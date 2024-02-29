@@ -1,0 +1,59 @@
+import * as crypto from "crypto"
+
+  // Define a secret key and an algorithm
+const secretKey = process.env.ENCRYPT_SECRET_KEY;
+const algorithm = process.env.ENCRYPT_ALGO;
+
+export async function encrypt(data){
+  // Generate a secret key for encryption and decryption.
+  //const secretKey1 = crypto.randomBytes(32);
+
+  //const keystr =  secretKey1.toString('hex');
+  const key = Buffer.from (secretKey, 'hex');
+
+  // Generate a random initialization vector
+  const iv = crypto.randomBytes(16);
+
+  // Create a cipher object with the key and iv
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+  // Update the cipher with the data and return the encrypted result
+  const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
+
+  // Return the iv and encrypted data as a hex string
+  return iv.toString('hex') + ':' + encrypted.toString('hex');
+}
+
+export async function decrypt(data){
+  // Split the data into iv and encrypted parts
+  const parts = data.split(':');
+
+  // Convert the parts from hex to buffer
+  const iv = Buffer.from(parts[0], 'hex');
+  const encrypted = Buffer.from(parts[1], 'hex');
+
+  // Create a decipher object with the key and iv
+  const decipher = crypto.createDecipheriv(<string>algorithm, <string>secretKey, iv);
+
+  // Update the decipher with the encrypted data and return the decrypted result
+  const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+
+  // Return the decrypted data as a string
+  return decrypted.toString();
+}
+
+export async function hashText(data: any) {
+    // creating hash object
+  const hash = crypto.createHash(<string>process.env.HASH_ALGO).update(data).digest('hex');
+
+  console.log(`Hash: ${hash}`);
+  return hash;
+}
+
+export async function hashCompare(plainText, hash){
+  const newHash = await hashText(plainText);
+  if (hash === newHash){
+    return true;
+  }
+  return false;
+}
