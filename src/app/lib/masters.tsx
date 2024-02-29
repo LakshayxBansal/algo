@@ -98,3 +98,25 @@ export async function getTicketStageList(ticketTypeId: number) {
     throw new Error('error in credentials');
   }
 }
+
+/**
+ * get getCustomerList List from DB
+ */
+export async function getCustomerList() {
+
+  try {
+    let query = "select customerId as id, nameVal as name from customer ";
+   const result = await excuteQuery({
+      query: query, 
+      values: [],
+    });
+
+    const stringf = JSON.stringify(result);
+    const parsed = JSON.parse(stringf);
+    return stringf;
+
+  } catch (e) {
+    console.log(e);
+    throw new Error('error in credentials');
+  }
+}

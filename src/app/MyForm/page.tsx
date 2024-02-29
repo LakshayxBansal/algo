@@ -11,8 +11,9 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import ColorTabs from '../Widgets/ColorTabs';
 import AutocompleteAdd from '../Widgets/Autocomplete';
-import { getSalesPerson, getTicketCategory, getTicketStage} from '../lib/actions';
+import { getSalesPerson, getTicketCategory, getTicketStage, getCustomer} from '../lib/actions';
 import ReactPhoneInput from 'react-phone-input-material-ui';
+import AddCustomerDialog from './AddCustomerDialog';
 
 //import ChevronButton from '../Widgets/ChevronButton';
 //import { MuiTelInput } from 'mui-tel-input';
@@ -23,6 +24,7 @@ interface baseDataType {
   salesPerson: [{id: number; name: string;}];
   catList: [{id: number; name: string;}];
   ticketStages:  [{id: number; name: string;}];
+  customer:[{id: number; name: string;}];
 }
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -40,11 +42,13 @@ const defaultTheme = createTheme({
 
 export default function MyForm() {
   const [state, setState] = useState('');
-  const [baseData, setBaseData] = useState<baseDataType | null>({});
+  const [baseData, setBaseData] = useState<baseDataType | null>();
+
 
   const handleChange = (event: SelectChangeEvent) => {
     setState(event.target.value as string);
   };
+
 
   const validateDate = (dte: Date) => {
     const date = new Date(dte);
@@ -60,10 +64,13 @@ export default function MyForm() {
         const salesPerson = JSON.parse(await getSalesPerson()); // Your API endpoint
         const catList = JSON.parse(await getTicketCategory(1));
         const ticketStage = JSON.parse(await getTicketStage(1));
+        const customer = JSON.parse(await getCustomer());
+
         const data = {
           salesPerson: salesPerson,
           catList: catList,
-          ticketStages:  ticketStage
+          ticketStages:  ticketStage,
+          customer: customer,
         }
         //const data = await response.json();
         setBaseData(data); // Assuming your data is an array of objects
@@ -98,7 +105,12 @@ export default function MyForm() {
             <Grid item xs={12} md={6}>
 
               <Grid item xs={6}>
-                <TextField label="Organization" fullWidth />
+              <AddCustomerDialog
+                    label="Customer"
+                    data={baseData? baseData.customer: []}
+                    allowFreeSolo={false}
+                    addNew={true}
+                  />
               </Grid>
 
               <Grid item xs={6}>
@@ -120,7 +132,7 @@ export default function MyForm() {
               <Grid item xs={6}>
                 <AutocompleteAdd
                     label="Sales Person Assigned"
-                    data={baseData.salesPerson}
+                    data={baseData? baseData.salesPerson : []}
                     allowFreeSolo={false}
                     addNew={false}
                   />
@@ -129,7 +141,7 @@ export default function MyForm() {
               <Grid item xs={6}>
                 <AutocompleteAdd
                       label="Category"
-                      data={baseData.catList}
+                      data={baseData? baseData.catList : []}
                       allowFreeSolo={false}
                       addNew={false}
                     />
@@ -145,7 +157,7 @@ export default function MyForm() {
               <Grid item xs={6}>
                 <AutocompleteAdd
                     label="Next Stage"
-                    data={baseData.ticketStages}
+                    data={baseData? baseData.ticketStages : []}
                     allowFreeSolo={false}
                     addNew={false}
                   />

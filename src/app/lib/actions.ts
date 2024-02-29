@@ -1,7 +1,7 @@
 'use server'
  
 import { signIn, signUp } from './auth';
-import { getCountryList, getSalesPersonList, getTicketCategoryList, getTicketStageList } from './masters';
+import { getCountryList, getSalesPersonList, getTicketCategoryList, getTicketStageList, getCustomerList } from './masters';
  
 export async function authenticate(formData: FormData) {
   try {
@@ -69,7 +69,7 @@ export async function getSalesPerson() {
  * get categories for the ticket
  */
 
-export async function getTicketCategory(ticketTypeId) {
+export async function getTicketCategory(ticketTypeId: number) {
   try {
     const result = await getTicketCategoryList(ticketTypeId);
 
@@ -85,9 +85,22 @@ export async function getTicketCategory(ticketTypeId) {
  * get stages for the ticket
  */
 
-export async function getTicketStage(ticketTypeId) {
+export async function getTicketStage(ticketTypeId: number) {
   try {
     const result = await getTicketStageList(ticketTypeId);
+
+    return result;
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
+export async function getCustomer() {
+  try {
+    const result = await getCustomerList();
 
     return result;
 

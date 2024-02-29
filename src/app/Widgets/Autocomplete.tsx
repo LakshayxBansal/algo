@@ -3,16 +3,18 @@ import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Chip from '@mui/material/Chip';
 
-//const filter = createFilterOptions();
+const filter = createFilterOptions();
+export interface optionsData {
+  id: number;
+  name: string;
+}
 
-interface propsData {
+export interface propsData {
   allowFreeSolo: boolean;
-  data: [{
-    id: number;
-    name: string;
-  }]
+  data: optionsData[];
   addNew: boolean;
   label: string;
+  addFunction?: (props) => void;
 }
 
 /**
@@ -26,7 +28,19 @@ interface propsData {
  */
 export default function AutocompleteAdd(props: propsData) {
   const [selectedValue, setSelectedValue] = useState(null);
-  const [arrValues, setarrValues] = useState([]);
+  //const [arrValues, setarrValues] = useState<optionsData[]>([]);
+  const optionsData = props.data;
+
+  const handleOnChange = (event, value) => {
+    // Update the selected city in state
+    console.log(value);
+    if (props.addNew && value.id==0 && props.addFunction) {
+      props.addFunction({name: value.name});
+    } else {
+      setSelectedValue(value);
+    }
+  };
+
   /*
   useEffect(() => {
     // Fetch options from your database (e.g., using an API call)
@@ -75,14 +89,30 @@ export default function AutocompleteAdd(props: propsData) {
   */
   return (
     <Autocomplete
-
-      options={props.data}
+      options={optionsData?  optionsData: []}
       renderOption={(props, option) => (
-        <li {...props} key={option.name}>{option.label || option.name}</li>
+        <li {...props} key={option.name}>{option.name}</li>
       )}
       freeSolo={props.allowFreeSolo} // Allow free text input
       getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
       renderInput={(params) => <TextField {...params} label={props.label} />}
+      value={selectedValue}
+      onChange={handleOnChange}
+      filterOptions={(options, params) => {
+        const filtered = filter(options, params);
+        const { inputValue } = params;
+
+        // Suggest creating a new value if it doesn't exist
+        if (inputValue !== "" && props.addNew && !options.some((option) => option.name === inputValue)) {
+          filtered.push({
+            id: 0,
+            name: `Add ${inputValue}`,
+          });
+        }
+
+        return filtered;
+      }}
+
     />
   );
 }
