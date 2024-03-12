@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react';
 import { Grid, TextField} from '@mui/material';
 import Tabs from '@mui/material/Tabs';

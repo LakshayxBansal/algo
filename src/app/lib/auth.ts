@@ -1,6 +1,5 @@
 
 import excuteQuery from "./db";
-import { checkSession, createSession } from "./session";
 import {hashText, hashCompare} from "./encrypt";
 
 /**
@@ -10,7 +9,7 @@ import {hashText, hashCompare} from "./encrypt";
  */
 
 
-export async function signIn(credData: any) {
+export async function authenticateUser(credData: any) {
 
   try {
 
@@ -19,26 +18,24 @@ export async function signIn(credData: any) {
     // check session, create if not existing else update the access datetime
     // return true if good else false
     const result = await excuteQuery({
-      query: 'select * from user where email=?', 
+      query: 'select * from user, role where email=? and user.roleId = role.roleId', 
       values: [credData.email],
     });
 
     if (result.length > 0) {
       if (await hashCompare(credData.password, result[0].password)) {
-        if (!(await checkSession(result[0].userId))){
-          return (await createSession({
-            userId: result[0].userId,
-            name: {
-              first: "Dinesh",
-              last: "Verma"
-            }
-          }));
-        }
-        return true;
+        const user = {
+          id: result[0].userId,
+          email: result[0].email,
+          name: result[0].firstName + " " +result[0].lastName,
+        };
+        return user;
+        /*if (!(await checkSession(result[0].userId))){
+          return (await createSession(user));
+        };*/
       }
-    } else {
-      return false;
-    }
+    } 
+    return null;
   } catch (e) {
     throw new Error('error in credentials');
   }

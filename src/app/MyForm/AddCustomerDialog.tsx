@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -9,6 +10,7 @@ import Button from '@mui/material/Button';
 import AutocompleteAdd, {propsData, optionsData}  from '../Widgets/Autocomplete';
 import ReactPhoneInput from 'react-phone-input-material-ui';
 import type { DialogProps } from "@mui/material";
+import Box, { BoxProps } from '@mui/material/Box';
 
 
 
@@ -18,7 +20,7 @@ export default function AddCustomerDialog(props: propsData) {
   const [addCustomerDialogOpen, setCustomerDialogOpen] = useState(false);
   const [dialogValue, setDialogValue] = React.useState();
 
-  const addCustomer = (props)=> {
+  const addCustomer = (props: any)=> {
     setDialogValue(props.name);
     setCustomerDialogOpen(true);
   }
@@ -48,6 +50,12 @@ export default function AddCustomerDialog(props: propsData) {
       <form onSubmit={handleSubmit}>
         <DialogTitle>Add a new customer</DialogTitle>
         <DialogContent>
+          <Box sx={{ display: 'grid', 
+                      columnGap: 3,
+                      rowGap: 1,
+                      gridTemplateColumns: 'repeat(2, 1fr)', 
+                    }}
+            >
               <TextField
                 autoFocus                
                 id="company"
@@ -60,16 +68,22 @@ export default function AddCustomerDialog(props: propsData) {
                 label="Contact Person"
                 type="text"
               />
-              <TextField  label="Email" fullWidth />
+              <TextField  label="Email"  />
               <ReactPhoneInput
                   component={TextField}
               />
+            </Box>
               <TextField  label="Address Line 1" fullWidth />
               <TextField  label="Address Line 2" fullWidth />
-              <TextField  label="City"  />
-              <TextField  label="State"  />
-              <TextField  label="Pin Code"  />
-
+              <Box sx={{ display: 'grid', 
+                      columnGap: 3,
+                      rowGap: 1,
+                      gridTemplateColumns: 'repeat(3, 1fr)', 
+                    }}>
+                <TextField  label="City"  />
+                <TextField  label="State"  />
+                <TextField  label="Pin Code"  />
+              </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

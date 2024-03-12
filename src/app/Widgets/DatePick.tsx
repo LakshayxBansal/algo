@@ -1,7 +1,8 @@
+'use client'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 /**
  * 
@@ -13,8 +14,12 @@ import dayjs from 'dayjs';
  *  onChange function
  * @returns 
  */
-export default function DatePick(props) {
+export default function DatePick(props: any) {
   //const theme = useTheme();
+  const validateDate = (value: Dayjs | null) => {
+    console.log('date:', value?.toDate());
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
@@ -23,7 +28,7 @@ export default function DatePick(props) {
         defaultValue={dayjs(props.defaultValue? props.defaultValue: null)}
         readOnly={props.readOnly? props.readOnly: false}
         disableOpenPicker={props.readOnly? props.readOnly: false}
-        onChange={props.onChange}
+        onChange={validateDate}
         slotProps={{ textField: { variant: 'standard' } }}
       />
     </LocalizationProvider>

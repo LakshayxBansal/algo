@@ -1,22 +1,24 @@
-'use server'
+"use server"
 
 import excuteQuery from "./db";
 import { cookies } from 'next/headers';
+import { redirect   } from 'next/navigation';
 import { setSessionCookies, getSessionCookies } from "./cookies";
 //import { encrypt, decrypt} from './encrypt';
 
 export async function checkSession(iduser) {
   try {
     const result = await excuteQuery({
-      query: 'select * from session where userId=4', 
-      values: [],
+      query: 'select * from session where userId=?', 
+      values: [iduser],
     });
 
     if (result.length > 0) {
       // update session last access
-      return await updateSessionAccess(iduser);
+      //await updateSessionAccess(iduser);
+      return result[0].data;
     }
-    return false;
+    return null;
   } catch (e) {
     console.log(e);
     throw new Error('error in checkSession');
@@ -25,18 +27,22 @@ export async function checkSession(iduser) {
 
 /**
  * check session from the cookie data. to be called when the user hits the server.
- * @param req 
+ * @param 
  * @returns 
  */
-export async function checkSessionFromCookie(req) {
+export async function getSession(openSignIn=true) {
   // get cookie from sessionStorage
-  const sessionData = await getSessionCookies(req);
-  const userId = sessionData? sessionData.userId : null;
-  if (await checkSession(userId)){
-    return userId;
+  const sessionData = await getSessionCookies();
+  const result = (sessionData? sessionData.token : null)? await checkSession(sessionData.token) : null;
+  if (result){
+    return result;
   } else {
-    return 0;
+    //const url = new URL(`/SignIn`, req.url);
+    if (openSignIn) {
+      return redirect("/SignIn");
+    }
   }
+  return null;
 }
 
 
@@ -51,7 +57,7 @@ export async function createSession(value: any) {
 
     console.log(result);
     if (result.constructor.name === "OkPacket") {
-      setSessionCookies({userId: value.userId});      
+      setSessionCookies({token: value.userId});      
     }
     return true;
 
@@ -94,7 +100,7 @@ async function updateSessionAccess(userId){
       values: [userId],
     });
     // update the cookie as well
-    setSessionCookies({userId: userId});     
+    setSessionCookies({token: userId});     
   
     return true;
   } catch(e) {

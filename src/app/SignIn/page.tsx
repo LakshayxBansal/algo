@@ -1,5 +1,3 @@
-'use client'
-
 import React, { FormEvent } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -13,41 +11,32 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import bgImage from "../../../public/OIG4.jpg";
 import { authenticate } from '../lib/actions';
+import { redirect   } from 'next/navigation';
 
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+export default function SignIn() {
+  //const router = useRouter();
+  //const callbackUrl = (searchParams.get('callbackUrl') as string) ?? "/";
 
-export default function SignInSide() {
+  //(router.query?.callbackUrl as string) ?? "/";
+
   // Define the handler function for form submission
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    // Prevent the default browser behavior
-    event.preventDefault();
-
+  const handleSubmit = async (formData: FormData) => {
+    "use server";
     try {
-      await authenticate(new FormData(event.currentTarget));
+      const authUser = await authenticate(formData);
+      //if (authUser) {
+      // redirect("/dashboard");
+        //router.refresh();
     } catch (e) {
       console.log(e);
     }
+    redirect("/dashboard");
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -58,8 +47,6 @@ export default function SignInSide() {
           sx={{
             backgroundImage: `url(${bgImage.src})`,
             backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -80,7 +67,7 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate action={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
@@ -126,11 +113,9 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
         </Grid>
       </Grid>
-    </ThemeProvider>
   );
 }

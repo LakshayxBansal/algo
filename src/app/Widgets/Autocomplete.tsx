@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
@@ -35,7 +37,9 @@ export default function AutocompleteAdd(props: propsData) {
     // Update the selected city in state
     console.log(value);
     if (props.addNew && value.id==0 && props.addFunction) {
-      props.addFunction({name: value.name});
+      // remove "Add " from the value
+      const str = value.name.slice(4);
+      props.addFunction({name: str});
     } else {
       setSelectedValue(value);
     }

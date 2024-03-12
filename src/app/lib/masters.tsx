@@ -31,7 +31,7 @@ export async function getSalesPersonList() {
   try {
 
     const result = await excuteQuery({
-      query: 'select salesPersonId as id, concat(firstName, " ", lastName) as name from salesperson;', 
+      query: 'select userId as id, concat(firstName, " ", lastName) as name from user;', 
       values: [],
     });
 
