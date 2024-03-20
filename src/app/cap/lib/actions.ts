@@ -1,6 +1,6 @@
 'use server'
  
-import { signIn, signUp } from './auth';
+import { authenticateUser } from './auth';
 import { getCountryList, getSalesPersonList, getTicketCategoryList, getTicketStageList, getCustomerList } from './masters';
  
 export async function authenticate(formData: FormData) {
@@ -8,7 +8,7 @@ export async function authenticate(formData: FormData) {
     let email = formData.get('email');
     let password = formData.get("password");
     
-    const success = await signIn({"email": email, "password": password});
+    const success = await authenticateUser({"email": email, "password": password});
 
     return success;
   } catch (error) {
@@ -17,7 +17,7 @@ export async function authenticate(formData: FormData) {
 }
 
 
-
+/*
 export async function createUser(formData: FormData) {
   try {
     const email = formData.get('email');
@@ -38,7 +38,7 @@ export async function createUser(formData: FormData) {
     throw error;
   }
 }
-
+*/
 
 
 export async function getCountries() {

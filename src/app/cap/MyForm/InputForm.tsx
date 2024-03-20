@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { Grid, TextField } from '@mui/material';
-import DatePick from '../Widgets/DatePick';
+import DatePick from '../../Widgets/DatePick';
 import Paper from '@mui/material/Paper';
 //import ResponsiveAppBar from '../Widgets/ResponsiveAppBar';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import ColorTabs from '../Widgets/ColorTabs';
-import AutocompleteAdd from '../Widgets/Autocomplete';
+import ColorTabs from '../../Widgets/ColorTabs';
+import AutocompleteAdd from '../../Widgets/Autocomplete';
 import ReactPhoneInput from 'react-phone-input-material-ui';
 import AddCustomerDialog from './AddCustomerDialog';
 import { Toolbar } from '@mui/material';

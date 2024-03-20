@@ -1,7 +1,8 @@
-import type { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions, User } from 'next-auth';
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { authenticateUser } from '../../../lib/auth'
+import { authenticateUser } from '../../../cap/lib/auth'
+import { addUser } from '../../../cap/lib/user';
 
 export const options: NextAuthOptions  = {
   providers: [
@@ -24,16 +25,48 @@ export const options: NextAuthOptions  = {
       },
       async authorize(credentials, req){
         // get the data from the db
+        console.log(credentials);
         const user = await authenticateUser({email: credentials?.username, password: credentials?.password});
         if(credentials?.username === user?.email){
           return user;
         } else {
+          console.log("user not found");
           return null;
         }
       }
     })
   ],
-  //pages: {
-    //signIn: '/SignIn',
-  //}
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      let isAllowedToSignIn = true;
+      if (account?.provider === "google"){
+        const names: string[] = user.name?.split(' ',2) ?? ['', '']; 
+        const data =  {
+          email: user.email,
+          provider: "google",
+          firstname: names[0],
+          lastname: names[1],
+        }
+        const result = await authenticateUser(data);
+        if (!result){
+          //add the user to the db
+          const res = await addUser(data);
+        } else {
+          isAllowedToSignIn = result?.email === user.email;
+        }
+      }
+      
+      if (isAllowedToSignIn) {
+        return true
+      } else {
+        // Return false to display a default error message
+        return "false"
+        // Or you can return a URL to redirect to:
+        // return '/unauthorized'
+      }
+    }
+  },
+  pages: {
+    signIn: '/SignIn',
+  }
 }

@@ -1,54 +1,18 @@
 
+import React, { FormEvent, useState } from 'react';
 import { getServerSession } from "next-auth/next";
-//import Congrats from './Congrats';
-import { getProviders, signIn } from "next-auth/react"
-//import { authOptions } from "../api/auth/[...nextauth]"
-import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
 
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { Container } from '@mui/material';
-import ProviderButton from '../Widgets/providerButton';
-import { addUser } from '../cap/lib/user';
 
 export default async function SignUp() {
-  const providerArr = Object.values((await getProviders())!).filter((provider) => provider.name!=="Credentials");
-
-
-  // Define the handler function for form submission
-  const handleSubmit = async (formData: FormData) => {
-    "use server"
-    try {
-      const userData = {email: formData.get("email") as string,
-                        password: formData.get("password") as string,
-                        firstname: formData.get("firstName") as string, 
-                        lastname: formData.get("lastName") as string
-                      };
-      const authUser = await addUser(userData);
-      //if (authUser) {
-      // redirect("/dashboard");
-        //router.refresh();
-    } catch (e) {
-      console.log(e);
-    }
-    //redirect("/dashboard");
-  };
   
   const session = await getServerSession();
   if (session) {
     console.log("ok");
-    // save the user
   }
 
-    return (
+
+  return (
+    <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
 
@@ -66,7 +30,7 @@ export default async function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate action={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -110,6 +74,12 @@ export default async function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  label="I want to receive inspiration, marketing promotions and updates via email."
+                />
+              </Grid>
             </Grid>
             <Button
               type="submit"
@@ -121,27 +91,15 @@ export default async function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="\SignIn" variant="body2">
+                <Link href="\signin" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Divider orientation="horizontal" variant="fullWidth" flexItem={true} component="li">Or</Divider>
- 
-        <Paper>
-          {providerArr.map((provider) => (
-            <ProviderButton
-              key={provider.id}
-              provider={provider}
-              >
-            </ProviderButton>
-          ))}
-        </Paper>
-
+        <Copyright sx={{ mt: 5 }} />
       </Container>
-    );
+    </ThemeProvider>
+  );
 }
-
-// onClick={() => signIn(provider.id)}

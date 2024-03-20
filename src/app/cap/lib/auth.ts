@@ -1,5 +1,5 @@
 
-import excuteQuery from "./db";
+import { excuteQuery } from "./db";
 import {hashText, hashCompare} from "./encrypt";
 
 /**
@@ -35,10 +35,10 @@ export async function authenticateUser(credData: any) {
         };*/
       }
     } 
-    return null;
   } catch (e) {
-    throw new Error('error in credentials');
+    console.log(e);
   }
+  return null;
 }
 
 
@@ -46,7 +46,7 @@ export async function authenticateUser(credData: any) {
  * 
  * @param credData {email: string, password:string, firstname: string, lastname: string}
  * @returns 
- */
+ 
 export async function signUp(userData: any) {
 
   try {
@@ -67,4 +67,4 @@ export async function signUp(userData: any) {
     throw new Error('error in signup');
   }
 }
-
+*/

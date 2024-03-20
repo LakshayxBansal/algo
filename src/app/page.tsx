@@ -1,7 +1,6 @@
-'use client'
-
 import React from "react";
-import Dashboard from './dashboard/page';
+import SignIn from './SignIn/page';
+//import { signIn } from "next-auth/react"
 
 
 
@@ -9,7 +8,8 @@ import Dashboard from './dashboard/page';
 export default function Home() {
 
   // Return the JSX element for the login page
+  //return signIn();
   return (
-    <Dashboard/>
+    <SignIn></SignIn>
   );
 };

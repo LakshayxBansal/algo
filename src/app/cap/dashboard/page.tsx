@@ -10,10 +10,15 @@ import CustomPaper from './CustomPaper';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signIn, signOut } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
 
 
 export default async function Dashboard() {
+  const session = await getServerSession();
+  if (session) {
+    console.log("ok");
+  }
 
     return (
       <Box sx={{ display: 'flex' }}>

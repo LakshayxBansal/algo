@@ -78,6 +78,7 @@ interface propsType {
     link: string, 
     disabled: boolean,
     id: string}[],
+  children: {}
 }
 
 export default function MenuBar(props : propsType) {
@@ -85,6 +86,7 @@ export default function MenuBar(props : propsType) {
   const [open, setOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(true);
   const router = useRouter();
+  const children = props.children;
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -102,7 +104,7 @@ export default function MenuBar(props : propsType) {
     return(<></>);
   } else {
     return (
-        <Box sx={{ display: 'flex' }}>
+        <>
           <CssBaseline />
           <AppBar position="absolute" open={open}>
             <Toolbar
@@ -117,8 +119,7 @@ export default function MenuBar(props : propsType) {
                 onClick={toggleDrawer}
                 sx={{
                   marginRight: '36px',
-                  ...(open && { display: 'none' }),
-                  display: { xs: 'flex', md: 'none' }
+                  ...(open && { display: 'none' }),                  
                 }}
               >
                 <MenuIcon />
@@ -152,8 +153,10 @@ export default function MenuBar(props : propsType) {
               </IconButton>
             </Toolbar>
           </AppBar>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <Drawer variant="permanent" open={open}>
+          <Box sx={{display: 'flex'}}>
+
+            <Drawer variant="permanent" open={open}
+              >
               <Toolbar
                 sx={{
                   display: 'flex',
@@ -173,8 +176,10 @@ export default function MenuBar(props : propsType) {
                 {secondaryListItems}
               </List>
             </Drawer>
+            {children}
           </Box>
-        </Box>
+
+        </>
     );
   }
 }

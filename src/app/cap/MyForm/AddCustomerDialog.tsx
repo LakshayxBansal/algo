@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import { Grid, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
-import AutocompleteAdd, {propsData, optionsData}  from '../Widgets/Autocomplete';
+import AutocompleteAdd, {propsData, optionsData}  from '../../Widgets/Autocomplete';
 import ReactPhoneInput from 'react-phone-input-material-ui';
 import type { DialogProps } from "@mui/material";
 import Box, { BoxProps } from '@mui/material/Box';
@@ -29,6 +29,11 @@ export default function AddCustomerDialog(props: propsData) {
   const handleSubmit = ()=> {
     setCustomerDialogOpen(false);
   }
+
+  const handleCancel = ()=> {
+    setCustomerDialogOpen(false);
+  }
+
 
   const handleClose: DialogProps["onClose"] = (event, reason) => {
     if (reason && reason === "backdropClick")
@@ -86,7 +91,7 @@ export default function AddCustomerDialog(props: propsData) {
               </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
           <Button type="submit">Add</Button>
         </DialogActions>
       </form>
