@@ -29,7 +29,7 @@ export default function SignUpForm() {
   const debouncedFormValidation =  debounce((formData: FormData)=> {
     const basicEmailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    const email = formData.get("email");
+    const email = formData.get("email") as string;
     const pass = formData.get("password");
     const repass = formData.get("repassword");
 
