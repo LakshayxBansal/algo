@@ -1,6 +1,5 @@
 //'use client'
 import * as React from 'react';
-//import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,8 +7,22 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
+import { Paper } from '@mui/material';
+import { getCompanyList } from '../services/masters.services';
+import { getSession }  from '../services/session.services';
+import CellDbName from './cellDBName';
+import CreateCompanyDialog from './CreateCompanyDialog';
+import { redirect } from 'next/navigation';
 
+interface companyInfo{
+  companyId: number,
+  nameVal: string,
+  dbId: number,
+  email: string,
+  host: string,
+  port: string,
+  dbName: string,
+}
 
 interface TitleProps {
   children?: React.ReactNode;
@@ -21,50 +34,47 @@ function Title(props: TitleProps) {
     </Typography>
   );
 }
-// Generate Order Data
-function createData(
-  id: number,
-  name: string,
-  admin: string,
-  db: string,
-) {
-  return { id, name, admin, db };
-}
 
-const rows = [
-  createData(
-    1,
-    "MyCo",
-    "admin",
-    "crmdb"
-    ),
-];
+export default async function Companies() {
+  const session = await getSession();
+  
+  async function callBackAfterAddCo() {
+    'use server'
+    redirect('/company')
+  }
 
-export default function Companies() {
-  return (
-    <React.Fragment>
-      <Grid>
-        <Title>Choose Company</Title>
-        <Button>Create</Button>
-      </Grid>
-      <Table size="small">
-        <TableHead>
-          <TableRow sx={{ '& th': { color: 'black', fontWeight: 'bold' } }}>
-            <TableCell>Name</TableCell>
-            <TableCell>DB Name</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>
-                <a href="https://google.com">{row.name}</a>
-              </TableCell>
-              <TableCell>{row.db}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </React.Fragment>
-  );
+  if (session) {
+    const rows:companyInfo[] = await getCompanyList(session.user?.email);
+    return (
+      <Paper sx={{ p: 2, height: '100vh'}}>
+        <React.Fragment>
+          <Grid sx={{ display: 'flex' }}>
+            <Title>Choose Company</Title>
+            <CreateCompanyDialog
+              email={session.user?.email}
+              callBackParent={callBackAfterAddCo}
+            ></CreateCompanyDialog>
+          </Grid>
+          <Table size="small">
+            <TableHead>
+              <TableRow sx={{ '& th': { color: 'black', fontWeight: 'bold' } }}>
+                <TableCell>Name</TableCell>
+                <TableCell>DB Name</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows?.map((row) => (
+                <TableRow key={row.companyId}>
+                  <CellDbName row={row}></CellDbName>
+                  <TableCell>{row.dbName}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </React.Fragment>
+      </Paper>
+    );
+  } else {
+    redirect('/SignIn');
+  }
 }

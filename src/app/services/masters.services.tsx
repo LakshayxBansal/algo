@@ -1,5 +1,5 @@
 
-import excuteQuery from "./db";
+import excuteQuery  from '../utils/db/db';
 
 /**
  * 
@@ -13,7 +13,8 @@ export async function getCountryList() {
   try {
 
     const result = await excuteQuery({
-      query: 'select countryId as id, nameVal as name from countries', 
+      host: 'crmdb',
+      query: 'select countryId as id, nameVal as name from country', 
       values: [],
     });
 
@@ -31,6 +32,7 @@ export async function getSalesPersonList() {
   try {
 
     const result = await excuteQuery({
+      host: 'crmdb',
       query: 'select userId as id, concat(firstName, " ", lastName) as name from user;', 
       values: [],
     });
@@ -40,7 +42,7 @@ export async function getSalesPersonList() {
     return stringf;
 
   } catch (e) {
-    throw new Error('error in credentials');
+    console.log(e);
   }
 }
 
@@ -51,13 +53,14 @@ export async function getSalesPersonList() {
 export async function getTicketCategoryList(ticketTypeId: number) {
 
   try {
-    let query = "select ticketCategoryId as id, nameVal as name from ticketcategory ";
+    let query = "select ticketCategoryId as id, nameVal as name from ticketCategory ";
     let values: number[] = [];
     if (ticketTypeId){
       query += " where ticketTypeId = ?";
       values = [ticketTypeId];
     }
     const result = await excuteQuery({
+      host: 'crmdb',
       query: query, 
       values: values,
     });
@@ -85,6 +88,7 @@ export async function getTicketStageList(ticketTypeId: number) {
       values = [ticketTypeId];
     }
     const result = await excuteQuery({
+      host: 'crmdb',
       query: query, 
       values: values,
     });
@@ -107,7 +111,8 @@ export async function getCustomerList() {
   try {
     let query = "select customerId as id, nameVal as name from customer ";
    const result = await excuteQuery({
-      query: query, 
+    host: 'crmdb',
+    query: query, 
       values: [],
     });
 
@@ -119,4 +124,42 @@ export async function getCustomerList() {
     console.log(e);
     throw new Error('error in credentials');
   }
+}
+
+
+/**
+ * Get the list of companies for the given userId
+ * @param email: <sring> email for the user for which the eligible companies to be returned.
+ * @returns list of companies
+ */
+export async function getCompanyList(email: string | undefined | null) {
+  try {
+    if (email) {
+      const result = await excuteQuery({
+        host: 'userDb',
+        query: 'select c.companyId, c.nameVal, c.dbId, u.email, h.host, h.port, d.dbName from \
+        company as c, \
+          userCompany as uc, \
+          user as u, \
+          dbInfo as d, \
+          dbHost as h \
+          where \
+          u.email=? and \
+          u.userId = uc.userId and \
+          uc.companyId = c.companyId and \
+          c.dbId = d.dbId and \
+          d.hostId = h.hostId \
+          ;', 
+        values: [email],
+      });
+      //Object.values(JSON.parse(JSON.stringify(
+      //const stringf = JSON.stringify(result);
+      const parsed = JSON.parse(JSON.stringify(result));
+
+      return result.valueOf();
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
 }

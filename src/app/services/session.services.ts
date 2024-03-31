@@ -1,0 +1,126 @@
+"use server"
+
+import excuteQuery from '../utils/db/db';
+import { cookies } from 'next/headers';
+import { redirect   } from 'next/navigation';
+import { setSessionCookies, getSessionCookies } from '../lib/cookies.lib';
+//import { encrypt, decrypt} from './encrypt';
+import { getServerSession } from "next-auth/next"
+import { options } from '../api/auth/[...nextauth]/options';
+import { usePreviousMonthDisabled } from "@mui/x-date-pickers/internals";
+
+const sessionDb = 'userDb';
+
+export async function getDbSession(email: string) {
+  try {
+
+    const result = await excuteQuery({
+      host: sessionDb,
+      query: 'select * from session where email=?', 
+      values: [email],
+    });
+
+    if (result?.length > 0) {
+      // update session last access
+      //await updateSessionAccess(iduser);
+      return result[0].data;
+    }
+    return null;
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+
+
+export async function createSession(value: any) {
+  try {
+    const result = await excuteQuery({
+      host: sessionDb,
+      query: 'insert into session (data, userId, last_access) values (?, ?, now())', 
+      values: [JSON.stringify(value), value.userId],
+    });
+
+    console.log(result);
+    if (result.constructor.name === "OkPacket") {
+      setSessionCookies({token: value.userId});      
+    }
+    return true;
+
+  } catch (e) {
+    console.log(e);
+    throw new Error('error in credentials');
+  }
+
+}
+
+async function getLastSession(idUser: number){
+  // fetch the session id
+  try {
+    const result = await excuteQuery ({
+      host: sessionDb,
+      query: 'select max(sessionId) as sessionId from session where userId=?',
+      values: [idUser],
+    })
+    if (result.length > 0){
+      return result[0].sessionId;
+    } else {
+      throw new Error("session not found");
+    }
+  } catch (e){
+    console.log(e);
+    throw new Error("session not found");
+  }
+
+}
+
+
+/**
+ * 
+ * @param dbInfo object containing the user email, companyinfo and db info
+ * @returns 
+ */
+export async function updateSession(dbInfo: any){
+  try {
+    let dbData = await getDbSession(dbInfo.email);
+    if (dbData) {
+      dbData = JSON.parse(dbData);
+      dbData.dbInfo = dbInfo;
+      dbData = JSON.stringify(dbData);
+      const result = await excuteQuery({
+        host: sessionDb,
+        query: 'update session set data=?, last_access=now() where email=?', 
+        values: [dbData, dbInfo.email],
+      });
+    } else {
+      dbData = {dbInfo: dbInfo}
+      dbData = JSON.stringify(dbData);
+      const result = await excuteQuery({
+        host: sessionDb,
+        query: 'insert into session (data, last_access, email) values (?, now(), ?);', 
+        values: [dbData, dbInfo.email],
+      });
+      return result;
+    }
+  } catch(e) {
+    console.log(e);
+  }
+  return null;
+}
+
+
+/**
+ * server function to return the session object at the server
+ */
+export async function getSession() {
+  try {
+    const session = await getServerSession(options);
+    if (session) {
+      return session;
+    }
+  } catch(e) {
+    console.log(e);
+  }
+  return null;
+}

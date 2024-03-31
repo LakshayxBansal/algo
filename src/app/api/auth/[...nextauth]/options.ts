@@ -1,8 +1,9 @@
 import type { NextAuthOptions, User } from 'next-auth';
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { authenticateUser } from '../../../cap/lib/auth'
-import { addUser } from '../../../cap/lib/user';
+import { authenticateUser } from '../../../services/auth.services';
+import { addUser } from '../../../services/user.services';
+import { getDbSession } from '../../../services/session.services';
 
 export const options: NextAuthOptions  = {
   providers: [
@@ -64,7 +65,14 @@ export const options: NextAuthOptions  = {
         // Or you can return a URL to redirect to:
         // return '/unauthorized'
       }
-    }
+    } /*,
+    async session({ session, token, user }) {
+      // Send properties to the client, like an access_token and user id from a provider.
+        const sessionDbData = await getDbSession(session.email);
+        const retVal = { ...session, moreInfo: sessionDbData?? {}}
+        
+        return retVal;
+    }*/
   },
   pages: {
     signIn: '/SignIn',

@@ -15,9 +15,6 @@ import AuthPage from './AuthPage';
 
 export default async function SignIn() {
   const providerArr = Object.values((await getProviders())!).filter((provider) => provider.name!=="Credentials");
-  //csrfToken = await getCsrfToken(Request);
-
-
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>

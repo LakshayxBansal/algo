@@ -1,7 +1,7 @@
 "use server"
 
-import { excuteQueryUserDb }  from "./db";
-import {hashText, hashCompare} from "./encrypt";
+import excuteQuery   from '../utils/db/db';
+import {hashText, hashCompare} from '../utils/encrypt.utils';
 
 interface userDataType {
   email: string | null | undefined,
@@ -18,26 +18,15 @@ export async function addUser(userData:userDataType) {
   try {
     const hashedPassword = userData.password? await hashText(userData.password) :  '';
 
-    // check if the user exists
-    if (userData.email) {
-      const user = await checkUser(userData.email)
-
-      if (!user) {
-        const result = await excuteQueryUserDb({
-          query: 'insert into user (email, password, firstname, lastname, datetime) values (?, ?, ?, ?, now())', 
-          values: [userData.email, hashedPassword, userData.firstname, userData.lastname],
-        });
-        if (result.constructor.name === "OkPacket") {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
+    return excuteQuery({
+      host: 'userDb',
+      query: 'insert into user (email, password, firstname, lastname, datetime) values (?, ?, ?, ?, now())', 
+      values: [userData.email, hashedPassword, userData.firstname, userData.lastname],
+    });
   } catch (e) {
     console.log(e);
   }
-  return false;
+  //return null;
 }
 
 
@@ -49,7 +38,8 @@ export async function addUser(userData:userDataType) {
 export async function checkUser(email: string) {
   try {
     // check if the user exists
-    const user = await excuteQueryUserDb({
+    const user = await excuteQuery({
+      host: 'userDb',
       query: 'select * from userDb.user where email = ?',
       values: [email],
     })

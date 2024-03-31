@@ -1,6 +1,7 @@
 
-import { excuteQuery } from "./db";
-import {hashText, hashCompare} from "./encrypt";
+import excuteQuery from '../utils/db/db';
+import {hashText, hashCompare} from '../utils/encrypt.utils';
+//import getSession  from './session';
 
 /**
  * 
@@ -12,13 +13,9 @@ import {hashText, hashCompare} from "./encrypt";
 export async function authenticateUser(credData: any) {
 
   try {
-
-    // check user
-    // check password
-    // check session, create if not existing else update the access datetime
-    // return true if good else false
     const result = await excuteQuery({
-      query: 'select * from user, role where email=? and user.roleId = role.roleId', 
+      host:'userDb',
+      query: 'select * from user where email=?', 
       values: [credData.email],
     });
 

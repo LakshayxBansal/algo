@@ -4,12 +4,9 @@ import * as crypto from "crypto"
 const secretKey = process.env.ENCRYPT_SECRET_KEY;
 const algorithm = process.env.ENCRYPT_ALGO;
 
-export async function encrypt(data){
-  // Generate a secret key for encryption and decryption.
-  //const secretKey1 = crypto.randomBytes(32);
-
-  //const keystr =  secretKey1.toString('hex');
-  const key = Buffer.from (secretKey, 'hex');
+export async function encrypt(data: string){
+  secretKeyArr = ArrayBuffer.from(secretKey.encode())
+  const key = Buffer.from (secretKeyArr, 'hex');
 
   // Generate a random initialization vector
   const iv = crypto.randomBytes(16);

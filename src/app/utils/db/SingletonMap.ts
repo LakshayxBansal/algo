@@ -1,4 +1,5 @@
-class SingletonMap<K, V> {
+
+export class SingletonMap<K, V> {
     private static instance: SingletonMap<any, any>;
     private map: Map<K, V>;
 
@@ -22,11 +23,13 @@ class SingletonMap<K, V> {
     }
 }
 
-// Example usage
+/* Example usage
 const mySingletonMap = SingletonMap.getInstance<string, number>();
+const singletonMap = SingletonMap.getInstance<string, number>();
 mySingletonMap.set('one', 1);
 mySingletonMap.set('two', 2);
 
 console.log(mySingletonMap.get('one')); // Output: 1
 console.log(mySingletonMap.get('two')); // Output: 2
 console.log(mySingletonMap.get('three')); // Output: undefined
+*/
