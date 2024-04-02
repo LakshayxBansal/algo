@@ -78,6 +78,8 @@ interface propsType {
     link: string, 
     disabled: boolean,
     id: string}[],
+  username: string,
+  companyName: string,
   children: {}
 }
 
@@ -106,7 +108,7 @@ export default function MenuBar(props : propsType) {
     return (
         <>
           <CssBaseline />
-          <AppBar position="absolute" open={open}>
+          <AppBar open={open}>
             <Toolbar
               sx={{
                 pr: '24px', // keep right padding when drawer closed
@@ -133,18 +135,18 @@ export default function MenuBar(props : propsType) {
               >
                 Zodo
               </Typography>
-              <Box justifyContent='flex-start' sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                {pages.map((page) => (
-                  <Button
-                    key={page.label}
-                    id={page.id}
-                    disabled={page.disabled}
-                    onClick={handleClick}
-                    sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none' }}
-                  >
-                    {page.label}
-                  </Button>
-                ))}
+              <Box justifyContent='flex-end' sx={{flexGrow: 1, display: 'flex' }}>
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+              >
+
+                  {props.companyName}
+              </Typography>    
+              </Box>
+              <Box justifyContent='flex-end' sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                  {props.username}
               </Box>
               <IconButton color="inherit">
                 <Badge badgeContent={4} color="secondary">
@@ -183,3 +185,20 @@ export default function MenuBar(props : propsType) {
     );
   }
 }
+
+
+/**
+ *                 {pages.map((page) => (
+                  <Button
+                    key={page.label}
+                    id={page.id}
+                    disabled={page.disabled}
+                    onClick={handleClick}
+                    sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none' }}
+                  >
+                    {page.label}
+                  </Button>
+                ))}
+ */
+
+                // <AppBar position="absolute" open={open}></AppBar>

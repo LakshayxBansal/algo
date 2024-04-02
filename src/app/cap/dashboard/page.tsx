@@ -17,7 +17,7 @@ import { getServerSession } from "next-auth/next";
 export default async function Dashboard() {
   const session = await getServerSession();
   if (session) {
-    console.log("ok");
+    console.log("ok in session");
   }
 
     return (

@@ -24,18 +24,19 @@ const userDb = mysql({
 });
 */
 
+// return pool.getConnection();
 
 const dbMap = SingletonMap.getInstance<string, mariadb.Pool>();
 
-function getConnection(host: string) {
+function getPool(host: string) {
   const pool = dbMap.get(host);
   if (pool) {
-    return pool.getConnection();
+    return pool;
   } else {
     dbMap.set('crmDb', mariadb.createPool({
         host: process.env.MYSQL_HOST,
         port: 3306,
-        database: 'crmdb',
+        database: 'crmDb',
         user: process.env.USERDB_USER,
         password: process.env.USERDB_PASSWORD,
         connectionLimit: 5
@@ -46,10 +47,11 @@ function getConnection(host: string) {
         port: 3306,
         database: 'userDb',
         user: process.env.USERDB_USER,
-        password: process.env.USERDB_PASSWORD
+        password: process.env.USERDB_PASSWORD,
+        connectionLimit: 5
       }
     ));
-    return dbMap.get(host)?.getConnection() ?? null;
+    return dbMap.get(host) ?? null;
   }
 }
 
@@ -58,21 +60,17 @@ function getConnection(host: string) {
  * @param param0 {host name, query, replacement values}
  * @returns result or null in case of error
  */
-export default async function excuteQuery({host, query, values }) {
+export default async function excuteQuery({host , query, values }: {host: string, query: string, values: any}) {
   let db;
   let results;
   try {
-    db = await getConnection(host);
+    db = getPool(host);
 
     if (db) {
       results = await db.query(query, values);
     }
   } catch (e) {
     throw (e);
-  } finally {
-    if (db) {
-      db.end();
-    }
-  }
+  } 
   return results;
 }

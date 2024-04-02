@@ -5,6 +5,10 @@ import { redirect } from 'next/navigation';
 export default async function selectUserCompany(row) {
   console.log(row);
   const result = await updateSession(row);
-  redirect('/cap')
+  if (result) {
+    redirect('/cap')
+  } else {
+    redirect('/error');
+  }
 
 }

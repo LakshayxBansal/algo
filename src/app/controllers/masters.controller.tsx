@@ -6,6 +6,8 @@ import { getCountryList,
   getTicketStageList, 
   getCustomerList } from '../services/masters.services';
  
+import { getDbSession } from '../services/session.services';
+
 export async function authenticate(formData: FormData) {
   try {
     const email = formData.get('email');
@@ -30,24 +32,22 @@ export async function authenticate(formData: FormData) {
 
 
 
-export async function getCountries() {
+export async function getCountries(crmDb: string) {
   try {
-    const result = await getCountryList();
+    const result = await getCountryList(crmDb);
 
-    return result;
-
+    return JSON.stringify(result);
   } catch (error) {
     throw error;
   }
 }
 
 
-export async function getSalesPerson() {
+export async function getSalesPerson(crmDb: string) {
   try {
-    const result = await getSalesPersonList();
+    const result = await getSalesPersonList(crmDb);
 
-    return result;
-
+    return JSON.stringify(result);
   } catch (error) {
     throw error;
   }
@@ -59,12 +59,11 @@ export async function getSalesPerson() {
  *
  */ 
 
-export async function getTicketCategory(ticketTypeId: number) {
+export async function getTicketCategory(crmDb: string, ticketTypeId: number) {
   try {
-    const result = await getTicketCategoryList(ticketTypeId);
+    const result = await getTicketCategoryList(crmDb, ticketTypeId);
 
-    return result;
-
+    return JSON.stringify(result);
   } catch (error) {
     throw error;
   }
@@ -75,24 +74,22 @@ export async function getTicketCategory(ticketTypeId: number) {
  * get stages for the ticket
 */ 
 
-export async function getTicketStage(ticketTypeId: number) {
+export async function getTicketStage(crmDb: string, ticketTypeId: number) {
   try {
-    const result = await getTicketStageList(ticketTypeId);
+    const result = await getTicketStageList(crmDb, ticketTypeId);
 
-    return result;
-
+    return JSON.stringify(result);
   } catch (error) {
     throw error;
   }
 }
 
 
-export async function getCustomer() {
+export async function getCustomer(crmDb: string) {
   try {
-    const result = await getCustomerList();
+    const result = await getCustomerList(crmDb);
 
-    return result;
-
+    return JSON.stringify(result);
   } catch (error) {
     throw error;
   }

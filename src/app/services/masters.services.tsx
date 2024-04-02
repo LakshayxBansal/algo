@@ -8,49 +8,45 @@ import excuteQuery  from '../utils/db/db';
  */
 
 
-export async function getCountryList() {
+export async function getCountryList(crmDb: string) {
 
   try {
 
     const result = await excuteQuery({
-      host: 'crmdb',
+      host: crmDb,
       query: 'select countryId as id, nameVal as name from country', 
       values: [],
     });
 
-    const stringf = JSON.stringify(result);
-    const parsed = JSON.parse(stringf);
-    return stringf;
-
+    return result;
   } catch (e) {
-    throw new Error('error in credentials');
+    console.log(e);
   }
+  return null;
 }
 
-export async function getSalesPersonList() {
+export async function getSalesPersonList(crmDb: string) {
 
   try {
 
     const result = await excuteQuery({
-      host: 'crmdb',
-      query: 'select userId as id, concat(firstName, " ", lastName) as name from user;', 
+      host: crmDb,
+      query: 'select userId as id, concat(firstName, " ", lastName) as name from coUser;', 
       values: [],
     });
 
-    const stringf = JSON.stringify(result);
-    const parsed = JSON.parse(stringf);
-    return stringf;
-
+    return result;
   } catch (e) {
     console.log(e);
   }
+  return null;
 }
 
 
 /**
  * get ticketCategory List from DB filtered by ticketTypeId
  */
-export async function getTicketCategoryList(ticketTypeId: number) {
+export async function getTicketCategoryList(crmDb: string, ticketTypeId: number) {
 
   try {
     let query = "select ticketCategoryId as id, nameVal as name from ticketCategory ";
@@ -60,25 +56,23 @@ export async function getTicketCategoryList(ticketTypeId: number) {
       values = [ticketTypeId];
     }
     const result = await excuteQuery({
-      host: 'crmdb',
+      host: crmDb,
       query: query, 
       values: values,
     });
 
-    const stringf = JSON.stringify(result);
-    const parsed = JSON.parse(stringf);
-    return stringf;
-
+    return result;
   } catch (e) {
-    throw new Error('error in credentials');
+    console.log(e);
   }
+  return null;
 }
 
 
 /**
  * get getTicketStageList List from DB filtered by ticketTypeId
  */
-export async function getTicketStageList(ticketTypeId: number) {
+export async function getTicketStageList(crmDb: string, ticketTypeId: number) {
 
   try {
     let query = "select ticketStageId as id, nameVal as name from ticketStage ";
@@ -88,42 +82,34 @@ export async function getTicketStageList(ticketTypeId: number) {
       values = [ticketTypeId];
     }
     const result = await excuteQuery({
-      host: 'crmdb',
+      host: crmDb,
       query: query, 
       values: values,
     });
-
-    const stringf = JSON.stringify(result);
-    const parsed = JSON.parse(stringf);
-    return stringf;
-
+    return result;
   } catch (e) {
     console.log(e);
-    throw new Error('error in credentials');
   }
+  return null;
 }
 
 /**
  * get getCustomerList List from DB
  */
-export async function getCustomerList() {
+export async function getCustomerList(crmDb: string) {
 
   try {
-    let query = "select customerId as id, nameVal as name from customer ";
    const result = await excuteQuery({
-    host: 'crmdb',
-    query: query, 
+      host: crmDb,
+      query: "select customerId as customerId, nameVal as name from customer", 
       values: [],
     });
 
-    const stringf = JSON.stringify(result);
-    const parsed = JSON.parse(stringf);
-    return stringf;
-
+    return result;
   } catch (e) {
     console.log(e);
-    throw new Error('error in credentials');
   }
+  return null;
 }
 
 

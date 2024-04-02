@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import MenuBar from './MenuBar';
 import Box from '@mui/material/Box';
-import {getSession} from '../cap/lib/session';
+import {getAppSession} from '../../services/session.services';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },
@@ -17,15 +17,22 @@ const pages = [
 
 export default async function AppMenu(props) {
   //const menuOpen = true;
-  //const session = await getSession(false);
+  const session = await getAppSession();
+
+  if (session) {
 
     return (
       <MenuBar 
         pages= {pages}
+        username = {session.session.user?.name!}
+        companyName = {session.dbSession.dbInfo.nameVal}
         >
-          <Box component="span" sx={{ display: 'block' }}>
+        <Box component="span" sx={{ display: 'block' }}>
           {props.children}
-          </Box>
-          </MenuBar>
+        </Box>
+      </MenuBar>
     );
+  } else {
+
+  }
 }

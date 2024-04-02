@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image";
 import React, { useState, FormEvent } from "react";
-import { authenticate } from './lib/actions'
+import { authenticate } from './controllers/masters.controller'
 import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 

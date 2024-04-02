@@ -16,10 +16,10 @@ import { Toolbar } from '@mui/material';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 export interface baseDataType {
-  salesPerson: [{id: number; name: string;}];
-  catList: [{id: number; name: string;}];
-  ticketStages:  [{id: number; name: string;}];
-  customer:[{id: number; name: string;}];
+  salesPerson: [{id: number; name: string;}],
+  catList: [{id: number; name: string;}],
+  ticketStages:  [{id: number; name: string;}],
+  customer:[{id: number; name: string;}],
 }
 
 
@@ -35,7 +35,7 @@ const theme = createTheme({
 });
 
 
-export default function InputForm(props: {baseData: baseDataType}) {
+export default function InputForm(props: {baseData: baseDataType, userName: string}) {
   const baseData = props.baseData;
 
   return (
@@ -143,7 +143,10 @@ export default function InputForm(props: {baseData: baseDataType}) {
 
         {/* creator */}
         <Grid item xs={6}>
-          <TextField label="Created By" fullWidth />
+          <TextField 
+          label="Created By"
+          value={props.userName} 
+          fullWidth />
         </Grid>
 
       </Grid>

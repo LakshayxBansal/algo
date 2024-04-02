@@ -23,7 +23,8 @@ export async function getDbSession(email: string) {
     if (result?.length > 0) {
       // update session last access
       //await updateSessionAccess(iduser);
-      return result[0].data;
+      const val = JSON.parse(result[0].data);
+      return JSON.parse(result[0].data);
     }
     return null;
   } catch (e) {
@@ -93,6 +94,7 @@ export async function updateSession(dbInfo: any){
         query: 'update session set data=?, last_access=now() where email=?', 
         values: [dbData, dbInfo.email],
       });
+      return result;
     } else {
       dbData = {dbInfo: dbInfo}
       dbData = JSON.stringify(dbData);
@@ -118,6 +120,26 @@ export async function getSession() {
     const session = await getServerSession(options);
     if (session) {
       return session;
+    }
+  } catch(e) {
+    console.log(e);
+  }
+  return null;
+}
+
+/**
+ * server function to return the session object at the server
+ */
+export async function getAppSession() {
+  try {
+    const session = await getServerSession(options);
+    if (session) {
+      const dbSession = await getDbSession(session.user?.email!);
+      const appSession = {
+        session: session,
+        dbSession: dbSession
+      }
+      return appSession;
     }
   } catch(e) {
     console.log(e);

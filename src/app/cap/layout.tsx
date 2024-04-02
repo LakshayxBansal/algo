@@ -1,3 +1,5 @@
+import AppMenu from './navbar/AppMenu';
+
 export default function CapLayout({
   children, // will be a page or nested layout
 }: {
@@ -6,9 +8,9 @@ export default function CapLayout({
   return (
     <section>
       {/* Include shared UI here e.g. a header or sidebar */}
-      <nav></nav>
- 
-      {children}
+      <AppMenu>
+        {children}
+      </AppMenu>
     </section>
   )
 }

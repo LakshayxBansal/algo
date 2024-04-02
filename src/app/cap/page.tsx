@@ -7,8 +7,6 @@ export default function ClientApp() {
   // Return the JSX element for the login page
   //return signIn();
   return (
-    <CapLayout>
-      <Dashbaord></Dashbaord>
-    </CapLayout>
+    <Dashbaord></Dashbaord>
   );
 };

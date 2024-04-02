@@ -2,6 +2,7 @@
 
 import { addUser, checkUser } from '../services/user.services';
 import { redirect } from 'next/navigation';
+import * as zs from '../zodschema/zodschema';
 
 export async function registerUser(formData: FormData){
   let userCreated = {status: false, msg: "Internal error!" };
@@ -11,6 +12,7 @@ export async function registerUser(formData: FormData){
                       firstname: formData.get("firstName") as string, 
                       lastname: formData.get("lastName") as string
                     };
+    const result = zs.userSchema.safeParse(userData);
     const authUser = await addUser(userData);
     if (authUser.constructor.name === "OkPacket" ) {
       userCreated = {status: true, msg:"User created!"};
