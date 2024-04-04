@@ -1,10 +1,8 @@
 
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import MenuBar from './MenuBar';
 import Box from '@mui/material/Box';
-import {getAppSession} from '../../services/session.services';
+import {getAppSession} from '../../services/session.service';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },
@@ -15,11 +13,11 @@ const pages = [
 ];
 
 
-export default async function AppMenu(props) {
+export default async function AppMenu(props: {children: React.ReactNode}) {
   //const menuOpen = true;
   const session = await getAppSession();
 
-  if (session) {
+  if (session?.dbSession?.dbInfo) {
 
     return (
       <MenuBar 

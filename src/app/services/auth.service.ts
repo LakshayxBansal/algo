@@ -1,3 +1,4 @@
+'use server'
 
 import excuteQuery from '../utils/db/db';
 import {hashText, hashCompare} from '../utils/encrypt.utils';

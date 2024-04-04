@@ -1,6 +1,6 @@
 "use server"
 
-import { addUser, checkUser } from '../services/user.services';
+import { addUser, checkUser } from '../services/user.service';
 import { redirect } from 'next/navigation';
 import * as zs from '../zodschema/zodschema';
 
@@ -17,7 +17,7 @@ export async function registerUser(formData: FormData){
     if (authUser.constructor.name === "OkPacket" ) {
       userCreated = {status: true, msg:"User created!"};
     }
-  } catch (e) {
+  } catch (e: any) {
     if (e.code === 'ER_DUP_ENTRY'){
       userCreated = {status: false, msg:"Email already exist"};
     }

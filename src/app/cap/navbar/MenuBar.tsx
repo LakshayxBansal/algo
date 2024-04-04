@@ -16,7 +16,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
-import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation'
 
 const drawerWidth: number = 240;
@@ -80,7 +79,7 @@ interface propsType {
     id: string}[],
   username: string,
   companyName: string,
-  children: {}
+  children: React.ReactNode
 }
 
 export default function MenuBar(props : propsType) {

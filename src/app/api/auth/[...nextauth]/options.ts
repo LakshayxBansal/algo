@@ -1,9 +1,8 @@
 import type { NextAuthOptions, User } from 'next-auth';
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { authenticateUser } from '../../../services/auth.services';
-import { addUser } from '../../../services/user.services';
-import { getDbSession } from '../../../services/session.services';
+import { authenticateUser } from '../../../services/auth.service';
+import { addUser } from '../../../services/user.service';
 
 export const options: NextAuthOptions  = {
   providers: [

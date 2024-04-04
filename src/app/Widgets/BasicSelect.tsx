@@ -9,7 +9,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 // use Autocomplete with options for advanced select options
 
 
-export default function BasicSelect({id, label, menuItems}) {
+export default function BasicSelect({id, label, menuItems}: {id: string, label: string, menuItems: {value:string, label:string}[]}) {
   const [value, setValue] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {

@@ -8,21 +8,13 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { Paper } from '@mui/material';
-import { getCompanyList } from '../services/masters.services';
-import { getSession }  from '../services/session.services';
+import { getCompanyList } from '../services/masters.service';
+import { getSession }  from '../services/session.service';
 import CellDbName from './cellDBName';
 import CreateCompanyDialog from './CreateCompanyDialog';
 import { redirect } from 'next/navigation';
+import {companyInfo} from './companyInfo';
 
-interface companyInfo{
-  companyId: number,
-  nameVal: string,
-  dbId: number,
-  email: string,
-  host: string,
-  port: string,
-  dbName: string,
-}
 
 interface TitleProps {
   children?: React.ReactNode;
@@ -51,7 +43,7 @@ export default async function Companies() {
           <Grid sx={{ display: 'flex' }}>
             <Title>Choose Company</Title>
             <CreateCompanyDialog
-              email={session.user?.email}
+              email={session.user?.email!}
               callBackParent={callBackAfterAddCo}
             ></CreateCompanyDialog>
           </Grid>

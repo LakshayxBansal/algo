@@ -1,7 +1,8 @@
 import React from 'react';
 import { getSalesPerson, getTicketCategory, getTicketStage, getCustomer} from '../../controllers/masters.controller';
 import InputForm from './InputForm';
-import { getAppSession } from '../../services/session.services';
+import { getAppSession } from '../../services/session.service';
+
 
 export default async function MyForm() {
   const session = await getAppSession();

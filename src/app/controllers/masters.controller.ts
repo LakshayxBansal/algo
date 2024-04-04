@@ -4,9 +4,8 @@ import { getCountryList,
   getSalesPersonList, 
   getTicketCategoryList, 
   getTicketStageList, 
-  getCustomerList } from '../services/masters.services';
+  getCustomerList } from '../services/masters.service';
  
-import { getDbSession } from '../services/session.services';
 
 export async function authenticate(formData: FormData) {
   try {

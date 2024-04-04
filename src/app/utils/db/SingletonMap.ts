@@ -1,16 +1,17 @@
+import mariadb from 'mariadb';
 
-export class SingletonMap<K, V> {
+class SingletonMap<K, V> {
     private static instance: SingletonMap<any, any>;
     private map: Map<K, V>;
-    private count: number;
 
     private constructor() {
         this.map = new Map<K, V>();
-        this.count=0;
     }
 
     public static getInstance<K, V>(): SingletonMap<K, V> {
+        console.log("--------get instance-----------");
         if (!SingletonMap.instance) {
+            console.log("++++++++New Insatnce++++++++");
             SingletonMap.instance = new SingletonMap<K, V>();
         }
         return SingletonMap.instance;
@@ -23,18 +24,11 @@ export class SingletonMap<K, V> {
     public get(key: K): V | undefined {
         return this.map.get(key);
     }
-
-    public incCount() {
-        this.count++;
-        console.log("++++++++++++++++ count inc: count = "+ this.count);
-    }
-    
-    public decCount() {
-        this.count--;
-        console.log("---------------- count dec: count = "+ this.count);
-
-    }
 }
+
+const dbMap = SingletonMap.getInstance<string, mariadb.Pool>();
+
+export {dbMap};
 
 /* Example usage
 const mySingletonMap = SingletonMap.getInstance<string, number>();

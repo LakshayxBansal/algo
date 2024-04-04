@@ -1,7 +1,7 @@
 'use client'
 
 import TextField from '@mui/material/TextField';
-import { checkUser } from '../services/user.services';
+import { checkUser } from '../services/user.service';
 import { useState } from 'react';
 
 

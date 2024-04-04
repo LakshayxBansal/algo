@@ -24,22 +24,10 @@ DROP TABLE IF EXISTS `coUser`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `coUser` (
   `coUserId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `userId` int(10) unsigned DEFAULT NULL,
-  `firstName` varchar(45) DEFAULT NULL,
-  `lastName` varchar(45) DEFAULT NULL,
-  `email` varchar(45) DEFAULT NULL,
+  `employeeId` int(10) unsigned DEFAULT NULL,
   `datetime` varchar(45) DEFAULT NULL,
   `licensed` int(11) DEFAULT NULL,
-  `roleId` int(11) DEFAULT NULL,
-  `cfield1` varchar(50) DEFAULT NULL,
-  `cfield2` varchar(50) DEFAULT NULL,
-  `cfield3` varchar(50) DEFAULT NULL,
-  `cfield4` varchar(50) DEFAULT NULL,
-  `cfield5` varchar(50) DEFAULT NULL,
-  `cfield6` varchar(50) DEFAULT NULL,
-  `cfield7` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`coUserId`),
-  UNIQUE KEY `email_UNIQUE` (`email`)
+  PRIMARY KEY (`coUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -108,6 +96,148 @@ LOCK TABLES `customer` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `dept`
+--
+
+DROP TABLE IF EXISTS `dept`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dept` (
+  `deptId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nameVal` varchar(45) DEFAULT NULL,
+  `desc` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`deptId`),
+  UNIQUE KEY `deptId_UNIQUE` (`deptId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dept`
+--
+
+LOCK TABLES `dept` WRITE;
+/*!40000 ALTER TABLE `dept` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dept` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `employee`
+--
+
+DROP TABLE IF EXISTS `employee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `employee` (
+  `employeeId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `personId` int(10) unsigned DEFAULT NULL,
+  `deptId` int(10) unsigned DEFAULT NULL,
+  `roleId` int(10) unsigned DEFAULT NULL,
+  `managerId` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`employeeId`),
+  UNIQUE KEY `employeeId_UNIQUE` (`employeeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `employee`
+--
+
+LOCK TABLES `employee` WRITE;
+/*!40000 ALTER TABLE `employee` DISABLE KEYS */;
+/*!40000 ALTER TABLE `employee` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `inquiry`
+--
+
+DROP TABLE IF EXISTS `inquiry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `inquiry` (
+  `inquiryId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `desc` varchar(45) DEFAULT NULL,
+  `customerId` int(10) DEFAULT NULL,
+  `contactPersonId` int(10) DEFAULT NULL,
+  `salesPersonId` int(10) DEFAULT NULL,
+  `nextStageId` int(10) DEFAULT NULL,
+  `expectedClosureDate` datetime DEFAULT NULL,
+  `createDate` datetime DEFAULT NULL,
+  `creatorId` varchar(45) DEFAULT NULL,
+  `customField1` varchar(45) DEFAULT NULL,
+  `customField2` varchar(45) DEFAULT NULL,
+  `customField3` varchar(45) DEFAULT NULL,
+  `customField4` varchar(45) DEFAULT NULL,
+  `customField5` varchar(45) DEFAULT NULL,
+  `customField6` varchar(45) DEFAULT NULL,
+  `customField7` varchar(45) DEFAULT NULL,
+  `customField8` varchar(45) DEFAULT NULL,
+  `customField9` varchar(45) DEFAULT NULL,
+  `customField10` varchar(45) DEFAULT NULL,
+  `customField11` varchar(45) DEFAULT NULL,
+  `customField12` varchar(45) DEFAULT NULL,
+  `customField13` varchar(45) DEFAULT NULL,
+  `customField14` varchar(45) DEFAULT NULL,
+  `customField15` varchar(45) DEFAULT NULL,
+  `date_time` varchar(45) DEFAULT NULL,
+  `active` int(11) DEFAULT NULL,
+  PRIMARY KEY (`inquiryId`),
+  UNIQUE KEY `inquiryId_UNIQUE` (`inquiryId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `inquiry`
+--
+
+LOCK TABLES `inquiry` WRITE;
+/*!40000 ALTER TABLE `inquiry` DISABLE KEYS */;
+/*!40000 ALTER TABLE `inquiry` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `person`
+--
+
+DROP TABLE IF EXISTS `person`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `person` (
+  `personId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(45) DEFAULT NULL,
+  `lasName` varchar(45) DEFAULT NULL,
+  `add1` varchar(45) DEFAULT NULL,
+  `add2` varchar(45) DEFAULT NULL,
+  `city` varchar(45) DEFAULT NULL,
+  `stateId` int(11) DEFAULT NULL,
+  `phone1` varchar(45) DEFAULT NULL,
+  `phone2` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  `cfield10` varchar(50) DEFAULT NULL,
+  `cfield9` varchar(50) DEFAULT NULL,
+  `cfield8` varchar(50) DEFAULT NULL,
+  `cfield7` varchar(50) DEFAULT NULL,
+  `cfield6` varchar(50) DEFAULT NULL,
+  `cfield5` varchar(50) DEFAULT NULL,
+  `cfield4` varchar(50) DEFAULT NULL,
+  `cfield3` varchar(50) DEFAULT NULL,
+  `cfield2` varchar(50) DEFAULT NULL,
+  `cfield1` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`personId`),
+  UNIQUE KEY `employeeId_UNIQUE` (`personId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `person`
+--
+
+LOCK TABLES `person` WRITE;
+/*!40000 ALTER TABLE `person` DISABLE KEYS */;
+/*!40000 ALTER TABLE `person` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `role`
 --
 
@@ -157,6 +287,32 @@ LOCK TABLES `ticketCategory` WRITE;
 /*!40000 ALTER TABLE `ticketCategory` DISABLE KEYS */;
 INSERT INTO `ticketCategory` VALUES (1,'Urgent',1),(2,'Regular',1),(3,'High Priority',1);
 /*!40000 ALTER TABLE `ticketCategory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ticketNote`
+--
+
+DROP TABLE IF EXISTS `ticketNote`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ticketNote` (
+  `ticketNoteId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ticketId` int(11) DEFAULT NULL,
+  `createDate` datetime DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  PRIMARY KEY (`ticketNoteId`),
+  UNIQUE KEY `ticketNoteId_UNIQUE` (`ticketNoteId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ticketNote`
+--
+
+LOCK TABLES `ticketNote` WRITE;
+/*!40000 ALTER TABLE `ticketNote` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ticketNote` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -220,4 +376,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-02 10:10:39
+-- Dump completed on 2024-04-04 16:56:59

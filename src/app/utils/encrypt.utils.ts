@@ -1,12 +1,13 @@
 import * as crypto from "crypto"
 
   // Define a secret key and an algorithm
-const secretKey = process.env.ENCRYPT_SECRET_KEY;
-const algorithm = process.env.ENCRYPT_ALGO;
+const secretKey = process.env.ENCRYPT_SECRET_KEY as string;
+const algorithm = process.env.ENCRYPT_ALGO as string;
 
 export async function encrypt(data: string){
-  secretKeyArr = ArrayBuffer.from(secretKey.encode())
-  const key = Buffer.from (secretKeyArr, 'hex');
+  //const secretKeyArr = ArrayBuffer.from(secretKey.encode());
+  const key = crypto.scryptSync(secretKey, 'salt', 32);
+  //const key = Buffer.from (secretKeyArr, 'hex');
 
   // Generate a random initialization vector
   const iv = crypto.randomBytes(16);
@@ -21,7 +22,7 @@ export async function encrypt(data: string){
   return iv.toString('hex') + ':' + encrypted.toString('hex');
 }
 
-export async function decrypt(data){
+export async function decrypt(data: any){
   // Split the data into iv and encrypted parts
   const parts = data.split(':');
 
@@ -47,7 +48,7 @@ export async function hashText(data: any) {
   return hash;
 }
 
-export async function hashCompare(plainText, hash){
+export async function hashCompare(plainText: any, hash: any){
   const newHash = await hashText(plainText);
   if (hash === newHash){
     return true;

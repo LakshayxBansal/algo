@@ -1,13 +1,9 @@
-"use server"
+'use server'
 
 import excuteQuery from '../utils/db/db';
-import { cookies } from 'next/headers';
-import { redirect   } from 'next/navigation';
-import { setSessionCookies, getSessionCookies } from '../lib/cookies.lib';
-//import { encrypt, decrypt} from './encrypt';
+//import { setSessionCookies } from '../utils/cookies.lib';
 import { getServerSession } from "next-auth/next"
 import { options } from '../api/auth/[...nextauth]/options';
-import { usePreviousMonthDisabled } from "@mui/x-date-pickers/internals";
 
 const sessionDb = 'userDb';
 
@@ -34,7 +30,7 @@ export async function getDbSession(email: string) {
 }
 
 
-
+/*
 export async function createSession(value: any) {
   try {
     const result = await excuteQuery({
@@ -55,6 +51,7 @@ export async function createSession(value: any) {
   }
 
 }
+*/
 
 async function getLastSession(idUser: number){
   // fetch the session id
@@ -86,7 +83,6 @@ export async function updateSession(dbInfo: any){
   try {
     let dbData = await getDbSession(dbInfo.email);
     if (dbData) {
-      dbData = JSON.parse(dbData);
       dbData.dbInfo = dbInfo;
       dbData = JSON.stringify(dbData);
       const result = await excuteQuery({

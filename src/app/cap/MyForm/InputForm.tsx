@@ -4,14 +4,14 @@ import React from 'react';
 import { Grid, TextField } from '@mui/material';
 import DatePick from '../../Widgets/DatePick';
 import Paper from '@mui/material/Paper';
-//import ResponsiveAppBar from '../Widgets/ResponsiveAppBar';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import ColorTabs from '../../Widgets/ColorTabs';
 import AutocompleteAdd from '../../Widgets/Autocomplete';
 import ReactPhoneInput from 'react-phone-input-material-ui';
 import AddCustomerDialog from './AddCustomerDialog';
-import { Toolbar } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
+import FormMenuBar from './formMenuBar';
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -40,7 +40,8 @@ export default function InputForm(props: {baseData: baseDataType, userName: stri
 
   return (
     <ThemeProvider theme={theme}>
-    <Toolbar />
+    <Toolbar/>
+    <FormMenuBar/>
     <Paper>
       {/*<ProminentAppBar />*/}
       <Grid container spacing={1}
@@ -73,6 +74,7 @@ export default function InputForm(props: {baseData: baseDataType, userName: stri
           <Grid item xs={6}>
             <ReactPhoneInput
               component={TextField}
+              country={'in' || 'us'}
             />
             </Grid>
         </Grid>

@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 
-export async function handleSubmit(event) {
+export async function handleSubmit(event: any) {
   signIn("credentials", { redirect: false, username: "jsmith", password: "1234" });
 };
 

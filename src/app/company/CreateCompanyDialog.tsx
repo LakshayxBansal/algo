@@ -23,8 +23,12 @@ const theme = createTheme({
   },
 });
 
+export interface compDialogPropT {
+  email: string,
+  callBackParent: ()=>Promise<void>
+}
 
-export default function CreateCompanyDialog(props) {
+export default function CreateCompanyDialog(props: compDialogPropT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogValue, setDialogValue] = React.useState();
   const email = props.email;
