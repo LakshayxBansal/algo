@@ -1,21 +1,25 @@
 'use client'
 
 import { signIn } from "next-auth/react"
-import Button from '@mui/material/Button';
+import {
+  Button as MuiButton,
+  ButtonProps,
+  makeStyles
+} from '@mui/material';
 import { ClientSafeProvider} from "next-auth/react";
 
 
-interface buttonPropsType {
+interface IButtonProps extends ButtonProps {
   provider: ClientSafeProvider;
   callbackUrl: string;
 }
 
-export default function ProviderButton(props: buttonPropsType) {
+export default function ProviderButton({ provider, callbackUrl, children, ...rest }: IButtonProps) {
 
   return (
-    <div key={props.provider.name}>
+    <div key={provider.name}>
       
-      <Button onClick={()=>signIn(props.provider.id, {callbackUrl: props.callbackUrl})}
+      <MuiButton onClick={()=>signIn(provider.id, {callbackUrl: callbackUrl})}
                   fullWidth
                   variant="contained"
                   sx={{
@@ -27,8 +31,8 @@ export default function ProviderButton(props: buttonPropsType) {
                   justifyContent: 'center',
                 }}
         >
-          Continue with {props.provider.name}
-      </Button>
+          {children} {provider.name}
+      </MuiButton>
     </div>
   );
 }

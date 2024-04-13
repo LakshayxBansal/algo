@@ -1,33 +1,35 @@
 import React from 'react';
-import { getSalesPerson, getTicketCategory, getTicketStage, getCustomer} from '../../controllers/masters.controller';
 import InputForm from './InputForm';
-import { getAppSession } from '../../services/session.service';
+import { getSession } from '../../services/session.service';
+import { getIquiryPageData } from '../../controllers/inquiry.controller';
+import { redirect } from 'next/navigation';
 
 
 export default async function MyForm() {
-  const session = await getAppSession();
+  try {
+    const session = await getSession();
 
-  if (session && session.dbSession && session.dbSession.dbInfo.dbName) {
-      const [salesPerson, catList, ticketStage, customer] = await Promise.all([
-        await getSalesPerson(session.dbSession.dbInfo.dbName),
-        await getTicketCategory(session.dbSession.dbInfo.dbName, 1),
-        await getTicketStage(session.dbSession.dbInfo.dbName, 1),
-        await getCustomer(session.dbSession.dbInfo.dbName)
-      ]);
-
-    const baseData = {
-      salesPerson: salesPerson? JSON.parse(salesPerson) : null,
-      catList: catList? JSON.parse(catList): null,
-      ticketStages:  ticketStage? JSON.parse(ticketStage): null,
-      customer: customer? JSON.parse(customer): null,
-    };
-    
-    return (
-      <InputForm 
-        baseData={baseData}
-        userName={session.session.user?.name!}
-      ></InputForm>
-    );
+    if (session) {
+      const result = await getIquiryPageData();
+      const masterData = {
+        userName: session.user?.name as string,
+        salesPerson: result?.salesPerson,
+        catList: result?.catList,
+        ticketStages: result?.ticketStages,
+        customer: result?.customer,
+        person: result?.person,
+        action: result?.action
+      }
+      
+      return (
+        <InputForm 
+          baseData={masterData}
+        ></InputForm>
+      );
+    }
+  } catch (e) {
+    // show error page
+    redirect("/error");
   }
 };
 

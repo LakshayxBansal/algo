@@ -7,8 +7,8 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
-import Slider from '@mui/material/Slider';
-import { blue } from '@mui/material/colors';
+import Grid from '@mui/material/Grid';
+import { Box } from '@mui/material';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -51,30 +51,33 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const BlueButton = styled(Button)(({ theme }) => ({
-  backgroundColor: 'blue',
-  color: 'black'
-}));
 
 
 export default function FormMenuBar() {
   return (
     <Paper>
-        <Toolbar variant="dense">
-          <BlueButton>
-            New
-          </BlueButton>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-          {/* Add your menu items or other components here */}
-        </Toolbar>
+      <Toolbar variant="dense">
+        <Grid container  rowSpacing={2} columnSpacing={1}>
+            <Grid item xs={6} md={6}>
+              <Box  margin={1} sx={{display: "flex"}}>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                  />
+                </Search>
+              </Box>
+            </Grid>
+            <Grid item xs={6} md={6}>
+              <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
+                <Button type="submit" variant="contained">Submit</Button>
+              </Box>
+            </Grid>
+          </Grid>
+      </Toolbar>
     </Paper>
   );
 };

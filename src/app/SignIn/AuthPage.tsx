@@ -89,6 +89,7 @@ export default function AuthPage(props: authPagePropsType) {
             provider={provider}
             callbackUrl={successCallBackUrl}
             >
+              Sign In with
           </ProviderButton>
         ))}
       </Paper>

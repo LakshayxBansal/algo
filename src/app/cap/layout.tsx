@@ -1,4 +1,5 @@
 import AppMenu from './navbar/AppMenu';
+import Box from '@mui/material/Box';
 
 export default function CapLayout({
   children, // will be a page or nested layout
@@ -9,7 +10,9 @@ export default function CapLayout({
     <section>
       {/* Include shared UI here e.g. a header or sidebar */}
       <AppMenu>
-        {children}
+        <Box>
+          {children}
+        </Box>
       </AppMenu>
     </section>
   )

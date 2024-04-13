@@ -16,6 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `action`
+--
+
+DROP TABLE IF EXISTS `action`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `action` (
+  `actionId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nameVal` varchar(45) DEFAULT NULL,
+  `ticketTypeId` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`actionId`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `action`
+--
+
+LOCK TABLES `action` WRITE;
+/*!40000 ALTER TABLE `action` DISABLE KEYS */;
+INSERT INTO `action` VALUES (1,'follow-up',1),(2,'Demo-visit',1),(3,'Demo Online',1),(4,'visit',1);
+/*!40000 ALTER TABLE `action` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `coUser`
 --
 
@@ -83,7 +108,7 @@ CREATE TABLE `customer` (
   `active` int(11) DEFAULT NULL,
   PRIMARY KEY (`customerId`),
   UNIQUE KEY `customerId_UNIQUE` (`customerId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92,6 +117,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+INSERT INTO `customer` VALUES (1,'New customer','IA 19 B','Ashok Vihar','Delhi','Delhi','110052','2024-04-05 18:37:06',1),(2,'my cus','','','','','','2024-04-05 18:42:11',1),(3,'raj kamal','','','','','','2024-04-05 18:43:21',1),(4,'Kaalia','weio welkkjf sjdksj','sjdsdj kdsldk ','dlfj','dsds','sddsd','2024-04-05 18:45:35',1),(5,'brand new','','','','','','2024-04-05 18:56:15',1),(6,'Maha','','','','','','2024-04-05 18:57:40',1),(7,'delhi times','','','','','','2024-04-05 19:01:56',1),(8,'Apple','','','','','','2024-04-05 19:05:32',1),(9,'microsoft','','','','','','2024-04-05 19:07:49',1),(10,'Dell','','','','','','2024-04-05 19:08:35',1),(11,'cisco','','','','','','2024-04-05 19:20:53',1),(12,'nano tech','','','','','','2024-04-05 19:22:34',1),(13,'mahindra','','','','','','2024-04-05 19:23:36',1),(14,'delhi trans','','','','','','2024-04-05 19:36:46',1),(15,'Timex','','','','','','2024-04-05 20:07:07',1),(16,'ICICI','','','','','','2024-04-08 11:58:01',1),(17,'yes bank','','','','','','2024-04-08 12:01:12',1),(18,'mad max','','','','','','2024-04-08 12:02:37',1),(19,'max hospital','','','','','','2024-04-08 12:04:52',1),(20,'Airbnb','','','','','','2024-04-10 16:29:41',1);
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,6 +159,7 @@ CREATE TABLE `employee` (
   `deptId` int(10) unsigned DEFAULT NULL,
   `roleId` int(10) unsigned DEFAULT NULL,
   `managerId` int(10) unsigned DEFAULT NULL,
+  `isAppUser` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`employeeId`),
   UNIQUE KEY `employeeId_UNIQUE` (`employeeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -158,29 +185,32 @@ CREATE TABLE `inquiry` (
   `inquiryId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `desc` varchar(45) DEFAULT NULL,
   `customerId` int(10) DEFAULT NULL,
-  `contactPersonId` int(10) DEFAULT NULL,
-  `salesPersonId` int(10) DEFAULT NULL,
+  `contactPersonId` int(11) unsigned DEFAULT NULL,
+  `employeeId` int(10) DEFAULT NULL,
   `nextStageId` int(10) DEFAULT NULL,
   `expectedClosureDate` datetime DEFAULT NULL,
+  `active` int(11) DEFAULT NULL,
+  `expectedRev` float DEFAULT NULL,
+  `probability` float DEFAULT NULL,
+  `nextStageCompletionDate` date DEFAULT NULL,
   `createDate` datetime DEFAULT NULL,
   `creatorId` varchar(45) DEFAULT NULL,
-  `customField1` varchar(45) DEFAULT NULL,
-  `customField2` varchar(45) DEFAULT NULL,
-  `customField3` varchar(45) DEFAULT NULL,
-  `customField4` varchar(45) DEFAULT NULL,
-  `customField5` varchar(45) DEFAULT NULL,
-  `customField6` varchar(45) DEFAULT NULL,
-  `customField7` varchar(45) DEFAULT NULL,
-  `customField8` varchar(45) DEFAULT NULL,
-  `customField9` varchar(45) DEFAULT NULL,
-  `customField10` varchar(45) DEFAULT NULL,
-  `customField11` varchar(45) DEFAULT NULL,
-  `customField12` varchar(45) DEFAULT NULL,
-  `customField13` varchar(45) DEFAULT NULL,
-  `customField14` varchar(45) DEFAULT NULL,
-  `customField15` varchar(45) DEFAULT NULL,
+  `cField1` varchar(45) DEFAULT NULL,
+  `cField2` varchar(45) DEFAULT NULL,
+  `cField3` varchar(45) DEFAULT NULL,
+  `cField4` varchar(45) DEFAULT NULL,
+  `cField5` varchar(45) DEFAULT NULL,
+  `cField6` varchar(45) DEFAULT NULL,
+  `cField7` varchar(45) DEFAULT NULL,
+  `cField8` varchar(45) DEFAULT NULL,
+  `cField9` varchar(45) DEFAULT NULL,
+  `cField10` varchar(45) DEFAULT NULL,
+  `cField11` varchar(45) DEFAULT NULL,
+  `cField12` varchar(45) DEFAULT NULL,
+  `cField13` varchar(45) DEFAULT NULL,
+  `cField14` varchar(45) DEFAULT NULL,
+  `cField15` varchar(45) DEFAULT NULL,
   `date_time` varchar(45) DEFAULT NULL,
-  `active` int(11) DEFAULT NULL,
   PRIMARY KEY (`inquiryId`),
   UNIQUE KEY `inquiryId_UNIQUE` (`inquiryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -209,10 +239,11 @@ CREATE TABLE `person` (
   `add1` varchar(45) DEFAULT NULL,
   `add2` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
-  `stateId` int(11) DEFAULT NULL,
+  `state` varchar(45) DEFAULT NULL,
   `phone1` varchar(45) DEFAULT NULL,
   `phone2` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
+  `personTypeId` int(11) NOT NULL,
   `cfield10` varchar(50) DEFAULT NULL,
   `cfield9` varchar(50) DEFAULT NULL,
   `cfield8` varchar(50) DEFAULT NULL,
@@ -225,7 +256,7 @@ CREATE TABLE `person` (
   `cfield1` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`personId`),
   UNIQUE KEY `employeeId_UNIQUE` (`personId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +265,33 @@ CREATE TABLE `person` (
 
 LOCK TABLES `person` WRITE;
 /*!40000 ALTER TABLE `person` DISABLE KEYS */;
+INSERT INTO `person` VALUES (1,'rajesh','khanna','malabar hills','south mumbai','mumbai','MH','1234567890',NULL,'rakesh@gmail.com',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(2,'rajesh','khanna','malabar hills','south mumbai','mumbai','MH','1234567890',NULL,'rakesh@gmail.com',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,'Vinod','Mehra','add line 1','add line 2','New Delhi','Delhi','+98 107 528 31',NULL,'vinod@mehra.com',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(4,'Mala ','Sinha','add 1','add2','New Delhi','Delho','990762630',NULL,'mala@sinha.com',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `person` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `personType`
+--
+
+DROP TABLE IF EXISTS `personType`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `personType` (
+  `personTypeId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nameVal` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`personTypeId`),
+  UNIQUE KEY `personTypeId_UNIQUE` (`personTypeId`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `personType`
+--
+
+LOCK TABLES `personType` WRITE;
+/*!40000 ALTER TABLE `personType` DISABLE KEYS */;
+INSERT INTO `personType` VALUES (1,'contact'),(2,'employee');
+/*!40000 ALTER TABLE `personType` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -376,4 +433,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-04 16:56:59
+-- Dump completed on 2024-04-13 19:14:46

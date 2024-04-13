@@ -25,11 +25,11 @@ export default function DatePick(props: any) {
       <DatePicker
         label={props.label}
         format={props.format}
-        defaultValue={dayjs(props.defaultValue? props.defaultValue: null)}
+        name={props.name}
+        defaultValue={props.defaultValue && dayjs(props.defaultValue)}
         readOnly={props.readOnly? props.readOnly: false}
         disableOpenPicker={props.readOnly? props.readOnly: false}
         onChange={validateDate}
-        slotProps={{ textField: { variant: 'standard' } }}
       />
     </LocalizationProvider>
   );

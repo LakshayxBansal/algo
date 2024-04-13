@@ -32,15 +32,20 @@ export async function getSalesPersonList(crmDb: string) {
 
     const result = await excuteQuery({
       host: crmDb,
-      query: 'select userId as id, concat(firstName, " ", lastName) as name from coUser;', 
+      query: 'select cu.coUserId as id, concat(p.firstName, " ", p.lasName) as name, d.nameVal as department, r.nameVal  \
+        from coUser cu, employee e, role r, person p, dept d \
+        where cu.employeeId = e.employeeId and \
+        e.personId = p.personId and \
+        e.deptId = d.deptId and \
+        e.roleId = r.roleId',
       values: [],
     });
 
     return result;
   } catch (e) {
     console.log(e);
+    throw e;
   }
-  return null;
 }
 
 
@@ -65,8 +70,8 @@ export async function getTicketCategoryList(crmDb: string, ticketTypeId: number)
     return result;
   } catch (e) {
     console.log(e);
+    throw e;
   }
-  return null;
 }
 
 
@@ -82,16 +87,15 @@ export async function getTicketStageList(crmDb: string, ticketTypeId: number) {
       query += " where ticketTypeId = ?";
       values = [ticketTypeId];
     }
-    const result = await excuteQuery({
+    return excuteQuery({
       host: crmDb,
       query: query, 
       values: values,
     });
-    return result;
   } catch (e) {
     console.log(e);
+    throw e;
   }
-  return null;
 }
 
 /**
@@ -100,17 +104,17 @@ export async function getTicketStageList(crmDb: string, ticketTypeId: number) {
 export async function getCustomerList(crmDb: string) {
 
   try {
-   const result = await excuteQuery({
+   return excuteQuery({
       host: crmDb,
-      query: "select customerId as customerId, nameVal as name from customer", 
+      query: "select customerId as Id, nameVal as name from customer \
+        order by nameVal", 
       values: [],
     });
 
-    return result;
   } catch (e) {
     console.log(e);
+    throw e;
   }
-  return null;
 }
 
 
@@ -147,6 +151,51 @@ export async function getCompanyList(email: string | undefined | null) {
     }
   } catch (e) {
     console.log(e);
-  }
-  return null;
+    throw e;
+ }
+}
+
+
+/**
+ * returns rows from person data based on type specified
+ * @param type 
+ */
+export async function getContactPersonList(crmDb: string, type:string){
+  
+  try {
+    return excuteQuery({
+       host: crmDb,
+       query: 'select personId as Id, concat(p.firstName, " ", p.lasName) as name, p.* from person p, personType t  where \
+         p.personTypeId=t.personTypeId and \
+         t.nameVal=?  order by name', 
+       values: [type],
+     });
+ 
+   } catch (e) {
+     console.log(e);
+     throw e;
+   }
+
+}
+
+/**
+ * returns rows from action data based on type specified
+ * @param type 
+ */
+export async function getActionList(crmDb: string, type:string){
+  
+  try {
+    return excuteQuery({
+       host: crmDb,
+       query: 'select a.actionId as Id, a.nameVal as name from action a, ticketType t  where \
+         a.ticketTypeId=t.ticketTypeId and \
+         t.nameVal=?  order by name', 
+       values: [type],
+     });
+ 
+   } catch (e) {
+     console.log(e);
+     throw e;
+   }
+
 }

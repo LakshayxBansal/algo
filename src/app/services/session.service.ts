@@ -1,13 +1,30 @@
 'use server'
 
 import excuteQuery from '../utils/db/db';
-//import { setSessionCookies } from '../utils/cookies.lib';
 import { getServerSession } from "next-auth/next"
 import { options } from '../api/auth/[...nextauth]/options';
+import { Session } from 'next-auth';
 
 const sessionDb = 'userDb';
 
-export async function getDbSession(email: string) {
+interface dbSesstionT {
+  dbInfo: {
+    companyId:number,
+    nameVal: string,
+    dbId: number,
+    email: string,
+    host: string,
+    port: string,
+    dbName:string
+  }
+};
+
+export interface appSessionT {
+  session: Session;
+  dbSession: dbSesstionT | null;
+};
+
+export async function getDbSession(email: string): Promise<dbSesstionT | null> {
   try {
 
     const result = await excuteQuery({
@@ -17,9 +34,6 @@ export async function getDbSession(email: string) {
     });
 
     if (result?.length > 0) {
-      // update session last access
-      //await updateSessionAccess(iduser);
-      const val = JSON.parse(result[0].data);
       return JSON.parse(result[0].data);
     }
     return null;
@@ -84,20 +98,20 @@ export async function updateSession(dbInfo: any){
     let dbData = await getDbSession(dbInfo.email);
     if (dbData) {
       dbData.dbInfo = dbInfo;
-      dbData = JSON.stringify(dbData);
+      const json = JSON.stringify(dbData);
       const result = await excuteQuery({
         host: sessionDb,
         query: 'update session set data=?, last_access=now() where email=?', 
-        values: [dbData, dbInfo.email],
+        values: [json, dbInfo.email],
       });
       return result;
     } else {
       dbData = {dbInfo: dbInfo}
-      dbData = JSON.stringify(dbData);
+      const json = JSON.stringify(dbData);
       const result = await excuteQuery({
         host: sessionDb,
         query: 'insert into session (data, last_access, email) values (?, now(), ?);', 
-        values: [dbData, dbInfo.email],
+        values: [json, dbInfo.email],
       });
       return result;
     }
@@ -126,19 +140,22 @@ export async function getSession() {
 /**
  * server function to return the session object at the server
  */
-export async function getAppSession() {
+export async function getAppSession(): Promise<{session: Session , dbSession: dbSesstionT|null} | null> {
   try {
     const session = await getServerSession(options);
     if (session) {
       const dbSession = await getDbSession(session.user?.email!);
-      const appSession = {
-        session: session,
-        dbSession: dbSession
+      if (dbSession) {
+        const appSession = {
+          session: session,
+          dbSession: dbSession
+        }
+        return appSession;
       }
-      return appSession;
     }
+    throw new Error("Session not found");
   } catch(e) {
     console.log(e);
+    throw e;
   }
-  return null;
 }

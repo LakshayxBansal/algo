@@ -28,9 +28,6 @@ export async function authenticateUser(credData: any) {
           name: result[0].firstName + " " +result[0].lastName,
         };
         return user;
-        /*if (!(await checkSession(result[0].userId))){
-          return (await createSession(user));
-        };*/
       }
     } 
   } catch (e) {
