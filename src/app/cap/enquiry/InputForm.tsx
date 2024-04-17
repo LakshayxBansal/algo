@@ -15,6 +15,7 @@ import { theme } from '../../utils/theme.util';
 import { ThemeProvider } from "@mui/material/styles";
 import Seperator from '@/app/Widgets/seperator';
 import { addEntityDlgT } from '../../models/models';
+import AutocompleteDB from '@/app/Widgets/AutocompleteDB';
 
 
 export interface IformData {
@@ -69,11 +70,11 @@ export default function InputForm(props: {baseData: IformData}) {
 
 
                 <Grid item xs={6} md={12}>
-                  <AddPersonDialog
+                  <AutocompleteDB
                     options={baseData? baseData.person:[]}
                     freeSolo={false}
                     addNew={true}
-                    renderInput={(params)=> <TextField {...params} name="contactperson" label="Contact Person" />}
+                    renderInput={(params)=> <TextField {...params} name="country" label="Country" />}
                   />
                 </Grid>
               </Grid>
@@ -166,3 +167,16 @@ export default function InputForm(props: {baseData: IformData}) {
     </>
   );
 }
+
+
+
+/*
+                <Grid item xs={6} md={12}>
+                  <AddPersonDialog
+                    options={baseData? baseData.person:[]}
+                    freeSolo={false}
+                    addNew={true}
+                    renderInput={(params)=> <TextField {...params} name="contactperson" label="Contact Person" />}
+                  />
+                </Grid>
+*/

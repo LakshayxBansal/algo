@@ -9,21 +9,25 @@ import excuteQuery  from '../utils/db/db';
  */
 
 
-export async function getCountryList(crmDb: string) {
+export async function getCountryList(crmDb: string, searchString: string = "") {
 
   try {
+    let query = 'select id as id, name as name from country_master';
+    let values: any[] = [];
 
-    const result = await excuteQuery({
+    if (searchString !== "") {
+      query = query + " where name like '%?%'";
+      values = [searchString];
+    }
+    return excuteQuery({
       host: crmDb,
-      query: 'select id as id, name as name from country_master', 
-      values: [],
+      query: query, 
+      values: values,
     });
 
-    return result;
   } catch (e) {
     console.log(e);
   }
-  return null;
 }
 
 export async function getExecutiveList(crmDb: string, departmentName: string) {

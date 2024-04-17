@@ -5,6 +5,9 @@ import { getCountryList,
   getEnquiryCategoryList, 
   getOrganizationList,
   getMenuOptionsList } from '../services/masters.service';
+import { getAppSession } from '../services/session.service';
+import {menuTreeT} from '../models/models';
+
  
 
 export async function authenticate(formData: FormData) {
@@ -45,7 +48,7 @@ export async function getMenuOptions(crmDb: string) {
 }
 
 
-function createTree(flatArray, parentId = 0) {
+function createTree(flatArray: menuTreeT[], parentId = 0): menuTreeT[] {
   return flatArray
     .filter(item => item.parent_id === parentId)
     .map(item => ({
@@ -55,11 +58,12 @@ function createTree(flatArray, parentId = 0) {
 }
 
 
-export async function getCountries(crmDb: string) {
+export async function getCountries(searchString: string) {
   try {
-    const result = await getCountryList(crmDb);
-
-    return JSON.stringify(result);
+    const appSession = await getAppSession();
+    if (appSession?.dbSession) {
+      return getCountryList(appSession.dbSession.dbInfo.dbName, searchString);
+    }
   } catch (error) {
     throw error;
   }
