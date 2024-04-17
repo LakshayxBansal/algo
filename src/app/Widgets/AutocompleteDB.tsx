@@ -21,11 +21,15 @@ function AutocompleteDB(props) {
 
   return (
     <Autocomplete
-      options={props.options}
+      options={options}
+      renderOption={(props, option) => (
+        <li {...props} key={option.name}>{option.name}</li>
+      )}
       value={selectedValue}
+      getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
       onChange={(event, newValue) => setSelectedValue(newValue)}
       onInputChange={(event, newInputValue) => fetchOptions(newInputValue)}
-      renderInput={(params) => <TextField {...params} label="Search" />}
+      renderInput={(params) => <TextField {...params} label="Countries" />}
     />
   );
 }
