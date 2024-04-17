@@ -11,7 +11,7 @@ interface IinquiryData {
   pin: string
 }
 
-export async function createInquiryDB(crmDb: string, data: IinquiryData) {
+export async function createEnquiryDB(crmDb: string, data: IinquiryData) {
   try {
 
   } catch (e) {

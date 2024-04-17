@@ -1,12 +1,11 @@
 'use server'
-import { createInquiryDB } from '../services/inquiry.service';
+import { createEnquiryDB } from '../services/inquiry.service';
 import { getAppSession } from '../services/session.service';
-import { getSalesPersonList, 
-  getTicketCategoryList, 
-  getTicketStageList, 
-  getCustomerList,
+import { getExecutiveList, 
+  getEnquiryCategoryList, 
+  getOrganizationList,
   getContactPersonList,
-  getActionList } from '../services/masters.service';
+  getEnquiryActionList } from '../services/masters.service';
 
 export async function createInquiry(formData: FormData ) {
   try {
@@ -18,7 +17,6 @@ export async function createInquiry(formData: FormData ) {
       salesPerson: formData.get("salesPerson") as string,
       category: formData.get("category") as string,
       closuredate: formData.get("expclosuredate") as string,
-      stage: formData.get("stage") as string,
       username: appSession?.session.user?.email,
       notes: formData.get("notes") as string,
       nextaction: formData.get("nextaction"),
@@ -33,23 +31,21 @@ export async function createInquiry(formData: FormData ) {
 }
 
 
-export async function getIquiryPageData() {
+export async function getEquiryPageData() {
   try {
     const appSession = await getAppSession();
     if (appSession?.dbSession) {
-      const [salesPerson, catList, ticketStage, customer, person, action] = await Promise.all([
-        await getSalesPersonList(appSession.dbSession.dbInfo.dbName),
-        await getTicketCategoryList(appSession.dbSession.dbInfo.dbName, 1),
-        await getTicketStageList(appSession.dbSession.dbInfo.dbName, 1),
-        await getCustomerList(appSession.dbSession.dbInfo.dbName),
-        await getContactPersonList(appSession.dbSession.dbInfo.dbName, "contact"),
-        await getActionList(appSession.dbSession.dbInfo.dbName, "Pre-sales")
+      const [salesPerson, catList, customer, person, action] = await Promise.all([
+        await getExecutiveList(appSession.dbSession.dbInfo.dbName, "Pre-Sales"),
+        await getEnquiryCategoryList(appSession.dbSession.dbInfo.dbName),
+        await getOrganizationList(appSession.dbSession.dbInfo.dbName),
+        await getContactPersonList(appSession.dbSession.dbInfo.dbName),
+        await getEnquiryActionList(appSession.dbSession.dbInfo.dbName)
       ]);
 
       const baseData = {
         salesPerson: salesPerson,
         catList: catList,
-        ticketStages: ticketStage,
         customer: customer,
         person: person,
         action: action,

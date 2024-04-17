@@ -1,12 +1,12 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, TextField } from '@mui/material';
 import DatePick from '../../Widgets/DatePick';
 import Paper from '@mui/material/Paper';
 import AutocompleteAdd from '../../Widgets/Autocomplete';
 import ReactPhoneInput from 'react-phone-input-material-ui';
-import AddCustomerDialog from './AddCustomerDialog';
+import AddCustomerDialog from './addcustomer/AddCustomerDialog';
 import AddPersonDialog from './AddPersonDialog';
 import Toolbar from '@mui/material/Toolbar';
 import FormMenuBar from './formMenuBar';
@@ -14,12 +14,13 @@ import { createInquiry } from '@/app/controllers/inquiry.controller';
 import { theme } from '../../utils/theme.util';
 import { ThemeProvider } from "@mui/material/styles";
 import Seperator from '@/app/Widgets/seperator';
+import { addEntityDlgT } from '../../models/models';
+
 
 export interface IformData {
   userName: string;
   salesPerson: [{id: number; name: string;}],
   catList: [{id: number; name: string;}],
-  ticketStages:  [{id: number; name: string;}],
   customer:[{id: number; name: string;}],
   person: [{id: number; name: string}],
   action: [{id: number; name: string}],
@@ -30,6 +31,8 @@ export interface IformData {
 
 export default function InputForm(props: {baseData: IformData}) {
   const baseData = props.baseData;
+  const [custDlgState, setCustDlgState] = useState<addEntityDlgT>({open: false, data:""});
+  const [customer, setCustomer] = useState("");
 
   const handleSubmit = async (formData: FormData)=> {
     const result = await createInquiry(formData);
@@ -53,13 +56,17 @@ export default function InputForm(props: {baseData: IformData}) {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Grid item xs={6} md={12}>
-                <AddCustomerDialog
-                      options={baseData? baseData.customer: []}
-                      freeSolo={false}
-                      addNew={true}
-                      renderInput={(params)=> <TextField {...params} name="customer" label="Customer" />}
-                    />
+                  <AutocompleteAdd
+                    value={customer}
+                    options={baseData? baseData.customer: []}
+                    freeSolo={false}
+                    addNew={true}
+                    setDlgValue={setCustDlgState}
+                    renderInput={(params)=> <TextField {...params} name="customer" label="Customer" />}
+                  />
                 </Grid>
+                {custDlgState && <AddCustomerDialog {...custDlgState} setDlgValue={setCustDlgState}></AddCustomerDialog>}
+
 
                 <Grid item xs={6} md={12}>
                   <AddPersonDialog
@@ -111,12 +118,7 @@ export default function InputForm(props: {baseData: IformData}) {
 
               <Grid item xs={12} md={6}>
                 <Grid item xs={6}>
-                  <AutocompleteAdd
-                      options={baseData? baseData.ticketStages : []}
-                      freeSolo={false}
-                      addNew={false}
-                      renderInput={(params)=> <TextField {...params} name="stage" label="Stage" />}
-                    />
+                  <TextField name='Stage'/>
                 </Grid>
                 <Grid item xs={6}>
                   <AutocompleteAdd

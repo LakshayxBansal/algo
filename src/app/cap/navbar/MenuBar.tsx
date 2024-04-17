@@ -16,7 +16,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useRouter } from 'next/navigation'
-import NestedList from './listitemsexpand';
+import LeftMenuTree from './leftmenutree';
+import {menuTreeT} from '../../models/models';
 
 const drawerWidth: number = 240;
 
@@ -63,7 +64,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         }),
         width: theme.spacing(7),
         [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
+          width: theme.spacing(4),
         },
       }),
     },
@@ -73,10 +74,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 // TODO remove, this demo shouldn't need to reset the theme.
 //const defaultTheme = createTheme();
 interface propsType {
-  pages: {label: string,
-    link: string, 
-    disabled: boolean,
-    id: string}[],
+  pages: menuTreeT[],
   username: string,
   companyName: string,
   children: React.ReactNode
@@ -91,15 +89,6 @@ export default function MenuBar(props : propsType) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    const currentTarget = event.currentTarget;
-    console.log(currentTarget);
-    // Your logic here
-    const menuOption = pages.find(obj => obj.id === currentTarget.getAttribute("id"));
-    router.push(menuOption?.link!);
-  };
-
 
   if (!menuOpen) {
     return(<></>);
@@ -155,9 +144,7 @@ export default function MenuBar(props : propsType) {
             </Toolbar>
           </AppBar>
           <Box sx={{display: 'flex'}}>
-
-            <Drawer variant="permanent" open={open}
-              >
+            <Drawer variant="permanent" open={open}>
               <Toolbar
                 sx={{
                   display: 'flex',
@@ -165,13 +152,13 @@ export default function MenuBar(props : propsType) {
                   justifyContent: 'flex-end',
                   px: [1],
                 }}
-              >
+                >
                 <IconButton onClick={toggleDrawer}>
                   <ChevronLeftIcon />
                 </IconButton>
               </Toolbar>
               <Divider />
-                <NestedList></NestedList>
+                <LeftMenuTree pages={pages}></LeftMenuTree>
             </Drawer>
             <Box>
               {children}

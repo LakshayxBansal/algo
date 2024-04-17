@@ -101,7 +101,7 @@ CREATE TABLE `dbInfo` (
 
 LOCK TABLES `dbInfo` WRITE;
 /*!40000 ALTER TABLE `dbInfo` DISABLE KEYS */;
-INSERT INTO `dbInfo` VALUES (1,1,'crmDb'),(2,1,'crmco2Db'),(3,1,'crmco3db');
+INSERT INTO `dbInfo` VALUES (1,1,'crmapp'),(2,1,'crmco2Db'),(3,1,'crmco3db');
 /*!40000 ALTER TABLE `dbInfo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +129,7 @@ CREATE TABLE `session` (
 
 LOCK TABLES `session` WRITE;
 /*!40000 ALTER TABLE `session` DISABLE KEYS */;
-INSERT INTO `session` VALUES (1,'{\"dbInfo\":{\"companyId\":3,\"nameVal\":\"MyCo\",\"dbId\":1,\"email\":\"a@b.com\",\"host\":\"127.0.0.1\",\"port\":\"3306\",\"dbName\":\"crmDb\"}}','2024-04-08 19:00:01','a@b.com');
+INSERT INTO `session` VALUES (1,'{\"dbInfo\":{\"companyId\":3,\"nameVal\":\"MyCo\",\"dbId\":1,\"email\":\"a@b.com\",\"host\":\"127.0.0.1\",\"port\":\"3306\",\"dbName\":\"crmapp\"}}','2024-04-15 11:21:09','a@b.com');
 /*!40000 ALTER TABLE `session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,4 +204,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-13 19:14:49
+-- Dump completed on 2024-04-17 12:34:31

@@ -1,5 +1,5 @@
 import React from "react";
-import SignIn from './SignIn/page';
+import SignIn from './signin/page';
 //import { signIn } from "next-auth/react"
 
 

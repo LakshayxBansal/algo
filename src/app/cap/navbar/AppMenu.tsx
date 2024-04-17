@@ -4,6 +4,7 @@ import MenuBar from './MenuBar';
 import Box from '@mui/material/Box';
 import {getAppSession} from '../../services/session.service';
 import { redirect } from 'next/navigation'
+import { getMenuOptions } from '../../controllers/masters.controller';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },
@@ -19,22 +20,23 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
     const session = await getAppSession();
 
     if (session?.dbSession?.dbInfo) {
-
-      return (
-        <MenuBar 
-          pages= {pages}
-          username = {session.session.user?.name!}
-          companyName = {session.dbSession.dbInfo.nameVal}
-          >
-          <Box component="span" sx={{ display: 'block' }}>
-            {props.children}
-          </Box>
-        </MenuBar>
-      );
-    } else {
-
+      const menuOptions= await getMenuOptions(session.dbSession.dbInfo.dbName);
+      if (menuOptions) {
+        return (
+          <MenuBar 
+            pages= {menuOptions}
+            username = {session.session.user?.name!}
+            companyName = {session.dbSession.dbInfo.nameVal}
+            >
+            <Box component="span" sx={{ display: 'block' }}>
+              {props.children}
+            </Box>
+          </MenuBar>
+        );
+      } 
     }
   } catch (e) {
-    redirect("/error");
+    console.log(e);
   }
+  redirect("/error");
 }

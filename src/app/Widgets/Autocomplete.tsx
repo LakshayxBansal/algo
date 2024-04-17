@@ -36,7 +36,7 @@ const AutocompleteAdd = (props: propsDataT) => {
     if (value && props.addNew && value.id==0 && props.setDlgValue) {
       // remove "Add " from the value
       const str = value.name.slice(4);
-      props.setDlgValue({name: str});
+      props.setDlgValue({open:true, data:str});
     } else {
       setSelectedValue(value);
     }

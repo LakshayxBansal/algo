@@ -15,7 +15,7 @@ export async function getCountryList(crmDb: string) {
 
     const result = await excuteQuery({
       host: crmDb,
-      query: 'select countryId as id, nameVal as name from country', 
+      query: 'select id as id, name as name from country_master', 
       values: [],
     });
 
@@ -26,19 +26,18 @@ export async function getCountryList(crmDb: string) {
   return null;
 }
 
-export async function getSalesPersonList(crmDb: string) {
+export async function getExecutiveList(crmDb: string, departmentName: string) {
 
   try {
 
     const result = await excuteQuery({
       host: crmDb,
-      query: 'select cu.coUserId as id, concat(p.firstName, " ", p.lasName) as name, d.nameVal as department, r.nameVal  \
-        from coUser cu, employee e, role r, person p, dept d \
-        where cu.employeeId = e.employeeId and \
-        e.personId = p.personId and \
-        e.deptId = d.deptId and \
-        e.roleId = r.roleId',
-      values: [],
+      query: 'select e.id as id, e.name as name, d.name as department, r.name as role  \
+        from executive_master e, role_master r, department_master d \
+        where e.role_id = r.id and \
+        r.department_id = d.id and \
+        d.name = ?',
+      values: [departmentName],
     });
 
     return result;
@@ -52,19 +51,13 @@ export async function getSalesPersonList(crmDb: string) {
 /**
  * get ticketCategory List from DB filtered by ticketTypeId
  */
-export async function getTicketCategoryList(crmDb: string, ticketTypeId: number) {
+export async function getEnquiryCategoryList(crmDb: string) {
 
   try {
-    let query = "select ticketCategoryId as id, nameVal as name from ticketCategory ";
-    let values: number[] = [];
-    if (ticketTypeId){
-      query += " where ticketTypeId = ?";
-      values = [ticketTypeId];
-    }
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
-      values: values,
+      query: "select id as id, name as name from enquiry_category_master ", 
+      values: [],
     });
 
     return result;
@@ -101,13 +94,13 @@ export async function getTicketStageList(crmDb: string, ticketTypeId: number) {
 /**
  * get getCustomerList List from DB
  */
-export async function getCustomerList(crmDb: string) {
+export async function getOrganizationList(crmDb: string) {
 
   try {
    return excuteQuery({
       host: crmDb,
-      query: "select customerId as Id, nameVal as name from customer \
-        order by nameVal", 
+      query: "select id as id, name as name from organisation_master \
+        order by name", 
       values: [],
     });
 
@@ -160,15 +153,13 @@ export async function getCompanyList(email: string | undefined | null) {
  * returns rows from person data based on type specified
  * @param type 
  */
-export async function getContactPersonList(crmDb: string, type:string){
+export async function getContactPersonList(crmDb: string){
   
   try {
     return excuteQuery({
        host: crmDb,
-       query: 'select personId as Id, concat(p.firstName, " ", p.lasName) as name, p.* from person p, personType t  where \
-         p.personTypeId=t.personTypeId and \
-         t.nameVal=?  order by name', 
-       values: [type],
+       query: 'select * from contact_master order by name', 
+       values: [],
      });
  
    } catch (e) {
@@ -182,15 +173,28 @@ export async function getContactPersonList(crmDb: string, type:string){
  * returns rows from action data based on type specified
  * @param type 
  */
-export async function getActionList(crmDb: string, type:string){
+export async function getEnquiryActionList(crmDb: string){
   
   try {
     return excuteQuery({
        host: crmDb,
-       query: 'select a.actionId as Id, a.nameVal as name from action a, ticketType t  where \
-         a.ticketTypeId=t.ticketTypeId and \
-         t.nameVal=?  order by name', 
-       values: [type],
+       query: 'select a.id as id, a.name as name from enquiry_action_master a order by a.name', 
+       values: [],
+     });
+ 
+   } catch (e) {
+     console.log(e);
+     throw e;
+   }
+
+}
+
+export async function getMenuOptionsList(crmDb: string) {
+  try {
+    return excuteQuery({
+       host: crmDb,
+       query: 'select * from menu_option_master order by parent_id, menu_order', 
+       values: [],
      });
  
    } catch (e) {

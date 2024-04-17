@@ -1,10 +1,10 @@
 'use server'
  
 import { getCountryList, 
-  getSalesPersonList, 
-  getTicketCategoryList, 
-  getTicketStageList, 
-  getCustomerList } from '../services/masters.service';
+  getExecutiveList, 
+  getEnquiryCategoryList, 
+  getOrganizationList,
+  getMenuOptionsList } from '../services/masters.service';
  
 
 export async function authenticate(formData: FormData) {
@@ -30,6 +30,30 @@ export async function authenticate(formData: FormData) {
 }
 
 
+export async function getMenuOptions(crmDb: string) {
+  try {
+    let menuOptions=[];
+    const result =  await getMenuOptionsList(crmDb);
+
+    // create top level menu
+    const tree = createTree(result, 0);
+    return tree;
+  } catch(e) {
+    console.log(e);
+  }
+  return null;
+}
+
+
+function createTree(flatArray, parentId = 0) {
+  return flatArray
+    .filter(item => item.parent_id === parentId)
+    .map(item => ({
+      ...item,
+      children: createTree(flatArray, item.id)
+    }));
+}
+
 
 export async function getCountries(crmDb: string) {
   try {
@@ -42,9 +66,9 @@ export async function getCountries(crmDb: string) {
 }
 
 
-export async function getSalesPerson(crmDb: string) {
+export async function getExecutive(crmDb: string, departmentName: string) {
   try {
-    const result = await getSalesPersonList(crmDb);
+    const result = await getExecutiveList(crmDb, departmentName);
 
     return JSON.stringify(result);
   } catch (error) {
@@ -60,7 +84,7 @@ export async function getSalesPerson(crmDb: string) {
 
 export async function getTicketCategory(crmDb: string, ticketTypeId: number) {
   try {
-    const result = await getTicketCategoryList(crmDb, ticketTypeId);
+    const result = await getEnquiryCategoryList(crmDb);
 
     return JSON.stringify(result);
   } catch (error) {
@@ -68,25 +92,11 @@ export async function getTicketCategory(crmDb: string, ticketTypeId: number) {
   }
 }
 
-
-/**
- * get stages for the ticket
-*/ 
-
-export async function getTicketStage(crmDb: string, ticketTypeId: number) {
-  try {
-    const result = await getTicketStageList(crmDb, ticketTypeId);
-
-    return JSON.stringify(result);
-  } catch (error) {
-    throw error;
-  }
-}
 
 
 export async function getCustomer(crmDb: string) {
   try {
-    const result = await getCustomerList(crmDb);
+    const result = await getOrganizationList(crmDb);
 
     return JSON.stringify(result);
   } catch (error) {

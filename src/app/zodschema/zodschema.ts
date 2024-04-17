@@ -74,12 +74,40 @@ export const inquirySchema = z.object({
   /**
    * used for passing values to autocomplete
    */
-  export const optionsData = z.object({ 
-    id: z.number(),
-    name: z.string()
-  });
+export const optionsData = z.object({ 
+  id: z.number(),
+  name: z.string()
+});
 
 
+  /**
+ * used for passing values to add dialogs
+ */
+export const addEntityDlg = z.object({ 
+  open: z.boolean(),
+  data: z.string()
+});
+
+
+
+/**
+ * zod schema for menu options
+ */
+export const menuOption = z.object({
+  id: z.number(),
+  name: z.string().min(1).max(30),
+  short_name: z.string().min(1).max(30), 
+  parent_id: z.number(), 
+  icon: z.string().min(1).max(30), 
+  href: z.string().min(1).max(30), 
+  default_open: z.number(), 
+  created_on: z.date(), 
+  modified_on: z.date(), 
+  created_by: z.number(), 
+  modified_by: z.number(), 
+  menu_order: z.number(),
+
+})
 
 /*
 cField1
