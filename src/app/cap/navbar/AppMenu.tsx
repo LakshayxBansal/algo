@@ -2,7 +2,7 @@
 import * as React from 'react';
 import MenuBar from './MenuBar';
 import Box from '@mui/material/Box';
-import {getAppSession} from '../../services/session.service';
+import {getSession} from '../../services/session.service';
 import { redirect } from 'next/navigation'
 import { getMenuOptions } from '../../controllers/masters.controller';
 
@@ -17,26 +17,27 @@ const pages = [
 
 export default async function AppMenu(props: {children: React.ReactNode}) {
   try {
-    const session = await getAppSession();
+    const session = await getSession();
 
-    if (session?.dbSession?.dbInfo) {
-      const menuOptions= await getMenuOptions(session.dbSession.dbInfo.dbName);
+    if (session?.user.dbInfo) {
+      const menuOptions= await getMenuOptions(session.user.dbInfo.dbName);
       if (menuOptions) {
         return (
           <MenuBar 
             pages= {menuOptions}
-            username = {session.session.user?.name!}
-            companyName = {session.dbSession.dbInfo.nameVal}
+            username = {session.user?.name!}
+            companyName = {session.user.dbInfo.companyName}
             >
-            <Box component="span" sx={{ display: 'block' }}>
+            <Box component="span" sx={{ display: 'block' }}>s
               {props.children}
             </Box>
           </MenuBar>
         );
       } 
+    } else {
+      redirect("/signin");
     }
   } catch (e) {
     console.log(e);
-  }
-  redirect("/error");
+  } 
 }

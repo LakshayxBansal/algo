@@ -23,13 +23,13 @@ DROP TABLE IF EXISTS `company`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `company` (
-  `companyId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `nameVal` varchar(45) DEFAULT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
   `add1` varchar(45) DEFAULT NULL,
   `add2` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
   `pincode` varchar(45) DEFAULT NULL,
-  `dbId` int(11) DEFAULT NULL,
+  `dbinfo_id` int(11) DEFAULT NULL,
   `stateId` int(11) DEFAULT NULL,
   `cfield1` varchar(50) DEFAULT NULL,
   `cfield2` varchar(50) DEFAULT NULL,
@@ -38,8 +38,8 @@ CREATE TABLE `company` (
   `cfield5` varchar(50) DEFAULT NULL,
   `cfield6` varchar(50) DEFAULT NULL,
   `cfield7` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`companyId`),
-  UNIQUE KEY `companyId_UNIQUE` (`companyId`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `companyId_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -61,11 +61,11 @@ DROP TABLE IF EXISTS `dbHost`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dbHost` (
-  `hostId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host` varchar(45) DEFAULT NULL,
   `port` varchar(45) DEFAULT NULL,
   `useForNextDb` int(11) DEFAULT NULL,
-  PRIMARY KEY (`hostId`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -87,11 +87,11 @@ DROP TABLE IF EXISTS `dbInfo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dbInfo` (
-  `dbId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `hostId` int(11) DEFAULT NULL,
-  `dbName` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`dbId`),
-  UNIQUE KEY `dbId_UNIQUE` (`dbId`)
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `host_id` int(11) DEFAULT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dbId_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -113,14 +113,14 @@ DROP TABLE IF EXISTS `session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session` (
-  `sessionId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `data` varchar(5000) DEFAULT NULL,
   `last_access` datetime DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`sessionId`),
-  UNIQUE KEY `sessionId_UNIQUE` (`sessionId`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sessionId_UNIQUE` (`id`),
   UNIQUE KEY `userId_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,7 +129,6 @@ CREATE TABLE `session` (
 
 LOCK TABLES `session` WRITE;
 /*!40000 ALTER TABLE `session` DISABLE KEYS */;
-INSERT INTO `session` VALUES (1,'{\"dbInfo\":{\"companyId\":3,\"nameVal\":\"MyCo\",\"dbId\":1,\"email\":\"a@b.com\",\"host\":\"127.0.0.1\",\"port\":\"3306\",\"dbName\":\"crmapp\"}}','2024-04-15 11:21:09','a@b.com');
 /*!40000 ALTER TABLE `session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +140,7 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
-  `userId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL,
   `firstName` varchar(45) DEFAULT NULL,
   `lastName` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
@@ -156,9 +155,9 @@ CREATE TABLE `user` (
   `cfield5` varchar(50) DEFAULT NULL,
   `cfield6` varchar(50) DEFAULT NULL,
   `cfield7` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`userId`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -179,8 +178,8 @@ DROP TABLE IF EXISTS `userCompany`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `userCompany` (
-  `userId` int(11) NOT NULL,
-  `companyId` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `company_id` int(11) NOT NULL,
   `isAdmin` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -204,4 +203,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-17 12:34:31
+-- Dump completed on 2024-04-25 15:28:32

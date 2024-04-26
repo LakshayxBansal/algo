@@ -13,7 +13,7 @@ import { getSession }  from '../services/session.service';
 import CellDbName from './cellDBName';
 import CreateCompanyDialog from './CreateCompanyDialog';
 import { redirect } from 'next/navigation';
-import {companyInfo} from './companyInfo';
+import {dbInfoT} from '../models/models';
 
 
 interface TitleProps {
@@ -36,7 +36,7 @@ export default async function Companies() {
   }
 
   if (session) {
-    const rows:companyInfo[] = await getCompanyList(session.user?.email);
+    const rows:dbInfoT[] = await getCompanyList(session.user?.email);
     return (
       <Paper sx={{ p: 2, height: '100vh'}}>
         <React.Fragment>
@@ -56,8 +56,8 @@ export default async function Companies() {
             </TableHead>
             <TableBody>
               {rows?.map((row) => (
-                <TableRow key={row.companyId}>
-                  <CellDbName row={row}></CellDbName>
+                <TableRow key={row.company_id}>
+                  <CellDbName row={row} userEmail={session.user.email as string}></CellDbName>
                   <TableCell>{row.dbName}</TableCell>
                 </TableRow>
               ))}
@@ -67,6 +67,6 @@ export default async function Companies() {
       </Paper>
     );
   } else {
-    redirect('/SignIn');
+    redirect('/signin');
   }
 }

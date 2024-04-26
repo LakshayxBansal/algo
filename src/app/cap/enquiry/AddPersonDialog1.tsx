@@ -12,17 +12,15 @@ import { createPerson } from '../../controllers/person.controller';
 import Autocomplete, { createFilterOptions, AutocompleteProps } from "@mui/material/Autocomplete";
 
 
-export interface addPersonDataT extends AutocompleteProps<addPersonDataT, boolean | undefined, boolean | undefined, boolean | undefined> {
-  addNew: boolean;
+export interface addPersonDataT{
+  open: boolean;
   data: string;
-  inputProps?: object;
 }
 
 
-const AddPersonDialog: React.FC<propsDataT> = (props) => {
-  const [addDialogOpen, setDialogOpen] = useState(false);
-  const [dialogValue, setDialogValue] = React.useState();
-  const [options, setOptions] = React.useState(props.options);
+const AddPersonDialog: React.FC<addPersonDataT> = (props) => {
+  const [addDialogOpen, setDialogOpen] = useState(props.open);
+  const [dialogValue, setDialogValue] = React.useState(props.data);
   //const [inputValue, setInputValue] = React.useState<optionsDataT>();
 
   const addPerson = (props: any)=> {
@@ -33,12 +31,7 @@ const AddPersonDialog: React.FC<propsDataT> = (props) => {
   
 
   const handleSubmit = async (formData: FormData)=> {
-    const result = await createPerson(formData);
-    if (result.status) {
-      const revisedOptions = [{id: result.data.personId as number, name: result.data.firstName + ' ' + result.data.lastName}, ...props.options];
-      setOptions(revisedOptions);
-    }
-    setDialogOpen(false);
+
   }
 
   const handleCancel = ()=> {
@@ -55,18 +48,11 @@ const AddPersonDialog: React.FC<propsDataT> = (props) => {
 
   return (
     <>
-      <AutocompleteAdd
-        options={options}
-        freeSolo={false}
-        addNew={true}
-        setDlgValue={addPerson}
-        renderInput={props.renderInput}
-      />
       <Dialog open={addDialogOpen} onClose={handleClose} >
         <form action={handleSubmit}>
           <DialogTitle>Add Person</DialogTitle>
           <Divider variant="fullWidth" sx={{borderWidth: 0.1, borderColor: '#E2E8EB'}}/>
-            <PersonDialogContent></PersonDialogContent>
+            <PersonDialogContent data={dialogValue}></PersonDialogContent>
           <DialogActions>
             <Button onClick={handleCancel}>Cancel</Button>
             <Button type="submit">Add</Button>

@@ -7,19 +7,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
-import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+
 import {menuTreeT} from '../../models/models';
+import {nameIconArr} from '../../utils/iconmap.utils';
 
 
 export default function LeftMenuTree(props: {pages:menuTreeT[]}) {
@@ -45,17 +37,17 @@ export default function LeftMenuTree(props: {pages:menuTreeT[]}) {
     setOpen(idToOpenMap);
   }
 
-  const iconMap = {
-    DashboardIcon: DashboardIcon,
-    // Add more mappings for other icons as needed
-  };
-
-
   function ShowMenu(levelData: {pages: menuTreeT[], level: number, menuLevel: number}) {
     const level = levelData.level;
     const pages = levelData.pages;
     const indent =  levelData.menuLevel;
+    
 
+    function ShowIcon(key: String) {
+      const icon = nameIconArr.find((obj)=> obj.name === 'DashboardIcon')?.icon;  
+
+      return ({icon});
+    }
     
     return (
       <div>
@@ -66,7 +58,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[]}) {
               <Tooltip title={page.name} placement="right">
                 <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href}>
                   <ListItemIcon style={{minWidth: '30px'}}>
-                    <DashboardIcon/>
+                    {SelectIcon({IconName: page.icon})}
                   </ListItemIcon>
                   <ListItemText primary={page.name} />
                   {page.children.length ? open?.get(page.id) ? <ExpandLess/> : <ExpandMore /> : <></>}
@@ -97,6 +89,20 @@ export default function LeftMenuTree(props: {pages:menuTreeT[]}) {
     </List>
   );
 }
+
+
+const SelectIcon: React.FC<{ IconName: string }> = ({ IconName }) => {
+  // Find the corresponding icon component based on user selection
+  const selectedIcon = nameIconArr.find((item) => item.name === IconName);
+
+  return (
+    <>
+        {selectedIcon && (
+          <selectedIcon.icon />
+        )}
+    </>
+  );
+};
 
 
 /*

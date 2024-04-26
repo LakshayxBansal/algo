@@ -1,22 +1,19 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { AutocompleteRenderInputParams, Grid, TextField } from '@mui/material';
 import DatePick from '../../Widgets/DatePick';
 import Paper from '@mui/material/Paper';
 import AutocompleteAdd from '../../Widgets/Autocomplete';
-import ReactPhoneInput from 'react-phone-input-material-ui';
-import AddCustomerDialog from './addcustomer/AddCustomerDialog';
-import AddPersonDialog from './AddPersonDialog';
 import Toolbar from '@mui/material/Toolbar';
 import FormMenuBar from './formMenuBar';
 import { createInquiry } from '@/app/controllers/inquiry.controller';
 import { theme } from '../../utils/theme.util';
 import { ThemeProvider } from "@mui/material/styles";
 import Seperator from '@/app/Widgets/seperator';
-import { addEntityDlgT } from '../../models/models';
-import AutocompleteDB from '@/app/Widgets/AutocompleteDB';
-
+import { SelectOrganisationWrapper } from '../../Widgets/masters/selectOrganisation/selectOrganisationWrapper';
+import { SelectContactWrapper } from '../../Widgets/masters/selectContact/selectContactWrapper';
+import Typography from '@mui/material/Typography';
 
 export interface IformData {
   userName: string;
@@ -32,7 +29,6 @@ export interface IformData {
 
 export default function InputForm(props: {baseData: IformData}) {
   const baseData = props.baseData;
-  const [custDlgState, setCustDlgState] = useState<addEntityDlgT>({open: false, data:""});
   const [customer, setCustomer] = useState("");
 
   const handleSubmit = async (formData: FormData)=> {
@@ -42,7 +38,7 @@ export default function InputForm(props: {baseData: IformData}) {
   return (
     <>
       <ThemeProvider theme={theme}>
-      <Toolbar/>
+        <Toolbar/>
         <form action={handleSubmit}>
           <FormMenuBar/>
           <Paper style={{ width: '100%', minHeight: '100vh' }}>
@@ -56,26 +52,10 @@ export default function InputForm(props: {baseData: IformData}) {
                 inputProps={{ style: { fontSize: 20 } }} name="desc" fullWidth/>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Grid item xs={6} md={12}>
-                  <AutocompleteAdd
-                    value={customer}
-                    options={baseData? baseData.customer: []}
-                    freeSolo={false}
-                    addNew={true}
-                    setDlgValue={setCustDlgState}
-                    renderInput={(params)=> <TextField {...params} name="customer" label="Customer" />}
-                  />
-                </Grid>
-                {custDlgState && <AddCustomerDialog {...custDlgState} setDlgValue={setCustDlgState}></AddCustomerDialog>}
-
+                <SelectOrganisationWrapper></SelectOrganisationWrapper>
 
                 <Grid item xs={6} md={12}>
-                  <AutocompleteDB
-                    options={baseData? baseData.person:[]}
-                    freeSolo={false}
-                    addNew={true}
-                    renderInput={(params)=> <TextField {...params} name="country" label="Country" />}
-                  />
+                  <SelectContactWrapper></SelectContactWrapper>
                 </Grid>
               </Grid>
 
@@ -154,10 +134,9 @@ export default function InputForm(props: {baseData: IformData}) {
 
               {/* creator */}
               <Grid item xs={6}>
-                <TextField 
-                label="User"
-                value={baseData.userName} 
-                fullWidth />
+                <Typography component="div" sx={{ position: 'relative', backgroundColor: 'white'}}>
+                  Created by: {baseData.userName} 
+                </Typography>
               </Grid>
 
             </Grid>

@@ -9,21 +9,23 @@ import excuteQuery  from '../utils/db/db';
  */
 
 
-export async function getCountryList(crmDb: string, searchString: string = "") {
+export async function getCountryList(crmDb: string, searchString: string) {
 
   try {
     let query = 'select id as id, name as name from country_master';
     let values: any[] = [];
 
     if (searchString !== "") {
-      query = query + " where name like '%?%'";
-      values = [searchString];
+      query = query + " where name like '%" + searchString + "%'";
+      values = [];
     }
-    return excuteQuery({
+    const result = await excuteQuery({
       host: crmDb,
       query: query, 
       values: values,
     });
+
+    return result;
 
   } catch (e) {
     console.log(e);
@@ -98,16 +100,21 @@ export async function getTicketStageList(crmDb: string, ticketTypeId: number) {
 /**
  * get getCustomerList List from DB
  */
-export async function getOrganizationList(crmDb: string) {
+export async function getOrganizationList(crmDb: string, searchString: string) {
 
   try {
-   return excuteQuery({
-      host: crmDb,
-      query: "select id as id, name as name from organisation_master \
-        order by name", 
-      values: [],
-    });
+    let query = 'select id as id, name as name from organisation_master';
+    let values: any[] = [];
 
+    if (searchString !== "") {
+      query = query + " where name like '%" + searchString + "%'";
+      values = [];
+    }
+    return excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
   } catch (e) {
     console.log(e);
     throw e;
@@ -125,7 +132,7 @@ export async function getCompanyList(email: string | undefined | null) {
     if (email) {
       const result = await excuteQuery({
         host: 'userDb',
-        query: 'select c.companyId, c.nameVal, c.dbId, u.email, h.host, h.port, d.dbName from \
+        query: 'select c.id as company_id, c.name as companyName, c.dbinfo_id, h.host, h.port, d.name as dbName from \
         company as c, \
           userCompany as uc, \
           user as u, \
@@ -133,10 +140,10 @@ export async function getCompanyList(email: string | undefined | null) {
           dbHost as h \
           where \
           u.email=? and \
-          u.userId = uc.userId and \
-          uc.companyId = c.companyId and \
-          c.dbId = d.dbId and \
-          d.hostId = h.hostId \
+          u.id = uc.user_id and \
+          uc.company_id = c.id and \
+          c.dbinfo_id = d.id and \
+          d.host_id = h.id \
           ;', 
         values: [email],
       });
@@ -157,19 +164,27 @@ export async function getCompanyList(email: string | undefined | null) {
  * returns rows from person data based on type specified
  * @param type 
  */
-export async function getContactPersonList(crmDb: string){
+export async function getContactList(crmDb: string, searchString: string){
   
   try {
-    return excuteQuery({
-       host: crmDb,
-       query: 'select * from contact_master order by name', 
-       values: [],
-     });
- 
-   } catch (e) {
-     console.log(e);
-     throw e;
-   }
+    let query = 'select id as id, name as name from contact_master';
+    let values: any[] = [];
+
+    if (searchString !== "") {
+      query = query + " where name like '%" + searchString + "%'";
+      values = [];
+    }
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
 
 }
 

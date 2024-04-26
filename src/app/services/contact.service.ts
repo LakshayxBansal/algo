@@ -4,7 +4,7 @@ import excuteQuery  from '../utils/db/db';
 import * as z from '../zodschema/zodschema';
 
 
-export async function createPersonDB(crmDb: string, personData: z.personT) {
+export async function createContactDB(crmDb: string, personData: z.personT) {
   try {
     return excuteQuery({
       host: crmDb,

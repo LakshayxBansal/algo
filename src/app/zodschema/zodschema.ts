@@ -8,21 +8,18 @@ export const userSchema = z.object({
 });
 
 
-export const companySchema = z.object({
-  nameVal: z.string().min(1).max(45),
- add1: z.string().min(1).max(45),
- add2: z.string().min(0).max(45),
- city: z.string().min(1).max(45),
- pincode: z.string().min(0).max(45),
- dbId: z.number().min(0),
- stateId: z.string().min(0).max(45),
- cfield1: z.string().min(0).max(45),
- cfield2: z.string().min(0).max(45),
- cfield3: z.string().min(0).max(45),
- cfield4: z.string().min(0).max(45),
- cfield5: z.string().min(0).max(45),
- cfield6: z.string().min(0).max(45),
- cfield7: z.string().min(0).max(45)
+export const organisationSchema = z.object({
+  name: z.string().min(1).max(45),
+  alias: z.string().max(45),
+  pan: z.string().max(20),
+  gst: z.string().max(20),
+  country_id: z.number(),
+  state_id: z.number(),
+  city: z.string().max(75),
+  pin: z.string().max(20),
+  add1: z.string().min(1).max(75),
+  add2: z.string().min(0).max(75),
+  add3: z.string().min(0).max(75),
 });
 
 
@@ -32,7 +29,7 @@ export const companySchema = z.object({
  * validate the add person to person table
  */
 const options = ["contact", "employee"];
-export const personSchema = z.object({
+export const contactSchema = z.object({
   personId:z.number().optional(),
   firstName: z.string().min(1).max(45),
   lastName: z.string().min(1).max(45),
@@ -47,7 +44,7 @@ export const personSchema = z.object({
 });
 
 export const employeeSchema = z.object({
-  person: personSchema,
+  person: contactSchema,
   dept: z.string().min(1).max(45),
   role: z.string().min(1).max(45),
   manager: z.string().max(45),

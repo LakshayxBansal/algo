@@ -27,7 +27,7 @@ export default function Congrats() {
             Thank you for sign up!
           </Typography>
           <Typography component="h1" variant="h5">
-            Please inform admin and <Link href="/SignIn" variant="h5">sign-in</Link> once the registration is completed.
+            Please inform admin and <Link href="/signin" variant="h5">sign-in</Link> once the registration is completed.
           </Typography>
 
         </Box>

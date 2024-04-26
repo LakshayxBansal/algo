@@ -121,7 +121,7 @@ export default function MenuBar(props : propsType) {
                 noWrap
                 sx={{ flexGrow: {xs: 1, md:0 }}}
               >
-                Zodo
+                Product Name
               </Typography>
               <Box justifyContent='flex-end' sx={{flexGrow: 1, display: 'flex' }}>
               <Typography

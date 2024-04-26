@@ -10,15 +10,14 @@ import CustomPaper from './CustomPaper';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
-import { useSession, signIn, signOut } from "next-auth/react";
-import { getServerSession } from "next-auth/next";
+import { getSession } from '../../services/session.service';
+import { redirect } from 'next/navigation';
+
 
 
 export default async function Dashboard() {
-  const session = await getServerSession();
-  if (session) {
-    console.log("ok in session");
-  }
+  const session = await getSession();
+  if (session?.user.dbInfo) {
 
     return (
       <Box sx={{ display: 'flex' }}>
@@ -70,6 +69,8 @@ export default async function Dashboard() {
       </Box>
     );
 
-
+  } else {
+    redirect('/signin');
+  }
 }
 

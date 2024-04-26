@@ -9,8 +9,8 @@ import Box from '@mui/material/Box';
 
 
 
-export default function PersonDialogContent(props: propsDataT) {
-  const [dialogValue, setDialogValue] = React.useState();
+export default function PersonDialogContent(props: {data:string}) {
+  const [dialogValue, setDialogValue] = React.useState(props.data);
 
   return (
     <>

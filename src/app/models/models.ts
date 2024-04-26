@@ -3,7 +3,7 @@ import * as zs from '../zodschema/zodschema';
 
 export type userT = z.infer<typeof zs.userSchema>;
 
-export type companyT = z.infer<typeof zs.companySchema>;
+export type organisationT = z.infer<typeof zs.organisationSchema>;
 
 export type personT = z.infer<typeof zs.personSchema>;
 
@@ -32,3 +32,14 @@ modified_by: number;
 menu_order: number;
 children: menuTreeT[];
 }
+
+export type dbInfoT = {
+    company_id:number,
+    companyName: string,
+    db_id: number,
+    host: string,
+    port: string,
+    dbName:string
+};
+
+

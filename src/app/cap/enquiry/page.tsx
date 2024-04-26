@@ -28,7 +28,8 @@ export default async function MyForm() {
     }
   } catch (e) {
     // show error page
-    redirect("/error");
+    console.log(e)
   }
+  redirect("/signin");
 };
 

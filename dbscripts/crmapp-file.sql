@@ -50,14 +50,15 @@ DROP TABLE IF EXISTS `area_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `area_master` (
-  `id` int(11) NOT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(60) DEFAULT '',
   `stamp` smallint(6) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `modified_by` int(11) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `modified_on` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -242,7 +243,6 @@ CREATE TABLE `contact_master` (
   `city` varchar(75) DEFAULT NULL,
   `state_id` int(11) DEFAULT NULL,
   `area_id` int(11) DEFAULT NULL,
-  `call_type_id` int(11) DEFAULT NULL,
   `pincode` varchar(15) DEFAULT NULL,
   `country_id` int(11) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
@@ -278,7 +278,7 @@ DROP TABLE IF EXISTS `country_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `country_master` (
-  `id` int(11) NOT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `alias` varchar(60) DEFAULT NULL,
   `name` varchar(60) DEFAULT '',
   `stamp` smallint(6) DEFAULT NULL,
@@ -286,8 +286,9 @@ CREATE TABLE `country_master` (
   `modified_by` int(11) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `modified_on` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=254 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -296,6 +297,7 @@ CREATE TABLE `country_master` (
 
 LOCK TABLES `country_master` WRITE;
 /*!40000 ALTER TABLE `country_master` DISABLE KEYS */;
+INSERT INTO `country_master` VALUES (1,'AF','Afghanistan',1,NULL,NULL,NULL,NULL),(2,'AX','Aland Islands',1,NULL,NULL,NULL,NULL),(3,'AL','Albania',1,NULL,NULL,NULL,NULL),(4,'DZ','Algeria',1,NULL,NULL,NULL,NULL),(5,'AS','American Samoa',1,NULL,NULL,NULL,NULL),(6,'AD','Andorra',1,NULL,NULL,NULL,NULL),(7,'AO','Angola',1,NULL,NULL,NULL,NULL),(8,'AI','Anguilla',1,NULL,NULL,NULL,NULL),(9,'AQ','Antarctica',1,NULL,NULL,NULL,NULL),(10,'AG','Antigua and Barbuda',1,NULL,NULL,NULL,NULL),(11,'AR','Argentina',1,NULL,NULL,NULL,NULL),(12,'AM','Armenia',1,NULL,NULL,NULL,NULL),(13,'AW','Aruba',1,NULL,NULL,NULL,NULL),(14,'AU','Australia',1,NULL,NULL,NULL,NULL),(15,'AT','Austria',1,NULL,NULL,NULL,NULL),(16,'AZ','Azerbaijan',1,NULL,NULL,NULL,NULL),(17,'BS','Bahamas',1,NULL,NULL,NULL,NULL),(18,'BH','Bahrain',1,NULL,NULL,NULL,NULL),(19,'BD','Bangladesh',1,NULL,NULL,NULL,NULL),(20,'BB','Barbados',1,NULL,NULL,NULL,NULL),(21,'BY','Belarus',1,NULL,NULL,NULL,NULL),(22,'BE','Belgium',1,NULL,NULL,NULL,NULL),(23,'BZ','Belize',1,NULL,NULL,NULL,NULL),(24,'BJ','Benin',1,NULL,NULL,NULL,NULL),(25,'BM','Bermuda',1,NULL,NULL,NULL,NULL),(26,'BT','Bhutan',1,NULL,NULL,NULL,NULL),(27,'BO','Bolivia',1,NULL,NULL,NULL,NULL),(28,'BA','Bosnia and Herzegovina',1,NULL,NULL,NULL,NULL),(29,'BW','Botswana',1,NULL,NULL,NULL,NULL),(30,'BV','Bouvet Island',1,NULL,NULL,NULL,NULL),(31,'BR','Brazil',1,NULL,NULL,NULL,NULL),(32,'IO','British Indian Ocean Territory',1,NULL,NULL,NULL,NULL),(33,'BN','Brunei Darussalam',1,NULL,NULL,NULL,NULL),(34,'BG','Bulgaria',1,NULL,NULL,NULL,NULL),(35,'BF','Burkina Faso',1,NULL,NULL,NULL,NULL),(36,'BI','Burundi',1,NULL,NULL,NULL,NULL),(37,'KH','Cambodia',1,NULL,NULL,NULL,NULL),(38,'CM','Cameroon',1,NULL,NULL,NULL,NULL),(39,'CA','Canada',1,NULL,NULL,NULL,NULL),(40,'CV','Cape Verde',1,NULL,NULL,NULL,NULL),(41,'KY','Cayman Islands',1,NULL,NULL,NULL,NULL),(42,'CF','Central African Republic',1,NULL,NULL,NULL,NULL),(43,'TD','Chad',1,NULL,NULL,NULL,NULL),(44,'CL','Chile',1,NULL,NULL,NULL,NULL),(45,'CN','China',1,NULL,NULL,NULL,NULL),(46,'CX','Christmas Island',1,NULL,NULL,NULL,NULL),(47,'CC','Cocos (Keeling) Islands',1,NULL,NULL,NULL,NULL),(48,'CO','Colombia',1,NULL,NULL,NULL,NULL),(49,'KM','Comoros',1,NULL,NULL,NULL,NULL),(50,'CG','Congo',1,NULL,NULL,NULL,NULL),(51,'CD','Congo, Democratic Republic of the',1,NULL,NULL,NULL,NULL),(52,'CK','Cook Islands',1,NULL,NULL,NULL,NULL),(53,'CR','Costa Rica',1,NULL,NULL,NULL,NULL),(54,'CI','C“te d\'Ivoire',1,NULL,NULL,NULL,NULL),(55,'HR','Croatia (Hrvatska)',1,NULL,NULL,NULL,NULL),(56,'CU','Cuba',1,NULL,NULL,NULL,NULL),(57,'CW','Cura‡ao',1,NULL,NULL,NULL,NULL),(58,'CY','Cyprus',1,NULL,NULL,NULL,NULL),(59,'CZ','Czech Republic',1,NULL,NULL,NULL,NULL),(60,'CS','Czechoslovakia (former)',1,NULL,NULL,NULL,NULL),(61,'KP','Democratic People\'s Republic of Korea',1,NULL,NULL,NULL,NULL),(62,'DK','Denmark',1,NULL,NULL,NULL,NULL),(63,'DJ','Djibouti',1,NULL,NULL,NULL,NULL),(64,'DM','Dominica',1,NULL,NULL,NULL,NULL),(65,'DO','Dominican Republic',1,NULL,NULL,NULL,NULL),(66,'TP','East Timor',1,NULL,NULL,NULL,NULL),(67,'EC','Ecuador',1,NULL,NULL,NULL,NULL),(68,'EG','Egypt',1,NULL,NULL,NULL,NULL),(69,'SV','El Salvador',1,NULL,NULL,NULL,NULL),(70,'GQ','Equatorial Guinea',1,NULL,NULL,NULL,NULL),(71,'ER','Eritrea',1,NULL,NULL,NULL,NULL),(72,'EE','Estonia',1,NULL,NULL,NULL,NULL),(73,'ET','Ethiopia',1,NULL,NULL,NULL,NULL),(74,'EU','European Union',1,NULL,NULL,NULL,NULL),(75,'FK','Falkland Islands (Malvinas)',1,NULL,NULL,NULL,NULL),(76,'FO','Faroe Islands',1,NULL,NULL,NULL,NULL),(77,'FM','Federated States of Micronesia',1,NULL,NULL,NULL,NULL),(78,'FJ','Fiji',1,NULL,NULL,NULL,NULL),(79,'FI','Finland',1,NULL,NULL,NULL,NULL),(80,'FR','France',1,NULL,NULL,NULL,NULL),(81,'GF','French Guiana',1,NULL,NULL,NULL,NULL),(82,'PF','French Polynesia',1,NULL,NULL,NULL,NULL),(83,'TF','French Southern Territories',1,NULL,NULL,NULL,NULL),(84,'GA','Gabon',1,NULL,NULL,NULL,NULL),(85,'GM','Gambia',1,NULL,NULL,NULL,NULL),(86,'GE','Georgia',1,NULL,NULL,NULL,NULL),(87,'DE','Germany',1,NULL,NULL,NULL,NULL),(88,'GH','Ghana',1,NULL,NULL,NULL,NULL),(89,'GI','Gibraltar',1,NULL,NULL,NULL,NULL),(90,'GR','Greece',1,NULL,NULL,NULL,NULL),(91,'GL','Greenland',1,NULL,NULL,NULL,NULL),(92,'GD','Grenada',1,NULL,NULL,NULL,NULL),(93,'GP','Guadeloupe',1,NULL,NULL,NULL,NULL),(94,'GU','Guam',1,NULL,NULL,NULL,NULL),(95,'GT','Guatemala',1,NULL,NULL,NULL,NULL),(96,'GG','Guernsey',1,NULL,NULL,NULL,NULL),(97,'GN','Guinea',1,NULL,NULL,NULL,NULL),(98,'GW','Guinea-Bissau',1,NULL,NULL,NULL,NULL),(99,'GY','Guyana',1,NULL,NULL,NULL,NULL),(100,'HT','Haiti',1,NULL,NULL,NULL,NULL),(101,'HM','Heard Island and McDonald Islands',1,NULL,NULL,NULL,NULL),(102,'VA','Holy See',1,NULL,NULL,NULL,NULL),(103,'HN','Honduras',1,NULL,NULL,NULL,NULL),(104,'HK','Hong Kong',1,NULL,NULL,NULL,NULL),(105,'HU','Hungary',1,NULL,NULL,NULL,NULL),(106,'IS','Iceland',1,NULL,NULL,NULL,NULL),(107,'IN','India',1,NULL,NULL,NULL,NULL),(108,'ID','Indonesia',1,NULL,NULL,NULL,NULL),(109,'IQ','Iraq',1,NULL,NULL,NULL,NULL),(110,'IE','Ireland',1,NULL,NULL,NULL,NULL),(111,'IR','Islamic Republic of Iran',1,NULL,NULL,NULL,NULL),(112,'IM','Isle of Man',1,NULL,NULL,NULL,NULL),(113,'IL','Israel',1,NULL,NULL,NULL,NULL),(114,'IT','Italy',1,NULL,NULL,NULL,NULL),(115,'JM','Jamaica',1,NULL,NULL,NULL,NULL),(116,'JP','Japan',1,NULL,NULL,NULL,NULL),(117,'JE','Jersey',1,NULL,NULL,NULL,NULL),(118,'JO','Jordan',1,NULL,NULL,NULL,NULL),(119,'KZ','Kazakhstan',1,NULL,NULL,NULL,NULL),(120,'KE','Kenya',1,NULL,NULL,NULL,NULL),(121,'KI','Kiribati',1,NULL,NULL,NULL,NULL),(122,'XK','Kosovo',1,NULL,NULL,NULL,NULL),(123,'KW','Kuwait',1,NULL,NULL,NULL,NULL),(124,'KG','Kyrgyzstan',1,NULL,NULL,NULL,NULL),(125,'LA','Lao People\'s Democratic Republic',1,NULL,NULL,NULL,NULL),(126,'LV','Latvia',1,NULL,NULL,NULL,NULL),(127,'LB','Lebanon',1,NULL,NULL,NULL,NULL),(128,'LS','Lesotho',1,NULL,NULL,NULL,NULL),(129,'LR','Liberia',1,NULL,NULL,NULL,NULL),(130,'LY','Libyan Arab Jamahiriya',1,NULL,NULL,NULL,NULL),(131,'LI','Liechtenstein',1,NULL,NULL,NULL,NULL),(132,'LT','Lithuania',1,NULL,NULL,NULL,NULL),(133,'LU','Luxembourg',1,NULL,NULL,NULL,NULL),(134,'MO','Macau',1,NULL,NULL,NULL,NULL),(135,'MG','Madagascar',1,NULL,NULL,NULL,NULL),(136,'MW','Malawi',1,NULL,NULL,NULL,NULL),(137,'MY','Malaysia',1,NULL,NULL,NULL,NULL),(138,'MV','Maldives',1,NULL,NULL,NULL,NULL),(139,'ML','Mali',1,NULL,NULL,NULL,NULL),(140,'MT','Malta',1,NULL,NULL,NULL,NULL),(141,'MH','Marshall Islands',1,NULL,NULL,NULL,NULL),(142,'MQ','Martinique',1,NULL,NULL,NULL,NULL),(143,'MR','Mauritania',1,NULL,NULL,NULL,NULL),(144,'MU','Mauritius',1,NULL,NULL,NULL,NULL),(145,'YT','Mayotte',1,NULL,NULL,NULL,NULL),(146,'MX','Mexico',1,NULL,NULL,NULL,NULL),(147,'MC','Monaco',1,NULL,NULL,NULL,NULL),(148,'MN','Mongolia',1,NULL,NULL,NULL,NULL),(149,'ME','Montenegro',1,NULL,NULL,NULL,NULL),(150,'MS','Montserrat',1,NULL,NULL,NULL,NULL),(151,'MA','Morocco',1,NULL,NULL,NULL,NULL),(152,'MZ','Mozambique',1,NULL,NULL,NULL,NULL),(153,'MM','Myanmar',1,NULL,NULL,NULL,NULL),(154,'NA','Namibia',1,NULL,NULL,NULL,NULL),(155,'NR','Nauru',1,NULL,NULL,NULL,NULL),(156,'NP','Nepal',1,NULL,NULL,NULL,NULL),(157,'NL','Netherlands',1,NULL,NULL,NULL,NULL),(158,'AN','Netherlands Antilles',1,NULL,NULL,NULL,NULL),(159,'NT','Neutral Zone',1,NULL,NULL,NULL,NULL),(160,'NC','New Caledonia',1,NULL,NULL,NULL,NULL),(161,'NZ','New Zealand',1,NULL,NULL,NULL,NULL),(162,'NI','Nicaragua',1,NULL,NULL,NULL,NULL),(163,'NE','Niger',1,NULL,NULL,NULL,NULL),(164,'NG','Nigeria',1,NULL,NULL,NULL,NULL),(165,'NU','Niue',1,NULL,NULL,NULL,NULL),(166,'NF','Norfolk Island',1,NULL,NULL,NULL,NULL),(167,'MP','Northern Mariana Islands',1,NULL,NULL,NULL,NULL),(168,'NO','Norway',1,NULL,NULL,NULL,NULL),(169,'OM','Oman',1,NULL,NULL,NULL,NULL),(170,'PK','Pakistan',1,NULL,NULL,NULL,NULL),(171,'PW','Palau',1,NULL,NULL,NULL,NULL),(172,'PS','Palestinian Territory, Occupied',1,NULL,NULL,NULL,NULL),(173,'PA','Panama',1,NULL,NULL,NULL,NULL),(174,'PG','Papua New Guinea',1,NULL,NULL,NULL,NULL),(175,'PY','Paraguay',1,NULL,NULL,NULL,NULL),(176,'PE','Peru',1,NULL,NULL,NULL,NULL),(177,'PH','Philippines',1,NULL,NULL,NULL,NULL),(178,'PN','Pitcairn',1,NULL,NULL,NULL,NULL),(179,'PL','Poland',1,NULL,NULL,NULL,NULL),(180,'PT','Portugal',1,NULL,NULL,NULL,NULL),(181,'PR','Puerto Rico',1,NULL,NULL,NULL,NULL),(182,'QA','Qatar',1,NULL,NULL,NULL,NULL),(183,'KR','Republic of Korea',1,NULL,NULL,NULL,NULL),(184,'MD','Republic of Moldova',1,NULL,NULL,NULL,NULL),(185,'RE','Reunion',1,NULL,NULL,NULL,NULL),(186,'RO','Romania',1,NULL,NULL,NULL,NULL),(187,'RU','Russian Federation',1,NULL,NULL,NULL,NULL),(188,'RW','Rwanda',1,NULL,NULL,NULL,NULL),(189,'SH','Saint Helena',1,NULL,NULL,NULL,NULL),(190,'KN','Saint Kitts and Nevis',1,NULL,NULL,NULL,NULL),(191,'LC','Saint Lucia',1,NULL,NULL,NULL,NULL),(192,'MF','Saint Martin',1,NULL,NULL,NULL,NULL),(193,'VC','Saint Vincent & the Grenadines',1,NULL,NULL,NULL,NULL),(194,'WS','Samoa',1,NULL,NULL,NULL,NULL),(195,'SM','San Marino',1,NULL,NULL,NULL,NULL),(196,'ST','Sao Tome and Principe',1,NULL,NULL,NULL,NULL),(197,'SA','Saudi Arabia',1,NULL,NULL,NULL,NULL),(198,'SN','Senegal',1,NULL,NULL,NULL,NULL),(199,'RS','Serbia',1,NULL,NULL,NULL,NULL),(200,'SC','Seychelles',1,NULL,NULL,NULL,NULL),(201,'SL','Sierra Leone',1,NULL,NULL,NULL,NULL),(202,'SG','Singapore',1,NULL,NULL,NULL,NULL),(203,'SX','Sint Maarten',1,NULL,NULL,NULL,NULL),(204,'SK','Slovakia',1,NULL,NULL,NULL,NULL),(205,'SI','Slovenia',1,NULL,NULL,NULL,NULL),(206,'SB','Solomon Islands',1,NULL,NULL,NULL,NULL),(207,'SO','Somalia',1,NULL,NULL,NULL,NULL),(208,'ZA','South Africa',1,NULL,NULL,NULL,NULL),(209,'GS','South Georgia and The South Sandwich Islands',1,NULL,NULL,NULL,NULL),(210,'SS','South Sudan',1,NULL,NULL,NULL,NULL),(211,'ES','Spain',1,NULL,NULL,NULL,NULL),(212,'LK','Sri Lanka',1,NULL,NULL,NULL,NULL),(213,'PM','St. Pierre and Miquelon',1,NULL,NULL,NULL,NULL),(214,'SD','Sudan',1,NULL,NULL,NULL,NULL),(215,'SR','Suriname',1,NULL,NULL,NULL,NULL),(216,'SJ','Svalbard and Jan Mayen',1,NULL,NULL,NULL,NULL),(217,'SZ','Swaziland',1,NULL,NULL,NULL,NULL),(218,'SE','Sweden',1,NULL,NULL,NULL,NULL),(219,'CH','Switzerland',1,NULL,NULL,NULL,NULL),(220,'SY','Syrian Arab Republic',1,NULL,NULL,NULL,NULL),(221,'TW','Taiwan',1,NULL,NULL,NULL,NULL),(222,'TJ','Tajikistan',1,NULL,NULL,NULL,NULL),(223,'TH','Thailand',1,NULL,NULL,NULL,NULL),(224,'MK','The Former Yugoslav Republic of Macedonia',1,NULL,NULL,NULL,NULL),(225,'TL','Timor-Leste',1,NULL,NULL,NULL,NULL),(226,'TG','Togo',1,NULL,NULL,NULL,NULL),(227,'TK','Tokelau',1,NULL,NULL,NULL,NULL),(228,'TO','Tonga',1,NULL,NULL,NULL,NULL),(229,'TT','Trinidad and Tobago',1,NULL,NULL,NULL,NULL),(230,'TN','Tunisia',1,NULL,NULL,NULL,NULL),(231,'TR','Turkey',1,NULL,NULL,NULL,NULL),(232,'TM','Turkmenistan',1,NULL,NULL,NULL,NULL),(233,'TC','Turks and Caicos Islands',1,NULL,NULL,NULL,NULL),(234,'TV','Tuvalu',1,NULL,NULL,NULL,NULL),(235,'UM','US Minor Outlying Islands',1,NULL,NULL,NULL,NULL),(236,'UG','Uganda',1,NULL,NULL,NULL,NULL),(237,'UA','Ukraine',1,NULL,NULL,NULL,NULL),(238,'AE','United Arab Emirates',1,NULL,NULL,NULL,NULL),(239,'GB','United Kingdom',1,NULL,NULL,NULL,NULL),(240,'TZ','United Republic of Tanzania',1,NULL,NULL,NULL,NULL),(241,'US','United States of America',1,NULL,NULL,NULL,NULL),(242,'UY','Uruguay',1,NULL,NULL,NULL,NULL),(243,'UZ','Uzbekistan',1,NULL,NULL,NULL,NULL),(244,'VU','Vanuatu',1,NULL,NULL,NULL,NULL),(245,'VE','Venezuela',1,NULL,NULL,NULL,NULL),(246,'VN','Viet Nam',1,NULL,NULL,NULL,NULL),(247,'VG','Virgin Islands (British)',1,NULL,NULL,NULL,NULL),(248,'VI','Virgin Islands (U.S.A.)',1,NULL,NULL,NULL,NULL),(249,'WF','Wallis and Futuna',1,NULL,NULL,NULL,NULL),(250,'EH','Western Sahara',1,NULL,NULL,NULL,NULL),(251,'YE','Yemen',1,NULL,NULL,NULL,NULL),(252,'ZM','Zambia',1,NULL,NULL,NULL,NULL),(253,'ZW','Zimbabwe',1,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `country_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -328,35 +330,6 @@ LOCK TABLES `department_master` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `enquiry_action`
---
-
-DROP TABLE IF EXISTS `enquiry_action`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `enquiry_action` (
-  `id` int(11) DEFAULT NULL,
-  `call_id` int(11) DEFAULT NULL,
-  `action_taken_by` int(11) DEFAULT NULL,
-  `action_taken_datetime` datetime DEFAULT NULL,
-  `action_remark` text DEFAULT NULL,
-  `call_status_id` int(11) DEFAULT NULL,
-  `call_sub_status_id` int(11) DEFAULT NULL,
-  `closer_remark` varchar(255) DEFAULT NULL,
-  `enquiry_action_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `enquiry_action`
---
-
-LOCK TABLES `enquiry_action` WRITE;
-/*!40000 ALTER TABLE `enquiry_action` DISABLE KEYS */;
-/*!40000 ALTER TABLE `enquiry_action` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `enquiry_action_master`
 --
 
@@ -385,6 +358,37 @@ LOCK TABLES `enquiry_action_master` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `enquiry_action_tran`
+--
+
+DROP TABLE IF EXISTS `enquiry_action_tran`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enquiry_action_tran` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `call_id` int(11) DEFAULT NULL,
+  `action_taken_by` int(11) DEFAULT NULL,
+  `action_taken_datetime` datetime DEFAULT NULL,
+  `action_remark` text DEFAULT NULL,
+  `call_status_id` int(11) DEFAULT NULL,
+  `call_sub_status_id` int(11) DEFAULT NULL,
+  `closer_remark` varchar(255) DEFAULT NULL,
+  `enquiry_action_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `enquiry_action_tran`
+--
+
+LOCK TABLES `enquiry_action_tran` WRITE;
+/*!40000 ALTER TABLE `enquiry_action_tran` DISABLE KEYS */;
+/*!40000 ALTER TABLE `enquiry_action_tran` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `enquiry_allocation`
 --
 
@@ -392,12 +396,15 @@ DROP TABLE IF EXISTS `enquiry_allocation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enquiry_allocation` (
-  `id` int(11) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `allocation_date` datetime DEFAULT NULL,
   `executive_id` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
-  `narration` varchar(255) DEFAULT NULL
+  `narration` varchar(255) DEFAULT NULL,
+  `enquiry_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -441,13 +448,15 @@ DROP TABLE IF EXISTS `enquiry_category_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enquiry_category_master` (
-  `id` int(11) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `stamp` int(11) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `modified_on` datetime DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `modified_by` int(11) DEFAULT NULL
+  `modified_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -794,7 +803,7 @@ CREATE TABLE `menu_option_master` (
   `modified_by` int(11) DEFAULT NULL,
   `menu_order` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -803,7 +812,7 @@ CREATE TABLE `menu_option_master` (
 
 LOCK TABLES `menu_option_master` WRITE;
 /*!40000 ALTER TABLE `menu_option_master` DISABLE KEYS */;
-INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'DashboardIcon','/cap',0,NULL,NULL,NULL,NULL,0),(2,'Enquiry','Enquiry',0,'InboxIcon','#',0,NULL,NULL,NULL,NULL,0),(3,'Campaign','Campaign',0,'PeopleIcon','#',0,NULL,NULL,NULL,NULL,0),(4,'Reports','Reports',0,'BarChartIcon','#',0,NULL,NULL,NULL,NULL,0),(5,'Admin','Admin',0,'LayersIcon','#',0,NULL,NULL,NULL,NULL,0),(6,'Add Inquiry','Add',2,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(7,'Allocate','Allocate',2,'InboxIcon','#',0,NULL,NULL,NULL,NULL,0),(8,'Update','Update',2,'PeopleIcon','#',0,NULL,NULL,NULL,NULL,0),(9,'Masters','Masters',5,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(10,'Modify Company','Modify Company',5,'InboxIcon','#',0,NULL,NULL,NULL,NULL,0),(11,'Add User','Add User',5,'PeopleIcon','#',0,NULL,NULL,NULL,NULL,0),(12,'Enquiry Masters','Enquiry Masters',9,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(13,'Support Masters','Support Masters',9,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(14,'Action','Actions',12,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(15,'Category','Category',12,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0);
+INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'DashboardIcon','/cap',0,NULL,NULL,NULL,NULL,0),(2,'Enquiry','Enquiry',0,'InboxIcon','#',0,NULL,NULL,NULL,NULL,0),(3,'Campaign','Campaign',0,'PeopleIcon','#',0,NULL,NULL,NULL,NULL,0),(4,'Reports','Reports',0,'BarChartIcon','#',0,NULL,NULL,NULL,NULL,0),(5,'Admin','Admin',0,'LayersIcon','#',0,NULL,NULL,NULL,NULL,0),(6,'Add Inquiry','Add',2,'AddIcCallIcon','/cap/enquiry',0,NULL,NULL,NULL,NULL,0),(7,'Allocate','Allocate',2,'InboxIcon','#',0,NULL,NULL,NULL,NULL,0),(8,'Update','Update',2,'PeopleIcon','#',0,NULL,NULL,NULL,NULL,0),(9,'Masters','Masters',5,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(10,'Modify Company','Modify Company',5,'InboxIcon','#',0,NULL,NULL,NULL,NULL,0),(11,'Add User','Add User',5,'PeopleIcon','#',0,NULL,NULL,NULL,NULL,0),(12,'Enquiry Masters','Enquiry Masters',9,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(13,'Support Masters','Support Masters',9,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(14,'Action','Actions',12,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(15,'Category','Category',12,'DashboardIcon','#',0,NULL,NULL,NULL,NULL,0),(16,'Add','Add',14,NULL,'/admin/action/add',NULL,'2024-04-22 15:30:57','2024-04-22 15:30:57',NULL,NULL,0),(17,'Modify','Modify',14,NULL,'/admin/action/modify',NULL,'2024-04-22 15:31:22','2024-04-22 15:31:22',NULL,NULL,0);
 /*!40000 ALTER TABLE `menu_option_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1260,4 +1269,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-17 12:34:28
+-- Dump completed on 2024-04-25 15:28:29

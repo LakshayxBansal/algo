@@ -3,15 +3,15 @@
 import { redirect } from 'next/navigation';
 import * as zs from '../zodschema/zodschema';
 import * as mdl from '../models/models';
-import {createPersonDB} from '../services/person.service';
-import { getAppSession } from '../services/session.service';
+import {createContactDB} from '../services/contact.service';
+import { getSession } from '../services/session.service';
 
 
-export async function createPerson(formData: FormData){
+export async function createContact(formData: FormData){
 
   let userCreated = {status: false, data: {} as mdl.personT, error: {} };
   try {
-    const appSession = await getAppSession();
+    const appSession = await getSession();
 
     if(appSession){
       const userData = {firstName: formData.get("firstname") as string,
@@ -27,7 +27,7 @@ export async function createPerson(formData: FormData){
       };
       const result = zs.personSchema.safeParse(userData);
       if(result.success) {
-        const person = await createPersonDB(appSession.dbSession?.dbInfo.dbName as string, userData);
+        const person = await createContactDB(appSession.user.dbInfo.dbName as string, userData);
         if (person.length >0 ) {
          userCreated = {status: true, data:person[0], error:{}};
         }

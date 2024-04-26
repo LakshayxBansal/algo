@@ -3,6 +3,8 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authenticateUser } from '../../../services/auth.service';
 import { addUser } from '../../../services/user.service';
+import { getDbSession } from '../../../services/session.service'
+import { dbInfoT } from '../../../models/models';
 
 export const options: NextAuthOptions  = {
   providers: [
@@ -64,16 +66,34 @@ export const options: NextAuthOptions  = {
         // Or you can return a URL to redirect to:
         // return '/unauthorized'
       }
-    } /*,
+    },
+    async jwt({ token, account, profile }) {
+      // Persist the OAuth access_token and or the user id to the token right after signin
+      if (account) {
+        const sessionDbData = await getDbSession(token?.email as string);
+        if (sessionDbData) {
+          token.dbInfo = sessionDbData
+        }
+      }
+      return token
+    },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
-        const sessionDbData = await getDbSession(session.email);
-        const retVal = { ...session, moreInfo: sessionDbData?? {}}
-        
-        return retVal;
-    }*/
+      if (token) {
+        if (!token.dbInfo) {
+          const dbInfo = await getDbSession(session.user.email as string);
+          if (dbInfo) {
+            token.dbInfo = dbInfo;
+          }
+        }
+        if (token.dbInfo) {
+          session.user.dbInfo = token.dbInfo as dbInfoT;
+        }
+      }
+      return session;
+    }
   },
   pages: {
-    signIn: '/SignIn',
+    signIn: '/signin',
   }
 }

@@ -1,5 +1,5 @@
 export { default } from 'next-auth/middleware';
 
 export const config = {
-  matcher: ["/cap", "/MyForm"]
+  matcher: ["/cap", "/cap/enquiry"]
 }

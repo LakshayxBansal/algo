@@ -4,8 +4,9 @@ import { getCountryList,
   getExecutiveList, 
   getEnquiryCategoryList, 
   getOrganizationList,
-  getMenuOptionsList } from '../services/masters.service';
-import { getAppSession } from '../services/session.service';
+  getMenuOptionsList,
+  getContactList } from '../services/masters.service';
+import { getSession } from '../services/session.service';
 import {menuTreeT} from '../models/models';
 
  
@@ -60,9 +61,9 @@ function createTree(flatArray: menuTreeT[], parentId = 0): menuTreeT[] {
 
 export async function getCountries(searchString: string) {
   try {
-    const appSession = await getAppSession();
-    if (appSession?.dbSession) {
-      return getCountryList(appSession.dbSession.dbInfo.dbName, searchString);
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getCountryList(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
     throw error;
@@ -98,11 +99,24 @@ export async function getTicketCategory(crmDb: string, ticketTypeId: number) {
 
 
 
-export async function getCustomer(crmDb: string) {
+export async function getOrganization(searchString: string) {
   try {
-    const result = await getOrganizationList(crmDb);
+    const session = await getSession();
+    if (session?.user.dbInfo.dbName){
+      return getOrganizationList(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
 
-    return JSON.stringify(result);
+
+export async function getContact(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getContactList(session.user.dbInfo.dbName, searchString);
+    }
   } catch (error) {
     throw error;
   }
