@@ -10,6 +10,7 @@ import SendIcon from '@mui/icons-material/Send';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 
 import StarBorder from '@mui/icons-material/StarBorder';
+import { Icon } from 'next/dist/lib/metadata/types/metadata-types';
 
 type iconElementT = {
   name: string,
@@ -30,3 +31,6 @@ export const nameIconArr: iconElementT[] = [
   // Add more pairs here
 ];
 
+export function getIconFromName(iconName: string) {
+  return nameIconArr.find((obj)=> obj.name === iconName)?.icon?? nameIconArr[0].icon;
+}

@@ -59,7 +59,7 @@ CREATE TABLE `area_master` (
   `modified_on` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,6 +68,7 @@ CREATE TABLE `area_master` (
 
 LOCK TABLES `area_master` WRITE;
 /*!40000 ALTER TABLE `area_master` DISABLE KEYS */;
+INSERT INTO `area_master` VALUES (1,'Mumbai',NULL,1,NULL,'2024-05-07 18:19:56',NULL);
 /*!40000 ALTER TABLE `area_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,18 +200,20 @@ DROP TABLE IF EXISTS `contact_group_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contact_group_master` (
-  `id` int(11) NOT NULL,
-  `alias` varchar(60) NOT NULL DEFAULT '',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `alias` varchar(60) DEFAULT '',
   `name` varchar(60) NOT NULL DEFAULT '',
-  `stamp` smallint(6) NOT NULL DEFAULT 0,
-  `parent_id` int(11) NOT NULL DEFAULT 0,
-  `created_by` int(11) NOT NULL DEFAULT 0,
-  `modified_by` int(11) NOT NULL DEFAULT 0,
+  `stamp` smallint(6) DEFAULT 0,
+  `parent_id` int(11) DEFAULT 0,
+  `created_by` int(11) DEFAULT 0,
+  `modified_by` int(11) DEFAULT 0,
   `created_on` datetime DEFAULT '0000-00-00 00:00:00',
   `modified_on` datetime DEFAULT '0000-00-00 00:00:00',
   `is_parent` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,6 +222,7 @@ CREATE TABLE `contact_group_master` (
 
 LOCK TABLES `contact_group_master` WRITE;
 /*!40000 ALTER TABLE `contact_group_master` DISABLE KEYS */;
+INSERT INTO `contact_group_master` VALUES (1,'','Film Stars',0,0,1,0,'2024-05-07 17:58:23','0000-00-00 00:00:00',NULL),(2,'','Cricketers',0,0,1,0,'2024-05-07 18:18:54','0000-00-00 00:00:00',NULL);
 /*!40000 ALTER TABLE `contact_group_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -316,7 +320,8 @@ CREATE TABLE `department_master` (
   `modified_by` int(11) NOT NULL DEFAULT 0,
   `created_on` datetime DEFAULT NULL,
   `modified_on` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -478,9 +483,9 @@ DROP TABLE IF EXISTS `enquiry_header_tran`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enquiry_header_tran` (
   `id` int(11) DEFAULT NULL,
-  `date` date DEFAULT NULL,
+  `desc` varchar(75) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   `enq_number` varchar(75) DEFAULT NULL,
-  `time` time DEFAULT NULL,
   `auto_number` int(11) DEFAULT NULL,
   `contact_id` int(11) DEFAULT NULL,
   `received_by_id` int(11) DEFAULT NULL,
@@ -490,7 +495,9 @@ CREATE TABLE `enquiry_header_tran` (
   `stamp` int(11) DEFAULT NULL,
   `modified_by` int(11) DEFAULT NULL,
   `modified_on` datetime DEFAULT NULL,
-  `allocated_to` int(11) DEFAULT NULL
+  `allocated_to` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -559,6 +566,36 @@ LOCK TABLES `enquiry_maturity_type` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `enquiry_source_master`
+--
+
+DROP TABLE IF EXISTS `enquiry_source_master`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enquiry_source_master` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(60) DEFAULT NULL,
+  `stamp` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL,
+  `modified_on` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `enquiry_source_master`
+--
+
+LOCK TABLES `enquiry_source_master` WRITE;
+/*!40000 ALTER TABLE `enquiry_source_master` DISABLE KEYS */;
+INSERT INTO `enquiry_source_master` VALUES (1,'Reference',NULL,1,NULL,'2024-05-06 11:56:32',NULL),(2,'Newspaper',NULL,1,NULL,'2024-05-06 12:00:55',NULL),(3,'Customer1',NULL,1,NULL,'2024-05-06 12:04:02',NULL),(4,'Customer2',NULL,1,NULL,'2024-05-06 12:07:13',NULL),(5,'Cold Call',NULL,1,NULL,'2024-05-06 12:20:54',NULL),(6,'Advertisement',NULL,1,NULL,'2024-05-06 15:58:39',NULL);
+/*!40000 ALTER TABLE `enquiry_source_master` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `enquiry_status_master`
 --
 
@@ -566,15 +603,17 @@ DROP TABLE IF EXISTS `enquiry_status_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enquiry_status_master` (
-  `id` int(11) NOT NULL,
-  `name` varchar(60) DEFAULT '',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(60) NOT NULL DEFAULT '',
   `stamp` smallint(6) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `modified_by` int(11) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `modified_on` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -583,43 +622,8 @@ CREATE TABLE `enquiry_status_master` (
 
 LOCK TABLES `enquiry_status_master` WRITE;
 /*!40000 ALTER TABLE `enquiry_status_master` DISABLE KEYS */;
+INSERT INTO `enquiry_status_master` VALUES (1,'Open',NULL,1,NULL,'2024-05-03 16:00:54',NULL),(5,'Allocated',NULL,1,NULL,'2024-05-03 16:21:10',NULL),(6,'Closed - Won',NULL,1,NULL,'2024-05-03 16:42:18',NULL),(7,'Closed - Lost',NULL,1,NULL,'2024-05-03 17:58:35',NULL),(9,'Postpone',NULL,1,NULL,'2024-05-04 11:05:59',NULL),(11,'New Value',NULL,1,NULL,'2024-05-04 11:08:44',NULL),(12,'New Value 1',NULL,1,NULL,'2024-05-04 11:10:23',NULL),(13,'dfdfdf',NULL,1,NULL,'2024-05-04 11:12:08',NULL),(14,'trtrt',NULL,1,NULL,'2024-05-04 11:31:23',NULL),(15,'hggghghg',NULL,1,NULL,'2024-05-04 11:34:19',NULL),(16,'sdsdd',NULL,1,NULL,'2024-05-04 12:37:31',NULL);
 /*!40000 ALTER TABLE `enquiry_status_master` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `enquiry_status_tran`
---
-
-DROP TABLE IF EXISTS `enquiry_status_tran`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `enquiry_status_tran` (
-  `enquiry_id` int(11) DEFAULT NULL,
-  `status_version` int(11) DEFAULT NULL,
-  `allocated_to` int(11) unsigned DEFAULT NULL,
-  `date` datetime DEFAULT NULL,
-  `vch_type` smallint(6) DEFAULT NULL,
-  `executive_id` int(11) DEFAULT NULL,
-  `status_id` int(11) DEFAULT NULL,
-  `sub_status_id` int(11) DEFAULT NULL,
-  `action_taken_id` int(11) DEFAULT NULL,
-  `next_action_id` int(11) DEFAULT NULL,
-  `next_action_date` date DEFAULT NULL,
-  `next_action_time` time DEFAULT NULL,
-  `enquiry_remark` text DEFAULT NULL,
-  `suggested_action_remark` text DEFAULT NULL,
-  `action_taken_remark` text DEFAULT NULL,
-  `closure_remark` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `enquiry_status_tran`
---
-
-LOCK TABLES `enquiry_status_tran` WRITE;
-/*!40000 ALTER TABLE `enquiry_status_tran` DISABLE KEYS */;
-/*!40000 ALTER TABLE `enquiry_status_tran` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -651,6 +655,73 @@ LOCK TABLES `enquiry_sub_status_master` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `enquiry_tran`
+--
+
+DROP TABLE IF EXISTS `enquiry_tran`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enquiry_tran` (
+  `enquiry_id` int(11) DEFAULT NULL,
+  `status_version` int(11) DEFAULT NULL,
+  `allocated_to` int(11) unsigned DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `vch_type` smallint(6) DEFAULT NULL,
+  `executive_id` int(11) DEFAULT NULL,
+  `status_id` int(11) DEFAULT NULL,
+  `sub_status_id` int(11) DEFAULT NULL,
+  `action_taken_id` int(11) DEFAULT NULL,
+  `next_action_id` int(11) DEFAULT NULL,
+  `next_action_date` date DEFAULT NULL,
+  `next_action_time` time DEFAULT NULL,
+  `enquiry_remark` text DEFAULT NULL,
+  `suggested_action_remark` text DEFAULT NULL,
+  `action_taken_remark` text DEFAULT NULL,
+  `closure_remark` text DEFAULT NULL,
+  `enquiry_tran_type_id` int(11) DEFAULT NULL,
+  `enquiry_tran_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `enquiry_tran`
+--
+
+LOCK TABLES `enquiry_tran` WRITE;
+/*!40000 ALTER TABLE `enquiry_tran` DISABLE KEYS */;
+/*!40000 ALTER TABLE `enquiry_tran` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `enquiry_tran_type_master`
+--
+
+DROP TABLE IF EXISTS `enquiry_tran_type_master`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enquiry_tran_type_master` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `created_on` date DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_on` date DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `stamp` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `enquiry_tran_type_master`
+--
+
+LOCK TABLES `enquiry_tran_type_master` WRITE;
+/*!40000 ALTER TABLE `enquiry_tran_type_master` DISABLE KEYS */;
+/*!40000 ALTER TABLE `enquiry_tran_type_master` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `executive_master`
 --
 
@@ -658,7 +729,7 @@ DROP TABLE IF EXISTS `executive_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `executive_master` (
-  `id` int(11) NOT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `alias` varchar(60) DEFAULT NULL,
   `name` varchar(60) DEFAULT NULL,
   `address1` varchar(75) DEFAULT NULL,
@@ -683,8 +754,9 @@ CREATE TABLE `executive_master` (
   `call_type_id` int(11) DEFAULT NULL,
   `crm_user_id` int(11) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -693,6 +765,7 @@ CREATE TABLE `executive_master` (
 
 LOCK TABLES `executive_master` WRITE;
 /*!40000 ALTER TABLE `executive_master` DISABLE KEYS */;
+INSERT INTO `executive_master` VALUES (1,NULL,'Dinesh Verma',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'a@b.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
 /*!40000 ALTER TABLE `executive_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -803,7 +876,7 @@ CREATE TABLE `menu_option_master` (
   `modified_by` int(11) DEFAULT NULL,
   `menu_order` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -885,33 +958,6 @@ LOCK TABLES `role_master` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `source_master`
---
-
-DROP TABLE IF EXISTS `source_master`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `source_master` (
-  `id` int(11) DEFAULT NULL,
-  `name` varchar(60) DEFAULT NULL,
-  `stamp` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `modified_by` int(11) DEFAULT NULL,
-  `created_on` datetime DEFAULT NULL,
-  `modified_on` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `source_master`
---
-
-LOCK TABLES `source_master` WRITE;
-/*!40000 ALTER TABLE `source_master` DISABLE KEYS */;
-/*!40000 ALTER TABLE `source_master` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `state_master`
 --
 
@@ -919,17 +965,18 @@ DROP TABLE IF EXISTS `state_master`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `state_master` (
-  `id` int(11) NOT NULL,
-  `alias` varchar(60) NOT NULL DEFAULT '',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `alias` varchar(60) DEFAULT '',
   `name` varchar(60) NOT NULL DEFAULT '0',
-  `stamp` smallint(6) NOT NULL DEFAULT 0,
-  `created_by` int(11) NOT NULL DEFAULT 0,
-  `modified_by` int(11) NOT NULL DEFAULT 0,
+  `stamp` smallint(6) DEFAULT 0,
+  `created_by` int(11) DEFAULT 0,
+  `modified_by` int(11) DEFAULT 0,
   `created_on` datetime DEFAULT '0000-00-00 00:00:00',
   `modified_on` datetime DEFAULT '0000-00-00 00:00:00',
-  `country_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `country_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -938,6 +985,7 @@ CREATE TABLE `state_master` (
 
 LOCK TABLES `state_master` WRITE;
 /*!40000 ALTER TABLE `state_master` DISABLE KEYS */;
+INSERT INTO `state_master` VALUES (1,'','Andhra Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(2,'','Arunachal Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(3,'','Assam',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(4,'','Bihar',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(5,'','Chhattisgarh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(6,'','Goa',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(7,'','Gujarat',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(8,'','Haryana',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(9,'','Himachal Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(10,'','Jharkhand',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(11,'','Karnataka',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(12,'','Kerala',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(13,'','Madhya Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(14,'','Maharashtra',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(15,'','Manipur',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(16,'','Meghalaya',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(17,'','Mizoram',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(18,'','Nagaland',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(19,'','Odisha',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(20,'','Punjab',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(21,'','Rajasthan',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(22,'','Sikkim',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(23,'','Tamil Nadu',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(24,'','Telangana',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(25,'','Tripura',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(26,'','Uttar Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(27,'','Uttarakhand',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(28,'','West Bengal',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(29,'','Andaman and Nicobar Islands',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(30,'','Chandigarh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(31,'','Dadra and Nagar Haveli and Daman and Diu',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(32,'','Jammu and Kashmir',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(33,'','Ladakh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(34,'','Lakshadweep',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(35,'','Delhi',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(36,'','Puducherry',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107);
 /*!40000 ALTER TABLE `state_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1269,4 +1317,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-25 15:28:29
+-- Dump completed on 2024-05-07 18:40:09

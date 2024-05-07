@@ -120,7 +120,7 @@ CREATE TABLE `session` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `sessionId_UNIQUE` (`id`),
   UNIQUE KEY `userId_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,6 +129,7 @@ CREATE TABLE `session` (
 
 LOCK TABLES `session` WRITE;
 /*!40000 ALTER TABLE `session` DISABLE KEYS */;
+INSERT INTO `session` VALUES (4,'{\"company_id\":3,\"companyName\":\"MyCo\",\"dbinfo_id\":1,\"host\":\"127.0.0.1\",\"port\":\"3306\",\"dbName\":\"crmapp\"}','2024-05-03 10:34:13','a@b.com');
 /*!40000 ALTER TABLE `session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -203,4 +204,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-25 15:28:32
+-- Dump completed on 2024-05-07 18:40:12

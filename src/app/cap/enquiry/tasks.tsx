@@ -1,3 +1,4 @@
+'use client'
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,7 +23,7 @@ import {
 } from '@mui/x-data-grid';
 import {
   randomCreatedDate,
-  randomTraderName,
+  randomCommodity,
   randomId,
   randomArrayItem,
 } from '@mui/x-data-grid-generator';
@@ -35,37 +36,37 @@ const randomRole = () => {
 const initialRows: GridRowsProp = [
   {
     id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
+    name: randomCommodity(),
+    qty: 25,
+    date: randomCreatedDate(),
     role: randomRole(),
   },
   {
     id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
+    name: randomCommodity(),
+    qty: 36,
+    date: randomCreatedDate(),
     role: randomRole(),
   },
   {
     id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
+    name: randomCommodity(),
+    qty: 19,
+    date: randomCreatedDate(),
     role: randomRole(),
   },
   {
     id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
+    name: randomCommodity(),
+    qty: 28,
+    date: randomCreatedDate(),
     role: randomRole(),
   },
   {
     id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
+    name: randomCommodity(),
+    qty: 23,
+    date: randomCreatedDate(),
     role: randomRole(),
   },
 ];
@@ -92,7 +93,7 @@ function EditToolbar(props: EditToolbarProps) {
   return (
     <GridToolbarContainer>
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
+        Add Item
       </Button>
     </GridToolbarContainer>
   );
@@ -145,24 +146,24 @@ export default function FullFeaturedCrudGrid() {
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Name', width: 180, editable: true },
     {
-      field: 'age',
-      headerName: 'Age',
+      field: 'qty',
+      headerName: 'Qty',
       type: 'number',
       width: 80,
-      align: 'left',
-      headerAlign: 'left',
+      align: 'right',
+      headerAlign: 'right',
       editable: true,
     },
     {
-      field: 'joinDate',
-      headerName: 'Join date',
+      field: 'date',
+      headerName: 'date',
       type: 'date',
       width: 180,
       editable: true,
     },
     {
-      field: 'role',
-      headerName: 'Department',
+      field: 'desc',
+      headerName: 'Description',
       width: 220,
       editable: true,
       type: 'singleSelect',
@@ -219,8 +220,9 @@ export default function FullFeaturedCrudGrid() {
   return (
     <Box
       sx={{
-        height: 500,
-        width: '100%',
+        marginTop: '10px',
+        height: 300,
+        width: '95%',
         '& .actions': {
           color: 'text.secondary',
         },
@@ -237,6 +239,9 @@ export default function FullFeaturedCrudGrid() {
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
+        initialState={{
+          density: 'compact',
+        }}
         slots={{
           toolbar: EditToolbar as GridSlots['toolbar'],
         }}

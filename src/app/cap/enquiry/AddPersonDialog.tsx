@@ -8,7 +8,7 @@ import AutocompleteAdd, { propsDataT }  from '../../Widgets/Autocomplete';
 import type { DialogProps } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import PersonDialogContent from './persondialogcontent';
-import { createPerson } from '../../controllers/person.controller';
+//import { createPerson } from '../../controllers/person.controller';
 import Autocomplete, { createFilterOptions, AutocompleteProps } from "@mui/material/Autocomplete";
 
 
@@ -33,12 +33,12 @@ const AddPersonDialog: React.FC<propsDataT> = (props) => {
   
 
   const handleSubmit = async (formData: FormData)=> {
-    const result = await createPerson(formData);
-    if (result.status) {
-      const revisedOptions = [{id: result.data.personId as number, name: result.data.firstName + ' ' + result.data.lastName}, ...props.options];
-      setOptions(revisedOptions);
-    }
-    setDialogOpen(false);
+    //const result = await createPerson(formData);
+    //if (result.status) {
+      //const revisedOptions = [{id: result.data.personId as number, name: result.data.firstName + ' ' + result.data.lastName}, ...props.options];
+      //setOptions(revisedOptions);
+    //}
+    //setDialogOpen(false);
   }
 
   const handleCancel = ()=> {

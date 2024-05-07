@@ -1,27 +1,35 @@
 'use client'
-
-import React, { useState } from 'react';
-import { AutocompleteRenderInputParams, Grid, TextField } from '@mui/material';
-import DatePick from '../../Widgets/DatePick';
+import React from 'react';
+import { Grid, TextField } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import AutocompleteAdd from '../../Widgets/Autocomplete';
 import Toolbar from '@mui/material/Toolbar';
-import FormMenuBar from './formMenuBar';
-import { createInquiry } from '@/app/controllers/inquiry.controller';
-import { theme } from '../../utils/theme.util';
-import { ThemeProvider } from "@mui/material/styles";
+import { createEnquiry } from '@/app/controllers/enquiry.controller';
 import Seperator from '@/app/Widgets/seperator';
-import { SelectOrganisationWrapper } from '../../Widgets/masters/selectOrganisation/selectOrganisationWrapper';
-import { SelectContactWrapper } from '../../Widgets/masters/selectContact/selectContactWrapper';
-import Typography from '@mui/material/Typography';
+import FullFeaturedCrudGrid from './tasks';
+import {InputControl} from '@/app/Widgets/input/InputControl';
+import {InputType} from '@/app/Widgets/input/InputControl';
+import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
+import { getEnquirySource } from '@/app/controllers/enquirySource.controller';
+import { getContact } from '@/app/controllers/contact.controller';
+import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
+import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
+import {theme} from '@/app/utils/theme.util'
+import { ThemeProvider } from "@mui/material/styles";
+import Box from '@mui/material/Box';
 
+
+const strA = "custom_script.js";
+const scrA = require("./" + strA);
+//import {makeInputReadOnly} from './custom_script';
+
+/*
+const My_COMPONENTS = {
+  ComponentA: require(strA),
+  ComponentB: require('./folder/ComponentB'),
+}
+*/
 export interface IformData {
   userName: string;
-  salesPerson: [{id: number; name: string;}],
-  catList: [{id: number; name: string;}],
-  customer:[{id: number; name: string;}],
-  person: [{id: number; name: string}],
-  action: [{id: number; name: string}],
 }
 
 
@@ -29,133 +37,129 @@ export interface IformData {
 
 export default function InputForm(props: {baseData: IformData}) {
   const baseData = props.baseData;
-  const [customer, setCustomer] = useState("");
-
   const handleSubmit = async (formData: FormData)=> {
-    const result = await createInquiry(formData);
+
+    const result = await createEnquiry(formData);
   }
 
+  const  handleButtonClick = async () => {
+    scrA.makeInputReadOnly("ticket_description");
+
+    // Append the script element to the head
+    //document.head.appendChild(script);
+ 
+  };
+
+  //       
+
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <Toolbar/>
-        <form action={handleSubmit}>
-          <FormMenuBar/>
+    <ThemeProvider theme={theme}>
+        <Toolbar style={{minHeight: 36}}/>
+        <form >
+          {/*<FormMenuBar/>*/}
           <Paper style={{ width: '100%', minHeight: '100vh' }}>
             {/*<ProminentAppBar />*/}
             <Grid container spacing={1} style={{ marginLeft: '10px', marginTop: '5px' }}>
               <Grid item xs={12}>
                 <Seperator>Inquiry Details</Seperator>
               </Grid>
-              <Grid item xs={10} >
-                <TextField label="Ticket Description" 
-                inputProps={{ style: { fontSize: 20 } }} name="desc" fullWidth/>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <SelectOrganisationWrapper></SelectOrganisationWrapper>
+              <Grid item xs={11}> 
+                <Box
+                  sx={{
+                    display: 'grid',
+                    columnGap: 3,
+                    rowGap: 1,
+                    gridTemplateColumns: '2fr 1fr 1fr',
+                  }}>
+                  <InputControl label="Ticket Description" 
+                    id="ticket_description"
+                    type={InputType.TEXT}
+                    name="desc" 
+                    fullWidth
+                  />
+                  <InputControl label="Received on "
+                    type={InputType.DATETIMEINPUT}
+                    id="date"
+                    name="date"
+                  />
+                  <SelectMasterWrapper
+                    name = {"category"}
+                    id = {"category"}
+                    label = {"Category"}
+                    dialogTitle={"Add Category"}
+                    fetchDataFn = {getEnquirySource}
+                    renderForm={(fnDialogOpen, fnDialogValue) => 
+                        <SourceForm
+                        setDialogOpen={fnDialogOpen}
+                        setDialogValue={fnDialogValue}
+                        />}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    columnGap: 3,
+                    rowGap: 1,
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                  }}>
+                  <SelectMasterWrapper
+                    name = {"source"}
+                    id = {"source"}
+                    label = {"Source"}
+                    dialogTitle={"Add Source"}
+                    fetchDataFn = {getEnquirySource}
+                    renderForm={(fnDialogOpen, fnDialogValue) => 
+                        <SourceForm
+                        setDialogOpen={fnDialogOpen}
+                        setDialogValue={fnDialogValue}
+                        />}
+                  />
+                  <SelectMasterWrapper
+                    name = {"contact"}
+                    id = {"contact"}
+                    label = {"Contact"}
+                    dialogTitle={"Add Contact"}
+                    fetchDataFn = {getContact}
+                    renderForm={(fnDialogOpen, fnDialogValue) => 
+                        <ContactForm
+                        setDialogOpen={fnDialogOpen}
+                        setDialogValue={fnDialogValue}
+                        />
+                      }
+                  />
+                  <SelectMasterWrapper
+                    name = {"rcd_by"}
+                    id = {"rcd_by"}
+                    label = {"Received By"}
+                    dialogTitle={"Add Executive"}
+                    fetchDataFn = {getContact}
+                    renderForm={(fnDialogOpen, fnDialogValue) => 
+                        <ContactForm
+                        setDialogOpen={fnDialogOpen}
+                        setDialogValue={fnDialogValue}
+                        />
+                      }
+                  />
+                </Box>
 
-                <Grid item xs={6} md={12}>
-                  <SelectContactWrapper></SelectContactWrapper>
+                <Grid item xs={12} md={12}>
+                  <Grid item xs={6} md={12}>
+                    <TextField placeholder="Please enter your comments" label="Comments" multiline name="notes" rows={6} fullWidth />
+                  </Grid>
                 </Grid>
               </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Grid item xs={6} md={12}>
-                  <TextField placeholder="Please enter your comments" multiline name="notes" rows={4} fullWidth />
-                </Grid>
+              <Grid item xs={7}>
+                <FullFeaturedCrudGrid></FullFeaturedCrudGrid>
               </Grid>
-
               <Grid item xs={12}>
                 <Seperator>Inquiry Assignment</Seperator>
               </Grid>
 
-              <Grid item xs={12} md={6}>
-                <Grid item xs={6}>
-                  <AutocompleteAdd
-                      options={baseData? baseData.salesPerson : []}
-                      freeSolo={false}
-                      addNew={false}
-                      renderInput={(params)=> <TextField {...params} name="salesperson" label="Sales Person" />}
-                    />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <AutocompleteAdd
-                        options={baseData? baseData.catList : []}
-                        freeSolo={false}
-                        addNew={false}
-                        renderInput={(params)=> <TextField {...params} name="category" label="Category" />}
-                      />
-                </Grid>
-                <Grid item xs={6}>
-                  <DatePick 
-                    label="Expected closure date"
-                    format="DD-MM-YYYY"
-                    name="expclosuredate"
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Grid item xs={6}>
-                  <TextField name='Stage'/>
-                </Grid>
-                <Grid item xs={6}>
-                  <AutocompleteAdd
-                      options={baseData? baseData.action : []}
-                      freeSolo={false}
-                      addNew={false}
-                      renderInput={(params)=> <TextField {...params} name="nextaction" label="Next Action" />}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                  <DatePick 
-                    label="Next Action date"
-                    format="DD-MM-YYYY"
-                    name="nextactiondate"
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Seperator>Other Details</Seperator>
-              </Grid>
-              {/* create date*/} 
-              <Grid item xs={6}>
-                <DatePick 
-                  label="Create Date"
-                  format="DD-MM-YYYY"
-                  readOnly={true}
-                  defaultValue={new Date()}
-                  />
-              </Grid>
-
-              {/* creator */}
-              <Grid item xs={6}>
-                <Typography component="div" sx={{ position: 'relative', backgroundColor: 'white'}}>
-                  Created by: {baseData.userName} 
-                </Typography>
-              </Grid>
-
+ 
             </Grid>
           </Paper>
         </form>
       </ThemeProvider>
-    </>
   );
 }
 
-
-
-/*
-                <Grid item xs={6} md={12}>
-                  <AddPersonDialog
-                    options={baseData? baseData.person:[]}
-                    freeSolo={false}
-                    addNew={true}
-                    renderInput={(params)=> <TextField {...params} name="contactperson" label="Contact Person" />}
-                  />
-                </Grid>
-*/

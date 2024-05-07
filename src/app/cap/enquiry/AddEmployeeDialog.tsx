@@ -6,13 +6,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TextField  from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import AutocompleteAdd, { propsDataT, optionsDataT}  from '../../Widgets/Autocomplete';
+import AutocompleteAdd, { propsDataT}  from '../../Widgets/Autocomplete';
 import ReactPhoneInput from 'react-phone-input-material-ui';
 import type { DialogProps } from "@mui/material";
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 
-import { createEmployee } from '../../controllers/person.controller';
+import { createContact } from '../../controllers/contact.controller';
 
 
 
@@ -30,7 +30,7 @@ export default function AddEmployeeDialog(props: propsDataT) {
   
 
   const handleSubmit = async (formData: FormData)=> {
-    const result = await createEmployee(formData);
+    const result = await createContact(formData);
     if (result.status) {
       const revisedOptions = [{id: result.data.personId as number, name: result.data.firstName + ' ' + result.data.lastName}, ...props.options];
       setOptions(revisedOptions);

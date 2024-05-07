@@ -5,9 +5,13 @@ import { getCountryList,
   getEnquiryCategoryList, 
   getOrganizationList,
   getMenuOptionsList,
-  getContactList } from '../services/masters.service';
+  createCountryDb,
+  createStateDb, 
+  getStateList } from '../services/masters.service';
 import { getSession } from '../services/session.service';
-import {menuTreeT} from '../models/models';
+import * as zs from '../zodschema/zodschema';
+import * as zm from '../models/models';
+import { SqlError } from 'mariadb';
 
  
 
@@ -49,7 +53,7 @@ export async function getMenuOptions(crmDb: string) {
 }
 
 
-function createTree(flatArray: menuTreeT[], parentId = 0): menuTreeT[] {
+function createTree(flatArray: zm.menuTreeT[], parentId = 0): zm.menuTreeT[] {
   return flatArray
     .filter(item => item.parent_id === parentId)
     .map(item => ({
@@ -64,6 +68,23 @@ export async function getCountries(searchString: string) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getCountryList(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * 
+ * @param searchState : partial state string to search for
+ * @param country : country for which the states need to be searched
+ * @returns 
+ */
+export async function getStates(searchState: string, country: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getStateList(session.user.dbInfo.dbName, searchState, country);
     }
   } catch (error) {
     throw error;
@@ -111,13 +132,95 @@ export async function getOrganization(searchString: string) {
 }
 
 
-export async function getContact(searchString: string) {
-  try {
+
+
+
+
+
+/**
+ * 
+ * @param formData 
+ * @returns object with status, record if success and error
+ */
+export async function createCountry(formData: FormData) {
+  let result;
+    try {
     const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getContactList(session.user.dbInfo.dbName, searchString);
+    if (session) {
+      const data = {
+        name: formData.get("name") as string,
+        alias: formData.get("alias") as string,
+      };
+  
+      const parsed = zs.nameMasterData.safeParse(data);
+      if(parsed.success) {
+        const dbResult = await createCountryDb(session, data);
+        if (dbResult.length >0 ) {
+         result = {status: true, data:dbResult};
+        } else {
+          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+        }
+      } else {
+        //result = {status: false, data: parsed.error.flatten().fieldErrors };
+        result = {status: false, data: parsed.error.issues };
+
+      }
+    } else {
+      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
     }
-  } catch (error) {
-    throw error;
+    return result;
+  } catch (e) {
+    console.log(e);
+    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
+      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+      return result;
+    }
   }
+  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  return result;
 }
+
+
+/**
+ * 
+ * @param formData 
+ * @returns object with status, record if success and error
+ */
+export async function createState(formData: FormData) {
+  let result;
+    try {
+    const session = await getSession();
+    if (session) {
+      const data = {
+        name: formData.get("name") as string,
+        alias: formData.get("alias") as string,
+      };
+  
+      const parsed = zs.nameMasterData.safeParse(data);
+      if(parsed.success) {
+        const dbResult = await createStateDb(session, data);
+        if (dbResult.length >0 ) {
+         result = {status: true, data:dbResult};
+        } else {
+          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+        }
+      } else {
+        //result = {status: false, data: parsed.error.flatten().fieldErrors };
+        result = {status: false, data: parsed.error.issues };
+
+      }
+    } else {
+      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
+    }
+    return result;
+  } catch (e) {
+    console.log(e);
+    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
+      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+      return result;
+    }
+  }
+  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  return result;
+}
+

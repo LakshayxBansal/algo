@@ -1,14 +1,16 @@
 'use server'
 
 import excuteQuery  from '../utils/db/db';
+import * as zm from '../models/models';
+import { Session } from 'next-auth';
+
 
 /**
  * 
- * @param getCountryList 
- * @returns list of countries with id
+ * @param crmDb 
+ * @param searchString - partial string for country 
+ * @returns 
  */
-
-
 export async function getCountryList(crmDb: string, searchString: string) {
 
   try {
@@ -18,6 +20,38 @@ export async function getCountryList(crmDb: string, searchString: string) {
     if (searchString !== "") {
       query = query + " where name like '%" + searchString + "%'";
       values = [];
+    }
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+
+/**
+ * 
+ * @param crmDb 
+ * @param searchString - partial string for country 
+ * @returns 
+ */
+export async function getStateList(crmDb: string, searchState: string, country: string) {
+
+  try {
+    let query = 'select s.id as id, s.name as name from state_master s, country_master c where \
+        c.name = ? and \
+        c.id = s.country_id ';
+    let values: any[] = [country];
+
+    if (searchState !== "") {
+      query = query + " and s.name like '%" + searchState + "%'";
     }
     const result = await excuteQuery({
       host: crmDb,
@@ -160,33 +194,7 @@ export async function getCompanyList(email: string | undefined | null) {
 }
 
 
-/**
- * returns rows from person data based on type specified
- * @param type 
- */
-export async function getContactList(crmDb: string, searchString: string){
-  
-  try {
-    let query = 'select id as id, name as name from contact_master';
-    let values: any[] = [];
 
-    if (searchString !== "") {
-      query = query + " where name like '%" + searchString + "%'";
-      values = [];
-    }
-    const result = await excuteQuery({
-      host: crmDb,
-      query: query, 
-      values: values,
-    });
-
-    return result;
-
-  } catch (e) {
-    console.log(e);
-  }
-
-}
 
 /**
  * returns rows from action data based on type specified
@@ -221,4 +229,55 @@ export async function getMenuOptionsList(crmDb: string) {
      throw e;
    }
 
+}
+
+
+
+/**
+ * 
+ * @param session : user session
+ * @param statusData : data for saving
+ * @returns result from DB (returning *)
+ */
+export async function createCountryDb(session: Session, statusData: zm.nameAliasDataT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "insert into country_master (name, alias, created_by, created_on) \
+       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      values: [
+        statusData.name,
+        statusData.alias,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+
+/**
+ * 
+ * @param session : user session
+ * @param statusData : data for saving
+ * @returns result from DB (returning *)
+ */
+export async function createStateDb(session: Session, statusData: zm.nameAliasDataT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "insert into state_master (name, alias, created_by, created_on) \
+       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      values: [
+        statusData.name,
+        statusData.alias,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
 }

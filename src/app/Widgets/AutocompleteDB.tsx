@@ -13,15 +13,15 @@ const AutocompleteDB: React.FC<AutocompletePropsDataT> = ({
     dataValues,
     ...otherProps}) => 
 {
-  const [inputValue, setInputValue] = React.useState('');
+  const [inputValue, setInputValue] = React.useState(otherProps.value);
   const [options, setOptions] = React.useState<optionsDataT[]>([]);
 
   React.useEffect(() => {
-
+/*
     if (inputValue === '') {
       return undefined;
     }
-    
+  */  
     
     const getData = debounce(async (input) => {
       const results = await dataValues(input);
@@ -45,7 +45,8 @@ const AutocompleteDB: React.FC<AutocompletePropsDataT> = ({
       autoComplete
       includeInputInList
       filterSelectedOptions
-      noOptionsText="Please type a few chars..."
+      value={inputValue}
+      noOptionsText="Please type a few chars or click + to add..."
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
@@ -62,7 +63,8 @@ const AutocompleteDB: React.FC<AutocompletePropsDataT> = ({
             </Grid>
           </li>
         );
-      }}/>
+      }}
+    />
   );
 }
 

@@ -1,5 +1,9 @@
 import * as z from 'zod';
 
+const phoneRegex = new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/);
+const panRegEx = new RegExp(/^[a-zA-Z0-9]{5}[0-9]{4}[a-zA-Z0-9]$/);
+const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 export const userSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(12),
@@ -9,39 +13,57 @@ export const userSchema = z.object({
 
 
 export const organisationSchema = z.object({
+  id:z.number().optional(),
   name: z.string().min(1).max(45),
-  alias: z.string().max(45),
-  pan: z.string().max(20),
-  gst: z.string().max(20),
-  country_id: z.number(),
-  state_id: z.number(),
-  city: z.string().max(75),
-  pin: z.string().max(20),
-  add1: z.string().min(1).max(75),
-  add2: z.string().min(0).max(75),
-  add3: z.string().min(0).max(75),
+  alias: z.string().max(45).optional(),
+  address1: z.string().max(75).optional(),
+  address2: z.string().max(75).optional(),
+  address3: z.string().max(75).optional(),
+  city: z.string().max(75).optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+  pan: z.union([z.string().optional(), z.string().min(10).regex(panRegEx, 'Invalid PAN number!')]),
+  gstin: z.union([z.string().optional(), z.string().min(10).regex(panRegEx, 'Invalid GSTIN number!')]),
+  pincode: z.string().max(15).optional(),
+  stamp: z.number().optional(),
+  created_by: z.number().optional(),
+  modified_by: z.number().optional(),
+  created_on: z.date().optional(),
+  modified_on: z.date().optional(),
 });
 
 
+//  pan: z.string().regex(panRegEx, 'Invalid PAN number!'),
 
-
+// z.string().regex(panRegEx, 'Invalid PAN number!'),
 /**
  * validate the add person to person table
  */
-const options = ["contact", "employee"];
 export const contactSchema = z.object({
-  personId:z.number().optional(),
-  firstName: z.string().min(1).max(45),
-  lastName: z.string().min(1).max(45),
-  email: z.string().email(),
-  phone: z.string().min(8).max(12),
-  add1: z.string().min(1).max(45),
-  add2: z.string().min(1).max(45),
-  city: z.string().min(1).max(45),
-  state: z.string().min(1).max(45),
-  pin:z.string().min(1).max(45),
-  personType:z.enum(options as [string, ...string[]]),
+  id:z.number().optional(),
+  alias: z.string().max(60).optional(),
+  name: z.string().min(1).max(60),
+  print_name: z.string().max(60).optional(),
+  pan: z.union([z.string().optional(), z.string().min(10).regex(panRegEx, 'Invalid PAN number!')]),
+  aadhaar: z.string().max(20), 
+  address1: z.string().max(75), 
+  address2: z.string().max(75), 
+  address3: z.string().max(75), 
+  pincode: z.string().max(15),
+  email: z.string().email().max(100),
+  mobile:  z.string().regex(phoneRegex, 'Invalid Number!'),
+  whatsapp: z.string().regex(phoneRegex, 'Invalid Number!'),
+  dob: z.date().optional(),
+  doa: z.date().optional(),
+  contactGroup: z.string().optional(), 
+  state: z.string().optional(),
+  area: z.string().optional(), 
+  department: z.string().optional(), 
+  organisation: z.string().optional(), 
+  country: z.string().optional(),
+  city: z.string().optional(), 
 });
+
 
 export const employeeSchema = z.object({
   person: contactSchema,
@@ -51,21 +73,43 @@ export const employeeSchema = z.object({
   isAppUser: z.boolean() 
 })
 
+
 /**
- * validate inquiry schema
+ * validate enquiry schema
  */
-export const inquirySchema = z.object({
-  inquiryId:z.number().optional(),
-  desc:z.string().min(1).max(45),
-  customerId: z.number(),
-  contactPersonId: z.number(),
-  active:z.number().min(0).max(1),
-  expectedRev:z.number(),
-  probability: z.number().max(100),
-  nextStageCompletionDate:z.date(),
-  createDate: z.date(),
-  creatorId: z.number()
-  });
+
+export const enquirySchema = z.object({
+  id: z.number().optional(),
+  desc: z.string().min(1).max(75),
+  date: z.date(),
+  enq_number : z.string().min(1),
+  contact_id: z.number(),
+  received_by_id : z.number(),
+  category_id: z.number(),
+  source_id : z.number(),
+  executive_id : z.number(),
+  allocated_to : z.number().optional(),
+  modified_by : z.number().optional(), 
+  modified_on : z.date().optional(),
+  created_by : z.number().optional(), 
+  created_on : z.number().optional(),
+});
+
+
+/**
+ * 
+ */
+export const contactGroupSchema = z.object({
+  id: z.number().optional(),
+  alias: z.string().max(60).optional(),
+  name: z.string().min(1).max(60),
+  stamp: z.number().optional(),
+  parentGroup: z.string().max(60).optional(),
+  modified_by : z.number().optional(), 
+  modified_on : z.date().optional(),
+  created_by : z.number().optional(), 
+  created_on : z.number().optional(),
+});
 
 
   /**
@@ -105,6 +149,24 @@ export const menuOption = z.object({
   menu_order: z.number(),
 
 })
+
+/**
+ * used for storing simple name master
+ */
+export const nameMasterData = z.object({ 
+  id: z.number().optional(),
+  name: z.string().min(1).max(45),
+});
+
+
+/**
+ * used for storing name, alias master
+ */
+export const nameAliasData = z.object({ 
+  id: z.number().optional(),
+  name: z.string().min(1).max(45),
+  alias: z.string().max(45)
+});
 
 /*
 cField1

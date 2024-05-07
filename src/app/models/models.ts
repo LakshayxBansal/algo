@@ -3,17 +3,23 @@ import * as zs from '../zodschema/zodschema';
 
 export type userT = z.infer<typeof zs.userSchema>;
 
-export type organisationT = z.infer<typeof zs.organisationSchema>;
+export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 
-export type personT = z.infer<typeof zs.personSchema>;
+export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
 export type employeeT = z.infer<typeof zs.employeeSchema>;
 
-export type inquiryT = z.infer<typeof zs.inquirySchema>;
+export type enquirySchemaT = z.infer<typeof zs.enquirySchema>;
+
+export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
 export type optionsDataT = z.infer<typeof zs.optionsData>;
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
+
+
+export type nameMasterDataT = z.infer<typeof zs.nameMasterData>;    // for simple name based masters
+export type nameAliasDataT = z.infer<typeof zs.nameAliasData>;     // for name and alias masters
 
 export type menuOptionT = z.infer<typeof zs.menuOption>
 

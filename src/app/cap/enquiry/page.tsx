@@ -10,14 +10,8 @@ export default async function MyForm() {
     const session = await getSession();
 
     if (session) {
-      const result = await getEquiryPageData();
       const masterData = {
         userName: session.user?.name as string,
-        salesPerson: result?.salesPerson,
-        catList: result?.catList,
-        customer: result?.customer,
-        person: result?.person,
-        action: result?.action
       }
       
       return (

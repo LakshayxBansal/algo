@@ -13,6 +13,7 @@
     "jsx": "preserve",
     "incremental": true,
     "typeRoots": ["./node_modules/@types", "./types"],
+    "downlevelIteration": true,
     "plugins": [
       {
         "name": "next"
