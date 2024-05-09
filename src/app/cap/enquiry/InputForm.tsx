@@ -11,11 +11,13 @@ import {InputType} from '@/app/Widgets/input/InputControl';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import { getEnquirySource } from '@/app/controllers/enquirySource.controller';
 import { getContact } from '@/app/controllers/contact.controller';
+import { getEnquiryCategory } from '@/app/controllers/enquiryCategory.controller';
 import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
 import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 import {theme} from '@/app/utils/theme.util'
 import { ThemeProvider } from "@mui/material/styles";
 import Box from '@mui/material/Box';
+
 
 
 const strA = "custom_script.js";
@@ -54,7 +56,6 @@ export default function InputForm(props: {baseData: IformData}) {
 
   return (
     <ThemeProvider theme={theme}>
-        <Toolbar style={{minHeight: 36}}/>
         <form >
           {/*<FormMenuBar/>*/}
           <Paper style={{ width: '100%', minHeight: '100vh' }}>
@@ -83,16 +84,17 @@ export default function InputForm(props: {baseData: IformData}) {
                     name="date"
                   />
                   <SelectMasterWrapper
-                    name = {"category"}
-                    id = {"category"}
-                    label = {"Category"}
-                    dialogTitle={"Add Category"}
-                    fetchDataFn = {getEnquirySource}
+                    name = {"contact"}
+                    id = {"contact"}
+                    label = {"Contact"}
+                    dialogTitle={"Add Contact"}
+                    fetchDataFn = {getContact}
                     renderForm={(fnDialogOpen, fnDialogValue) => 
-                        <SourceForm
-                        setDialogOpen={fnDialogOpen}
-                        setDialogValue={fnDialogValue}
-                        />}
+                        <ContactForm
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
+                        />
+                      }
                   />
                 </Box>
                 <Box
@@ -102,6 +104,19 @@ export default function InputForm(props: {baseData: IformData}) {
                     rowGap: 1,
                     gridTemplateColumns: 'repeat(3, 1fr)',
                   }}>
+                  <SelectMasterWrapper
+                    name = {"category"}
+                    id = {"category"}
+                    label = {"Category"}
+                    dialogTitle={"Add Category"}
+                    fetchDataFn = {getEnquiryCategory}
+                    renderForm={(fnDialogOpen, fnDialogValue) => 
+                        <SourceForm
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
+                        />}
+                  />
+
                   <SelectMasterWrapper
                     name = {"source"}
                     id = {"source"}
@@ -114,19 +129,7 @@ export default function InputForm(props: {baseData: IformData}) {
                         setDialogValue={fnDialogValue}
                         />}
                   />
-                  <SelectMasterWrapper
-                    name = {"contact"}
-                    id = {"contact"}
-                    label = {"Contact"}
-                    dialogTitle={"Add Contact"}
-                    fetchDataFn = {getContact}
-                    renderForm={(fnDialogOpen, fnDialogValue) => 
-                        <ContactForm
-                        setDialogOpen={fnDialogOpen}
-                        setDialogValue={fnDialogValue}
-                        />
-                      }
-                  />
+
                   <SelectMasterWrapper
                     name = {"rcd_by"}
                     id = {"rcd_by"}
@@ -144,9 +147,31 @@ export default function InputForm(props: {baseData: IformData}) {
 
                 <Grid item xs={12} md={12}>
                   <Grid item xs={6} md={12}>
-                    <TextField placeholder="Please enter your comments" label="Comments" multiline name="notes" rows={6} fullWidth />
+                    <TextField placeholder="Call receipt remarks" label="Call receipt remarks" multiline name="callReceiptRemarks" rows={6} fullWidth />
                   </Grid>
                 </Grid>
+                <Grid item xs={12} md={12}>
+                  <Grid item xs={6} md={12}>
+                    <TextField placeholder="Suggested Action Remarks" label="Suggested Action Remarks" multiline name="suggestedActionRemarks" rows={6} fullWidth />
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Seperator>Final Status</Seperator>
+                </Grid>
+                <SelectMasterWrapper
+                    name = {"status"}
+                    id = {"status"}
+                    label = {"Call Status"}
+                    dialogTitle={"Add Status"}
+                    fetchDataFn = {getContact}
+                    renderForm={(fnDialogOpen, fnDialogValue) => 
+                        <ContactForm
+                        setDialogOpen={fnDialogOpen}
+                        setDialogValue={fnDialogValue}
+                        />
+                      }
+                  />
+
               </Grid>
               <Grid item xs={7}>
                 <FullFeaturedCrudGrid></FullFeaturedCrudGrid>
@@ -154,6 +179,7 @@ export default function InputForm(props: {baseData: IformData}) {
               <Grid item xs={12}>
                 <Seperator>Inquiry Assignment</Seperator>
               </Grid>
+
 
  
             </Grid>

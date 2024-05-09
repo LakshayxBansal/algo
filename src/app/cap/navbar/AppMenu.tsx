@@ -28,7 +28,7 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
             username = {session.user?.name!}
             companyName = {session.user.dbInfo.companyName}
             >
-            <Box component="span" sx={{ display: 'block' }}>s
+            <Box component="span" sx={{ display: 'block',  mt: 8 }}>
               {props.children}
             </Box>
           </MenuBar>

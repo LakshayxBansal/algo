@@ -1,7 +1,6 @@
 import React from 'react';
 import InputForm from './InputForm';
 import { getSession } from '../../services/session.service';
-import { getEquiryPageData } from '../../controllers/inquiry.controller';
 import { redirect } from 'next/navigation';
 
 
