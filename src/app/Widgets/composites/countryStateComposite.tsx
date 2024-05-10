@@ -1,10 +1,11 @@
-
+import React, {useState} from 'react';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
 import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
 import { getCountries, getStates } from '@/app/controllers/masters.controller';
 
 export default function CountryStateComposite(){
+  const [country, setCountry] = useState('');
 
   async function getStatesforCountry(stateStr: string) {
     const country = (document.getElementById("country") as HTMLInputElement).value;

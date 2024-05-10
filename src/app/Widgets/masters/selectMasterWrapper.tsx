@@ -64,7 +64,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
       text.value = 'new' + val;
     }
   }
-  
+
   function openDialog(){
     if (allowNewAdd) {
       setDialogOpen(true);
