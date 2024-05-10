@@ -150,6 +150,21 @@ export const menuOption = z.object({
 
 })
 
+
+/**
+ * used for storing sub status master
+ */
+export const enquirySubStatusMaster = z.object({ 
+  id: z.number().optional(),
+  name: z.string().min(1).max(50),
+  status: z.string().min(1).max(30), 
+  created_on: z.date(), 
+  modified_on: z.date(), 
+  created_by: z.number(), 
+  modified_by: z.number(), 
+  stamp: z.number(),});
+
+
 /**
  * used for storing simple name master
  */

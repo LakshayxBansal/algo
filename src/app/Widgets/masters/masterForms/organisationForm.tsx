@@ -11,6 +11,7 @@ import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import CountryForm from './countryForm';
 import StateForm from './countryForm';
+import { revalidatePath } from 'next/cache';
 
 export default function OrganisationForm(props: {
       setDialogOpen: (props: any) => void,
@@ -72,7 +73,7 @@ export default function OrganisationForm(props: {
         sx={{ display: 'grid', 
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: 'repeat(3, 1fr)', 
+              gridTemplateColumns: '2fr 1fr', 
             }}>
         <InputControl
           type={InputType.TEXT}
@@ -91,6 +92,13 @@ export default function OrganisationForm(props: {
           error={formError?.alias?.error}
           helperText={formError?.alias?.msg} 
         />
+      </Box>
+      <Box 
+        sx={{ display: 'grid', 
+              columnGap: 3,
+              rowGap: 1,
+              gridTemplateColumns: 'repeat(3, 1fr)', 
+            }}>
         <InputControl
           type={InputType.TEXT}     
           id="print_name"

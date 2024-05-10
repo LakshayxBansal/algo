@@ -4,13 +4,10 @@ import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { getCountries, getStates } from '../../../controllers/masters.controller';
 import { getOrganisation } from '@/app/controllers/organisation.controller';
 import { getDepartment } from '@/app/controllers/department.controller';
 import { contactSchema } from '@/app/zodschema/zodschema';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
-import CountryForm from './countryForm';
-import StateForm from './countryForm';
 import OrganisationForm from './organisationForm';
 import DepartmentForm from './departmentForm';
 import {createContact} from '@/app/controllers/contact.controller';
@@ -18,7 +15,7 @@ import { getContactGroup } from '@/app/controllers/contactGroup.controller';
 import ContactGroupForm from '@/app/Widgets/masters/masterForms/contactGroupForm';
 import AreaForm from './areaForm';
 import { getArea } from '@/app/controllers/area.controller';
-
+import CountryStateComposite from '@/app/Widgets/composites/countryStateComposite';
 
 
 
@@ -69,14 +66,7 @@ export default function ContactForm(props: {
     props.setDialogOpen(false);  
   }
 
-  async function getStatesforCountry(stateStr: string) {
-    const country = (document.getElementById("country") as HTMLInputElement).value;
 
-    const states = await getStates(stateStr, country);
-    if (states.length > 0){
-      return states
-    } 
-  }
 
   return(
     <form action={handleSubmit}> 
@@ -253,34 +243,7 @@ export default function ContactForm(props: {
               rowGap: 1,
               gridTemplateColumns: 'repeat(3, 1fr)', 
             }}>
-        <SelectMasterWrapper
-          name = {"country"}
-          id = {"country"}
-          label = {"Country"}
-          width = {210}
-          dialogTitle={"Add country"}
-          fetchDataFn = {getCountries}
-          renderForm={(fnDialogOpen, fnDialogValue) => 
-            <CountryForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-            />
-          }
-        />
-        <SelectMasterWrapper
-          name = {"state"}
-          id = {"state"}
-          label = {"State"}
-          width = {210}
-          dialogTitle={"Add State"}
-          fetchDataFn = {getStatesforCountry}
-          renderForm={(fnDialogOpen, fnDialogValue) => 
-            <StateForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-            />
-          }
-        />
+        <CountryStateComposite/>
 
         <InputControl 
           type={InputType.TEXT} 

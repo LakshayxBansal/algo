@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, ReactNode } from 'react';
 import { Box, Grid } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import {AddDialog} from './addDialog';
@@ -13,7 +13,7 @@ import Popper from '@mui/material/Popper';
 
 type RenderFormFunction = (
   fnDialogOpen: (props: any) => void,
-  fnDialogValue?: (props: any) => void
+  fnDialogValue: (props: any) => void,
 ) => JSX.Element;
 
 
@@ -56,7 +56,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
 
 
   function onHighlightChange(event: React.SyntheticEvent, option: any, reason: string) {
-    const text = document.getElementById("popper_textid_temp_5276");
+    const text = document.getElementById("popper_textid_temp_5276") as HTMLInputElement;
 
     if (text && option) {
       const val = option.name;
@@ -87,9 +87,13 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
             onHighlightChange={onHighlightChange} 
             autoSelect={true}
             autoHighlight={true}
+            value={dialogValue}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            freeSolo={true}
+            forcePopupIcon={true}
             PopperComponent={(props) => (
               <Popper {...props}>
-                {props.children}
+                {props.children as ReactNode}
                 <TextField
                   id="popper_textid_temp_5276"
                   variant="outlined"
@@ -122,7 +126,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
           open={dialogOpen} 
           setDialogOpen={setDialogOpen} 
           >
-            {props.renderForm(setDialogOpen)}
+            {props.renderForm(setDialogOpen, setDialogValue)}
         </AddDialog>
       }
     </>

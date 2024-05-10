@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import {InputControl, InputType} from '@/app/Widgets/input/InputControl';
 import Box from '@mui/material/Box';
-import { createStatus } from '../../../controllers/masters.controller';
+import { createEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
 import Grid from '@mui/material/Grid';
 import {nameMasterData} from '../../../zodschema/zodschema';
 
@@ -25,7 +25,7 @@ export default function StatusForm(props: {
     let issues;
 
     if (parsed.success) {
-      result = await createStatus(formData);
+      result = await createEnquiryStatus(formData);
       if (result.status){
         const newVal = {id: result.data[0].id, name: result.data[0].name};
         props.setDialogValue(newVal);

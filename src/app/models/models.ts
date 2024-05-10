@@ -16,6 +16,7 @@ export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 export type optionsDataT = z.infer<typeof zs.optionsData>;
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
+export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 
 
 export type nameMasterDataT = z.infer<typeof zs.nameMasterData>;    // for simple name based masters
