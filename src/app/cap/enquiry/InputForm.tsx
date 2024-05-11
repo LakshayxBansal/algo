@@ -2,21 +2,25 @@
 import React from 'react';
 import { Grid, TextField } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import Toolbar from '@mui/material/Toolbar';
 import { createEnquiry } from '@/app/controllers/enquiry.controller';
 import Seperator from '@/app/Widgets/seperator';
-import FullFeaturedCrudGrid from './tasks';
 import {InputControl} from '@/app/Widgets/input/InputControl';
 import {InputType} from '@/app/Widgets/input/InputControl';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import { getEnquirySource } from '@/app/controllers/enquirySource.controller';
 import { getContact } from '@/app/controllers/contact.controller';
 import { getEnquiryCategory } from '@/app/controllers/enquiryCategory.controller';
+import { getEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
+import { getEnquirySubStatus } from '@/app/controllers/enquirySubStatus.controller';
 import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
 import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
+import StatusForm from '@/app/Widgets/masters/masterForms/statusForm';
 import {theme} from '@/app/utils/theme.util'
 import { ThemeProvider } from "@mui/material/styles";
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { optionsDataT } from '../../models/models';
+
 
 
 
@@ -52,16 +56,22 @@ export default function InputForm(props: {baseData: IformData}) {
  
   };
 
-  //       
+  async function getSubStatusforStatus(stateStr: string) {
+    const status = (document.getElementById("status") as HTMLInputElement).value;
+
+    const subStatus = await getEnquirySubStatus(stateStr, status);
+    if (subStatus?.length > 0){
+      return subStatus;
+    } 
+  }
+
 
   return (
     <ThemeProvider theme={theme}>
         <form >
-          {/*<FormMenuBar/>*/}
-          <Paper style={{ width: '100%', minHeight: '100vh' }}>
-            {/*<ProminentAppBar />*/}
+          <Paper style={{  minHeight: '100vh', minWidth: '100vh' }}>
             <Grid container spacing={1} style={{ marginLeft: '10px', marginTop: '5px' }}>
-              <Grid item xs={12}>
+              <Grid item xs={11}>
                 <Seperator>Inquiry Details</Seperator>
               </Grid>
               <Grid item xs={11}> 
@@ -83,12 +93,14 @@ export default function InputForm(props: {baseData: IformData}) {
                     id="date"
                     name="date"
                   />
-                  <SelectMasterWrapper
+                  <SelectMasterWrapper<optionsDataT>
                     name = {"contact"}
                     id = {"contact"}
                     label = {"Contact"}
                     dialogTitle={"Add Contact"}
+                    renderOptions={(option : optionsDataT) => {return option.name + ' ' + option.id}}
                     fetchDataFn = {getContact}
+                    // optionLabels={['id','name']}
                     renderForm={(fnDialogOpen, fnDialogValue) => 
                         <ContactForm
                           setDialogOpen={fnDialogOpen}
@@ -112,8 +124,8 @@ export default function InputForm(props: {baseData: IformData}) {
                     fetchDataFn = {getEnquiryCategory}
                     renderForm={(fnDialogOpen, fnDialogValue) => 
                         <SourceForm
-                          setDialogOpen={fnDialogOpen}
-                          setDialogValue={fnDialogValue}
+                            setDialogOpen={fnDialogOpen}
+                            setDialogValue={fnDialogValue}
                         />}
                   />
 
@@ -125,8 +137,8 @@ export default function InputForm(props: {baseData: IformData}) {
                     fetchDataFn = {getEnquirySource}
                     renderForm={(fnDialogOpen, fnDialogValue) => 
                         <SourceForm
-                        setDialogOpen={fnDialogOpen}
-                        setDialogValue={fnDialogValue}
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
                         />}
                   />
 
@@ -138,8 +150,8 @@ export default function InputForm(props: {baseData: IformData}) {
                     fetchDataFn = {getContact}
                     renderForm={(fnDialogOpen, fnDialogValue) => 
                         <ContactForm
-                        setDialogOpen={fnDialogOpen}
-                        setDialogValue={fnDialogValue}
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
                         />
                       }
                   />
@@ -147,41 +159,105 @@ export default function InputForm(props: {baseData: IformData}) {
 
                 <Grid item xs={12} md={12}>
                   <Grid item xs={6} md={12}>
-                    <TextField placeholder="Call receipt remarks" label="Call receipt remarks" multiline name="callReceiptRemarks" rows={6} fullWidth />
+                    <TextField placeholder="Call receipt remarks" label="Call receipt remarks" multiline name="callReceiptRemarks" id="callReceiptRemarks" rows={6} fullWidth />
                   </Grid>
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <Grid item xs={6} md={12}>
-                    <TextField placeholder="Suggested Action Remarks" label="Suggested Action Remarks" multiline name="suggestedActionRemarks" rows={6} fullWidth />
+                    <TextField placeholder="Suggested Action Remarks" label="Suggested Action Remarks" multiline name="suggestedActionRemarks" id="suggestedActionRemarks" rows={6} fullWidth />
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
                   <Seperator>Final Status</Seperator>
                 </Grid>
-                <SelectMasterWrapper
-                    name = {"status"}
-                    id = {"status"}
-                    label = {"Call Status"}
-                    dialogTitle={"Add Status"}
-                    fetchDataFn = {getContact}
-                    renderForm={(fnDialogOpen, fnDialogValue) => 
-                        <ContactForm
-                        setDialogOpen={fnDialogOpen}
-                        setDialogValue={fnDialogValue}
-                        />
-                      }
+                <Box 
+                  sx={{ display: 'grid', 
+                        columnGap: 3,
+                        rowGap: 1,
+                        gridTemplateColumns: 'repeat(3, 1fr)', 
+                      }}>
+                  <SelectMasterWrapper
+                      name = {"status"}
+                      id = {"status"}
+                      label = {"Call Status"}
+                      dialogTitle={"Add Status"}
+                      fetchDataFn = {getEnquiryStatus}
+                      renderForm={(fnDialogOpen, fnDialogValue) => 
+                          <StatusForm
+                            setDialogOpen={fnDialogOpen}
+                            setDialogValue={fnDialogValue}
+                          />
+                        }
+                    />
+                  <SelectMasterWrapper
+                      name = {"substatus"}
+                      id = {"substatus"}
+                      label = {"Call Sub-Status"}
+                      dialogTitle={"Add Sub-Status"}
+                      fetchDataFn = {getSubStatusforStatus}
+                      renderForm={(fnDialogOpen, fnDialogValue) => 
+                          <StatusForm
+                            setDialogOpen={fnDialogOpen}
+                            setDialogValue={fnDialogValue}
+                          />
+                        }
+                    />
+                  <SelectMasterWrapper
+                      name = {"actionTaken"}
+                      id = {"actionTaken"}
+                      label = {"Action Taken"}
+                      dialogTitle={"Add Action"}
+                      fetchDataFn = {getSubStatusforStatus}
+                      renderForm={(fnDialogOpen, fnDialogValue) => 
+                          <StatusForm
+                            setDialogOpen={fnDialogOpen}
+                            setDialogValue={fnDialogValue}
+                          />
+                        }
+                    />
+                  <SelectMasterWrapper
+                      name = {"nextAction"}
+                      id = {"nextAction"}
+                      label = {"Next Action"}
+                      dialogTitle={"Add Action"}
+                      fetchDataFn = {getSubStatusforStatus}
+                      renderForm={(fnDialogOpen, fnDialogValue) => 
+                          <StatusForm
+                            setDialogOpen={fnDialogOpen}
+                            setDialogValue={fnDialogValue}
+                          />
+                        }
+                    />
+                  <InputControl label="When "
+                    type={InputType.DATETIMEINPUT}
+                    id="whenDate"
+                    name="whenDate"
                   />
+                  <Grid item xs={12} md={12}>
+                    <Grid item xs={6} md={12}>
+                      <TextField placeholder="Closure remarks" label="Closure remarks" multiline name="closureRemarks" id="closureRemarks" rows={2} fullWidth />
+                    </Grid>
+                  </Grid>
+                </Box>
 
               </Grid>
-              <Grid item xs={7}>
-                <FullFeaturedCrudGrid></FullFeaturedCrudGrid>
+              <Grid item xs={11}>
+                  <Seperator></Seperator>
+                </Grid>
+              <Grid container>
+                <Grid item xs={5} md={5}>
+                  <Box  margin={1} sx={{display: "flex"}}>
+                    <Box display="flex" justifyContent="flex-start" alignItems="flex-start" m={1}>
+                      <Button>Cancel</Button>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} md={6}>
+                  <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
+                    <Button type="submit" variant="contained">Submit</Button>
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <Seperator>Inquiry Assignment</Seperator>
-              </Grid>
-
-
- 
             </Grid>
           </Paper>
         </form>
@@ -189,3 +265,11 @@ export default function InputForm(props: {baseData: IformData}) {
   );
 }
 
+/*
+              <Grid item xs={7}>
+                <FullFeaturedCrudGrid></FullFeaturedCrudGrid>
+              </Grid>
+              <Grid item xs={12}>
+                <Seperator>Inquiry Assignment</Seperator>
+              </Grid>
+*/

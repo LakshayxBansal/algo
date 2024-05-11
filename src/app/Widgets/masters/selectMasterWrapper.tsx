@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, ReactNode } from 'react';
 import { Box, Grid } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import {AddDialog} from './addDialog';
@@ -13,8 +13,12 @@ import Popper from '@mui/material/Popper';
 
 type RenderFormFunction = (
   fnDialogOpen: (props: any) => void,
-  fnDialogValue?: (props: any) => void
+  fnDialogValue: (props: any) => void,
 ) => JSX.Element;
+
+type RenderOptionsFunction = (
+  option : any
+) => string;
 
 
 type selectMasterWrapperT = {
@@ -26,14 +30,16 @@ type selectMasterWrapperT = {
   allowNewAdd?:boolean,
   fetchDataFn: (arg0: string) => Promise<any>,
   renderForm: RenderFormFunction,
+  renderOptions?: RenderOptionsFunction
+  optionLabels?: string[]
   //children: React.FunctionComponentElement
 }
 
-export function SelectMasterWrapper(props: selectMasterWrapperT ) {
+export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT ) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogValue, setDialogValue] = useState<optionsDataT>({id:0, name: ""});
+  const [dialogValue, setDialogValue] = useState<CustomT>({} as CustomT);
   const [inputValue, setInputValue] = React.useState('');
-  const [options, setOptions] = React.useState<optionsDataT[]>([]);
+  const [options, setOptions] = React.useState<CustomT[]>([]);
   const width = props.width? props.width: 300;
   const allowNewAdd = props.allowNewAdd === false? false: true;
 
@@ -45,7 +51,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
   */  
     
     const getData = debounce(async (input) => {
-      const results = await props.fetchDataFn(input);
+      const results = await props.fetchDataFn(input) as CustomT[];
       if (results) {
         setOptions(results);
       }
@@ -54,17 +60,29 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
     getData(inputValue);
   }, [inputValue]);
 
+  function getOptionLabels(option: any): string
+  {
+    
+    if (Object.keys(option).length > 0) {
+      
+    if (props.renderOptions) {
+    return props.renderOptions(option);
+  }
+  return option.name
+}
+  return ""
+  }
 
   function onHighlightChange(event: React.SyntheticEvent, option: any, reason: string) {
-    const text = document.getElementById("popper_textid_temp_5276");
+    const text = document.getElementById("popper_textid_temp_5276") as HTMLInputElement;
 
     if (text && option) {
       const val = option.name;
-      console.log(option?.name);
+      console.log(option);
       text.value = 'new' + val;
     }
   }
-  
+
   function openDialog(){
     if (allowNewAdd) {
       setDialogOpen(true);
@@ -81,15 +99,24 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
           <Autocomplete
             id={props.id} 
             options={options}
-            getOptionLabel={(option) => typeof option === 'string' ? option : option.name }
+            getOptionLabel={(option) => typeof option === 'string' ? option :  getOptionLabels(option)}
+            // getOptionLabel={(option) => typeof option === 'string' ? option : option.name }
+            // renderOption={(p,option) => {if(props.renderOptions) 
+            //   {return props.renderOptions(option) }
+            //   return option.name}
+            // }
             sx={{ width: {width} }}
             renderInput={(params)=> <TextField {...params} name={props.name} label={props.label} />} 
             onHighlightChange={onHighlightChange} 
             autoSelect={true}
             autoHighlight={true}
+            value={dialogValue}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            freeSolo={true}
+            forcePopupIcon={true}
             PopperComponent={(props) => (
               <Popper {...props}>
-                {props.children}
+                {props.children as ReactNode}
                 <TextField
                   id="popper_textid_temp_5276"
                   variant="outlined"
@@ -103,7 +130,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
             autoComplete
             includeInputInList
             onChange={(event: any, newValue) => {
-              setDialogValue(newValue as optionsDataT);
+              setDialogValue(newValue as CustomT);
             }}
             onInputChange={(event, newInputValue) => {
               setInputValue(newInputValue);
@@ -122,7 +149,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
           open={dialogOpen} 
           setDialogOpen={setDialogOpen} 
           >
-            {props.renderForm(setDialogOpen)}
+            {props.renderForm(setDialogOpen, setDialogValue)}
         </AddDialog>
       }
     </>
