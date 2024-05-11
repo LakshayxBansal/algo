@@ -214,6 +214,7 @@ export default function InputForm(props: {baseData: IformData}) {
                           />
                         }
                     />
+                    
                   <SelectMasterWrapper
                       name = {"nextAction"}
                       id = {"nextAction"}
