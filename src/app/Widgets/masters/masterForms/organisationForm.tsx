@@ -12,6 +12,7 @@ import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import CountryForm from './countryForm';
 import StateForm from './countryForm';
 import { revalidatePath } from 'next/cache';
+import CountryStateComposite from '../../composites/countryStateComposite';
 
 export default function OrganisationForm(props: {
       setDialogOpen: (props: any) => void,
@@ -54,14 +55,7 @@ export default function OrganisationForm(props: {
         }    
       }
     
-      async function getStatesforCountry(stateStr: string) {
-        const country = (document.getElementById("country") as HTMLInputElement).value;
-    
-        const states = await getStates(stateStr, country);
-        if (states.length > 0){
-          return states
-        } 
-      }
+
 
       const handleCancel = ()=> {
         props.setDialogOpen(false);  
@@ -153,34 +147,7 @@ export default function OrganisationForm(props: {
               rowGap: 1,
               gridTemplateColumns: 'repeat(2, 1fr)', 
             }}>
-        <SelectMasterWrapper
-          name = {"country"}
-          id = {"country"}
-          label = {"Country"}
-          width = {210}
-          dialogTitle={"Add country"}
-          fetchDataFn = {getCountries}
-          renderForm={(fnDialogOpen, fnDialogValue) => 
-            <CountryForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-            />
-          }
-        />
-        <SelectMasterWrapper
-          name = {"state"}
-          id = {"state"}
-          label = {"State"}
-          width = {210}
-          dialogTitle={"Add State"}
-          fetchDataFn = {getStatesforCountry}
-          renderForm={(fnDialogOpen, fnDialogValue) => 
-            <StateForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-            />
-          }
-        />
+        <CountryStateComposite/>
         <InputControl 
           type={InputType.TEXT} 
           name="city" 

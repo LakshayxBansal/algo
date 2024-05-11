@@ -12,9 +12,11 @@ import { getContact } from '@/app/controllers/contact.controller';
 import { getEnquiryCategory } from '@/app/controllers/enquiryCategory.controller';
 import { getEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
 import { getEnquirySubStatus } from '@/app/controllers/enquirySubStatus.controller';
+import {getEnquiryAction} from '@/app/controllers/enquiryAction.controller';
 import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
 import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 import StatusForm from '@/app/Widgets/masters/masterForms/statusForm';
+import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
 import {theme} from '@/app/utils/theme.util'
 import { ThemeProvider } from "@mui/material/styles";
 import Box from '@mui/material/Box';
@@ -204,9 +206,9 @@ export default function InputForm(props: {baseData: IformData}) {
                       id = {"actionTaken"}
                       label = {"Action Taken"}
                       dialogTitle={"Add Action"}
-                      fetchDataFn = {getSubStatusforStatus}
+                      fetchDataFn = {getEnquiryAction}
                       renderForm={(fnDialogOpen, fnDialogValue) => 
-                          <StatusForm
+                          <ActionForm
                             setDialogOpen={fnDialogOpen}
                             setDialogValue={fnDialogValue}
                           />
@@ -217,9 +219,9 @@ export default function InputForm(props: {baseData: IformData}) {
                       id = {"nextAction"}
                       label = {"Next Action"}
                       dialogTitle={"Add Action"}
-                      fetchDataFn = {getSubStatusforStatus}
+                      fetchDataFn = {getEnquiryAction}
                       renderForm={(fnDialogOpen, fnDialogValue) => 
-                          <StatusForm
+                          <ActionForm
                             setDialogOpen={fnDialogOpen}
                             setDialogValue={fnDialogValue}
                           />

@@ -14,8 +14,9 @@ export const userSchema = z.object({
 
 export const organisationSchema = z.object({
   id:z.number().optional(),
-  name: z.string().min(1).max(45),
-  alias: z.string().max(45).optional(),
+  name: z.string().min(1).max(75),
+  alias: z.string().max(75).optional(),
+  printName: z.string().max(75).optional(),
   address1: z.string().max(75).optional(),
   address2: z.string().max(75).optional(),
   address3: z.string().max(75).optional(),

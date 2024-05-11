@@ -11,10 +11,22 @@ export async function createOrganisationDB(session: Session, data: zm.organisati
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "insert into organisation_master \
-      (alias, name, print_name, group_id, pan, aadhaar, address1, address2, address3, city, state_id, area_id, pincode, country_id, email, mobile, whatsapp, created_by, created_on, modified_by, modified_on, stamp, dob, doa, department_id, organisation_id) \
-      (select ?, ?, ?, ?, ?, ?, ?, ?,  personTypeId from personType t where t.nameVal=?) returning *",
+      (alias, name, print_name, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, created_by, created_on) \
+      (?, ?, ?, ?, ?, ?, ?, ?, ?, (select id from state_master where name=?), ?, (select id from country_master where name=?), (select crm_user_id from executive_master where email=?), now()) returning *",
       values: [
-        
+        data.alias,
+        data.name,
+        data.printName,
+        data.pan,
+        data.gstin,
+        data.address1,
+        data.address2,
+        data.address3,
+        data.city,
+        data.state,
+        data.pincode,
+        data.country,
+        session.user.email
       ],
     });
   } catch (e) {
