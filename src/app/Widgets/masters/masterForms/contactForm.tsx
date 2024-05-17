@@ -66,7 +66,7 @@ export default function ContactForm(props: {
 
 
   const handleCancel = ()=> {
-    props.setDialogOpen(false);  
+    props.setDialogOpen(false); 
   }
 
   async function getStatesforCountry(stateStr: string) {
