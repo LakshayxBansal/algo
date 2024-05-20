@@ -1,17 +1,17 @@
 'use server'
  
 import * as zs from '../zodschema/zodschema';
-import {contactGroupSchemaT} from '@/app/models/models';
-import { getContactGroupList, createContactGroupDb } from '../services/contactGroup.service';
+import {executiveDeptSchemaT} from '@/app/models/models';
+import { getExecutiveDeptList, createExecutiveDeptDb } from '../services/executiveDept.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
 
 
-export async function getContactGroup(searchString: string) {
+export async function getExecutiveDept(searchString: string) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getContactGroupList(session.user.dbInfo.dbName, searchString);
+      return getExecutiveDeptList(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
     throw error;
@@ -20,7 +20,7 @@ export async function getContactGroup(searchString: string) {
 
 
 
-export async function createContactGroup(formData: FormData){
+export async function createExecutiveDept(formData: FormData){
   let result;
     try {
     const session = await getSession();
@@ -31,9 +31,9 @@ export async function createContactGroup(formData: FormData){
         data[key] = value;
       }
   
-      const parsed = zs.contactGroupSchema.safeParse(data);
+      const parsed = zs.executiveDeptSchema.safeParse(data);
       if(parsed.success) {
-        const dbResult = await createContactGroupDb(session, data as contactGroupSchemaT);
+        const dbResult = await createExecutiveDeptDb(session, data as executiveDeptSchemaT);
         if (dbResult.length >0 ) {
          result = {status: true, data:dbResult};
         } else {

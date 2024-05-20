@@ -10,11 +10,9 @@ import {nameMasterData} from '@/app/zodschema/zodschema';
 
 
 export default function StateForm(props: {
-      data:optionsDataT,
       setDialogOpen: (props: any) => void,
       setDialogValue: (props: any) => void,
     }) {
-  const entityName = props.data.name;
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
 
@@ -70,7 +68,6 @@ export default function StateForm(props: {
         <InputControl
           autoFocus
           id="name"
-          defaultValue={entityName}
           label="State Name"
           type={InputType.TEXT}
           name="name"

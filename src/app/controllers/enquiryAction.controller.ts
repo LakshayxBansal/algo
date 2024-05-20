@@ -1,17 +1,16 @@
 'use server'
  
 import * as zs from '../zodschema/zodschema';
-import {contactGroupSchemaT} from '@/app/models/models';
-import { getContactGroupList, createContactGroupDb } from '../services/contactGroup.service';
+import { getEnquiryActionList, createEnquiryActionDb } from '../services/enquiryAction.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
 
 
-export async function getContactGroup(searchString: string) {
+export async function getEnquiryAction(searchString: string) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getContactGroupList(session.user.dbInfo.dbName, searchString);
+      return getEnquiryActionList(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
     throw error;
@@ -20,27 +19,32 @@ export async function getContactGroup(searchString: string) {
 
 
 
-export async function createContactGroup(formData: FormData){
+/**
+ * 
+ * @param formData 
+ * @returns object with status, record if success and error
+ */
+export async function createEnquiryAction(formData: FormData) {
   let result;
     try {
     const session = await getSession();
     if (session) {
-      let data: { [key: string]: any } = {}; // Initialize an empty object
-
-      for (const [key, value] of formData.entries()) {
-        data[key] = value;
-      }
+      const data = {
+        name: formData.get("name") as string,
+      };
   
-      const parsed = zs.contactGroupSchema.safeParse(data);
+      const parsed = zs.nameMasterData.safeParse(data);
       if(parsed.success) {
-        const dbResult = await createContactGroupDb(session, data as contactGroupSchemaT);
+        const dbResult = await createEnquiryActionDb(session, data);
         if (dbResult.length >0 ) {
          result = {status: true, data:dbResult};
         } else {
           result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
         }
       } else {
+        //result = {status: false, data: parsed.error.flatten().fieldErrors };
         result = {status: false, data: parsed.error.issues };
+
       }
     } else {
       result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };

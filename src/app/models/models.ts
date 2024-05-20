@@ -7,15 +7,22 @@ export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 
 export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
-export type employeeT = z.infer<typeof zs.employeeSchema>;
-
-export type enquirySchemaT = z.infer<typeof zs.enquirySchema>;
-
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
 export type optionsDataT = z.infer<typeof zs.optionsData>;
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
+
+//Enquiry Schemas
+export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
+export type enquirySchemaT = z.infer<typeof zs.enquirySchema>;
+
+
+// executive schemas
+export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;
+export type executiveRoleSchemaT = z.infer<typeof zs.executiveRoleSchema>;
+export type executiveGroupSchemaT = z.infer<typeof zs.executiveGroupSchema>;
+export type executiveDeptSchemaT = z.infer<typeof zs.executiveDeptSchema>;
 
 
 export type nameMasterDataT = z.infer<typeof zs.nameMasterData>;    // for simple name based masters
