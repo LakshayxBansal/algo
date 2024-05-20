@@ -1,6 +1,7 @@
 'use server'
  
 import * as zs from '../zodschema/zodschema';
+import {contactGroupSchemaT} from '@/app/models/models';
 import { getContactGroupList, createContactGroupDb } from '../services/contactGroup.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
@@ -30,9 +31,9 @@ export async function createContactGroup(formData: FormData){
         data[key] = value;
       }
   
-      const parsed = zs.nameMasterData.safeParse(data);
+      const parsed = zs.contactGroupSchema.safeParse(data);
       if(parsed.success) {
-        const dbResult = await createContactGroupDb(session, data);
+        const dbResult = await createContactGroupDb(session, data as contactGroupSchemaT);
         if (dbResult.length >0 ) {
          result = {status: true, data:dbResult};
         } else {

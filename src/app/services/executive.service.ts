@@ -1,29 +1,23 @@
 "use server"
 
 import excuteQuery  from '../utils/db/db';
-import * as z from '../zodschema/zodschema';
-import * as zm from '../models/models';
+import {executiveSchemaT} from '../models/models';
 import { Session } from 'next-auth';
 
 
-export async function createContactDB(session: Session, data: zm.contactSchemaT) {
+export async function createExecutiveDB(session: Session, data: executiveSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query: "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
-        data.print_name,
-        data.contactGroup,
-        data.pan,
-        data.aadhaar,
         data.address1,
         data.address2,
         data.address3,
         data.city,
         data.state,
-        data.area,
         data.pincode,
         data.country,
         data.email,
@@ -31,8 +25,13 @@ export async function createContactDB(session: Session, data: zm.contactSchemaT)
         data.whatsapp,
         data.dob,
         data.doa,
-        data.department,
-        data.organisation,
+        data.doj,
+        data.area,
+        data.call_type,
+        data.crm_map_id,
+        data.role,
+        data.executive_dept,
+        data.executive_group,    
         session.user.email
       ],
     });
@@ -46,13 +45,13 @@ export async function createContactDB(session: Session, data: zm.contactSchemaT)
 /**
  * 
  * @param crmDb database to search in
- * @param searchString partial string to search in contact_master.name
+ * @param searchString partial string to search in executive_master.name
  * @returns 
  */
-export async function getContactList(crmDb: string, searchString: string){
+export async function getExecutiveList(crmDb: string, searchString: string){
   
   try {
-    let query = 'select id as id, name as name from contact_master';
+    let query = 'select id as id, name as name from executive_master';
     let values: any[] = [];
 
     if (searchString !== "") {

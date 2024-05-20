@@ -17,16 +17,17 @@ import {nameIconArr} from '../../utils/iconmap.utils';
 export default function LeftMenuTree(props: {pages:menuTreeT[]}) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [openAdmin, setOpenAdmin] = React.useState(false);
+  const pages = props.pages;
 
   useEffect(() => {
     const idToOpenMap: Map<number, boolean> = new Map([]);
-    props.pages.forEach(page => {
+    pages.forEach(page => {
       if (page.children.length > 0) {
         idToOpenMap.set(page.id, false)
       }
     });
     setOpen(idToOpenMap);
-    const str = ShowMenu({pages: props.pages, level:0, menuLevel:0});
+    const str = ShowMenu({pages: pages, level:0, menuLevel:0});
     console.log(str);
   }, []);
 

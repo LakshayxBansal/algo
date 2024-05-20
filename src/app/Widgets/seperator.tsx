@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import { Children } from 'react';
 
 
-export default function Seperator({children}: {children: React.ReactNode}) {
+export default function Seperator({children}: {children?: React.ReactNode}) {
   return (
     <>
       <Typography variant="h6" component="div" sx={{ position: 'relative', backgroundColor: 'white'}}>

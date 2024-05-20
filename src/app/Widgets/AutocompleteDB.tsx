@@ -1,70 +1,130 @@
-import * as React from 'react';
-import Autocomplete, { AutocompleteProps } from '@mui/material/Autocomplete';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import { useState, ReactNode, useEffect, SyntheticEvent, Dispatch, SetStateAction}from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
 import { debounce } from '@mui/material/utils';
-import { optionsDataT } from '../models/models';
+import TextField from "@mui/material/TextField";
+import Popper from "@mui/material/Popper";
 
-export type AutocompletePropsDataT = {
-  dataValues: (arg0: string) => Promise<any>;
-} & AutocompleteProps<any, false, false, false>;
+type OnChangeFunction = (
+  event: any,
+  newVal: any,
+  setDialogValue: (props: any) => void
+) => void;
 
-const AutocompleteDB: React.FC<AutocompletePropsDataT> = ({
-    dataValues,
-    ...otherProps}) => 
+type SelectOptionsFunction = (option: any) => string;
+
+type autocompleteDBT = {
+  name: string;
+  id: string;
+  label: string;
+  fetchDataFn: (arg0: string) => Promise<any>;
+  onChange?: OnChangeFunction;
+  renderOptions?: SelectOptionsFunction;
+  labelOptions?: SelectOptionsFunction;
+  highlightOptions?: SelectOptionsFunction;
+  width?: number;
+  diaglogVal?: any;
+  setDialogVal?: Dispatch<SetStateAction<any>>
+  //children: React.FunctionComponentElement
+};
+
+export function AutocompleteDB<CustomT>(props: autocompleteDBT)
 {
-  const [inputValue, setInputValue] = React.useState(otherProps.value);
-  const [options, setOptions] = React.useState<optionsDataT[]>([]);
-
-  React.useEffect(() => {
-/*
-    if (inputValue === '') {
-      return undefined;
+  const [inputValue, setInputValue] = useState("");
+  let [diaglogValue, setDialogValue] = useState<CustomT>({} as CustomT);
+  if (props.diaglogVal && props.setDialogVal)
+    {
+      diaglogValue = props.diaglogVal
+      setDialogValue = props.setDialogVal
     }
-  */  
+  
+  const [options, setOptions] = useState<CustomT[]>([]);
+  const width = props.width ? props.width : 300;
+
+  useEffect(() => {
     
     const getData = debounce(async (input) => {
-      const results = await dataValues(input);
+      const results = (await props.fetchDataFn(input)) as CustomT[];
       if (results) {
         setOptions(results);
       }
-    },400);
+    }, 400);
 
     getData(inputValue);
   }, [inputValue]);
 
+  function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
+    if (Object.keys(option).length > 0) {
+      if (selectFunc) {
+        return selectFunc(option);
+      }
+      return option.name;
+    }
+    return "";
+  }
+
+  function onHighlightChange(
+    event: SyntheticEvent,
+    option: any,
+    reason: string
+  ) {
+    const text = document.getElementById(
+      "popper_textid_temp_5276"
+    ) as HTMLInputElement;
+
+    if (text && option) {
+      console.log(option);
+      text.value = getOptions(option, props.highlightOptions);
+    }
+  }
 
   return (
     <Autocomplete
-      {...otherProps}
-      getOptionLabel={(option) =>
-        typeof option === 'string' ? option : option.name
-      }
-      filterOptions={(x) => x}
-      options={options}
-      autoComplete
-      includeInputInList
-      filterSelectedOptions
-      value={inputValue}
-      noOptionsText="Please type a few chars or click + to add..."
-      onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
-      }}
-      renderInput={otherProps.renderInput}
-      renderOption={(props, option) => {
-        return (
-          <li {...props}>
-            <Grid container alignItems="center">
-              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                <Typography variant="body2" color="text.secondary">
-                  {option.name}
-                </Typography>
-              </Grid>
-            </Grid>
-          </li>
-        );
-      }}
-    />
+            id={props.id}
+            options={options}
+            getOptionLabel={(option) =>
+              typeof option === "string"
+                ? option
+                : getOptions(option, props.labelOptions)
+            }
+            renderOption={(p, option) => {
+              return <li {...p}>{getOptions(option, props.renderOptions)}</li>;
+            }}
+            sx={{ width: { width } }}
+            renderInput={(params) => (
+              <TextField {...params} name={props.name} label={props.label} />
+            )}
+            onHighlightChange={onHighlightChange}
+            autoSelect={true}
+            autoHighlight={true}
+            value={diaglogValue}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            freeSolo={true}
+            forcePopupIcon={true}
+            PopperComponent={(props) => (
+              <Popper {...props}>
+                {props.children as ReactNode}
+                <TextField
+                  id="popper_textid_temp_5276"
+                  variant="outlined"
+                  inputProps={{ style: { color: "blue", fontSize: 10 } }}
+                  multiline
+                  rows={2}
+                  fullWidth
+                />
+              </Popper>
+            )}
+            autoComplete
+            includeInputInList
+            onChange={(event: any, newValue) => {
+              setDialogValue(newValue as CustomT);
+              props.onChange
+                ? props.onChange(event, newValue, setDialogValue)
+                : null;
+            }}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
+            }}
+          />
   );
 }
 

@@ -25,10 +25,10 @@ export async function createOrganisation(formData: FormData){
       const parsed = zs.organisationSchema.safeParse(data);
       if(parsed.success) {
         const dbResult = await createOrganisationDB(session, data as zm.organisationSchemaT);
-        if (dbResult.length >0 ) {
-          result = {status: true, data:dbResult};
+        if (dbResult.length >0 && dbResult[0][0].error === 0) {
+          result = {status: true, data:dbResult[1]};
          } else {
-          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+          result = {status: false, data: [{path:[dbResult[0][0].error_path], message:dbResult[0][0].error_text}] };
          }
       } else {
         result = {status: false, data: parsed.error.issues };

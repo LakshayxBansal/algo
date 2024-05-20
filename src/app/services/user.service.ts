@@ -1,5 +1,6 @@
 'use server'
 
+import { ucs2 } from 'punycode';
 import excuteQuery   from '../utils/db/db';
 import {hashText, hashCompare} from '../utils/encrypt.utils';
 
@@ -52,3 +53,33 @@ export async function checkUser(email: string) {
   }
   return false;
 } 
+
+
+export async function getBizAppUserList(crmDb: string, searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean){
+  try {
+    let query = 'select uc.user_id as id, u.firstName as name from userCompany uc, dbInfo db, company co, user u where \
+                    db.name = ? and \
+                    db.id = co.dbInfo_id and \
+                    co.id = uc.company_id and \
+                    uc.user_id = u.id and \
+                    uc.isInvited = ? and \
+                    uc.isAccepted = ? and \
+                    uc.isMapped = ? and \
+                    uc.isAdmin = ?';
+    let values: any[] = [crmDb, invited, accepted, mapped, admin];
+
+    if (searchString !== "") {
+      query = query + " and u.firstName like '%" + searchString + "%' ";
+    }
+    const result = await excuteQuery({
+      host: 'userDb',
+      query: query, 
+      values: values,
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}

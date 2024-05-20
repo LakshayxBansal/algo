@@ -36,6 +36,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
   const [options, setOptions] = React.useState<optionsDataT[]>([]);
   const width = props.width? props.width: 300;
   const allowNewAdd = props.allowNewAdd === false? false: true;
+  const fetchDataFn = props.fetchDataFn;
 
   React.useEffect(() => {
 /*
@@ -45,7 +46,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
   */  
     
     const getData = debounce(async (input) => {
-      const results = await props.fetchDataFn(input);
+      const results = await fetchDataFn(input);
       if (results) {
         setOptions(results);
       }
@@ -122,7 +123,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
       </Grid>
       {dialogOpen && 
         <AddDialog
-          title={props.dialogTitle} 
           open={dialogOpen} 
           setDialogOpen={setDialogOpen} 
           >
