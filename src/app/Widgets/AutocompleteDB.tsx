@@ -31,11 +31,10 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT)
 {
   const [inputValue, setInputValue] = useState("");
   let [diaglogValue, setDialogValue] = useState<CustomT>({} as CustomT);
-  if (props.diaglogVal && props.setDialogVal)
-    {
-      diaglogValue = props.diaglogVal
-      setDialogValue = props.setDialogVal
-    }
+  if (props.diaglogVal && props.setDialogVal) {
+    diaglogValue = props.diaglogVal
+    setDialogValue = props.setDialogVal
+  }
   
   const [options, setOptions] = useState<CustomT[]>([]);
   const width = props.width ? props.width : 300;

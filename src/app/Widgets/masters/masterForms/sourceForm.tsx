@@ -88,11 +88,11 @@ export default function SourceForm(props: {
             display: 'grid',
             columnGap: 3,
             rowGap: 1,
-            gridTemplateColumns: 'repeat(2, 1fr)',
+            gridTemplateColumns: 'repeat(3, 1fr)',
           }}>
+            <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
             <Button type="submit" variant="contained">Submit</Button>
-            <Button>Upload File</Button>
         </Box>
       </form>
       <Snackbar

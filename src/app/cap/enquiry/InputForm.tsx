@@ -17,10 +17,16 @@ import {getEnquiryAction} from '@/app/controllers/enquiryAction.controller';
 import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
 import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 import ExecutiveForm from '@/app/Widgets/masters/masterForms/executiveForm';
-import StatusForm from '@/app/Widgets/masters/masterForms/statusForm';
 import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
+import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
+import { optionsDataT } from '@/app/models/models';
+import AutocompleteDB from '@/app/Widgets/AutocompleteDB';
+import dayjs from "dayjs";
+
+
 
 
 
@@ -91,6 +97,7 @@ export default function InputForm(props: {baseData: IformData}) {
               type={InputType.DATETIMEINPUT}
               id="date"
               name="date"
+              defaultValue={dayjs(new Date())}
             />
             <SelectMasterWrapper
               name = {"contact"}
@@ -120,10 +127,10 @@ export default function InputForm(props: {baseData: IformData}) {
               dialogTitle={"Add Category"}
               fetchDataFn = {getEnquiryCategory}
               renderForm={(fnDialogOpen, fnDialogValue) => 
-                  <SourceForm
-                      setDialogOpen={fnDialogOpen}
-                      setDialogValue={fnDialogValue}
-                  />}
+                <CategoryForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                />}
             />
 
             <SelectMasterWrapper
@@ -173,18 +180,11 @@ export default function InputForm(props: {baseData: IformData}) {
                   rowGap: 1,
                   gridTemplateColumns: 'repeat(3, 1fr)', 
                 }}>
-            <SelectMasterWrapper
+            <AutocompleteDB<optionsDataT>
                 name = {"status"}
                 id = {"status"}
                 label = {"Call Status"}
-                dialogTitle={"Add Status"}
                 fetchDataFn = {getEnquiryStatus}
-                renderForm={(fnDialogOpen, fnDialogValue) => 
-                  <StatusForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                  />
-                }
             />  
             <SelectMasterWrapper
                 name = {"substatus"}
@@ -193,7 +193,7 @@ export default function InputForm(props: {baseData: IformData}) {
                 dialogTitle={"Add Sub-Status"}
                 fetchDataFn = {getSubStatusforStatus}
                 renderForm={(fnDialogOpen, fnDialogValue) => 
-                  <StatusForm
+                  <SubStatusForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                   />
@@ -229,6 +229,7 @@ export default function InputForm(props: {baseData: IformData}) {
               type={InputType.DATETIMEINPUT}
               id="whenDate"
               name="whenDate"
+              defaultValue={dayjs(new Date())}
             />
             <Grid item xs={12} md={12}>
               <Grid item xs={6} md={12}>

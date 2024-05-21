@@ -6,7 +6,8 @@ import Box from '@mui/material/Box';
 import { getExecutiveGroup, createExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
 import Grid from '@mui/material/Grid';
 import {nameMasterData} from '../../../zodschema/zodschema';
-import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
+import { optionsDataT } from '@/app/models/models';
+import AutocompleteDB from '../../AutocompleteDB';
 
 
 
@@ -77,20 +78,12 @@ export default function ExecutiveGroupForm(props: {
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 
         />      
-        <SelectMasterWrapper
+        <AutocompleteDB<optionsDataT>
           name = {"parentgroup"}
           id = {"parentgroup"}
           label = {"Parent Executive Group"}
           width = {210}
-          dialogTitle={"Add Executive Group"}
           fetchDataFn = {getExecutiveGroup}
-          allowNewAdd = {false}
-          renderForm={(fnDialogOpen, fnDialogValue) => 
-            <ExecutiveGroupForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-            />
-          }
         />
       </Box>
       <Grid container xs={12} md={12}>

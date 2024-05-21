@@ -58,8 +58,8 @@ export default function ActionForm(props: {
 
   return(
     <Paper>
-      <Seperator>Add Source</Seperator>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Seperator>Add Action</Seperator>
+      <Box sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
         <form action={handleSubmit}> 
           <Box
@@ -67,32 +67,30 @@ export default function ActionForm(props: {
               display: 'grid',
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: 'repeat(1, 1fr)',
             }}>
             <InputControl
               autoFocus
-              id="Action_master"
+              id="action_name"
               label="Action Name"
               type={InputType.TEXT}
-              name="name"
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg} 
+              name="action_name"
+              fullWidth
+              error={formError?.action_name?.error}
+              helperText={formError?.action_name?.msg} 
             />
           </Box>
-          <Grid container xs={12} md={12}>
-            <Grid item xs={6} md={6}>
-              <Box margin={1} sx={{ display: "flex" }}>
-                <Box display="flex" justifyContent="flex-start" alignItems="flex-start" m={1}>
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
-                <Button type="submit" variant="contained">Submit</Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box sx={{
+            mt:3,
+            display: 'grid',
+            columnGap: 3,
+            rowGap: 1,
+            gridTemplateColumns: 'repeat(3, 1fr)',
+          }}>
+            <Button>Upload File</Button>
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button type="submit" variant="contained">Submit</Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}

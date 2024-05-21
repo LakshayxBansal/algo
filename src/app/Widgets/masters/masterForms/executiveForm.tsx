@@ -74,7 +74,9 @@ export default function ExecutiveForm(props: {
       // show error on screen
       const errorState: Record<string, {msg: string, error: boolean}> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = {msg: issue.message, error: true};
+        for (const path of issue.path) {
+          errorState[path] = {msg: issue.message, error: true};
+        }
       }
       setFormError(errorState);
     }    
@@ -190,8 +192,8 @@ export default function ExecutiveForm(props: {
               helperText={formError?.aadhaar?.msg} 
             />
             <SelectMasterWrapper
-              name = {"appuser"}
-              id = {"appuser"}
+              name = {"crm_user"}
+              id = {"crm_user"}
               label = {"Map to App User"}
               width = {210}
               dialogTitle={"Add App User"}

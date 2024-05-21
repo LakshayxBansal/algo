@@ -69,7 +69,11 @@ export const contactSchema = z.object({
   organisation: z.string().optional(), 
   country: z.string().optional(),
   city: z.string().optional(), 
-});
+}).refine(schema => {
+  return (
+      schema.email === '' && 
+      schema.mobile === ''); 
+}, "please provide email, or phone no");
 
 
 export const executiveSchema = z.object({
@@ -101,7 +105,10 @@ export const executiveSchema = z.object({
   role: z.string().min(1).max(45),
   executive_dept: z.string().max(75).optional(),
   executive_group: z.string().max(75).optional()
-})
+}).refine(schema => { return false; 
+}, {message: "please provide email, or phone no",
+  path: ["email", "mobile"]
+});
 
 
 /**
