@@ -1,17 +1,17 @@
 'use server'
  
-import {enquirySubStatusMaster} from '../zodschema/zodschema';
-import {enquirySubStatusMasterT} from '@/app/models/models';
-import { getEnquirySubStatusList, createEnquirySubStatusDb } from '../services/enquirySubStatus.service';
+import * as zs from '../zodschema/zodschema';
+import {executiveGroupSchemaT} from '@/app/models/models';
+import { getExecutiveGroupList, createExecutiveGroupDb } from '../services/executiveGroup.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
 
 
-export async function getEnquirySubStatus(searchString: string, status: string) {
+export async function getExecutiveGroup(searchString: string) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getEnquirySubStatusList(session.user.dbInfo.dbName, searchString, status);
+      return getExecutiveGroupList(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
     throw error;
@@ -20,7 +20,7 @@ export async function getEnquirySubStatus(searchString: string, status: string) 
 
 
 
-export async function createEnquirySubStatus(formData: FormData){
+export async function createExecutiveGroup(formData: FormData){
   let result;
     try {
     const session = await getSession();
@@ -31,9 +31,9 @@ export async function createEnquirySubStatus(formData: FormData){
         data[key] = value;
       }
   
-      const parsed = enquirySubStatusMaster.safeParse(data);
+      const parsed = zs.executiveGroupSchema.safeParse(data);
       if(parsed.success) {
-        const dbResult = await createEnquirySubStatusDb(session, data as enquirySubStatusMasterT);
+        const dbResult = await createExecutiveGroupDb(session, data as executiveGroupSchemaT);
         if (dbResult.length >0 ) {
          result = {status: true, data:dbResult};
         } else {

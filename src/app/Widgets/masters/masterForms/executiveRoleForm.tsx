@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import {InputControl, InputType} from '@/app/Widgets/input/InputControl';
 import Box from '@mui/material/Box';
-import { createEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
+import { getExecutiveRole, createExecutiveRole } from '@/app/controllers/executiveRole.controller';
 import Grid from '@mui/material/Grid';
 import {nameMasterData} from '../../../zodschema/zodschema';
+import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 
 
-export default function StatusForm(props: {
+
+export default function ExecutiveRoleForm(props: {
       setDialogOpen: (props: any) => void,
       setDialogValue: (props: any) => void,
     }) {
@@ -17,18 +19,20 @@ export default function StatusForm(props: {
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData)=> {
-    const data = {
-                  name: formData.get("name") as string,
-                  };
+    let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
     const parsed = nameMasterData.safeParse(data);
     let result;
     let issues;
 
     if (parsed.success) {
-      result = await createEnquiryStatus(formData);
+      result = await createExecutiveRole(formData);
       if (result.status){
         const newVal = {id: result.data[0].id, name: result.data[0].name};
-        props.setDialogValue(newVal);
+        props.setDialogValue(newVal.name);
       } else {
         issues = result?.data;
       }
@@ -66,12 +70,27 @@ export default function StatusForm(props: {
         }}>
         <InputControl
           autoFocus
-          id="status_master"
-          label="Status Name"
+          id="name"
+          label="Executive Role Name"
           type={InputType.TEXT}
           name="name"
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 
+        />      
+        <SelectMasterWrapper
+          name = {"parentrole"}
+          id = {"parentrole"}
+          label = {"Parent Executive Role"}
+          width = {210}
+          dialogTitle={"Add Executive Role"}
+          fetchDataFn = {getExecutiveRole}
+          allowNewAdd = {false}
+          renderForm={(fnDialogOpen, fnDialogValue) => 
+            <ExecutiveRoleForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+            />
+          }
         />
       </Box>
       <Grid container xs={12} md={12}>

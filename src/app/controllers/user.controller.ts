@@ -1,8 +1,9 @@
 "use server"
 
-import { addUser, checkUser } from '../services/user.service';
-import { redirect } from 'next/navigation';
+import { addUser, getBizAppUserList } from '../services/user.service';
 import * as zs from '../zodschema/zodschema';
+import { getSession } from '../services/session.service';
+
 
 export async function registerUser(formData: FormData){
   let userCreated = {status: false, msg: "Internal error!" };
@@ -24,4 +25,16 @@ export async function registerUser(formData: FormData){
     console.log(e);
   }
   return userCreated;
+}
+
+
+export async function getBizAppUser(searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getBizAppUserList(session.user.dbInfo.dbName, searchString, invited, accepted, mapped, admin);
+    }
+  } catch (error) {
+    throw error;
+  }
 }

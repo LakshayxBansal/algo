@@ -8,11 +8,20 @@ import { Session } from 'next-auth';
 
 export async function createOrganisationDB(session: Session, data: zm.organisationSchemaT) {
   try {
+/*
+      query: "insert into organisation_master \
+      (alias, name, print_name, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, created_by, created_on) values \
+      (?, ?, ?, ?, ?, ?, ?, ?, ?, \
+          (select id from state_master where name=?), \
+          ?, (select id from country_master where name=?), \
+          (select crm_user_id from executive_master where email=?), \
+          now()) returning *",
+
+*/
+
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into organisation_master \
-      (alias, name, print_name, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, created_by, created_on) \
-      (?, ?, ?, ?, ?, ?, ?, ?, ?, (select id from state_master where name=?), ?, (select id from country_master where name=?), (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       values: [
         data.alias,
         data.name,
@@ -64,3 +73,5 @@ export async function getOrganisationList(crmDb: string, searchString: string){
     console.log(e);
   }
 }
+
+

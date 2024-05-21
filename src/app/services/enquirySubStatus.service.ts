@@ -1,6 +1,6 @@
 'use server'
 
-import * as zm from '../models/models';
+import {enquirySubStatusMasterT} from '../models/models';
 import { Session } from 'next-auth';
 import excuteQuery  from '../utils/db/db';
 
@@ -37,7 +37,7 @@ export async function getEnquirySubStatusList(crmDb: string, searchString: strin
  * @param sourceData : data for saving
  * @returns result from DB (returning *)
  */
-export async function createEnquirySubStatusDb(session: Session, sourceData: zm.SubStatusSchemaT) {
+export async function createEnquirySubStatusDb(session: Session, sourceData: enquirySubStatusMasterT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,

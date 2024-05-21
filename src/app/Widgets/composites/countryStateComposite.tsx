@@ -12,7 +12,7 @@ export default function CountryStateComposite(){
 
     const states = await getStates(stateStr, country);
     if (states.length > 0){
-      return states
+      return states;
     } 
   }
 
