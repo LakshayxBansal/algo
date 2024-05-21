@@ -94,12 +94,12 @@ export default function CategoryForm(props: {
           </Box>
         </form>
         <Snackbar
-              open={snackOpen}
-              autoHideDuration={3000}
-              onClose={()=>setSnackOpen(false)}
-              message="Record Saved!"
-              anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-          />
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={()=>setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+        />
       </Box>
     </Paper>
   );
