@@ -6,6 +6,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import AutocompleteDB from "../AutocompleteDB";
+import { formErrorT } from "../../models/models";
 
 type RenderFormFunction = (
   fnDialogOpen: (props: any) => void,
@@ -33,6 +34,10 @@ type selectMasterWrapperT = {
   highlightOptions?: SelectOptionsFunction;
   width?: number;
   allowNewAdd?: boolean;
+  formError?: formErrorT;
+  required?: boolean;
+  defaultValue?: string;
+  notEmpty?: boolean;
   //children: React.FunctionComponentElement
 };
 
@@ -40,7 +45,6 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogValue, setDialogValue] = useState<CustomT>({} as CustomT);
   const allowNewAdd = props.allowNewAdd === false ? false : true;
-
 
   function openDialog() {
     if (allowNewAdd) {
@@ -54,18 +58,22 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
     <>
       <Grid item xs={12} md={12}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <AutocompleteDB 
-          name={props.name}
-          id={props.id}
-          label={props.label}
-          renderOptions={props.renderOptions}
-          labelOptions={props.labelOptions}
-          highlightOptions={props.highlightOptions}
-          fetchDataFn={props.fetchDataFn}
-          onChange={props.onChange}
-          width={props.width}
-          diaglogVal={dialogValue}
-          setDialogVal={setDialogValue}
+          <AutocompleteDB
+            name={props.name}
+            id={props.id}
+            label={props.label}
+            renderOptions={props.renderOptions}
+            labelOptions={props.labelOptions}
+            highlightOptions={props.highlightOptions}
+            fetchDataFn={props.fetchDataFn}
+            onChange={props.onChange}
+            width={props.width}
+            diaglogVal={dialogValue}
+            setDialogVal={setDialogValue}
+            formError={props.formError}
+            required={props.required}
+            notEmpty={props.notEmpty}
+            defaultValue={props.defaultValue}
           />
           <Tooltip
             title={allowNewAdd ? "Click to add new" : "Not allowed to add"}
