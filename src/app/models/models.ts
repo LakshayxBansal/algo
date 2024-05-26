@@ -13,6 +13,10 @@ export type optionsDataT = z.infer<typeof zs.optionsData>;
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
+export type formErrorT = 
+    {msg: string; 
+    error: boolean;}
+
 //Enquiry Schemas
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquirySchemaT = z.infer<typeof zs.enquirySchema>;
