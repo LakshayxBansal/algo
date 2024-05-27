@@ -1,12 +1,12 @@
 'use client'
 import React, { useState, forwardRef, ReactNode } from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Input } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import {AddDialog} from './addDialog';
 import { optionsDataT } from '../../models/models';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { IconButton } from "@mui/material";
-import Autocomplete, { AutocompleteProps } from '@mui/material/Autocomplete';
+import Autocomplete, { AutocompleteProps, AutocompleteRenderInputParams } from '@mui/material/Autocomplete';
 import { debounce } from '@mui/material/utils';
 import Tooltip from '@mui/material/Tooltip';
 import Popper from '@mui/material/Popper';
@@ -61,7 +61,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
 
     if (text && option) {
       const val = option.name;
-      console.log(option?.name);
       text.value = 'new' + val;
     }
   }
@@ -74,23 +73,27 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
 
 //             ListboxComponent={customListbox}
 
+  function renderInp(params: AutocompleteRenderInputParams) {
+    return (<TextField {...params} name={props.name} label={props.label} />);
+    // renderInput={(params)=> <TextField {...params} name={props.name} label={props.label} />} 
+  }
+
 
   return (
     <>
       <Grid item xs={12} md={12}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Autocomplete
-            id={props.id} 
+            
             options={options}
             getOptionLabel={(option) => typeof option === 'string' ? option : option.name }
             sx={{ width: {width} }}
-            renderInput={(params)=> <TextField {...params} name={props.name} label={props.label} />} 
+            renderInput={(params)=> <TextField {...params}  label={props.label} />} 
             onHighlightChange={onHighlightChange} 
             autoSelect={true}
             autoHighlight={true}
             value={dialogValue}
             isOptionEqualToValue={(option, value) => option.id === value.id}
-            freeSolo={true}
             forcePopupIcon={true}
             PopperComponent={(props) => (
               <Popper {...props}>
@@ -109,11 +112,13 @@ export function SelectMasterWrapper(props: selectMasterWrapperT ) {
             includeInputInList
             onChange={(event: any, newValue) => {
               setDialogValue(newValue as optionsDataT);
+              setInputValue('')
             }}
             onInputChange={(event, newInputValue) => {
               setInputValue(newInputValue);
             }}
           />
+          <Input type="hidden" value={JSON.stringify(dialogValue)} id={props.id} name={props.name}/>
           <Tooltip  title={allowNewAdd? "Click to add new" : "Not allowed to add"} placement="top">
             <IconButton onClick={openDialog}>
               <AddBoxIcon color="action" fontSize="small"/>

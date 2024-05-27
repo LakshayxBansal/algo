@@ -1,7 +1,6 @@
 'use client'
-import React from 'react';
-import { Grid, TextField } from '@mui/material';
-import Paper from '@mui/material/Paper';
+import React, {useState} from 'react';
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
 import { createEnquiry } from '@/app/controllers/enquiry.controller';
 import Seperator from '@/app/Widgets/seperator';
 import {InputControl} from '@/app/Widgets/input/InputControl';
@@ -11,7 +10,6 @@ import { getEnquirySource } from '@/app/controllers/enquirySource.controller';
 import { getContact } from '@/app/controllers/contact.controller';
 import { getExecutive } from '@/app/controllers/executive.controller';
 import { getEnquiryCategory } from '@/app/controllers/enquiryCategory.controller';
-import { getEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
 import { getEnquirySubStatus } from '@/app/controllers/enquirySubStatus.controller';
 import {getEnquiryAction} from '@/app/controllers/enquiryAction.controller';
 import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
@@ -22,14 +20,9 @@ import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
-import { optionsDataT } from '@/app/models/models';
-import AutocompleteDB from '@/app/Widgets/AutocompleteDB';
+
 import dayjs from "dayjs";
-
-
-
-
-
+import { enquiryHeaderSchema, enquiryLedgerSchema } from '@/app/zodschema/zodschema';
 
 const strA = "custom_script.js";
 const scrA = require("./" + strA);
@@ -45,14 +38,50 @@ export interface IformData {
   userName: string;
 }
 
-
+const formConfig = {
+  showItems: false,
+};
 
 
 export default function InputForm(props: {baseData: IformData}) {
+  const [status, setStatus] = useState("Open");
   const baseData = props.baseData;
-  const handleSubmit = async (formData: FormData)=> {
+  const [selectValues, setSelectValues] = useState({});
 
-    const result = await createEnquiry(formData);
+  let result;
+  let issues;
+  const handleSubmit = async (formData: FormData)=> {
+    const headerData = {
+      enq_number: formData.get("enq_number") as string,
+      date: formData.get("date"),
+      contact: JSON.parse(formData.get("contact") as string).id,
+      received_by: JSON.parse(formData.get("received_by") as string).id,
+      category: JSON.parse(formData.get("category") as string).id,
+      source: JSON.parse(formData.get("source") as string).id,
+      };
+    let ledgerData = {
+      status_version: 0,
+      allocated_to: '',
+      date: formData.get("date"),
+      status: formData.get("status"),
+      sub_status: JSON.parse(formData.get("sub_status") as string).id,
+      action_taken: JSON.parse(formData.get("action_taken") as string).id,
+      next_action: JSON.parse(formData.get("next_action") as string).id,
+      next_action_date: formData.get("next_action_date"),
+      enquiry_remark: formData.get("enquiry_remark") ?? '',
+      suggested_action_remark: formData.get("suggested_action_remark") ?? '',
+      action_taken_remark: formData.get("action_taken_remark") ?? '',
+      closure_remark: formData.get("closure_remark") ?? '',
+      enquiry_tran_type: 1,
+      active : 1
+    }
+
+    const headerParsed = enquiryHeaderSchema.safeParse(headerData);
+    if (headerParsed.success) {
+      const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
+      console.log("parsed.error.issues")
+    }
+    //const result = await createEnquiry(formData);
   }
 
   const  handleButtonClick = async () => {
@@ -64,20 +93,32 @@ export default function InputForm(props: {baseData: IformData}) {
   };
 
   async function getSubStatusforStatus(stateStr: string) {
-    const status = (document.getElementById("status") as HTMLInputElement).value;
-
     const subStatus = await getEnquirySubStatus(stateStr, status);
     if (subStatus?.length > 0){
       return subStatus;
     } 
   }
 
+  function onStatusChange(event: React.SyntheticEvent, value: any) {
+    setStatus(value);
+  }
+
+  function onSelectChange(event: React.SyntheticEvent, value: any){
+    const controlName = event.currentTarget.name;
+    const newObj = {[controlName]: value};
+    const values = {...selectValues, newObj};
+    const val1 = {
+        status : {id: 1, name: "name"}
+      };
+    setSelectValues(values);
+
+  }
 
   return (
-    <form>
+    <form action={handleSubmit}>
       <Grid container spacing={1} style={{ marginLeft: '10px', marginTop: '5px' }}>
         <Grid item xs={11}>
-          <Seperator>Inquiry Details</Seperator>
+          <Seperator>Enquiry Details</Seperator>
         </Grid>
         <Grid item xs={11}> 
           <Box
@@ -87,10 +128,10 @@ export default function InputForm(props: {baseData: IformData}) {
               rowGap: 1,
               gridTemplateColumns: '2fr 1fr 1fr',
             }}>
-            <InputControl label="Ticket Description" 
-              id="ticket_description"
+            <InputControl label="Enquiry Description" 
+              id="enq_number"
               type={InputType.TEXT}
-              name="desc" 
+              name="enq_number" 
               fullWidth
             />
             <InputControl label="Received on "
@@ -128,8 +169,8 @@ export default function InputForm(props: {baseData: IformData}) {
               fetchDataFn = {getEnquiryCategory}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <CategoryForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
                 />}
             />
 
@@ -147,8 +188,8 @@ export default function InputForm(props: {baseData: IformData}) {
             />
 
             <SelectMasterWrapper
-              name = {"rcd_by"}
-              id = {"rcd_by"}
+              name = {"received_by"}
+              id = {"received_by"}
               label = {"Received By"}
               dialogTitle={"Add Executive"}
               fetchDataFn = {getExecutive}
@@ -163,12 +204,12 @@ export default function InputForm(props: {baseData: IformData}) {
 
           <Grid item xs={12} md={12}>
             <Grid item xs={6} md={12}>
-              <TextField placeholder="Call receipt remarks" label="Call receipt remarks" multiline name="callReceiptRemarks" id="callReceiptRemarks" rows={6} fullWidth />
+              <TextField placeholder="Call receipt remarks" label="Call receipt remarks" multiline name="enquiry_remark" id="enquiry_remark" rows={6} fullWidth />
             </Grid>
           </Grid>
           <Grid item xs={12} md={12}>
             <Grid item xs={6} md={12}>
-              <TextField placeholder="Suggested Action Remarks" label="Suggested Action Remarks" multiline name="suggestedActionRemarks" id="suggestedActionRemarks" rows={6} fullWidth />
+              <TextField placeholder="Suggested Action Remarks" label="Suggested Action Remarks" multiline name="suggested_action_remark" id="suggested_action_remark" rows={6} fullWidth />
             </Grid>
           </Grid>
           <Grid item xs={12}>
@@ -180,28 +221,36 @@ export default function InputForm(props: {baseData: IformData}) {
                   rowGap: 1,
                   gridTemplateColumns: 'repeat(3, 1fr)', 
                 }}>
-            <AutocompleteDB<optionsDataT>
-                name = {"status"}
-                id = {"status"}
-                label = {"Call Status"}
-                fetchDataFn = {getEnquiryStatus}
-            />  
+            <FormControl>
+              <RadioGroup
+                row
+                name="status"
+                id="status"
+                defaultValue='1'
+                onChange={onStatusChange}
+              >
+                <FormControlLabel value="Status" control={<label />} label="Status :" />
+                <FormControlLabel value="1" control={<Radio />} label="Open" />
+                <FormControlLabel value="2" control={<Radio />} label="Closed" />
+              </RadioGroup>
+            </FormControl>
             <SelectMasterWrapper
-                name = {"substatus"}
-                id = {"substatus"}
+                name = {"sub_status"}
+                id = {"sub_status"}
                 label = {"Call Sub-Status"}
-                dialogTitle={"Add Sub-Status"}
+                dialogTitle={"Add Sub-Status for " + status}
                 fetchDataFn = {getSubStatusforStatus}
                 renderForm={(fnDialogOpen, fnDialogValue) => 
                   <SubStatusForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
+                    statusName={status}
                   />
                 }
             />
             <SelectMasterWrapper
-                name = {"actionTaken"}
-                id = {"actionTaken"}
+                name = {"action_taken"}
+                id = {"action_taken"}
                 label = {"Action Taken"}
                 dialogTitle={"Add Action"}
                 fetchDataFn = {getEnquiryAction}
@@ -213,8 +262,8 @@ export default function InputForm(props: {baseData: IformData}) {
                 }
             />
             <SelectMasterWrapper
-                name = {"nextAction"}
-                id = {"nextAction"}
+                name = {"next_action"}
+                id = {"next_action"}
                 label = {"Next Action"}
                 dialogTitle={"Add Action"}
                 fetchDataFn = {getEnquiryAction}
@@ -227,13 +276,22 @@ export default function InputForm(props: {baseData: IformData}) {
             />
             <InputControl label="When "
               type={InputType.DATETIMEINPUT}
-              id="whenDate"
-              name="whenDate"
+              id="next_action_date"
+              name="next_action_date"
               defaultValue={dayjs(new Date())}
             />
             <Grid item xs={12} md={12}>
               <Grid item xs={6} md={12}>
-                <TextField placeholder="Closure remarks" label="Closure remarks" multiline name="closureRemarks" id="closureRemarks" rows={2} fullWidth />
+                <TextField 
+                  placeholder="Closure remarks" 
+                  label="Closure remarks" 
+                  multiline name="closure_remark" 
+                  id="closure_remark" 
+                  rows={2} 
+                  fullWidth
+                  required={status==="2"} 
+                  disabled={status==="1"}
+                />
               </Grid>
             </Grid>
           </Box>
@@ -260,3 +318,14 @@ export default function InputForm(props: {baseData: IformData}) {
     </form>
   );
 }
+
+
+/*
+            <AutocompleteDB<optionsDataT>
+                name = {"status"}
+                id = {"status"}
+                label = {"Call Status"}
+                fetchDataFn = {getEnquiryStatus}
+                onChange={onStatusChange}
+            /> 
+*/

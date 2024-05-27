@@ -71,7 +71,6 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT)
     ) as HTMLInputElement;
 
     if (text && option) {
-      console.log(option);
       text.value = getOptions(option, props.highlightOptions);
     }
   }
@@ -96,7 +95,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT)
             autoSelect={true}
             autoHighlight={true}
             value={diaglogValue}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
+            isOptionEqualToValue={(option, value) => option === value}
             freeSolo={true}
             forcePopupIcon={true}
             PopperComponent={(props) => (

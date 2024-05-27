@@ -15,8 +15,8 @@ export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
 //Enquiry Schemas
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
-export type enquirySchemaT = z.infer<typeof zs.enquirySchema>;
-
+export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
+export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;

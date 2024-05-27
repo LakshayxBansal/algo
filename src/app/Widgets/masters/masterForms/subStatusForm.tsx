@@ -3,19 +3,17 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import {InputControl, InputType} from '@/app/Widgets/input/InputControl';
 import Box from '@mui/material/Box';
-import { createEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
+import { createEnquirySubStatus } from '@/app/controllers/enquirySubStatus.controller';
 import Grid from '@mui/material/Grid';
-import {nameMasterData} from '../../../zodschema/zodschema';
+import {enquirySubStatusMaster} from '../../../zodschema/zodschema';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
 import Paper from '@mui/material/Paper';
-import { optionsDataT } from '@/app/models/models';
-import AutocompleteDB from '@/app/Widgets/AutocompleteDB';
-import { getEnquiryStatus } from '@/app/controllers/enquiryStatus.controller';
 
 export default function SubStatusForm(props: {
   setDialogOpen?: (props: any) => void,
   setDialogValue?: (props: any) => void,
+  statusName?: string
     }) {
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
@@ -23,13 +21,17 @@ export default function SubStatusForm(props: {
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData)=> {
-    const data = { name: formData.get("name") as string, };
-    const parsed = nameMasterData.safeParse(data);
+    formData.append('status', props.statusName as string);
     let result;
     let issues;
+    let data: { [key: string]: any } = {}; // Initialize an empty object
 
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+    const parsed = enquirySubStatusMaster.safeParse(data);
     if (parsed.success) {
-      result = await createEnquiryStatus(formData);
+      result = await createEnquirySubStatus(formData);
       if (result.status){
         const newVal = {id: result.data[0].id, name: result.data[0].name};
         props.setDialogValue? props.setDialogValue(newVal.name) : null;
@@ -60,7 +62,7 @@ export default function SubStatusForm(props: {
 
   return(
     <Paper>
-      <Seperator>Add Sub-Status</Seperator>
+      <Seperator>{"Add Sub-Status for " + props.statusName} </Seperator>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
         <form action={handleSubmit}> 
@@ -71,20 +73,14 @@ export default function SubStatusForm(props: {
               rowGap: 1,
               gridTemplateColumns: 'repeat(2, 1fr)',
             }}>
-            <AutocompleteDB<optionsDataT>
-              name = {"status"}
-              id = {"status"}
-              label = {"Call Status"}
-              fetchDataFn = {getEnquiryStatus}
-            /> 
             <InputControl
               autoFocus
-              id="substatus_name"
+              id="name"
               label="Sub-Status Name"
               type={InputType.TEXT}
-              name="substatus_name"
-              error={formError?.substatus_name?.error}
-              helperText={formError?.substatus_name?.msg} 
+              name="name"
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg} 
             />
           </Box>
           <Grid container xs={12} md={12}>
