@@ -1,8 +1,19 @@
-import { useState, ReactNode, useEffect, SyntheticEvent, Dispatch, SetStateAction}from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
-import { debounce } from '@mui/material/utils';
+import {
+  Fragment,
+  useState,
+  ReactNode,
+  useEffect,
+  SyntheticEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import Autocomplete from "@mui/material/Autocomplete";
+import { debounce } from "@mui/material/utils";
 import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
+import { formErrorT } from "../models/models";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 
 type OnChangeFunction = (
   event: any,
@@ -23,33 +34,50 @@ type autocompleteDBT = {
   highlightOptions?: SelectOptionsFunction;
   width?: number;
   diaglogVal?: any;
-  setDialogVal?: Dispatch<SetStateAction<any>>
+  setDialogVal?: Dispatch<SetStateAction<any>>;
+  formError?: formErrorT;
+  required?: boolean;
+  defaultValue?: string;
+  notEmpty?: boolean;
   //children: React.FunctionComponentElement
 };
 
-export function AutocompleteDB<CustomT>(props: autocompleteDBT)
-{
-  const [inputValue, setInputValue] = useState("");
-  let [diaglogValue, setDialogValue] = useState<CustomT>({} as CustomT);
-  if (props.diaglogVal && props.setDialogVal) {
-    diaglogValue = props.diaglogVal
-    setDialogValue = props.setDialogVal
-  }
-  
+export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
+  const [inputValue, setInputValue] = useState(
+    props.defaultValue ? props.defaultValue : ""
+  );
   const [options, setOptions] = useState<CustomT[]>([]);
   const width = props.width ? props.width : 300;
+  const [valueChange, setvalueChange] = useState(true);
+  const [autoSelect, setAutoSelect] = useState(props.notEmpty);
+  const [selectDefault, setSelectDefault] = useState(
+    Boolean(props.defaultValue)
+  );
+  let [diaglogValue, setDialogValue] = useState<CustomT>({} as CustomT);
+
+  if (props.diaglogVal && props.setDialogVal) {
+    diaglogValue = props.diaglogVal;
+    setDialogValue = props.setDialogVal;
+  }
 
   useEffect(() => {
-    
     const getData = debounce(async (input) => {
       const results = (await props.fetchDataFn(input)) as CustomT[];
       if (results) {
+        if (
+          (autoSelect && inputValue === "") ||
+          (selectDefault && results.length === 1)
+        ) {
+          setDialogValue(results[0]);
+        }
         setOptions(results);
+        setSelectDefault(false);
       }
     }, 400);
-
-    getData(inputValue);
-  }, [inputValue]);
+    if (valueChange || autoSelect) {
+      getData(inputValue);
+    }
+  }, [inputValue, autoSelect]);
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
@@ -77,52 +105,87 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT)
 
   return (
     <Autocomplete
-            id={props.id}
-            options={options}
-            getOptionLabel={(option) =>
-              typeof option === "string"
-                ? option
-                : getOptions(option, props.labelOptions)
-            }
-            renderOption={(p, option) => {
-              return <li {...p}>{getOptions(option, props.renderOptions)}</li>;
-            }}
-            sx={{ width: { width } }}
-            renderInput={(params) => (
-              <TextField {...params} name={props.name} label={props.label} />
-            )}
-            onHighlightChange={onHighlightChange}
-            autoSelect={true}
-            autoHighlight={true}
-            value={diaglogValue}
-            isOptionEqualToValue={(option, value) => option === value}
-            freeSolo={true}
-            forcePopupIcon={true}
-            PopperComponent={(props) => (
-              <Popper {...props}>
-                {props.children as ReactNode}
-                <TextField
-                  id="popper_textid_temp_5276"
-                  variant="outlined"
-                  inputProps={{ style: { color: "blue", fontSize: 10 } }}
-                  multiline
-                  rows={2}
-                  fullWidth
-                />
-              </Popper>
-            )}
-            autoComplete
-            includeInputInList
-            onChange={(event: any, newValue) => {
-              setDialogValue(newValue as CustomT);
-              props.onChange
-                ? props.onChange(event, newValue, setDialogValue)
-                : null;
-            }}
-            onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue);
+      id={props.id}
+      options={options}
+      getOptionLabel={(option) => {
+        return typeof option === "string"
+          ? option
+          : getOptions(option, props.labelOptions);
+      }}
+      renderOption={(p, option) => {
+        return <li {...p}>{getOptions(option, props.renderOptions)}</li>;
+      }}
+      sx={{ width: { width } }}
+      renderInput={(params) => {
+        return (
+          <TextField
+            {...params}
+            name={props.name}
+            label={props.label}
+            required={props.required}
+            error={props.formError?.error}
+            helperText={props.formError?.msg}
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <Fragment>
+                  <IconButton
+                    onClick={(param) => {
+                      console.log("modify- " + param);
+                      console.log(param);
+                      console.log(params.inputProps.value);
+                    }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  {params.InputProps.endAdornment}
+                </Fragment>
+              ),
             }}
           />
+        );
+      }}
+      onHighlightChange={onHighlightChange}
+      value={diaglogValue}
+      isOptionEqualToValue={(option, value) => option === value}
+      PopperComponent={(props) => (
+        <Popper {...props}>
+          {props.children as ReactNode}
+          <TextField
+            id="popper_textid_temp_5276"
+            variant="outlined"
+            inputProps={{ style: { color: "blue", fontSize: 10 } }}
+            multiline
+            rows={2}
+            fullWidth
+          />
+        </Popper>
+      )}
+      onBlur={(e) => setAutoSelect(props.notEmpty)}
+      onOpen={(e) => {
+        setvalueChange(true);
+        setInputValue("");
+      }}
+      onChange={(event: any, newValue, reason) => {
+        if (reason != "blur") {
+          setDialogValue(newValue ? (newValue as CustomT) : ({} as CustomT));
+          props.onChange
+            ? props.onChange(event, newValue, setDialogValue)
+            : null;
+        }
+      }}
+      onInputChange={(event, newInputValue, reason) => {
+        setAutoSelect(false);
+        if (reason != "reset") {
+          setvalueChange(true);
+          setInputValue(newInputValue);
+        }
+      }}
+      forcePopupIcon={true}
+      autoHighlight
+      autoComplete
+      includeInputInList
+    />
   );
 }
 

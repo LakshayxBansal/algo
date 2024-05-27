@@ -84,12 +84,11 @@ export default function InputForm(props: {baseData: IformData}) {
     //const result = await createEnquiry(formData);
   }
 
-  const  handleButtonClick = async () => {
+  const handleButtonClick = async () => {
     scrA.makeInputReadOnly("ticket_description");
 
     // Append the script element to the head
     //document.head.appendChild(script);
- 
   };
 
   async function getSubStatusforStatus(stateStr: string) {
@@ -174,18 +173,19 @@ export default function InputForm(props: {baseData: IformData}) {
                 />}
             />
 
-            <SelectMasterWrapper
-              name = {"source"}
-              id = {"source"}
-              label = {"Source"}
-              dialogTitle={"Add Source"}
-              fetchDataFn = {getEnquirySource}
-              renderForm={(fnDialogOpen, fnDialogValue) => 
-                  <SourceForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                  />}
-            />
+                <SelectMasterWrapper
+                  name={"source"}
+                  id={"source"}
+                  label={"Source"}
+                  dialogTitle={"Add Source"}
+                  fetchDataFn={getEnquirySource}
+                  renderForm={(fnDialogOpen, fnDialogValue) => (
+                    <SourceForm
+                      setDialogOpen={fnDialogOpen}
+                      setDialogValue={fnDialogValue}
+                    />
+                  )}
+                />
 
             <SelectMasterWrapper
               name = {"received_by"}
