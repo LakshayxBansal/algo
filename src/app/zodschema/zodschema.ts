@@ -112,26 +112,50 @@ export const executiveSchema = z.object({
 
 
 /**
- * validate enquiry schema
+ * validate enquiry header schema
  */
 
-export const enquirySchema = z.object({
-  id: z.number().optional(),
-  desc: z.string().min(1).max(75),
-  date: z.date(),
-  enq_number : z.string().min(1),
-  contact_id: z.number(),
-  received_by_id : z.number(),
-  category_id: z.number(),
-  source_id : z.number(),
-  executive_id : z.number(),
-  allocated_to : z.number().optional(),
-  modified_by : z.number().optional(), 
-  modified_on : z.date().optional(),
-  created_by : z.number().optional(), 
-  created_on : z.number().optional(),
+export const enquiryHeaderSchema = z.object({
+  id : z.number().optional(),
+  enq_number : z.string().min(1).max(75),
+  date: z.string().min(1).max(20),
+  auto_number : z.number().optional(),
+  contact: z.string().min(1).max(60),
+  received_by : z.string().min(1).max(60),
+  category: z.string().min(1).max(50),
+  allocated_to : z.string().max(60).optional(),
+  source: z.string().max(60).optional(),
+  stamp : z.number().optional(),
+  modified_by : z.number().optional(),
+  modified_on: z.date().optional(),
+  created_by : z.number().optional(),
+  created_on: z.date().optional(),
 });
 
+
+
+/**
+ * validate enquiry ledger schema
+ */
+export const enquiryLedgerSchema = z.object({
+  enquiry_id : z.number().optional(),
+  status_version: z.number().optional(),
+  allocated_to: z.string().max(60).optional(),
+  date: z.string().min(1).max(20),
+  executive: z.string().max(60).optional(),
+  status: z.string().min(1).max(50),
+  sub_status: z.string().min(1).max(50),
+  action_taken: z.string().min(1).max(60),
+  next_action: z.string().min(1).max(60),
+  next_action_date: z.string().min(1).max(20),
+  enquiry_remark: z.string().max(5000).optional(),
+  suggested_action_remark: z.string().max(5000).optional(),
+  action_taken_remark: z.string().max(5000).optional(),
+  closure_remark: z.string().max(5000).optional(),
+  enquiry_tran_type: z.number().optional(),
+  id : z.number().optional(),
+  active : z.number().optional()
+});
 
 /**
  * contact group 
@@ -242,11 +266,11 @@ export const enquirySubStatusMaster = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(50),
   status: z.string().min(1).max(30), 
-  created_on: z.date(), 
-  modified_on: z.date(), 
-  created_by: z.number(), 
-  modified_by: z.number(), 
-  stamp: z.number(),});
+  created_on: z.date().optional(), 
+  modified_on: z.date().optional(), 
+  created_by: z.number().optional(), 
+  modified_by: z.number().optional(), 
+  stamp: z.number().optional(),});
 
 
 /**

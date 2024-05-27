@@ -1,5 +1,5 @@
 
-import React, {FocusEventHandler, useState} from 'react';
+import React, {useState} from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -57,25 +57,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({type, custLabel
         const inputProps = props as CheckboxProps;
         if(inputProps.onChange) {
           inputProps.onChange(event, event.target.checked)
-        }
-        break;
-      }
-    }
-  }
-
-  function onBlur(event: React.FocusEvent<HTMLInputElement>){
-    switch (type){
-      case InputType.EMAIL: {
-        const email = event.target.value;
-        const inputProps = props as TextFieldProps;
-        const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (email !== '' && !emailRegex.test(email)) {
-          setIfEmail({status: false, msg: "Please enter a valid email"});
-        } else {
-          setIfEmail({status: true, msg: ""});
-        }
-        if(inputProps.onBlur) {
-          inputProps.onBlur(event)
         }
         break;
       }
@@ -159,10 +140,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({type, custLabel
       const textFieldProps = props as TextFieldProps;
       return <TextField {...textFieldProps} 
         type="email" 
-        onBlur={onBlur} 
         onChange={onChange}
-        error={!ifEmail.status}
-        helperText={!ifEmail.status && ifEmail.msg} 
       />;
       break;
     }

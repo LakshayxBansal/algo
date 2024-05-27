@@ -14,8 +14,7 @@ export async function getEnquirySubStatusList(crmDb: string, searchString: strin
     let values: any[] = [status];
 
     if (searchString !== "") {
-      query = query + " and name like '%" + searchString + "%'";
-      values = [];
+      query = query + " and sb.name like '%" + searchString + "%'";
     }
     const result = await excuteQuery({
       host: crmDb,

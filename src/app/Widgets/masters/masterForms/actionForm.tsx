@@ -71,13 +71,13 @@ export default function ActionForm(props: {
             }}>
             <InputControl
               autoFocus
-              id="action_name"
+              id="name"
               label="Action Name"
               type={InputType.TEXT}
-              name="action_name"
+              name="name"
               fullWidth
-              error={formError?.action_name?.error}
-              helperText={formError?.action_name?.msg} 
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg} 
             />
           </Box>
           <Box sx={{

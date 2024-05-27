@@ -1,34 +1,38 @@
 'use server'
 import { createEnquiryDB } from '../services/enquiry.service';
 import { getSession } from '../services/session.service';
+import { enquiryHeaderSchemaT, enquiryLedgerSchemaT } from '@/app/models/models';
+import { enquiryHeaderSchema, enquiryLedgerSchema } from '@/app/zodschema/zodschema';
 
-
-export async function createEnquiry(formData: FormData ) {
-  try {
+export async function createEnquiry(enqData: { head: enquiryHeaderSchemaT, ledger:enquiryLedgerSchemaT } ) {
+  let result;
+    try {
     const session = await getSession();
-
     if (session) {
-      const enquiryData = {
-        desc: formData.get("desc") as string,
-        contactPerson: formData.get("contactperson"),
-        salesPerson: formData.get("executive") as string,
-        category: formData.get("category") as string,
-        closuredate: formData.get("expclosuredate") as string,
-        username: session.user.email,
-        notes: formData.get("notes") as string,
-        nextaction: formData.get("nextaction"),
-        nextactiondate: formData.get("nextactiondate"),
-      }
   
-      console.log(enquiryData);
-      //return createEnquiryDB(session.user.dbInfo.dbName, enquiryData);
+      const headParsed = enquiryHeaderSchema.safeParse(enqData.head);
+      const ledgerParsed = enquiryLedgerSchema.safeParse(enqData.ledger)
+      if(headParsed.success && ledgerParsed.success) {
+        const dbResult = await createEnquiryDB(session, enqData);
+        if (dbResult.length >0 ) {
+         result = {status: true, data:dbResult};
+        } else {
+          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+        }
+      } else {
+        //result = {status: false, data: parsed.error.flatten().fieldErrors };
+        result = {status: false, data: parsed.error.issues };
+
+      }
+    } else {
+      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
     }
-
-
+    return result;
   } catch (e) {
     console.log(e);
   }
+  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  return result;
 }
-
 
 
