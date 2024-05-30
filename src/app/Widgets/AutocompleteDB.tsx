@@ -13,7 +13,8 @@ import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import { InputControl, InputType } from "./input/InputControl";
 
 type OnChangeFunction = (
   event: any,
@@ -44,7 +45,7 @@ type autocompleteDBT = {
 
 export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   const [inputValue, setInputValue] = useState(
-    props.defaultValue ? props.defaultValue : ""
+    props.defaultValue ? props.defaultValue : "a"
   );
   const [options, setOptions] = useState<CustomT[]>([]);
   const width = props.width ? props.width : 300;
@@ -75,6 +76,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       }
     }, 400);
     if (valueChange || autoSelect) {
+      console.log("getData fired!");
       getData(inputValue);
     }
   }, [inputValue, autoSelect]);
@@ -118,8 +120,9 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       sx={{ width: { width } }}
       renderInput={(params) => {
         return (
-          <TextField
+          <InputControl
             {...params}
+            inputType={InputType.TEXT}
             name={props.name}
             label={props.label}
             required={props.required}
@@ -135,8 +138,11 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
                       console.log(param);
                       console.log(params.inputProps.value);
                     }}
+                    size='small'
+                    edge='end'
+                    style={{ fontSize: 16, padding: 4 }}
                   >
-                    <EditIcon fontSize="small" />
+                    <EditNoteIcon  fontSize='inherit'/>
                   </IconButton>
                   {params.InputProps.endAdornment}
                 </Fragment>
@@ -165,6 +171,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       onOpen={(e) => {
         setvalueChange(true);
         setInputValue("");
+        console.log("onOpen fired!");
       }}
       onChange={(event: any, newValue, reason) => {
         if (reason != "blur") {
@@ -182,7 +189,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
         }
       }}
       forcePopupIcon={true}
-      autoHighlight
+      // autoHighlight
       autoComplete
       includeInputInList
     />

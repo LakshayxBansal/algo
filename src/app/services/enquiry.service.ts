@@ -7,41 +7,32 @@ import { Session } from 'next-auth';
 
 export async function createEnquiryDB(session: Session, enqData: { head: enquiryHeaderSchemaT, ledger:enquiryLedgerSchemaT } ) {
   try {
-/*
-    INSERT INTO crmapp.enquiry_ledger_tran
-    (enquiry_id, status_version, allocated_to, date, executive_id, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date, enquiry_remark, suggested_action_remark,
-    action_taken_remark, closure_remark, enquiry_tran_type_id, id, active)
-    VALUES
-    ();
-    
+
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query: "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        data.alias,
-        data.name,
-        data.address1,
-        data.address2,
-        data.address3,
-        data.city,
-        data.state,
-        data.pincode,
-        data.country,
-        data.email,
-        data.mobile,
-        data.whatsapp,
-        data.dob,
-        data.doa,
-        data.doj,
-        data.area,
-        data.call_type,
-        data.crm_map_id,
-        data.role,
-        data.executive_dept,
-        data.executive_group,    
+        enqData.head.enq_number,
+        enqData.head.date,
+        enqData.head.contact_id,
+        enqData.head.received_by_id,
+        enqData.head.category_id,
+        enqData.head.source_id,
+        enqData.ledger.allocated_to_id,
+        enqData.ledger.status_id,
+        enqData.ledger.sub_status_id,
+        enqData.ledger.action_taken_id,
+        enqData.ledger.next_action_id,
+        enqData.ledger.next_action_date,
+        enqData.ledger.enquiry_remark,
+        enqData.ledger.suggested_action_remark,
+        enqData.ledger.action_taken_remark,
+        enqData.ledger.closure_remark,
+        enqData.ledger.enquiry_tran_type,
+        1,
         session.user.email
       ],
-    });*/
+    });
   } catch (e) {
     console.log(e);
   }

@@ -1,7 +1,7 @@
 import * as z from 'zod';
 import * as zs from '../zodschema/zodschema';
 
-export type userT = z.infer<typeof zs.userSchema>;
+export type userSchemaT = z.infer<typeof zs.userSchema>;
 
 export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 

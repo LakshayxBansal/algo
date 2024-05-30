@@ -73,7 +73,7 @@ export default function ExecutiveGroupForm(props: {
           autoFocus
           id="name"
           label="Executive Group Name"
-          type={InputType.TEXT}
+          inputType={InputType.TEXT}
           name="name"
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 

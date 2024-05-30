@@ -102,7 +102,7 @@ export default function ExecutiveForm(props: {
                   gridTemplateColumns: 'repeat(3, 1fr)', 
                 }}>
             <InputControl
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               autoFocus                
               id="name"
               label="Name"
@@ -112,7 +112,7 @@ export default function ExecutiveForm(props: {
               helperText={formError?.name?.msg} 
             />
             <InputControl
-              type={InputType.TEXT}     
+              inputType={InputType.TEXT}     
               id="alias"
               label="Alias"
               name="alias"
@@ -176,7 +176,7 @@ export default function ExecutiveForm(props: {
               }
             /> 
             <InputControl
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               id="pan" 
               label="PAN"
               name="pan"
@@ -184,7 +184,7 @@ export default function ExecutiveForm(props: {
               helperText={formError?.pan?.msg} 
             />
             <InputControl
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               id="aadhaar" 
               label="AADHAAR"
               name="aadhaar"
@@ -206,7 +206,7 @@ export default function ExecutiveForm(props: {
               }
             /> 
             <InputControl
-              type={InputType.EMAIL}     
+              inputType={InputType.EMAIL}     
               id="email"
               label="Email"
               name="email"
@@ -215,7 +215,7 @@ export default function ExecutiveForm(props: {
               helperText={formError?.email?.msg} 
             />
             <InputControl
-              type={InputType.PHONE}     
+              inputType={InputType.PHONE}     
               id="mobile"
               label="Phone No"
               name="mobile"
@@ -223,7 +223,7 @@ export default function ExecutiveForm(props: {
               helperText={formError?.mobile?.msg} 
             />
             <InputControl
-              type={InputType.PHONE}     
+              inputType={InputType.PHONE}     
               id="whatsapp"
               label="Whatsapp No"
               name="whatsapp"
@@ -232,7 +232,7 @@ export default function ExecutiveForm(props: {
             />
 
             <InputControl
-              type={InputType.DATEINPUT}     
+              inputType={InputType.DATEINPUT}     
               id="dob"
               label="Date of Birth"
               name="dob"
@@ -244,7 +244,7 @@ export default function ExecutiveForm(props: {
               }}
             />
             <InputControl
-              type={InputType.DATEINPUT}     
+              inputType={InputType.DATEINPUT}     
               id="doa"
               label="Anniversary Date"
               name="doa"
@@ -256,7 +256,7 @@ export default function ExecutiveForm(props: {
               }}          
             />
             <InputControl
-              type={InputType.DATEINPUT}     
+              inputType={InputType.DATEINPUT}     
               id="doj"
               label="Joining Date"
               name="doj"

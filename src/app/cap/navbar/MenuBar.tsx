@@ -158,7 +158,7 @@ export default function MenuBar(props : propsType) {
                 </IconButton>
               </Toolbar>
               <Divider />
-                <LeftMenuTree pages={pages}></LeftMenuTree>
+                <LeftMenuTree pages={pages} toggleDrawer={toggleDrawer}></LeftMenuTree>
             </Drawer>
             <Box>
               {children}

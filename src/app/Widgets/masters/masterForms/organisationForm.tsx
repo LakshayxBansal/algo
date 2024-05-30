@@ -72,7 +72,7 @@ export default function OrganisationForm(props: {
                 gridTemplateColumns: '2fr 1fr', 
               }}>
           <InputControl
-            type={InputType.TEXT}
+            inputType={InputType.TEXT}
             autoFocus                
             id="name"
             label="Name"
@@ -81,7 +81,7 @@ export default function OrganisationForm(props: {
             helperText={formError?.name?.msg} 
           />
           <InputControl
-            type={InputType.TEXT}     
+            inputType={InputType.TEXT}     
             id="alias"
             label="Alias"
             name="alias"
@@ -96,7 +96,7 @@ export default function OrganisationForm(props: {
                 gridTemplateColumns: 'repeat(3, 1fr)', 
               }}>
           <InputControl
-            type={InputType.TEXT}     
+            inputType={InputType.TEXT}     
             id="print_name"
             label="Print Name"
             name="print_name"
@@ -104,7 +104,7 @@ export default function OrganisationForm(props: {
             helperText={formError?.print_name?.msg} 
           />
           <InputControl
-            type={InputType.TEXT}
+            inputType={InputType.TEXT}
             id="pan" 
             label="PAN"
             name="pan"
@@ -112,7 +112,7 @@ export default function OrganisationForm(props: {
             helperText={formError?.pan?.msg} 
           />
           <InputControl
-            type={InputType.TEXT}
+            inputType={InputType.TEXT}
             id="aadhaar" 
             label="Aadhaar"
             name="aadhaar"
@@ -121,7 +121,7 @@ export default function OrganisationForm(props: {
           />
         </Box>
         <InputControl
-          type={InputType.TEXT} 
+          inputType={InputType.TEXT} 
           label="Address Line 1" 
           name="address1"
           id="address1"
@@ -129,7 +129,7 @@ export default function OrganisationForm(props: {
           helperText={formError?.address1?.msg} 
           fullWidth />
         <InputControl
-          type={InputType.TEXT} 
+          inputType={InputType.TEXT} 
           label="Address Line 2" 
           name="address2"
           id="address2"
@@ -137,7 +137,7 @@ export default function OrganisationForm(props: {
           helperText={formError?.address2?.msg} 
           fullWidth/>
         <InputControl
-          type={InputType.TEXT} 
+          inputType={InputType.TEXT} 
           label="Address Line 3" 
           name="address3"
           id="address3"
@@ -151,7 +151,7 @@ export default function OrganisationForm(props: {
               }}>
           <CountryStateComposite/>
           <InputControl 
-            type={InputType.TEXT} 
+            inputType={InputType.TEXT} 
             name="city" 
             id="city" 
             label="City" 
@@ -159,7 +159,7 @@ export default function OrganisationForm(props: {
             helperText={formError?.city?.msg}  
           />
           <InputControl 
-            type={InputType.TEXT} 
+            inputType={InputType.TEXT} 
             name="pincode" 
             id="pincode" 
             label="Pin Code" 

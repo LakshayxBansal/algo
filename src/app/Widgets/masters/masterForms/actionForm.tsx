@@ -73,7 +73,7 @@ export default function ActionForm(props: {
               autoFocus
               id="name"
               label="Action Name"
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               name="name"
               fullWidth
               error={formError?.name?.error}

@@ -79,7 +79,7 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
             title={allowNewAdd ? "Click to add new" : "Not allowed to add"}
             placement="top"
           >
-            <IconButton onClick={openDialog}>
+            <IconButton onClick={openDialog} size='small'>
               <AddBoxIcon color="action" fontSize="small" />
             </IconButton>
           </Tooltip>

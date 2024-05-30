@@ -77,7 +77,7 @@ export default function SubStatusForm(props: {
               autoFocus
               id="name"
               label="Sub-Status Name"
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               name="name"
               error={formError?.name?.error}
               helperText={formError?.name?.msg} 

@@ -8,10 +8,10 @@ import excuteQuery  from '../utils/db/db';
 export async function getEnquirySubStatusList(crmDb: string, searchString: string, status: string) {
 
   try {
-    let query = 'select sb.id as id, sb.name as name from enquiry_sub_status_master sb, enquiry_status_master st where \
-                  st.name=? and \
-                  st.id = sb.enquiry_status_id ';
-    let values: any[] = [status];
+    const nStatus = Number(status);
+    let query = 'select sb.id as id, sb.name as name from enquiry_sub_status_master sb where \
+                  sb.enquiry_status_id= ?';
+    let values: any[] = [nStatus];
 
     if (searchString !== "") {
       query = query + " and sb.name like '%" + searchString + "%'";

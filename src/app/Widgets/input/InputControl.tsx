@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -17,6 +17,7 @@ import { FieldChangeHandlerContext } from '@mui/x-date-pickers/internals/hooks/u
 import { DatePicker  } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker, TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import ReactPhoneInput, { CountryData, PhoneInputProps } from 'react-phone-input-material-ui';
 
 export enum InputType {
   TEXT,
@@ -29,7 +30,7 @@ export enum InputType {
 }
 // Define the mandatory props for the base control
 interface BaseControlProps {
-  type:InputType,
+  inputType:InputType,
   custLabel?: string,
   // Add any mandatory props here
 }
@@ -39,12 +40,12 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({type, custLabel="", ...props }) => {
+export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, custLabel="", ...props }) => {
   const [ifEmail, setIfEmail] = useState({status: true, msg: ""});
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>){
     console.log(event.target.id, "event is :", event.type);
-    switch (type){
+    switch (inputType){
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
         if(inputProps.onChange) {
@@ -85,8 +86,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({type, custLabel
     }
   }
 
+  function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
+    const inputProps = props as PhoneInputProps;
+    if(inputProps.onChange) {
+      inputProps.onChange(value, data, event, formattedValue)
+    }
+  }
+
   // Render either a TextField or a Checkbox based on the props
-  switch (type) {
+  switch (inputType) {
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
@@ -145,9 +153,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({type, custLabel
       break;
     }
     case InputType.PHONE: {
-      // It's a TextField
-      const textFieldProps = props as TextFieldProps;
-      return <TextField {...textFieldProps} onChange={onChange} />;
+      // It's a phone input
+      const phoneProps = props as PhoneInputProps;
+      return <ReactPhoneInput  {...phoneProps} onChange={onPhoneChange} component={TextField}/>;
       break;
     }
   }

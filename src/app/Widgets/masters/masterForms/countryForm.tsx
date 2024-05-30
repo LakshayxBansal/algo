@@ -69,7 +69,7 @@ export default function CountryForm(props: {
           autoFocus
           id="name"
           label="Country Name"
-          type={InputType.TEXT}
+          inputType={InputType.TEXT}
           name="name"
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 
@@ -77,7 +77,7 @@ export default function CountryForm(props: {
         <InputControl
           id="alias"
           label="Alias"
-          type={InputType.TEXT}
+          inputType={InputType.TEXT}
           name="alias"
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 

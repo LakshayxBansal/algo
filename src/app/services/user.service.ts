@@ -1,33 +1,29 @@
 'use server'
 
-import { ucs2 } from 'punycode';
 import excuteQuery   from '../utils/db/db';
-import {hashText, hashCompare} from '../utils/encrypt.utils';
-
-interface userDataType {
-  email: string | null | undefined,
-  password?: string | null,
-  firstname: string,
-  lastname: string,
-}
-
+import {hashText} from '../utils/encrypt.utils';
+import {userSchemaT} from '@/app/models/models';
 /**
  * add user to user db
  * 
  */
-export async function addUser(userData:userDataType) {
+export async function addUser(data:userSchemaT) {
   try {
-    const hashedPassword = userData.password? await hashText(userData.password) :  '';
-
     return excuteQuery({
       host: 'userDb',
-      query: 'insert into user (email, password, firstname, lastname, datetime) values (?, ?, ?, ?, now())', 
-      values: [userData.email, hashedPassword, userData.firstname, userData.lastname],
+      query: "call createUser(?, ?, ?, ?, ?);",
+      values: [
+        data.email,
+        data.name,
+        data.password,
+        data.phone,
+        data.provider,
+      ],
     });
   } catch (e) {
     console.log(e);
   }
-  //return null;
+  return null;
 }
 
 

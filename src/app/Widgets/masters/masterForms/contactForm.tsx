@@ -84,7 +84,7 @@ export default function ContactForm(props: {
                   gridTemplateColumns: 'repeat(3, 1fr)', 
                 }}>
             <InputControl
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               autoFocus                
               id="name"
               label="Name"
@@ -93,7 +93,7 @@ export default function ContactForm(props: {
               helperText={formError?.name?.msg} 
             />
             <InputControl
-              type={InputType.TEXT}     
+              inputType={InputType.TEXT}     
               id="alias"
               label="Alias"
               name="alias"
@@ -101,7 +101,7 @@ export default function ContactForm(props: {
               helperText={formError?.alias?.msg} 
             />
             <InputControl
-              type={InputType.TEXT}     
+              inputType={InputType.TEXT}     
               id="print_name"
               label="Print Name"
               name="print_name"
@@ -165,7 +165,7 @@ export default function ContactForm(props: {
               }
             />
             <InputControl
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               id="pan" 
               label="PAN"
               name="pan"
@@ -173,7 +173,7 @@ export default function ContactForm(props: {
               helperText={formError?.pan?.msg} 
             />
             <InputControl
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               id="aadhaar" 
               label="AADHAAR"
               name="aadhaar"
@@ -181,7 +181,7 @@ export default function ContactForm(props: {
               helperText={formError?.aadhaar?.msg} 
             />
             <InputControl
-              type={InputType.EMAIL}     
+              inputType={InputType.EMAIL}     
               id="email"
               label="Email"
               name="email"
@@ -190,7 +190,7 @@ export default function ContactForm(props: {
               helperText={formError?.email?.msg} 
             />
             <InputControl
-              type={InputType.PHONE}     
+              inputType={InputType.PHONE}     
               id="mobile"
               label="Phone No"
               name="mobile"
@@ -198,7 +198,7 @@ export default function ContactForm(props: {
               helperText={formError?.mobile?.msg} 
             />
             <InputControl
-              type={InputType.PHONE}     
+              inputType={InputType.PHONE}     
               id="whatsapp"
               label="Whatsapp No"
               name="whatsapp"
@@ -213,7 +213,7 @@ export default function ContactForm(props: {
                   gridTemplateColumns: 'repeat(2, 1fr)', 
                 }}>
             <InputControl
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               label="Address Line 1" 
               name="address1"
               id="address1"
@@ -221,7 +221,7 @@ export default function ContactForm(props: {
               helperText={formError?.address1?.msg} 
               fullWidth />
             <InputControl
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               label="Address Line 2" 
               name="address2"
               id="address2"
@@ -229,7 +229,7 @@ export default function ContactForm(props: {
               helperText={formError?.address2?.msg} 
               fullWidth/>
             <InputControl
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               label="Address Line 3" 
               name="address3"
               id="address3"
@@ -237,7 +237,7 @@ export default function ContactForm(props: {
               helperText={formError?.address3?.msg} 
               fullWidth/>
             <InputControl 
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               name="city" 
               id="city" 
               label="City" 
@@ -253,7 +253,7 @@ export default function ContactForm(props: {
             <CountryStateComposite/>
 
             <InputControl 
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               name="pincode" 
               id="pincode" 
               label="Pin Code" 

@@ -74,7 +74,7 @@ export default function CategoryForm(props: {
               autoFocus
               id="category_master"
               label="Category Name"
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               name="name"
               fullWidth
               error={formError?.name?.error}

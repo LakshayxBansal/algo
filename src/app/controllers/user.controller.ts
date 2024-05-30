@@ -2,29 +2,45 @@
 
 import { addUser, getBizAppUserList } from '../services/user.service';
 import * as zs from '../zodschema/zodschema';
+import {userSchemaT} from '@/app/models/models';
 import { getSession } from '../services/session.service';
+import { SqlError } from 'mariadb';
 
 
 export async function registerUser(formData: FormData){
-  let userCreated = {status: false, msg: "Internal error!" };
+  let result;
   try {
-    const userData = {email: formData.get("email") as string,
-                      password: formData.get("password") as string,
-                      firstname: formData.get("firstName") as string, 
-                      lastname: formData.get("lastName") as string
-                    };
-    const result = zs.userSchema.safeParse(userData);
-    const authUser = await addUser(userData);
-    if (authUser.constructor.name === "OkPacket" ) {
-      userCreated = {status: true, msg:"User created!"};
+    const session = await getSession();
+    if(session){
+      let userData: { [key: string]: any } = {}; // Initialize an empty object
+
+      for (const [key, value] of formData.entries()) {
+        userData[key] = value;
+      }
+      const parsed = zs.userSchema.safeParse(userData);
+      if(parsed.success) {
+        const dbResult = await addUser(userData as userSchemaT);
+        if (dbResult.length >0 && dbResult[0][0].error === 0) {
+          result = {status: true, data:dbResult[1]};
+        } else {
+          result = {status: false, data: [{path:[dbResult[0][0].error_path], message:dbResult[0][0].error_text}] };
+        }
+      } else {
+        result = {status: false, data: parsed.error.issues };
+      }
+    } else {
+      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
     }
+    return result;
   } catch (e: any) {
-    if (e.code === 'ER_DUP_ENTRY'){
-      userCreated = {status: false, msg:"Email already exist"};
-    }
     console.log(e);
+    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
+      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+      return result;
+    }
   }
-  return userCreated;
+  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  return result;
 }
 
 

@@ -23,6 +23,8 @@ import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
 
 import dayjs from "dayjs";
 import { enquiryHeaderSchema, enquiryLedgerSchema } from '@/app/zodschema/zodschema';
+import { ZodIssue } from 'zod';
+import { optionsDataT } from '@/app/models/models';
 
 const strA = "custom_script.js";
 const scrA = require("./" + strA);
@@ -42,46 +44,84 @@ const formConfig = {
   showItems: false,
 };
 
+type selectKeyValueT = {
+  [key: string]: any; 
+};
 
 export default function InputForm(props: {baseData: IformData}) {
-  const [status, setStatus] = useState("Open");
-  const baseData = props.baseData;
-  const [selectValues, setSelectValues] = useState({});
+  const [status, setStatus] = useState("1");
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
 
   let result;
   let issues;
   const handleSubmit = async (formData: FormData)=> {
+    let dt = new Date(formData.get("date") as string);
+    const date = (dt.toISOString().slice(0,10)+ " " + dt.toISOString().slice(11,19));
+    dt = new Date(formData.get("next_action_date") as string);
+    const nextActionDate = (dt.toISOString().slice(0,10)+ " " + dt.toISOString().slice(11,19));
+
     const headerData = {
       enq_number: formData.get("enq_number") as string,
-      date: formData.get("date"),
-      contact: JSON.parse(formData.get("contact") as string).id,
-      received_by: JSON.parse(formData.get("received_by") as string).id,
-      category: JSON.parse(formData.get("category") as string).id,
-      source: JSON.parse(formData.get("source") as string).id,
+      date: date,
+      contact_id: selectValues.contact?.id,
+      received_by_id: selectValues.received_by?.id,
+      category_id: selectValues.category?.id,
+      source_id: selectValues.source?.id,
+      contact: selectValues.contact?.name,
+      received_by: selectValues.received_by?.name,
+      category: selectValues.category?.name,
+      source: selectValues.source?.name,
       };
     let ledgerData = {
       status_version: 0,
+      allocated_to_id: 0,
       allocated_to: '',
-      date: formData.get("date"),
-      status: formData.get("status"),
-      sub_status: JSON.parse(formData.get("sub_status") as string).id,
-      action_taken: JSON.parse(formData.get("action_taken") as string).id,
-      next_action: JSON.parse(formData.get("next_action") as string).id,
-      next_action_date: formData.get("next_action_date"),
-      enquiry_remark: formData.get("enquiry_remark") ?? '',
-      suggested_action_remark: formData.get("suggested_action_remark") ?? '',
-      action_taken_remark: formData.get("action_taken_remark") ?? '',
-      closure_remark: formData.get("closure_remark") ?? '',
+      date: date,
+      status_id: Number(formData.get("status")),
+      sub_status_id: selectValues.sub_status?.id,
+      sub_status: selectValues.sub_status?.name,
+      action_taken_id: selectValues.action_taken?.id,
+      action_taken: selectValues.action_taken?.name,
+      next_action_id: selectValues.next_action?.id,
+      next_action: selectValues.next_action?.name,
+      next_action_date: nextActionDate,
+      enquiry_remark: (formData.get("enquiry_remark") ?? '') as string,
+      suggested_action_remark: (formData.get("suggested_action_remark") ?? '') as string,
+      action_taken_remark: (formData.get("action_taken_remark") ?? '') as string,
+      closure_remark: (formData.get("closure_remark") ?? '') as string,
       enquiry_tran_type: 1,
       active : 1
     }
 
     const headerParsed = enquiryHeaderSchema.safeParse(headerData);
-    if (headerParsed.success) {
-      const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
+    const ledgerParsed = enquiryHeaderSchema.safeParse(headerData);
+    let issues: ZodIssue[] = [];
+    if (headerParsed.success && ledgerParsed.success) {
+      result = await createEnquiry({head: headerData, ledger: ledgerData});
+      if (result.status){
+        const newVal = {id: result.data[0].id, name: result.data[0].name};
+      } else {
+        issues = result?.data;
+      }
       console.log("parsed.error.issues")
+    } else {
+      if (!ledgerParsed.success) {
+        issues = [...ledgerParsed.error.issues]
+      }
+      if (!headerParsed.success) {
+        issues = [...issues, ...headerParsed.error.issues]
+      }
     }
-    //const result = await createEnquiry(formData);
+    
+    if (issues.length > 0) {
+      // show error on screen
+      const errorState: Record<string, {msg: string, error: boolean}> = {};
+      for (const issue of issues) {
+        errorState[issue.path[0]] = {msg: issue.message, error: true};
+      }
+      setFormError(errorState);
+    } 
   }
 
   const handleButtonClick = async () => {
@@ -102,15 +142,10 @@ export default function InputForm(props: {baseData: IformData}) {
     setStatus(value);
   }
 
-  function onSelectChange(event: React.SyntheticEvent, value: any){
-    const controlName = event.currentTarget.name;
-    const newObj = {[controlName]: value};
-    const values = {...selectValues, newObj};
-    const val1 = {
-        status : {id: 1, name: "name"}
-      };
+  function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
+    let values =  {...selectValues};
+    values[name] = val;
     setSelectValues(values);
-
   }
 
   return (
@@ -129,22 +164,31 @@ export default function InputForm(props: {baseData: IformData}) {
             }}>
             <InputControl label="Enquiry Description" 
               id="enq_number"
-              type={InputType.TEXT}
+              inputType={InputType.TEXT}
               name="enq_number" 
               fullWidth
+              required
+              error={formError?.enq_number?.error}
+              helperText={formError?.enq_number?.msg} 
             />
             <InputControl label="Received on "
-              type={InputType.DATETIMEINPUT}
+              inputType={InputType.DATETIMEINPUT}
               id="date"
               name="date"
               defaultValue={dayjs(new Date())}
+              required
+              error={formError?.date?.error}
+              helperText={formError?.date?.msg} 
             />
             <SelectMasterWrapper
               name = {"contact"}
               id = {"contact"}
               label = {"Contact"}
               dialogTitle={"Add Contact"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
               fetchDataFn = {getContact}
+              required
+              formError={formError?.contact?? formError.contact}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                   <ContactForm
                     setDialogOpen={fnDialogOpen}
@@ -165,34 +209,41 @@ export default function InputForm(props: {baseData: IformData}) {
               id = {"category"}
               label = {"Category"}
               dialogTitle={"Add Category"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
               fetchDataFn = {getEnquiryCategory}
+              required
+              formError={formError?.category?? formError.category}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <CategoryForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                 />}
             />
-
-                <SelectMasterWrapper
-                  name={"source"}
-                  id={"source"}
-                  label={"Source"}
-                  dialogTitle={"Add Source"}
-                  fetchDataFn={getEnquirySource}
-                  renderForm={(fnDialogOpen, fnDialogValue) => (
-                    <SourceForm
-                      setDialogOpen={fnDialogOpen}
-                      setDialogValue={fnDialogValue}
-                    />
-                  )}
+            <SelectMasterWrapper
+              name={"source"}
+              id={"source"}
+              label={"Source"}
+              dialogTitle={"Add Source"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
+              fetchDataFn={getEnquirySource}
+              required
+              formError={formError?.source?? formError.source}
+              renderForm={(fnDialogOpen, fnDialogValue) => (
+                <SourceForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
                 />
-
+              )}
+            />
             <SelectMasterWrapper
               name = {"received_by"}
               id = {"received_by"}
               label = {"Received By"}
               dialogTitle={"Add Executive"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
               fetchDataFn = {getExecutive}
+              required
+              formError={formError?.received_by?? formError.received_by}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                   <ExecutiveForm
                     setDialogOpen={fnDialogOpen}
@@ -235,24 +286,28 @@ export default function InputForm(props: {baseData: IformData}) {
               </RadioGroup>
             </FormControl>
             <SelectMasterWrapper
-                name = {"sub_status"}
-                id = {"sub_status"}
-                label = {"Call Sub-Status"}
-                dialogTitle={"Add Sub-Status for " + status}
-                fetchDataFn = {getSubStatusforStatus}
-                renderForm={(fnDialogOpen, fnDialogValue) => 
-                  <SubStatusForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    statusName={status}
-                  />
-                }
+              name = {"sub_status"}
+              id = {"sub_status"}
+              label = {"Call Sub-Status"}
+              dialogTitle={"Add Sub-Status for " + status}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
+              fetchDataFn = {getSubStatusforStatus}
+              required
+              formError={formError?.sub_status?? formError.sub_status}
+              renderForm={(fnDialogOpen, fnDialogValue) => 
+                <SubStatusForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  statusName={status}
+                />
+              }
             />
             <SelectMasterWrapper
                 name = {"action_taken"}
                 id = {"action_taken"}
                 label = {"Action Taken"}
                 dialogTitle={"Add Action"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
                 fetchDataFn = {getEnquiryAction}
                 renderForm={(fnDialogOpen, fnDialogValue) => 
                   <ActionForm
@@ -266,7 +321,10 @@ export default function InputForm(props: {baseData: IformData}) {
                 id = {"next_action"}
                 label = {"Next Action"}
                 dialogTitle={"Add Action"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn = {getEnquiryAction}
+                required
+                formError={formError?.next_action?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue) => 
                   <ActionForm
                     setDialogOpen={fnDialogOpen}
@@ -275,7 +333,7 @@ export default function InputForm(props: {baseData: IformData}) {
                 }
             />
             <InputControl label="When "
-              type={InputType.DATETIMEINPUT}
+              inputType={InputType.DATETIMEINPUT}
               id="next_action_date"
               name="next_action_date"
               defaultValue={dayjs(new Date())}

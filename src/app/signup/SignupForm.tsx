@@ -1,85 +1,84 @@
 'use client'
 
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
-import { registerUser } from '../controllers/user.controller';
-//import _ from "lodash";
-import { debounce } from '@mui/material';
+import { registerUser } from '@/app/controllers/user.controller';
+import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
+
 import { useRouter } from 'next/navigation';
+import { userSchema } from '../zodschema/zodschema';
+import { CountryData } from 'react-phone-input-material-ui';
 
 
 export default function SignUpForm() {
-  const [ifEmail, setIfEmail] = useState({status: true, msg: ""});
-  const [passError, setPassError] = useState({status: false, msg: ""});
-  const [buttonDisable, setButtonDisable] = useState(true);
+  const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
+  const [phoneNumber, setPhoneNumber] = useState("");
   const router = useRouter();
 
   const formSubmit = async (formData: FormData) => {
-    const result = await registerUser(formData);
-    if (result.status){
+  
+    let data: { [key: string]: any } = {}; // Initialize an empty object
+    formData.append("phone", phoneNumber)
+
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+
+    const parsed = userSchema.safeParse(data);
+    let result;
+    let issues;
+
+    if (parsed.success) {
+      const result = await registerUser(formData);
+      if (result.status){
+        const newVal = {id: result.data[0].id, name: result.data[0].name};
+      } else {
+        issues = result?.data;
+      }
+    } else {
+      issues = parsed.error.issues;
+    } 
+
+    if (issues) {
+      // show error on screen
+      const errorState: Record<string, {msg: string, error: boolean}> = {};
+      for (const issue of issues) {
+        errorState[issue.path[0]] = {msg: issue.message, error: true};
+      }
+      setFormError(errorState);
+    } else {
       router.push('/congrats');
     }
-    setIfEmail(result);
   }
 
-  const debouncedFormValidation =  debounce((formData: FormData)=> {
-    const basicEmailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    const email = formData.get("email") as string;
-    const pass = formData.get("password");
-    const repass = formData.get("repassword");
-
-    if (email !== '' && !basicEmailRegex.test(email)) {
-      setIfEmail({status: false, msg: "Please enter a valid email"});
-    } else {
-      setIfEmail({status: true, msg: ""});
-    }
-
-    if (pass !== '' && repass !== '' && pass !== repass) {
-      setPassError({status: true, msg: 'The passwords should match'});
-    } else {
-      setPassError({status: false, msg: ''});
-    }
-    setButtonDisable(!(basicEmailRegex.test(email) && pass !== '' && pass === repass))
-  }, 500);
-
-  function checkFormValue(e: React.SyntheticEvent<HTMLFormElement>) {
-    const formData = new FormData(e.currentTarget);
-    debouncedFormValidation(formData);
-  };
+  function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
+    setPhoneNumber(value);
+    console.log(phoneNumber);
+  }
 
   return (
-    <form noValidate onChange={checkFormValue} action={formSubmit} >
+    <form noValidate action={formSubmit} >
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            autoComplete="given-name"
-            name="firstName"
+        <Grid item xs={12}>
+          <InputControl
+            inputType={InputType.TEXT}     
+            name="name"
             required
             fullWidth
-            id="firstName"
-            label="First Name"
+            id="name"
+            label="Name"
             autoFocus
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            fullWidth
-            id="lastName"
-            label="Last Name"
-            name="lastName"
-            autoComplete="family-name"
+            error={formError?.name?.error}
+            helperText={formError?.name?.msg} 
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            error={!ifEmail.status}
-            helperText={!ifEmail.status && ifEmail.msg}
+          <InputControl
+            inputType={InputType.EMAIL}     
+            error={formError?.email?.error}
+            helperText={formError?.email?.msg} 
             required
             fullWidth
             id="email"
@@ -88,19 +87,37 @@ export default function SignUpForm() {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
+          <InputControl
+            inputType={InputType.PHONE}     
+            id="phone"
+            label="Phone No"
+            name="phone"
+            error={formError?.phone?.error}
+            helperText={formError?.phone?.msg} 
+            country={'in'}
+            preferredCountries={['in', 'gb']}
+            dropdownClass={['in', 'gb']}
+            disableDropdown={false}
+            onChange={onPhoneChange}
+          />
+        </Grid>        
+        <Grid item xs={12}>
+          <InputControl
+            inputType={InputType.TEXT}     
             required
             fullWidth
             name="password"
             label="Password"
             type="password"
             id="password"
-          />
+            error={formError?.password?.error}
+            helperText={formError?.password?.msg}           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            error={passError.status}
-            helperText={passError.msg}
+          <InputControl
+            inputType={InputType.TEXT}     
+            error={formError?.repassword?.error}
+            helperText={formError?.repassword?.msg} 
             required
             fullWidth
             name="repassword"
@@ -115,7 +132,6 @@ export default function SignUpForm() {
         type="submit"
         fullWidth
         variant="contained"
-        disabled={buttonDisable}
         sx={{ mt: 3, mb: 2 }}
       >
         Sign Up

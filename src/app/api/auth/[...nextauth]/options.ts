@@ -42,12 +42,10 @@ export const options: NextAuthOptions  = {
     async signIn({ user, account, profile, email, credentials }) {
       let isAllowedToSignIn = true;
       if (account?.provider === "google"){
-        const names: string[] = user.name?.split(' ',2) ?? ['', '']; 
         const data =  {
-          email: user.email,
+          email: user.email as string,
           provider: "google",
-          firstname: names[0],
-          lastname: names[1],
+          name: user.name as string,
         }
         const result = await authenticateUser(data);
         if (!result){

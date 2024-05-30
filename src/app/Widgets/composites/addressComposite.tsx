@@ -25,7 +25,7 @@ export default function AddressComposite(formError: any){
                   gridTemplateColumns: 'repeat(2, 1fr)', 
                 }}>
             <InputControl
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               label="Address Line 1" 
               name="address1"
               id="address1"
@@ -33,7 +33,7 @@ export default function AddressComposite(formError: any){
               helperText={formError?.address1?.msg} 
               fullWidth />
             <InputControl
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               label="Address Line 2" 
               name="address2"
               id="address2"
@@ -41,7 +41,7 @@ export default function AddressComposite(formError: any){
               helperText={formError?.address2?.msg} 
               fullWidth/>
             <InputControl
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               label="Address Line 3" 
               name="address3"
               id="address3"
@@ -49,7 +49,7 @@ export default function AddressComposite(formError: any){
               helperText={formError?.address3?.msg} 
               fullWidth/>
             <InputControl 
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               name="city" 
               id="city" 
               label="City" 
@@ -65,7 +65,7 @@ export default function AddressComposite(formError: any){
             <CountryStateComposite/>
 
             <InputControl 
-              type={InputType.TEXT} 
+              inputType={InputType.TEXT} 
               name="pincode" 
               id="pincode" 
               label="Pin Code" 

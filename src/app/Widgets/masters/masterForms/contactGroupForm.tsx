@@ -73,7 +73,7 @@ export default function ContactGroupForm(props: {
           autoFocus
           id="name"
           label="Group Name"
-          type={InputType.TEXT}
+          inputType={InputType.TEXT}
           name="name"
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 
@@ -82,7 +82,7 @@ export default function ContactGroupForm(props: {
           autoFocus
           id="alias"
           label="Alias"
-          type={InputType.TEXT}
+          inputType={InputType.TEXT}
           name="alias"
           error={formError?.alias?.error}
           helperText={formError?.alias?.msg} 

@@ -68,7 +68,7 @@ export default function DepartmentForm(props: {
           autoFocus
           id="name"
           label="Department Name"
-          type={InputType.TEXT}
+          inputType={InputType.TEXT}
           name="name"
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 
