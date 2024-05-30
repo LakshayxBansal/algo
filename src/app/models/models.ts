@@ -60,3 +60,7 @@ export type dbInfoT = {
 };
 
 
+export type selectKeyValueT = {
+    [key: string]: any; 
+};
+

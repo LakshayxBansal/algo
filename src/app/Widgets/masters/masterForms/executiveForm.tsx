@@ -22,7 +22,7 @@ import Snackbar from '@mui/material/Snackbar';
 import ExecutiveRoleForm from './executiveRoleForm';
 import ExecutiveGroupForm from './executiveGroupForm';
 import ExecutiveDeptForm from './executiveDeptForm';
-import TextField from '@mui/material/TextField';
+import {selectKeyValueT} from '@/app/models/models';
 
 
 
@@ -32,6 +32,7 @@ export default function ExecutiveForm(props: {
     }) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
 
 
   async function getApplicationUser(searchStr: string) {
@@ -46,11 +47,18 @@ export default function ExecutiveForm(props: {
   const handleSubmit = async (formData: FormData)=> {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
+    formData.append("area_id", selectValues.area?.id);
+    formData.append("department_id", selectValues.department?.id);
+    formData.append("role_id", selectValues.role?.id);
+    formData.append("group_id", selectValues.group?.id);
+    formData.append("crm_user_id", selectValues.crm_user?.id);
+    formData.append("call_type", "Enquiry");
+
+
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
 
-    data["call_type"] = "Enquiry";
     const parsed = executiveSchema.safeParse(data);
     let result;
     let issues;
@@ -87,7 +95,11 @@ export default function ExecutiveForm(props: {
     props.setDialogOpen? props.setDialogOpen(false) : null;
   }
 
-
+  function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
+    let values =  {...selectValues};
+    values[name] = val;
+    setSelectValues(values);
+  }
 
   return(
     <>
@@ -125,6 +137,7 @@ export default function ExecutiveForm(props: {
               label = {"Area"}
               width = {210}
               dialogTitle={"Add Area"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn = {getArea}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <AreaForm
@@ -139,6 +152,7 @@ export default function ExecutiveForm(props: {
               label = {"Department"}
               width = {210}
               dialogTitle={"Add Department"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn = {getDepartment}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <ExecutiveDeptForm
@@ -154,6 +168,7 @@ export default function ExecutiveForm(props: {
               width = {210}
               dialogTitle={"Add Role"}
               fetchDataFn = {getExecutiveRole}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <ExecutiveRoleForm
                   setDialogOpen={fnDialogOpen}
@@ -167,6 +182,7 @@ export default function ExecutiveForm(props: {
               label = {"Executive Group"}
               width = {210}
               dialogTitle={"Add Executive Group"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "group")}
               fetchDataFn = {getExecutiveGroup}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <ExecutiveGroupForm
@@ -197,6 +213,7 @@ export default function ExecutiveForm(props: {
               label = {"Map to App User"}
               width = {210}
               dialogTitle={"Add App User"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
               fetchDataFn = {getApplicationUser}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <ExecutiveGroupForm

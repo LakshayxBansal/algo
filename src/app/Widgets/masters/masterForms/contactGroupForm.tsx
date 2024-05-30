@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import {nameMasterData} from '../../../zodschema/zodschema';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import { getContactGroup } from '@/app/controllers/contactGroup.controller';
+import {selectKeyValueT} from '@/app/models/models';
 
 
 
@@ -17,11 +18,14 @@ export default function ContactGroupForm(props: {
     }) {
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData)=> {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
+    formData.append("parent_id", selectValues.parent?.id);
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
@@ -58,6 +62,13 @@ export default function ContactGroupForm(props: {
     props.setDialogOpen(false);
   }
 
+
+  function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
+    let values =  {...selectValues};
+    values[name] = val;
+    setSelectValues(values);
+  }
+
   return(
     <>
     {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
@@ -88,11 +99,12 @@ export default function ContactGroupForm(props: {
           helperText={formError?.alias?.msg} 
         />        
         <SelectMasterWrapper
-          name = {"parentgroup"}
-          id = {"parentgroup"}
+          name = {"parent"}
+          id = {"parent"}
           label = {"Parent Group"}
           width = {210}
-          dialogTitle={"Add Group"}
+          dialogTitle={"Add Parent Group"}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "parent")}
           fetchDataFn = {getContactGroup}
           allowNewAdd = {false}
           renderForm={(fnDialogOpen, fnDialogValue) => 

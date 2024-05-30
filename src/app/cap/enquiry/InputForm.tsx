@@ -24,7 +24,7 @@ import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
 import dayjs from "dayjs";
 import { enquiryHeaderSchema, enquiryLedgerSchema } from '@/app/zodschema/zodschema';
 import { ZodIssue } from 'zod';
-import { optionsDataT } from '@/app/models/models';
+import {selectKeyValueT} from '@/app/models/models';
 
 const strA = "custom_script.js";
 const scrA = require("./" + strA);
@@ -44,9 +44,6 @@ const formConfig = {
   showItems: false,
 };
 
-type selectKeyValueT = {
-  [key: string]: any; 
-};
 
 export default function InputForm(props: {baseData: IformData}) {
   const [status, setStatus] = useState("1");

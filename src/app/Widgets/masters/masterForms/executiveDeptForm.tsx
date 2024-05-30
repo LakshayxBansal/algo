@@ -6,15 +6,12 @@ import Box from '@mui/material/Box';
 import { getExecutiveDept, createExecutiveDept } from '@/app/controllers/executiveDept.controller';
 import Grid from '@mui/material/Grid';
 import {nameMasterData} from '../../../zodschema/zodschema';
-import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
-
 
 
 export default function ExecutiveDeptForm(props: {
       setDialogOpen: (props: any) => void,
       setDialogValue: (props: any) => void,
     }) {
-
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
 
   // submit function. Save to DB and set value to the dropdown control
@@ -53,6 +50,7 @@ export default function ExecutiveDeptForm(props: {
   }
 
 
+
   const handleCancel = ()=> {
     props.setDialogOpen(false);
   }
@@ -66,7 +64,7 @@ export default function ExecutiveDeptForm(props: {
           display: 'grid',
           columnGap: 3,
           rowGap: 1,
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns: 'repeat(1, 1fr)',
         }}>
         <InputControl
           autoFocus
@@ -77,21 +75,6 @@ export default function ExecutiveDeptForm(props: {
           error={formError?.name?.error}
           helperText={formError?.name?.msg} 
         />      
-        <SelectMasterWrapper
-          name = {"parentdept"}
-          id = {"parentdept"}
-          label = {"Parent Executive Dept"}
-          width = {210}
-          dialogTitle={"Add Executive Dept"}
-          fetchDataFn = {getExecutiveDept}
-          allowNewAdd = {false}
-          renderForm={(fnDialogOpen, fnDialogValue) => 
-            <ExecutiveDeptForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-            />
-          }
-        />
       </Box>
       <Grid container xs={12} md={12}>
         <Grid item xs={6} md={6}>

@@ -18,6 +18,8 @@ import { getArea } from '@/app/controllers/area.controller';
 import CountryStateComposite from '@/app/Widgets/composites/countryStateComposite';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
+import {selectKeyValueT} from '@/app/models/models';
+
 
 
 
@@ -26,6 +28,7 @@ export default function ContactForm(props: {
       setDialogValue: (props: any) => void,
     }) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
 
   const handleSubmit = async (formData: FormData)=> {
@@ -69,6 +72,11 @@ export default function ContactForm(props: {
     props.setDialogOpen? props.setDialogOpen(false) : null;
   }
 
+  function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
+    let values =  {...selectValues};
+    values[name] = val;
+    setSelectValues(values);
+  }
 
 
   return(
@@ -115,6 +123,7 @@ export default function ContactForm(props: {
               width = {210}
               dialogTitle={"Add Group"}
               fetchDataFn = {getContactGroup}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "contactGroup")}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <ContactGroupForm
                   setDialogOpen={fnDialogOpen}
@@ -129,6 +138,7 @@ export default function ContactForm(props: {
               width = {210}
               dialogTitle={"Add Area"}
               fetchDataFn = {getArea}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
@@ -141,6 +151,7 @@ export default function ContactForm(props: {
               id = {"organisation"}
               label = {"Organisation"}
               width = {210}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "organisation")}
               dialogTitle={"Add Organisation"}
               fetchDataFn = {getOrganisation}
               renderForm={(fnDialogOpen, fnDialogValue) => 
@@ -156,6 +167,7 @@ export default function ContactForm(props: {
               label = {"Department"}
               width = {210}
               dialogTitle={"Add Department"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn = {getDepartment}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <DepartmentForm
