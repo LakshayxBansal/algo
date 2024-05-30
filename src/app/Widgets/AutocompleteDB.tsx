@@ -45,7 +45,7 @@ type autocompleteDBT = {
 
 export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   const [inputValue, setInputValue] = useState(
-    props.defaultValue ? props.defaultValue : "a"
+    props.defaultValue ? props.defaultValue : null
   );
   const [options, setOptions] = useState<CustomT[]>([]);
   const width = props.width ? props.width : 300;
@@ -54,6 +54,9 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   const [selectDefault, setSelectDefault] = useState(
     Boolean(props.defaultValue)
   );
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
   let [diaglogValue, setDialogValue] = useState<CustomT>({} as CustomT);
 
   if (props.diaglogVal && props.setDialogVal) {
@@ -62,8 +65,11 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   }
 
   useEffect(() => {
+    console.log('effect jp')
     const getData = debounce(async (input) => {
-      const results = (await props.fetchDataFn(input)) as CustomT[];
+      console.log(input)
+      const results = (await props.fetchDataFn(input)) as CustomT[]
+      setLoading(false)
       if (results) {
         if (
           (autoSelect && inputValue === "") ||
@@ -76,10 +82,10 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       }
     }, 400);
     if (valueChange || autoSelect) {
-      console.log("getData fired!");
+      setLoading(true)
       getData(inputValue);
     }
-  }, [inputValue, autoSelect]);
+  }, [inputValue, autoSelect, open]);
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
@@ -109,6 +115,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
     <Autocomplete
       id={props.id}
       options={options}
+      loading={loading}
       getOptionLabel={(option) => {
         return typeof option === "string"
           ? option
@@ -169,15 +176,19 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       )}
       onBlur={(e) => setAutoSelect(props.notEmpty)}
       onOpen={(e) => {
+        setOpen(true);
         setvalueChange(true);
         setInputValue("");
-        console.log("onOpen fired!");
+      }}
+      onClose={(e) => {
+        setOpen(false);
+        setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
         if (reason != "blur") {
           setDialogValue(newValue ? (newValue as CustomT) : ({} as CustomT));
           props.onChange
-            ? props.onChange(event, newValue, setDialogValue)
+            ? props.onChange(event, diaglogValue, setDialogValue)
             : null;
         }
       }}
