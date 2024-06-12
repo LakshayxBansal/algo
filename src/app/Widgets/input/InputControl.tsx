@@ -17,7 +17,11 @@ import { FieldChangeHandlerContext } from '@mui/x-date-pickers/internals/hooks/u
 import { DatePicker  } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker, TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import ReactPhoneInput, { CountryData, PhoneInputProps } from 'react-phone-input-material-ui';
+// import ReactPhoneInput, { CountryData, PhoneInputProps } from 'react-phone-input-material-ui';
+// import PhoneInput from 'react-phone-input-2';
+// import "react-phone-input-2/lib/style.css";
+import { MuiTelInput, MuiTelInputInfo } from 'mui-tel-input';
+import { AnyARecord } from 'dns';
 
 export enum InputType {
   TEXT,
@@ -42,6 +46,7 @@ type CustomControlProps<T> = BaseControlProps & T;
 // Define the base control component
 export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, custLabel="", ...props }) => {
   const [ifEmail, setIfEmail] = useState({status: true, msg: ""});
+  const [value, setValue] = React.useState('')
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>){
     console.log(event.target.id, "event is :", event.type);
@@ -86,12 +91,19 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, cust
     }
   }
 
-  function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
-    const inputProps = props as PhoneInputProps;
-    if(inputProps.onChange) {
-      inputProps.onChange(value, data, event, formattedValue)
+  function onPhoneChange(newValue : any) {
+    setValue(newValue);
+    if(props.onChange) {
+      props.onChange(newValue)
     }
   }
+
+  // function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
+  //   const inputProps = props as PhoneInputProps;
+  //   if(inputProps.onChange) {
+  //     inputProps.onChange(value, data, event, formattedValue)
+  //   }
+  // }
 
   // Render either a TextField or a Checkbox based on the props
   switch (inputType) {
@@ -154,8 +166,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, cust
     }
     case InputType.PHONE: {
       // It's a phone input
-      const phoneProps = props as PhoneInputProps;
-      return <ReactPhoneInput  {...phoneProps} onChange={onPhoneChange} component={TextField}/>;
+      return <MuiTelInput  defaultCountry="IN" {...props} value={value} onChange={onPhoneChange} />;
       break;
     }
   }

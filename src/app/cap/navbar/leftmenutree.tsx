@@ -14,7 +14,7 @@ import {menuTreeT} from '../../models/models';
 import {nameIconArr} from '../../utils/iconmap.utils';
 
 
-export default function LeftMenuTree(props: {pages:menuTreeT[], toggleDrawer: any}) {
+export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: any}) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [openAdmin, setOpenAdmin] = React.useState(false);
   const pages = props.pages;
@@ -35,6 +35,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], toggleDrawer: an
   function handleHeaderMenuClick(id: number) {
     const idToOpenMap: Map<number, boolean> = new Map(open);
     idToOpenMap.set(id, !idToOpenMap.get(id));
+    props.setOpenDrawer(true);
     setOpen(idToOpenMap);
   }
 

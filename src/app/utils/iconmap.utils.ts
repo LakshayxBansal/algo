@@ -8,6 +8,8 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import SendIcon from '@mui/icons-material/Send';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import FolderIcon from '@mui/icons-material/Folder';
+import ContactsIcon from '@mui/icons-material/Contacts';
 
 import StarBorder from '@mui/icons-material/StarBorder';
 import { Icon } from 'next/dist/lib/metadata/types/metadata-types';
@@ -27,7 +29,9 @@ export const nameIconArr: iconElementT[] = [
   { name: 'AssignmentIcon', icon: AssignmentIcon},
   { name: 'InboxIcon', icon: InboxIcon},
   { name: 'DraftsIcon', icon: DraftsIcon},
-  { name: 'SendIcon', icon: SendIcon}
+  { name: 'SendIcon', icon: SendIcon},
+  { name: 'FolderIcon', icon: FolderIcon},
+  { name: 'ContactsIcon', icon: ContactsIcon},
   // Add more pairs here
 ];
 

@@ -1,5 +1,5 @@
 'use client'
-
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { TextField, Divider, Paper } from '@mui/material';
 import Link from '@mui/material/Link';
@@ -20,6 +20,7 @@ interface authPagePropsType {
 
 
 export default function AuthPage(props: authPagePropsType) {
+  const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const router = useRouter();
   let csrfToken;
   const providerArr = props.providers;
@@ -32,6 +33,9 @@ export default function AuthPage(props: authPagePropsType) {
         if (status?.ok) {
           router.push(successCallBackUrl);
         } else {
+          const errorState: Record<string, {msg: string, error: boolean}> = {};
+          errorState["form"] = {msg: "Invalid Credentials", error: true};
+          setFormError(errorState);
           if (status?.error === "CredentialsSignin") {
             console.log(status);
           }
@@ -42,6 +46,7 @@ export default function AuthPage(props: authPagePropsType) {
   getCsrfToken().then((token) => {csrfToken = token}).catch((error) => {console.log(error)});
   return (
     <form method="POST" action={actValidate}>
+      {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
       <TextField
         margin="normal"

@@ -68,8 +68,9 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
     console.log('effect jp')
     const getData = debounce(async (input) => {
       console.log(input)
-      const results = (await props.fetchDataFn(input)) as CustomT[]
-      setLoading(false)
+      const results = (await props.fetchDataFn(input)) as CustomT[];
+      setOptions([] as CustomT[]);
+      setLoading(false);
       if (results) {
         if (
           (autoSelect && inputValue === "") ||
@@ -139,7 +140,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
               ...params.InputProps,
               endAdornment: (
                 <Fragment>
-                  <IconButton
+                  {diaglogValue.id && <IconButton
                     onClick={(param) => {
                       console.log("modify- " + param);
                       console.log(param);
@@ -150,7 +151,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
                     style={{ fontSize: 16, padding: 4 }}
                   >
                     <EditNoteIcon  fontSize='inherit'/>
-                  </IconButton>
+                  </IconButton>}
                   {params.InputProps.endAdornment}
                 </Fragment>
               ),
@@ -188,7 +189,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
         if (reason != "blur") {
           setDialogValue(newValue ? (newValue as CustomT) : ({} as CustomT));
           props.onChange
-            ? props.onChange(event, diaglogValue, setDialogValue)
+            ? props.onChange(event, newValue, setDialogValue)
             : null;
         }
       }}

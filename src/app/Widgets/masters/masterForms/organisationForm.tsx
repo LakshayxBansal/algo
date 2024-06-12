@@ -11,14 +11,15 @@ import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import CountryForm from './countryForm';
 import StateForm from './countryForm';
-import { revalidatePath } from 'next/cache';
-import CountryStateComposite from '../../composites/countryStateComposite';
+import {selectKeyValueT} from '@/app/models/models';
+
 
 export default function OrganisationForm(props: {
       setDialogOpen: (props: any) => void,
       setDialogValue: (props: any) => void,
     }) {
       const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
+      const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
 
       const handleSubmit = async (formData: FormData)=> {
         let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -55,7 +56,21 @@ export default function OrganisationForm(props: {
         }    
       }
     
+      async function getStatesforCountry(stateStr: string) {
+        const country = selectValues.country?.name;
+    
+        const states = await getStates(stateStr, country);
+        if (states.length > 0){
+          return states;
+        } 
+      }
 
+      function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
+        let values =  {...selectValues};
+        values[name] = val;
+        setSelectValues(values);
+      }
+    
 
       const handleCancel = ()=> {
         props.setDialogOpen(false);  
@@ -149,7 +164,36 @@ export default function OrganisationForm(props: {
                 rowGap: 1,
                 gridTemplateColumns: 'repeat(2, 1fr)', 
               }}>
-          <CountryStateComposite/>
+          <SelectMasterWrapper
+            name = {"country"}
+            id = {"country"}
+            label = {"Country"}
+            width = {210}
+            dialogTitle={"Add country"}
+            onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+            fetchDataFn = {getCountries}
+            renderForm={(fnDialogOpen, fnDialogValue) => 
+              <CountryForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+              />
+            }
+          />
+          <SelectMasterWrapper
+            name = {"state"}
+            id = {"state"}
+            label = {"State"}
+            width = {210}
+            onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+            dialogTitle={"Add State"}
+            fetchDataFn = {getStatesforCountry}
+            renderForm={(fnDialogOpen, fnDialogValue) => 
+              <StateForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+              />
+            }
+          />
           <InputControl 
             inputType={InputType.TEXT} 
             name="city" 

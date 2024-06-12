@@ -9,21 +9,20 @@ import { executiveSchema } from '@/app/zodschema/zodschema';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import DepartmentForm from './departmentForm';
 import {createExecutive} from '@/app/controllers/executive.controller';
-//import { getExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
-//import ExecutiveGroupForm from '@/app/Widgets/masters/masterForms/executiveGroupForm';
 import AreaForm from './areaForm';
 import { getArea } from '@/app/controllers/area.controller';
 import { getExecutiveRole } from '@/app/controllers/executiveRole.controller';
 import { getExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
 import { getBizAppUser } from '@/app/controllers/user.controller'
-import AddressComposite from '@/app/Widgets/composites/addressComposite';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
 import ExecutiveRoleForm from './executiveRoleForm';
 import ExecutiveGroupForm from './executiveGroupForm';
 import ExecutiveDeptForm from './executiveDeptForm';
 import {selectKeyValueT} from '@/app/models/models';
-
+import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
+import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
+import { getCountries, getStates } from '@/app/controllers/masters.controller';
 
 
 export default function ExecutiveForm(props: {
@@ -52,6 +51,8 @@ export default function ExecutiveForm(props: {
     formData.append("role_id", selectValues.role?.id);
     formData.append("group_id", selectValues.group?.id);
     formData.append("crm_user_id", selectValues.crm_user?.id);
+    formData.append("country_id", selectValues.country?.id);
+    formData.append("state_id", selectValues.state?.id);
     formData.append("call_type", "Enquiry");
 
 
@@ -90,6 +91,14 @@ export default function ExecutiveForm(props: {
     }    
   }
 
+  async function getStatesforCountry(stateStr: string) {
+    const country = selectValues.country?.name;
+
+    const states = await getStates(stateStr, country);
+    if (states.length > 0){
+      return states;
+    } 
+  }
 
   const handleCancel = ()=> {
     props.setDialogOpen? props.setDialogOpen(false) : null;
@@ -285,8 +294,91 @@ export default function ExecutiveForm(props: {
               }}
             />            
           </Box>
-          <AddressComposite
-            formError={formError}/>
+          <Box 
+            sx={{ display: 'grid', 
+                  columnGap: 3,
+                  rowGap: 1,
+                  gridTemplateColumns: 'repeat(2, 1fr)', 
+                }}>
+            <InputControl
+              inputType={InputType.TEXT} 
+              label="Address Line 1" 
+              name="address1"
+              id="address1"
+              error={formError?.address1?.error}
+              helperText={formError?.address1?.msg} 
+              fullWidth />
+            <InputControl
+              inputType={InputType.TEXT} 
+              label="Address Line 2" 
+              name="address2"
+              id="address2"
+              error={formError?.address2?.error}
+              helperText={formError?.address2?.msg} 
+              fullWidth/>
+            <InputControl
+              inputType={InputType.TEXT} 
+              label="Address Line 3" 
+              name="address3"
+              id="address3"
+              error={formError?.address3?.error}
+              helperText={formError?.address3?.msg} 
+              fullWidth/>
+            <InputControl 
+              inputType={InputType.TEXT} 
+              name="city" 
+              id="city" 
+              label="City" 
+              error={formError?.city?.error}
+              helperText={formError?.city?.msg}  
+            />
+          </Box>
+          <Box sx={{ display: 'grid', 
+                  columnGap: 3,
+                  rowGap: 1,
+                  gridTemplateColumns: 'repeat(3, 1fr)', 
+                }}>
+            <SelectMasterWrapper
+              name = {"country"}
+              id = {"country"}
+              label = {"Country"}
+              width = {210}
+              dialogTitle={"Add country"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+              fetchDataFn = {getCountries}
+              renderForm={(fnDialogOpen, fnDialogValue) => 
+                <CountryForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                />
+              }
+            />
+            <SelectMasterWrapper
+              name = {"state"}
+              id = {"state"}
+              label = {"State"}
+              width = {210}
+              dialogTitle={"Add State"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+              fetchDataFn = {getStatesforCountry}
+              renderForm={(fnDialogOpen, fnDialogValue) => 
+                <StateForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                />
+              }
+            />
+
+            <InputControl 
+              inputType={InputType.TEXT} 
+              name="pincode" 
+              id="pincode" 
+              label="Pin Code" 
+              error={formError?.pincode?.error}
+              helperText={formError?.pincode?.msg}  
+            />
+          </Box>
+
 
           <Grid container>
             <Grid item xs={6} md={6}>

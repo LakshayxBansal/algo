@@ -90,6 +90,8 @@ export default function MenuBar(props : propsType) {
     setOpen(!open);
   };
 
+  const setOpenDrawer = (val:boolean) => {setOpen(val)};
+
   if (!menuOpen) {
     return(<></>);
   } else {
@@ -100,8 +102,7 @@ export default function MenuBar(props : propsType) {
             <Toolbar
               sx={{
                 pr: '24px', // keep right padding when drawer closed
-              }}
-            >
+              }}>
               <IconButton
                 edge="start"
                 color="inherit"
@@ -158,7 +159,7 @@ export default function MenuBar(props : propsType) {
                 </IconButton>
               </Toolbar>
               <Divider />
-                <LeftMenuTree pages={pages} toggleDrawer={toggleDrawer}></LeftMenuTree>
+                <LeftMenuTree pages={pages} setOpenDrawer={setOpenDrawer}></LeftMenuTree>
             </Drawer>
             <Box>
               {children}

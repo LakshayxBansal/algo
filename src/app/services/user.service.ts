@@ -53,7 +53,7 @@ export async function checkUser(email: string) {
 
 export async function getBizAppUserList(crmDb: string, searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean){
   try {
-    let query = 'select uc.user_id as id, u.firstName as name from userCompany uc, dbInfo db, company co, user u where \
+    let query = 'select uc.user_id as id, u.name as name from userCompany uc, dbInfo db, company co, user u where \
                     db.name = ? and \
                     db.id = co.dbInfo_id and \
                     co.id = uc.company_id and \
@@ -65,7 +65,7 @@ export async function getBizAppUserList(crmDb: string, searchString: string, inv
     let values: any[] = [crmDb, invited, accepted, mapped, admin];
 
     if (searchString !== "") {
-      query = query + " and u.firstName like '%" + searchString + "%' ";
+      query = query + " and u.name like '%" + searchString + "%' ";
     }
     const result = await excuteQuery({
       host: 'userDb',

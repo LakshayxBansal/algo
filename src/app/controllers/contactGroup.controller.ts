@@ -5,6 +5,7 @@ import {contactGroupSchemaT} from '@/app/models/models';
 import { getContactGroupList, createContactGroupDb } from '../services/contactGroup.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
+import {logger} from '@/app/utils/logger.utils';
 
 
 export async function getContactGroup(searchString: string) {
@@ -20,17 +21,11 @@ export async function getContactGroup(searchString: string) {
 
 
 
-export async function createContactGroup(formData: FormData){
+export async function createContactGroup(data: contactGroupSchemaT){
   let result;
     try {
     const session = await getSession();
     if (session) {
-      let data: { [key: string]: any } = {}; // Initialize an empty object
-
-      for (const [key, value] of formData.entries()) {
-        data[key] = value;
-      }
-  
       const parsed = zs.contactGroupSchema.safeParse(data);
       if(parsed.success) {
         const dbResult = await createContactGroupDb(session, data as contactGroupSchemaT);
@@ -47,7 +42,7 @@ export async function createContactGroup(formData: FormData){
     }
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e)
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;

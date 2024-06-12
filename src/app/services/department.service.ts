@@ -3,6 +3,7 @@
 import * as zm from '../models/models';
 import { Session } from 'next-auth';
 import excuteQuery  from '../utils/db/db';
+import {logger} from '@/app/utils/logger.utils';
 
 
 export async function getDepartmentList(crmDb: string, searchString: string) {
@@ -24,7 +25,7 @@ export async function getDepartmentList(crmDb: string, searchString: string) {
     return result;
 
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
 
@@ -47,7 +48,7 @@ export async function createDepartmentDb(session: Session, sourceData: zm.nameMa
       ],
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
   return null;
 }

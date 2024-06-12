@@ -3,10 +3,8 @@ import React, { useState } from 'react';
 import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import { getOrganisation } from '@/app/controllers/organisation.controller';
 import { getDepartment } from '@/app/controllers/department.controller';
-import { contactSchema } from '@/app/zodschema/zodschema';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import OrganisationForm from './organisationForm';
 import DepartmentForm from './departmentForm';
@@ -15,21 +13,26 @@ import { getContactGroup } from '@/app/controllers/contactGroup.controller';
 import ContactGroupForm from '@/app/Widgets/masters/masterForms/contactGroupForm';
 import AreaForm from './areaForm';
 import { getArea } from '@/app/controllers/area.controller';
-import CountryStateComposite from '@/app/Widgets/composites/countryStateComposite';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
-import {selectKeyValueT} from '@/app/models/models';
-
+import {contactSchemaT, selectKeyValueT} from '@/app/models/models';
+import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
+import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
+import { getCountries, getStates } from '@/app/controllers/masters.controller';
 
 
 
 export default function ContactForm(props: {
-      setDialogOpen: (props: any) => void,
-      setDialogValue: (props: any) => void,
+      setDialogOpen?: (props: any) => void,
+      setDialogValue?: (props: any) => void,
     }) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
+
+  const handleCancel = ()=> {
+    props.setDialogOpen? props.setDialogOpen(false) : null;
+  }
 
   const handleSubmit = async (formData: FormData)=> {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -38,44 +41,44 @@ export default function ContactForm(props: {
       data[key] = value;
     }
 
-    const parsed = contactSchema.safeParse(data);
-    let result;
-    let issues;
+    formData = updateFormData(data);
 
-    if (parsed.success) {
-      result = await createContact(formData);
-      if (result.status){
-        const newVal = {id: result.data[0].id, name: result.data[0].name};
-        props.setDialogValue? props.setDialogValue(newVal.name) : null;
-        setSnackOpen(true);
-      } else {
-        issues = result?.data;
-      }
-    } else {
-      issues = parsed.error.issues;
-    } 
-    
-    if (parsed.success && result?.status) {
+    const result = await createEntity(data as contactSchemaT);
+    if (result.status){
+      const newVal = {id: result.data[0].id, name: result.data[0].name};
+      props.setDialogValue? props.setDialogValue(newVal.name) : null;
       props.setDialogOpen? props.setDialogOpen(false) : null;
+      setFormError({});
+      setSnackOpen(true);
     } else {
+      const issues = result.data;
       // show error on screen
       const errorState: Record<string, {msg: string, error: boolean}> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = {msg: issue.message, error: true};
+        for (const path of issue.path){
+          errorState[path] = {msg: issue.message, error: true};
+        }
       }
+      errorState["form"] = {msg: "Error encountered", error: true};
       setFormError(errorState);
-    }    
+    }
   }
 
+  const updateFormData =  (data: any) => {
+    data.contactGroup_id = selectValues.contactGroup? selectValues.contactGroup.id : 0;
+    data.contactGroup_id = selectValues.contactGroup? selectValues.contactGroup.id : 0;
+    data.area_id = selectValues.area? selectValues.area.id: 0;
+    data.organisation_id = selectValues.organisation? selectValues.organisation.id: 0;
+    data.department_id = selectValues.department? selectValues.department.id: 0;
+    data.country_id = selectValues.country? selectValues.country.id: 0;
+    data.state_id = selectValues.state? selectValues.state.id: 0;
 
-  const handleCancel = ()=> {
-    props.setDialogOpen? props.setDialogOpen(false) : null;
+    return data;
   }
 
-  function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
-    let values =  {...selectValues};
-    values[name] = val;
-    setSelectValues(values);
+  async function createEntity(data: contactSchemaT) {
+    const result = await createContact(data);
+    return result;
   }
 
 
@@ -97,6 +100,7 @@ export default function ContactForm(props: {
               id="name"
               label="Name"
               name="name"
+              required
               error={formError?.name?.error}
               helperText={formError?.name?.msg} 
             />
@@ -123,7 +127,7 @@ export default function ContactForm(props: {
               width = {210}
               dialogTitle={"Add Group"}
               fetchDataFn = {getContactGroup}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "contactGroup")}
+              onChange={(e, val, s) => setSelectValues({...selectValues, "contactGroup": val})}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <ContactGroupForm
                   setDialogOpen={fnDialogOpen}
@@ -138,7 +142,7 @@ export default function ContactForm(props: {
               width = {210}
               dialogTitle={"Add Area"}
               fetchDataFn = {getArea}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
+              onChange={(e, val, s) => setSelectValues({...selectValues, "area": val})}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
@@ -151,7 +155,7 @@ export default function ContactForm(props: {
               id = {"organisation"}
               label = {"Organisation"}
               width = {210}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "organisation")}
+              onChange={(e, val, s) => setSelectValues({...selectValues, "organisation": val})}
               dialogTitle={"Add Organisation"}
               fetchDataFn = {getOrganisation}
               renderForm={(fnDialogOpen, fnDialogValue) => 
@@ -167,7 +171,7 @@ export default function ContactForm(props: {
               label = {"Department"}
               width = {210}
               dialogTitle={"Add Department"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
+              onChange={(e, val, s) => setSelectValues({...selectValues, "department": val})}
               fetchDataFn = {getDepartment}
               renderForm={(fnDialogOpen, fnDialogValue) => 
                 <DepartmentForm
@@ -214,6 +218,7 @@ export default function ContactForm(props: {
               id="whatsapp"
               label="Whatsapp No"
               name="whatsapp"
+              // defaultCountry="FR"
               error={formError?.whatsapp?.error}
               helperText={formError?.whatsapp?.msg} 
             />
@@ -262,7 +267,36 @@ export default function ContactForm(props: {
                   rowGap: 1,
                   gridTemplateColumns: 'repeat(3, 1fr)', 
                 }}>
-            <CountryStateComposite/>
+            <SelectMasterWrapper
+              name = {"country"}
+              id = {"country"}
+              label = {"Country"}
+              width = {210}
+              dialogTitle={"Add country"}
+              onChange={(e, val, s) => setSelectValues({...selectValues, "country": val})}
+              fetchDataFn = {getCountries}
+              renderForm={(fnDialogOpen, fnDialogValue) => 
+                <CountryForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                />
+              }
+            />
+            <SelectMasterWrapper
+              name = {"state"}
+              id = {"state"}
+              label = {"State"}
+              width = {210}
+              onChange={(e, val, s) => setSelectValues({...selectValues, "state": val})}
+              dialogTitle={"Add State"}
+              fetchDataFn = {(stateStr: string) => getStates(stateStr, selectValues.country?.name)}
+              renderForm={(fnDialogOpen, fnDialogValue) => 
+                <StateForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                />
+              }
+            />
 
             <InputControl 
               inputType={InputType.TEXT} 
@@ -273,20 +307,17 @@ export default function ContactForm(props: {
               helperText={formError?.pincode?.msg}  
             />
           </Box>
-          <Grid container>
-            <Grid item xs={6} md={6}>
-              <Box  margin={1} sx={{display: "flex"}}>
-                <Box display="flex" justifyContent="flex-start" alignItems="flex-start" m={1}>
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
-                <Button type="submit" variant="contained">Submit</Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box sx={{
+            mt:3,
+            display: 'grid',
+            columnGap: 3,
+            rowGap: 1,
+            gridTemplateColumns: 'repeat(3, 1fr)',
+          }}>
+            <Button>Upload File</Button>
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button type="submit" variant="contained">Submit</Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}

@@ -80,20 +80,24 @@ export const contactSchema = z.object({
   whatsapp: z.union([z.literal(''),z.string().regex(phoneRegex, 'Invalid Number!')]),
   dob: z.date().optional(),
   doa: z.date().optional(),
+  contactGroup_id: z.number().optional(), 
   contactGroup: z.string().optional(), 
   state: z.string().optional(),
   area: z.string().optional(), 
+  area_id: z.number().optional(), 
   department: z.string().optional(), 
   organisation: z.string().optional(),
+  department_id: z.number().optional(), 
+  organisation_id: z.number().optional(),
   state_id: z.number().optional(),
   country_id: z.number().optional(), 
   country: z.string().optional(),
   city: z.string().optional(), 
 }).refine(schema => {
   return (
-      schema.email === '' && 
-      schema.mobile === ''); 
-}, "please provide email, or phone no");
+      !(schema.email === '' &&
+      schema.mobile === '')); 
+}, {message: "please provide email, or phone no", path: ["mobile", "email"]});
 
 
 export const executiveSchema = z.object({

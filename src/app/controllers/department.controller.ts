@@ -4,6 +4,8 @@ import * as zs from '../zodschema/zodschema';
 import { getDepartmentList, createDepartmentDb } from '../services/department.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
+import { nameMasterDataT } from '../models/models';
+import {logger} from '@/app/utils/logger.utils';
 
 
 export async function getDepartment(searchString: string) {
@@ -19,15 +21,12 @@ export async function getDepartment(searchString: string) {
 
 
 
-export async function createDepartment(formData: FormData){
+export async function createDepartment(data: nameMasterDataT){
   let result;
     try {
     const session = await getSession();
     if (session) {
-      const data = {
-        name: formData.get("name") as string,
-      };
-  
+
       const parsed = zs.nameMasterData.safeParse(data);
       if(parsed.success) {
         const dbResult = await createDepartmentDb(session, data);
@@ -44,7 +43,7 @@ export async function createDepartment(formData: FormData){
     }
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;
