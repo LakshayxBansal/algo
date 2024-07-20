@@ -4,16 +4,47 @@ import { useDemoData } from '@mui/x-data-grid-generator';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Search, StyledInputBase, StripedDataGrid, SearchIconWrapper } from '@/app/utils/styledComponents'
+import { Search, StyledInputBase, SearchIconWrapper } from '@/app/utils/styledComponents';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import EntityList from '@/app/Widgets/masters/EntityList';
 
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
 
-export default function StripedGrid() {
-  const { data, loading } = useDemoData({
-    dataSet: 'Employee',
-    rowLength: 200,
-  });
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  {
+    field: 'firstName',
+    headerName: 'First name',
+    width: 150,
+    editable: true,
+  },
+  {
+    field: 'lastName',
+    headerName: 'Last name',
+    width: 150,
+    editable: true,
+  },
+  {
+    field: 'age',
+    headerName: 'Age',
+    type: 'number',
+    width: 110,
+    editable: true,
+  },
+  {
+    field: 'fullName',
+    headerName: 'Full name',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 160,
+    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+  },
+];
+
+
+export default function ContactGrid() {
+
 
   return (
     <div style={{ height: 800, width: '100%' }}>
@@ -38,13 +69,12 @@ export default function StripedGrid() {
           </Box>
         </Toolbar>
       </AppBar>
-      <StripedDataGrid
-        loading={loading}
-        {...data}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-        }
-      />
+      <EntityList 
+        ModDialog={ModifyDeptDialog}
+        DelDialog={DeleteDeptDialog}
+        fetchDataFn={getContacts}
+        customCols={columns}>
+      </EntityList>
     </div>
   );
 }

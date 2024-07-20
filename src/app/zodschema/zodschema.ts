@@ -278,6 +278,15 @@ export const addEntityDlg = z.object({
 });
 
 
+export const modifyEntityDlg = z.object({ 
+  open: z.boolean(),
+  data: z.object({})
+});
+
+export const deleteEntityDlg = z.object({ 
+  open: z.boolean(),
+  data: z.object({})
+});
 
 /**
  * zod schema for menu options

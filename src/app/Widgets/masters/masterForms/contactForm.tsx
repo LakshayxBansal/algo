@@ -236,7 +236,8 @@ export default function ContactForm(props: {
               id="address1"
               error={formError?.address1?.error}
               helperText={formError?.address1?.msg} 
-              fullWidth />
+              fullWidth 
+            />
             <InputControl
               inputType={InputType.TEXT} 
               label="Address Line 2" 
@@ -244,7 +245,8 @@ export default function ContactForm(props: {
               id="address2"
               error={formError?.address2?.error}
               helperText={formError?.address2?.msg} 
-              fullWidth/>
+              fullWidth
+            />
             <InputControl
               inputType={InputType.TEXT} 
               label="Address Line 3" 
@@ -252,7 +254,8 @@ export default function ContactForm(props: {
               id="address3"
               error={formError?.address3?.error}
               helperText={formError?.address3?.msg} 
-              fullWidth/>
+              fullWidth
+            />
             <InputControl 
               inputType={InputType.TEXT} 
               name="city" 

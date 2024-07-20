@@ -45,7 +45,7 @@ export default function AuthPage(props: authPagePropsType) {
 
   getCsrfToken().then((token) => {csrfToken = token}).catch((error) => {console.log(error)});
   return (
-    <form method="POST" action={actValidate}>
+    <form action={actValidate}>
       {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
       <TextField
