@@ -97,7 +97,7 @@ export default function CategoryForm(props: {
           open={snackOpen}
           autoHideDuration={3000}
           onClose={()=>setSnackOpen(false)}
-          message="Record Saved!"
+          message="Record Saved!!"
           anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
         />
       </Box>
