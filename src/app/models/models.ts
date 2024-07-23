@@ -35,6 +35,20 @@ export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 
+//jp_dev
+export type deptT = z.infer<typeof zs.deptSchema>;
+export type getDeptsT = [{
+    id: number;
+    name: string;
+    rowID: number;
+    stamp: number }]
+    //jp mail files
+    export type getDeptT = [{
+        id: number;
+        name: string;
+        stamp: number }]
+    //jp_dev
+
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;
 export type executiveRoleSchemaT = z.infer<typeof zs.executiveRoleSchema>;

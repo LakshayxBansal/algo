@@ -52,6 +52,10 @@ export const organisationSchema = z.object({
   modified_on: z.date().optional(),
 });
 
+export const deptSchema = z.object({
+  name: z.string().min(1).max(45)
+});
+
 
 const contactDetailsSchema = z.object({
   email: z.union([z.literal(''), z.string().email().max(100)]),
