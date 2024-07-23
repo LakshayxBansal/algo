@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 
 
 type ModifyT = {
-  ModForm:any,
+  renderModForm:any,
   AddAllowed:Boolean,
   fetchDataFn:any, 
   customCols :GridColDef[]

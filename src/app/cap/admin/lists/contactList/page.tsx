@@ -71,7 +71,7 @@ export default function ManageContacts() {
         </Toolbar>
       </AppBar>
       <EntityList 
-        ModForm={(id) => 
+        renderModForm={(id) => 
           <ContactForm
             id={id}
           />}
