@@ -1,15 +1,16 @@
 'use client'
 import * as React from 'react';
-import { useDemoData } from '@mui/x-data-grid-generator';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Search, StyledInputBase, SearchIconWrapper } from '@/app/utils/styledComponents';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
+import {getContact} from '@/app/controllers/contact.controller';
 
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
+import { AddDialog } from '@/app/Widgets/masters/addDialog';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -43,7 +44,7 @@ const columns: GridColDef[] = [
 ];
 
 
-export default function ContactGrid() {
+export default function ManageContacts() {
 
 
   return (
@@ -70,13 +71,14 @@ export default function ContactGrid() {
         </Toolbar>
       </AppBar>
       <EntityList 
-        ModDialog={ModifyDeptDialog}
-        DelDialog={DeleteDeptDialog}
-        fetchDataFn={getContacts}
-        customCols={columns}>
+        ModForm={(id) => 
+          <ContactForm
+            id={id}
+          />}
+        fetchDataFn={getContact}
+        customCols={columns}
+        AddAllowed={true}>
       </EntityList>
     </div>
   );
 }
-
-

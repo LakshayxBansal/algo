@@ -1,24 +1,27 @@
 'use client'
 
 import { DataGrid, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import { deleteEntityDlgT,modifyEntityDlgT } from '@/app/models/models';
 import { useEffect, useState } from 'react';
 import { IconButton, Toolbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+
 
 type ModifyT = {
-  ModDialog:any,
-  DelDialog:any,
+  ModForm:any,
+  AddAllowed:Boolean,
   fetchDataFn:any, 
   customCols :GridColDef[]
 };
 
 export default function Modify<ModEntityT>(props:ModifyT) {
   
-  const [modifyDlgState, setModifyDlgState] = useState<modifyEntityDlgT>({open: false, data:{}});
-  const [deleteDlgState, setDeleteDlgState] = useState<deleteEntityDlgT>({open: false, data:{}});
+  const [modifyDlgOpen, setModifyDlgOpen] = useState(false);
+  const [deleteDlgOpen, setDeleteDlgOpen] = useState(false);
+  const [dlgID, setDlgID] = useState()
   
   const pgSize = 5;
   
@@ -36,7 +39,7 @@ export default function Modify<ModEntityT>(props:ModifyT) {
       
       setNRows(rows.count as number)
     }
-      fetchData();
+    fetchData();
     
   }, [PageModel,filterModel,searchText]);
 
@@ -46,12 +49,12 @@ export default function Modify<ModEntityT>(props:ModifyT) {
   [
 
     { field: 'Edit' , headerName: 'Edit', width: 100, renderCell: (params) => (
-      <IconButton onClick={() => {setModifyDlgState({open: true , data : params.row})}}>
+      <IconButton onClick={() => {setDlgID(params.row.id); setModifyDlgOpen(true)}}>
         <EditIcon/>
       </IconButton>
     ) },
     { field: 'Delete' , headerName: 'Delete', width: 100, renderCell: (params) => (
-      <IconButton onClick={() => {setDeleteDlgState({open: true , data : params.row})}}>
+      <IconButton onClick={() => {setDlgID(params.row.id); setDeleteDlgOpen(true)}}>
         <DeleteIcon/>
       </IconButton>
     ) }
@@ -62,14 +65,17 @@ export default function Modify<ModEntityT>(props:ModifyT) {
     <div style={{ height: 400, width: '100%' }}>
       <Toolbar/>
       <TextField
-                  label="Search"
-                  name="search"
-                  fullWidth
-                  id="search"
-                  onChange={(e) => setSearchText(e.target.value)}
-                  style={{ width: 'fit-content' }}
-                  autoFocus
-                />
+        label="Search"
+        name="search"
+        fullWidth
+        id="search"
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 'fit-content' }}
+        autoFocus
+      />
+      <Box sx={{flexGrow: 1, display: 'flex' }}>
+        {props.AddAllowed && <Button variant="contained">Add New</Button>}
+      </Box>
       <DataGrid 
         rows={data ? data : []} 
         columns={columns}
@@ -85,8 +91,7 @@ export default function Modify<ModEntityT>(props:ModifyT) {
         loading={!data}
       />
       {/* The Below dialogs shall come fro  props */}
-      {modifyDlgState && <props.ModDialog {...modifyDlgState} setDlgValue={setModifyDlgState}></props.ModDialog>}
-      {deleteDlgState && <props.DelDialog {...deleteDlgState} setDlgValue={setDeleteDlgState}></props.DelDialog>}
+      {modifyDlgOpen && <props.ModForm id={dlgID}></props.ModDialog>}
     </div>
   );
 }

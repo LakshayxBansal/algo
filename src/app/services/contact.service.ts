@@ -71,3 +71,26 @@ export async function getContactList(crmDb: string, searchString: string){
     console.log(e);
   }
 }
+
+
+/**
+ * 
+ * @param crmDb database to search in
+ * @param id id to search in contact_master
+ * @returns 
+ */
+export async function fetchContactById(crmDb: string, id: string){
+  
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select * from contact_master where id=?', 
+      values: [id],
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}

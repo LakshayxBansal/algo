@@ -52,7 +52,10 @@ export default function InputForm(props: {baseData: IformData}) {
 
   let result;
   let issues;
+
   const handleSubmit = async (formData: FormData)=> {
+
+
     let dt = new Date(formData.get("date") as string);
     const date = (dt.toISOString().slice(0,10)+ " " + dt.toISOString().slice(11,19));
     dt = new Date(formData.get("next_action_date") as string);
