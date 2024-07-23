@@ -73,7 +73,12 @@ export default function ContactForm(props: {
     data.country_id = selectValues.country? selectValues.country.id: 0;
     data.state_id = selectValues.state? selectValues.state.id: 0;
 
+<<<<<<< HEAD
     return data;
+=======
+  const handleCancel = ()=> {
+    props.setDialogOpen(false); 
+>>>>>>> c38f32c (#AutoCompleteDB - revamped autocompleteDB and used with selectMasterWrapper)
   }
 
   async function createEntity(data: contactSchemaT) {
