@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DeptModifyForm from './ModifyDeptForm';
 import Divider from '@mui/material/Divider';
 
-
+//need to checl type dispatch
 export default function ModifyDeptDialog(props: {open:boolean, id:number, setDlgValue:Dispatch<SetStateAction<boolean>>}) {
   if (props.open) {
     return (

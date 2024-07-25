@@ -10,10 +10,12 @@ class SingletonMap<K, V> {
 
     public static getInstance<K, V>(): SingletonMap<K, V> {
         console.log("--------get instance-----------");
+        // console.log(!SingletonMap.instance);
         if (!SingletonMap.instance) {
             console.log("++++++++New Insatnce++++++++");
             SingletonMap.instance = new SingletonMap<K, V>();
         }
+        // console.log(Singl    etonMap.instance);
         return SingletonMap.instance;
     }
 
@@ -27,6 +29,7 @@ class SingletonMap<K, V> {
 }
 
 const dbMap = SingletonMap.getInstance<string, mariadb.Pool>();
+// console.log(dbMap)
 
 export {dbMap};
 

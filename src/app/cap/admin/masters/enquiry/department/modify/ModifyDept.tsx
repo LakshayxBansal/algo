@@ -5,6 +5,10 @@ import { deleteDept, getDepts } from '../../../../../../controllers/department.c
 import ModifyDeptDialog from './ModifyDeptDialog';
 import DeleteDeptDialog from './DeleteDeptDialog';
 import EntityList from '@/app/Widgets/masters/EntityList';
+import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
+import DeptModifyForm from "./ModifyDeptForm";
+import { useState } from 'react';
+import AddDeptForm from '../add/AddDeptForm';
 
 
 
@@ -15,12 +19,26 @@ export default function ModifyDept() {
     { field: 'name', headerName: 'Name', width: 300 },
 
   ];
+
+  const [id, setId]= useState<number>(-1);
+
   
   return (
     <EntityList 
-    ModDialog={ModifyDeptDialog}
+    // formTitle = "modify"
+    // ModForm={ModifyDeptDialog}
+    modForm={ModifyDeptDialog}
+
     DelDialog={DeleteDeptDialog}
     fetchDataFn={getDepts}
-    customCols={columns}></EntityList>
+    customCols={columns}
+    renderFormEntity={(fnDialogOpen)=>
+      <AddDeptForm/>
+    }
+    // RenderFormFunctionEntity1={(fnDialogOpen1)=>
+    //   <DeptModifyForm open={} id={} setDlgValue={}/>
+    // }
+    >
+    </EntityList>
   );
 }

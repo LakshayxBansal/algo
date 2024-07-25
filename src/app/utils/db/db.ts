@@ -3,9 +3,14 @@ import mariadb from 'mariadb';
 import { dbMap } from './SingletonMap';
 
 //const dbMap = SingletonMap<string, mariadb.Pool>;
+// console.log("this is the console data",dbMap)
 
+
+// below code
+// map is created as we have more than one databases in our system
 function getPool(host: string) {
   const pool = dbMap.get(host);
+  // console.log("mariaDb",pool);
   if (pool) {
     return pool;
   } else {
@@ -18,6 +23,7 @@ function getPool(host: string) {
         connectionLimit: 5
       }
     ));
+    // console.log(dbMap.get(host));
     return dbMap.get(host) ?? null;
   }
 }
@@ -39,5 +45,6 @@ export default async function excuteQuery({host , query, values }: {host: string
   } catch (e) {
     throw (e);
   } 
+  // console.log("these are the results",results)
   return results;
 }
