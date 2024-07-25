@@ -40,6 +40,7 @@ type autocompleteDBT = {
   required?: boolean;
   defaultValue?: string;
   notEmpty?: boolean;
+  fnSetModifyMode: (id: string)=> void,
   //children: React.FunctionComponentElement
 };
 
@@ -145,6 +146,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
                       console.log("modify- " + param);
                       console.log(param);
                       console.log(params.inputProps.value);
+                      props.fnSetModifyMode(diaglogValue.id);
                     }}
                     size='small'
                     edge='end'

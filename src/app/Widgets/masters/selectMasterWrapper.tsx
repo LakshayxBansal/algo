@@ -10,8 +10,10 @@ import { formErrorT } from "../../models/models";
 
 type RenderFormFunction = (
   fnDialogOpen: (props: any) => void,
-  fnDialogValue: (props: any) => void
+  fnDialogValue: (props: any) => void,
+  id?: string
 ) => JSX.Element;
+
 
 type OnChangeFunction = (
   event: any,
@@ -38,18 +40,26 @@ type selectMasterWrapperT = {
   required?: boolean;
   defaultValue?: string;
   notEmpty?: boolean;
+  renderModForm: RenderFormFunction;
   //children: React.FunctionComponentElement
 };
 
 export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [modDialogOpen, setModDialogOpen] = useState(false);
   const [dialogValue, setDialogValue] = useState<CustomT>({} as CustomT);
+  const [modEntityId, setModEntityId] = useState("");
   const allowNewAdd = props.allowNewAdd === false ? false : true;
 
   function openDialog() {
     if (allowNewAdd) {
       setDialogOpen(true);
     }
+  }
+
+  function onModifyDialog(id:string) {
+    setModDialogOpen(true);
+    setModEntityId(id);
   }
 
   //             ListboxComponent={customListbox}
@@ -74,6 +84,7 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
             required={props.required}
             notEmpty={props.notEmpty}
             defaultValue={props.defaultValue}
+            fnSetModifyMode={onModifyDialog}
           />
           <Tooltip
             title={allowNewAdd ? "Click to add new" : "Not allowed to add"}
@@ -92,6 +103,15 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
           setDialogOpen={setDialogOpen}
         >
           {props.renderForm(setDialogOpen, setDialogValue)}
+        </AddDialog>
+      )}
+      {modDialogOpen && (
+        <AddDialog
+          title={props.dialogTitle}
+          open={modDialogOpen}
+          setDialogOpen={setModDialogOpen}
+        >
+          {props.renderModForm(setDialogOpen, setDialogValue, modEntityId)}
         </AddDialog>
       )}
     </>

@@ -19,6 +19,7 @@ import {contactSchemaT, selectKeyValueT} from '@/app/models/models';
 import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
 import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
 import { getCountries, getStates } from '@/app/controllers/masters.controller';
+import ModTempForm  from '@/app/Widgets/masters/modForms/modForm';
 
 
 
@@ -134,6 +135,13 @@ export default function ContactForm(props: {
                   setDialogValue={fnDialogValue}
                 />
               }
+              renderModForm={(fnDialogOpen, fnDialogValue, id) =>
+                <ModTempForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
+                />
+              }
             />
             <SelectMasterWrapper
               name = {"area"}
@@ -147,6 +155,13 @@ export default function ContactForm(props: {
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                />
+              }
+              renderModForm={(fnDialogOpen, fnDialogValue, id) =>
+                <ModTempForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
                 />
               }
             />
@@ -164,6 +179,13 @@ export default function ContactForm(props: {
                   setDialogValue={fnDialogValue}
                 />
               }
+              renderModForm={(fnDialogOpen, fnDialogValue, id) =>
+                <ModTempForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
+                />
+              }
             />
             <SelectMasterWrapper
               name = {"department"}
@@ -177,6 +199,13 @@ export default function ContactForm(props: {
                 <DepartmentForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                />
+              }
+              renderModForm={(fnDialogOpen, fnDialogValue, id) =>
+                <ModTempForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
                 />
               }
             />
@@ -284,6 +313,13 @@ export default function ContactForm(props: {
                   setDialogValue={fnDialogValue}
                 />
               }
+              renderModForm={(fnDialogOpen, fnDialogValue, id) =>
+                <ModTempForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
+                />
+              }
             />
             <SelectMasterWrapper
               name = {"state"}
@@ -297,6 +333,13 @@ export default function ContactForm(props: {
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                />
+              }
+              renderModForm={(fnDialogOpen, fnDialogValue, id) =>
+                <ModTempForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
                 />
               }
             />
