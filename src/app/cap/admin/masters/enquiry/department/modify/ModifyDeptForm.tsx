@@ -9,12 +9,12 @@ import { getDeptData, modifyDept } from '../../../../../../controllers/departmen
 
 export default function DeptModifyForm(props: {
   open: boolean;
-  id: number;
+  id: string;
   setDlgValue: Dispatch<SetStateAction<boolean>>;
 }) 
 
 {
-  const [data,setData] = useState([{}] as getDeptT)
+  const [data,setData] = useState([{}] as getDeptT);
 
   useEffect(() => {
     async function fetchData() { 

@@ -2,7 +2,7 @@
 
 import { DataGrid, GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import { deleteEntityDlgT, modifyEntityDlgT } from '@/app/models/models';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, InputAdornment, Toolbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,27 +11,34 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputForm from '@/app/cap/enquiry/InputForm';
 import ContactForm from './masterForms/contactForm';
 import { AddDialog } from './addDialog';
+import { SocketAddress } from 'net';
 // import { Container } from '@mui/material';
 
-type RenderFormFunctionEntity = (
-  fnDialogOpen: (props: any) => void
+type renderAddForm = (
+  addDialogOpen: (props: any) => void,
+  addDialogValue: (props: any) => void
 ) => JSX.Element;
 
-type RenderFormFunctionEntity1 = (
-  fnDialogOpen1: (props: any) => void
+type renderModForm = (
+  modDialogOpen: boolean,
+  modDialogClose: Dispatch<SetStateAction<boolean>>,
+  id: string,
+) => JSX.Element;
+
+type renderDeleteForm = (
+  delDialogOpen: boolean,
+  delDialogClose: Dispatch<SetStateAction<boolean>>,
+  dialogName: string,
+  id: string,
 ) => JSX.Element;
 
 
 type ModifyT = {
-  // formTitle: string,
-  modForm: any,
-  // ModForm: RenderFormFunctionEntity,
-  DelDialog: any,
+  renderModForm: renderModForm,
+  renderDelForm: renderDeleteForm,
   fetchDataFn: any,
   customCols: GridColDef[],
-  renderFormEntity: RenderFormFunctionEntity,
-  // RenderFormFunctionEntity1:RenderFormFunctionEntity1
-
+  renderAddForm: renderAddForm,
 };
 
 
@@ -40,10 +47,9 @@ export default function EntityList<ModEntityT>(props: ModifyT) {
 
   const [modifyDlgState, setModifyDlgState] = useState<boolean>(false);
   const [deleteDlgState, setDeleteDlgState] = useState<boolean>(false);
-  const [id, setId] = useState<number>(-1);
+  const [id, setId] = useState("-1");
   const [name, setName] = useState<String>('');
-  const [addText, setAddText] = useState<boolean>(false);
-  const [modifyDlgState1, setModifyDlgState1] = useState<boolean>(false);
+  const [addDlgState, setAddDlgState] = useState<boolean>(false);
 
 
 
@@ -54,6 +60,7 @@ export default function EntityList<ModEntityT>(props: ModifyT) {
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
   const [searchText, setSearchText] = useState<String>('');
+  const [dummyText, setDummyText] = useState("");
 
 
   useEffect(() => {
@@ -104,62 +111,66 @@ export default function EntityList<ModEntityT>(props: ModifyT) {
 
 
   const addNewClick = () => {
-    setAddText(true);
+    setAddDlgState(true);
   }
 
   return (
     <Container maxWidth="lg">
       <div style={{ height: 300, width: '100%', padding: "25px" }}>
         {/* <Toolbar/> */}
-        <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", p: 2 }}>
-          <TextField
-            // label="Search..."
-            name="search"
-            id="search"
-            placeholder="Search..."
-            type="search"
-            variant="filled"
-            onChange={(e) => setSearchText(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="medium" style={{ verticalAlign: "middle", marginBottom: "0.2rem", fontWeight: "bold" }} />
-                </InputAdornment>
-              ), disableUnderline: true, sx: { borderRadius: 0, justifyContent: "center", width: "fit-content" }, style: { fontSize: '1.2rem', alignItems: "center" }
-            }}
-          />
+        <Box sx={{ display: 'flex', alignItems: "center", p: 2 }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <TextField
+              // label="Search..."
+              name="search"
+              id="search"
+              placeholder="Search..."
+              type="search"
+              variant="filled"
+              onChange={(e) => setSearchText(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="medium" style={{ verticalAlign: "middle", marginBottom: "0.2rem", fontWeight: "bold" }} />
+                  </InputAdornment>
+                ), disableUnderline: true, sx: { borderRadius: 0, justifyContent: "center", width: "fit-content", flexGrow: 1 }, style: { fontSize: '1.2rem', alignItems: "center" }
+              }}
+            />
+          </Box>
           <Box>
-            <Button variant="contained" onClick={() => setAddText(true)}>
+            <Button variant="contained" onClick={() => setAddDlgState(true)}>
               ADD NEW
             </Button>
-            {addText && (
-              <AddDialog
-                title={''}
-                open={addText}
-                setDialogOpen={setAddText}
-              >
-                {props.renderFormEntity(setAddText)}
-              </AddDialog>
-            )}
-            {/* <Dialog  maxWidth="lg" open={addText}>
-        <DialogContent>
-          <ContactForm setDialogOpen={()=>setAddText(false)} setDialogValue={()=>setModifyDlgState1(true)}/>
-        </DialogContent>
-        </Dialog> */}
           </Box>
-          {/* for edit button -- pencil */}
-          {/* {modifyDlgState && <props.ModForm open={modifyDlgState} id={id} setDlgValue={setModifyDlgState}></props.ModForm>} */}
-
-          {modifyDlgState && (
-              <AddDialog  
-                title={''}
-                open={modifyDlgState}
-                setDialogOpen={setModifyDlgState}
-              >
-                {props.modForm(modifyDlgState,id,setModifyDlgState )}
-              </AddDialog>
-            )}
-           </Box>
+        </Box>
+        {addDlgState && (
+          <AddDialog
+            title={''}
+            open={addDlgState}
+            setDialogOpen={setAddDlgState}
+          >
+            {props.renderAddForm(setAddDlgState, setDummyText)}
+          </AddDialog>
+        )}
+        {/* The Below dialogs shall come fro  props */}
+        {modifyDlgState && (
+          <AddDialog
+            title={''}
+            open={modifyDlgState}
+            setDialogOpen={setModifyDlgState}
+          >
+            {props.renderModForm(modifyDlgState, setModifyDlgState, id)}
+          </AddDialog>
+        )}
+        {deleteDlgState && (
+          <AddDialog
+            title={''}
+            open={deleteDlgState}
+            setDialogOpen={setDeleteDlgState}
+          >
+            {props.renderDelForm(deleteDlgState, setDeleteDlgState, "String", id)}
+          </AddDialog>
+        )}
 
         <DataGrid
           rows={data ? data : []}
@@ -175,21 +186,6 @@ export default function EntityList<ModEntityT>(props: ModifyT) {
           onFilterModelChange={setFilterModel}
           loading={!data}
         />
-        {/* The Below dialogs shall come fro  props */}
-        {/* <div>
-
-      {modifyDlgState && (
-        <AddDialog
-        title={props.formTitle}
-        open={modifyDlgState}
-        setDialogOpen={setModifyDlgState}
-        >
-          {props.renderFormEntity(setModifyDlgState)}
-        </AddDialog>
-      )}
-      </div> */}
-        {/* {modifyDlgState && <props.ModForm open={modifyDlgState} id={id} setDlgValue={setModifyDlgState}></props.ModForm>} */}
-        {deleteDlgState && <props.DelDialog open={deleteDlgState} id={id} name={name} setDlgValue={setDeleteDlgState}></props.DelDialog>}
 
       </div>
     </Container>

@@ -11,6 +11,7 @@ import {getContact} from '@/app/controllers/contact.controller';
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
 import { AddDialog } from '@/app/Widgets/masters/addDialog';
+import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },

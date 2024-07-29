@@ -9,7 +9,10 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '../../../../../../utils/theme.util';
 import Paper from '@mui/material/Paper';
 
-export default function AddDeptForm() {
+export default function AddDeptForm(props: {
+  setDialogOpen?: (props: any) => void,
+  setDialogValue?: (props: any) => void,
+}) {
   const [FormError, setFormError] = useState('');
 
   const formSubmit = async (formData: FormData) => {
@@ -23,6 +26,11 @@ export default function AddDeptForm() {
       setFormError(result.error as string);
     }
   };
+
+  const handleClose = ()=>{
+    props.setDialogOpen(false);
+
+  }
 
   return (
     <>
@@ -57,6 +65,12 @@ export default function AddDeptForm() {
                 />
               </Grid>
               <Grid item xs={2} style={{ textAlign: 'right' }}>
+              <Button
+                  // sx={{ mt: 3, mb: 2, left: '29px' }}
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
                 <Button
                   type="submit"
                   variant="contained"
@@ -64,6 +78,7 @@ export default function AddDeptForm() {
                 >
                   Submit
                 </Button>
+                
               </Grid>
             </Grid>
           </Paper>

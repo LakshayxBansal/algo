@@ -7,26 +7,16 @@ import Divider from '@mui/material/Divider';
 import DialogActions from '@mui/material/DialogActions';
 
 
-export default function DeleteDeptDialog(props: {open:boolean, id:number, name:String, setDlgValue:Dispatch<SetStateAction<boolean>>}) {
-  if (props.open) {
+export default function DeleteDeptForm(props: {open:boolean, id:string, name:String, setDlgValue:Dispatch<SetStateAction<boolean>>}) {
     return (
       <>
-        <Dialog open={props.open}>
-          <DialogTitle>Delete Department: {props.name}</DialogTitle>
-          <Divider variant="fullWidth" sx={{borderWidth: 0.1, borderColor: '#E2E8EB'}}/>
-          <DialogActions>
           <Button onClick={()=> {props.setDlgValue(false)}} color="primary">
             Cancel
           </Button>
           <Button onClick={()=>{}} color="primary" autoFocus>
             Delete
           </Button>
-        </DialogActions>
-        </Dialog>
       </>
     );
-  } else {
-    return <></>
-  }
 
 }
