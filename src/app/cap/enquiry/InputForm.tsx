@@ -189,12 +189,13 @@ export default function InputForm(props: {baseData: IformData}) {
               fetchDataFn = {getContact}
               required
               formError={formError?.contact?? formError.contact}
-              renderForm={(fnDialogOpen, fnDialogValue) => 
-                  <ContactForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                  />
-                }
+              renderForm={(fnDialogOpen, fnDialogValue, id) => 
+                <ContactForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  id={id}
+                />
+              }
             />
           </Box>
           <Box

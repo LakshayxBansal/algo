@@ -1,4 +1,4 @@
-
+'use client'
 import React, {ChangeEvent, useState} from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';

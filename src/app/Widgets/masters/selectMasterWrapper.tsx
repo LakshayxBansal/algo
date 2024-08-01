@@ -36,33 +36,41 @@ type selectMasterWrapperT = {
   highlightOptions?: SelectOptionsFunction;
   width?: number;
   allowNewAdd?: boolean;
+  allowModify?: boolean;
   formError?: formErrorT;
   required?: boolean;
   defaultValue?: string;
   notEmpty?: boolean;
-  renderModForm: RenderFormFunction;
-  //children: React.FunctionComponentElement
 };
+
+enum dialogMode {
+  Add,
+  Modify
+}
 
 export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [modDialogOpen, setModDialogOpen] = useState(false);
+  const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [dialogValue, setDialogValue] = useState<CustomT>({} as CustomT);
   const [modEntityId, setModEntityId] = useState("");
   const allowNewAdd = props.allowNewAdd === false ? false : true;
+  const allowModify = props.allowModify === false ? false : true;
 
   function openDialog() {
     if (allowNewAdd) {
       setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
     }
   }
 
-  function onModifyDialog(id:string) {
-    setModDialogOpen(true);
-    setModEntityId(id);
+  async function onModifyDialog(id:string) {
+    if(allowModify) {
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Modify);
+      setModEntityId(id);
+    }
   }
 
-  //             ListboxComponent={customListbox}
 
   return (
     <>
@@ -102,16 +110,7 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
         >
-          {props.renderForm(setDialogOpen, setDialogValue)}
-        </AddDialog>
-      )}
-      {modDialogOpen && (
-        <AddDialog
-          title={props.dialogTitle}
-          open={modDialogOpen}
-          setDialogOpen={setModDialogOpen}
-        >
-          {props.renderModForm(setDialogOpen, setDialogValue, modEntityId)}
+          {(dlgMode === dialogMode.Add)? props.renderForm(setDialogOpen, setDialogValue) : props.renderForm(setDialogOpen, setDialogValue, modEntityId)}
         </AddDialog>
       )}
     </>

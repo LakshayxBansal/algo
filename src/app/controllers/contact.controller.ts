@@ -4,7 +4,7 @@ import * as zs from '../zodschema/zodschema';
 import {contactSchemaT} from '../models/models';
 import {createContactDB} from '../services/contact.service';
 import { getSession } from '../services/session.service';
-import {getContactList, fetchContactById} from '@/app/services/contact.service';
+import {getContactList, getContactDetailsById} from '@/app/services/contact.service';
 import { SqlError } from 'mariadb';
 
 
@@ -72,7 +72,7 @@ export async function getContactById(id: string) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return fetchContactById(session.user.dbInfo.dbName, id);
+      return getContactDetailsById(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;

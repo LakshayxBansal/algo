@@ -51,3 +51,27 @@ export async function createContactGroupDb(session: Session, sourceData: zm.cont
   }
   return null;
 }
+
+
+/**
+ * 
+ * @param crmDb database to search in
+ * @param id id to search in contact_master
+ * @returns 
+ */
+export async function getContactGroupDetailsById(crmDb: string, id: string){
+  
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'SELECT c1.*, c2.name parent FROM contact_group_master c1 left outer join contact_group_master c2 on c1.parent_id = c2.id \
+        where c1.id=?;', 
+      values: [id],
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}

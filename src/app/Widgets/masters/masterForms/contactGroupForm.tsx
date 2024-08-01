@@ -9,13 +9,11 @@ import { getContactGroup } from '@/app/controllers/contactGroup.controller';
 import {contactGroupSchemaT, selectKeyValueT} from '@/app/models/models';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
+import {masterFormPropsT} from '@/app/models/models';
 
 
 
-export default function ContactGroupForm(props: {
-      setDialogOpen: (props: any) => void,
-      setDialogValue: (props: any) => void,
-    }) {
+export default function ContactGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);

@@ -6,12 +6,10 @@ import Box from '@mui/material/Box';
 import { createArea } from '../../../controllers/area.controller';
 import Grid from '@mui/material/Grid';
 import {nameMasterData} from '../../../zodschema/zodschema';
+import {masterFormPropsT} from '@/app/models/models';
 
 
-export default function AreaForm(props: {
-      setDialogOpen: (props: any) => void,
-      setDialogValue: (props: any) => void,
-    }) {
+export default function AreaForm(props: masterFormPropsT) {
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
 
@@ -28,7 +26,8 @@ export default function AreaForm(props: {
       result = await createArea(formData);
       if (result.status){
         const newVal = {id: result.data[0].id, name: result.data[0].name};
-        props.setDialogValue(newVal.name);
+        props.setDialogValue? props.setDialogValue(newVal.name) : null;
+        props.setDialogOpen? props.setDialogOpen(false) : null;
       } else {
         issues = result?.data;
       }

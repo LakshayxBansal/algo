@@ -2,7 +2,7 @@
  
 import * as zs from '../zodschema/zodschema';
 import {contactGroupSchemaT} from '@/app/models/models';
-import { getContactGroupList, createContactGroupDb } from '../services/contactGroup.service';
+import { getContactGroupList, createContactGroupDb, getContactGroupDetailsById } from '../services/contactGroup.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
 import {logger} from '@/app/utils/logger.utils';
@@ -50,4 +50,21 @@ export async function createContactGroup(data: contactGroupSchemaT){
   }
   result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
   return result;
+}
+
+
+/**
+ * 
+ * @param Id id of the contact to be searched
+ * @returns 
+ */
+export async function getContactGroupById(id: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getContactGroupDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
 }

@@ -13,23 +13,22 @@ export type optionsDataT = z.infer<typeof zs.optionsData>;
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
-<<<<<<< HEAD
-export type modifyEntityDlgT = z.infer<typeof zs.modifyEntityDlg>;
+// export type modifyEntityDlgT = z.infer<typeof zs.modifyEntityDlg>;
 
-export type deleteEntityDlgT = z.infer<typeof zs.deleteEntityDlg>;
+// export type deleteEntityDlgT = z.infer<typeof zs.deleteEntityDlg>;
 
-=======
->>>>>>> a454ba0 (#AutoCompleteDB - added formErrorT model)
 export type formErrorT = 
     {msg: string; 
     error: boolean;}
 
-<<<<<<< HEAD
+export type masterFormPropsT = {      
+    setDialogOpen?: (props: any) => void,
+    setDialogValue?: (props: any) => void,
+    id?: string,
+}
 
     
 
-=======
->>>>>>> a454ba0 (#AutoCompleteDB - added formErrorT model)
 //Enquiry Schemas
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;

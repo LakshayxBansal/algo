@@ -66,9 +66,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   }
 
   useEffect(() => {
-    console.log('effect jp')
     const getData = debounce(async (input) => {
-      console.log(input)
       const results = (await props.fetchDataFn(input)) as CustomT[];
       setOptions([] as CustomT[]);
       setLoading(false);

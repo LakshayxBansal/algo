@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -9,7 +9,7 @@ import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import OrganisationForm from './organisationForm';
 import DepartmentForm from './departmentForm';
 import {createContact} from '@/app/controllers/contact.controller';
-import { getContactGroup, getContactGroupById } from '@/app/controllers/contactGroup.controller';
+import { getContactGroup } from '@/app/controllers/contactGroup.controller';
 import ContactGroupForm from '@/app/Widgets/masters/masterForms/contactGroupForm';
 import AreaForm from './areaForm';
 import { getArea } from '@/app/controllers/area.controller';
@@ -21,39 +21,29 @@ import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
 import { getCountries, getStates } from '@/app/controllers/masters.controller';
 import {masterFormPropsT} from '@/app/models/models';
 import {getContactById} from '@/app/controllers/contact.controller';
+import {getContactGroupById} from ''
+
 
 
 export default function ContactForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [dbData, setDbData] = React.useState<contactSchemaT>({} as contactSchemaT);
+  const [data, setData] = React.useState<contactSchemaT>({} as contactSchemaT);
 
   const handleCancel = ()=> {
     props.setDialogOpen? props.setDialogOpen(false) : null;
   }
 
-  // useEffect(() => {
-  //   if (props.id) {
-  //     const fetchData = async (id: string) => {
-  //       const data = await getContactById(id);
-  //       setDbData(data);
-  //     }
-  //     fetchData(props.id);
-  //     console.log(dbData);    
-  //   }
-  // }, []);
-
-
   useEffect(() => {
     if (props.id) {
-      const data = getContactById(props.id).then((data) => {
-        setDbData(data);
-      });
-      console.log(dbData);
-    }
-  }, [dbData]);
-
+      const fetchData = async () => {
+        const data = await getContactById(props.id as string);
+        setData(data);
+        }
+        fetchData();
+      }
+    }, []);
 
   const handleSubmit = async (formData: FormData)=> {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -124,7 +114,7 @@ export default function ContactForm(props: masterFormPropsT) {
               required
               error={formError?.name?.error}
               helperText={formError?.name?.msg} 
-              value={dbData.name}
+              value={data.name? data.name : "" }
             />
             <InputControl
               inputType={InputType.TEXT}     
