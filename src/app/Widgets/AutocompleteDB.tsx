@@ -71,10 +71,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       setOptions([] as CustomT[]);
       setLoading(false);
       if (results) {
-        if (
-          (autoSelect && inputValue === "") ||
-          (selectDefault && results.length === 1)
-        ) {
+        if ((autoSelect && inputValue === "") || (selectDefault && results.length === 1)) {
           setDialogValue(results[0]);
         }
         setOptions(results);
@@ -122,7 +119,10 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
           : getOptions(option, props.labelOptions);
       }}
       renderOption={(p, option) => {
-        return <li {...p}>{getOptions(option, props.renderOptions)}</li>;
+        const { ["key"]: _, ...newP } = p;
+        return <li key={p.key} {...newP}>{getOptions(option, props.renderOptions)}</li>;
+        //return <li>{getOptions(option, props.renderOptions)}</li>;
+
       }}
       sx={{ width: { width } }}
       renderInput={(params) => {
@@ -161,7 +161,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       }}
       onHighlightChange={onHighlightChange}
       value={diaglogValue}
-      isOptionEqualToValue={(option, value) => option === value}
+      isOptionEqualToValue={(option, value) => {console.log("option:--", option);console.log("value:--", value);return option.id === value.id;}}
       PopperComponent={(props) => (
         <Popper {...props}>
           {props.children as ReactNode}

@@ -33,26 +33,18 @@ export default function ContactForm(props: masterFormPropsT) {
     props.setDialogOpen? props.setDialogOpen(false) : null;
   }
 
-  // useEffect(() => {
-  //   if (props.id) {
-  //     const fetchData = async (id: string) => {
-  //       const data = await getContactById(id);
-  //       setDbData(data);
-  //     }
-  //     fetchData(props.id);
-  //     console.log(dbData);    
-  //   }
-  // }, []);
-
-
   useEffect(() => {
     if (props.id) {
-      const data = getContactById(props.id).then((data) => {
+      const fetchData = async (id: string) => {
+        console.log(id); 
+        const data = await getContactById(id);
         setDbData(data);
-      });
-      console.log(dbData);
+        console.log(data); 
+      }
+      fetchData(props.id);
+   
     }
-  }, [dbData]);
+  }, [props.id]);
 
 
   const handleSubmit = async (formData: FormData)=> {
