@@ -24,7 +24,13 @@ export type formErrorT =
 export type masterFormPropsT = {      
     setDialogOpen?: (props: any) => void,
     setDialogValue?: (props: any) => void,
-    id?: string,
+    data?: any
+}
+
+export type masterFormPropsWithDataT = {      
+    setDialogOpen?: (props: any) => void,
+    setDialogValue?: (props: any) => void,
+    data: any,
 }
 
     

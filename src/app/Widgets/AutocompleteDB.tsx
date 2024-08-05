@@ -12,8 +12,6 @@ import { debounce } from "@mui/material/utils";
 import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
-import IconButton from "@mui/material/IconButton";
-import EditNoteIcon from '@mui/icons-material/EditNote';
 import { InputControl, InputType } from "./input/InputControl";
 
 type OnChangeFunction = (
@@ -135,33 +133,12 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
             required={props.required}
             error={props.formError?.error}
             helperText={props.formError?.msg}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <Fragment>
-                  {diaglogValue.id && <IconButton
-                    onClick={(param) => {
-                      console.log("modify- " + param);
-                      console.log(param);
-                      console.log(params.inputProps.value);
-                      props.fnSetModifyMode(diaglogValue.id);
-                    }}
-                    size='small'
-                    edge='end'
-                    style={{ fontSize: 16, padding: 4 }}
-                  >
-                    <EditNoteIcon  fontSize='inherit'/>
-                  </IconButton>}
-                  {params.InputProps.endAdornment}
-                </Fragment>
-              ),
-            }}
           />
         );
       }}
       onHighlightChange={onHighlightChange}
       value={diaglogValue}
-      isOptionEqualToValue={(option, value) => {console.log("option:--", option);console.log("value:--", value);return option.id === value.id;}}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       PopperComponent={(props) => (
         <Popper {...props}>
           {props.children as ReactNode}

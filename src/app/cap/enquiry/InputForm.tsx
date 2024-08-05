@@ -20,6 +20,7 @@ import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
+import {getContactById} from '@/app/controllers/contact.controller';
 
 import dayjs from "dayjs";
 import { enquiryHeaderSchema, enquiryLedgerSchema } from '@/app/zodschema/zodschema';
@@ -187,13 +188,14 @@ export default function InputForm(props: {baseData: IformData}) {
               dialogTitle={"Add Contact"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
               fetchDataFn = {getContact}
+              fnFetchDataByID={getContactById}
               required
               formError={formError?.contact?? formError.contact}
-              renderForm={(fnDialogOpen, fnDialogValue, id) => 
+              renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <ContactForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
-                  id={id}
+                  data={data}
                 />
               }
             />
