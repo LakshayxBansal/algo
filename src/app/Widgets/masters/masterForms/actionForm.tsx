@@ -8,12 +8,10 @@ import {nameMasterData} from '../../../zodschema/zodschema';
 import Paper from '@mui/material/Paper';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
+import { masterFormPropsT } from '@/app/models/models';
 
 
-export default function ActionForm(props: {
-      setDialogOpen?: (props: any) => void,
-      setDialogValue?: (props: any) => void,
-    }) {
+export default function ActionForm(props: masterFormPropsT) {
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [snackOpen, setSnackOpen] = React.useState(false);

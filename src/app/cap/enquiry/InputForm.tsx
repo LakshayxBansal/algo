@@ -216,10 +216,11 @@ export default function InputForm(props: {baseData: IformData}) {
               fetchDataFn = {getEnquiryCategory}
               required
               formError={formError?.category?? formError.category}
-              renderForm={(fnDialogOpen, fnDialogValue) => 
+              renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <CategoryForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />}
             />
             <SelectMasterWrapper
@@ -231,10 +232,11 @@ export default function InputForm(props: {baseData: IformData}) {
               fetchDataFn={getEnquirySource}
               required
               formError={formError?.source?? formError.source}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <SourceForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
             />
@@ -247,10 +249,11 @@ export default function InputForm(props: {baseData: IformData}) {
               fetchDataFn = {getExecutive}
               required
               formError={formError?.received_by?? formError.received_by}
-              renderForm={(fnDialogOpen, fnDialogValue) => 
+              renderForm={(fnDialogOpen, fnDialogValue, data) => 
                   <ExecutiveForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
+                    data={data}
                   />
                 }
             />
@@ -297,11 +300,12 @@ export default function InputForm(props: {baseData: IformData}) {
               fetchDataFn = {getSubStatusforStatus}
               required
               formError={formError?.sub_status?? formError.sub_status}
-              renderForm={(fnDialogOpen, fnDialogValue) => 
+              renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <SubStatusForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   statusName={status}
+                  data={data}
                 />
               }
             />
@@ -312,10 +316,11 @@ export default function InputForm(props: {baseData: IformData}) {
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
                 fetchDataFn = {getEnquiryAction}
-                renderForm={(fnDialogOpen, fnDialogValue) => 
+                renderForm={(fnDialogOpen, fnDialogValue, data) => 
                   <ActionForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
+                    data={data}
                   />
                 }
             />
@@ -328,10 +333,11 @@ export default function InputForm(props: {baseData: IformData}) {
                 fetchDataFn = {getEnquiryAction}
                 required
                 formError={formError?.next_action?? formError.next_action}
-                renderForm={(fnDialogOpen, fnDialogValue) => 
+                renderForm={(fnDialogOpen, fnDialogValue, data) => 
                   <ActionForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
+                    data={data}
                   />
                 }
             />

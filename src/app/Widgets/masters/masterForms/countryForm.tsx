@@ -5,14 +5,11 @@ import {InputControl, InputType} from '@/app/Widgets/input/InputControl';
 import Box from '@mui/material/Box';
 import { createCountry } from '@/app/controllers/masters.controller';
 import Grid from '@mui/material/Grid';
-import { optionsDataT } from '@/app/models/models';
 import {nameMasterData} from '@/app/zodschema/zodschema';
+import { masterFormPropsT } from '@/app/models/models';
 
 
-export default function CountryForm(props: {
-      setDialogOpen: (props: any) => void,
-      setDialogValue: (props: any) => void,
-    }) {
+export default function CountryForm(props: masterFormPropsT) {
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
 

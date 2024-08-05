@@ -14,10 +14,7 @@ import StateForm from './countryForm';
 import {selectKeyValueT} from '@/app/models/models';
 
 
-export default function OrganisationForm(props: {
-      setDialogOpen: (props: any) => void,
-      setDialogValue: (props: any) => void,
-    }) {
+export default function OrganisationForm(props: masterFormPropsT) {
       const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
       const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
 

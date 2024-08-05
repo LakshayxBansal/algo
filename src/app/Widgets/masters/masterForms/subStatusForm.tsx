@@ -14,6 +14,7 @@ export default function SubStatusForm(props: {
   setDialogOpen?: (props: any) => void,
   setDialogValue?: (props: any) => void,
   statusName?: string
+  data? : any
     }) {
 
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
