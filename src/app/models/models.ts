@@ -9,7 +9,11 @@ export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
-export type optionsDataT = z.infer<typeof zs.optionsData>;
+export type optionsDataT = {
+    id: number,
+    name: string,
+    detail?: string
+}
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 

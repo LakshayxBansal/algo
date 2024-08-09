@@ -7,8 +7,8 @@ import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import AutocompleteDB from "../AutocompleteDB";
 import { formErrorT } from "../../models/models";
-import EditNoteIcon from '@mui/icons-material/EditNote';
 import EditIcon from '@mui/icons-material/Edit';
+import {optionsDataT} from '@/app/models/models';
 
 
 type RenderFormFunction = (
@@ -43,19 +43,21 @@ type selectMasterWrapperT = {
   allowModify?: boolean;
   formError?: formErrorT;
   required?: boolean;
-  defaultValue?: string;
+  defaultValue?: optionsDataT;
   notEmpty?: boolean;
 };
+
+
 
 enum dialogMode {
   Add,
   Modify
 }
 
-export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
+export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
-  const [dialogValue, setDialogValue] = useState<CustomT>({} as CustomT);
+  const [dialogValue, setDialogValue] = useState<optionsDataT>({} as optionsDataT);
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
@@ -72,7 +74,7 @@ export function SelectMasterWrapper<CustomT>(props: selectMasterWrapperT) {
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
       if (props.fnFetchDataByID && dialogValue.id) {
-        const data = await props.fnFetchDataByID(dialogValue.id);
+        const data = await props.fnFetchDataByID(dialogValue.id.toString());
         setModData(data[0]);
       }
     }

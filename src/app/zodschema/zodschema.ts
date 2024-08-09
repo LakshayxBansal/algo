@@ -260,14 +260,6 @@ export const executiveDeptSchema = z.object({
   created_on : z.number().optional(),
 });
 
-  /**
-   * used for passing values to autocomplete
-   */
-export const optionsData = z.object({ 
-  id: z.number(),
-  name: z.string()
-});
-
 
   /**
  * used for passing values to add dialogs

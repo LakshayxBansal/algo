@@ -15,7 +15,7 @@ import AreaForm from './areaForm';
 import { getArea } from '@/app/controllers/area.controller';
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
-import {contactSchemaT, selectKeyValueT} from '@/app/models/models';
+import {contactSchemaT, optionsDataT, selectKeyValueT} from '@/app/models/models';
 import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
 import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
 import { getCountries, getStates } from '@/app/controllers/masters.controller';
@@ -146,7 +146,7 @@ export default function ContactForm(props: masterFormPropsT) {
               width = {210}
               dialogTitle={"Group"}
               fetchDataFn = {getContactGroup}
-              defaultValue={entityData.contactGroup}
+              defaultValue={{id: entityData.contactGroup_id, name: entityData.contactGroup} as optionsDataT}
               onChange={(e, val, s) => setSelectValues({...selectValues, "contactGroup": val})}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => 
                 <ContactGroupForm
@@ -163,7 +163,7 @@ export default function ContactForm(props: masterFormPropsT) {
               width = {210}
               dialogTitle={"Area"}
               fetchDataFn = {getArea}
-              defaultValue={entityData.area}
+              defaultValue={{id: entityData.area_id, name: entityData.area} as optionsDataT}
               onChange={(e, val, s) => setSelectValues({...selectValues, "area": val})}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => 
                 <AreaForm
@@ -181,7 +181,7 @@ export default function ContactForm(props: masterFormPropsT) {
               onChange={(e, val, s) => setSelectValues({...selectValues, "organisation": val})}
               dialogTitle={"Organisation"}
               fetchDataFn = {getOrganisation}
-              defaultValue={entityData.organisation}
+              defaultValue={{id: entityData.organisation_id, name: entityData.organisation} as optionsDataT}
               renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <OrganisationForm
                   setDialogOpen={fnDialogOpen}
@@ -196,7 +196,7 @@ export default function ContactForm(props: masterFormPropsT) {
               label = {"Department"}
               width = {210}
               dialogTitle={"Department"}
-              defaultValue={entityData.department}
+              defaultValue={{id: entityData.department_id, name: entityData.department} as optionsDataT}
               onChange={(e, val, s) => setSelectValues({...selectValues, "department": val})}
               fetchDataFn = {getDepartment}
               renderForm={(fnDialogOpen, fnDialogValue, data) => 
@@ -314,7 +314,7 @@ export default function ContactForm(props: masterFormPropsT) {
               dialogTitle={"country"}
               onChange={(e, val, s) => setSelectValues({...selectValues, "country": val})}
               fetchDataFn = {getCountries}
-              defaultValue={entityData.country}
+              defaultValue={{id: entityData.country_id, name: entityData.country} as optionsDataT}
               renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <CountryForm
                   setDialogOpen={fnDialogOpen}
@@ -331,7 +331,7 @@ export default function ContactForm(props: masterFormPropsT) {
               onChange={(e, val, s) => setSelectValues({...selectValues, "state": val})}
               dialogTitle={"State"}
               fetchDataFn = {(stateStr: string) => getStates(stateStr, selectValues.country?.name)}
-              defaultValue={entityData.state}
+              defaultValue={{id: entityData.state_id, name: entityData.state} as optionsDataT}
               renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <StateForm
                   setDialogOpen={fnDialogOpen}

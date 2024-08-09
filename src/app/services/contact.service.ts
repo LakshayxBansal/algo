@@ -52,7 +52,7 @@ export async function createContactDB(session: Session, data: zm.contactSchemaT)
 export async function getContactList(crmDb: string, searchString: string){
   
   try {
-    let query = 'select id as id, name as name from contact_master';
+    let query = 'select id as id, name as name, concat("Email - ", email, "; Alias - ", alias, "; Phone - ", mobile, "; PAN - ", pan) as detail from contact_master';
     let values: any[] = [];
 
     if (searchString !== "") {
