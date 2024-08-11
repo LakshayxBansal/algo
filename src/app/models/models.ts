@@ -17,9 +17,6 @@ export type optionsDataT = {
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
-// export type modifyEntityDlgT = z.infer<typeof zs.modifyEntityDlg>;
-
-// export type deleteEntityDlgT = z.infer<typeof zs.deleteEntityDlg>;
 
 export type formErrorT = 
     {msg: string; 
@@ -30,13 +27,6 @@ export type masterFormPropsT = {
     setDialogValue?: (props: any) => void,
     data?: any
 }
-
-export type masterFormPropsWithDataT = {      
-    setDialogOpen?: (props: any) => void,
-    setDialogValue?: (props: any) => void,
-    data: any,
-}
-
     
 
 //Enquiry Schemas

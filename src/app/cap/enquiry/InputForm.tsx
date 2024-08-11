@@ -73,7 +73,7 @@ export default function InputForm(props: {baseData: IformData}) {
       received_by: selectValues.received_by?.name,
       category: selectValues.category?.name,
       source: selectValues.source?.name,
-      };
+    };
     let ledgerData = {
       status_version: 0,
       allocated_to_id: 0,
@@ -96,7 +96,7 @@ export default function InputForm(props: {baseData: IformData}) {
     }
 
     const headerParsed = enquiryHeaderSchema.safeParse(headerData);
-    const ledgerParsed = enquiryHeaderSchema.safeParse(headerData);
+    const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
       result = await createEnquiry({head: headerData, ledger: ledgerData});

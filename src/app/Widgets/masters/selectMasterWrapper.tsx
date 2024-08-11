@@ -71,12 +71,12 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
 
   async function onModifyDialog() {
     if(allowModify) {
-      setDialogOpen(true);
-      setDlgMode(dialogMode.Modify);
       if (props.fnFetchDataByID && dialogValue.id) {
         const data = await props.fnFetchDataByID(dialogValue.id.toString());
         setModData(data[0]);
       }
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Modify);
     }
   }
 

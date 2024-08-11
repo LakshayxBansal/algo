@@ -27,7 +27,6 @@ export default function ContactForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  //const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data? props.data : {};
 
 
@@ -35,20 +34,6 @@ export default function ContactForm(props: masterFormPropsT) {
     props.setDialogOpen? props.setDialogOpen(false) : null;
   }
 
-  // useEffect(() => {
-  //   if (props.id) {
-  //     const fetchData = async (id: string) => {
-  //       console.log(id); 
-  //       const data = await getContactById(id);
-  //       if (data) {
-  //         setentityData(data[0]);
-  //       }
-  //       console.log(data); 
-  //     }
-  //     fetchData(props.id);
-   
-  //   }
-  // }, [props.id]);
 
   const handleSubmit = async (formData: FormData)=> {
     let data: { [key: string]: any } = {}; // Initialize an empty object
