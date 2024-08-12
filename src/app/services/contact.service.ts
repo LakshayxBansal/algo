@@ -1,16 +1,19 @@
-"use server"
+"use server";
 
-import excuteQuery  from '../utils/db/db';
-import * as z from '../zodschema/zodschema';
-import * as zm from '../models/models';
-import { Session } from 'next-auth';
+import excuteQuery from "../utils/db/db";
+import * as z from "../zodschema/zodschema";
+import * as zm from "../models/models";
+import { Session } from "next-auth";
 
-
-export async function createContactDB(session: Session, data: zm.contactSchemaT) {
+export async function createContactDB(
+  session: Session,
+  data: zm.contactSchemaT
+) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query:
+        "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -33,7 +36,7 @@ export async function createContactDB(session: Session, data: zm.contactSchemaT)
         data.doa,
         data.department_id,
         data.organisation_id,
-        session.user.email
+        session.user.email,
       ],
     });
   } catch (e) {
@@ -42,15 +45,54 @@ export async function createContactDB(session: Session, data: zm.contactSchemaT)
   return null;
 }
 
+export async function updateContactDB(
+  session: Session,
+  data: zm.contactSchemaT,
+) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        data.id, 
+        data.alias,
+        data.name,
+        data.print_name,
+        data.contactGroup_id,
+        data.pan,
+        data.aadhaar,
+        data.address1,
+        data.address2,
+        data.address3,
+        data.city,
+        data.state_id,
+        data.area_id,
+        data.pincode,
+        data.country_id,
+        data.email,
+        data.mobile,
+        data.whatsapp,
+        data.dob,
+        data.doa,
+        data.department_id,
+        data.organisation_id,
+        // session.user.email,
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
 
 /**
- * 
+ *
  * @param crmDb database to search in
  * @param searchString partial string to search in contact_master.name
- * @returns 
+ * @returns
  */
-export async function getContactList(crmDb: string, searchString: string){
-  
+export async function getContactList(crmDb: string, searchString: string) {
   try {
     let query = 'select id as id, name as name, concat("Email - ", email, "; Alias - ", alias, "; Phone - ", mobile, "; PAN - ", pan) as detail from contact_master';
     let values: any[] = [];
@@ -61,30 +103,28 @@ export async function getContactList(crmDb: string, searchString: string){
     }
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }
 }
 
-
 /**
- * 
+ *
  * @param crmDb database to search in
  * @param id id to search in contact_master
- * @returns 
+ * @returns
  */
-export async function getContactDetailsById(crmDb: string, id: string){
-  
+export async function getContactDetailsById(crmDb: string, id: string) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: 'select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
+      query:
+        "select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
         g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation \
         from contact_master c left outer join contact_group_master g on c.group_id = g.id \
         left outer join state_master s on c.state_id = s.id \
@@ -92,12 +132,11 @@ export async function getContactDetailsById(crmDb: string, id: string){
         left outer join country_master co on c.country_id = co.id \
         left outer join department_master d on c.department_id = d.id \
         left outer join  organisation_master o on c.organisation_id = o.id \
-        where c.id=?;', 
+        where c.id=?;",
       values: [id],
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }
