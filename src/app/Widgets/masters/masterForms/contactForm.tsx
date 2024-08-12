@@ -8,17 +8,18 @@ import { getDepartment } from '@/app/controllers/department.controller';
 import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
 import OrganisationForm from './organisationForm';
 import DepartmentForm from './departmentForm';
-import {createContact} from '@/app/controllers/contact.controller';
+import {createContact,updateContact} from '@/app/controllers/contact.controller';
 import { getContactGroup, getContactGroupById } from '@/app/controllers/contactGroup.controller';
 import ContactGroupForm from '@/app/Widgets/masters/masterForms/contactGroupForm';
 import AreaForm from './areaForm';
-import { getArea } from '@/app/controllers/area.controller';
+import { getArea ,getAreaById} from '@/app/controllers/area.controller';
+// ap/admin/masters/enquiry
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
 import {contactSchemaT, selectKeyValueT} from '@/app/models/models';
 import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
 import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
-import { getCountries, getStates } from '@/app/controllers/masters.controller';
+import { getCountries, getStates,getCountryById } from '@/app/controllers/masters.controller';
 import {masterFormPropsT} from '@/app/models/models';
 
 
@@ -28,7 +29,9 @@ export default function ContactForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   //const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
-  const entityData: contactSchemaT = props.data? props.data : {};
+  const entityData: contactSchemaT = props.data ? props.data : {};
+
+  // console.log(entityData);
 
 
   const handleCancel = ()=> {
@@ -58,26 +61,28 @@ export default function ContactForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
-
-    const result = await createEntity(data as contactSchemaT);
-    if (result.status){
-      const newVal = {id: result.data[0].id, name: result.data[0].name};
-      props.setDialogValue? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen? props.setDialogOpen(false) : null;
-      setFormError({});
-      setSnackOpen(true);
-    } else {
-      const issues = result.data;
-      // show error on screen
-      const errorState: Record<string, {msg: string, error: boolean}> = {};
-      for (const issue of issues) {
-        for (const path of issue.path){
-          errorState[path] = {msg: issue.message, error: true};
+  
+      const result = await createEntity(data as contactSchemaT);
+      if (result.status){
+        const newVal = {id: result.data[0].id, name: result.data[0].name};
+        props.setDialogValue? props.setDialogValue(newVal.name) : null;
+        props.setDialogOpen? props.setDialogOpen(false) : null;
+        setFormError({});
+        setSnackOpen(true);
+      } else {
+        const issues = result.data;
+        // show error on screen
+        const errorState: Record<string, {msg: string, error: boolean}> = {};
+        for (const issue of issues) {
+          for (const path of issue.path){
+            errorState[path] = {msg: issue.message, error: true};
+          }
         }
+        errorState["form"] = {msg: "Error encountered", error: true};
+        setFormError(errorState);
       }
-      errorState["form"] = {msg: "Error encountered", error: true};
-      setFormError(errorState);
-    }
+
+
   }
 
   const updateFormData =  (data: any) => {
@@ -93,7 +98,12 @@ export default function ContactForm(props: masterFormPropsT) {
   }
 
   async function createEntity(data: contactSchemaT) {
-    const result = await createContact(data);
+    let result;
+    if(props.data){
+      result = await updateContact(data,props.data.id);
+    }else{
+      result = await createContact(data);
+    }
     return result;
   }
 
@@ -163,6 +173,7 @@ export default function ContactForm(props: masterFormPropsT) {
               width = {210}
               dialogTitle={"Area"}
               fetchDataFn = {getArea}
+              fnFetchDataByID={getAreaById}
               defaultValue={entityData.area}
               onChange={(e, val, s) => setSelectValues({...selectValues, "area": val})}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => 
@@ -314,6 +325,7 @@ export default function ContactForm(props: masterFormPropsT) {
               dialogTitle={"country"}
               onChange={(e, val, s) => setSelectValues({...selectValues, "country": val})}
               fetchDataFn = {getCountries}
+              fnFetchDataByID={getCountryById}
               defaultValue={entityData.country}
               renderForm={(fnDialogOpen, fnDialogValue, data) => 
                 <CountryForm

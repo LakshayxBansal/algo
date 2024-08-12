@@ -35,9 +35,11 @@ export default async function excuteQuery({host , query, values }: {host: string
 
     if (db) {
       results = await db.query(query, values);
+      console.log(results)
     }
   } catch (e) {
     throw (e);
+
   } 
   return results;
 }

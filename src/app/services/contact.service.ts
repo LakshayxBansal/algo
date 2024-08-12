@@ -42,6 +42,42 @@ export async function createContactDB(session: Session, data: zm.contactSchemaT)
   return null;
 }
 
+export async function updateContactDB(session: Session, data: zm.contactSchemaT, id : string) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateContact(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        id,
+        data.alias,
+        data.name,
+        data.print_name,
+        data.contactGroup_id,
+        data.pan,
+        data.aadhaar,
+        data.address1,
+        data.address2,
+        data.address3,
+        data.city,
+        data.state_id,
+        data.area_id,
+        data.pincode,
+        data.country_id,
+        data.email,
+        data.mobile,
+        data.whatsapp,
+        data.dob,
+        data.doa,
+        data.department_id,
+        data.organisation_id,
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
 
 /**
  * 
@@ -64,7 +100,6 @@ export async function getContactList(crmDb: string, searchString: string){
       query: query, 
       values: values,
     });
-
     return result;
 
   } catch (e) {

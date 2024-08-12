@@ -32,11 +32,14 @@ export default function EntityList<ModEntityT>(props:ModifyT) {
 
   useEffect(() => {
     async function fetchData() { // the fecth data function will come from props
-      const rows : any = await props.fetchDataFn(PageModel.page, filterModel?.items[0]?.value, pgSize as number, searchText as string);
+      // const rows : any = await props.fetchDataFn(PageModel.page, filterModel?.items[0]?.value, pgSize as number, searchText as string);
+      const rows : any = await props.fetchDataFn(searchText as string);
+      // console.log(rows)
       
-      setData(rows.data); 
+      // setData(rows.data);
+      setData(rows) 
       
-      setNRows(rows.count as number)
+      // setNRows(rows.count as number)
     }
       fetchData();
     
@@ -90,7 +93,7 @@ export default function EntityList<ModEntityT>(props:ModifyT) {
         loading={!data}
       />
       {/* The Below dialogs shall come fro  props */}
-      {modifyDlgState && 
+      {modifyDlgState &&
         <AddDialog
           open={modifyDlgState}
           setDialogOpen={setModifyDlgState}

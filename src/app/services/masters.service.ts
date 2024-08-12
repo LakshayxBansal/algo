@@ -34,6 +34,20 @@ export async function getCountryList(crmDb: string, searchString: string) {
   }
 }
 
+export async function getCountryByIDList(crmDb : string, id : string){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias from country_master cm where cm.id=?;', 
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 
 
 /**
@@ -249,6 +263,22 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
         statusData.name,
         statusData.alias,
         session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+export async function updateCountryDb(session: Session, sourceData: zm.countrySchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateCountry(?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.alias
       ],
     });
   } catch (e) {

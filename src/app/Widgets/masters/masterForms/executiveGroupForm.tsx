@@ -1,67 +1,71 @@
 'use client'
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-import {InputControl, InputType} from '@/app/Widgets/input/InputControl';
+import { InputControl, InputType } from '@/app/Widgets/input/InputControl';
 import Box from '@mui/material/Box';
-import { getExecutiveGroup, createExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
+import { getExecutiveGroup, createExecutiveGroup,updateExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
 import Grid from '@mui/material/Grid';
-import {nameMasterData} from '../../../zodschema/zodschema';
-import { optionsDataT } from '@/app/models/models';
+import { executiveGroupSchema, nameMasterData } from '../../../zodschema/zodschema';
+import { optionsDataT, executiveGroupSchemaT, masterFormPropsT } from '@/app/models/models';
 import AutocompleteDB from '../../AutocompleteDB';
+import Seperator from '../../seperator';
 
 
 
-export default function ExecutiveGroupForm(props: {
-      setDialogOpen: (props: any) => void,
-      setDialogValue: (props: any) => void,
-    }) {
-
-  const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
-
+export default function (props: masterFormPropsT) {
+  const [formError, setFormError] = useState<Record<string, { msg: string, error: boolean }>>({});
+  const entityData : executiveGroupSchemaT = props.data ? props.data : {};
+  console.log(entityData)
   // submit function. Save to DB and set value to the dropdown control
-  const handleSubmit = async (formData: FormData)=> {
+  const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
-
+  
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    const parsed = nameMasterData.safeParse(data);
-    let result;
-    let issues;
-
-    if (parsed.success) {
-      result = await createExecutiveGroup(formData);
-      if (result.status){
-        const newVal = {id: result.data[0].id, name: result.data[0].name};
-        props.setDialogValue(newVal.name);
-      } else {
-        issues = result?.data;
+      const result = await persistEntity(data as executiveGroupSchemaT);
+      // console.log(result);
+      if (result.status) {
+        const newVal = { id: result.data[0].id, name: result.data[0].name };
+        props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+        setFormError({});
       }
-    } else {
-      issues = parsed.error.issues;
-    } 
-    
-    if (parsed.success && result?.status) {
-      props.setDialogOpen(false);
-    } else {
+     else {
       // show error on screen
-      const errorState: Record<string, {msg: string, error: boolean}> = {};
+      const issues = result.data;
+      const errorState: Record<string, { msg: string, error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = {msg: issue.message, error: true};
+        errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
+      errorState["form"] = {msg: "Error encountered", error: true};
       setFormError(errorState);
-    }    
+    }
   }
-
-
-  const handleCancel = ()=> {
-    props.setDialogOpen(false);
+  
+async function persistEntity(data : executiveGroupSchemaT) {
+  let result;
+  if (props.data) {
+    Object.assign(data, { id: props.data.id });
+    result = await updateExecutiveGroup(data);
+  } else {
+    result = await createExecutiveGroup(data);
   }
+  return result;
+}
+const randomFunction = ()=>{
 
-  return(
-    <>
+}
+
+const handleCancel = () => {
+  props.setDialogOpen ? props.setDialogOpen(false) : null;
+}
+
+return (
+  <>
+    <Seperator>{props.data ? "Modify Executive Group" : "Add Executive Group"}</Seperator>
     {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
-    <form action={handleSubmit}> 
+    <form action={handleSubmit}>
       <Box
         sx={{
           display: 'grid',
@@ -75,15 +79,18 @@ export default function ExecutiveGroupForm(props: {
           label="Executive Group Name"
           inputType={InputType.TEXT}
           name="name"
+          defaultValue={entityData.name}
           error={formError?.name?.error}
-          helperText={formError?.name?.msg} 
-        />      
+          helperText={formError?.name?.msg}
+        />
         <AutocompleteDB<optionsDataT>
-          name = {"parentgroup"}
-          id = {"parentgroup"}
-          label = {"Parent Executive Group"}
-          width = {210}
-          fetchDataFn = {getExecutiveGroup}
+          name={"parentgroup"}
+          id={"parentgroup"}
+          label={"Parent Executive Group"}
+          defaultValue={entityData.parent}
+          width={210}
+          fnSetModifyMode={randomFunction}
+          fetchDataFn={getExecutiveGroup}
         />
       </Box>
       <Grid container xs={12} md={12}>
@@ -102,6 +109,6 @@ export default function ExecutiveGroupForm(props: {
       </Grid>
     </form>
   </>
-  );
+);
 }
 

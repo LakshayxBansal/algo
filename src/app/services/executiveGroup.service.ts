@@ -28,6 +28,20 @@ export async function getExecutiveGroupList(crmDb: string, searchString: string)
   }
 }
 
+export async function getExecutiveGroupByIDList(crmDb : string, id : string){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, parent_id as parent from executive_group_master egm where egm.id=?;', 
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 
 /**
  * 
@@ -44,6 +58,23 @@ export async function createExecutiveGroupDb(session: Session, sourceData: zm.ex
       values: [
         sourceData.name,
         session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateExecutiveGroupDb(session : Session, sourceData : zm.executiveGroupSchemaT){
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateExecutiveGroupDb(?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.parent_id
       ],
     });
   } catch (e) {
