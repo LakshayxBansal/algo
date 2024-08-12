@@ -12,7 +12,7 @@ export default async function EnquiryConfig() {
     const entityData = await getEnquiryConfig();
 
     if (session) {
-      logger.info('form open : user '+ session.user.email)
+      logger.info('form open : user '+ session.user.email);
       const masterData = {
         userName: session.user?.name as string,
       }
