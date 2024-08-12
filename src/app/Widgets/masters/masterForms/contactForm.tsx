@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -12,10 +12,7 @@ import {
   createContact,
   updateContact,
 } from "@/app/controllers/contact.controller";
-import {
-  getContactGroup,
-  getContactGroupById,
-} from "@/app/controllers/contactGroup.controller";
+import { getContactGroup } from "@/app/controllers/contactGroup.controller";
 import ContactGroupForm from "@/app/Widgets/masters/masterForms/contactGroupForm";
 import AreaForm from "./areaForm";
 import { getArea } from "@/app/controllers/area.controller";
@@ -40,20 +37,7 @@ export default function ContactForm(props: masterFormPropsT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
-  // useEffect(() => {
-  //   if (props.id) {
-  //     const fetchData = async (id: string) => {
-  //       console.log(id);
-  //       const data = await getContactById(id);
-  //       if (data) {
-  //         setentityData(data[0]);
-  //       }
-  //       console.log(data);
-  //     }
-  //     fetchData(props.id);
 
-  //   }
-  // }, [props.id]);
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
