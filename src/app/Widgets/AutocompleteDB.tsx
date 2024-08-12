@@ -38,7 +38,8 @@ type autocompleteDBT = {
   required?: boolean;
   defaultValue?: string;
   notEmpty?: boolean;
-  fnSetModifyMode: (id: string)=> void,
+  fnSetModifyMode: (id: string) => void;
+  disableComponent?: boolean;
   //children: React.FunctionComponentElement
 };
 
@@ -69,7 +70,10 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       setOptions([] as CustomT[]);
       setLoading(false);
       if (results) {
-        if ((autoSelect && inputValue === "") || (selectDefault && results.length === 1)) {
+        if (
+          (autoSelect && inputValue === "") ||
+          (selectDefault && results.length === 1)
+        ) {
           setDialogValue(results[0]);
         }
         setOptions(results);
@@ -77,7 +81,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       }
     }, 400);
     if (valueChange || autoSelect) {
-      setLoading(true)
+      setLoading(true);
       getData(inputValue);
     }
   }, [inputValue, autoSelect, open]);
@@ -109,6 +113,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   return (
     <Autocomplete
       id={props.id}
+      disabled={props.disableComponent ? props.disableComponent : false}
       options={options}
       loading={loading}
       getOptionLabel={(option) => {
@@ -118,9 +123,12 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       }}
       renderOption={(p, option) => {
         const { ["key"]: _, ...newP } = p;
-        return <li key={p.key} {...newP}>{getOptions(option, props.renderOptions)}</li>;
+        return (
+          <li key={p.key} {...newP}>
+            {getOptions(option, props.renderOptions)}
+          </li>
+        );
         //return <li>{getOptions(option, props.renderOptions)}</li>;
-
       }}
       sx={{ width: { width } }}
       renderInput={(params) => {

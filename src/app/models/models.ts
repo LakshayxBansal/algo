@@ -1,5 +1,5 @@
-import * as z from 'zod';
-import * as zs from '../zodschema/zodschema';
+import * as z from "zod";
+import * as zs from "../zodschema/zodschema";
 
 export type userSchemaT = z.infer<typeof zs.userSchema>;
 
@@ -17,23 +17,21 @@ export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
 // export type deleteEntityDlgT = z.infer<typeof zs.deleteEntityDlg>;
 
-export type formErrorT = 
-    {msg: string; 
-    error: boolean;}
+export type formErrorT = { msg: string; error: boolean };
 
-export type masterFormPropsT = {      
-    setDialogOpen?: (props: any) => void,
-    setDialogValue?: (props: any) => void,
-    data?: any
-}
+export type masterFormPropsT = {
+  setDialogOpen?: (props: any) => void;
+  setDialogValue?: (props: any) => void;
+  data?: any;
+};
 
-export type masterFormPropsWithDataT = {      
-    setDialogOpen?: (props: any) => void,
-    setDialogValue?: (props: any) => void,
-    data: any,
-}
-
-    
+// Added parentData property of type number
+export type masterFormPropsWithDataT = {
+  setDialogOpen?: (props: any) => void;
+  setDialogValue?: (props: any) => void;
+  data?: any;
+  parentData?: number;
+};
 
 //Enquiry Schemas
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
@@ -46,39 +44,36 @@ export type executiveRoleSchemaT = z.infer<typeof zs.executiveRoleSchema>;
 export type executiveGroupSchemaT = z.infer<typeof zs.executiveGroupSchema>;
 export type executiveDeptSchemaT = z.infer<typeof zs.executiveDeptSchema>;
 
+export type nameMasterDataT = z.infer<typeof zs.nameMasterData>; // for simple name based masters
+export type nameAliasDataT = z.infer<typeof zs.nameAliasData>; // for name and alias masters
 
-export type nameMasterDataT = z.infer<typeof zs.nameMasterData>;    // for simple name based masters
-export type nameAliasDataT = z.infer<typeof zs.nameAliasData>;     // for name and alias masters
-
-export type menuOptionT = z.infer<typeof zs.menuOption>
+export type menuOptionT = z.infer<typeof zs.menuOption>;
 
 export type menuTreeT = {
-id: number;
-name: string;
-short_name: string;
-parent_id: number;
-icon: string;
-href: string;
-default_open: number;
-created_on: Date;
-modified_on: Date;
-created_by: number;
-modified_by: number;
-menu_order: number;
-children: menuTreeT[];
-}
+  id: number;
+  name: string;
+  short_name: string;
+  parent_id: number;
+  icon: string;
+  href: string;
+  default_open: number;
+  created_on: Date;
+  modified_on: Date;
+  created_by: number;
+  modified_by: number;
+  menu_order: number;
+  children: menuTreeT[];
+};
 
 export type dbInfoT = {
-    company_id:number,
-    companyName: string,
-    db_id: number,
-    host: string,
-    port: string,
-    dbName:string
+  company_id: number;
+  companyName: string;
+  db_id: number;
+  host: string;
+  port: string;
+  dbName: string;
 };
-
 
 export type selectKeyValueT = {
-    [key: string]: any; 
+  [key: string]: any;
 };
-

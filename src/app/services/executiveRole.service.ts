@@ -1,49 +1,96 @@
-'use server'
+"use server";
 
-import * as zm from '../models/models';
-import { Session } from 'next-auth';
-import excuteQuery  from '../utils/db/db';
+import * as zm from "../models/models";
+import { Session } from "next-auth";
+import excuteQuery from "../utils/db/db";
 
-
-export async function getExecutiveRoleList(crmDb: string, searchString: string) {
-
+export async function getExecutiveRoleList(
+  crmDb: string,
+  searchString: string,
+  department?: number
+) {
   try {
-    let query = 'select id as id, name as name from executive_role_master';
-    let values: any[] = [];
+    let query = "select id as id, name as name from executive_role_master rm";
+    let values: any[] = [department];
 
+    if (department) query += " where rm.department_id= ?";
     if (searchString !== "") {
-      query = query + " where name like '%" + searchString + "%'";
+      if (department) query += " AND";
+      else query += " Where";
+      query = query + " name like '%" + searchString + "%'";
       values = [];
     }
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }
 }
 
-
 /**
- * 
+ *
  * @param session : user session
  * @param sourceData : data for saving
  * @returns result from DB (returning *)
  */
-export async function createExecutiveRoleDb(session: Session, sourceData: zm.executiveRoleSchemaT) {
+export async function createExecutiveRoleDb(
+  session: Session,
+  sourceData: zm.executiveRoleSchemaT
+) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into executive_role_master (name, created_by, created_on) \
-       values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query:
+        "insert into executive_role_master (name, created_by, created_on, parent, department_id) \
+       values (?, (select crm_user_id from executive_master where email=?), now(), ?, ?) returning *",
       values: [
         sourceData.name,
-        session.user.email
+        session.user.email,
+        sourceData.parent_id,
+        sourceData.department_id,
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function getExecutiveRoleDetailsById(crmDb: string, id: string) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT c1.*, c2.name parentName FROM executive_role_master c1 left outer join executive_role_master c2 on c1.parent = c2.id \
+        where c1.id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function updateExecutiveRoleDb(
+  session: Session,
+  executiveRoleData: zm.executiveRoleSchemaT
+) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateExecutiveRole(?, ?, ?, ?);",
+      values: [
+        executiveRoleData.id,
+        executiveRoleData.name,
+        executiveRoleData.parent_id,
+        executiveRoleData.department_id,
+        session.user.email,
       ],
     });
   } catch (e) {
