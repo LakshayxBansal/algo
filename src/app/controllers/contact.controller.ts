@@ -1,6 +1,6 @@
 "use server";
 
-import * as zs from "../zodschema/zodschema";
+import { contactSchema } from "../zodschema/zodschema";
 import { contactSchemaT } from "../models/models";
 import { createContactDB, updateContactDB } from "../services/contact.service";
 import { getSession } from "../services/session.service";
@@ -15,7 +15,7 @@ export async function createContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      const parsed = zs.contactSchema.safeParse(data);
+      const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
         console.log(dbResult);
@@ -71,7 +71,7 @@ export async function updateContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      const parsed = zs.contactSchema.safeParse(data);
+      const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
         if (dbResult.length > 0 && dbResult[0].length === 0) {
