@@ -1,27 +1,3 @@
-'use client'
-import React, { useState, useEffect, lazy, Suspense } from 'react';
-import {InputControl, InputType}  from '@/app/Widgets/input/InputControl';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import { getOrganisation } from '@/app/controllers/organisation.controller';
-import { getDepartment } from '@/app/controllers/department.controller';
-import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
-import OrganisationForm from './organisationForm';
-import DepartmentForm from './departmentForm';
-import {createContact} from '@/app/controllers/contact.controller';
-import { getContactGroup, getContactGroupById } from '@/app/controllers/contactGroup.controller';
-import ContactGroupForm from '@/app/Widgets/masters/masterForms/contactGroupForm';
-import AreaForm from './areaForm';
-import { getArea } from '@/app/controllers/area.controller';
-import Seperator from '../../seperator';
-import Snackbar from '@mui/material/Snackbar';
-import {contactSchemaT, optionsDataT, selectKeyValueT} from '@/app/models/models';
-import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
-import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
-import { getCountries, getStates } from '@/app/controllers/masters.controller';
-import {masterFormPropsT} from '@/app/models/models';
-
-
 "use client";
 import React, { useState, useEffect, lazy, Suspense } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -45,7 +21,7 @@ import AreaForm from "./areaForm";
 import { getArea } from "@/app/controllers/area.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { contactSchemaT, selectKeyValueT } from "@/app/models/models";
+import { contactSchemaT, optionsDataT, selectKeyValueT } from "@/app/models/models";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
 import { getCountries, getStates } from "@/app/controllers/masters.controller";
@@ -202,7 +178,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
-              )}
+              }
             />
             <SelectMasterWrapper
               name={"area"}
@@ -219,7 +195,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
-              )}
+              }
             />
             <SelectMasterWrapper
               name={"organisation"}
@@ -238,7 +214,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
-              )}
+              }
             />
             <SelectMasterWrapper
               name={"department"}
@@ -255,7 +231,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
-              )}
+              }
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -376,7 +352,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
-              )}
+              }
             />
             <SelectMasterWrapper
               name={"state"}
