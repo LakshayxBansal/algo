@@ -55,7 +55,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     // formData.append("group_id", selectValues.group?.id);
     // formData.append("crm_user_id", selectValues.crm_user?.id);
     // formData.append("country_id", selectValues.country?.id);
-    formData.append("state_id", selectValues.state?.id);
+    // formData.append("state_id", selectValues.state?.id);
     formData.append("call_type", "Enquiry");
 
     for (const [key, value] of formData.entries()) {
