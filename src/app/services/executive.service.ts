@@ -1,15 +1,20 @@
-"use server"
+"use server";
 
-import excuteQuery  from '../utils/db/db';
-import {executiveSchemaT} from '../models/models';
-import { Session } from 'next-auth';
+import excuteQuery from "../utils/db/db";
+import { executiveSchemaT } from "../models/models";
+import { Session } from "next-auth";
 
-
-export async function createExecutiveDB(session: Session, data: executiveSchemaT) {
+export async function createExecutiveDB(
+  session: Session,
+  data: executiveSchemaT
+) {
   try {
+    console.log(data);
+
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query:
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -31,8 +36,8 @@ export async function createExecutiveDB(session: Session, data: executiveSchemaT
         data.crm_map_id,
         data.role,
         data.executive_dept,
-        data.executive_group,    
-        session.user.email
+        data.executive_group,
+        session.user.email,
       ],
     });
   } catch (e) {
@@ -41,17 +46,15 @@ export async function createExecutiveDB(session: Session, data: executiveSchemaT
   return null;
 }
 
-
 /**
- * 
+ *
  * @param crmDb database to search in
  * @param searchString partial string to search in executive_master.name
- * @returns 
+ * @returns
  */
-export async function getExecutiveList(crmDb: string, searchString: string){
-  
+export async function getExecutiveList(crmDb: string, searchString: string) {
   try {
-    let query = 'select id as id, name as name from executive_master';
+    let query = "select id as id, name as name from executive_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -60,12 +63,11 @@ export async function getExecutiveList(crmDb: string, searchString: string){
     }
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }
