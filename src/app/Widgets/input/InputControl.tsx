@@ -91,7 +91,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, cust
     }
   }
 
-  function onPhoneChange(newValue : any) {
+  function onPhoneChange(newValue : any, details: any) {
     setValue(newValue);
     if(props.onChange) {
       props.onChange(newValue)

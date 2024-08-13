@@ -70,7 +70,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
     }, 400);
     if (valueChange || autoSelect) {
       if(selectDefault) { 
-        console.log(props.defaultValue)
         props.setDialogVal(props.defaultValue as optionsDataT)
         setSelectDefault(false)
       } else {
