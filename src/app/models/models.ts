@@ -17,6 +17,8 @@ export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
 export type countrySchemaT = z.infer<typeof zs.countrySchema>;
 
+export type stateSchemaT = z.infer<typeof zs.stateSchema>
+
 // export type modifyEntityDlgT = z.infer<typeof zs.modifyEntityDlg>;
 
 // export type deleteEntityDlgT = z.infer<typeof zs.deleteEntityDlg>;
@@ -29,6 +31,12 @@ export type masterFormPropsT = {
     setDialogOpen?: (props: any) => void,
     setDialogValue?: (props: any) => void,
     data?: any
+}
+export type masterFormPropsWithParentT = {      
+    setDialogOpen?: (props: any) => void,
+    setDialogValue?: (props: any) => void,
+    data?: any
+    parentData?: any
 }
 
 export type masterFormPropsWithDataT = {      

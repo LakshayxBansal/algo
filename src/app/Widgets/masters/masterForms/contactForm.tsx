@@ -18,8 +18,8 @@ import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
 import {contactSchemaT, selectKeyValueT} from '@/app/models/models';
 import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
-import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
-import { getCountries, getStates,getCountryById } from '@/app/controllers/masters.controller';
+import StateForm from '../../../Widgets/masters/masterForms/stateForm';
+import { getCountries, getStates,getCountryById,getStateById} from '@/app/controllers/masters.controller';
 import {masterFormPropsT} from '@/app/models/models';
 
 
@@ -343,16 +343,18 @@ export default function ContactForm(props: masterFormPropsT) {
               onChange={(e, val, s) => setSelectValues({...selectValues, "state": val})}
               dialogTitle={"State"}
               fetchDataFn = {(stateStr: string) => getStates(stateStr, selectValues.country?.name)}
+              fnFetchDataByID={getStateById}
               defaultValue={entityData.state}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => 
+              disable={selectValues.country ? false : true}
+              renderForm={(fnDialogOpen, fnDialogValue, data, parentData) =>
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
+                  parentData={selectValues.country?.id}
                 />
               }
             />
-
             <InputControl 
               inputType={InputType.TEXT} 
               name="pincode" 

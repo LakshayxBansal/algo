@@ -39,7 +39,8 @@ type autocompleteDBT = {
   defaultValue?: string;
   notEmpty?: boolean;
   fnSetModifyMode: (id: string)=> void,
-  //children: React.FunctionComponentElement
+  disable? : boolean
+  //children: React.FunctionComponentElements
 };
 
 export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
@@ -109,6 +110,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   return (
     <Autocomplete
       id={props.id}
+      disabled={props.disable ? props.disable : false}
       options={options}
       loading={loading}
       getOptionLabel={(option) => {

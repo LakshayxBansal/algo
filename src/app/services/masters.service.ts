@@ -80,6 +80,20 @@ export async function getStateList(crmDb: string, searchState: string, country: 
   }
 }
 
+export async function getStateListById(crmDb : string, id : string){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias from state_master sm where sm.id=?;',
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 export async function getExecutiveList(crmDb: string, departmentName: string) {
 
   try {
@@ -294,16 +308,35 @@ export async function updateCountryDb(session: Session, sourceData: zm.countrySc
  * @param statusData : data for saving
  * @returns result from DB (returning *)
  */
-export async function createStateDb(session: Session, statusData: zm.nameAliasDataT) {
+export async function createStateDb(session: Session, statusData: zm.stateSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into state_master (name, alias, created_by, created_on) \
-       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "insert into state_master (name, alias,country_id, created_by, created_on) \
+       values (?, ?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
       values: [
         statusData.name,
         statusData.alias,
+        statusData.country_id,
         session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateStateDb(session: Session, sourceData: zm.stateSchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateState(?,?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.alias,
+        sourceData.country_id
       ],
     });
   } catch (e) {

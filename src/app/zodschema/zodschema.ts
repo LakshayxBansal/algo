@@ -278,6 +278,13 @@ export const countrySchema = z.object({
   alias : z.string().min(1).max(45)
 })
 
+export const stateSchema = z.object({
+  id : z.number().optional(),
+  name : z.string().min(1).max(60),
+  alias : z.string().min(1).max(45),
+  country_id : z.number()
+})
+
 
   /**
  * used for passing values to add dialogs

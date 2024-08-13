@@ -7,6 +7,7 @@ import { createCountry,updateCountry } from '@/app/controllers/masters.controlle
 import Grid from '@mui/material/Grid';
 import { nameMasterData } from '@/app/zodschema/zodschema';
 import { masterFormPropsT, countrySchemaT } from '@/app/models/models';
+import Seperator from '../../seperator';
 
 
 export default function CountryForm(props: masterFormPropsT) {
@@ -59,6 +60,7 @@ export default function CountryForm(props: masterFormPropsT) {
 
     return (
       <>
+        <Seperator>{props.data ? "Modify Country" : "Add Country"}</Seperator>
         {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
         <form action={handleSubmit}>
           <Box
