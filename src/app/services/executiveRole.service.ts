@@ -64,7 +64,7 @@ export async function getExecutiveRoleDetailsById(crmDb: string, id: string) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT c1.*, c2.name parentName FROM executive_role_master c1 left outer join executive_role_master c2 on c1.parent = c2.id \
+        "SELECT c1.*, c2.name parentRole FROM executive_role_master c1 left outer join executive_role_master c2 on c1.parent = c2.id \
         where c1.id=?;",
       values: [id],
     });

@@ -150,7 +150,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
               width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
-              // defaultValue={entityData.parent}
+              defaultValue={entityData.parentRole}
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, parentRole: val })
               }

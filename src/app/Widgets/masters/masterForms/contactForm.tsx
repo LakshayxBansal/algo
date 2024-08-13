@@ -4,7 +4,10 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { getOrganisation } from "@/app/controllers/organisation.controller";
-import { getDepartment } from "@/app/controllers/department.controller";
+import {
+  getDepartment,
+  getDepartmentById,
+} from "@/app/controllers/department.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
@@ -68,11 +71,11 @@ export default function ContactForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -231,6 +234,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 setSelectValues({ ...selectValues, department: val })
               }
               fetchDataFn={getDepartment}
+              fnFetchDataByID={getDepartmentById}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <DepartmentForm
                   setDialogOpen={fnDialogOpen}
@@ -414,7 +418,7 @@ export default function ContactForm(props: masterFormPropsT) {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={3000}
+          autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
