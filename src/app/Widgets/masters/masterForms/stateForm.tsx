@@ -24,21 +24,23 @@ export default function StateForm(props: masterFormPropsWithParentT) {
     const result = await persistEntity(data as stateSchemaT);
    
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, alias: result.data[0].alais };
+      const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
-    }
-    else {
-      // show error on screen
+    } else {
       const issues = result.data;
-      const errorState: Record<string, { msg: string, error: boolean }> = {};
+      // show error on screen
+      const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
       }
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
+
     async function persistEntity(data: stateSchemaT) {
       let result;
       if (props.data) {
@@ -85,8 +87,8 @@ export default function StateForm(props: masterFormPropsWithParentT) {
               defaultValue={entityData.alias}
               inputType={InputType.TEXT}
               name="alias"
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
+              error={formError?.alias?.error}
+              helperText={formError?.alias?.msg}
             />
           </Box>
           <Grid container xs={12} md={12}>

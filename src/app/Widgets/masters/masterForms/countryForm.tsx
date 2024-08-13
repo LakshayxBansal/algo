@@ -20,22 +20,23 @@ export default function CountryForm(props: masterFormPropsT) {
       alias: formData.get("alias") as string,
     };
     const result = await persistEntity(data);
-      // console.log(result);
+      console.log(result);
       if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name, alias : result.data[0].alais };
+        const newVal = { id: result.data[0].id, name: result.data[0].name };
         props.setDialogValue ? props.setDialogValue(newVal.name) : null;
         props.setDialogOpen ? props.setDialogOpen(false) : null;
         setFormError({});
-      }
-     else {
-      // show error on screen
-      const issues = result.data;
-      const errorState: Record<string, { msg: string, error: boolean }> = {};
-      for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
-      }
-      errorState["form"] = {msg: "Error encountered", error: true};
-      setFormError(errorState);
+      } else {
+        const issues = result.data;
+        // show error on screen
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        for (const issue of issues) {
+          for (const path of issue.path) {
+            errorState[path] = { msg: issue.message, error: true };
+          }
+        }
+        errorState["form"] = { msg: "Error encountered", error: true };
+        setFormError(errorState);
     }
   }
 
@@ -86,8 +87,8 @@ export default function CountryForm(props: masterFormPropsT) {
               inputType={InputType.TEXT}
               defaultValue={entityData.alias}
               name="alias"
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
+              error={formError?.alias?.error}
+              helperText={formError?.alias?.msg}
             />
           </Box>
           <Grid container xs={12} md={12}>

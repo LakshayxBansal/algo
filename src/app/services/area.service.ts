@@ -53,8 +53,7 @@ export async function createAreaDb(session: Session, sourceData: zm.areaSchemaT)
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into area_master (name, created_by, created_on) \
-       values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createArea(?,?);",
       values: [
         sourceData.name,
         session.user.email

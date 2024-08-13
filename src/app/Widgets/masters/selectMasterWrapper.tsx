@@ -34,7 +34,7 @@ type selectMasterWrapperT = {
   dialogTitle: string;
   fetchDataFn: (arg0: string) => Promise<any>;
   fnFetchDataByID?: (id: string) => Promise<any>;
-  renderForm: RenderFormFunction;
+  renderForm?: RenderFormFunction;
   onChange?: OnChangeFunction;
   renderOptions?: SelectOptionsFunction;
   labelOptions?: SelectOptionsFunction;

@@ -3,87 +3,105 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { InputControl, InputType } from '@/app/Widgets/input/InputControl';
 import Box from '@mui/material/Box';
-import { getExecutiveGroup, createExecutiveGroup,updateExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
+import { getExecutiveGroup, createExecutiveGroup, updateExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
 import Grid from '@mui/material/Grid';
 import { executiveGroupSchema, nameMasterData } from '../../../zodschema/zodschema';
-import { optionsDataT, executiveGroupSchemaT, masterFormPropsT } from '@/app/models/models';
-import AutocompleteDB from '../../AutocompleteDB';
+import { optionsDataT, executiveGroupSchemaT, masterFormPropsT, selectKeyValueT } from '@/app/models/models';
+import { SelectMasterWrapper } from '../../masters/selectMasterWrapper';
 import Seperator from '../../seperator';
+import StateForm from './stateForm';
 
 
 
 export default function (props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, { msg: string, error: boolean }>>({});
-  const entityData : executiveGroupSchemaT = props.data ? props.data : {};
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const entityData: executiveGroupSchemaT = props.data ? props.data : {};
   console.log(entityData)
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
-  
+
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-      const result = await persistEntity(data as executiveGroupSchemaT);
-      // console.log(result);
-      if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name };
-        props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-        setFormError({});
-      }
-     else {
-      // show error on screen
+    formData = updateFormData(data);
+    console.log(data);
+    const result = await persistEntity(data as executiveGroupSchemaT);
+    // console.log(result);
+    if (result.status) {
+      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      setFormError({});
+    }
+    else {
       const issues = result.data;
-      const errorState: Record<string, { msg: string, error: boolean }> = {};
+      // show error on screen
+      const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
       }
-      errorState["form"] = {msg: "Error encountered", error: true};
+      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   }
-  
-async function persistEntity(data : executiveGroupSchemaT) {
-  let result;
-  if (props.data) {
-    Object.assign(data, { id: props.data.id });
-    result = await updateExecutiveGroup(data);
-  } else {
-    result = await createExecutiveGroup(data);
+
+  const updateFormData = (data: any) => {
+    data.parent_id = selectValues.parent ? selectValues.parent.id : 0;
+    return data;
   }
-  return result;
-}
-const randomFunction = ()=>{
 
-}
+  async function persistEntity(data: executiveGroupSchemaT) {
+    let result;
+    if (props.data) {
+      Object.assign(data, { id: props.data.id });
+      result = await updateExecutiveGroup(data);
+    } else {
+      result = await createExecutiveGroup(data);
+    }
+    return result;
+  }
 
-const handleCancel = () => {
-  props.setDialogOpen ? props.setDialogOpen(false) : null;
-}
+  const handleCancel = () => {
+    props.setDialogOpen ? props.setDialogOpen(false) : null;
+  }
 
-return (
-  <>
-    <Seperator>{props.data ? "Modify Executive Group" : "Add Executive Group"}</Seperator>
-    {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
-    <form action={handleSubmit}>
-      <Box
-        sx={{
-          display: 'grid',
-          columnGap: 3,
-          rowGap: 1,
-          gridTemplateColumns: 'repeat(2, 1fr)',
-        }}>
-        <InputControl
-          autoFocus
-          id="name"
-          label="Executive Group Name"
-          inputType={InputType.TEXT}
-          name="name"
-          defaultValue={entityData.name}
-          error={formError?.name?.error}
-          helperText={formError?.name?.msg}
-        />
-        <AutocompleteDB<optionsDataT>
+  return (
+    <>
+      <Seperator>{props.data ? "Modify Executive Group" : "Add Executive Group"}</Seperator>
+      {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
+      <form action={handleSubmit}>
+        <Box
+          sx={{
+            display: 'grid',
+            columnGap: 3,
+            rowGap: 1,
+            gridTemplateColumns: 'repeat(2, 1fr)',
+          }}>
+          <InputControl
+            autoFocus
+            id="name"
+            label="Executive Group Name"
+            inputType={InputType.TEXT}
+            name="name"
+            defaultValue={entityData.name}
+            error={formError?.name?.error}
+            helperText={formError?.name?.msg}
+          />
+          <InputControl
+            autoFocus
+            id="alias"
+            label="Alias"
+            inputType={InputType.TEXT}
+            name="alias"
+            defaultValue={entityData.alias}
+            error={formError?.alias?.error}
+            helperText={formError?.name?.msg}
+          />
+          {/* <AutocompleteDB<optionsDataT>
           name={"parentgroup"}
           id={"parentgroup"}
           label={"Parent Executive Group"}
@@ -91,24 +109,47 @@ return (
           width={210}
           fnSetModifyMode={randomFunction}
           fetchDataFn={getExecutiveGroup}
-        />
-      </Box>
-      <Grid container xs={12} md={12}>
-        <Grid item xs={6} md={6}>
-          <Box margin={1} sx={{ display: "flex" }}>
-            <Box display="flex" justifyContent="flex-start" alignItems="flex-start" m={1}>
-              <Button onClick={handleCancel}>Cancel</Button>
+        /> */}
+          <SelectMasterWrapper
+            name={"parent"}
+            id={"parent"}
+            label={"Parent Executive Group"}
+            width={210}
+            onChange={(e, val, s) => setSelectValues({ ...selectValues, "parent": val })}
+            dialogTitle={"Parent Executive Group"}
+            fetchDataFn={getExecutiveGroup}
+            // fnFetchDataByID={getStateById}
+            formError={formError?.parentgroup}
+            allowModify={false}
+            allowNewAdd={false}
+            defaultValue={entityData.parent}
+          // disable={selectValues.country ? false : true}
+          // renderForm={(fnDialogOpen, fnDialogValue, data, parentData) =>
+          //   <StateForm
+          //     setDialogOpen={fnDialogOpen}
+          //     setDialogValue={fnDialogValue}
+          //     data={data}
+          //     parentData={selectValues.country?.id}
+          //   />
+          // }
+          />
+        </Box>
+        <Grid container xs={12} md={12}>
+          <Grid item xs={6} md={6}>
+            <Box margin={1} sx={{ display: "flex" }}>
+              <Box display="flex" justifyContent="flex-start" alignItems="flex-start" m={1}>
+                <Button onClick={handleCancel}>Cancel</Button>
+              </Box>
             </Box>
-          </Box>
+          </Grid>
+          <Grid item xs={6} md={6}>
+            <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
+              <Button type="submit" variant="contained">Submit</Button>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid item xs={6} md={6}>
-          <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
-            <Button type="submit" variant="contained">Submit</Button>
-          </Box>
-        </Grid>
-      </Grid>
-    </form>
-  </>
-);
+      </form>
+    </>
+  );
 }
 
