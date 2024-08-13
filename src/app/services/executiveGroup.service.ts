@@ -28,6 +28,20 @@ export async function getExecutiveGroupList(crmDb: string, searchString: string)
   }
 }
 
+export async function getExecutiveGroupByIDList(crmDb : string, id : string){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias, parent_id as parent from executive_group_master egm where egm.id=?;', 
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 
 /**
  * 
@@ -39,10 +53,30 @@ export async function createExecutiveGroupDb(session: Session, sourceData: zm.ex
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into executive_group_master (name, created_by, created_on) \
-       values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createExecutiveGroup(?,?,?,?);",
       values: [
         sourceData.name,
+        sourceData.alias,
+        sourceData.parent_id,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateExecutiveGroupDb(session : Session, sourceData : zm.executiveGroupSchemaT){
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateExecutiveGroup(?,?,?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.alias,
+        sourceData.id,
+        sourceData.parent_id,
         session.user.email
       ],
     });

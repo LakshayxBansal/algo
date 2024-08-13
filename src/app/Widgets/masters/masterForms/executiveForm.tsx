@@ -12,7 +12,7 @@ import {createExecutive} from '@/app/controllers/executive.controller';
 import AreaForm from './areaForm';
 import { getArea } from '@/app/controllers/area.controller';
 import { getExecutiveRole } from '@/app/controllers/executiveRole.controller';
-import { getExecutiveGroup } from '@/app/controllers/executiveGroup.controller';
+import { getExecutiveGroup,getExecutiveGroupById } from '@/app/controllers/executiveGroup.controller';
 import { getBizAppUser } from '@/app/controllers/user.controller'
 import Seperator from '../../seperator';
 import Snackbar from '@mui/material/Snackbar';
@@ -193,10 +193,12 @@ export default function ExecutiveForm(props: {
               dialogTitle={"Add Executive Group"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "group")}
               fetchDataFn = {getExecutiveGroup}
-              renderForm={(fnDialogOpen, fnDialogValue) => 
+              fnFetchDataByID={getExecutiveGroupById}
+              renderForm={(fnDialogOpen, fnDialogValue, data?) => 
                 <ExecutiveGroupForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               }
             /> 

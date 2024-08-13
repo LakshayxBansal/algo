@@ -106,7 +106,6 @@ export async function getContactList(crmDb: string, searchString: string) {
       query: query,
       values: values,
     });
-
     return result;
   } catch (e) {
     console.log(e);

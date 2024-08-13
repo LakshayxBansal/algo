@@ -7,6 +7,8 @@ export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 
 export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
+export type areaSchemaT = z.infer<typeof zs.areaSchema>;
+
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
 export type optionsDataT = {
@@ -16,6 +18,10 @@ export type optionsDataT = {
 }
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
+
+export type countrySchemaT = z.infer<typeof zs.countrySchema>;
+
+export type stateSchemaT = z.infer<typeof zs.stateSchema>
 
 
 export type formErrorT = 
@@ -27,6 +33,19 @@ export type masterFormPropsT = {
     setDialogValue?: (props: any) => void,
     data?: any
 }
+export type masterFormPropsWithParentT = {      
+    setDialogOpen?: (props: any) => void,
+    setDialogValue?: (props: any) => void,
+    data?: any
+    parentData?: any
+}
+
+export type masterFormPropsWithDataT = {      
+    setDialogOpen?: (props: any) => void,
+    setDialogValue?: (props: any) => void,
+    data: any,
+}
+
     
 
 //Enquiry Schemas

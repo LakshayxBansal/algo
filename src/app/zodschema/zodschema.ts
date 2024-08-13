@@ -99,6 +99,10 @@ export const contactSchema = z.object({
       schema.mobile === '')); 
 }, {message: "please provide email, or phone no", path: ["mobile", "email"]});
 
+export const areaSchema = z.object({
+  id : z.number().optional(),
+  name : z.string().max(60),
+})
 
 export const executiveSchema = z.object({
   id: z.number().optional(),
@@ -260,6 +264,26 @@ export const executiveDeptSchema = z.object({
   created_on : z.number().optional(),
 });
 
+  /**
+   * used for passing values to autocomplete
+   */
+export const optionsData = z.object({ 
+  id: z.number(),
+  name: z.string()
+});
+
+export const countrySchema = z.object({
+  id : z.number().optional(),
+  name : z.string().min(1).max(60),
+  alias : z.string().min(1).max(45)
+})
+
+export const stateSchema = z.object({
+  id : z.number().optional(),
+  name : z.string().min(1).max(60),
+  alias : z.string().min(1).max(45),
+  country_id : z.number()
+})
 
   /**
  * used for passing values to add dialogs
@@ -279,6 +303,7 @@ export const deleteEntityDlg = z.object({
   open: z.boolean(),
   data: z.object({})
 });
+
 
 /**
  * zod schema for menu options
@@ -318,6 +343,8 @@ export const enquirySubStatusMaster = z.object({
 /**
  * used for storing simple name master
  */
+
+
 export const nameMasterData = z.object({ 
   id: z.number().optional(),
   name: z.string().min(1).max(45),

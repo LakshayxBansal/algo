@@ -14,7 +14,8 @@ import {optionsDataT} from '@/app/models/models';
 type RenderFormFunction = (
   fnDialogOpen: (props: any) => void,
   fnDialogValue: (props: any) => void,
-  data?: any
+  data?: any,
+  parentData?: any
 ) => JSX.Element;
 
 
@@ -33,7 +34,7 @@ type selectMasterWrapperT = {
   dialogTitle: string;
   fetchDataFn: (arg0: string) => Promise<any>;
   fnFetchDataByID?: (id: string) => Promise<any>;
-  renderForm: RenderFormFunction;
+  renderForm?: RenderFormFunction;
   onChange?: OnChangeFunction;
   renderOptions?: SelectOptionsFunction;
   labelOptions?: SelectOptionsFunction;
@@ -45,6 +46,7 @@ type selectMasterWrapperT = {
   required?: boolean;
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
+  disable?: boolean;
 };
 
 
@@ -102,26 +104,30 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             notEmpty={props.notEmpty}
             defaultValue={props.defaultValue}
             fnSetModifyMode={onModifyDialog}
+            disable={props.disable}
           />
-          <IconButton size='small'>
-            <span
+          {
+            !props.disable &&
+            <IconButton size='small'>
+              <span
                 style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "Center",
-                alignItems: "Center",
-                marginLeft: "3px",
-                gap: '0px'
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "Center",
+                  alignItems: "Center",
+                  marginLeft: "3px",
+                  gap: '0px'
                 }}
-            >
-              <Tooltip title={allowNewAdd ? "Click to add new" : "Not allowed to add"} placement="top">
-                <AddBoxIcon onClick={openDialog} color="action" fontSize="small" />
-              </Tooltip>
-              {(dialogValue.id?? false) &&  <Tooltip title={allowModify ? "Click to modify" : "Not allowed to modify"} placement="bottom">
-                {<EditIcon onClick={onModifyDialog} color="action" fontSize="small" />}
-              </Tooltip>}
-            </span>
-          </IconButton>
+              >
+                <Tooltip title={allowNewAdd ? "Click to add new" : "Not allowed to add"} placement="top">
+                  <AddBoxIcon onClick={openDialog} color="action" fontSize="small" />
+                </Tooltip>
+                {(dialogValue.id ?? false) && <Tooltip title={allowModify ? "Click to modify" : "Not allowed to modify"} placement="bottom">
+                  {<EditIcon onClick={onModifyDialog} color="action" fontSize="small" />}
+                </Tooltip>}
+              </span>
+            </IconButton>
+          }
         </Box>
       </Grid>
       {dialogOpen && (
@@ -130,7 +136,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
         >
-          {(dlgMode === dialogMode.Add)? props.renderForm(setDialogOpen, setDialogValue) : props.renderForm(setDialogOpen, setDialogValue, modData)}
+          {(dlgMode === dialogMode.Add) ? props.renderForm(setDialogOpen, setDialogValue) : props.renderForm(setDialogOpen, setDialogValue, modData)}
         </AddDialog>
       )}
     </>
