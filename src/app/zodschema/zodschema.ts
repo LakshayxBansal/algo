@@ -277,7 +277,7 @@ export const executiveRoleSchema = z.object({
   name: z.string().min(1).max(60),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
-  parent: z.string().max(60).optional(),
+  parentRole: z.string().max(60).optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
   created_by: z.number().optional(),

@@ -18,17 +18,20 @@ export async function createContact(data: contactSchemaT) {
       const parsed = zs.contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+
+        if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
           result = {
             status: false,
-            data: [
-              {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
-              },
-            ],
+            data: errorState,
           };
         }
       } else {

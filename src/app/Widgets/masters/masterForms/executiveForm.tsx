@@ -4,10 +4,8 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { getDepartment } from "@/app/controllers/department.controller";
 import { executiveSchema } from "@/app/zodschema/zodschema";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import DepartmentForm from "./departmentForm";
 import { createExecutive } from "@/app/controllers/executive.controller";
 import AreaForm from "./areaForm";
 import { getArea } from "@/app/controllers/area.controller";
@@ -26,6 +24,10 @@ import { selectKeyValueT } from "@/app/models/models";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
 import { getCountries, getStates } from "@/app/controllers/masters.controller";
+import {
+  getDeptById,
+  getExecutiveDept,
+} from "@/app/controllers/executiveDept.controller";
 
 export default function ExecutiveForm(props: {
   setDialogOpen?: (props: any) => void;
@@ -191,11 +193,13 @@ export default function ExecutiveForm(props: {
               width={210}
               dialogTitle={"Add Department"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
-              fetchDataFn={getDepartment}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              fetchDataFn={getExecutiveDept}
+              fnFetchDataByID={getDeptById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveDeptForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
             />
@@ -216,7 +220,7 @@ export default function ExecutiveForm(props: {
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  parentData={selectValues.department}
+                  parentData={selectValues.department.id}
                 />
               )}
             />

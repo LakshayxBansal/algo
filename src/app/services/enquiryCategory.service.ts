@@ -55,9 +55,7 @@ export async function createEnquiryCategoryDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query:
-        "insert into enquiry_category_master (name, created_by, created_on) \
-       values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createCategory(?, ?)",
       values: [categoryData.name, session.user.email],
     });
   } catch (e) {

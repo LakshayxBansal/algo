@@ -119,7 +119,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
       {/* {formError?.form?.error && (
         <p style={{ color: "red" }}>{formError?.form.msg}</p>
       )} */}
-      <Seperator>{entityData ? "Update Role" : "Add Role"}</Seperator>
+      <Seperator>{entityData.id ? "Update Role" : "Add Role"}</Seperator>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>

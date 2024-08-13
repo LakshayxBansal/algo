@@ -81,7 +81,7 @@ export default function CategoryForm(props: masterFormPropsT) {
   async function persistEntity(data: nameMasterDataT) {
     let result;
     if (entityData.id) {
-      data = { ...data, id: entityData.id };
+      data.id = entityData.id;
       result = await updateEnquiryCategory(data);
     } else result = await createEnquiryCategory(data);
     console.log(result);

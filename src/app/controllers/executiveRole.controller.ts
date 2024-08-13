@@ -47,17 +47,23 @@ export async function createExecutiveRole(data: executiveRoleSchemaT) {
     const session = await getSession();
     if (session) {
       const parsed = zs.executiveRoleSchema.safeParse(data);
+
       if (parsed.success) {
         const dbResult = await createExecutiveRoleDb(
           session,
           data as executiveRoleSchemaT
         );
-        if (dbResult.length > 0) {
-          result = { status: true, data: dbResult };
+        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+          result = { status: true, data: dbResult[1] };
         } else {
           result = {
             status: false,
-            data: [{ path: ["form"], message: "Error: Error saving record" }],
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
           };
         }
       } else {

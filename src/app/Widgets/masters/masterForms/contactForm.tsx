@@ -34,7 +34,6 @@ export default function ContactForm(props: masterFormPropsT) {
 
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  //const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data ? props.data : {};
 
   const handleCancel = () => {

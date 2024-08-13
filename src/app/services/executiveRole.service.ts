@@ -45,14 +45,12 @@ export async function createExecutiveRoleDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query:
-        "insert into executive_role_master (name, created_by, created_on, parent, department_id) \
-       values (?, (select crm_user_id from executive_master where email=?), now(), ?, ?) returning *",
+      query: "call createExecutiveRole(?, ?, ?, ?)",
       values: [
         sourceData.name,
-        session.user.email,
         sourceData.parent_id,
         sourceData.department_id,
+        session.user.email,
       ],
     });
   } catch (e) {

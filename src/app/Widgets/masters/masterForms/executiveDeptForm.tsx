@@ -6,17 +6,20 @@ import Box from "@mui/material/Box";
 import {
   getExecutiveDept,
   createExecutiveDept,
+  updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
 import Grid from "@mui/material/Grid";
-import { nameMasterData } from "../../../zodschema/zodschema";
+import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
+import { Snackbar } from "@mui/material";
 
-export default function ExecutiveDeptForm(props: {
-  setDialogOpen: (props: any) => void;
-  setDialogValue: (props: any) => void;
-}) {
+export default function ExecutiveDeptForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+
+  const [snackOpen, setSnackOpen] = React.useState(false);
+  const entityData: executiveDeptSchemaT = props.data ? props.data : {};
+  console.log(entityData);
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -25,36 +28,42 @@ export default function ExecutiveDeptForm(props: {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    const parsed = nameMasterData.safeParse(data);
-    let result;
-    let issues;
-
-    if (parsed.success) {
-      result = await createExecutiveDept(formData);
-      if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name };
-        props.setDialogValue(newVal.name);
-      } else {
-        issues = result?.data;
-      }
+    const result = await persistEntity(data as executiveDeptSchemaT);
+    if (result.status) {
+      setSnackOpen(true);
+      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
+      setFormError({});
     } else {
-      issues = parsed.error.issues;
-    }
-
-    if (parsed.success && result?.status) {
-      props.setDialogOpen(false);
-    } else {
+      const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
       }
+      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
+  // Function to create or modify contact
+  async function persistEntity(data: executiveDeptSchemaT) {
+    let result;
+    if (entityData.id) {
+      data = { ...data, id: entityData.id };
+      result = await updateExecutiveDept(data);
+    } else result = await createExecutiveDept(data);
+
+    return result;
+  }
+
   const handleCancel = () => {
-    props.setDialogOpen(false);
+    props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
   return (
@@ -79,9 +88,10 @@ export default function ExecutiveDeptForm(props: {
             name="name"
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            defaultValue={entityData.name}
           />
         </Box>
-        <Grid container xs={12} md={12}>
+        <Grid container>
           <Grid item xs={6} md={6}>
             <Box margin={1} sx={{ display: "flex" }}>
               <Box
@@ -108,6 +118,14 @@ export default function ExecutiveDeptForm(props: {
           </Grid>
         </Grid>
       </form>
+
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </>
   );
 }
