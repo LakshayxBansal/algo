@@ -46,7 +46,7 @@ type CustomControlProps<T> = BaseControlProps & T;
 // Define the base control component
 export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, custLabel="", ...props }) => {
   const [ifEmail, setIfEmail] = useState({status: true, msg: ""});
-  const [value, setValue] = React.useState('')
+  const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>){
     // console.log(event.target.id, "event is :", event.type);

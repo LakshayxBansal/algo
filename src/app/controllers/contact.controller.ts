@@ -18,7 +18,6 @@ export async function createContact(data: contactSchemaT) {
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
-        console.log(dbResult);
         if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
