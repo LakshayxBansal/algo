@@ -14,7 +14,10 @@ import Seperator from "@/app/Widgets/seperator";
 import { InputControl } from "@/app/Widgets/input/InputControl";
 import { InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { getEnquirySource } from "@/app/controllers/enquirySource.controller";
+import {
+  getEnquirySource,
+  getEnquirySourceById,
+} from "@/app/controllers/enquirySource.controller";
 import { getContact } from "@/app/controllers/contact.controller";
 import { getExecutive } from "@/app/controllers/executive.controller";
 import {
@@ -262,6 +265,7 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Source"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
               fetchDataFn={getEnquirySource}
+              fnFetchDataByID={getEnquirySourceById}
               required
               formError={formError?.source ?? formError.source}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
