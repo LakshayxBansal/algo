@@ -18,7 +18,6 @@ type RenderFormFunction = (
   parentData?: any
 ) => JSX.Element;
 
-
 type OnChangeFunction = (
   event: any,
   newVal: any,
@@ -53,7 +52,7 @@ type selectMasterWrapperT = {
 
 enum dialogMode {
   Add,
-  Modify
+  Modify,
 }
 
 export function SelectMasterWrapper(props: selectMasterWrapperT) {
@@ -81,7 +80,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       setDlgMode(dialogMode.Modify);
     }
   }
-
 
   return (
     <>

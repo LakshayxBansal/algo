@@ -111,7 +111,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
         const { ["key"]: _, ...newP } = p;
         return <li key={p.key} {...newP}>{option.name}</li>;
         //return <li>{getOptions(option, props.renderOptions)}</li>;
-
       }}
       sx={{ width: { width } }}
       renderInput={(params) => {

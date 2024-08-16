@@ -371,13 +371,15 @@ export default function ContactForm(props: masterFormPropsT) {
               defaultValue={entityData.pincode}
             />
           </Box>
-          <Box sx={{
-            mt:3,
-            display: 'grid',
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: 'repeat(3, 1fr)',
-          }}>
+          <Box
+            sx={{
+              mt: 3,
+              display: "grid",
+              columnGap: 3,
+              rowGap: 1,
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+          >
             <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
             <Button type="submit" variant="contained">
@@ -387,10 +389,10 @@ export default function ContactForm(props: masterFormPropsT) {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={3000}
-          onClose={()=>setSnackOpen(false)}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
           message="Record Saved!"
-          anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
     </>
