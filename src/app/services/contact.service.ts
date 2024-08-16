@@ -53,7 +53,7 @@ export async function updateContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id, 
         data.alias,
@@ -77,7 +77,7 @@ export async function updateContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
-        // session.user.email,
+        session.user.email,
       ],
     });
   } catch (e) {
