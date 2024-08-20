@@ -30,20 +30,14 @@ export async function createContactGroup(data: contactGroupSchemaT) {
 
     if (session) {
       const parsed = zs.contactGroupSchema.safeParse(data);
-
       if (parsed.success) {
         const dbResult = await createContactGroupDb(
           session,
           data as contactGroupSchemaT
         );
+        // console.log(dbResult);
 
-        // if (dbResult.length > 0) {
-        //   result = { status: true, data: dbResult };
-        // } else {
-        //   result = {
-        //     status: false,
-        //     data: [{ path: ["form"], message: "Error: Error saving record" }],
-        //   };
+        // if (dbResult.length > 0 && dbResult[0][0].error === 0) {
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
@@ -57,6 +51,13 @@ export async function createContactGroup(data: contactGroupSchemaT) {
           });
           result = { status: false, data: errorState };
         }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
       }
     } else {
       result = {
@@ -65,8 +66,8 @@ export async function createContactGroup(data: contactGroupSchemaT) {
       };
     }
     return result;
-  } catch (e) {
-    logger.error(e);
+  } catch (e: any) {
+    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
