@@ -18,6 +18,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useRouter } from 'next/navigation'
 import LeftMenuTree from './leftmenutree';
 import {menuTreeT} from '../../models/models';
+import ProfileModal from '@/app/miscellenous/ProfileModal';
 
 const drawerWidth: number = 240;
 
@@ -84,6 +85,7 @@ export default function MenuBar(props : propsType) {
   const pages = props.pages;
   const [open, setOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(true);
+  const [profileModalOpen,SetProfileModalOpen] = React.useState(false);
   const router = useRouter();
   const children = props.children;
   const toggleDrawer = () => {
@@ -142,6 +144,7 @@ export default function MenuBar(props : propsType) {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
+              <ProfileModal/>
             </Toolbar>
           </AppBar>
           <Box sx={{display: 'flex'}}>

@@ -2,7 +2,7 @@
 
 import * as zs from '../zodschema/zodschema';
 import {executiveSchemaT} from '../models/models';
-import {createExecutiveDB} from '../services/executive.service';
+import {createExecutiveDB,getExecutiveIdFromEmailList} from '../services/executive.service';
 import { getSession } from '../services/session.service';
 import {getExecutiveList} from '@/app/services/executive.service';
 import { SqlError } from 'mariadb';
@@ -69,6 +69,17 @@ export async function getExecutive(searchString: string) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getExecutiveList(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getExecutiveIdFromEmail(email: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getExecutiveIdFromEmailList(session.user.dbInfo.dbName, email);
     }
   } catch (error) {
     throw error;

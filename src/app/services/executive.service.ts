@@ -70,3 +70,22 @@ export async function getExecutiveList(crmDb: string, searchString: string){
     console.log(e);
   }
 }
+
+export async function getExecutiveIdFromEmailList(crmDb: string, email: string){
+  
+  try {
+    let query = 'select id as id from executive_master where email = ?';
+    let values: any[] = [email];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}

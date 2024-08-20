@@ -28,6 +28,7 @@ import { getCountries, getStates } from '@/app/controllers/masters.controller';
 export default function ExecutiveForm(props: {
   setDialogOpen?: (props: any) => void,
   setDialogValue?: (props: any) => void,
+  data?: any
     }) {
   const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
