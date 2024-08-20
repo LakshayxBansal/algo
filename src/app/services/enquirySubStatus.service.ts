@@ -61,11 +61,7 @@ export async function createEnquirySubStatusDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query:
-        "insert into enquiry_sub_status_master (name, enquiry_status_id, created_by, created_on) \
-       values (?, \
-        (select id from enquiry_status_master where name=?), \
-        (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createEnquirySubStatusDb(?,?,?)",
       values: [sourceData.name, sourceData.status, session.user.email],
     });
   } catch (e) {

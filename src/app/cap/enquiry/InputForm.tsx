@@ -16,7 +16,10 @@ import { InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import { getEnquirySource } from "@/app/controllers/enquirySource.controller";
 import { getContact } from "@/app/controllers/contact.controller";
-import { getExecutive } from "@/app/controllers/executive.controller";
+import {
+  getExecutive,
+  getExecutiveById,
+} from "@/app/controllers/executive.controller";
 import { getEnquiryCategory } from "@/app/controllers/enquiryCategory.controller";
 import {
   getEnquirySubSatusById,
@@ -281,6 +284,7 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Executive"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
               fetchDataFn={getExecutive}
+              fnFetchDataByID={getExecutiveById}
               required
               formError={formError?.received_by ?? formError.received_by}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (

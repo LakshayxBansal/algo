@@ -37,6 +37,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const entityData: executiveSchemaT = props.data ? props.data : {};
 
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
@@ -70,27 +71,25 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
     // if (parsed.success) {
     const result = await persistEntity(data as executiveSchemaT);
+    console.log(result);
+
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+      };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setSnackOpen(true);
     } else {
       const issues = result.data;
 
-      // } else {
-      //   issues = parsed.error.issues;
-      // }
-
-      // if (parsed.success && result?.status) {
-      // props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // } else {
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        for (const path of issue.path) {
-          errorState[path] = { msg: issue.message, error: true };
-        }
+        errorState[issue.path] = { msg: issue.message, error: true };
       }
+      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -139,12 +138,15 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
+    if (props.data) {
+      data["id"] = entityData.id;
+      result = await updateExecutive(data);
+    } else result = await createExecutive(data);
+    return result;
     // if (entityData) {
     //   data["id"] = entityData.id;
     //   result = await updateExecutive(data);
     // } else
-    result = await createExecutive(data);
-    return result;
   }
 
   return (
@@ -154,7 +156,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )}
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -169,9 +171,10 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               id="name"
               label="Name"
               name="name"
-              required
+              // required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -180,6 +183,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               name="alias"
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+              defaultValue={entityData.alias}
             />
             <SelectMasterWrapper
               name={"area"}
@@ -189,6 +193,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               dialogTitle={"Add Area"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn={getArea}
+              // defaultValue={entityData.}
               renderForm={(fnDialogOpen, fnDialogValue) => (
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
@@ -219,6 +224,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               dialogTitle={"Add Role"}
               fetchDataFn={getExecutiveRole}
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
+              formError={formError.crm_user}
               renderForm={(fnDialogOpen, fnDialogValue) => (
                 <ExecutiveRoleForm
                   setDialogOpen={fnDialogOpen}
@@ -265,6 +271,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               dialogTitle={"Add App User"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
               fetchDataFn={getApplicationUser}
+              formError={formError.crm_user}
               renderForm={(fnDialogOpen, fnDialogValue) => (
                 <ExecutiveGroupForm
                   setDialogOpen={fnDialogOpen}

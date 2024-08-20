@@ -63,6 +63,7 @@ export default function ActionForm(props: masterFormPropsT) {
       setSnackOpen(true);
     } else {
       const issues = result.data;
+
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {

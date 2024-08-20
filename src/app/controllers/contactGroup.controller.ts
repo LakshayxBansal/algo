@@ -37,16 +37,26 @@ export async function createContactGroup(data: contactGroupSchemaT) {
           data as contactGroupSchemaT
         );
 
-        if (dbResult.length > 0) {
-          result = { status: true, data: dbResult };
+        // if (dbResult.length > 0) {
+        //   result = { status: true, data: dbResult };
+        // } else {
+        //   result = {
+        //     status: false,
+        //     data: [{ path: ["form"], message: "Error: Error saving record" }],
+        //   };
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
         } else {
-          result = {
-            status: false,
-            data: [{ path: ["form"], message: "Error: Error saving record" }],
-          };
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: error.error_path,
+              message: error.error_text,
+            });
+          });
+          result = { status: false, data: errorState };
         }
-      } else {
-        result = { status: false, data: parsed.error.issues };
       }
     } else {
       result = {
@@ -79,24 +89,26 @@ export async function updateContactGroup(data: contactGroupSchemaT) {
 
     if (session) {
       const parsed = zs.contactGroupSchema.safeParse(data);
-
       if (parsed.success) {
         const dbResult = await updateContactGroupDb(
           session,
           data as contactGroupSchemaT
         );
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+        // console.log(dbResult);
+
+        // if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+        if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
-          result = {
-            status: false,
-            data: [
-              {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
-              },
-            ],
-          };
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: error.error_path,
+              message: error.error_text,
+            });
+          });
+          result = { status: false, data: errorState };
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];

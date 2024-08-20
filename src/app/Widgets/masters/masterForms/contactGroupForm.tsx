@@ -42,11 +42,15 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       setFormError({});
       setSnackOpen(true);
     } else {
+      // console.log(result);
+
       const issues = result.data;
+      // console.log(issues);
+
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
+        errorState[issue.path] = { msg: issue.message, error: true };
       }
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);

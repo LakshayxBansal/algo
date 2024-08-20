@@ -55,7 +55,12 @@ export async function createEnquiryAction(data: nameMasterDataT) {
         } else {
           result = {
             status: false,
-            data: [{ path: ["form"], message: "Error: Error saving record" }],
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
           };
         }
       } else {
@@ -104,7 +109,12 @@ export async function updateEnquiryAction(data: nameMasterDataT) {
         } else {
           result = {
             status: false,
-            data: [{ path: ["form"], message: "Error: Error saving record" }],
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
           };
         }
       } else {

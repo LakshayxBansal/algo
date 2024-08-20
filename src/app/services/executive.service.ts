@@ -9,9 +9,13 @@ export async function createExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    console.log(data);
+    const placeholderDate = new Date("1500-01-01");
+    data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
 
-    return excuteQuery({
+    data.doa = data.doa == "" ? placeholderDate : new Date(data.doa);
+    data.doj = data.doj == "" ? placeholderDate : new Date(data.doj);
+
+    const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
         "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
@@ -22,21 +26,70 @@ export async function createExecutiveDB(
         data.address2,
         data.address3,
         data.city,
-        data.state,
+        data.state_id,
         data.pincode,
-        data.country,
+        data.country_id,
         data.email,
         data.mobile,
         data.whatsapp,
         data.dob,
         data.doa,
         data.doj,
-        data.area,
-        data.call_type,
+        data.area_id,
+        data.call_type_id,
         data.crm_map_id,
-        data.role,
-        data.executive_dept,
-        data.executive_group,
+        data.role_id,
+        data.executive_dept_id,
+        data.executive_group_id,
+        session.user.email,
+      ],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateExecutiveDB(
+  session: Session,
+  data: executiveSchemaT
+) {
+  try {
+    // console.log("email", session.user.email);
+    const placeholderDate = new Date("1500-01-01");
+    data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
+
+    data.doa = data.doa == "" ? placeholderDate : new Date(data.doa);
+    data.doj = data.doj == "" ? placeholderDate : new Date(data.doj);
+
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        data.id,
+        data.alias,
+        data.name,
+        data.address1,
+        data.address2,
+        data.address3,
+        data.city,
+        data.state_id,
+        data.pincode,
+        data.country_id,
+        data.email,
+        data.mobile,
+        data.whatsapp,
+        data.dob,
+        data.doa,
+        data.doj,
+        data.area_id,
+        data.call_type_id,
+        data.crm_map_id,
+        data.role_id,
+        data.executive_dept_id,
+        data.executive_group_id,
         session.user.email,
       ],
     });
@@ -45,7 +98,6 @@ export async function createExecutiveDB(
   }
   return null;
 }
-
 /**
  *
  * @param crmDb database to search in
@@ -65,6 +117,38 @@ export async function getExecutiveList(crmDb: string, searchString: string) {
       host: crmDb,
       query: query,
       values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getExecutiveDetailsById(crmDb: string, id: string) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        // "select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
+        // g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation \
+        // from executive_master c \
+        // left outer join state_master s on c.state_id = s.id \
+        // left outer join area_master a on c.area_id =  a.id \
+        // left outer join country_master co on c.country_id = co.id \
+        // left outer join department_master d on c.department_id = d.id \
+        // left outer join  executive_role_master e on c.role_id = e.id \
+        // left outer join  executive_group_master eg on c.group_id = eg.id \
+        // left outer join user us on c.cem_user_id=us.id\
+        // where c.id=?;",
+        "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name, s.name state, co.name country from executive_master em left join area_master am on am.id=em.area_id\
+         left outer join department_master d on d.id=em.dept_id\
+         left outer join  executive_role_master e on em.role_id = e.id \
+         left outer join executive_group_master egm on egm.id=em.group_id\
+         left outer join state_master s on em.state_id = s.id \
+         left outer join country_master co on em.country_id = co.id \
+         where em.id=?",
+      values: [id],
     });
 
     return result;

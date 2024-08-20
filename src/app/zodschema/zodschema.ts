@@ -179,9 +179,23 @@ export const executiveSchema = z
     modified_by: z.number().optional(),
     modified_on: z.union([z.literal(""), z.date().optional()]),
     stamp: z.number().optional(),
-    dob: z.union([z.literal(""), z.date().optional()]),
-    doa: z.union([z.literal(""), z.date().optional()]),
-    doj: z.union([z.literal(""), z.date().optional()]),
+    // dob: z.union([z.literal(""), z.string().datetime()]),
+    // doj: z.union([z.literal(""), z.string().datetime()]),
+    // doa: z.union([z.literal(""), z.string().datetime()]),
+    // dob: z
+    //   .string()
+    //   .or(z.date())
+    //   .transform((arg) => new Date(arg)),
+    dob: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
+    doj: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
+    doa: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
+    // dob: z.union([z.literal(""), z.date().optional()]),
+    // doa: z.union([z.literal(""), z.date().optional()]),
+    // doj: z.union([z.literal(""), z.date().optional()]),
+
+    // dob: z.string().optional(),
+    // doa: z.string().optional(),
+    // doj: z.string().optional(),
     area_id: z.number().optional(),
     area: z.string().max(60).optional(),
     call_type_id: z.number().optional(),
@@ -206,6 +220,12 @@ export const executiveSchema = z
       return !(schema.email === "" && schema.mobile === "");
     },
     { message: "please provide email, or phone no", path: ["mobile", "email"] }
+  )
+  .refine(
+    (schema) => {
+      return !(schema.crm_user.length == 0);
+    },
+    { message: "Please provide crm user", path: ["crm_user"] }
   );
 
 /**

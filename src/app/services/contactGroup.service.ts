@@ -38,10 +38,13 @@ export async function createContactGroupDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query:
-        "insert into contact_group_master (name, created_by, created_on) \
-       values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
-      values: [sourceData.name, session.user.email],
+      query: "call createContactGroup(?,?,?,?)",
+      values: [
+        sourceData.name,
+        sourceData.alias,
+        sourceData.parent_id,
+        session.user.email,
+      ],
     });
   } catch (e) {
     console.log(e);
