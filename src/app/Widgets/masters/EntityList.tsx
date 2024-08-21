@@ -6,6 +6,7 @@ import { IconButton, Toolbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TextField from '@mui/material/TextField';
+import { AddDialog } from './addDialog';
 
 type ModifyT = {
   modForm:any,
@@ -34,7 +35,7 @@ export default function EntityList<ModEntityT>(props:ModifyT) {
     async function fetchData() { // the fecth data function will come from props
       // const rows : any = await props.fetchDataFn(PageModel.page, filterModel?.items[0]?.value, pgSize as number, searchText as string);
       const rows : any = await props.fetchDataFn(searchText as string);
-      // console.log(rows)
+      console.log(rows)
       
       // setData(rows.data);
       setData(rows) 
@@ -92,13 +93,14 @@ export default function EntityList<ModEntityT>(props:ModifyT) {
         onFilterModelChange={setFilterModel}
         loading={!data}
       />
-      {/* The Below dialogs shall come fro  props */}
+      {/* The Below dialogs shall come from props */}
       {modifyDlgState &&
         <AddDialog
+        title=""
           open={modifyDlgState}
           setDialogOpen={setModifyDlgState}
           >
-          {props.modForm(setModifyDlgState, setVal)}
+          {props.modForm(setModifyDlgState, setVal,)}
         </AddDialog>
       }
         

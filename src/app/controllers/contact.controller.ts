@@ -2,7 +2,7 @@
 
 import { contactSchema } from "../zodschema/zodschema";
 import { contactSchemaT } from "../models/models";
-import { createContactDB, updateContactDB } from "../services/contact.service";
+import { createContactDB, DeleteContactList, updateContactDB } from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
   getContactList,
@@ -136,6 +136,54 @@ export async function getContact(searchString: string) {
   }
 }
 
+// export async function getContacts(
+//   page: number,
+//   filter: string | undefined,
+//   limit: number
+// ) {
+//   let getCont = {
+//     status: false,
+//     data: {} as mdl.getContsT,
+//     count: 0,
+//     error: {},
+//   };
+//   try {
+//     const appSession = await getSession();
+
+//     if (appSession) {
+//       const conts = await Pagination(
+//         appSession.user.dbInfo.dbName as string,
+//         page as number,
+//         filter,
+//         limit as number
+//       );
+//       const rowCount = await getContactCount(
+//         appSession.user.dbInfo.dbName as string,
+//         filter
+//       );
+//       getCont = {
+//         status: true,
+//         data: conts.map(bigIntToNum) as mdl.getContsT,
+//         count: Number(rowCount[0]["rowCount"]),
+//         error: {},
+//       };
+//     }
+//   } catch (e: any) {
+//     console.log(e);
+
+//     let err = "contact Admin, E-Code:369";
+
+//     getCont = {
+//       ...getCont,
+//       status: false,
+//       data: {} as mdl.getContsT,
+//       error: err,
+//     };
+//   }
+//   return getCont;
+// }
+
+
 /**
  *
  * @param Id id of the contact to be searched
@@ -151,3 +199,19 @@ export async function getContactById(id: string) {
     throw error;
   }
 }
+
+
+// For Deleting Contact 
+export async function DeleteContact(id: number) {
+  try {
+    const session = await getSession();
+    console.log(session);
+
+    if (session?.user.dbInfo) {
+      return DeleteContactList(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+

@@ -90,3 +90,10 @@ export type dbInfoT = {
 export type selectKeyValueT = {
   [key: string]: any;
 };
+
+// export type getContsT = [{
+//   id: number;
+//   name: string;
+//   whatsapp: string;
+//   email: string }]
+

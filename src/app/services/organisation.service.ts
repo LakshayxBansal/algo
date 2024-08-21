@@ -76,7 +76,7 @@ export async function updateOrganisationDB(
  */
 export async function getOrganisationList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from organisation_master";
+    let query = "select id as id, name as name, alias as alias from organisation_master";
     let values: any[] = [];
 
     if (searchString !== "") {

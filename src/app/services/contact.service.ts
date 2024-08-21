@@ -94,7 +94,7 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    let query = 'select id as id, name as name, concat("Email - ", email, "; Alias - ", alias, "; Phone - ", mobile, "; PAN - ", pan) as detail from contact_master';
+    let query = 'select id as id, name as name, email, alias, mobile, pan from contact_master';
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -106,6 +106,7 @@ export async function getContactList(crmDb: string, searchString: string) {
       query: query,
       values: values,
     });
+    // console.log("test : ",result)
     return result;
   } catch (e) {
     console.log(e);
@@ -140,3 +141,67 @@ export async function getContactDetailsById(crmDb: string, id: string) {
     console.log(e);
   }
 }
+
+
+export async function DeleteContactList(crmDb: string, id: number) {
+  try {
+    let query = "Delete from contact_master where id=?";
+    let values: any[] = [id];
+
+    await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+
+    return;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+// export async function Pagination(
+//   crmDb: string,
+//   page: number,
+//   filter: string | undefined,
+//   limit: number
+// ) {
+//   try {
+//     const vals: any = [page, limit, limit];
+
+//     if (filter) {
+//       vals.unshift(filter);
+//     }
+
+//     return excuteQuery({
+//       host: crmDb,
+//       query:
+//         "SELECT name,RowNum as RowID,id,email, age \
+//        FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+//           FROM contact_master " +
+//         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+//         "order by name\
+//       ) AS NumberedRows\
+//       WHERE RowNum > ?*?\
+//       ORDER BY RowNum\
+//       LIMIT ?;",
+//       values: vals,
+//     });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
+
+// export async function getContactCount(crmDb: string, value: string | undefined) {
+//   try {
+//     return excuteQuery({
+//       host: crmDb,
+//       query:
+//         "SELECT count(*) as rowCount from contact_master " +
+//         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+//       values: [value],
+//     });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }

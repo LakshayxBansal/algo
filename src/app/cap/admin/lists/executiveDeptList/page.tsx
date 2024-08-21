@@ -5,56 +5,33 @@ import Button from '@mui/material/Button';
 import { Search, StyledInputBase, SearchIconWrapper } from '@/app/utils/styledComponents';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
-import { DeleteContact, getContact } from '@/app/controllers/contact.controller';
 import React, { Dispatch, SetStateAction } from "react";
 
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
-import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 import { Alert } from '@mui/material';
+import ExecutiveDeptForm from '@/app/Widgets/masters/masterForms/executiveDeptForm';
+import { getExecutiveDept } from '@/app/controllers/executiveDept.controller';
+
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
     field: 'name',
-    headerName: 'First name',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'alias',
-    headerName: 'Alias',
-    width: 150,
-    editable: true,
-  },
-  {
-    field:'email',
-    headerName: 'Email',
-    width: 180,
-    editable: true,
-  },
-  {
-    field: 'mobile',
-    headerName: 'Phone Number',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'pan',
-    headerName: 'Pan',
+    headerName: 'Name',
     width: 150,
     editable: true,
   }
 ];
 
 
-export default function ManageContacts(props: {
+export default function ManageExecutiveDept(props: {
   id: number;
   setDlgValue: Dispatch<SetStateAction<boolean>>;
 }) {
 
   async function handleDelete() {
-    await DeleteContact(props.id);
+    await DeleteExecutiveDept(props.id);
     props.setDlgValue(false);
   }
 
@@ -83,7 +60,7 @@ export default function ManageContacts(props: {
       </AppBar>
       <EntityList
         modForm={(setDialogOpen: ((props: any) => void) | undefined, setVal: ((props: any) => void) | undefined,data:any) => (
-          <ContactForm
+          <ExecutiveDeptForm
             setDialogOpen={setDialogOpen}
             setDialogValue={setVal}
             data={data}
@@ -105,7 +82,7 @@ export default function ManageContacts(props: {
 
           </Alert>
         )}
-        fetchDataFn={getContact}
+        fetchDataFn={getExecutiveDept}
         customCols={columns}>
       </EntityList>
     </div>

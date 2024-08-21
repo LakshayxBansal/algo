@@ -8,7 +8,7 @@ import excuteQuery  from '../utils/db/db';
 export async function getExecutiveGroupList(crmDb: string, searchString: string) {
 
   try {
-    let query = 'select id as id, name as name from executive_group_master';
+    let query = 'select id as id, name as name, alias as alias from executive_group_master';
     let values: any[] = [];
 
     if (searchString !== "") {
