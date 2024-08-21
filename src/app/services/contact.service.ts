@@ -118,7 +118,7 @@ export async function getContactList(crmDb: string, searchString: string) {
  * @param id id to search in contact_master
  * @returns
  */
-export async function getContactDetailsById(crmDb: string, id: string) {
+export async function getContactDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

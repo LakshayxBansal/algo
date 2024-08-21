@@ -28,7 +28,7 @@ export async function getEnquirySourceList(
   }
 }
 
-export async function getEnquirySourceDetailsById(crmDb: string, id: string) {
+export async function getEnquirySourceDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
