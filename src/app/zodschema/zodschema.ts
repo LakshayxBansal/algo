@@ -294,6 +294,14 @@ export const contactGroupSchema = z.object({
   created_on: z.number().optional(),
 });
 
+export const currencySchema = z.object({
+  id: z.number().optional(),
+  Symbol: z.string().min(1).max(60).optional(),
+  Name: z.string().min(1).max(60).optional(),
+  ShortForm: z.string().min(1).max(60).optional(),
+  decimal_places: z.string().min(1).max(60).optional(),
+  currency_system: z.string().min(1).max(60).optional(),
+});
 /**
  * Executive Role
  */
