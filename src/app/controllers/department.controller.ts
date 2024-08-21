@@ -23,7 +23,7 @@ export async function getDepartment(searchString: string) {
   }
 }
 
-export async function getDepartmentById(id: string) {
+export async function getDepartmentById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

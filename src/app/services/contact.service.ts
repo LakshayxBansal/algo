@@ -50,6 +50,8 @@ export async function updateContactDB(
   data: zm.contactSchemaT,
 ) {
   try {
+    console.log('-----DV----')
+    console.log(data)
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:

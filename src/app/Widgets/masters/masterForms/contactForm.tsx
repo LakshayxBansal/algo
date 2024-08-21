@@ -7,7 +7,10 @@ import {
   getOrganisation,
   getOrganisationById,
 } from "@/app/controllers/organisation.controller";
-import { getDepartment } from "@/app/controllers/department.controller";
+import {
+  getDepartment,
+  getDepartmentById,
+} from "@/app/controllers/department.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
@@ -15,10 +18,13 @@ import {
   createContact,
   updateContact,
 } from "@/app/controllers/contact.controller";
-import { getContactGroup } from "@/app/controllers/contactGroup.controller";
+import {
+  getContactGroup,
+  getContactGroupById,
+} from "@/app/controllers/contactGroup.controller";
 import ContactGroupForm from "@/app/Widgets/masters/masterForms/contactGroupForm";
 import AreaForm from "./areaForm";
-import { getArea } from "@/app/controllers/area.controller";
+import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import {
@@ -28,7 +34,12 @@ import {
 } from "@/app/models/models";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
-import { getCountries, getStates } from "@/app/controllers/masters.controller";
+import {
+  getCountries,
+  getCountryById,
+  getStateById,
+  getStates,
+} from "@/app/controllers/masters.controller";
 import { masterFormPropsT } from "@/app/models/models";
 
 export default function ContactForm(props: masterFormPropsT) {
@@ -56,7 +67,7 @@ export default function ContactForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
@@ -72,7 +83,6 @@ export default function ContactForm(props: masterFormPropsT) {
         }
       }
       errorState["form"] = { msg: "Error encountered", error: true };
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -80,19 +90,35 @@ export default function ContactForm(props: masterFormPropsT) {
   const updateFormData = (data: any) => {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
+      : entityData.contactGroup_id
+      ? entityData.contactGroup_id
       : 0;
-    data.contactGroup_id = selectValues.contactGroup
-      ? selectValues.contactGroup.id
+    console.log(data.contactGroup_id);
+    data.area_id = selectValues.area
+      ? selectValues.area.id
+      : entityData.area_id
+      ? entityData.area_id
       : 0;
-    data.area_id = selectValues.area ? selectValues.area.id : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
+      : entityData.organisation_id
+      ? entityData.organisation_id
       : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
+      : entityData.department_id
+      ? entityData.department_id
       : 0;
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country_id
+      ? entityData.contactGroup_id
+      : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state_id
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -160,6 +186,7 @@ export default function ContactForm(props: masterFormPropsT) {
               width={210}
               dialogTitle={"Group"}
               fetchDataFn={getContactGroup}
+              fnFetchDataByID={getContactGroupById}
               defaultValue={
                 {
                   id: entityData.contactGroup_id,
@@ -184,6 +211,7 @@ export default function ContactForm(props: masterFormPropsT) {
               width={210}
               dialogTitle={"Area"}
               fetchDataFn={getArea}
+              fnFetchDataByID={getAreaById}
               defaultValue={
                 {
                   id: entityData.area_id,
@@ -232,6 +260,7 @@ export default function ContactForm(props: masterFormPropsT) {
               label={"Department"}
               width={210}
               dialogTitle={"Department"}
+              fnFetchDataByID={getDepartmentById}
               defaultValue={
                 {
                   id: entityData.department_id,
@@ -364,6 +393,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 setSelectValues({ ...selectValues, country: val })
               }
               fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
               defaultValue={
                 {
                   id: entityData.country_id,
@@ -390,6 +420,7 @@ export default function ContactForm(props: masterFormPropsT) {
               fetchDataFn={(stateStr: string) =>
                 getStates(stateStr, selectValues.country?.name)
               }
+              fnFetchDataByID={getStateById}
               defaultValue={
                 {
                   id: entityData.state_id,

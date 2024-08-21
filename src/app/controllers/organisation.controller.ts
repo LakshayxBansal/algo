@@ -145,7 +145,7 @@ export async function getOrganisation(searchString: string) {
   }
 }
 
-export async function getOrganisationById(id: string) {
+export async function getOrganisationById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

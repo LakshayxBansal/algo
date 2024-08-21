@@ -75,7 +75,7 @@ export async function getCountries(searchString: string) {
   }
 }
 
-export async function getCountryById(id : string){
+export async function getCountryById(id : number){
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -103,11 +103,11 @@ export async function getStates(searchState: string, country: string) {
   }
 }
 
-export async function getStateById( country_id: string){
+export async function getStateById( state_id: number){
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getStateListById(session.user.dbInfo.dbName, country_id);
+      return getStateListById(session.user.dbInfo.dbName, state_id);
     }
   } catch (error) {
     throw error;
