@@ -1,4 +1,5 @@
 'use client'
+<<<<<<< HEAD
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -12,6 +13,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
 import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 import { Alert } from '@mui/material';
+=======
+import * as React from 'react';
+
+import { GridColDef } from '@mui/x-data-grid';
+import EntityList from '@/app/Widgets/masters/EntityList';
+import {getContact, getContactById} from '@/app/controllers/contact.controller';
+import AppBar from '@mui/material/AppBar';
+>>>>>>> origin/branch-1
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -61,7 +70,7 @@ export default function ManageContacts(props: {
   return (
     <div style={{ height: 800, width: '100%' }}>
       <AppBar position="static" color="default">
-        <Toolbar
+        {/* <Toolbar
           sx={{
             pr: '24px', // keep right padding when drawer closed
           }}>
@@ -79,8 +88,9 @@ export default function ManageContacts(props: {
           <Box sx={{ flexGrow: 1, display: 'flex' }}>
             <Button variant="contained">Add New</Button>
           </Box>
-        </Toolbar>
+        </Toolbar> */}
       </AppBar>
+<<<<<<< HEAD
       <EntityList
         modForm={(setDialogOpen: ((props: any) => void) | undefined, setVal: ((props: any) => void) | undefined,data:any) => (
           <ContactForm
@@ -107,6 +117,13 @@ export default function ManageContacts(props: {
         )}
         fetchDataFn={getContact}
         customCols={columns}>
+=======
+      <EntityList 
+        fetchDataFn={getContact}
+        fnFetchDataByID={getContactById}
+        customCols={columns}
+        AddAllowed={true}>
+>>>>>>> origin/branch-1
       </EntityList>
     </div>
   );

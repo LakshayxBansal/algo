@@ -2,37 +2,55 @@
 
 import { DataGrid, GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
-import { IconButton, Toolbar } from '@mui/material';
+import { Box, Button, Container, IconButton, InputAdornment, Toolbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TextField from '@mui/material/TextField';
+<<<<<<< HEAD
 import { AddDialog } from './addDialog';
+=======
+import SearchIcon from '@mui/icons-material/Search';
+import { AddDialog } from './addDialog';
+import {RenderFormFunctionT} from '@/app/models/models';
+
+
+>>>>>>> origin/branch-1
 
 type ModifyT = {
-  modForm:any,
-  DelDialog:any,
-  fetchDataFn:any, 
-  customCols :GridColDef[]
+  renderForm?: RenderFormFunctionT;
+  fetchDataFn: (page: number, value: any, pgSize: number, searchText: string) => Promise<any>;
+  fnFetchDataByID?: (id: number) => Promise<any>;
+  customCols: GridColDef[];
+  AddAllowed:boolean;
 };
 
-export default function EntityList<ModEntityT>(props:ModifyT) {
-  
-  const [modifyDlgState, setModifyDlgState] = useState<boolean>(false);
-  const [deleteDlgState, setDeleteDlgState] = useState<boolean>(false);
-  const [id, setId] = useState<number>(-1);
+const pgSize = 10;
+
+enum dialogMode {
+  Add,
+  Modify,
+}
+
+
+export default function EntityList(props: ModifyT) {
+
+  const [id, setId] = useState("-1");
   const [name, setName] = useState<String>('');
-  const [val, setVal] = useState();
-  
-  const pgSize = 5;
-  
-  const [data, setData] = useState<ModEntityT|any>(); // change to rows and type will be dynamic
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [data, setData] = useState([]); // change to rows and type will be dynamic
   const [NRows, setNRows] = useState<number>(0);
-  const [PageModel, setPageModel] = useState({pageSize:pgSize , page:0});
+  const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
-  const [searchText, setSearchText] = useState<String>('');
+  const [searchText, setSearchText] = useState('');
+  const [dummyText, setDummyText] = useState("");
+  const [modData, setModData] = useState({});
+  const [dlgMode, setDlgMode] = useState(dialogMode.Add);
+
+
 
   useEffect(() => {
     async function fetchData() { // the fecth data function will come from props
+<<<<<<< HEAD
       // const rows : any = await props.fetchDataFn(PageModel.page, filterModel?.items[0]?.value, pgSize as number, searchText as string);
       const rows : any = await props.fetchDataFn(searchText as string);
       console.log(rows)
@@ -45,12 +63,23 @@ export default function EntityList<ModEntityT>(props:ModifyT) {
       fetchData();
     
   }, [PageModel,filterModel,searchText]);
+=======
+      const rows: any = await props.fetchDataFn(PageModel.page, filterModel?.items[0]?.value, pgSize as number, searchText as string);
 
-  
+      setData(rows.data);
+
+      setNRows(rows.count as number)
+    }
+    fetchData();
+
+  }, [PageModel, filterModel, searchText]);
+>>>>>>> origin/branch-1
+
 
   const columns: GridColDef[] = props.customCols.concat(
-  [
+    [
 
+<<<<<<< HEAD
     { field: 'Edit' , headerName: 'Edit', width: 100, renderCell: (params) => (
       <IconButton onClick={() => {setId(params.row.id)
         setModifyDlgState(true)}}>
@@ -102,9 +131,96 @@ export default function EntityList<ModEntityT>(props:ModifyT) {
           >
           {props.modForm(setModifyDlgState, setVal,)}
         </AddDialog>
+=======
+      {
+        field: 'Edit', headerName: 'Edit', width: 100, renderCell: (params) => (
+          <IconButton onClick={()=>onModifyDialog(params.row.id)}>
+            <EditIcon />
+          </IconButton>
+        )
+      },
+      {
+        field: 'Delete', headerName: 'Delete', width: 100, renderCell: (params) => (
+          <IconButton onClick={() => {
+            setId(params.row.id)
+            setName(params.row.name)
+            //setDeleteDlgState(true)
+          }}>
+            <DeleteIcon />
+          </IconButton>
+        )
+>>>>>>> origin/branch-1
       }
-        
-      {deleteDlgState && <props.DelDialog open={deleteDlgState} id={id} name={name} setDlgValue={setDeleteDlgState}></props.DelDialog>}
-    </div>
+
+    ]);
+
+
+    async function onModifyDialog(modId: number) {
+      if (props.fnFetchDataByID && modId) {
+        const data = await props.fnFetchDataByID(modId);
+        setModData(data[0]);
+        setDialogOpen(true);
+        setDlgMode(dialogMode.Modify);
+      }
+    }
+
+
+  return (
+    <Container maxWidth="lg">
+      <div style={{ height: 300, width: '100%', padding: "25px" }}>
+        {/* <Toolbar/> */}
+        <Box sx={{ display: 'flex', alignItems: "center", p: 2 }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <TextField
+              // label="Search..."
+              name="search"
+              id="search"
+              placeholder="Search..."
+              type="search"
+              variant="filled"
+              onChange={(e) => setSearchText(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="medium" style={{ verticalAlign: "middle", marginBottom: "0.2rem", fontWeight: "bold" }} />
+                  </InputAdornment>
+                ), disableUnderline: true, sx: { borderRadius: 0, justifyContent: "center", width: "fit-content", flexGrow: 1 }, style: { fontSize: '1.2rem', alignItems: "center" }
+              }}
+            />
+          </Box>
+          {props.AddAllowed && (<Box>
+            <Button variant="contained" onClick={() => {setDialogOpen(true); setDlgMode(dialogMode.Add);}}>
+              ADD NEW
+            </Button>
+          </Box>)}
+        </Box>
+        {dialogOpen && (
+          <AddDialog
+            title={''}
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+          {(props.renderForm) ? ((dlgMode === dialogMode.Add) ? props.renderForm(setDialogOpen, setDummyText) : props.renderForm(setDialogOpen, setDummyText, modData)): 1}
+
+          </AddDialog>
+        )}
+
+        <DataGrid
+          rows={data ? data : []}
+          columns={columns}
+          rowCount={NRows}
+          getRowId={(row) => row.id}
+          pagination={true}
+          pageSizeOptions={[pgSize]}
+          paginationMode="server"
+          paginationModel={PageModel}
+          onPaginationModelChange={setPageModel}
+          filterMode='server'
+          onFilterModelChange={setFilterModel}
+          loading={!data}
+        />
+
+      </div>
+    </Container>
   );
 }

@@ -28,7 +28,7 @@ export async function getEnquiryCategoryList(
   }
 }
 
-export async function getCategoryDetailsById(crmDb: string, id: string) {
+export async function getCategoryDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

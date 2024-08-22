@@ -189,7 +189,7 @@ export async function getContact(searchString: string) {
  * @param Id id of the contact to be searched
  * @returns
  */
-export async function getContactById(id: string) {
+export async function getContactById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
