@@ -3,38 +3,38 @@ import * as React from 'react';
 
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
-import {getContact, getContactById} from '@/app/controllers/contact.controller';
+import {getContact, getContactById, getConts} from '@/app/controllers/contact.controller';
 import AppBar from '@mui/material/AppBar';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'firstName',
-    headerName: 'First name',
+    field: 'name',
+    headerName: 'Name',
     width: 150,
     editable: true,
   },
   {
-    field: 'lastName',
-    headerName: 'Last name',
+    field: 'email',
+    headerName: 'Email',
     width: 150,
     editable: true,
   },
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'whatsapp',
+    headerName: 'Whatsapp',
     type: 'number',
     width: 110,
     editable: true,
   },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-  },
+  // {
+  //   field: 'fullName',
+  //   headerName: 'Full name',
+  //   description: 'This column has a value getter and is not sortable.',
+  //   sortable:   false,
+  //   width: 160,
+  //   valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+  // },
 ];
 
 
@@ -65,7 +65,7 @@ export default function ManageContacts() {
         </Toolbar> */}
       </AppBar>
       <EntityList 
-        fetchDataFn={getContact}
+        fetchDataFn={getConts}
         fnFetchDataByID={getContactById}
         customCols={columns}
         AddAllowed={true}>

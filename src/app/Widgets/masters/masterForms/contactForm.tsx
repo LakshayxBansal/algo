@@ -51,7 +51,6 @@ export default function ContactForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data ? props.data : {};
-  console.log(entityData);
   
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -64,8 +63,6 @@ export default function ContactForm(props: masterFormPropsT) {
       data[key] = value;
     }
     formData = updateFormData(data);
-
-    console.log(data);
 
     const result = await persistEntity(data as contactSchemaT);
     if (result.status) {
