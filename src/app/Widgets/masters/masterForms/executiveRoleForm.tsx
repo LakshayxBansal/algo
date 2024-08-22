@@ -15,6 +15,7 @@ import {
   executiveRoleSchemaT,
   masterFormPropsT,
   masterFormPropsWithDataT,
+  optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
@@ -28,6 +29,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveRoleSchemaT = props.data ? props.data : {};
+  console.log(entityData);
+  
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -150,7 +153,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
               width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
-              defaultValue={entityData.parentRole}
+              defaultValue={
+                {
+                  id: entityData.parent_id,
+                  name: entityData.parentRole
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, parentRole: val })
               }

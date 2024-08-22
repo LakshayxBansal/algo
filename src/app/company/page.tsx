@@ -1,5 +1,5 @@
 //'use client'
-import * as React from 'react';
+import React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,9 +11,9 @@ import { Paper } from '@mui/material';
 import { getCompanyList } from '../services/masters.service';
 import { getSession }  from '../services/session.service';
 import CellDbName from './cellDBName';
-import CreateCompanyDialog from './CreateCompanyDialog';
 import { redirect } from 'next/navigation';
-import {dbInfoT} from '../models/models';
+import {dbInfoT, optionsDataT} from '../models/models';
+import { Create } from './Create';
 
 
 interface TitleProps {
@@ -42,10 +42,12 @@ export default async function Companies() {
         <React.Fragment>
           <Grid sx={{ display: 'flex' }}>
             <Title>Choose Company</Title>
-            <CreateCompanyDialog
+            {/* <CreateCompanyDialog
               email={session.user?.email!}
               callBackParent={callBackAfterAddCo}
-            ></CreateCompanyDialog>
+            ></CreateCompanyDialog> */}
+            <Create email={session.user?.email}/>
+        
           </Grid>
           <Table size="small">
             <TableHead>

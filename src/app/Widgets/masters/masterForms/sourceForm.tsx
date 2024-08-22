@@ -65,7 +65,7 @@ export default function SourceForm(props: masterFormPropsT) {
 
   return (
     <Paper>
-      <Seperator>Add Source</Seperator>
+      <Seperator>{entityData.id ? "Update Source" : "Add Source"}</Seperator>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>

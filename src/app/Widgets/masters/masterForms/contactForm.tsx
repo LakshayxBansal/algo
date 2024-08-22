@@ -5,9 +5,10 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { getOrganisation } from "@/app/controllers/organisation.controller";
 import {
-  getDepartment,
-  getDepartmentById,
-} from "@/app/controllers/department.controller";
+  getOrganisation,
+  getOrganisationById,
+} from "@/app/controllers/organisation.controller";
+import { getDepartment, getDepartmentById } from "@/app/controllers/department.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";

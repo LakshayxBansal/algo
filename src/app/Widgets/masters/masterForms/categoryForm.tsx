@@ -93,7 +93,7 @@ export default function CategoryForm(props: masterFormPropsT) {
 
   return (
     <Paper>
-      <Seperator>{entityData ? "Update Category" : "Add Category"}</Seperator>
+      <Seperator>{entityData.id ? "Update Category" : "Add Category"}</Seperator>
       <Box sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>

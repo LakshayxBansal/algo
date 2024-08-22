@@ -18,7 +18,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {};
+  const entityData: nameMasterDataT = props.data ? props.data : {};  
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -67,7 +67,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
       <Seperator>
         {entityData.id ? "Update Department" : "Add Department"}
       </Seperator>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="departmentForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )}

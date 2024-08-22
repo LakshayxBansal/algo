@@ -7,6 +7,10 @@ export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 
 export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
+export type companySchemaT = z.infer<typeof zs.companySchema>;
+
+export type areaSchemaT = z.infer<typeof zs.areaSchema>;
+
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
 export type optionsDataT = z.infer<typeof zs.optionsData>;
