@@ -5,9 +5,10 @@ import * as zm from "../models/models";
 import {
   createOrganisationDB,
   getOrganisationDetailsById,
-  updateOrganisationDB,
+  updateOrganisationDB,getOrgsList,getOrgsCount
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
+import { bigIntToNum } from "../utils/db/types";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
 
@@ -155,3 +156,89 @@ export async function getOrganisationById(id: string) {
     throw error;
   }
 }
+
+export async function getOrgns(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getOrgs = {
+    status: false,
+    data: {} as zm.getOrgansT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const orgs = await getOrgsList(
+        // appSession.dbSession?.dbInfo.dbName as string,
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getOrgsCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getOrgs = {
+        status: true,
+        data: orgs.map(bigIntToNum) as zm.getOrgansT,
+        count: Number(rowCount[0]['rowCount']),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = 'Contact Admin, E-Code:369';
+
+    getOrgs = {
+      ...getOrgs,
+      status: false,
+      data: {} as zm.getOrgansT,
+      error: err,
+    };
+  }
+  return getOrgs;
+}
+
+// export async function getOrgData(id : string){
+//   let getOrg = {
+//     status: false,
+//     data: [{}] as zm.getOrganT,
+//     error: {},
+//   };
+//   try {
+//     const appSession = await getSession();
+
+//     if (appSession) {
+//       const dep = await getOrgDataDb(
+//         appSession.user.dbInfo.dbName as string,
+//         id as string
+//       );
+      
+//       getOrg = {
+//         status: true,
+//         data: dep.map(bigIntToNum) as zm.getOrganT,
+//         error: {},
+//       };
+//     }
+//   } catch (e: any) {
+//     console.log(e);
+
+//     let err = 'Contact Admin, E-Code:369';
+
+//     getOrg = {
+//       ...getOrg,
+//       status: false,
+//       data: {} as zm.getOrganT,
+//       error: err,
+//     };
+//   }
+//   return getOrg;
+// }
+
+
