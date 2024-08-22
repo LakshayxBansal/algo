@@ -159,8 +159,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
               inputType={InputType.TEXT}
               name="Symbol"
               defaultValue={entityData.Symbol}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
+              error={formError?.Symbol?.error}
+              helperText={formError?.Symbol?.msg}
               onChange={onSymbolChange}
             />
             <InputControl
@@ -170,8 +170,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
               inputType={InputType.TEXT}
               name="Name"
               defaultValue={entityData.Name}
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
+              error={formError?.Name?.error}
+              helperText={formError?.Name?.msg}
             />
             <InputControl
               autoFocus
@@ -180,8 +180,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
               inputType={InputType.TEXT}
               name="ShortForm"
               defaultValue={entityData.ShortForm}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
+              error={formError?.ShortForm?.error}
+              helperText={formError?.ShortForm?.msg}
             />
             <FormControl fullWidth>
               <InputLabel id="decimal-places-label">Decimal Places</InputLabel>

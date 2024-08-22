@@ -39,7 +39,8 @@ export async function createCurrencyDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "insert into currency_data (symbol,name,shortForm,decimal_places,currency_system) values(?,?,?,?,?) returning *",
+        // "insert into currency_data (symbol,name,shortForm,decimal_places,currency_system) values(?,?,?,?,?) returning*",
+        "call createCurrency(?,?,?,?,?)",
       values: [
         sourceData.Symbol,
         sourceData.Name,
