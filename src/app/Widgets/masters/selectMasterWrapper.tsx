@@ -9,14 +9,9 @@ import AutocompleteDB from "../AutocompleteDB";
 import { formErrorT } from "../../models/models";
 import EditIcon from '@mui/icons-material/Edit';
 import {optionsDataT} from '@/app/models/models';
+import {RenderFormFunctionT} from '@/app/models/models';
 
 
-type RenderFormFunction = (
-  fnDialogOpen: (props: any) => void,
-  fnDialogValue: (props: any) => void,
-  data?: any,
-  parentData?: any
-) => JSX.Element;
 
 type OnChangeFunction = (
   event: any,
@@ -32,8 +27,8 @@ type selectMasterWrapperT = {
   label: string;
   dialogTitle: string;
   fetchDataFn: (arg0: string) => Promise<any>;
-  fnFetchDataByID?: (id: string) => Promise<any>;
-  renderForm?: RenderFormFunction;
+  fnFetchDataByID?: (id: number) => Promise<any>;
+  renderForm?: RenderFormFunctionT;
   onChange?: OnChangeFunction;
   renderOptions?: SelectOptionsFunction;
   labelOptions?: SelectOptionsFunction;
@@ -73,7 +68,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   async function onModifyDialog() {
     if(allowModify) {
       if (props.fnFetchDataByID && dialogValue.id) {
-        const data = await props.fnFetchDataByID(dialogValue.id.toString());
+        const data = await props.fnFetchDataByID(dialogValue.id);
         setModData(data[0]);
       }
       setDialogOpen(true);
@@ -134,7 +129,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
         >
-          {(dlgMode === dialogMode.Add) ? props.renderForm(setDialogOpen, setDialogValue) : props.renderForm(setDialogOpen, setDialogValue, modData)}
+          {(props.renderForm) ? ((dlgMode === dialogMode.Add) ? props.renderForm(setDialogOpen, setDialogValue) : props.renderForm(setDialogOpen, setDialogValue, modData)): 1}
         </AddDialog>
       )}
     </>

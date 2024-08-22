@@ -1,74 +1,57 @@
 'use client'
-import Toolbar from '@mui/material/Toolbar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { Search, StyledInputBase, SearchIconWrapper } from '@/app/utils/styledComponents';
+import * as React from 'react';
+
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
-import { DeleteContact, getContact } from '@/app/controllers/contact.controller';
-import React, { Dispatch, SetStateAction } from "react";
-
-import SearchIcon from '@mui/icons-material/Search';
+import {getContact, getContactById} from '@/app/controllers/contact.controller';
 import AppBar from '@mui/material/AppBar';
-import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
-import { Alert } from '@mui/material';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'name',
+    field: 'firstName',
     headerName: 'First name',
     width: 150,
     editable: true,
   },
   {
-    field: 'alias',
-    headerName: 'Alias',
+    field: 'lastName',
+    headerName: 'Last name',
     width: 150,
     editable: true,
   },
   {
-    field:'email',
-    headerName: 'Email',
-    width: 180,
+    field: 'age',
+    headerName: 'Age',
+    type: 'number',
+    width: 110,
     editable: true,
   },
   {
-    field: 'mobile',
-    headerName: 'Phone Number',
-    width: 150,
-    editable: true,
+    field: 'fullName',
+    headerName: 'Full name',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 160,
+    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
   },
-  {
-    field: 'pan',
-    headerName: 'Pan',
-    width: 150,
-    editable: true,
-  }
 ];
 
 
-export default function ManageContacts(props: {
-  id: number;
-  setDlgValue: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function ManageContacts() {
 
-  async function handleDelete() {
-    await DeleteContact(props.id);
-    props.setDlgValue(false);
-  }
 
   return (
     <div style={{ height: 800, width: '100%' }}>
       <AppBar position="static" color="default">
-        <Toolbar
+        {/* <Toolbar
           sx={{
             pr: '24px', // keep right padding when drawer closed
           }}>
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
+          <Box sx={{flexGrow: 1, display: 'flex' }}>
             <Search>
               <SearchIconWrapper>
-                <SearchIcon />
+                <SearchIcon/>
               </SearchIconWrapper>
               <StyledInputBase
                 placeholder="Search…"
@@ -76,37 +59,16 @@ export default function ManageContacts(props: {
               />
             </Search>
           </Box>
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
+          <Box sx={{flexGrow: 1, display: 'flex' }}>
             <Button variant="contained">Add New</Button>
           </Box>
-        </Toolbar>
+        </Toolbar> */}
       </AppBar>
-      <EntityList
-        modForm={(setDialogOpen: ((props: any) => void) | undefined, setVal: ((props: any) => void) | undefined,data:any) => (
-          <ContactForm
-            setDialogOpen={setDialogOpen}
-            setDialogValue={setVal}
-            data={data}
-          />)}
-        DelDialog={(delDialogOpen: any, delDialogClose: any, dialogName: any, id: any) => (
-          <Alert variant="filled" severity="info">
-
-            <Button
-              onClick={() => {
-                props.setDlgValue(false);
-              }}
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleDelete} color="primary" autoFocus>
-              Delete
-            </Button>
-
-          </Alert>
-        )}
+      <EntityList 
         fetchDataFn={getContact}
-        customCols={columns}>
+        fnFetchDataByID={getContactById}
+        customCols={columns}
+        AddAllowed={true}>
       </EntityList>
     </div>
   );

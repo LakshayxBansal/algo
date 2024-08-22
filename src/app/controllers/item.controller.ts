@@ -1,26 +1,30 @@
 "use server";
 
-import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT } from "../models/models";
-import { createContactDB, DeleteContactList, getContactCount, Pagination, updateContactDB } from "../services/contact.service";
-import { getSession } from "../services/session.service";
+import * as zs from "../zodschema/zodschema";
+import { itemSchemaT } from "../models/models";
 import {
-  getContactList,
-  getContactDetailsById,
-} from "@/app/services/contact.service";
+  createItemDB,
+  Pagination,
+  getItemCount,
+  DeleteItemList,
+  getItemList,
+} from "../services/item.service";
+import { getSession } from "../services/session.service";
+import { updateItemDB } from "../services/item.service";
+import { fetchItemById } from "@/app/services/item.service";
+import * as mdl from "../models/models";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
-import * as mdl from "../models/models";
 
-export async function createContact(data: contactSchemaT) {
+export async function createItem(data: itemSchemaT) {
   let result;
   try {
     const session = await getSession();
     if (session) {
-      const parsed = contactSchema.safeParse(data);
+      const parsed = zs.ItemSchema.safeParse(data);
       if (parsed.success) {
-        const dbResult = await createContactDB(session, data as contactSchemaT);
-        if (dbResult.length > 0 && dbResult[0].length === 0) {
+        const dbResult = await createItemDB(session, data as itemSchemaT);
+        if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -33,8 +37,8 @@ export async function createContact(data: contactSchemaT) {
           result = {
             status: false,
             data: errorState,
-          };
-        }
+        };
+      }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
         for (const issue of parsed.error.issues) {
@@ -67,14 +71,15 @@ export async function createContact(data: contactSchemaT) {
   return result;
 }
 
-export async function updateContact(data: contactSchemaT) {
+export async function updateItem(data: itemSchemaT) {
   let result;
   try {
     const session = await getSession();
     if (session) {
-      const parsed = contactSchema.safeParse(data);
+      const parsed = zs.ItemSchema.safeParse(data);
+
       if (parsed.success) {
-        const dbResult = await updateContactDB(session, data as contactSchemaT);
+        const dbResult = await updateItemDB(session, data as itemSchemaT);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
@@ -124,28 +129,57 @@ export async function updateContact(data: contactSchemaT) {
 
 /**
  *
- * @param searchString partial string for contact name
+ * @param searchString partial string for item name
  * @returns
  */
-export async function getContact(searchString: string) {
+export async function getItem(searchString: string) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getContactList(session.user.dbInfo.dbName, searchString);
+      return getItemList(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
     throw error;
   }
 }
 
-export async function getContacts(
+export async function DeleteItem(id: number) {
+  try {
+    const session = await getSession();
+    console.log(session);
+
+    if (session?.user.dbInfo) {
+      return DeleteItemList(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ *
+ * @param Id id of the item to be searched
+ * @returns
+ */
+export async function getItemById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return fetchItemById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getItems(
   page: number,
   filter: string | undefined,
   limit: number
 ) {
-  let getCont = {
+  let getItem = {
     status: false,
-    data: {} as mdl.getContsT,
+    data: {} as mdl.getItemT,
     count: 0,
     error: {},
   };
@@ -159,13 +193,13 @@ export async function getContacts(
         filter,
         limit as number
       );
-      const rowCount = await getContactCount(
+      const rowCount = await getItemCount(
         appSession.user.dbInfo.dbName as string,
         filter
       );
-      getCont = {
+      getItem = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.getContsT,
+        data: conts.map(bigIntToNum) as mdl.getItemT,
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -173,47 +207,50 @@ export async function getContacts(
   } catch (e: any) {
     console.log(e);
 
-    let err = "contact Admin, E-Code:369";
+    let err = "item Admin, E-Code:369";
 
-    getCont = {
-      ...getCont,
+    getItem = {
+      ...getItem,
       status: false,
-      data: {} as mdl.getContsT,
+      data: {} as mdl.getItemT,
       error: err,
     };
   }
-  return getCont;
+  return getItem;
 }
 
-
-/**
- *
- * @param Id id of the contact to be searched
- * @returns
- */
-export async function getContactById(id: number) {
+export async function getItemData(id: number) {
+  let getItem = {
+    status: false,
+    data: [{}] as mdl.getItemT,
+    error: {},
+  };
   try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getContactDetailsById(session.user.dbInfo.dbName, id);
+    const appSession = await getSession();
+
+    if (appSession) {
+      const dep = await fetchItemById(
+        appSession.user.dbInfo.dbName as string,
+        id as number
+      );
+
+      getItem = {
+        status: true,
+        data: dep.map(bigIntToNum) as mdl.getItemT,
+        error: {},
+      };
     }
-  } catch (error) {
-    throw error;
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "item Admin, E-Code:369";
+
+    getItem = {
+      ...getItem,
+      status: false,
+      data: {} as mdl.getItemT,
+      error: err,
+    };
   }
+  return getItem;
 }
-
-
-// For Deleting Contact 
-export async function DeleteContact(id: number) {
-  try {
-    const session = await getSession();
-    console.log(session);
-
-    if (session?.user.dbInfo) {
-      return DeleteContactList(session.user.dbInfo.dbName, id);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-

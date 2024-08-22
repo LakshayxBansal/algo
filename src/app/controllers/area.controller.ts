@@ -1,10 +1,12 @@
 'use server'
  
 import * as zs from '../zodschema/zodschema';
-import { getAreaList, createAreaDb ,getAreaByIDList,updateAreaDb} from '../services/area.service';
+import { getAreaList, createAreaDb ,getAreaByIDList,updateAreaDb, Pagination, getAreaCount, fetchAreaById} from '../services/area.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
 import { areaSchemaT } from '../models/models';
+import * as mdl from "../models/models";
+import { bigIntToNum } from '../utils/db/types';
 
 
 export async function getArea(searchString: string) {
@@ -29,7 +31,17 @@ export async function getAreaById (id : string){
   }
 }
 
-
+export async function getById (id: number){
+  try {
+    const session = await getSession();
+    if(session?.user.dbInfo){
+      return fetchAreaById(session.user.dbInfo.dbName, id);
+    }
+  }
+  catch(error){
+      throw error;
+    }
+}
 
 export async function createArea(data: areaSchemaT){
   let result;
@@ -106,4 +118,51 @@ export async function updateArea(data: areaSchemaT){
   }
   result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
   return result;
+}
+
+export async function getAreas(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getArea = {
+    status: false,
+    data: {} as mdl.areaSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getAreaCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getArea = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.areaSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "Area Admin, E-Code:369";
+
+    getArea = {
+      ...getArea,
+      status: false,
+      data: {} as mdl.areaSchemaT,
+      error: err,
+    };
+  }
+  return getArea;
 }

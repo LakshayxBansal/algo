@@ -119,7 +119,7 @@ export async function getContactList(crmDb: string, searchString: string) {
  * @param id id to search in contact_master
  * @returns
  */
-export async function getContactDetailsById(crmDb: string, id: string) {
+export async function getContactDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
@@ -160,48 +160,48 @@ export async function DeleteContactList(crmDb: string, id: number) {
   }
 }
 
-// export async function Pagination(
-//   crmDb: string,
-//   page: number,
-//   filter: string | undefined,
-//   limit: number
-// ) {
-//   try {
-//     const vals: any = [page, limit, limit];
+export async function Pagination(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
 
-//     if (filter) {
-//       vals.unshift(filter);
-//     }
+    if (filter) {
+      vals.unshift(filter);
+    }
 
-//     return excuteQuery({
-//       host: crmDb,
-//       query:
-//         "SELECT name,RowNum as RowID,id,email, age \
-//        FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-//           FROM contact_master " +
-//         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
-//         "order by name\
-//       ) AS NumberedRows\
-//       WHERE RowNum > ?*?\
-//       ORDER BY RowNum\
-//       LIMIT ?;",
-//       values: vals,
-//     });
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT name,RowNum as RowID,id, alias, email, mobile, pan \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM contact_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
 
-// export async function getContactCount(crmDb: string, value: string | undefined) {
-//   try {
-//     return excuteQuery({
-//       host: crmDb,
-//       query:
-//         "SELECT count(*) as rowCount from contact_master " +
-//         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
-//       values: [value],
-//     });
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
+export async function getContactCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from contact_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}

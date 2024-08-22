@@ -6,10 +6,14 @@ import {
   createEnquiryCategoryDb,
   getCategoryDetailsById,
   updateEnquiryCategoryDb,
+  Pagination,
+  getEnquiryCategoryCount,
 } from "../services/enquiryCategory.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { nameMasterDataT } from "../models/models";
+import * as mdl from "../models/models";
+import { bigIntToNum } from '../utils/db/types';
 
 export async function getEnquiryCategory(searchString: string) {
   try {
@@ -22,7 +26,7 @@ export async function getEnquiryCategory(searchString: string) {
   }
 }
 
-export async function getCategoryById(id: string) {
+export async function getCategoryById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -147,4 +151,51 @@ export async function updateEnquiryCategory(data: nameMasterDataT) {
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
   };
   return result;
+}
+
+export async function getEnquiryCategorys(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getCategory = {
+    status: false,
+    data: {} as mdl.nameMasterDataT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getEnquiryCategoryCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getCategory = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "Category Admin, E-Code:369";
+
+    getCategory = {
+      ...getCategory,
+      status: false,
+      data: {} as mdl.nameMasterDataT,
+      error: err,
+    };
+  }
+  return getCategory;
 }
