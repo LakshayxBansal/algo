@@ -11,7 +11,12 @@ import {
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { logger } from "@/app/utils/logger.utils";
-import { createCurrencyDb } from "../services/currency.services";
+import {
+  createCurrencyDb,
+  getCurrencyDetailsById,
+  updateCurrencyDb,
+} from "../services/currency.services";
+import { getContactDetailsById } from "../services/contact.service";
 
 export async function getContactGroup(searchString: string) {
   try {
@@ -93,7 +98,7 @@ export async function updateCurrency(data: currencySchemaT) {
     if (session) {
       const parsed = zs.currencySchema.safeParse(data);
       if (parsed.success) {
-        const dbResult = await createCurrencyDb(
+        const dbResult = await updateCurrencyDb(
           session,
           data as currencySchemaT
         );
@@ -150,11 +155,11 @@ export async function updateCurrency(data: currencySchemaT) {
  * @param Id id of the contact to be searched
  * @returns
  */
-export async function getContactGroupById(id: string) {
+export async function getCurrencyById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getContactGroupDetailsById(session.user.dbInfo.dbName, id);
+      return getCurrencyDetailsById(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;
