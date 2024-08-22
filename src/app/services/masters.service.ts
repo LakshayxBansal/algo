@@ -34,6 +34,20 @@ export async function getCountryList(crmDb: string, searchString: string) {
   }
 }
 
+export async function getCountryByIDList(crmDb : string, id : number){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias from country_master cm where cm.id=?;', 
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 
 
 /**
@@ -63,6 +77,20 @@ export async function getStateList(crmDb: string, searchState: string, country: 
 
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function getStateListById(crmDb : string, id : number){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias from state_master sm where sm.id=?;',
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
   }
 }
 
@@ -243,11 +271,27 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into country_master (name, alias, created_by, created_on) \
-       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createCountry(?,?,?);",
       values: [
         statusData.name,
         statusData.alias,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+export async function updateCountryDb(session: Session, sourceData: zm.countrySchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateCountry(?,?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.alias,
         session.user.email
       ],
     });
@@ -264,15 +308,34 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
  * @param statusData : data for saving
  * @returns result from DB (returning *)
  */
-export async function createStateDb(session: Session, statusData: zm.nameAliasDataT) {
+export async function createStateDb(session: Session, sourceData: zm.stateSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into state_master (name, alias, created_by, created_on) \
-       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createState(?,?,?,?);",
       values: [
-        statusData.name,
-        statusData.alias,
+        sourceData.name,
+        sourceData.alias,
+        sourceData.country_id,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateStateDb(session: Session, sourceData: zm.stateSchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateState(?,?,?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.alias,
+        sourceData.country_id,
         session.user.email
       ],
     });

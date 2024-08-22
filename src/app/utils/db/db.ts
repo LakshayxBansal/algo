@@ -70,9 +70,11 @@ export async function executeQueryPool({dbName, host, port, query, values }: {db
     
     if (db) {
       results = await db.query(query, values);
+      console.log(results)
     }
   } catch (e) {
     throw (e);
+
   } 
   return results;
 }

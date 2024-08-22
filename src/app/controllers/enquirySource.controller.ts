@@ -22,7 +22,7 @@ export async function getEnquirySource(searchString: string) {
   }
 }
 
-export async function getEnquirySourceById(id: string) {
+export async function getEnquirySourceById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

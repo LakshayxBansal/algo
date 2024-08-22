@@ -47,15 +47,17 @@ export async function createContactDB(
 
 export async function updateContactDB(
   session: Session,
-  data: zm.contactSchemaT
+  data: zm.contactSchemaT,
 ) {
   try {
+    console.log('-----DV----')
+    console.log(data)
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        data.id,
+        data.id, 
         data.alias,
         data.name,
         data.print_name,
@@ -77,6 +79,7 @@ export async function updateContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
+        session.user.email,
       ],
     });
   } catch (e) {
@@ -93,7 +96,7 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from contact_master";
+    let query = 'select id as id, name as name, concat("Email - ", email, "; Alias - ", alias, "; Phone - ", mobile, "; PAN - ", pan) as detail from contact_master';
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -105,7 +108,6 @@ export async function getContactList(crmDb: string, searchString: string) {
       query: query,
       values: values,
     });
-
     return result;
   } catch (e) {
     console.log(e);
@@ -118,7 +120,7 @@ export async function getContactList(crmDb: string, searchString: string) {
  * @param id id to search in contact_master
  * @returns
  */
-export async function getContactDetailsById(crmDb: string, id: string) {
+export async function getContactDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
@@ -136,6 +138,52 @@ export async function getContactDetailsById(crmDb: string, id: string) {
     });
 
     return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getContactList2(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        'SELECT name,RowNum as RowID,whatsapp, id,email \
+     FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+        FROM contact_master ' +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : '') +
+        'order by name\
+    ) AS NumberedRows\
+    WHERE RowNum > ?*?\
+    ORDER BY RowNum\
+    LIMIT ?;',
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getContCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        'SELECT count(*) as rowCount from contact_master ' +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ''),
+      values: [value],
+    });
   } catch (e) {
     console.log(e);
   }

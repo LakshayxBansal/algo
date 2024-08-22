@@ -18,7 +18,7 @@ import {
   getEnquirySource,
   getEnquirySourceById,
 } from "@/app/controllers/enquirySource.controller";
-import { getContact } from "@/app/controllers/contact.controller";
+import { getContact, getContactById } from "@/app/controllers/contact.controller";
 import { getExecutive } from "@/app/controllers/executive.controller";
 import {
   getCategoryById,
@@ -34,7 +34,6 @@ import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
-import { getContactById } from "@/app/controllers/contact.controller";
 
 import dayjs from "dayjs";
 import {
@@ -116,7 +115,7 @@ export default function InputForm(props: { baseData: IformData }) {
     };
 
     const headerParsed = enquiryHeaderSchema.safeParse(headerData);
-    const ledgerParsed = enquiryHeaderSchema.safeParse(headerData);
+    const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
       result = await createEnquiry({ head: headerData, ledger: ledgerData });

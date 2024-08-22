@@ -13,7 +13,7 @@ import {
   getExecutiveRole,
   getExecutiveRoleById,
 } from "@/app/controllers/executiveRole.controller";
-import { getExecutiveGroup } from "@/app/controllers/executiveGroup.controller";
+import { getExecutiveGroup, getExecutiveGroupById } from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
@@ -213,7 +213,7 @@ export default function ExecutiveForm(props: {
               fnFetchDataByID={getExecutiveRoleById}
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disableComponent={selectValues.department ? false : true}
+              disable={selectValues.department ? false : true}
               formError={formError?.executiveRole ?? formError.executiveRole}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
@@ -231,13 +231,15 @@ export default function ExecutiveForm(props: {
               width={210}
               dialogTitle={"Add Executive Group"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "group")}
-              fetchDataFn={getExecutiveGroup}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              fetchDataFn = {getExecutiveGroup}
+              fnFetchDataByID={getExecutiveGroupById}
+              renderForm={(fnDialogOpen, fnDialogValue, data?) => 
                 <ExecutiveGroupForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
-                />
-              )}
+                  data={data}
+                />  
+              }
             />
             <InputControl
               inputType={InputType.TEXT}

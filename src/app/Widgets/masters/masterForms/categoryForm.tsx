@@ -20,38 +20,23 @@ export default function CategoryForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: nameMasterDataT = props.data ? props.data : {};
 
+  async function persistEntity(data: nameMasterDataT) {
+    let result;
+    if (entityData.id) {
+      data.id = entityData.id;
+      result = await updateEnquiryCategory(data);
+    } else result = await createEnquiryCategory(data);
+    console.log(result);
+
+    return result;
+  }
+
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
     };
-    // const parsed = nameMasterData.safeParse(data);
-    // let result;
-    // let issues;
-
-    // if (parsed.success) {
-    //   const result = await createEntity(data as nameMasterDataT);
-    //   if (result.status) {
-    //     const newVal = { id: result.data[0].id, name: result.data[0].name };
-    //     props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-    //     setSnackOpen(true);
-    //   } else {
-    //     issues = result?.data;
-    //   }
-    // } else {
-    //   issues = parsed.error.issues;
-    // }
-
-    // if (parsed.success && result?.status) {
-    //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-    // } else {
-    //   // show error on screen
-    //   const errorState: Record<string, { msg: string; error: boolean }> = {};
-    //   for (const issue of issues) {
-    //     errorState[issue.path[0]] = { msg: issue.message, error: true };
-    //   }
-    //   setFormError(errorState);
-    // }
+    
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -79,17 +64,6 @@ export default function CategoryForm(props: masterFormPropsT) {
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
-
-  async function persistEntity(data: nameMasterDataT) {
-    let result;
-    if (entityData.id) {
-      data.id = entityData.id;
-      result = await updateEnquiryCategory(data);
-    } else result = await createEnquiryCategory(data);
-    console.log(result);
-
-    return result;
-  }
 
   return (
     <Paper>

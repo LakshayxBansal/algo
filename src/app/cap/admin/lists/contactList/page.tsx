@@ -1,46 +1,40 @@
 'use client'
 import * as React from 'react';
-import Toolbar from '@mui/material/Toolbar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { Search, StyledInputBase, SearchIconWrapper } from '@/app/utils/styledComponents';
+
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
-import {getContact} from '@/app/controllers/contact.controller';
-
-import SearchIcon from '@mui/icons-material/Search';
+import {getContact, getContactById, getConts} from '@/app/controllers/contact.controller';
 import AppBar from '@mui/material/AppBar';
-import { AddDialog } from '@/app/Widgets/masters/addDialog';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'firstName',
-    headerName: 'First name',
+    field: 'name',
+    headerName: 'Name',
     width: 150,
     editable: true,
   },
   {
-    field: 'lastName',
-    headerName: 'Last name',
+    field: 'email',
+    headerName: 'Email',
     width: 150,
     editable: true,
   },
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'whatsapp',
+    headerName: 'Whatsapp',
     type: 'number',
     width: 110,
     editable: true,
   },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-  },
+  // {
+  //   field: 'fullName',
+  //   headerName: 'Full name',
+  //   description: 'This column has a value getter and is not sortable.',
+  //   sortable:   false,
+  //   width: 160,
+  //   valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+  // },
 ];
 
 
@@ -50,7 +44,7 @@ export default function ManageContacts() {
   return (
     <div style={{ height: 800, width: '100%' }}>
       <AppBar position="static" color="default">
-        <Toolbar
+        {/* <Toolbar
           sx={{
             pr: '24px', // keep right padding when drawer closed
           }}>
@@ -68,14 +62,11 @@ export default function ManageContacts() {
           <Box sx={{flexGrow: 1, display: 'flex' }}>
             <Button variant="contained">Add New</Button>
           </Box>
-        </Toolbar>
+        </Toolbar> */}
       </AppBar>
       <EntityList 
-        renderModForm={(id) => 
-          <ContactForm
-            id={id}
-          />}
-        fetchDataFn={getContact}
+        fetchDataFn={getConts}
+        fnFetchDataByID={getContactById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

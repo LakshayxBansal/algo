@@ -51,6 +51,9 @@ export const options: NextAuthOptions  = {
         if (!result){
           //add the user to the db
           const res = await addUser(data);
+          if (!res){
+            isAllowedToSignIn = false;
+          }
         } else {
           isAllowedToSignIn = result?.email === user.email;
         }

@@ -9,7 +9,7 @@ import {userSchemaT} from '@/app/models/models';
  */
 export async function addUser(data:userSchemaT) {
   try {
-    return excuteQuery({
+    const result = await excuteQuery({
       host: 'userDb',
       query: "call createUser(?, ?, ?, ?, ?);",
       values: [
@@ -20,6 +20,7 @@ export async function addUser(data:userSchemaT) {
         data.provider,
       ],
     });
+    return result;
   } catch (e) {
     console.log(e);
   }

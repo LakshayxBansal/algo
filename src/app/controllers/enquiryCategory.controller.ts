@@ -22,7 +22,7 @@ export async function getEnquiryCategory(searchString: string) {
   }
 }
 
-export async function getCategoryById(id: string) {
+export async function getCategoryById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
