@@ -8,7 +8,7 @@ import AreaForm from '@/app/Widgets/masters/masterForms/areaForm';
 import { getAreas, getById } from '@/app/controllers/area.controller';
 
 
-export default function Action() {
+export default function Area() {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 90 },
     {

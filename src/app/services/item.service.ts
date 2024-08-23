@@ -159,7 +159,9 @@ export async function fetchItemById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select * from item_master where id=?",
+      query: "select im.*, gm.name as group_name, um.name as unit_name\
+       from item_master im left join item_group_master gm on im.group_id=gm.id \
+       left join unit_master um on im.unit_id=um.id where im.id=?",
       values: [id],
     });
 

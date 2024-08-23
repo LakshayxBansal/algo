@@ -200,5 +200,5 @@ export async function getExecutiveDepts(
       error: err,
     };
   }
-  return getExecutiveDepts;
+  return getExecutiveDept;
 }

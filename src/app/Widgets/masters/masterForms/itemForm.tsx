@@ -61,8 +61,8 @@ export default function ItemForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.group = selectValues.itemGroup ? selectValues.itemGroup.id : entityData.itemGroup ? entityData.itemGroup : 0;
-    data.unit = selectValues.unit ? selectValues.unit.id : entityData.unit ? entityData.unit: 0;
+    data.group = selectValues.itemGroup ? selectValues.itemGroup.id : entityData.group ? entityData.group_name: 0;
+    data.unit = selectValues.unit ? selectValues.unit.id : entityData.unit ? entityData.unit_name: 0;
     return data;
   };
 
@@ -148,7 +148,7 @@ export default function ItemForm(props: masterFormPropsT) {
               defaultValue={
                 {
                   id: entityData.group,
-                  name: entityData.itemGroup, 
+                  name: entityData.group_name, 
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
@@ -171,7 +171,7 @@ export default function ItemForm(props: masterFormPropsT) {
               defaultValue={
                 {
                   id: entityData.unit,
-                  name: entityData.unitName,
+                  name: entityData.unit_name,
                 } as optionsDataT
               }
               onChange={(e, val, s) =>

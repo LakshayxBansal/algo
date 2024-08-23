@@ -48,3 +48,26 @@ export async function createItemGroupDb(
   }
   return null;
 }
+
+/**
+ * 
+ * @param crmDb database to search in
+ * @param id id to search in item_master
+ * @returns 
+ */
+export async function getItemGroupDetailsById(crmDb: string, id: number){
+  
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'SELECT c1.*, c2.name parent FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id \
+        where c1.id=?;', 
+      values: [id],
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}

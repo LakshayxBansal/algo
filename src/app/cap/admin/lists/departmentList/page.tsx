@@ -8,7 +8,7 @@ import DepartmentForm from '@/app/Widgets/masters/masterForms/departmentForm';
 import { getDepartmentById, getDepartments } from '@/app/controllers/department.controller';
 
 
-export default function Category() {
+export default function Department() {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 90 },
     {

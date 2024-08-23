@@ -138,7 +138,7 @@ export async function getEnquirySources(
   filter: string | undefined,
   limit: number
 ) {
-  let getExecutiveSource = {
+  let getEnquirySource = {
     status: false,
     data: {} as mdl.nameMasterDataT,
     count: 0,
@@ -158,7 +158,7 @@ export async function getEnquirySources(
         appSession.user.dbInfo.dbName as string,
         filter
       );
-      getExecutiveSource = {
+      getEnquirySource = {
         status: true,
         data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
         count: Number(rowCount[0]["rowCount"]),
@@ -168,10 +168,10 @@ export async function getEnquirySources(
   } catch (e: any) {
     console.log(e);
 
-    let err = "ExecutiveSource Admin, E-Code:369";
+    let err = "EnquirySource Admin, E-Code:369";
 
-    getExecutiveSource = {
-      ...getExecutiveSource,
+    getEnquirySource = {
+      ...getEnquirySource,
       status: false,
       data: {} as mdl.nameMasterDataT,
       error: err,

@@ -5,6 +5,7 @@ import { itemGroupSchemaT } from "@/app/models/models";
 import {
   getItemGroupList,
   createItemGroupDb,
+  getItemGroupDetailsById,
 } from "../services/itemGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -65,4 +66,21 @@ export async function createItemGroup(data: itemGroupSchemaT) {
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
   };
   return result;
+}
+
+
+/**
+ * 
+ * @param Id id of the item to be searched
+ * @returns 
+ */
+export async function getItemGroupById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getItemGroupDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
 }

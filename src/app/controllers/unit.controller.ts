@@ -1,7 +1,6 @@
 "use server";
 
 import * as zs from "../zodschema/zodschema";
-import { itemSchemaT } from "../models/models";
 import {
   createUnitDB,
   Pagination,
@@ -13,7 +12,7 @@ import * as mdl from "../models/models";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 
-export async function createUnit(data: itemSchemaT) {
+export async function createUnit(data: mdl.unitSchemaT) {
   let result;
   try {
     const session = await getSession();

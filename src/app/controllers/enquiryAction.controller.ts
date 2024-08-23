@@ -39,9 +39,9 @@ export async function getEnquiryActions(
   filter: string | undefined,
   limit: number
 ) {
-  let getItem = {
+  let getAction = {
     status: false,
-    data: {} as mdl.getItemT,
+    data: {} as mdl.nameMasterDataT,
     count: 0,
     error: {},
   };
@@ -59,9 +59,9 @@ export async function getEnquiryActions(
         appSession.user.dbInfo.dbName as string,
         filter
       );
-      getItem = {
+      getAction = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.getItemT,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -71,14 +71,14 @@ export async function getEnquiryActions(
 
     let err = "enquiryAction Admin, E-Code:369";
 
-    getItem = {
-      ...getItem,
+    getAction = {
+      ...getAction,
       status: false,
-      data: {} as mdl.getItemT,
+      data: {} as mdl.nameMasterDataT,
       error: err,
     };
   }
-  return getItem;
+  return getAction;
 }
 
 /**
