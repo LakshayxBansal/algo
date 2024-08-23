@@ -46,7 +46,6 @@ export default function EntityList(props: ModifyT) {
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
   const [searchText, setSearchText] = useState("");
-  const [dummyText, setDummyText] = useState("");
   const [modData, setModData] = useState({});
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
 
@@ -161,8 +160,8 @@ export default function EntityList(props: ModifyT) {
           <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.renderForm
               ? dlgMode === dialogMode.Add
-                ? props.renderForm(setDialogOpen, setDummyText)
-                : props.renderForm(setDialogOpen, setDummyText, modData)
+                ? props.renderForm(setDialogOpen, (arg) => {})
+                : props.renderForm(setDialogOpen, (arg) => {}, modData)
               : 1}
           </AddDialog>
         )}

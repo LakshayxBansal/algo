@@ -10,6 +10,7 @@ import {
 } from "@/app/services/contact.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
+import { modifyPhone } from "../utils/phoneUtils";
 import * as mdl from "../models/models";
 
 export async function createContact(data: contactSchemaT) {
@@ -17,6 +18,9 @@ export async function createContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile);
+      data.whatsapp = modifyPhone(data.whatsapp);
+
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
@@ -72,6 +76,9 @@ export async function updateContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile);
+      data.whatsapp = modifyPhone(data.whatsapp);
+
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
