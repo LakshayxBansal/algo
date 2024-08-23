@@ -2,7 +2,12 @@
 
 import { contactSchema } from "../zodschema/zodschema";
 import { contactSchemaT, getContsT } from "../models/models";
-import { createContactDB, getContactList2, getContCount, updateContactDB } from "../services/contact.service";
+import {
+  createContactDB,
+  getContactList2,
+  getContCount,
+  updateContactDB,
+} from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
   getContactList,
@@ -10,12 +15,16 @@ import {
 } from "@/app/services/contact.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
+import { modifyPhone } from "../utils/phoneUtils";
 
 export async function createContact(data: contactSchemaT) {
   let result;
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile);
+      data.whatsapp = modifyPhone(data.whatsapp);
+
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
@@ -71,6 +80,9 @@ export async function updateContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile);
+      data.whatsapp = modifyPhone(data.whatsapp);
+
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
