@@ -1,4 +1,4 @@
-export default function checkPhone(mobile: string): boolean {
+export function checkPhone(mobile: string): boolean {
   if (mobile.length > 0) {
     // Find the index of the first space
     const mobile_arr = mobile.split(' ')
@@ -19,4 +19,17 @@ export default function checkPhone(mobile: string): boolean {
   }
 
   return true;
+}
+
+export function modifyPhone (mobile : string) : string {
+  const firstSpaceIndex = mobile.indexOf(" ");
+    mobile =
+      (firstSpaceIndex !== -1 ? mobile.slice(firstSpaceIndex + 1) : "")
+        .length === 0
+        ? ""
+        : mobile.slice(0, firstSpaceIndex) +
+          " " +
+          mobile.slice(firstSpaceIndex + 1).replaceAll(" ", "");
+
+  return mobile;
 }

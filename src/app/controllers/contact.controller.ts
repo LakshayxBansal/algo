@@ -15,7 +15,7 @@ import {
 } from "@/app/services/contact.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
-import modifyPhone from "../utils/modifyPhone";
+import { modifyPhone } from "../utils/phoneUtils";
 
 export async function createContact(data: contactSchemaT) {
   let result;
