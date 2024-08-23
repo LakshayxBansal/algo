@@ -1,8 +1,8 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT } from "../models/models";
-import { createContactDB, DeleteContactList, getContactCount, Pagination, updateContactDB } from "../services/contact.service";
+import { contactSchemaT, getContsT } from "../models/models";
+import { createContactDB, DeleteContactList, getContactList2, getContCount, updateContactDB } from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
   getContactList,
@@ -138,53 +138,6 @@ export async function getContact(searchString: string) {
   }
 }
 
-export async function getContacts(
-  page: number,
-  filter: string | undefined,
-  limit: number
-) {
-  let getCont = {
-    status: false,
-    data: {} as mdl.getContsT,
-    count: 0,
-    error: {},
-  };
-  try {
-    const appSession = await getSession();
-
-    if (appSession) {
-      const conts = await Pagination(
-        appSession.user.dbInfo.dbName as string,
-        page as number,
-        filter,
-        limit as number
-      );
-      const rowCount = await getContactCount(
-        appSession.user.dbInfo.dbName as string,
-        filter
-      );
-      getCont = {
-        status: true,
-        data: conts.map(bigIntToNum) as mdl.getContsT,
-        count: Number(rowCount[0]["rowCount"]),
-        error: {},
-      };
-    }
-  } catch (e: any) {
-    console.log(e);
-
-    let err = "contact Admin, E-Code:369";
-
-    getCont = {
-      ...getCont,
-      status: false,
-      data: {} as mdl.getContsT,
-      error: err,
-    };
-  }
-  return getCont;
-}
-
 
 /**
  *
@@ -202,7 +155,6 @@ export async function getContactById(id: number) {
   }
 }
 
-
 // For Deleting Contact 
 export async function DeleteContact(id: number) {
   try {
@@ -217,3 +169,51 @@ export async function DeleteContact(id: number) {
   }
 }
 
+
+export async function getConts(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getConts = {
+    status: false,
+    data: {} as getContsT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await getContactList2(
+        // appSession.dbSession?.dbInfo.dbName as string,
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getContCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getConts = {
+        status: true,
+        data: conts.map(bigIntToNum) as getContsT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "Contact Admin, E-Code:369";
+
+    getConts = {
+      ...getConts,
+      status: false,
+      data: {} as getContsT,
+      error: err,
+    };
+  }
+  return getConts;
+}

@@ -95,7 +95,7 @@ export async function getOrganisationList(crmDb: string, searchString: string) {
   }
 }
 
-export async function getOrganisationDetailsById(crmDb: string, id: string) {
+export async function getOrganisationDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

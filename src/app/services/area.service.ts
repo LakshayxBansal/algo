@@ -28,7 +28,7 @@ export async function getAreaList(crmDb: string, searchString: string) {
   }
 }
 
-export async function getAreaByIDList(crmDb : string, id : string){
+export async function getAreaByIDList(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,
