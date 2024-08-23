@@ -1,3 +1,5 @@
+
+
 export function checkPhone(mobile: string): boolean {
   if (mobile.length > 0) {
     // Find the index of the first space
