@@ -2,10 +2,11 @@
  
 import * as zs from '../zodschema/zodschema';
 import {executiveGroupSchemaT} from '@/app/models/models';
-import { getExecutiveGroupList, createExecutiveGroupDb,updateExecutiveGroupDb,getExecutiveGroupByIDList} from '../services/executiveGroup.service';
+import { getExecutiveGroupList, createExecutiveGroupDb,updateExecutiveGroupDb,getExecutiveGroupByIDList, Pagination, getExecutiveGroupCount} from '../services/executiveGroup.service';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
-
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getExecutiveGroup(searchString: string) {
   try {
@@ -18,7 +19,7 @@ export async function getExecutiveGroup(searchString: string) {
   }
 }
 
-export async function getExecutiveGroupById(id : string) {
+export async function getExecutiveGroupById(id : number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -139,4 +140,52 @@ export async function updateExecutiveGroup(data: executiveGroupSchemaT){
   }
   result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
   return result;
+}
+
+
+export async function getExecutiveGroups(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getExecutiveGroup = {
+    status: false,
+    data: {} as mdl.executiveGroupSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getExecutiveGroupCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getExecutiveGroup = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.executiveGroupSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "ExecutiveGroup Admin, E-Code:369";
+
+    getExecutiveGroup = {
+      ...getExecutiveGroup,
+      status: false,
+      data: {} as mdl.executiveGroupSchemaT,
+      error: err,
+    };
+  }
+  return getExecutiveGroup;
 }
