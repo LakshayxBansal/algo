@@ -146,7 +146,7 @@ export async function getOrganisation(searchString: string) {
   }
 }
 
-export async function getOrganisationById(id: string) {
+export async function getOrganisationById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -204,41 +204,3 @@ export async function getOrgns(
   }
   return getOrgs;
 }
-
-// export async function getOrgData(id : string){
-//   let getOrg = {
-//     status: false,
-//     data: [{}] as zm.getOrganT,
-//     error: {},
-//   };
-//   try {
-//     const appSession = await getSession();
-
-//     if (appSession) {
-//       const dep = await getOrgDataDb(
-//         appSession.user.dbInfo.dbName as string,
-//         id as string
-//       );
-      
-//       getOrg = {
-//         status: true,
-//         data: dep.map(bigIntToNum) as zm.getOrganT,
-//         error: {},
-//       };
-//     }
-//   } catch (e: any) {
-//     console.log(e);
-
-//     let err = 'Contact Admin, E-Code:369';
-
-//     getOrg = {
-//       ...getOrg,
-//       status: false,
-//       data: {} as zm.getOrganT,
-//       error: err,
-//     };
-//   }
-//   return getOrg;
-// }
-
-

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import {checkPhone} from "../utils/phoneUtils";
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|^$/
@@ -14,7 +15,8 @@ const passwordRegex = new RegExp(
 
 export const userSchema = z
   .object({
-    email: z.union([z.string().optional(), z.string().email()]),
+    // email: z.union([z.string().optional(), z.string().email()]),
+    email: z.string().regex(emailRegex, "Input must be in email format").optional(),
     password: z.union([
       z.string().optional(),
       z
@@ -27,7 +29,8 @@ export const userSchema = z
         ),
     ]),
     name: z.string().min(1).max(45),
-    phone: z.string().max(15).optional(),
+    phone: z.string().min(10).max(15).optional(),
+    contact : z.string().optional(),
     repassword: z.string().max(50).optional(),
     provider: z.string().max(15).optional(),
   })
@@ -39,10 +42,15 @@ export const userSchema = z
   )
   .refine(
     (schema) => {
-      return !(schema.email === "" && schema.phone === "");
+      return !(schema.email === "");
     },
-    { message: "please provide email, or phone no", path: ["email", "phone"] }
-  );
+    { message: "please provide email", path: ["email"] }
+  ).refine(
+    (schema) => {
+      return !(schema.phone === "");
+    },
+    { message: "please provide phone", path: ["phone"] }
+  )
 
 /*
 refine(schema => {
@@ -104,86 +112,97 @@ const contactDetailsSchema = z
 /**
  * validate the add person to person table
  */
-export const contactSchema = z.object({
-  id:z.number().optional(),
-  alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
-  print_name: z.string().max(60).optional(),
-  pan: z.union([z.literal(''), z.string().min(10).regex(panRegEx, 'Invalid PAN number!')]),
-  aadhaar: z.union([z.literal(''),z.string().max(20)]), 
-  address1: z.string().max(75), 
-  address2: z.string().max(75), 
-  address3: z.string().max(75), 
-  pincode: z.string().max(15),
-  email: z.union([z.literal(''), z.string().email().max(100)]),
-  mobile:  z.union([z.literal(''),z.string().regex(phoneRegex, 'Invalid Number!')]),
-  whatsapp: z.union([z.literal(''),z.string().regex(phoneRegex, 'Invalid Number!')]),
-  dob: z.date().optional(),
-  doa: z.date().optional(),
-  contactGroup_id: z.number().optional(), 
-  contactGroup: z.string().optional(), 
-  state: z.string().optional(),
-  area: z.string().optional(), 
-  area_id: z.number().optional(), 
-  department: z.string().optional(), 
-  organisation: z.string().optional(),
-  department_id: z.number().optional(), 
-  organisation_id: z.number().optional(),
-  state_id: z.number().optional(),
-  country_id: z.number().optional(), 
-  country: z.string().optional(),
-  city: z.string().optional(), 
-}).refine(schema => {
-  return (
-      !(schema.email === '' &&
-      schema.mobile === '')); 
-}, {message: "please provide email, or phone no", path: ["mobile", "email"]});
+export const contactSchema = z
+  .object({
+    id: z.number().optional(),
+    alias: z.string().max(60).optional(),
+    name: z.string().min(1).max(60),
+    print_name: z.string().max(60).optional(),
+    pan: z.union([
+      z.literal(""),
+      z.string().min(10).regex(panRegEx, "Invalid PAN number!"),
+    ]),
+    aadhaar: z.union([z.literal(""), z.string().max(20)]),
+    address1: z.string().max(75),
+    address2: z.string().max(75),
+    address3: z.string().max(75),
+    pincode: z.string().max(15),
+    email: z.union([z.literal(""), z.string().email().max(100)]),
+    mobile: z.string().refine((val) => checkPhone(val),{message: "Please provide a valid Phone No", path: ["mobile"]}),
+    whatsapp: z.string().refine((val) => checkPhone(val),{message: "Please provide a valid Whatsapp No", path: ["whatsapp"]}),
+    dob: z.date().optional(),
+    doa: z.date().optional(),
+    contactGroup_id: z.number().optional(),
+    contactGroup: z.string().optional(),
+    state: z.string().optional(),
+    area: z.string().optional(),
+    area_id: z.number().optional(),
+    department: z.string().optional(),
+    organisation: z.string().optional(),
+    department_id: z.number().optional(),
+    organisation_id: z.number().optional(),
+    state_id: z.number().optional(),
+    country_id: z.number().optional(),
+    country: z.string().optional(),
+    city: z.string().optional(),
+  });
+
 
 export const areaSchema = z.object({
-  id : z.number().optional(),
-  name : z.string().max(60),
-})
-
-export const executiveSchema = z.object({
   id: z.number().optional(),
-  alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
-  address1: z.string().max(75).optional(),
-  address2: z.string().max(75).optional(),
-  address3: z.string().max(75).optional(),
-  city: z.string().max(75).optional(),
-  state_id: z.number().optional(),
-  state: z.string().max(60).optional(),
-  pincode: z.string().max(15).optional(),
-  country_id: z.number().optional(),
-  country: z.string().max(60).optional(),
-  email: z.string().max(100).optional(),
-  mobile:  z.union([z.literal(''),z.string().regex(phoneRegex, 'Invalid Number!')]),
-  whatsapp: z.union([z.literal(''),z.string().regex(phoneRegex, 'Invalid Number!')]),
-  created_by: z.number().optional(),
-  created_on: z.union([z.literal(''),z.date().optional()]),
-  modified_by: z.number().optional(),
-  modified_on: z.union([z.literal(''),z.date().optional()]),
-  stamp: z.number().optional(),
-  dob: z.union([z.literal(''),z.date().optional()]),
-  doa: z.union([z.literal(''),z.date().optional()]),
-  doj: z.union([z.literal(''),z.date().optional()]),
-  area_id: z.number().optional(),
-  area: z.string().max(60).optional(),
-  call_type_id: z.number().optional(),
-  call_type: z.string().min(1).max(45),
-  crm_user: z.string().min(1).max(60),
-  crm_map_id: z.number().optional(),
-  role_id: z.number().optional(),
-  role: z.string().min(1).max(45),
-  executive_dept_id: z.number().optional(),
-  executive_dept: z.string().max(75).optional(),
-  executive_group_id: z.number().optional(),
-  executive_group: z.string().max(75).optional()
-}).refine(schema => { return false; 
-}, {message: "please provide email, or phone no",
-  path: ["email", "mobile"]
+  name: z.string().max(60),
 });
+
+export const executiveSchema = z
+  .object({
+    id: z.number().optional(),
+    alias: z.string().max(60).optional(),
+    name: z.string().min(1).max(60),
+    address1: z.string().max(75).optional(),
+    address2: z.string().max(75).optional(),
+    address3: z.string().max(75).optional(),
+    city: z.string().max(75).optional(),
+    state_id: z.number().optional(),
+    state: z.string().max(60).optional(),
+    pincode: z.string().max(15).optional(),
+    country_id: z.number().optional(),
+    country: z.string().max(60).optional(),
+    email: z.string().max(100).optional(),
+    mobile: z.union([
+      z.literal(""),
+      z.string().regex(phoneRegex, "Invalid Number!"),
+    ]),
+    whatsapp: z.union([
+      z.literal(""),
+      z.string().regex(phoneRegex, "Invalid Number!"),
+    ]),
+    created_by: z.number().optional(),
+    created_on: z.union([z.literal(""), z.date().optional()]),
+    modified_by: z.number().optional(),
+    modified_on: z.union([z.literal(""), z.date().optional()]),
+    stamp: z.number().optional(),
+    dob: z.union([z.literal(""), z.date().optional()]),
+    doa: z.union([z.literal(""), z.date().optional()]),
+    doj: z.union([z.literal(""), z.date().optional()]),
+    area_id: z.number().optional(),
+    area: z.string().max(60).optional(),
+    call_type_id: z.number().optional(),
+    call_type: z.string().min(1).max(45),
+    crm_user: z.string().min(1).max(60),
+    crm_map_id: z.number().optional(),
+    role_id: z.number().optional(),
+    role: z.string().min(1).max(45),
+    executive_dept_id: z.number().optional(),
+    executive_dept: z.string().max(75).optional(),
+    executive_group_id: z.number().optional(),
+    executive_group: z.string().max(75).optional(),
+  })
+  .refine(
+    (schema) => {
+      return false;
+    },
+    { message: "please provide email, or phone no", path: ["email", "mobile"] }
+  );
 
 // export const executiveSchema = z
 //   .object({
@@ -358,19 +377,19 @@ export const optionsData = z.object({
 });
 
 export const countrySchema = z.object({
-  id : z.number().optional(),
-  name : z.string().min(1).max(60),
-  alias : z.string().min(1).max(45)
-})
+  id: z.number().optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().min(1).max(45),
+});
 
 export const stateSchema = z.object({
-  id : z.number().optional(),
-  name : z.string().min(1).max(60),
-  alias : z.string().min(1).max(45),
-  country_id : z.number()
-})
+  id: z.number().optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().min(1).max(45),
+  country_id: z.number(),
+});
 
-  /**
+/**
  * used for passing values to add dialogs
  */
 export const addEntityDlg = z.object({
@@ -387,7 +406,6 @@ export const deleteEntityDlg = z.object({
   open: z.boolean(),
   data: z.object({}),
 });
-
 
 /**
  * zod schema for menu options
@@ -426,8 +444,7 @@ export const enquirySubStatusMaster = z.object({
  * used for storing simple name master
  */
 
-
-export const nameMasterData = z.object({ 
+export const nameMasterData = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(45),
 });

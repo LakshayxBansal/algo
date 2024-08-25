@@ -34,7 +34,7 @@ export async function getCountryList(crmDb: string, searchString: string) {
   }
 }
 
-export async function getCountryByIDList(crmDb : string, id : string){
+export async function getCountryByIDList(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,
@@ -80,7 +80,7 @@ export async function getStateList(crmDb: string, searchState: string, country: 
   }
 }
 
-export async function getStateListById(crmDb : string, id : string){
+export async function getStateListById(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,

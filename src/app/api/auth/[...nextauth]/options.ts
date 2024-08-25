@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { authenticateUser } from '../../../services/auth.service';
 import { addUser } from '../../../services/user.service';
 import { getDbSession } from '../../../services/session.service'
-import { dbInfoT } from '../../../models/models';
+import { dbInfoT,userSchemaT } from '../../../models/models';
 
 export const options: NextAuthOptions  = {
   providers: [
@@ -15,10 +15,10 @@ export const options: NextAuthOptions  = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username",
+        userContact: {
+          label: "User Contact",
           type: "text",
-          placeholder: "username"
+          placeholder: "user email/phone"
         },
         password: { 
           label: "Password", 
@@ -28,8 +28,8 @@ export const options: NextAuthOptions  = {
       async authorize(credentials, req){
         // get the data from the db
         console.log(credentials);
-        const user = await authenticateUser({email: credentials?.username, password: credentials?.password});
-        if(credentials?.username === user?.email){
+        const user = await authenticateUser({contact: credentials?.userContact, password: credentials?.password});
+        if(credentials?.userContact === user?.contact){
           return user;
         } else {
           console.log("user not found");
@@ -43,19 +43,19 @@ export const options: NextAuthOptions  = {
       let isAllowedToSignIn = true;
       if (account?.provider === "google"){
         const data =  {
-          email: user.email as string,
+          contact: user.email as string,
           provider: "google",
           name: user.name as string,
         }
         const result = await authenticateUser(data);
         if (!result){
           //add the user to the db
-          const res = await addUser(data);
+          const res = await addUser(data as userSchemaT);
           if (!res){
             isAllowedToSignIn = false;
           }
         } else {
-          isAllowedToSignIn = result?.email === user.email;
+          isAllowedToSignIn = result?.contact === user.email;
         }
       }
       

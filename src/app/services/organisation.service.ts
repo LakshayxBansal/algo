@@ -141,7 +141,8 @@ export async function getOrgsCount(crmDb: string, value: string | undefined) {
   }
 }
 
-export async function getOrganisationDetailsById(crmDb: string, id: string) {
+
+export async function getOrganisationDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

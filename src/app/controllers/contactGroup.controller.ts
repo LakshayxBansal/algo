@@ -58,7 +58,7 @@ export async function createContactGroup(data: contactGroupSchemaT){
  * @param Id id of the contact to be searched
  * @returns 
  */
-export async function getContactGroupById(id: string) {
+export async function getContactGroupById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

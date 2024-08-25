@@ -1,26 +1,25 @@
 'use server'
 
 import excuteQuery   from '../utils/db/db';
-import {hashText} from '../utils/encrypt.utils';
 import {userSchemaT} from '@/app/models/models';
 /**
  * add user to user db
  * 
  */
-export async function addUser(data:userSchemaT) {
+
+export async function addUser(data: userSchemaT) {
   try {
-    const result = await excuteQuery({
-      host: 'userDb',
-      query: "call createUser(?, ?, ?, ?, ?);",
+
+    return excuteQuery({
+      host: "userDb",
+      query: "call createUser(?, ?, ?, ?);",
       values: [
-        data.email,
+        data.contact,
         data.name,
         data.password,
-        data.phone,
         data.provider,
       ],
     });
-    return result;
   } catch (e) {
     console.log(e);
   }

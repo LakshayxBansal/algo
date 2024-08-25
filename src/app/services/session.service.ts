@@ -14,7 +14,7 @@ export async function getDbSession(email: string): Promise<dbInfoT | null> {
 
     const result = await excuteQuery({
       host: sessionDb,
-      query: 'select * from session where email=?', 
+      query: 'select * from session where email=?',
       values: [email],
     });
 

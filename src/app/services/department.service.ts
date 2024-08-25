@@ -26,7 +26,7 @@ export async function getDepartmentList(crmDb: string, searchString: string) {
   }
 }
 
-export async function getDepartmentDetailsById(crmDb: string, id: string) {
+export async function getDepartmentDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

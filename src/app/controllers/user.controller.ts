@@ -1,45 +1,64 @@
 "use server"
 
 import { addUser, getBizAppUserList } from '../services/user.service';
+import { hashText } from '../utils/encrypt.utils';
 import * as zs from '../zodschema/zodschema';
-import {userSchemaT} from '@/app/models/models';
+import { userSchemaT } from '@/app/models/models';
 import { getSession } from '../services/session.service';
 import { SqlError } from 'mariadb';
 
 
-export async function registerUser(formData: FormData){
+export async function registerUser(formData: userSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if(session){
-      let userData: { [key: string]: any } = {}; // Initialize an empty object
+    console.log(session);
 
-      for (const [key, value] of formData.entries()) {
-        userData[key] = value;
-      }
-      const parsed = zs.userSchema.safeParse(userData);
-      if(parsed.success) {
-        const dbResult = await addUser(userData as userSchemaT);
-        if (dbResult.length >0 && dbResult[0][0].error === 0) {
-          result = {status: true, data:dbResult[1]};
+    if (session) {
+
+      const parsed = zs.userSchema.safeParse(formData);
+      if (parsed.success) {
+        let contact;
+        if(formData.email){
+          contact = formData.email;
+          delete formData.email;
+        }
+        else{
+          contact = formData.phone;
+          delete formData?.phone;
+        }
+
+        formData.contact = contact;
+
+        const hashedPassword = await hashText(formData.password);
+        formData.password = hashedPassword;
+
+        const dbResult = await addUser(formData as userSchemaT);
+        if (dbResult[0][0].error === 0) {
+          result = { status: true, data: dbResult[1] };
         } else {
-          result = {status: false, data: [{path:[dbResult[0][0].error_path], message:dbResult[0][0].error_text}] };
+          result = { status: false, data: [{ path: [dbResult[0][0].error_path], message: dbResult[0][0].error_text }] };
         }
       } else {
-        result = {status: false, data: parsed.error.issues };
+        let errorState: { path: (string | number)[], message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
       }
     } else {
-      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
+      result = { status: false, data: [{ path: ["form"], message: "Error: Server Error" }] };
     }
     return result;
-  } catch (e: any) {
+  } catch (e) {
     console.log(e);
-    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
-      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY') {
+      result = { status: false, data: [{ path: ["name"], message: "Error: Value already exist" }] };
       return result;
     }
   }
-  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  result = { status: false, data: [{ path: ["form"], message: "Error: Unknown Error" }] };
   return result;
 }
 
