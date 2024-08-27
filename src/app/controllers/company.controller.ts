@@ -1,75 +1,46 @@
 'use server'
 import { companySchemaT } from "../models/models";
-import { createCompanyDB, assignUserCompany, createTables, createProcedures, getHostId, createCompanyAndInfoDb, deleteCompanyAndDbInfo, dropDatabase } from "../services/company.service";
+import { createCompanyDB, assignUserCompany, getHostId, createCompanyAndInfoDb, deleteCompanyAndDbInfo, dropDatabase, createTablesAndProc } from "../services/company.service";
 import { getSession } from "../services/session.service";
 import { companySchema } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
-
-// function generateRandomName(compName: string, length: number): string {
-//   let companyName = compName?.replace(/\s/g, "");
-//   const letters = 'abcdefghijklmnopqrstuvwxyz';
-//   let result = '';
-//   for (let i = 0; i < length; i++) {
-//     const randomIndex = Math.floor(Math.random() * letters.length);
-//     result += letters[randomIndex];
-//   }
-
-//   return companyName + result;
-// }
 
 export async function createCompany(data: companySchemaT, userEmail: string) {
   let result
   try {
     const session = await getSession();
     if (session) {
-      const parsed = companySchema.safeParse(data);
+      const parsed = companySchema.safeParse(data);      
       
       if (parsed.success) {
-        // create dbName
-        // let dbName = generateRandomName(data.name, 5)
-
-        // // check if dbName exists in dbInfo table
-        // let dbInfoRes = await checkDbInfo(dbName)
-        
-        // while(dbInfoRes[0].temp > BigInt(0)){
-        //   dbName = generateRandomName(data.name, 5)
-        //   dbInfoRes = await checkDbInfo(dbName)
-        // }
         let dbName = "crmapp"
 
-        const hostDetails = (await getHostId())[0];
+        const hostRes = await getHostId();
+        let hostDetails
+        if(hostRes.status){
+          hostDetails = hostRes.data
+        }
+        else{
+          result = hostRes;
+          return result
+        }
+        
         const companyData = (await createCompanyAndInfoDb(hostDetails.id, dbName, data))
         
         if (companyData[0].length === 0) {
           dbName += companyData[2][0].id
           const dbRes = await createCompanyDB(dbName, hostDetails.host, Number(hostDetails.port));
-          if(!dbRes){
+          if(!dbRes.status){
             const delComp = await deleteCompanyAndDbInfo(companyData[1][0].id, companyData[2][0].id)
-            result = {
-              status: false,
-              data: [{ path: ["form"], message: "Error: Server Error" }],
-            };
+            result = dbRes
             return result;
           }
           
-          const tableRes = await createTables(dbName, hostDetails.host, Number(hostDetails.port))
-          if(!tableRes){
+          const tableAndProcRes = await createTablesAndProc(dbName, hostDetails.host, Number(hostDetails.port))
+          if(!tableAndProcRes){
             const delComp = await deleteCompanyAndDbInfo(companyData[1][0].id, companyData[2][0].id)
             const dropDb = await dropDatabase(dbName)
-            result = {
-              status: false,
-              data: [{ path: ["form"], message: "Error: Server Error" }],
-            };
-            return result
-          }
-          const proceduresRes = await createProcedures(dbName, hostDetails.host, Number(hostDetails.port))
-          if(!proceduresRes){
-            const delComp = await deleteCompanyAndDbInfo(companyData[1][0].id, companyData[2][0].id)
-            const dropDb = await dropDatabase(dbName)
-            result = {
-              status: false,
-              data: [{ path: ["form"], message: "Error: Server Error" }],
-            };
+            result = tableAndProcRes
             return result
           }
          

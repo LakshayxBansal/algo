@@ -1,4 +1,4 @@
-export const dbTableScript = "CREATE TABLE `allocation_type_master` (\
+export const dbTableAndProScript = "CREATE TABLE `allocation_type_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(50) DEFAULT NULL,\
   `stamp` int(11) DEFAULT NULL,\
@@ -540,13 +540,9 @@ CREATE TABLE `userCompany` (\
   `invitedDate` date DEFAULT NULL,\
   `acceptedDate` date DEFAULT NULL,\
   `mappedDate` date DEFAULT NULL\
-);"
-
-
-
-
-
-export const dbProcedures = "CREATE PROCEDURE `createArea`(\
+);~\
+\
+CREATE PROCEDURE `createArea`(\
 	IN name varchar(75),\
     IN email varchar(100)\
     )\
@@ -587,20 +583,6 @@ BEGIN\
     select error, error_path, error_text;\
     select * from area_master am where am.id = last_insert_id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `createCategory`(\
     IN name varchar(60),\
@@ -649,20 +631,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from enquiry_category_master cm where id = last_insert_id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `createContact`(\
 	IN alias varchar(75),\
@@ -846,20 +814,6 @@ BEGIN\
     select * from contact_master cm where cm.id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createCountry`(\
 	IN name varchar(75),\
     IN alias varchar(45),\
@@ -923,20 +877,6 @@ BEGIN\
     select * from country_master cm where cm.id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createDepartment`(\
     IN name varchar(60),\
     IN email varchar(70)\
@@ -984,20 +924,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from department_master cm where id = last_insert_id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `createEnquiry`(\
 	IN enq_number varchar(75),\
@@ -1066,20 +992,6 @@ BEGIN\
     select * from enquiry_header_tran where id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createEnquirySource`(\
     IN name varchar(60),\
     IN email varchar(70)\
@@ -1127,20 +1039,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from enquiry_source_master cm where id = last_insert_id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `createExecutive`(\
 	IN alias varchar(60),\
@@ -1231,20 +1129,6 @@ BEGIN\
     select * from contact_master where id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createExecutiveDept`(\
     IN name varchar(60),\
     IN email varchar(70)\
@@ -1292,20 +1176,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from executive_dept_master cm where id = last_insert_id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `createExecutiveGroup`(\
 	IN name varchar(75),\
@@ -1397,20 +1267,6 @@ BEGIN\
     select * from executive_group_master egm where egm.id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createExecutiveRole`(\
     IN name varchar(60),\
     IN parentId int,\
@@ -1461,20 +1317,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from executive_role_master rm where id = last_insert_id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `createOrganisation`(\
 		IN alias VARCHAR(75),\
@@ -1602,20 +1444,6 @@ BEGIN\
     select * from organisation_master where id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createState`(\
 	IN name varchar(75),\
     IN alias varchar(45),\
@@ -1680,20 +1508,6 @@ BEGIN\
     select * from state_master sm where sm.id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `createUser`(\
 	IN email varchar(100),\
     IN name varchar(60),\
@@ -1755,20 +1569,6 @@ BEGIN\
     select * from user where id = last_insert_id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `updateArea`(\
 	IN name varchar(75),\
     IN id int(11) unsigned)\
@@ -1809,20 +1609,6 @@ BEGIN\
     select error, error_path, error_text;\
     select * from area_master am where am.id = id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `updateCategory`(\
 	IN id int(11) unsigned,\
@@ -1870,20 +1656,6 @@ END if;\
 	select error, error_path, error_text;\
     select * from enquiry_category_master cm where cm.id = id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `updateContact`(\
 	IN id int(11) unsigned,\
@@ -2067,20 +1839,6 @@ BEGIN\
     select * from contact_master cm where cm.id = id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `updateCountry`(\
 	IN name varchar(75),\
     IN id int(11) unsigned,\
@@ -2142,20 +1900,6 @@ BEGIN\
     select * from country_master cm where cm.id = id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `updateDepartment`(\
 	IN id int(11) unsigned,\
     IN name varchar(60),\
@@ -2200,20 +1944,6 @@ BEGIN\
     select * from department_master cm where cm.id = id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `updateEnquirySource`(\
 	IN id int(11) unsigned,\
     IN name varchar(60),\
@@ -2257,20 +1987,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from enquiry_source_master cm where cm.id = id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `updateExecutiveDept`(\
 	IN id int(11) unsigned,\
@@ -2318,20 +2034,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from executive_dept_master cm where cm.id = id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `updateExecutiveGroup`(\
 	IN name varchar(75),\
@@ -2419,20 +2121,6 @@ BEGIN\
     select * from executive_group_master egm where egm.id = id;\
 END ;~\
 \
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 CREATE PROCEDURE `updateExecutiveRole`(\
 	IN id int(11) unsigned,\
     IN name varchar(60),\
@@ -2480,20 +2168,6 @@ BEGIN\
 	select error, error_path, error_text;\
     select * from executive_role_master rm where rm.id = id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `updateOrganisation`(\
 	IN id int(11) unsigned,\
@@ -2616,20 +2290,6 @@ BEGIN\
     select * from temp_error_log;\
     select * from organisation_master om where om.id = id;\
 END ;~\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 CREATE PROCEDURE `updateState`(\
 	IN name varchar(75),\

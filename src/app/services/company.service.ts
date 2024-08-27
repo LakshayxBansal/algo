@@ -1,34 +1,28 @@
 'use server'
 import excuteQuery, {executeQueryPool}  from '../utils/db/db';
 import * as zm from "../models/models";
-import { dbProcedures, dbTableScript } from '../utils/tableScript';
+import { dbTableAndProScript } from '../utils/tableScript';
 
 export async function getHostId() {
+  let result
   try {
-    const result = await excuteQuery({
+    const data = await excuteQuery({
       host: 'userDb',
       query: 'select * from dbHost d where d.useForNextDb = 1;', 
       values: [],
     });
-    return result
+    result = {
+      status: true,
+      data: data[0]
+    }
   } catch (e) {
-    return e
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    }
   }
+  return result
 }
-
-// export async function checkDbInfo(dbName: string) {
-//   try {
-//     const result = await excuteQuery({
-//       host: 'userDb',
-//       query: 'select count(*) as temp from dbInfo d where d.name = ?;', 
-//       values: [dbName],
-//     });
-//     return result;
-//   } catch (e) {
-//     return e
-//   }
-//   return null;
-// }
 
 /**
  * creates a database for the company name specified. 
@@ -39,28 +33,36 @@ export async function getHostId() {
  * 
 */
 export async function createCompanyDB(dbName: string, host: string, port: number) {
+  let result
   try {
-    const result = await executeQueryPool({
+    const data = await executeQueryPool({
       dbName: 'userDb',
       host: host,
       port: port,
       query: 'create database ' + dbName,
       values: [dbName],
     });
-    return result
+    result = {
+      status: true,
+      data: data[0]
+    }
   } catch (e) {
-    console.log(e);
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    }
   }
-  return null;
+  return result;
 }
 
-export async function createTables(dbName: string, host: string, port: number) {
+export async function createTablesAndProc(dbName: string, host: string, port: number) {
+  let result
   try {
-    const scripts : string[] = dbTableScript.split('~')  
-    let result
+    const scripts : string[] = dbTableAndProScript.split('~')  
+    let data
     for(let idx in scripts){
       let query = scripts[idx]
-      result += await executeQueryPool({
+      data += await executeQueryPool({
         dbName: dbName,
         host: host,
         port: port,
@@ -68,34 +70,60 @@ export async function createTables(dbName: string, host: string, port: number) {
         values: [],
       });
     }
-    return result
+    result = {
+      status: true,
+      data: data
+    }
   } catch (e) {
-    console.log(e);
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    }
   }
-  return null;
+  return result;
 }
+// export async function createTables(dbName: string, host: string, port: number) {
+//   try {
+//     const scripts : string[] = dbTableScript.split('~')  
+//     let result
+//     for(let idx in scripts){
+//       let query = scripts[idx]
+//       result += await executeQueryPool({
+//         dbName: dbName,
+//         host: host,
+//         port: port,
+//         query: query,
+//         values: [],
+//       });
+//     }
+//     return result
+//   } catch (e) {
+//     console.log(e);
+//   }
+//   return null;
+// }
 
-export async function createProcedures(dbName: string, host: string, port: number) {
-  try {
-    const scripts : string[] = dbProcedures.split('~')  
-    let result
-    for(let idx in scripts){
-      let query = scripts[idx]
+// export async function createProcedures(dbName: string, host: string, port: number) {
+//   try {
+//     const scripts : string[] = dbProcedures.split('~')  
+//     let result
+//     for(let idx in scripts){
+//       let query = scripts[idx]
       
-      result += await executeQueryPool({
-        dbName: dbName,
-        host: host,
-        port: port,
-        query: query,
-        values: [],
-      });
-    }
-    return result
-  } catch (e) {
-    console.log(e);
-  }
-  return null;
-}
+//       result += await executeQueryPool({
+//         dbName: dbName,
+//         host: host,
+//         port: port,
+//         query: query,
+//         values: [],
+//       });
+//     }
+//     return result
+//   } catch (e) {
+//     console.log(e);
+//   }
+//   return null;
+// }
 
 
 /**
