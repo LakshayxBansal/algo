@@ -81,7 +81,7 @@ export async function updateContactGroupDb(
  * @param id id to search in contact_master
  * @returns
  */
-export async function getContactGroupDetailsById(crmDb: string, id: string) {
+export async function getContactGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

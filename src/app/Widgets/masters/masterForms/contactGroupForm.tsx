@@ -9,7 +9,11 @@ import {
 } from "../../../controllers/contactGroup.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import { getContactGroup } from "@/app/controllers/contactGroup.controller";
-import { contactGroupSchemaT, selectKeyValueT } from "@/app/models/models";
+import {
+  contactGroupSchemaT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
@@ -36,10 +40,12 @@ export default function ContactGroupForm(props: masterFormPropsT) {
     formData = updateFormData(data);
     const result = await persistEntity(data as contactGroupSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+      };
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
-      setFormError({});
       setSnackOpen(true);
     } else {
       // console.log(result);
@@ -50,7 +56,9 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path] = { msg: issue.message, error: true };
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
       }
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
@@ -58,15 +66,20 @@ export default function ContactGroupForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent ? selectValues.parent.id : 0;
+    data.parent_id = selectValues.parent
+      ? selectValues.parent.id
+      : entityData.parent_id
+      ? entityData.parent_id
+      : 0;
 
     return data;
   };
 
   async function persistEntity(data: contactGroupSchemaT) {
     let result;
+    console.log(props.data);
 
-    if (entityData?.id) {
+    if (props.data) {
       data["id"] = entityData.id;
       result = await updateContactGroup(data);
     } else {
@@ -119,6 +132,12 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               label={"Parent Group"}
               width={210}
               dialogTitle={"Add Parent Group"}
+              defaultValue={
+                {
+                  id: entityData.parent_id,
+                  name: entityData.parent,
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, parent: val })
               }

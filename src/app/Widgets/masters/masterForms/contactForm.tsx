@@ -1,9 +1,12 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { getOrganisation } from "@/app/controllers/organisation.controller";
+import {
+  getOrganisation,
+  getOrganisationById,
+} from "@/app/controllers/organisation.controller";
 import { getDepartment } from "@/app/controllers/department.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
@@ -21,7 +24,11 @@ import AreaForm from "./areaForm";
 import { getArea } from "@/app/controllers/area.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { contactSchemaT, selectKeyValueT } from "@/app/models/models";
+import {
+  contactSchemaT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
 import { getCountries, getStates } from "@/app/controllers/masters.controller";
@@ -40,39 +47,26 @@ export default function ContactForm(props: masterFormPropsT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
-  // useEffect(() => {
-  //   if (props.id) {
-  //     const fetchData = async (id: string) => {
-  //       console.log(id);
-  //       const data = await getContactById(id);
-  //       if (data) {
-  //         setentityData(data[0]);
-  //       }
-  //       console.log(data);
-  //     }
-  //     fetchData(props.id);
-
-  //   }
-  // }, [props.id]);
-
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-
     formData = updateFormData(data);
 
     const result = await persistEntity(data as contactSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
-      setFormError({});
       setSnackOpen(true);
+      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
+      setFormError({});
     } else {
       const issues = result.data;
+      // console.log(issues);
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
@@ -107,16 +101,18 @@ export default function ContactForm(props: masterFormPropsT) {
 
   async function persistEntity(data: contactSchemaT) {
     let result;
-    if (entityData) {
-      data["id"] = entityData.id;
+    if (props.data) {
+      Object.assign(data, { id: props.data.id });
       result = await updateContact(data);
-    } else result = await createContact(data);
+    } else {
+      result = await createContact(data);
+    }
     return result;
   }
 
   return (
     <>
-      <Seperator>{entityData ? "Update Contact" : "Add Contact"}</Seperator>
+      <Seperator>{props.data ? "Update Contact" : "Add Contact"}</Seperator>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
@@ -167,7 +163,12 @@ export default function ContactForm(props: masterFormPropsT) {
               dialogTitle={"Group"}
               fetchDataFn={getContactGroup}
               fnFetchDataByID={getContactGroupById}
-              defaultValue={entityData.contactGroup}
+              defaultValue={
+                {
+                  id: entityData.contactGroup_id,
+                  name: entityData.contactGroup,
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, contactGroup: val })
               }
@@ -186,7 +187,12 @@ export default function ContactForm(props: masterFormPropsT) {
               width={210}
               dialogTitle={"Area"}
               fetchDataFn={getArea}
-              defaultValue={entityData.area}
+              defaultValue={
+                {
+                  id: entityData.area_id,
+                  name: entityData.area,
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, area: val })
               }
@@ -208,7 +214,13 @@ export default function ContactForm(props: masterFormPropsT) {
               }
               dialogTitle={"Organisation"}
               fetchDataFn={getOrganisation}
-              defaultValue={entityData.organisation}
+              fnFetchDataByID={getOrganisationById}
+              defaultValue={
+                {
+                  id: entityData.organisation_id,
+                  name: entityData.organisation,
+                } as optionsDataT
+              }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <OrganisationForm
                   setDialogOpen={fnDialogOpen}
@@ -223,7 +235,12 @@ export default function ContactForm(props: masterFormPropsT) {
               label={"Department"}
               width={210}
               dialogTitle={"Department"}
-              defaultValue={entityData.department}
+              defaultValue={
+                {
+                  id: entityData.department_id,
+                  name: entityData.department,
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, department: val })
               }
@@ -350,7 +367,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 setSelectValues({ ...selectValues, country: val })
               }
               fetchDataFn={getCountries}
-              defaultValue={entityData.country}
+              defaultValue={
+                {
+                  id: entityData.country_id,
+                  name: entityData.country,
+                } as optionsDataT
+              }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <CountryForm
                   setDialogOpen={fnDialogOpen}
@@ -371,12 +393,18 @@ export default function ContactForm(props: masterFormPropsT) {
               fetchDataFn={(stateStr: string) =>
                 getStates(stateStr, selectValues.country?.name)
               }
-              defaultValue={entityData.state}
+              defaultValue={
+                {
+                  id: entityData.state_id,
+                  name: entityData.state,
+                } as optionsDataT
+              }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
+                  parentData={selectValues.country?.id}
                 />
               )}
             />
@@ -409,7 +437,7 @@ export default function ContactForm(props: masterFormPropsT) {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={3000}
+          autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}

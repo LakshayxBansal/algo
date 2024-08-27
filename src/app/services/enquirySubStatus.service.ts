@@ -33,7 +33,7 @@ export async function getEnquirySubStatusList(
 
 export async function getEnquirySubStatusDetailsById(
   crmDb: string,
-  id: string
+  id: number
 ) {
   try {
     const result = await excuteQuery({

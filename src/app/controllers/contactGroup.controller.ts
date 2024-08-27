@@ -38,18 +38,20 @@ export async function createContactGroup(data: contactGroupSchemaT) {
         // console.log(dbResult);
 
         // if (dbResult.length > 0 && dbResult[0][0].error === 0) {
-        if (dbResult[0].length === 0) {
+        if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
-
           dbResult[0].forEach((error: any) => {
             errorState.push({
-              path: error.error_path,
+              path: [error.error_path],
               message: error.error_text,
             });
           });
-          result = { status: false, data: errorState };
+          result = {
+            status: false,
+            data: errorState,
+          };
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -98,18 +100,20 @@ export async function updateContactGroup(data: contactGroupSchemaT) {
         // console.log(dbResult);
 
         // if (dbResult.length > 0 && dbResult[0][0].error === 0) {
-        if (dbResult[0].length === 0) {
+        if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
-
           dbResult[0].forEach((error: any) => {
             errorState.push({
-              path: error.error_path,
+              path: [error.error_path],
               message: error.error_text,
             });
           });
-          result = { status: false, data: errorState };
+          result = {
+            status: false,
+            data: errorState,
+          };
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -142,13 +146,12 @@ export async function updateContactGroup(data: contactGroupSchemaT) {
   };
   return result;
 }
-
 /**
  *
  * @param Id id of the contact to be searched
  * @returns
  */
-export async function getContactGroupById(id: string) {
+export async function getContactGroupById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

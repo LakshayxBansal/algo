@@ -9,9 +9,7 @@ import {
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
-import { SqlError } from "mariadb";
 import { getBizAppUserList } from "../services/user.service";
-import { logger } from "../utils/logger.utils";
 
 const inviteSring = "Send Invite...";
 
@@ -22,9 +20,11 @@ export async function createExecutive(data: executiveSchemaT) {
     if (session) {
       let inviteResult = false;
       let crm_map_id = 0;
+      console.log("data:" + data);
 
       const parsed = zs.executiveSchema.safeParse(data);
       console.log(parsed);
+      // console.log(parsed.error.issues);
 
       if (parsed.success) {
         // check if invite needs to be sent
@@ -47,19 +47,21 @@ export async function createExecutive(data: executiveSchemaT) {
           );
           console.log("DbResult", dbResult);
 
-          if (dbResult[0].length === 0) {
+          if (dbResult.length > 0 && dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =
               [];
-
             dbResult[0].forEach((error: any) => {
               errorState.push({
-                path: error.error_path,
+                path: [error.error_path],
                 message: error.error_text,
               });
             });
-            result = { status: false, data: errorState };
+            result = {
+              status: false,
+              data: errorState,
+            };
           }
         } else {
           result = {
@@ -93,30 +95,19 @@ export async function createExecutive(data: executiveSchemaT) {
   };
   return result;
 }
+
 export async function updateExecutive(data: executiveSchemaT) {
   let result;
   try {
     const session = await getSession();
     if (session) {
-      // data.dob = new Date(data.dob);
-      // console.log(data);
-      // const placeholderDate = new Date("1500-01-01");
-      // const dob = new Date(data.dob);
-      // const date = data.dob == "" ? placeholderDate : dob;
-      // data.dob = date;
-
-      // data.doa = data.doa == "" ? placeholderDate : data.doa;
-      // data.doj = data.doj == "" ? placeholderDate : data.doj;
-
-      // let data: { [key: string]: any } = {}; // Initialize an empty object
       let inviteResult = false;
       let crm_map_id = 0;
-      // for (const [key, value] of formData.entries()) {
-      //   data[key] = value;
-      // }
+      console.log("data:" + data);
 
       const parsed = zs.executiveSchema.safeParse(data);
-      // console.log(parsed);
+      console.log(parsed);
+      // console.log(parsed.error.issues);
 
       if (parsed.success) {
         // check if invite needs to be sent
@@ -130,6 +121,8 @@ export async function updateExecutive(data: executiveSchemaT) {
           );
           data.crm_map_id = crm_map_id;
         }
+        console.log("inviteResult", inviteResult);
+        console.log("CRM", crm_map_id);
         if (inviteResult || crm_map_id) {
           const dbResult = await updateExecutiveDB(
             session,
@@ -137,22 +130,21 @@ export async function updateExecutive(data: executiveSchemaT) {
           );
           console.log("DbResult", dbResult);
 
-          if (dbResult[0].length === 0) {
+          if (dbResult.length > 0 && dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =
               [];
-
             dbResult[0].forEach((error: any) => {
               errorState.push({
-                path: error.error_path,
+                path: [error.error_path],
                 message: error.error_text,
               });
             });
-            result = { status: false, data: errorState };
-            // console.log(result);
-
-            return result;
+            result = {
+              status: false,
+              data: errorState,
+            };
           }
         } else {
           result = {
@@ -161,7 +153,16 @@ export async function updateExecutive(data: executiveSchemaT) {
           };
         }
       } else {
-        result = { status: false, data: parsed.error.issues };
+        console.log(parsed.error.issues);
+
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({
+            path: issue.path,
+            message: issue.message,
+          });
+        }
+        result = { status: false, data: errorState };
       }
     } else {
       result = {
@@ -218,7 +219,7 @@ async function getCrmUserId(crmDb: string, user: string) {
   return 0;
 }
 
-export async function getExecutiveById(id: string) {
+export async function getExecutiveById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

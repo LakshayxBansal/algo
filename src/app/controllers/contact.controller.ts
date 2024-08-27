@@ -1,6 +1,6 @@
 "use server";
 
-import * as zs from "../zodschema/zodschema";
+import { contactSchema } from "../zodschema/zodschema";
 import { contactSchemaT } from "../models/models";
 import { createContactDB, updateContactDB } from "../services/contact.service";
 import { getSession } from "../services/session.service";
@@ -15,20 +15,22 @@ export async function createContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      const parsed = zs.contactSchema.safeParse(data);
+      const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+        if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
           result = {
             status: false,
-            data: [
-              {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
-              },
-            ],
+            data: errorState,
           };
         }
       } else {
@@ -68,20 +70,22 @@ export async function updateContact(data: contactSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      const parsed = zs.contactSchema.safeParse(data);
+      const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+        if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
           result = {
             status: false,
-            data: [
-              {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
-              },
-            ],
+            data: errorState,
           };
         }
       } else {
@@ -137,7 +141,7 @@ export async function getContact(searchString: string) {
  * @param Id id of the contact to be searched
  * @returns
  */
-export async function getContactById(id: string) {
+export async function getContactById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

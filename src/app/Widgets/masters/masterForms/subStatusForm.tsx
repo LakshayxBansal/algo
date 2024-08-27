@@ -124,6 +124,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
               label="Sub-Status Name"
               inputType={InputType.TEXT}
               name="name"
+              defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
             />

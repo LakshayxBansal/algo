@@ -14,21 +14,18 @@ import Seperator from "@/app/Widgets/seperator";
 import { InputControl } from "@/app/Widgets/input/InputControl";
 import { InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { getEnquirySource } from "@/app/controllers/enquirySource.controller";
-import { getContact } from "@/app/controllers/contact.controller";
 import {
-  getExecutive,
-  getExecutiveById,
-} from "@/app/controllers/executive.controller";
-import { getEnquiryCategory } from "@/app/controllers/enquiryCategory.controller";
+  getEnquirySource,
+  getEnquirySourceById,
+} from "@/app/controllers/enquirySource.controller";
 import {
-  getEnquirySubSatusById,
-  getEnquirySubStatus,
-} from "@/app/controllers/enquirySubStatus.controller";
+  getContact,
+  getContactById,
+} from "@/app/controllers/contact.controller";
 import {
-  getActionById,
-  getEnquiryAction,
-} from "@/app/controllers/enquiryAction.controller";
+  getCategoryById,
+  getEnquiryCategory,
+} from "@/app/controllers/enquiryCategory.controller";
 import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
@@ -37,7 +34,19 @@ import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
-import { getContactById } from "@/app/controllers/contact.controller";
+
+import {
+  getExecutive,
+  getExecutiveById,
+} from "@/app/controllers/executive.controller";
+import {
+  getEnquirySubSatusById,
+  getEnquirySubStatus,
+} from "@/app/controllers/enquirySubStatus.controller";
+import {
+  getActionById,
+  getEnquiryAction,
+} from "@/app/controllers/enquiryAction.controller";
 
 import dayjs from "dayjs";
 import {
@@ -119,7 +128,7 @@ export default function InputForm(props: { baseData: IformData }) {
     };
 
     const headerParsed = enquiryHeaderSchema.safeParse(headerData);
-    const ledgerParsed = enquiryHeaderSchema.safeParse(headerData);
+    const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
       result = await createEnquiry({ head: headerData, ledger: ledgerData });
@@ -250,6 +259,7 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Category"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
               fetchDataFn={getEnquiryCategory}
+              fnFetchDataByID={getCategoryById}
               required
               formError={formError?.category ?? formError.category}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -267,6 +277,7 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Source"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
               fetchDataFn={getEnquirySource}
+              fnFetchDataByID={getEnquirySourceById}
               required
               formError={formError?.source ?? formError.source}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (

@@ -151,6 +151,11 @@ export const contactSchema = z
     { message: "please provide email, or phone no", path: ["mobile", "email"] }
   );
 
+export const areaSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().max(60),
+});
+
 export const executiveSchema = z
   .object({
     id: z.number().optional(),
@@ -179,19 +184,19 @@ export const executiveSchema = z
     modified_by: z.number().optional(),
     modified_on: z.union([z.literal(""), z.date().optional()]),
     stamp: z.number().optional(),
-    // dob: z.union([z.literal(""), z.string().datetime()]),
-    // doj: z.union([z.literal(""), z.string().datetime()]),
-    // doa: z.union([z.literal(""), z.string().datetime()]),
+    // dob: z.union([z.literal(""), z.string(),z.date()]).optional(),
+    // doj: z.union([z.literal(""), z.string().datetime()]).optional(),
+    // doa: z.union([z.literal(""), z.string().datetime()]).optional(),
     // dob: z
     //   .string()
     //   .or(z.date())
     //   .transform((arg) => new Date(arg)),
-    dob: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
-    doj: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
-    doa: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
-    // dob: z.union([z.literal(""), z.date().optional()]),
-    // doa: z.union([z.literal(""), z.date().optional()]),
-    // doj: z.union([z.literal(""), z.date().optional()]),
+    // dob: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
+    // doj: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
+    // doa: z.union([z.literal(""), z.string().pipe(z.coerce.date())]),
+    dob: z.union([z.literal(""), z.date().optional()]),
+    doa: z.union([z.literal(""), z.date().optional()]),
+    doj: z.union([z.literal(""), z.date().optional()]),
 
     // dob: z.string().optional(),
     // doa: z.string().optional(),
@@ -204,7 +209,7 @@ export const executiveSchema = z
     crm_user_id: z.number().optional(),
     crm_map_id: z.number().optional(),
     role_id: z.number().optional(),
-    role: z.string().min(1, "Select role").max(45),
+    role: z.string().min(1, "Select role").max(45).optional(),
     executive_dept_id: z.number().optional(),
     executive_dept: z.string().max(75).optional(),
     executive_group_id: z.number().optional(),
@@ -227,7 +232,6 @@ export const executiveSchema = z
     },
     { message: "Please provide crm user", path: ["crm_user"] }
   );
-
 /**
  * validate enquiry header schema
  */
@@ -311,11 +315,12 @@ export const executiveRoleSchema = z.object({
   name: z.string().min(1).max(60),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
-  parent: z.string().max(60).optional(),
+  parentRole: z.string().max(60).optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.number().optional(),
+  department_id: z.number().optional(),
 });
 
 /**
@@ -354,6 +359,19 @@ export const executiveDeptSchema = z.object({
 export const optionsData = z.object({
   id: z.number(),
   name: z.string(),
+});
+
+export const countrySchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().min(1).max(45),
+});
+
+export const stateSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().min(1).max(45),
+  country_id: z.number(),
 });
 
 /**
@@ -410,6 +428,7 @@ export const enquirySubStatusMaster = z.object({
 /**
  * used for storing simple name master
  */
+
 export const nameMasterData = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(45),

@@ -30,7 +30,7 @@ export async function getEnquirySubStatus(
   }
 }
 
-export async function getEnquirySubSatusById(id: string) {
+export async function getEnquirySubSatusById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

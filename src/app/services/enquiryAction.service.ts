@@ -50,7 +50,7 @@ export async function createEnquiryActionDb(
   return null;
 }
 
-export async function getActionDetailsById(crmDb: string, id: string) {
+export async function getActionDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

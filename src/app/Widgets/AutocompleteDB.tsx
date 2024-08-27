@@ -13,6 +13,7 @@ import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
+import {optionsDataT} from '@/app/models/models';
 
 type OnChangeFunction = (
   event: any,
@@ -32,21 +33,20 @@ type autocompleteDBT = {
   labelOptions?: SelectOptionsFunction;
   highlightOptions?: SelectOptionsFunction;
   width?: number;
-  diaglogVal?: any;
-  setDialogVal?: Dispatch<SetStateAction<any>>;
+  diaglogVal: optionsDataT;
+  setDialogVal: Dispatch<SetStateAction<optionsDataT>>;
   formError?: formErrorT;
   required?: boolean;
-  defaultValue?: string;
+  defaultValue?: optionsDataT;
   notEmpty?: boolean;
   fnSetModifyMode: (id: string)=> void,
-  //children: React.FunctionComponentElement
+  disable? : boolean
+  //children: React.FunctionComponentElements
 };
 
-export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
-  const [inputValue, setInputValue] = useState(
-    props.defaultValue ? props.defaultValue : null
-  );
-  const [options, setOptions] = useState<CustomT[]>([]);
+export function AutocompleteDB(props: autocompleteDBT) {
+  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [options, setOptions] = useState<optionsDataT[]>([]);
   const width = props.width ? props.width : 300;
   const [valueChange, setvalueChange] = useState(true);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
@@ -56,29 +56,27 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  let [diaglogValue, setDialogValue] = useState<CustomT>({} as CustomT);
-
-  if (props.diaglogVal && props.setDialogVal) {
-    diaglogValue = props.diaglogVal;
-    setDialogValue = props.setDialogVal;
-  }
-
   useEffect(() => {
     const getData = debounce(async (input) => {
-      const results = (await props.fetchDataFn(input)) as CustomT[];
-      setOptions([] as CustomT[]);
+      const results = (await props.fetchDataFn(input)) as optionsDataT[];
+      setOptions([] as optionsDataT[]);
       setLoading(false);
       if (results) {
-        if ((autoSelect && inputValue === "") || (selectDefault && results.length === 1)) {
-          setDialogValue(results[0]);
+        if (autoSelect && inputValue === "" ) {
+          props.setDialogVal(results[0]);
         }
         setOptions(results);
-        setSelectDefault(false);
+        
       }
     }, 400);
     if (valueChange || autoSelect) {
-      setLoading(true)
-      getData(inputValue);
+      if(selectDefault) { 
+        props.setDialogVal(props.defaultValue as optionsDataT)
+        setSelectDefault(false)
+      } else {
+        setLoading(true)
+        getData(inputValue);
+      }
     }
   }, [inputValue, autoSelect, open]);
 
@@ -92,35 +90,27 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
     return "";
   }
 
-  function onHighlightChange(
-    event: SyntheticEvent,
-    option: any,
-    reason: string
-  ) {
+  function onHighlightChange(event: SyntheticEvent, option: optionsDataT | null, reason: string) {
     const text = document.getElementById(
       "popper_textid_temp_5276"
     ) as HTMLInputElement;
 
     if (text && option) {
-      text.value = getOptions(option, props.highlightOptions);
+      text.value = option.detail ?? option.name;
     }
   }
 
   return (
     <Autocomplete
       id={props.id}
+      disabled={props.disable ? props.disable : false}
       options={options}
       loading={loading}
-      getOptionLabel={(option) => {
-        return typeof option === "string"
-          ? option
-          : getOptions(option, props.labelOptions);
-      }}
+      getOptionLabel={(option) => option.name ?? ""}
       renderOption={(p, option) => {
         const { ["key"]: _, ...newP } = p;
-        return <li key={p.key} {...newP}>{getOptions(option, props.renderOptions)}</li>;
+        return <li key={p.key} {...newP}>{option.name}</li>;
         //return <li>{getOptions(option, props.renderOptions)}</li>;
-
       }}
       sx={{ width: { width } }}
       renderInput={(params) => {
@@ -137,7 +127,7 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
         );
       }}
       onHighlightChange={onHighlightChange}
-      value={diaglogValue}
+      value={props.diaglogVal}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       PopperComponent={(props) => (
         <Popper {...props}>
@@ -164,9 +154,9 @@ export function AutocompleteDB<CustomT>(props: autocompleteDBT) {
       }}
       onChange={(event: any, newValue, reason) => {
         if (reason != "blur") {
-          setDialogValue(newValue ? (newValue as CustomT) : ({} as CustomT));
+          props.setDialogVal(newValue ? (newValue as optionsDataT) : ({} as optionsDataT));
           props.onChange
-            ? props.onChange(event, newValue, setDialogValue)
+            ? props.onChange(event, newValue, props.setDialogVal)
             : null;
         }
       }}

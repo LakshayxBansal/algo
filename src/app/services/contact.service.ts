@@ -53,7 +53,7 @@ export async function updateContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -77,7 +77,7 @@ export async function updateContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
-        // session.user.email,
+        session.user.email,
       ],
     });
   } catch (e) {
@@ -94,7 +94,8 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from contact_master";
+    let query =
+      'select id as id, name as name, concat("Email - ", email, "; Alias - ", alias, "; Phone - ", mobile, "; PAN - ", pan) as detail from contact_master';
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -106,7 +107,6 @@ export async function getContactList(crmDb: string, searchString: string) {
       query: query,
       values: values,
     });
-
     return result;
   } catch (e) {
     console.log(e);
@@ -119,7 +119,7 @@ export async function getContactList(crmDb: string, searchString: string) {
  * @param id id to search in contact_master
  * @returns
  */
-export async function getContactDetailsById(crmDb: string, id: string) {
+export async function getContactDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

@@ -8,18 +8,30 @@ export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
+export type areaSchemaT = z.infer<typeof zs.areaSchema>;
 
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
-export type optionsDataT = z.infer<typeof zs.optionsData>;
+export type optionsDataT = {
+  id: number;
+  name: string;
+  detail?: string;
+};
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
-// export type modifyEntityDlgT = z.infer<typeof zs.modifyEntityDlg>;
+export type countrySchemaT = z.infer<typeof zs.countrySchema>;
 
-// export type deleteEntityDlgT = z.infer<typeof zs.deleteEntityDlg>;
+export type stateSchemaT = z.infer<typeof zs.stateSchema>;
 
 export type formErrorT = { msg: string; error: boolean };
+
+export type RenderFormFunctionT = (
+  fnDialogOpen: (props: any) => void,
+  fnDialogValue: (props: any) => void,
+  data?: any,
+  parentData?: any
+) => JSX.Element;
 
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
@@ -27,6 +39,18 @@ export type masterFormPropsT = {
   data?: any;
 };
 
+export type masterFormPropsWithParentT = masterFormPropsT & {
+  parentData?: number;
+};
+
+// export type masterFormPropsWithParentT = {
+//     setDialogOpen?: (props: any) => void,
+//     setDialogValue?: (props: any) => void,
+//     data?: any
+//     parentData?: number
+// }
+
+// // Added parentData property of type number
 export type masterFormPropsWithDataT = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;

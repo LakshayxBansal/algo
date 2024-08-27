@@ -22,7 +22,7 @@ export async function getEnquiryAction(searchString: string) {
   }
 }
 
-export async function getActionById(id: string) {
+export async function getActionById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
