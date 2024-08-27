@@ -63,8 +63,10 @@ export default function EntityList(props: ModifyT) {
 
       setNRows(rows.count as number);
     }
+    if(!dialogOpen){
     fetchData();
-  }, [PageModel, filterModel, searchText]);
+    }
+  }, [PageModel, filterModel, searchText, dialogOpen]);
 
   const columns: GridColDef[] = props.customCols.concat([
     {

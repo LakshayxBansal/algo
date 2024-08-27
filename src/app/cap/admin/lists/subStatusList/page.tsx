@@ -8,7 +8,7 @@ import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
 import { getEnquirySubStatus1, getEnquirySubStatusById } from '@/app/controllers/enquirySubStatus.controller';
 
 
-export default function organisation() {
+export default function subStatus() {
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
