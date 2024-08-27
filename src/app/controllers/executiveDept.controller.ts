@@ -141,7 +141,7 @@ export async function updateExecutiveDept(data: executiveDeptSchemaT) {
   return result;
 }
 
-export async function getDeptById(id: string) {
+export async function getDeptById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

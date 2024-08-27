@@ -18,7 +18,7 @@ export async function getExecutiveGroup(searchString: string) {
   }
 }
 
-export async function getExecutiveGroupById(id : string) {
+export async function getExecutiveGroupById(id : number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

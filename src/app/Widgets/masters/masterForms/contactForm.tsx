@@ -7,10 +7,6 @@ import {
   getOrganisation,
   getOrganisationById,
 } from "@/app/controllers/organisation.controller";
-import {
-  getOrganisation,
-  getOrganisationById,
-} from "@/app/controllers/organisation.controller";
 import { getDepartment, getDepartmentById } from "@/app/controllers/department.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";

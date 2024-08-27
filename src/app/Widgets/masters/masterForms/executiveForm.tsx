@@ -68,8 +68,12 @@ export default function ExecutiveForm(props: {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-
+    console.log(data)
+    data["dob"] = data['dob']!=''?new Date(data["dob"]):''
+    
     const parsed = executiveSchema.safeParse(data);
+    if(!parsed.success) console.log(parsed.error.issues);
+    
     let result;
     let issues;
 

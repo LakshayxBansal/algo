@@ -66,7 +66,7 @@ export async function updateExecutiveDeptDb(
   return null;
 }
 
-export async function getDeptDetailsById(crmDb: string, id: string) {
+export async function getDeptDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

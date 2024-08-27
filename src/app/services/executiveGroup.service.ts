@@ -28,7 +28,7 @@ export async function getExecutiveGroupList(crmDb: string, searchString: string)
   }
 }
 
-export async function getExecutiveGroupByIDList(crmDb : string, id : string){
+export async function getExecutiveGroupByIDList(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,

@@ -16,7 +16,7 @@ export async function createExecutive(formData: FormData){
   try {
     const session = await getSession();
     if(session){
-
+      
       let data: { [key: string]: any } = {}; // Initialize an empty object
       let inviteResult = false;
       let crm_map_id = 0;
@@ -25,6 +25,8 @@ export async function createExecutive(formData: FormData){
       }
 
       const parsed = zs.executiveSchema.safeParse(data);
+      console.log(parsed);
+      
       if(parsed.success) {
         // check if invite needs to be sent
         if (data.crm_user === inviteSring) {

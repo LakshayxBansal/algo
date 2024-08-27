@@ -21,24 +21,24 @@ export default function CreateCompany(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [loading, setLoading] = useState(false)
 
-  // submit function. Save to DB and set value to the dropdown control
+  
   const handleSubmit = async (formData: FormData) => {
-    setLoading(true)
+    setLoading((prev) => !prev);
+    
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    formData = updateFormData(data);
+    formData = updateFormData(data);    
 
-
-    const result = await createCompany(data as companySchemaT, props.data.email);
+    const result = await createCompany(data as companySchemaT, props.data);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
@@ -56,7 +56,7 @@ export default function CreateCompany(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
-    setLoading(false)
+    setLoading((prev) => !prev);
   };
 
   const handleCancel = () => {
@@ -155,7 +155,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               fullWidth
             />
 
-<InputControl
+            <InputControl
               inputType={InputType.TEXT}
               name="city"
               id="city"
@@ -222,8 +222,8 @@ export default function CreateCompany(props: masterFormPropsT) {
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained" disabled={loading}>
-              Submit
+            <Button type="submit" variant="contained" disabled={loading} sx={{":disabled": {opacity: '80%'}}}>
+              {loading ? "Creating..." : "Create"}
             </Button>
           </Box>
         </form>

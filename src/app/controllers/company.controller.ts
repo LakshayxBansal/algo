@@ -1,22 +1,21 @@
 'use server'
 import { companySchemaT } from "../models/models";
-import { createCompanyDB, assignUserCompany, checkDbInfo, updateCompanyInfo, createTables, createProcedures, getHostId, createCompanyAndInfoDb } from "../services/company.service";
+import { createCompanyDB, assignUserCompany, createTables, createProcedures, getHostId, createCompanyAndInfoDb, deleteCompanyAndDbInfo, dropDatabase } from "../services/company.service";
 import { getSession } from "../services/session.service";
-import { logger } from "../utils/logger.utils";
 import { companySchema } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
 
-function generateRandomName(compName: string, length: number): string {
-  let companyName = compName?.replace(/\s/g, "");
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * letters.length);
-    result += letters[randomIndex];
-  }
+// function generateRandomName(compName: string, length: number): string {
+//   let companyName = compName?.replace(/\s/g, "");
+//   const letters = 'abcdefghijklmnopqrstuvwxyz';
+//   let result = '';
+//   for (let i = 0; i < length; i++) {
+//     const randomIndex = Math.floor(Math.random() * letters.length);
+//     result += letters[randomIndex];
+//   }
 
-  return companyName + result;
-}
+//   return companyName + result;
+// }
 
 export async function createCompany(data: companySchemaT, userEmail: string) {
   let result
@@ -27,36 +26,57 @@ export async function createCompany(data: companySchemaT, userEmail: string) {
       
       if (parsed.success) {
         // create dbName
-        let dbName = generateRandomName(data.name, 5)
+        // let dbName = generateRandomName(data.name, 5)
 
-        // check if dbName exists in dbInfo table
-        let dbInfoRes = await checkDbInfo(dbName)
+        // // check if dbName exists in dbInfo table
+        // let dbInfoRes = await checkDbInfo(dbName)
         
-        while(dbInfoRes[0].temp > BigInt(0)){
-          dbName = generateRandomName(data.name, 5)
-          dbInfoRes = await checkDbInfo(dbName)
-        }
+        // while(dbInfoRes[0].temp > BigInt(0)){
+        //   dbName = generateRandomName(data.name, 5)
+        //   dbInfoRes = await checkDbInfo(dbName)
+        // }
+        let dbName = "crmapp"
 
         const hostDetails = (await getHostId())[0];
         const companyData = (await createCompanyAndInfoDb(hostDetails.id, dbName, data))
         
         if (companyData[0].length === 0) {
-          // create dbInfo with hostId
+          dbName += companyData[2][0].id
           const dbRes = await createCompanyDB(dbName, hostDetails.host, Number(hostDetails.port));
-
-          // update company with dbID
+          if(!dbRes){
+            const delComp = await deleteCompanyAndDbInfo(companyData[1][0].id, companyData[2][0].id)
+            result = {
+              status: false,
+              data: [{ path: ["form"], message: "Error: Server Error" }],
+            };
+            return result;
+          }
           
-          const updCompany = await updateCompanyInfo(companyData[2][0].id, companyData[1][0].id);          
-          
-          const tableRes = await createTables(companyData[2][0].name)
-          const proceduresRes = await createProcedures(companyData[2][0].name)
+          const tableRes = await createTables(dbName, hostDetails.host, Number(hostDetails.port))
+          if(!tableRes){
+            const delComp = await deleteCompanyAndDbInfo(companyData[1][0].id, companyData[2][0].id)
+            const dropDb = await dropDatabase(dbName)
+            result = {
+              status: false,
+              data: [{ path: ["form"], message: "Error: Server Error" }],
+            };
+            return result
+          }
+          const proceduresRes = await createProcedures(dbName, hostDetails.host, Number(hostDetails.port))
+          if(!proceduresRes){
+            const delComp = await deleteCompanyAndDbInfo(companyData[1][0].id, companyData[2][0].id)
+            const dropDb = await dropDatabase(dbName)
+            result = {
+              status: false,
+              data: [{ path: ["form"], message: "Error: Server Error" }],
+            };
+            return result
+          }
+         
+          // create userCompany with user and companyId
+          const userCoResult = assignUserCompany(companyData[1][0].id, userEmail);
           
           result = { status: true, data: companyData[1] };
-          
-          // if (result.length > 0){
-          //   // create userCompany with user and companyId
-          //   const userCoResult = assignUserCompany(result[0].companyId, userEmail);
-          // }
         }
         else {
           let errorState: { path: (string | number)[]; message: string }[] = [];

@@ -1,8 +1,6 @@
 'use server'
-
 import excuteQuery, {executeQueryPool}  from '../utils/db/db';
 import * as zm from "../models/models";
-import { dbTables } from '../utils/companyDBScript';
 import { dbProcedures, dbTableScript } from '../utils/tableScript';
 
 export async function getHostId() {
@@ -12,26 +10,25 @@ export async function getHostId() {
       query: 'select * from dbHost d where d.useForNextDb = 1;', 
       values: [],
     });
-    return result;
+    return result
   } catch (e) {
-    console.log(e);
+    return e
   }
-  return null;
 }
 
-export async function checkDbInfo(dbName: string) {
-  try {
-    const result = await excuteQuery({
-      host: 'userDb',
-      query: 'select count(*) as temp from dbInfo d where d.name = ?;', 
-      values: [dbName],
-    });
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-  return null;
-}
+// export async function checkDbInfo(dbName: string) {
+//   try {
+//     const result = await excuteQuery({
+//       host: 'userDb',
+//       query: 'select count(*) as temp from dbInfo d where d.name = ?;', 
+//       values: [dbName],
+//     });
+//     return result;
+//   } catch (e) {
+//     return e
+//   }
+//   return null;
+// }
 
 /**
  * creates a database for the company name specified. 
@@ -41,7 +38,7 @@ export async function checkDbInfo(dbName: string) {
  * @param compName Name of the company
  * 
 */
-export async function createCompanyDB( dbName: string, host: string, port: number) {
+export async function createCompanyDB(dbName: string, host: string, port: number) {
   try {
     const result = await executeQueryPool({
       dbName: 'userDb',
@@ -57,19 +54,19 @@ export async function createCompanyDB( dbName: string, host: string, port: numbe
   return null;
 }
 
-export async function createTables( dbName: string) {
+export async function createTables(dbName: string, host: string, port: number) {
   try {
-    const scripts : string[] = dbTableScript.split(';')  
+    const scripts : string[] = dbTableScript.split('~')  
     let result
     for(let idx in scripts){
-      
-      if(scripts[idx] != ''){
-        result += await excuteQuery({
-            host: dbName,
-            query: scripts[idx]+';',
-            values: [],
-        });
-      }
+      let query = scripts[idx]
+      result += await executeQueryPool({
+        dbName: dbName,
+        host: host,
+        port: port,
+        query: query,
+        values: [],
+      });
     }
     return result
   } catch (e) {
@@ -78,17 +75,19 @@ export async function createTables( dbName: string) {
   return null;
 }
 
-export async function createProcedures( dbName: string) {
+export async function createProcedures(dbName: string, host: string, port: number) {
   try {
     const scripts : string[] = dbProcedures.split('~')  
     let result
     for(let idx in scripts){
       let query = scripts[idx]
       
-      result += await excuteQuery({
-          host: dbName,
-          query: query,
-          values: [],
+      result += await executeQueryPool({
+        dbName: dbName,
+        host: host,
+        port: port,
+        query: query,
+        values: [],
       });
     }
     return result
@@ -117,26 +116,26 @@ export async function createCompanyAndInfoDb(hostId: number, dbName: string, dbI
   }
 }
 
-export async function updateCompanyInfo( dbInfoId: number, companyId: number) {
-  try {
-    const result = await excuteQuery({
-      host: 'userDb',
-      query: 'update company c set c.dbinfo_id = ? where c.id = ?', 
-      values: [dbInfoId, companyId] 
-    });
-    return result;
-  } catch(e) {
-    console.log(e);
-  }
-}
+// export async function updateCompanyInfo( dbInfoId: number, companyId: number) {
+//   try {
+//     const result = await excuteQuery({
+//       host: 'userDb',
+//       query: 'update company c set c.dbinfo_id = ? where c.id = ?', 
+//       values: [dbInfoId, companyId] 
+//     });
+//     return result;
+//   } catch(e) {
+//     console.log(e);
+//   }
+// }
 
 export async function assignUserCompany(companyId: number, email: string){
   try {
     const result = await excuteQuery({
       host: 'userDb',
-      query: 'INSERT INTO userCompany (userId, companyId, isAdmin) \
-        select userId, ?, 1 from user where email=?;',
-      values:[companyId, email]
+      query: 'INSERT INTO userCompany (user_id, company_id, isAdmin) values \
+        ((select id from user where email=?), ?, 0)',
+      values:[email, companyId]
     }); 
     return result;
   } catch (e) {
@@ -144,14 +143,35 @@ export async function assignUserCompany(companyId: number, email: string){
   }
 }
 
+export async function dropDatabase(dbName: string){
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query: 'DROP DATABASE ' + dbName,
+      values:[]
+    }); 
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
 
-// function generateRandomString(length: number): string {
-//   const letters = 'abcdefghijklmnopqrstuvwxyz';
-//   let result = '';
-//   for (let i = 0; i < length; i++) {
-//       const randomIndex = Math.floor(Math.random() * letters.length);
-//       result += letters[randomIndex];
-//   }
-//   return result;
-// }
+export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number){
+  try {
+    let result = await excuteQuery({
+      host: 'userDb',
+      query: 'DELETE FROM company WHERE id = ?',
+      values:[companyId]
+    }); 
 
+    result += await excuteQuery({
+      host: 'userDb',
+      query: 'DELETE FROM dbInfo WHERE id = ?',
+      values:[dbInfoId]
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

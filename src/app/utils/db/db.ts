@@ -27,7 +27,7 @@ function getHostPool(dbName: string, host: string, port: number) {
   if (pool) {
     return pool;
   } else {
-    dbMap.set(host, mariadb.createPool({
+    dbMap.set(dbName, mariadb.createPool({
         host: host,
         port: port,
         database: dbName,
@@ -36,7 +36,7 @@ function getHostPool(dbName: string, host: string, port: number) {
         connectionLimit: 5
       }
     ));
-    return dbMap.get(host) ?? null;
+    return dbMap.get(dbName) ?? null;
   }
 }
 /**
@@ -44,7 +44,7 @@ function getHostPool(dbName: string, host: string, port: number) {
  * @param param0 {host name, query, replacement values}
  * @returns result or null in case of error
  */
-export default async function excuteQuery({host , query, values }: {host: string, query: string, values: any}) {
+export default async function excuteQuery({host, query, values }: {host: string, query: string, values: any}) {
   let db;
   let results;
   try {
@@ -62,7 +62,7 @@ export default async function excuteQuery({host , query, values }: {host: string
 }
 
 
-export async function executeQueryPool({dbName, host, port, query, values }: {dbName: string, host: string, port: number, query: string, values: any}) {
+export async function executeQueryPool({dbName, host, port, query, values}: {dbName: string, host: string, port: number, query: string, values: any}) {
   let db;
   let results;
   try {

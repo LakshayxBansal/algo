@@ -59,7 +59,7 @@ export async function createExecutiveRoleDb(
   return null;
 }
 
-export async function getExecutiveRoleDetailsById(crmDb: string, id: string) {
+export async function getExecutiveRoleDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

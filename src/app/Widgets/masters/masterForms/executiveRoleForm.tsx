@@ -9,19 +9,17 @@ import {
   updateExecutiveRole,
 } from "@/app/controllers/executiveRole.controller";
 import Grid from "@mui/material/Grid";
-import { nameMasterData } from "../../../zodschema/zodschema";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
-  masterFormPropsT,
-  masterFormPropsWithDataT,
+  masterFormPropsWithParentT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 
-export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
+export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -34,11 +32,6 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
-    // let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    // for (const [key, value] of formData.entries()) {
-    //   data[key] = value;
-    // }
     // const parsed = nameMasterData.safeParse(data);
     // let result;
     // let issues;

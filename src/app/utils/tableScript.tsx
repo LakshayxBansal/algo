@@ -6,7 +6,7 @@ export const dbTableScript = "CREATE TABLE `allocation_type_master` (\
   `modified_on` datetime DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL\
-);\
+);~\
 CREATE TABLE `area_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT '',\
@@ -17,48 +17,41 @@ CREATE TABLE `area_master` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `business_profile`;\
+);~\
 CREATE TABLE `business_profile` ( `id` int(11) NOT NULL, `name` varchar(60) DEFAULT NULL,\
   `address1` varchar(75) DEFAULT NULL, `address2` varchar(75) DEFAULT NULL, `address3` varchar(75) DEFAULT NULL,\
   `city` varchar(75) DEFAULT NULL, `state_id` int(11) DEFAULT NULL, `country_id` int(11) DEFAULT NULL,\
   `pincode` varchar(20) DEFAULT NULL, `mobile` varchar(20) DEFAULT NULL, `pan` varchar(20) DEFAULT NULL,\
   `gstin` varchar(20) DEFAULT NULL, `email` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `call_allocation`;\
+);~\
 CREATE TABLE `call_allocation` ( `call_id` int(11) DEFAULT NULL, `allocated_to` int(11) DEFAULT NULL,\
   `allocated_on` datetime DEFAULT NULL, `allocated_by` int(11) DEFAULT NULL,\
   `next_action_id` int(11) DEFAULT NULL, `next_action_datetime` datetime DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `call_receipt`;\
+);~\
 CREATE TABLE `call_receipt` ( `id` int(11) DEFAULT NULL, `received_datetime` datetime DEFAULT NULL,\
   `call_no` varchar(40) DEFAULT NULL, `contact_id` int(11) DEFAULT NULL, `received_by` int(11) DEFAULT NULL,\
   `call_status` int(11) DEFAULT NULL, `call_sub_status` int(11) DEFAULT NULL, `next_action_id` int(11) DEFAULT NULL,\
   `next_action_datetime` datetime DEFAULT NULL, `allocated_to` int(11) DEFAULT NULL,\
   `call_remark` text DEFAULT NULL, `call_suggested_remark` text DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `call_type_master`;\
+);~\
 CREATE TABLE `call_type_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(60) DEFAULT '',\
   `stamp` smallint(6) DEFAULT NULL, `created_by` int(11) DEFAULT NULL, `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL, PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `company`;\
+);~\
 CREATE TABLE `company` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(45) DEFAULT NULL,\
   `add1` varchar(45) DEFAULT NULL, `add2` varchar(45) DEFAULT NULL, `city` varchar(45) DEFAULT NULL,\
   `pincode` varchar(45) DEFAULT NULL, `dbinfo_id` int(11) DEFAULT NULL, `stateId` int(11) DEFAULT NULL,\
   `cfield1` varchar(50) DEFAULT NULL, `cfield2` varchar(50) DEFAULT NULL, `cfield3` varchar(50) DEFAULT NULL,\
   `cfield4` varchar(50) DEFAULT NULL, `cfield5` varchar(50) DEFAULT NULL, `cfield6` varchar(50) DEFAULT NULL,\
   `cfield7` varchar(50) DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `companyId_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `contact_group_master`;\
+);~\
 CREATE TABLE `contact_group_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `alias` varchar(60) DEFAULT '',\
   `name` varchar(60) NOT NULL DEFAULT '', `stamp` smallint(6) DEFAULT 0, `parent_id` int(11) DEFAULT 0,\
   `created_by` int(11) DEFAULT 0, `modified_by` int(11) DEFAULT 0, `created_on` datetime DEFAULT '0000-00-00 00:00:00',\
   `modified_on` datetime DEFAULT '0000-00-00 00:00:00', `is_parent` tinyint(4) DEFAULT NULL,\
   PRIMARY KEY (`id`), UNIQUE KEY `id_UNIQUE` (`id`), UNIQUE KEY `name_UNIQUE` (`name`)\
-);\
-DROP TABLE IF EXISTS `contact_master`;\
+);~\
 CREATE TABLE `contact_master` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, `alias` varchar(60) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL, `print_name` varchar(60) DEFAULT NULL, `group_id` int(11) DEFAULT NULL,\
   `pan` varchar(20) DEFAULT NULL, `aadhaar` varchar(20) DEFAULT NULL, `address1` varchar(75) DEFAULT NULL,\
@@ -69,34 +62,29 @@ CREATE TABLE `contact_master` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, `a
   `modified_by` int(11) DEFAULT NULL, `modified_on` datetime DEFAULT NULL, `stamp` int(11) DEFAULT NULL,\
   `dob` datetime DEFAULT NULL, `doa` datetime DEFAULT NULL, `department_id` int(11) DEFAULT NULL,\
   `organisation_id` int(11) DEFAULT NULL, PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `country_master`;\
+);~\
 CREATE TABLE `country_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `alias` varchar(60) DEFAULT NULL,\
   `name` varchar(60) DEFAULT '', `stamp` smallint(6) DEFAULT NULL, `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL, `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`), UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `dbHost`;\
+);~\
 CREATE TABLE `dbHost` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `host` varchar(45) DEFAULT NULL, \
   `port` varchar(45) DEFAULT NULL, `useForNextDb` int(11) DEFAULT NULL, PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `dbInfo`;\
+);~\
 CREATE TABLE `dbInfo` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `host_id` int(11) DEFAULT NULL,\
   `name` varchar(45) DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `dbId_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `department_master`;\
+);~\
 CREATE TABLE `department_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) NOT NULL DEFAULT '', `stamp` smallint(6) DEFAULT 0, `created_by` int(11) DEFAULT 0,\
   `modified_by` int(11) DEFAULT 0, `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE, UNIQUE KEY `name_UNIQUE` (`name`), UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_action_master`;\
-CREATE TABLE `enquiry_action_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+);~\
+CREATE TABLE `enquiry_action_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT '', `stamp` smallint(6) DEFAULT NULL, `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL, `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE, UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_action_tran`;\
+);~\
 CREATE TABLE `enquiry_action_tran` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `call_id` int(11) DEFAULT NULL,\
@@ -109,8 +97,7 @@ CREATE TABLE `enquiry_action_tran` (\
   `enquiry_action_id` int(11) NOT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_allocation`;\
+);~\
 CREATE TABLE `enquiry_allocation` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `allocation_date` datetime DEFAULT NULL,\
@@ -121,14 +108,12 @@ CREATE TABLE `enquiry_allocation` (\
   `enquiry_id` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_allocation_detail`;\
+);~\
 CREATE TABLE `enquiry_allocation_detail` (\
   `allocation_id` int(11) DEFAULT NULL,\
   `enquiry_id` int(11) DEFAULT NULL,\
   `slno` int(11) DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `enquiry_category_master`;\
+);~\
 CREATE TABLE `enquiry_category_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT NULL,\
@@ -139,8 +124,7 @@ CREATE TABLE `enquiry_category_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_header_tran`;\
+);~\
 CREATE TABLE `enquiry_header_tran` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `enq_number` varchar(75) DEFAULT NULL,\
@@ -157,8 +141,7 @@ CREATE TABLE `enquiry_header_tran` (\
   `created_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_item_tran`;\
+);~\
 CREATE TABLE `enquiry_item_tran` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `enquiry_id` int(11) DEFAULT NULL,\
@@ -168,8 +151,7 @@ CREATE TABLE `enquiry_item_tran` (\
   `unit_id` int(11) DEFAULT NULL,\
   `remark` text DEFAULT NULL,\
   PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_ledger_tran`;\
+);~\
 CREATE TABLE `enquiry_ledger_tran` (\
   `enquiry_id` int(11) DEFAULT NULL,\
   `status_version` int(11) DEFAULT NULL,\
@@ -189,8 +171,7 @@ CREATE TABLE `enquiry_ledger_tran` (\
   `active` int(11) NOT NULL DEFAULT 1,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_maturity_type`;\
+);~\
 CREATE TABLE `enquiry_maturity_type` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(50) DEFAULT NULL,\
@@ -201,8 +182,7 @@ CREATE TABLE `enquiry_maturity_type` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_source_master`;\
+);~\
 CREATE TABLE `enquiry_source_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT NULL,\
@@ -213,8 +193,7 @@ CREATE TABLE `enquiry_source_master` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_status_master`;\
+);~\
 CREATE TABLE `enquiry_status_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) NOT NULL DEFAULT '',\
@@ -226,8 +205,7 @@ CREATE TABLE `enquiry_status_master` (\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`),\
   UNIQUE KEY `name_UNIQUE` (`name`)\
-);\
-DROP TABLE IF EXISTS `enquiry_sub_status_master`;\
+);~\
 CREATE TABLE `enquiry_sub_status_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(50) NOT NULL,\
@@ -240,8 +218,7 @@ CREATE TABLE `enquiry_sub_status_master` (\
   `closure_sucess` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `enquiry_tran_type_master`;\
+);~\
 CREATE TABLE `enquiry_tran_type_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(45) DEFAULT NULL,\
@@ -252,8 +229,7 @@ CREATE TABLE `enquiry_tran_type_master` (\
   `stamp` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `executive_dept_master`;\
+);~\
 CREATE TABLE `executive_dept_master` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) NOT NULL DEFAULT '',\
@@ -264,8 +240,7 @@ CREATE TABLE `executive_dept_master` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `name_UNIQUE` (`name`)\
-);\
-DROP TABLE IF EXISTS `executive_group_master`;\
+);~\
 CREATE TABLE `executive_group_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT '',\
@@ -279,8 +254,7 @@ CREATE TABLE `executive_group_master` (\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`),\
   UNIQUE KEY `name_UNIQUE` (`name`)\
-);\
-DROP TABLE IF EXISTS `executive_master`;\
+);~\
 CREATE TABLE `executive_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT NULL,\
@@ -311,8 +285,7 @@ CREATE TABLE `executive_master` (\
   `group_id` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `executive_role_master`;\
+);~\
 CREATE TABLE `executive_role_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) NOT NULL DEFAULT '',\
@@ -325,8 +298,7 @@ CREATE TABLE `executive_role_master` (\
   `department_id` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `item_group_master`;\
+);~\
 CREATE TABLE `item_group_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL,\
@@ -338,8 +310,7 @@ CREATE TABLE `item_group_master` (\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
   `is_parent` tinyint(4) DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `item_master`;\
+);~\
 CREATE TABLE `item_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL,\
@@ -352,16 +323,14 @@ CREATE TABLE `item_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `master_tran_types`;\
+);~\
 CREATE TABLE `master_tran_types` (\
   `id` int(11) NOT NULL,\
   `short_name` varchar(30) DEFAULT NULL,\
   `full_name` varchar(60) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `short_name` (`short_name`) USING BTREE\
-);\
-DROP TABLE IF EXISTS `menu_option_master`;\
+);~\
 CREATE TABLE `menu_option_master` (\
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(100) DEFAULT NULL,\
@@ -376,8 +345,7 @@ CREATE TABLE `menu_option_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   `menu_order` int(11) NOT NULL DEFAULT 0,\
   PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `organisation_master`;\
+);~\
 CREATE TABLE `organisation_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(75) NOT NULL DEFAULT '',\
@@ -399,8 +367,7 @@ CREATE TABLE `organisation_master` (\
   `pincode` varchar(20) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `session`;\
+);~\
 CREATE TABLE `session` (\
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
   `data` varchar(5000) DEFAULT NULL,\
@@ -409,8 +376,7 @@ CREATE TABLE `session` (\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `sessionId_UNIQUE` (`id`),\
   UNIQUE KEY `userId_UNIQUE` (`email`)\
-);\
-DROP TABLE IF EXISTS `state_master`;\
+);~\
 CREATE TABLE `state_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT '',\
@@ -423,8 +389,7 @@ CREATE TABLE `state_master` (\
   `country_id` int(11) NOT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `system_task`;\
+);~\
 CREATE TABLE `system_task` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT NULL,\
@@ -435,8 +400,7 @@ CREATE TABLE `system_task` (\
   `icon` varchar(40) DEFAULT NULL,\
   `sq_no` double DEFAULT NULL,\
   PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `ticket_action_master`;\
+);~\
 CREATE TABLE `ticket_action_master` (\
   `id` int(11) NOT NULL,\
   `name` varchar(60) DEFAULT '',\
@@ -446,8 +410,7 @@ CREATE TABLE `ticket_action_master` (\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE\
-);\
-DROP TABLE IF EXISTS `ticket_category_master`;\
+);~\
 CREATE TABLE `ticket_category_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(50) DEFAULT NULL,\
@@ -456,8 +419,7 @@ CREATE TABLE `ticket_category_master` (\
   `modified_on` datetime DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `ticket_header_tran`;\
+);~\
 CREATE TABLE `ticket_header_tran` (\
   `id` int(11) DEFAULT NULL,\
   `date` date DEFAULT NULL,\
@@ -473,8 +435,7 @@ CREATE TABLE `ticket_header_tran` (\
   `modified_by` int(11) DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
   `allocated_to` int(11) DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `ticket_item_tran`;\
+);~\
 CREATE TABLE `ticket_item_tran` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `ticket_id` int(11) DEFAULT NULL,\
@@ -484,8 +445,7 @@ CREATE TABLE `ticket_item_tran` (\
   `unit_id` int(11) DEFAULT NULL,\
   `remark` text DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE\
-);\
-DROP TABLE IF EXISTS `ticket_source_master`;\
+);~\
 CREATE TABLE `ticket_source_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL,\
@@ -494,8 +454,7 @@ CREATE TABLE `ticket_source_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `ticket_status_master`;\
+);~\
 CREATE TABLE `ticket_status_master` (\
   `id` int(11) NOT NULL,\
   `name` varchar(60) DEFAULT '',\
@@ -505,8 +464,7 @@ CREATE TABLE `ticket_status_master` (\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE\
-);\
-DROP TABLE IF EXISTS `ticket_status_tran`;\
+);~\
 CREATE TABLE `ticket_status_tran` (\
   `ticket_id` int(11) DEFAULT NULL,\
   `status_version` int(11) DEFAULT NULL,\
@@ -524,8 +482,7 @@ CREATE TABLE `ticket_status_tran` (\
   `suggested_action_remark` text DEFAULT NULL,\
   `action_taken_remark` text DEFAULT NULL,\
   `closure_remark` text DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `ticket_sub_status_master`;\
+);~\
 CREATE TABLE `ticket_sub_status_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(50) DEFAULT NULL,\
@@ -535,16 +492,14 @@ CREATE TABLE `ticket_sub_status_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL\
-);\
-DROP TABLE IF EXISTS `trans_types_masters`;\
+);~\
 CREATE TABLE `trans_types_masters` (\
   `id` int(11) NOT NULL,\
   `short_name` varchar(30) DEFAULT NULL,\
   `full_name` varchar(60) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `short_name` (`short_name`) USING BTREE\
-);\
-DROP TABLE IF EXISTS `unit_master`;\
+);~\
 CREATE TABLE `unit_master` (\
   `id` int(11) NOT NULL,\
   `name` varchar(50) DEFAULT NULL,\
@@ -555,8 +510,7 @@ CREATE TABLE `unit_master` (\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`)\
-);\
-DROP TABLE IF EXISTS `user`;\
+);~\
 CREATE TABLE `user` (\
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT NULL,\
@@ -575,8 +529,7 @@ CREATE TABLE `user` (\
   `phone` varchar(15) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);\
-DROP TABLE IF EXISTS `userCompany`;\
+);~\
 CREATE TABLE `userCompany` (\
   `user_id` int(11) NOT NULL,\
   `company_id` int(11) NOT NULL,\
