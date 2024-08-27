@@ -14,6 +14,7 @@ import { Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
+import Seperator from "../../seperator";
 
 export default function ExecutiveDeptForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -78,6 +79,8 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
 
   return (
     <>
+    <Seperator>{entityData.id ? "Update Department" : "Add Department"}</Seperator>
+
     <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

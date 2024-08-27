@@ -89,7 +89,7 @@ export default function ItemForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>Add Item</Seperator>
+      <Seperator>{entityData.id ? "Update Item" : "Add Item"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
