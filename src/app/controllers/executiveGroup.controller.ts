@@ -7,9 +7,13 @@ import {
   createExecutiveGroupDb,
   updateExecutiveGroupDb,
   getExecutiveGroupByIDList,
+  Pagination,
+  getExecutiveGroupCount,
 } from "../services/executiveGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getExecutiveGroup(searchString: string) {
   try {

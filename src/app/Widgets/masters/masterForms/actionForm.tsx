@@ -11,7 +11,7 @@ import { nameMasterData } from "../../../zodschema/zodschema";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT } from "@/app/models/models";
+import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -81,6 +81,13 @@ export default function ActionForm(props: masterFormPropsT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   async function persistEntity(data: nameMasterDataT) {
     let result;
     if (props.data) {
@@ -89,13 +96,6 @@ export default function ActionForm(props: masterFormPropsT) {
     } else result = await createEnquiryAction(data);
     return result;
   }
-
-  const clearFormError = () => {
-    setFormError((curr) => {
-      const { form, ...rest } = curr;
-      return rest;
-    });
-  };
 
   return (
     <Paper>

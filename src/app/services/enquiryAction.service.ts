@@ -80,3 +80,69 @@ export async function updateEnquiryActionDb(
   }
   return null;
 }
+
+export async function Pagination(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT name,RowNum as RowID,group_id,id,alias,unit_id,hsn_code \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM enquiry_action_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getEnquiryActionCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from enquiry_action_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+/**
+ *
+ * @param crmDb database to search in
+ * @param id id to search in enquiry_action_master_master
+ * @returns
+ */
+export async function fetchEnquiryActionById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select * from enquiry_action_master where id=?",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

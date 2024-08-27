@@ -129,6 +129,7 @@ export const UnitSchema = z.object({
   created_on: z.date().optional(),
   modified_on: z.date().optional(),
 });
+
 /**
  * validate the add person to person table
  */
@@ -319,6 +320,9 @@ export const contactGroupSchema = z.object({
   created_on: z.number().optional(),
 });
 
+/**
+ * item group
+ */
 export const itemGroupSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(60),
