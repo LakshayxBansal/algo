@@ -18,7 +18,7 @@ export async function getArea(searchString: string) {
   }
 }
 
-export async function getAreaById (id : string){
+export async function getAreaById (id : number){
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { checkPhone } from "../utils/phoneUtils";
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|^$/
@@ -104,52 +105,49 @@ const contactDetailsSchema = z
 /**
  * validate the add person to person table
  */
-export const contactSchema = z
-  .object({
-    id: z.number().optional(),
-    alias: z.string().max(60).optional(),
-    name: z.string().min(1).max(60),
-    print_name: z.string().max(60).optional(),
-    pan: z.union([
-      z.literal(""),
-      z.string().min(10).regex(panRegEx, "Invalid PAN number!"),
-    ]),
-    aadhaar: z.union([z.literal(""), z.string().max(20)]),
-    address1: z.string().max(75),
-    address2: z.string().max(75),
-    address3: z.string().max(75),
-    pincode: z.string().max(15),
-    email: z.union([z.literal(""), z.string().email().max(100)]),
-    mobile: z.union([
-      z.literal(""),
-      z.string().regex(phoneRegex, "Invalid Number!"),
-    ]),
-    whatsapp: z.union([
-      z.literal(""),
-      z.string().regex(phoneRegex, "Invalid Number!"),
-    ]),
-    dob: z.date().optional(),
-    doa: z.date().optional(),
-    contactGroup_id: z.number().optional(),
-    contactGroup: z.string().optional(),
-    state: z.string().optional(),
-    area: z.string().optional(),
-    area_id: z.number().optional(),
-    department: z.string().optional(),
-    organisation: z.string().optional(),
-    department_id: z.number().optional(),
-    organisation_id: z.number().optional(),
-    state_id: z.number().optional(),
-    country_id: z.number().optional(),
-    country: z.string().optional(),
-    city: z.string().optional(),
-  })
-  .refine(
-    (schema) => {
-      return !(schema.email === "" && schema.mobile === "");
-    },
-    { message: "please provide email, or phone no", path: ["mobile", "email"] }
-  );
+export const contactSchema = z.object({
+  id: z.number().optional(),
+  alias: z.string().max(60).optional(),
+  name: z.string().min(1).max(60),
+  print_name: z.string().max(60).optional(),
+  pan: z.union([
+    z.literal(""),
+    z.string().min(10).regex(panRegEx, "Invalid PAN number!"),
+  ]),
+  aadhaar: z.union([z.literal(""), z.string().max(20)]),
+  address1: z.string().max(75),
+  address2: z.string().max(75),
+  address3: z.string().max(75),
+  pincode: z.string().max(15),
+  email: z.union([z.literal(""), z.string().email().max(100)]),
+  mobile: z
+    .string()
+    .refine((val) => checkPhone(val), {
+      message: "Please provide a valid Phone No",
+      path: ["mobile"],
+    }),
+  whatsapp: z
+    .string()
+    .refine((val) => checkPhone(val), {
+      message: "Please provide a valid Whatsapp No",
+      path: ["whatsapp"],
+    }),
+  dob: z.date().optional(),
+  doa: z.date().optional(),
+  contactGroup_id: z.number().optional(),
+  contactGroup: z.string().optional(),
+  state: z.string().optional(),
+  area: z.string().optional(),
+  area_id: z.number().optional(),
+  department: z.string().optional(),
+  organisation: z.string().optional(),
+  department_id: z.number().optional(),
+  organisation_id: z.number().optional(),
+  state_id: z.number().optional(),
+  country_id: z.number().optional(),
+  country: z.string().optional(),
+  city: z.string().optional(),
+});
 
 export const areaSchema = z.object({
   id: z.number().optional(),

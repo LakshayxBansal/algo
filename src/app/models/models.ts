@@ -1,3 +1,4 @@
+
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
 
@@ -102,3 +103,10 @@ export type dbInfoT = {
 export type selectKeyValueT = {
   [key: string]: any;
 };
+
+export type getContsT = [{
+  id: number;
+  name: string;
+  whatsapp: string;
+  email: string 
+}]
