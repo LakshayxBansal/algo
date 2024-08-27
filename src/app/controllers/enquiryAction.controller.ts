@@ -4,12 +4,17 @@ import * as zs from "../zodschema/zodschema";
 import {
   getEnquiryActionList,
   createEnquiryActionDb,
+  fetchEnquiryActionById,
+  getEnquiryActionCount,
+  Pagination,
   getActionDetailsById,
   updateEnquiryActionDb,
 } from "../services/enquiryAction.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { nameMasterDataT } from "../models/models";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getEnquiryAction(searchString: string) {
   try {
@@ -31,6 +36,58 @@ export async function getActionById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+/**
+ *
+ * @param Id id of the item to be searched
+ * @returns
+ */
+
+export async function getEnquiryActions(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getAction = {
+    status: false,
+    data: {} as mdl.nameMasterDataT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getEnquiryActionCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getAction = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "enquiryAction Admin, E-Code:369";
+
+    getAction = {
+      ...getAction,
+      status: false,
+      data: {} as mdl.nameMasterDataT,
+      error: err,
+    };
+  }
+  return getAction;
 }
 
 /**

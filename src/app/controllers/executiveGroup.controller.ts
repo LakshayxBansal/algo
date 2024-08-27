@@ -160,3 +160,50 @@ export async function updateExecutiveGroup(data: executiveGroupSchemaT) {
   };
   return result;
 }
+
+export async function getExecutiveGroups(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getExecutiveGroup = {
+    status: false,
+    data: {} as mdl.executiveGroupSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getExecutiveGroupCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getExecutiveGroup = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.executiveGroupSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "ExecutiveGroup Admin, E-Code:369";
+
+    getExecutiveGroup = {
+      ...getExecutiveGroup,
+      status: false,
+      data: {} as mdl.executiveGroupSchemaT,
+      error: err,
+    };
+  }
+  return getExecutiveGroup;
+}

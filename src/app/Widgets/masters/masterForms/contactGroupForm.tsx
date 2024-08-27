@@ -17,6 +17,9 @@ import {
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ContactGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -48,11 +51,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setSnackOpen(true);
     } else {
-      // console.log(result);
-
       const issues = result.data;
-      // console.log(issues);
-
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
@@ -88,11 +87,36 @@ export default function ContactGroupForm(props: masterFormPropsT) {
     return result;
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <>
       <Seperator>
         {entityData.id ? "Update Contact Group" : "Add Contact Group"}
       </Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>

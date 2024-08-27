@@ -4,12 +4,16 @@ import * as zs from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import {
   createOrganisationDB,
+  getOrganisationCount,
   getOrganisationDetailsById,
+  Pagination,
   updateOrganisationDB,
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function createOrganisation(data: zm.organisationSchemaT) {
   let result;
@@ -154,4 +158,51 @@ export async function getOrganisationById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getOrganisations(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getOrg = {
+    status: false,
+    data: {} as mdl.organisationSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getOrganisationCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getOrg = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.organisationSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "Organisation Admin, E-Code:369";
+
+    getOrg = {
+      ...getOrg,
+      status: false,
+      data: {} as mdl.organisationSchemaT,
+      error: err,
+    };
+  }
+  return getOrg;
 }

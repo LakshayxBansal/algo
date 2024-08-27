@@ -9,7 +9,8 @@ export async function getExecutiveGroupList(
   searchString: string
 ) {
   try {
-    let query = "select id as id, name as name from executive_group_master";
+    let query =
+      "select id as id, name as name, alias as alias from executive_group_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -90,4 +91,53 @@ export async function updateExecutiveGroupDb(
     console.log(e);
   }
   return null;
+}
+
+export async function Pagination(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT name,RowNum as RowID,id, alias \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM executive_group_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getExecutiveGroupCount(
+  crmDb: string,
+  value: string | undefined
+) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from executive_group_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
 }

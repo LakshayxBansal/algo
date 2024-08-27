@@ -102,6 +102,33 @@ const contactDetailsSchema = z
     }
   );
 
+export const ItemSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1).max(75),
+  // stamp: z.number().optional(),
+  group: z.number().optional(),
+  group_name: z.string().optional(),
+  alias: z.string().max(75).optional(),
+  unit: z.number().optional(),
+  unit_name: z.string().optional(),
+  hsn_code: z.string().max(60).optional(),
+  // created_by: z.number().optional(),
+  // modified_by: z.number().optional(),
+  // created_on: z.date().optional(),
+  // modified_on: z.date().optional(),
+});
+
+export const UnitSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1).max(50),
+  uqc: z.string().max(50),
+  stamp: z.number().optional(),
+  group_id: z.number().optional(),
+  created_by: z.number().optional(),
+  modified_by: z.number().optional(),
+  created_on: z.date().optional(),
+  modified_on: z.date().optional(),
+});
 /**
  * validate the add person to person table
  */
@@ -120,18 +147,14 @@ export const contactSchema = z.object({
   address3: z.string().max(75),
   pincode: z.string().max(15),
   email: z.union([z.literal(""), z.string().email().max(100)]),
-  mobile: z
-    .string()
-    .refine((val) => checkPhone(val), {
-      message: "Please provide a valid Phone No",
-      path: ["mobile"],
-    }),
-  whatsapp: z
-    .string()
-    .refine((val) => checkPhone(val), {
-      message: "Please provide a valid Whatsapp No",
-      path: ["whatsapp"],
-    }),
+  mobile: z.string().refine((val) => checkPhone(val), {
+    message: "Please provide a valid Phone No",
+    path: ["mobile"],
+  }),
+  whatsapp: z.string().refine((val) => checkPhone(val), {
+    message: "Please provide a valid Whatsapp No",
+    path: ["whatsapp"],
+  }),
   dob: z.date().optional(),
   doa: z.date().optional(),
   contactGroup_id: z.number().optional(),
@@ -294,6 +317,19 @@ export const contactGroupSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.number().optional(),
+});
+
+export const itemGroupSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().max(60).optional(),
+  stamp: z.number().optional(),
+  parent_id: z.number().optional(),
+  is_parent: z.number().max(60).optional(),
+  modified_by: z.number().optional(),
+  modified_on: z.date().optional(),
+  created_by: z.number().optional(),
+  created_on: z.date().optional(),
 });
 
 export const currencySchema = z.object({

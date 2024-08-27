@@ -1,4 +1,3 @@
-
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
 
@@ -7,6 +6,12 @@ export type userSchemaT = z.infer<typeof zs.userSchema>;
 export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 
 export type contactSchemaT = z.infer<typeof zs.contactSchema>;
+
+export type itemSchemaT = z.infer<typeof zs.ItemSchema>;
+
+export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
+
+export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
 
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
@@ -104,9 +109,29 @@ export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContsT = [{
-  id: number;
-  name: string;
-  whatsapp: string;
-  email: string 
-}]
+export type getContsT = [
+  {
+    id: number;
+    name: string;
+    whatsapp: string;
+    email: string;
+  }
+];
+
+export type getItemT = [
+  {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+  }
+];
+
+export type getUnitT = [
+  {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+  }
+];

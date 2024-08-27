@@ -39,6 +39,9 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ExecutiveForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -156,8 +159,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     const country = selectValues.country?.name;
 
     const states = await getStates(stateStr, country);
-    console.log(states);
-
     if (states.length > 0) {
       return states;
     }
@@ -207,9 +208,34 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     // } else
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <>
       <Seperator>Add Executive</Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>

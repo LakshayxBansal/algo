@@ -79,3 +79,52 @@ export async function updateEnquiryCategoryDb(
   }
   return null;
 }
+
+export async function Pagination(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT name,RowNum as RowID,id \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM enquiry_category_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getEnquiryCategoryCount(
+  crmDb: string,
+  value: string | undefined
+) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from enquiry_category_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}

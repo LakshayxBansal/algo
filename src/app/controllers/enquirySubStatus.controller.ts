@@ -5,12 +5,17 @@ import { enquirySubStatusMasterT } from "@/app/models/models";
 import {
   getEnquirySubStatusList,
   createEnquirySubStatusDb,
+  getEnquirySubStatusDetailsById,
+  Pagination,
+  getEnquirySubStatusCount,
   updateEnquirySubStatusDb,
   getEnquirySubStatusDetailsById,
 } from "../services/enquirySubStatus.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import * as zs from "../zodschema/zodschema";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getEnquirySubStatus(
   searchString: string,
@@ -135,8 +140,6 @@ export async function updateEnquirySubStatus(data: enquirySubStatusMasterT) {
         data: [{ path: ["form"], message: "Error: Server Error" }],
       };
     }
-    console.log(result);
-
     return result;
   } catch (e) {
     console.log(e);
@@ -153,4 +156,51 @@ export async function updateEnquirySubStatus(data: enquirySubStatusMasterT) {
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
   };
   return result;
+}
+
+export async function getEnquirySubStatus1(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getEnquirySubStatus = {
+    status: false,
+    data: {} as mdl.enquirySubStatusMasterT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getEnquirySubStatusCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getEnquirySubStatus = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.enquirySubStatusMasterT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "EnquirySubStatus Admin, E-Code:369";
+
+    getEnquirySubStatus = {
+      ...getEnquirySubStatus,
+      status: false,
+      data: {} as mdl.enquirySubStatusMasterT,
+      error: err,
+    };
+  }
+  return getEnquirySubStatus;
 }
