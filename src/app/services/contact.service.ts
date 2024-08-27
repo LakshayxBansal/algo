@@ -6,8 +6,9 @@ import * as zm from "../models/models";
 import { Session } from "next-auth";
 
 export async function createContactDB(
+  
   session: Session,
-  data: zm.contactSchemaT
+  data: zm.contactSchemaT  
 ) {
   try {
     return excuteQuery({
