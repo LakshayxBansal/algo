@@ -148,7 +148,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             formError={formError?.parentgroup}
             allowModify={false}
             allowNewAdd={false}
-            defaultValue={entityData.parent}
+            defaultValue={{"id": entityData.id, name: entityData.parent} as optionsDataT}
           // disable={selectValues.country ? false : true}
           // renderForm={(fnDialogOpen, fnDialogValue, data, parentData) =>
           //   <StateForm

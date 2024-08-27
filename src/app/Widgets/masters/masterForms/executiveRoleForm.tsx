@@ -14,7 +14,8 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
   masterFormPropsT,
-  masterFormPropsWithDataT,
+  masterFormPropsWithParentT,
+  optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
@@ -23,7 +24,7 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
 
-export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
+export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -172,7 +173,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
               width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
-              defaultValue={entityData.parentRole}
+              defaultValue={{id: entityData.id, name: entityData.parentRole} as optionsDataT}
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, parentRole: val })
               }
