@@ -2,12 +2,7 @@
 
 import { contactSchema } from "../zodschema/zodschema";
 import { contactSchemaT, getContsT } from "../models/models";
-import {
-  createContactDB,
-  getContactList2,
-  getContCount,
-  updateContactDB,
-} from "../services/contact.service";
+import { createContactDB, DeleteContactList, getContactList2, getContCount, updateContactDB } from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
   getContactList,
@@ -16,6 +11,7 @@ import {
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import { modifyPhone } from "../utils/phoneUtils";
+import * as mdl from "../models/models";
 
 export async function createContact(data: contactSchemaT) {
   let result;
@@ -86,7 +82,7 @@ export async function updateContact(data: contactSchemaT) {
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
-        if (dbResult.length > 0 && dbResult[0].length === 0) {
+        if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -149,6 +145,7 @@ export async function getContact(searchString: string) {
   }
 }
 
+
 /**
  *
  * @param Id id of the contact to be searched
@@ -164,6 +161,21 @@ export async function getContactById(id: number) {
     throw error;
   }
 }
+
+// For Deleting Contact 
+export async function DeleteContact(id: number) {
+  try {
+    const session = await getSession();
+    console.log(session);
+
+    if (session?.user.dbInfo) {
+      return DeleteContactList(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 export async function getConts(
   page: number,

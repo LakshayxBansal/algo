@@ -10,10 +10,12 @@ import { optionsDataT, executiveGroupSchemaT, masterFormPropsT, selectKeyValueT 
 import { SelectMasterWrapper } from '../../masters/selectMasterWrapper';
 import Seperator from '../../seperator';
 import StateForm from './stateForm';
+import { Collapse, IconButton } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
 
 
-
-export default function (props: masterFormPropsT) {
+export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, { msg: string, error: boolean }>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveGroupSchemaT = props.data ? props.data : {};
@@ -67,12 +69,36 @@ export default function (props: masterFormPropsT) {
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
+  };
+
+  const clearFormError = () => {
+    setFormError(curr => {
+      const {form, ...rest} = curr;
+      return rest;
+    });
   }
 
   return (
     <>
       <Seperator>{props.data ? "Modify Executive Group" : "Add Executive Group"}</Seperator>
-      {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <form action={handleSubmit}>
         <Box
           sx={{

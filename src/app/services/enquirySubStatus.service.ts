@@ -56,3 +56,65 @@ export async function createEnquirySubStatusDb(
   }
   return null;
 }
+
+export async function getEnquirySubStatusDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "select select sb.id as id, sb.name as name from enquiry_sub_status_master sb where \
+                  sb.enquiry_status_id= ?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function Pagination(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT name,RowNum as RowID,id\
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM enquiry_sub_status_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getEnquirySubStatusCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from enquiry_sub_status_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}

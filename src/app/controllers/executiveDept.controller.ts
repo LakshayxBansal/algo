@@ -7,9 +7,13 @@ import {
   createExecutiveDeptDb,
   getDeptDetailsById,
   updateExecutiveDeptDb,
+  getExecutiveDeptCount,
+  Pagination,
 } from "../services/executiveDept.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getExecutiveDept(searchString: string) {
   try {
@@ -141,7 +145,7 @@ export async function updateExecutiveDept(data: executiveDeptSchemaT) {
   return result;
 }
 
-export async function getDeptById(id: string) {
+export async function getDeptById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -150,4 +154,51 @@ export async function getDeptById(id: string) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getExecutiveDepts(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getExecutiveDept = {
+    status: false,
+    data: {} as mdl.executiveDeptSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getExecutiveDeptCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getExecutiveDept = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.executiveDeptSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "ExecutiveDept Admin, E-Code:369";
+
+    getExecutiveDept = {
+      ...getExecutiveDept,
+      status: false,
+      data: {} as mdl.executiveDeptSchemaT,
+      error: err,
+    };
+  }
+  return getExecutiveDept;
 }

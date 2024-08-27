@@ -9,6 +9,9 @@ import { enquirySubStatusMaster } from "../../../zodschema/zodschema";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function SubStatusForm(props: {
   setDialogOpen?: (props: any) => void;
@@ -61,13 +64,35 @@ export default function SubStatusForm(props: {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
+  const clearFormError = () => {
+    setFormError(curr => {
+      const {form, ...rest} = curr;
+      return rest;
+    });
+  }
+
   return (
     <Paper>
       <Seperator>{"Add Sub-Status for " + props.statusName} </Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{

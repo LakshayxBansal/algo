@@ -12,6 +12,9 @@ import { nameMasterDataT, selectKeyValueT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function DepartmentForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -62,16 +65,38 @@ export default function DepartmentForm(props: masterFormPropsT) {
     return result;
   }
 
+  const clearFormError = () => {
+    setFormError(curr => {
+      const {form, ...rest} = curr;
+      return rest;
+    });
+  }
+
   return (
     <>
       <Seperator>
         {entityData.id ? "Update Department" : "Add Department"}
       </Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
-        <form action={handleSubmit}>
+         <form action={handleSubmit}>
           <Box
             sx={{
               display: "grid",

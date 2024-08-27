@@ -97,7 +97,7 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    let query = 'select id as id, name as name, concat("Email - ", email, "; Alias - ", alias, "; Phone - ", mobile, "; PAN - ", pan) as detail from contact_master';
+    let query = 'select id as id, name as name, email, alias, mobile, pan from contact_master';
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -109,6 +109,7 @@ export async function getContactList(crmDb: string, searchString: string) {
       query: query,
       values: values,
     });
+    // console.log("test : ",result)
     return result;
   } catch (e) {
     console.log(e);
@@ -189,3 +190,21 @@ export async function getContCount(crmDb: string, value: string | undefined) {
     console.log(e);
   }
 }
+
+export async function DeleteContactList(crmDb: string, id: number) {
+  try {
+    let query = "Delete from contact_master where id=?";
+    let values: any[] = [id];
+
+    await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+
+    return;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
