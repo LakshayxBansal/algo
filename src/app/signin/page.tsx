@@ -7,14 +7,14 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import bgImage from "../../../public/OIG4.jpg";
-import { getProviders} from "next-auth/react";
-import Divider  from '@mui/material/Divider';
+import { getProviders } from "next-auth/react";
+import Divider from '@mui/material/Divider';
 import AuthPage from './AuthPage';
 
 
 
 export default async function SignIn() {
-  const providerArr = Object.values((await getProviders())!).filter((provider) => provider.name!=="Credentials");
+  const providerArr = Object.values((await getProviders())!).filter((provider) => provider.name !== "Credentials");
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -48,7 +48,7 @@ export default async function SignIn() {
             Sign in
           </Typography>
           <Divider />
-          <AuthPage providers = {providerArr}></AuthPage>
+          <AuthPage providers={providerArr}></AuthPage>
         </Box>
       </Grid>
     </Grid>

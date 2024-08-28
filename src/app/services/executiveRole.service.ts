@@ -128,7 +128,10 @@ export async function Pagination(
   }
 }
 
-export async function getExecutiveRoleCount(crmDb: string, value: string | undefined) {
+export async function getExecutiveRoleCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

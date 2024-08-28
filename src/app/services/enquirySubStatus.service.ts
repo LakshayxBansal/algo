@@ -1,6 +1,6 @@
 "use server";
 
-import { enquirySubStatusMasterT } from "../models/models";
+import * as zm from "../models/models";
 import { Session } from "next-auth";
 import excuteQuery from "../utils/db/db";
 
@@ -31,6 +31,23 @@ export async function getEnquirySubStatusList(
   }
 }
 
+export async function getEnquirySubStatusDetailsById(
+  crmDb: string,
+  id: number
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select * from enquiry_sub_status_master a where a.id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 /**
  *
  * @param session : user session
@@ -39,16 +56,12 @@ export async function getEnquirySubStatusList(
  */
 export async function createEnquirySubStatusDb(
   session: Session,
-  sourceData: enquirySubStatusMasterT
+  sourceData: zm.enquirySubStatusMasterT
 ) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query:
-        "insert into enquiry_sub_status_master (name, enquiry_status_id, created_by, created_on) \
-       values (?, \
-        (select id from enquiry_status_master where name=?), \
-        (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createEnquirySubStatusDb(?,?,?)",
       values: [sourceData.name, sourceData.status, session.user.email],
     });
   } catch (e) {
@@ -57,20 +70,21 @@ export async function createEnquirySubStatusDb(
   return null;
 }
 
-export async function getEnquirySubStatusDetailsById(crmDb: string, id: number) {
+export async function updateEnquirySubStatusDb(
+  session: Session,
+  statusData: zm.enquirySubStatusMasterT
+) {
   try {
-    const result = await excuteQuery({
-      host: crmDb,
-      query:
-        "select select sb.id as id, sb.name as name from enquiry_sub_status_master sb where \
-                  sb.enquiry_status_id= ?;",
-      values: [id],
-    });
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call UpdateEnquirySubStatus(?,?,?);",
 
-    return result;
+      values: [statusData.id, statusData.name, session.user.email],
+    });
   } catch (e) {
     console.log(e);
   }
+  return null;
 }
 
 export async function Pagination(
@@ -105,7 +119,10 @@ export async function Pagination(
   }
 }
 
-export async function getEnquirySubStatusCount(crmDb: string, value: string | undefined) {
+export async function getEnquirySubStatusCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,
