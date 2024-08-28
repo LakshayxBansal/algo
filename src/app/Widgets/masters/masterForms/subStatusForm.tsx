@@ -8,7 +8,6 @@ import {
   updateEnquirySubStatus,
 } from "@/app/controllers/enquirySubStatus.controller";
 import Grid from "@mui/material/Grid";
-import { enquirySubStatusMaster } from "../../../zodschema/zodschema";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";

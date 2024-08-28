@@ -28,7 +28,6 @@ function Title(props: TitleProps) {
 
 export default async function Companies() {
   const session = await getSession();
-  console.log("company page :", session);
   async function callBackAfterAddCo() {
     "use server";
     redirect("/company");
