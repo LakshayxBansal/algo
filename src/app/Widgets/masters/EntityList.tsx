@@ -6,8 +6,12 @@ import {
   Box,
   Button,
   Container,
+  Divider,
+  Grid,
   IconButton,
   InputAdornment,
+  Menu,
+  MenuItem,
   Toolbar,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,6 +20,10 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
 import { RenderFormFunctionT } from "@/app/models/models";
+import { StripedDataGrid } from "@/app/utils/styledComponents";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AddIcon from "@mui/icons-material/Add";
+import TuneIcon from "@mui/icons-material/Tune";
 
 type ModifyT = {
   renderForm?: RenderFormFunctionT;
@@ -48,6 +56,8 @@ export default function EntityList(props: ModifyT) {
   const [searchText, setSearchText] = useState("");
   const [modData, setModData] = useState({});
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
+  const [search, setSearch] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -65,34 +75,62 @@ export default function EntityList(props: ModifyT) {
     fetchData();
   }, [PageModel, filterModel, searchText]);
 
-  const columns: GridColDef[] = props.customCols.concat([
+  const handleClick = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const columns1: GridColDef[] = [
     {
-      field: "Edit",
-      headerName: "Edit",
+      field: "Icon menu",
+      headerName: "Options",
       width: 100,
       renderCell: (params) => (
-        <IconButton onClick={() => onModifyDialog(params.row.id)}>
-          <EditIcon />
-        </IconButton>
+        <Box>
+          <IconButton
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleClose}>
+              <IconButton
+         onClick={() => onModifyDialog(params.row.id)}
+              >
+                <EditIcon />
+                Edit
+              </IconButton>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              {" "}
+              <IconButton
+         onClick={() => {
+          setId(params.row.id);
+          setName(params.row.name);
+          //setDeleteDlgState(true)
+        }}
+              >
+                <DeleteIcon />
+                Delete
+              </IconButton>
+            </MenuItem>
+          </Menu>
+        </Box>
       ),
     },
-    {
-      field: "Delete",
-      headerName: "Delete",
-      width: 100,
-      renderCell: (params) => (
-        <IconButton
-          onClick={() => {
-            setId(params.row.id);
-            setName(params.row.name);
-            //setDeleteDlgState(true)
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      ),
-    },
-  ]);
+  ];
+
+  const columns: GridColDef[] = columns1.concat(props.customCols);
 
   async function onModifyDialog(modId: number) {
     if (props.fnFetchDataByID && modId) {
@@ -104,44 +142,72 @@ export default function EntityList(props: ModifyT) {
   }
 
   return (
-    <Container maxWidth="lg">
-      <div style={{ height: 300, width: "100%", padding: "25px" }}>
-        {/* <Toolbar/> */}
-        <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-          <Box sx={{ flexGrow: 1 }}>
+    <Container
+      maxWidth="lg"
+      style={{ height: "500px", width: "100%", padding: "25px" }}
+    >
+      <Grid container spacing={2} style={{ verticalAlign: "center" }}>
+        <Grid item xs={8}>
+          <Box sx={{ width: "75%", marginLeft:"30px" }}>
             <TextField
-              // label="Search..."
-              name="search"
-              id="search"
+              // label="Search"
+              variant="outlined"
+              fullWidth
               placeholder="Search..."
-              type="search"
-              variant="filled"
-              onChange={(e) => setSearchText(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              margin="normal"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon
-                      fontSize="medium"
-                      style={{
-                        verticalAlign: "middle",
-                        marginBottom: "0.2rem",
-                        fontWeight: "bold",
-                      }}
-                    />
+                    <SearchIcon />
                   </InputAdornment>
                 ),
-                disableUnderline: true,
-                sx: {
-                  borderRadius: 0,
-                  justifyContent: "center",
-                  width: "fit-content",
-                  flexGrow: 1,
+                style: {
+                  backgroundColor: "#f5f5f5", // Set the background color
                 },
-                style: { fontSize: "1.2rem", alignItems: "center" },
+              }}
+              InputLabelProps={{
+                style: {
+                  backgroundColor: "#f5f5f5", // Ensure label background matches
+                },
               }}
             />
           </Box>
+        </Grid>
+        <Grid
+          item
+          xs={3}
+          sx={{ textAlign: "right", marginTop: "1.1rem", paddingRight: "45px" }}
+        >
           {props.AddAllowed && (
+            <Box>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setDialogOpen(true);
+                  setDlgMode(dialogMode.Add);
+                }}
+              >
+                <AddIcon sx={{ paddingRight: "5px" }} />
+                ADD NEW
+              </Button>
+            </Box>
+          )}
+        </Grid>
+        <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
+          <IconButton>
+            <TuneIcon fontSize="large" />
+          </IconButton>
+        </Grid>
+      </Grid>
+      <Divider
+        sx={{
+          margin: "20px",
+        }}
+      />
+
+      {/* {props.AddAllowed && (
             <Box>
               <Button
                 variant="contained"
@@ -153,33 +219,31 @@ export default function EntityList(props: ModifyT) {
                 ADD NEW
               </Button>
             </Box>
-          )}
-        </Box>
-        {dialogOpen && (
-          <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-            {props.renderForm
-              ? dlgMode === dialogMode.Add
-                ? props.renderForm(setDialogOpen, (arg) => {})
-                : props.renderForm(setDialogOpen, (arg) => {}, modData)
-              : 1}
-          </AddDialog>
-        )}
+          )} */}
 
-        <DataGrid
-          rows={data ? data : []}
-          columns={columns}
-          rowCount={NRows}
-          getRowId={(row) => row.id}
-          pagination={true}
-          pageSizeOptions={[pgSize]}
-          paginationMode="server"
-          paginationModel={PageModel}
-          onPaginationModelChange={setPageModel}
-          filterMode="server"
-          onFilterModelChange={setFilterModel}
-          loading={!data}
-        />
-      </div>
+      {dialogOpen && (
+        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
+          {props.renderForm
+            ? dlgMode === dialogMode.Add
+              ? props.renderForm(setDialogOpen, (arg) => {})
+              : props.renderForm(setDialogOpen, (arg) => {}, modData)
+            : 1}
+        </AddDialog>
+      )}
+      <StripedDataGrid
+        rows={data ? data : []}
+        columns={columns}
+        rowCount={NRows}
+        getRowId={(row) => row.id}
+        pagination={true}
+        pageSizeOptions={[pgSize, 20, 30]}
+        paginationMode="server"
+        paginationModel={PageModel}
+        onPaginationModelChange={setPageModel}
+        filterMode="server"
+        onFilterModelChange={setFilterModel}
+        loading={!data}
+      />
     </Container>
   );
 }
