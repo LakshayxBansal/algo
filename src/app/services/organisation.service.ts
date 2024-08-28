@@ -129,11 +129,13 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id, alias \
-       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-          FROM organisation_master " +
+        "SELECT *, RowNum as RowID \
+       FROM (select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.address3, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
+        s.name state, co.name country, ROW_NUMBER() OVER () AS RowNum  \
+        from organisation_master o left outer join state_master s on o.state_id = s.id \
+        left outer join country_master co on o.country_id = co.id " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
-        "order by name\
+        "order by o.name\
       ) AS NumberedRows\
       WHERE RowNum > ?*?\
       ORDER BY RowNum\

@@ -4,8 +4,8 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getExecutiveGroupById, getExecutiveGroups } from '@/app/controllers/executiveGroup.controller';
 import ExecutiveForm from '@/app/Widgets/masters/masterForms/executiveForm';
+import { getExecutiveById, getExecutives } from '@/app/controllers/executive.controller';
 
 export default function executive() {
 const columns: GridColDef[] = [
@@ -21,7 +21,19 @@ const columns: GridColDef[] = [
     headerName: 'Alias',
     width: 150,
     editable: true,
-  }
+  },
+  { 
+    field: "email", 
+    headerName: "Email", 
+    width: 100,
+    editable: true,
+  },
+  { 
+    field: "mobile", 
+    headerName: "Mobile", 
+    width: 100,
+    editable: true,
+  },
 ];
 
   return (
@@ -36,8 +48,8 @@ const columns: GridColDef[] = [
               data={data}
             />
           )}
-        fetchDataFn={getExecutiveGroups}
-        fnFetchDataByID={getExecutiveGroupById}
+        fetchDataFn={getExecutives}
+        fnFetchDataByID={getExecutiveById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

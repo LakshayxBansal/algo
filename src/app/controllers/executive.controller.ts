@@ -4,12 +4,16 @@ import * as zs from "../zodschema/zodschema";
 import { executiveSchemaT } from "../models/models";
 import {
   createExecutiveDB,
+  getExecutiveCount,
   getExecutiveDetailsById,
+  Pagination,
   updateExecutiveDB,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
 import { getBizAppUserList } from "../services/user.service";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 const inviteSring = "Send Invite...";
 
@@ -228,4 +232,51 @@ export async function getExecutiveById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getExecutives(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getExecutive = {
+    status: false,
+    data: {} as mdl.executiveSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getExecutiveCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getExecutive = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.executiveSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "Executive Admin, E-Code:369";
+
+    getExecutive = {
+      ...getExecutive,
+      status: false,
+      data: {} as mdl.executiveSchemaT,
+      error: err,
+    };
+  }
+  return getExecutive;
 }

@@ -60,7 +60,7 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id, uqc\
+        "SELECT *, RowNum as RowID\
      FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
         FROM unit_master " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +

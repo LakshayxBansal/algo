@@ -112,13 +112,12 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id \
-       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-          FROM executive_role_master " +
-        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
-        "order by name\
+      "SELECT *, RowNum AS RowID \
+       FROM (SELECT c1.*, c2.name parentRole, ROW_NUMBER() OVER () AS RowNum FROM executive_role_master c1 left outer join executive_role_master c2 on c1.parent = c2.id " +
+        (filter ? "WHERE c1.name LIKE CONCAT('%', ?, '%') " : "") + 
+      "ORDER BY c1.name \
       ) AS NumberedRows\
-      WHERE RowNum > ?*?\
+      WHERE RowNum > ?*? \
       ORDER BY RowNum\
       LIMIT ?;",
       values: vals,

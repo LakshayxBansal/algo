@@ -9,7 +9,6 @@ import {
   Pagination,
   getEnquirySubStatusCount,
   updateEnquirySubStatusDb,
-  getEnquirySubStatusDetailsById,
 } from "../services/enquirySubStatus.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";

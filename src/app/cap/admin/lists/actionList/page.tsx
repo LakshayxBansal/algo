@@ -4,7 +4,7 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getEnquiryActionById, getEnquiryActions } from '@/app/controllers/enquiryAction.controller';
+import { getActionById, getEnquiryActions } from '@/app/controllers/enquiryAction.controller';
 import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
 
 
@@ -32,7 +32,7 @@ export default function Action() {
             />
           )}
         fetchDataFn={getEnquiryActions}
-        fnFetchDataByID={getEnquiryActionById}
+        fnFetchDataByID={getActionById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>
