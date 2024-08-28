@@ -132,3 +132,5 @@ export type getUnitT = [{
   phone: string;
   email: string;
 }]
+
+export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
