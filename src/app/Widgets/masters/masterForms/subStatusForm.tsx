@@ -114,7 +114,11 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
 
   return (
     <Paper>
-      <Seperator>{"Add Sub-Status for " + props.statusName} </Seperator>
+      <Seperator>
+        {(props.data ? "Update " : "Add ") +
+          "Sub-Status for " +
+          (props.parentData === 1 ? "Open" : "Closed")}{" "}
+      </Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

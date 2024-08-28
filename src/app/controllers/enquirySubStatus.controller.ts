@@ -1,6 +1,5 @@
 "use server";
 
-import { enquirySubStatusMaster } from "../zodschema/zodschema";
 import { enquirySubStatusMasterT } from "@/app/models/models";
 import {
   getEnquirySubStatusList,
@@ -9,7 +8,6 @@ import {
   Pagination,
   getEnquirySubStatusCount,
   updateEnquirySubStatusDb,
-  getEnquirySubStatusDetailsById,
 } from "../services/enquirySubStatus.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
