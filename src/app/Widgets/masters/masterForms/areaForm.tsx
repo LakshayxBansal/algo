@@ -17,7 +17,6 @@ export default function AreaForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const entityData: areaSchemaT = props.data ? props.data : {};
-  // console.log(entityData);
   // submit function. Save to DB and set value to the dropdown control
 
   const handleSubmit = async (formData: FormData) => {
@@ -30,7 +29,6 @@ export default function AreaForm(props: masterFormPropsT) {
 
     // if (parsed.success) {
     const result = await persistEntity(data);
-    // console.log(result);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
@@ -60,7 +58,6 @@ export default function AreaForm(props: masterFormPropsT) {
     let result;
     if (props.data) {
       Object.assign(data, { id: props.data.id });
-      // console.log(data)
       result = await updateArea(data);
     } else {
       result = await createArea(data);

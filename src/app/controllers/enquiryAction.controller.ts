@@ -4,7 +4,6 @@ import * as zs from "../zodschema/zodschema";
 import {
   getEnquiryActionList,
   createEnquiryActionDb,
-  fetchEnquiryActionById,
   getEnquiryActionCount,
   Pagination,
   getActionDetailsById,
@@ -76,8 +75,6 @@ export async function getEnquiryActions(
       };
     }
   } catch (e: any) {
-    console.log(e);
-
     let err = "enquiryAction Admin, E-Code:369";
 
     getAction = {
@@ -132,7 +129,6 @@ export async function createEnquiryAction(data: nameMasterDataT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,

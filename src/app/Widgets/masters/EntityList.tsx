@@ -58,7 +58,6 @@ export default function EntityList(props: ModifyT) {
         pgSize as number,
         searchText as string
       );
-      console.log(rows.data);
       setData(rows.data);
 
       setNRows(rows.count as number);

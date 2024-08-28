@@ -53,7 +53,6 @@ export default function StateForm(props: masterFormPropsWithParentT) {
       let result;
       if (props.data) {
         Object.assign(data, { id: entityData.id });
-        // console.log(data)
         result = await updateState(data);
       } else {
         result = await createState(data);

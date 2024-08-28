@@ -8,7 +8,6 @@ import { getServerSession } from "next-auth/next";
 export default async function CustomInquiry() {
   const session = await getServerSession();
   if (session) {
-    console.log("ok in session");
   }
 
   return (

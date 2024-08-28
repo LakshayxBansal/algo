@@ -29,7 +29,6 @@ export default function CategoryForm(props: masterFormPropsT) {
       data.id = entityData.id;
       result = await updateEnquiryCategory(data);
     } else result = await createEnquiryCategory(data);
-    console.log(result);
 
     return result;
   }

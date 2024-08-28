@@ -73,9 +73,7 @@ export default function ItemForm(props: masterFormPropsT) {
       result = await updateItem(data);
     }
     else {
-    // console.log(data);
      result = await createItem(data);
-    // console.log(result);
     }
     return result;
   }

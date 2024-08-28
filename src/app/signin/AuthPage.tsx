@@ -27,7 +27,6 @@ export default function AuthPage(props: authPagePropsType) {
   const successCallBackUrl = '/company';
 
   function actValidate(formData: FormData) {
-    console.log(formData);
     signIn("credentials",  { redirect: false, username: formData.get("username"), password: formData.get("password") })
       .then((status)=>{
         if (status?.ok) {

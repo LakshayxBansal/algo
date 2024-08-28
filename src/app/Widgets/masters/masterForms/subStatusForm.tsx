@@ -8,7 +8,6 @@ import {
   updateEnquirySubStatus,
 } from "@/app/controllers/enquirySubStatus.controller";
 import Grid from "@mui/material/Grid";
-import { enquirySubStatusMaster } from "../../../zodschema/zodschema";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
@@ -114,7 +113,11 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
 
   return (
     <Paper>
-      <Seperator>{"Add Sub-Status for " + props.statusName} </Seperator>
+      <Seperator>
+        {(props.data ? "Update " : "Add ") +
+          "Sub-Status for " +
+          (props.parentData === 1 ? "Open" : "Closed")}{" "}
+      </Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

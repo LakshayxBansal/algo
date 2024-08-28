@@ -137,7 +137,6 @@ export default function InputForm(props: { baseData: IformData }) {
       } else {
         issues = result?.data;
       }
-      console.log("parsed.error.issues");
     } else {
       if (!ledgerParsed.success) {
         issues = [...ledgerParsed.error.issues];

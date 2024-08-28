@@ -1,6 +1,5 @@
 "use server";
 
-import { enquirySubStatusMaster } from "../zodschema/zodschema";
 import { enquirySubStatusMasterT } from "@/app/models/models";
 import {
   getEnquirySubStatusList,
@@ -86,7 +85,6 @@ export async function createEnquirySubStatus(data: enquirySubStatusMasterT) {
 
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -190,8 +188,6 @@ export async function getEnquirySubStatus1(
       };
     }
   } catch (e: any) {
-    console.log(e);
-
     let err = "EnquirySubStatus Admin, E-Code:369";
 
     getEnquirySubStatus = {

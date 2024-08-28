@@ -55,7 +55,6 @@ export default function SignUpForm() {
 
   function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
     setPhoneNumber(value);
-    console.log(phoneNumber);
   }
 
   return (

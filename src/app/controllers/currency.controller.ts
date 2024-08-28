@@ -1,22 +1,15 @@
 "use server";
 
 import * as zs from "../zodschema/zodschema";
-import { contactGroupSchemaT, currencySchemaT } from "@/app/models/models";
-import {
-  getContactGroupList,
-  createContactGroupDb,
-  getContactGroupDetailsById,
-  updateContactGroupDb,
-} from "../services/contactGroup.service";
+import { currencySchemaT } from "@/app/models/models";
+import { getContactGroupList } from "../services/contactGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
-import { logger } from "@/app/utils/logger.utils";
 import {
   createCurrencyDb,
   getCurrencyDetailsById,
   updateCurrencyDb,
 } from "../services/currency.services";
-import { getContactDetailsById } from "../services/contact.service";
 
 export async function getContactGroup(searchString: string) {
   try {
