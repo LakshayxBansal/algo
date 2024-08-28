@@ -27,12 +27,10 @@ export const options: NextAuthOptions  = {
       },
       async authorize(credentials, req){
         // get the data from the db
-        console.log(credentials);
         const user = await authenticateUser({email: credentials?.username, password: credentials?.password});
         if(credentials?.username === user?.email){
           return user;
         } else {
-          console.log("user not found");
           return null;
         }
       }
@@ -68,7 +66,7 @@ export const options: NextAuthOptions  = {
         // return '/unauthorized'
       }
     },
-    async jwt({ token, account, profile }) {
+    async jwt({ token, user, account, profile, trigger, session }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
         const sessionDbData = await getDbSession(token?.email as string);

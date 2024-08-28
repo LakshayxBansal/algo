@@ -6,10 +6,14 @@ import {
   createEnquirySourceDb,
   getEnquirySourceDetailsById,
   updateEnquirySourceDb,
+  Pagination,
+  getEnquirySourceCount,
 } from "../services/enquirySource.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { nameMasterDataT } from "../models/models";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getEnquirySource(searchString: string) {
   try {
@@ -65,7 +69,6 @@ export async function createEnquirySource(data: nameMasterDataT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -113,7 +116,6 @@ export async function updateEnquirySource(data: nameMasterDataT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -127,4 +129,50 @@ export async function updateEnquirySource(data: nameMasterDataT) {
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
   };
   return result;
+}
+
+export async function getEnquirySources(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getEnquirySource = {
+    status: false,
+    data: {} as mdl.nameMasterDataT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getEnquirySourceCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getEnquirySource = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+
+    let err = "EnquirySource Admin, E-Code:369";
+
+    getEnquirySource = {
+      ...getEnquirySource,
+      status: false,
+      data: {} as mdl.nameMasterDataT,
+      error: err,
+    };
+  }
+  return getEnquirySource;
 }

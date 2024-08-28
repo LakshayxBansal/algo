@@ -8,6 +8,9 @@ import Grid from '@mui/material/Grid';
 import { masterFormPropsT,masterFormPropsWithParentT, stateSchemaT } from '@/app/models/models';
 import { nameMasterData } from '@/app/zodschema/zodschema';
 import Seperator from '../../seperator';
+import { Collapse, IconButton } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function StateForm(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<Record<string, { msg: string, error: boolean }>>({});
@@ -45,7 +48,6 @@ export default function StateForm(props: masterFormPropsWithParentT) {
       let result;
       if (props.data) {
         Object.assign(data, { id: entityData.id });
-        // console.log(data)
         result = await updateState(data);
       } else {
         result = await createState(data);
@@ -57,12 +59,36 @@ export default function StateForm(props: masterFormPropsWithParentT) {
 
     const handleCancel = () => {
       props.setDialogOpen ? props.setDialogOpen(false) : null;
-    }
+    };
+
+    const clearFormError = () => {
+      setFormError(curr => {
+        const {form, ...rest} = curr;
+        return rest;
+      });
+    }  
 
     return (
       <>
         <Seperator>{props.data ? "Modify Country" : "Add Country"}</Seperator>
-        {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
+        <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
         <form action={handleSubmit}>
           <Box
             sx={{

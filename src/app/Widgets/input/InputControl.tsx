@@ -50,7 +50,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, cust
   const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>){
-    // console.log(event.target.id, "event is :", event.type);
     switch (inputType){
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;

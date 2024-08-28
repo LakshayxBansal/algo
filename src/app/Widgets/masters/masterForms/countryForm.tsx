@@ -8,7 +8,9 @@ import Grid from '@mui/material/Grid';
 import { nameMasterData } from '@/app/zodschema/zodschema';
 import { masterFormPropsT, countrySchemaT } from '@/app/models/models';
 import Seperator from '../../seperator';
-
+import { Collapse, IconButton } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function CountryForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, { msg: string, error: boolean }>>({});
@@ -20,7 +22,6 @@ export default function CountryForm(props: masterFormPropsT) {
       alias: formData.get("alias") as string,
     };
     const result = await persistEntity(data);
-      console.log(result);
       if (result.status) {
         const newVal = { id: result.data[0].id, name: result.data[0].name };
         props.setDialogValue ? props.setDialogValue(newVal.name) : null;
@@ -46,7 +47,6 @@ export default function CountryForm(props: masterFormPropsT) {
       let result;
       if (props.data) {
         Object.assign(data, { id: props.data.id });
-        // console.log(data)
         result = await updateCountry(data);
       } else {
         result = await createCountry(data);
@@ -57,12 +57,36 @@ export default function CountryForm(props: masterFormPropsT) {
 
     const handleCancel = () => {
       props.setDialogOpen ? props.setDialogOpen(false) : null;
-    }
+    };
+
+    const clearFormError = () => {
+      setFormError(curr => {
+        const {form, ...rest} = curr;
+        return rest;
+      });
+    }  
 
     return (
       <>
         <Seperator>{props.data ? "Modify Country" : "Add Country"}</Seperator>
-        {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
+        <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
         <form action={handleSubmit}>
           <Box
             sx={{
