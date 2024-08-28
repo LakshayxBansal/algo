@@ -112,7 +112,10 @@ export async function Pagination(
   }
 }
 
-export async function getEnquirySourceCount(crmDb: string, value: string | undefined) {
+export async function getEnquirySourceCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

@@ -2,7 +2,13 @@
 
 import { contactSchema } from "../zodschema/zodschema";
 import { contactSchemaT, getContsT } from "../models/models";
-import { createContactDB, DeleteContactList, getContactList2, getContCount, updateContactDB } from "../services/contact.service";
+import {
+  createContactDB,
+  DeleteContactList,
+  getContactList2,
+  getContCount,
+  updateContactDB,
+} from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
   getContactList,
@@ -145,7 +151,6 @@ export async function getContact(searchString: string) {
   }
 }
 
-
 /**
  *
  * @param Id id of the contact to be searched
@@ -162,7 +167,7 @@ export async function getContactById(id: number) {
   }
 }
 
-// For Deleting Contact 
+// For Deleting Contact
 export async function DeleteContact(id: number) {
   try {
     const session = await getSession();
@@ -175,7 +180,6 @@ export async function DeleteContact(id: number) {
     throw error;
   }
 }
-
 
 export async function getConts(
   page: number,

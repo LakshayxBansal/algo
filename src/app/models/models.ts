@@ -1,4 +1,3 @@
-
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
 
@@ -14,25 +13,24 @@ export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
 
+export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
 
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
 export type optionsDataT = {
-    id: number,
-    name: string,
-    detail?: string
-}
+  id: number;
+  name: string;
+  detail?: string;
+};
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
 export type countrySchemaT = z.infer<typeof zs.countrySchema>;
 
-export type stateSchemaT = z.infer<typeof zs.stateSchema>
-
+export type stateSchemaT = z.infer<typeof zs.stateSchema>;
 
 export type formErrorT = { msg: string; error: boolean };
-
 
 export type RenderFormFunctionT = (
   fnDialogOpen: (props: any) => void,
@@ -41,18 +39,17 @@ export type RenderFormFunctionT = (
   parentData?: any
 ) => JSX.Element;
 
-export type masterFormPropsT = {      
-    setDialogOpen?: (props: any) => void,
-    setDialogValue?: (props: any) => void,
-    data?: any
-}
+export type masterFormPropsT = {
+  setDialogOpen?: (props: any) => void;
+  setDialogValue?: (props: any) => void;
+  data?: any;
+};
 
 export type masterFormPropsWithParentT = masterFormPropsT & {
-  parentData?: number
-}
+  parentData?: number;
+};
 
-
-// export type masterFormPropsWithParentT = {      
+// export type masterFormPropsWithParentT = {
 //     setDialogOpen?: (props: any) => void,
 //     setDialogValue?: (props: any) => void,
 //     data?: any
@@ -60,12 +57,12 @@ export type masterFormPropsWithParentT = masterFormPropsT & {
 // }
 
 // // Added parentData property of type number
-// export type masterFormPropsWithDataT = {
-//   setDialogOpen?: (props: any) => void;
-//   setDialogValue?: (props: any) => void;
-//   data?: any;
-//   parentData?: number;
-// };
+export type masterFormPropsWithDataT = {
+  setDialogOpen?: (props: any) => void;
+  setDialogValue?: (props: any) => void;
+  data?: any;
+  parentData?: any;
+};
 
 //Enquiry Schemas
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
@@ -112,23 +109,29 @@ export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContsT = [{
-  id: number;
-  name: string;
-  whatsapp: string;
-  email: string 
-}]
+export type getContsT = [
+  {
+    id: number;
+    name: string;
+    whatsapp: string;
+    email: string;
+  }
+];
 
-export type getItemT = [{
-  id:number;
-  name: string;
-  phone: string;
-  email: string;
-}]
+export type getItemT = [
+  {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+  }
+];
 
-export type getUnitT = [{
-  id:number;
-  name: string;
-  phone: string;
-  email: string;
-}]
+export type getUnitT = [
+  {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+  }
+];

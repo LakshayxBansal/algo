@@ -6,9 +6,8 @@ import * as zm from "../models/models";
 import { Session } from "next-auth";
 
 export async function createContactDB(
-  
   session: Session,
-  data: zm.contactSchemaT  
+  data: zm.contactSchemaT
 ) {
   try {
     return excuteQuery({
@@ -48,17 +47,17 @@ export async function createContactDB(
 
 export async function updateContactDB(
   session: Session,
-  data: zm.contactSchemaT,
+  data: zm.contactSchemaT
 ) {
   try {
-    console.log('-----DV----')
-    console.log(data)
+    console.log("-----DV----");
+    console.log(data);
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
         "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        data.id, 
+        data.id,
         data.alias,
         data.name,
         data.print_name,
@@ -97,7 +96,8 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    let query = 'select id as id, name as name, email, alias, mobile, pan from contact_master';
+    let query =
+      "select id as id, name as name, email, alias, mobile, pan from contact_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -161,15 +161,15 @@ export async function getContactList2(
     return excuteQuery({
       host: crmDb,
       query:
-        'SELECT name,RowNum as RowID,whatsapp, id,email \
+        "SELECT name,RowNum as RowID,whatsapp, id,email \
      FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-        FROM contact_master ' +
-        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : '') +
-        'order by name\
+        FROM contact_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
     ) AS NumberedRows\
     WHERE RowNum > ?*?\
     ORDER BY RowNum\
-    LIMIT ?;',
+    LIMIT ?;",
       values: vals,
     });
   } catch (e) {
@@ -182,8 +182,8 @@ export async function getContCount(crmDb: string, value: string | undefined) {
     return excuteQuery({
       host: crmDb,
       query:
-        'SELECT count(*) as rowCount from contact_master ' +
-        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ''),
+        "SELECT count(*) as rowCount from contact_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
   } catch (e) {
@@ -207,4 +207,3 @@ export async function DeleteContactList(crmDb: string, id: number) {
     console.log(e);
   }
 }
-

@@ -13,7 +13,7 @@ import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { nameMasterDataT } from "../models/models";
 import * as mdl from "../models/models";
-import { bigIntToNum } from '../utils/db/types';
+import { bigIntToNum } from "../utils/db/types";
 
 export async function getEnquiryCategory(searchString: string) {
   try {

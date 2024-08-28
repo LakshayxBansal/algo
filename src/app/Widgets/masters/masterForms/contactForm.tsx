@@ -43,8 +43,8 @@ import {
 import { masterFormPropsT } from "@/app/models/models";
 import { Paper } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ContactForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -54,7 +54,7 @@ export default function ContactForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data ? props.data : {};
-  
+
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
@@ -138,11 +138,11 @@ export default function ContactForm(props: masterFormPropsT) {
   }
 
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <>
