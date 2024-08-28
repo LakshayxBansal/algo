@@ -30,7 +30,6 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveRoleSchemaT = props.data ? props.data : {};
-  console.log(entityData);
   
 
   // submit function. Save to DB and set value to the dropdown control

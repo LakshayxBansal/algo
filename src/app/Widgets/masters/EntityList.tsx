@@ -15,7 +15,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
-import { RenderFormFunctionT } from "@/app/models/models";
+import { dbInfoT, RenderFormFunctionT } from "@/app/models/models";
+import CellDbName from "@/app/company/cellDBName";
 
 type ModifyT = {
   renderForm?: RenderFormFunctionT;
@@ -62,8 +63,9 @@ export default function EntityList(props: ModifyT) {
 
       setNRows(rows.count as number);
     }
+
     fetchData();
-  }, [PageModel, filterModel, searchText]);
+  }, [PageModel, filterModel, searchText, dialogOpen]);
 
   const columns: GridColDef[] = props.customCols.concat([
     {
@@ -90,6 +92,18 @@ export default function EntityList(props: ModifyT) {
         >
           <DeleteIcon />
         </IconButton>
+      ),
+    },
+    {
+      field: "Open",
+      headerName: "",
+      width: 100,
+      renderCell: (params) => (
+        <CellDbName
+          row={params.row}
+          // {params.row}
+          userEmail={params.row.email as string}
+        ></CellDbName>
       ),
     },
   ]);

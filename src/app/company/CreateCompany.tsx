@@ -5,8 +5,8 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
-import { companySchemaT, masterFormPropsT, selectKeyValueT } from "@/app/models/models";
-import { createCompany } from "../controllers/company.controller";
+import { companySchemaT, masterFormPropsT, optionsDataT, selectKeyValueT } from "@/app/models/models";
+import { createCompany, updateCompany } from "../controllers/company.controller";
 import Seperator from "../Widgets/seperator";
 import Alert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
@@ -21,13 +21,11 @@ export default function CreateCompany(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});  
+  const entityData: companySchemaT = props.data ? props.data : {};
 
   
   const handleSubmit = async (formData: FormData) => {
-    setLoading((prev) => !prev);
-    
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
@@ -35,7 +33,7 @@ export default function CreateCompany(props: masterFormPropsT) {
     }
     formData = updateFormData(data);    
 
-    const result = await createCompany(data as companySchemaT, props.data);
+    const result = await persistEntity(data as companySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
@@ -56,7 +54,6 @@ export default function CreateCompany(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
-    setLoading((prev) => !prev);
   };
 
   const handleCancel = () => {
@@ -64,12 +61,22 @@ export default function CreateCompany(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => { 
-       
     data.country_id = selectValues.country ? selectValues.country.id : 0;
     data.state_id = selectValues.state ? selectValues.state.id : 0;
 
     return data;
   };
+
+  async function persistEntity(data: companySchemaT) {
+    let result;
+    if (entityData?.id) {
+      data = { ...data, id: entityData.id };
+
+      result = await updateCompany(data);
+    } else result = await createCompany(data);
+
+    return result;
+  }
 
   const clearFormError = () => {
     setFormError(curr => {
@@ -81,7 +88,7 @@ export default function CreateCompany(props: masterFormPropsT) {
   }
   return (
     <Paper>
-      <Seperator>Add Company</Seperator>
+      <Seperator>{entityData.id ? "Update Company" : "Add Company"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -118,6 +125,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               name="name"
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -126,6 +134,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               name="alias"
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+              defaultValue={entityData.alias}
             />
           </Box>
           <Box
@@ -144,6 +153,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.add1?.error}
               helperText={formError?.add1?.msg}
               fullWidth
+              defaultValue={entityData.add1}
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -153,6 +163,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.add2?.error}
               helperText={formError?.add2?.msg}
               fullWidth
+              defaultValue={entityData.add2}
             />
 
             <InputControl
@@ -162,6 +173,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="City"
               error={formError?.city?.error}
               helperText={formError?.city?.msg}
+              defaultValue={entityData.city}
             />
             <SelectMasterWrapper
               name={"country"}
@@ -173,6 +185,12 @@ export default function CreateCompany(props: masterFormPropsT) {
                 setSelectValues({ ...selectValues, country: val })
               }
               fetchDataFn={getCountries}
+              defaultValue={
+                {
+                  id: entityData.country_id,
+                  name: entityData.country
+                } as optionsDataT
+              }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <CountryForm
                   setDialogOpen={fnDialogOpen}
@@ -193,7 +211,13 @@ export default function CreateCompany(props: masterFormPropsT) {
               fetchDataFn={(stateStr: string) =>
                 getStates(stateStr, selectValues.country?.name)
               }
-              disable={selectValues.country ? false : true}
+              disable={selectValues.country || entityData.country ? false : true}
+              defaultValue={
+                {
+                  id: entityData.state_id,
+                  name: entityData.state
+                } as optionsDataT
+              }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
@@ -210,6 +234,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="Pin Code"
               error={formError?.pincode?.error}
               helperText={formError?.pincode?.msg}
+              defaultValue={entityData.pincode}
             />
           </Box>
           <Box
@@ -222,8 +247,8 @@ export default function CreateCompany(props: masterFormPropsT) {
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained" disabled={loading} sx={{":disabled": {opacity: '80%'}}}>
-              {loading ? "Creating..." : "Create"}
+            <Button type="submit" variant="contained">
+              Create
             </Button>
           </Box>
         </form>

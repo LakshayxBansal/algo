@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import selectUserCompany from './SelectCompany';
 import {dbInfoT} from '../models/models';
+import { Button } from '@mui/material';
 
 
 export default function CellDbName(props : {row:dbInfoT, userEmail: string }) {
@@ -19,8 +20,7 @@ export default function CellDbName(props : {row:dbInfoT, userEmail: string }) {
   return (
     <TableCell>
     <Link href="" onClick={handleClick}>
-      {row.companyName}
-
+      <Button>Open</Button>
     </Link>
   </TableCell>
   );

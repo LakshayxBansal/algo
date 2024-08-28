@@ -1,7 +1,8 @@
 'use server'
-import { companySchemaT } from "../models/models";
-import { createCompanyDB, getHostId, createCompanyAndInfoDb, deleteCompanyAndDbInfo, dropDatabase, createTablesAndProc, getCompanyDetailsById } from "../services/company.service";
+import { companySchemaT, dbInfoT } from "../models/models";
+import { createCompanyDB, getHostId, createCompanyAndInfoDb, deleteCompanyAndDbInfo, dropDatabase, createTablesAndProc, getCompanyDetailsById, getCompaniesDb, getCompanyCount, updateCompanyDB } from "../services/company.service";
 import { getSession } from "../services/session.service";
+import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
 
@@ -16,9 +17,9 @@ export async function getCompanyById(id: number) {
   }
 }
 
-export async function createCompany(data: companySchemaT, userEmail: string) {
+export async function createCompany(data: companySchemaT) {
   let result
-  try {
+  try {    
     const session = await getSession();
     if (session) {
       const parsed = companySchema.safeParse(data);      
@@ -34,8 +35,9 @@ export async function createCompany(data: companySchemaT, userEmail: string) {
         else{
           return hostRes;
         }
+        const userEmail = session.user.email;
         
-        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userEmail);
+        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userEmail as string);
         
         if (companyData[0].length === 0) {
           dbName += companyData[2][0].id;
@@ -106,4 +108,107 @@ async function createCompanyDbAndTableProc(dbName: string, host: string, port: n
   }
 
   return tableAndProcRes
+}
+
+export async function updateCompany(data: companySchemaT) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = companySchema.safeParse(data);
+      if (parsed.success) {
+        const dbResult = await updateCompanyDB(data as companySchemaT);
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e: any) {
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
+      return result;
+    }
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function getCompanies(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getConts = {
+    status: false,
+    data: {} as dbInfoT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();    
+
+    if (appSession) {
+      const email = appSession.user.email;
+      const conts = await getCompaniesDb(
+        email as string,
+        page as number,
+        filter,
+        limit as number
+      );
+
+      const rowCount = await getCompanyCount(
+        email as string,
+        filter
+      );
+      
+      getConts = {
+        status: true,
+        data: conts.map(bigIntToNum) as dbInfoT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+
+    let err = "Contact Admin, E-Code:369";
+
+    getConts = {
+      ...getConts,
+      status: false,
+      data: {} as dbInfoT,
+      error: err,
+    };
+  }
+  return getConts;
 }
