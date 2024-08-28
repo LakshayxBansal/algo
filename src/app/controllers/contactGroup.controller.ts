@@ -10,7 +10,6 @@ import {
 } from "../services/contactGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
-import { logger } from "@/app/utils/logger.utils";
 
 export async function getContactGroup(searchString: string) {
   try {
