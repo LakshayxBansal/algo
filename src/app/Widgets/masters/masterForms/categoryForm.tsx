@@ -13,8 +13,8 @@ import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function CategoryForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -38,7 +38,7 @@ export default function CategoryForm(props: masterFormPropsT) {
     const data = {
       name: formData.get("name") as string,
     };
-    
+
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -68,11 +68,11 @@ export default function CategoryForm(props: masterFormPropsT) {
   };
 
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <Paper>
@@ -96,7 +96,7 @@ export default function CategoryForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box sx={{ m: 2, p: 3 }}>
-         <form action={handleSubmit}>
+        <form action={handleSubmit}>
           <Box
             sx={{
               display: "grid",

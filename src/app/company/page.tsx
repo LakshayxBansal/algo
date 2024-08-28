@@ -11,6 +11,6 @@ export default async function Companies() {
       <CompanyEntityList/>
     );
   } else {
-    redirect('/signin');
+    redirect("/signin");
   }
 }

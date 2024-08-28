@@ -36,7 +36,7 @@ export async function createOrganisationDB(
 
 export async function updateOrganisationDB(
   session: Session,
-  data: zm.organisationSchemaT,
+  data: zm.organisationSchemaT
 ) {
   try {
     return excuteQuery({
@@ -44,7 +44,7 @@ export async function updateOrganisationDB(
       query:
         "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        data.id, 
+        data.id,
         data.alias,
         data.name,
         data.printName,
@@ -66,7 +66,6 @@ export async function updateOrganisationDB(
   return null;
 }
 
-
 /**
  *
  * @param crmDb database to search in
@@ -75,7 +74,8 @@ export async function updateOrganisationDB(
  */
 export async function getOrganisationList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name, alias as alias from organisation_master";
+    let query =
+      "select id as id, name as name, alias as alias from organisation_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -145,7 +145,10 @@ export async function Pagination(
   }
 }
 
-export async function getOrganisationCount(crmDb: string, value: string | undefined) {
+export async function getOrganisationCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

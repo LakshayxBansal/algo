@@ -18,14 +18,14 @@ import {
   getEnquirySource,
   getEnquirySourceById,
 } from "@/app/controllers/enquirySource.controller";
-import { getContact, getContactById } from "@/app/controllers/contact.controller";
-import { getExecutive } from "@/app/controllers/executive.controller";
+import {
+  getContact,
+  getContactById,
+} from "@/app/controllers/contact.controller";
 import {
   getCategoryById,
   getEnquiryCategory,
 } from "@/app/controllers/enquiryCategory.controller";
-import { getEnquirySubStatus } from "@/app/controllers/enquirySubStatus.controller";
-import { getEnquiryAction } from "@/app/controllers/enquiryAction.controller";
 import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
@@ -34,6 +34,19 @@ import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
+
+import {
+  getExecutive,
+  getExecutiveById,
+} from "@/app/controllers/executive.controller";
+import {
+  getEnquirySubSatusById,
+  getEnquirySubStatus,
+} from "@/app/controllers/enquirySubStatus.controller";
+import {
+  getActionById,
+  getEnquiryAction,
+} from "@/app/controllers/enquiryAction.controller";
 
 import dayjs from "dayjs";
 import {
@@ -281,6 +294,7 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Executive"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
               fetchDataFn={getExecutive}
+              fnFetchDataByID={getExecutiveById}
               required
               formError={formError?.received_by ?? formError.received_by}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -358,13 +372,14 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Sub-Status for " + status}
               onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
               fetchDataFn={getSubStatusforStatus}
+              fnFetchDataByID={getEnquirySubSatusById}
               required
               formError={formError?.sub_status ?? formError.sub_status}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <SubStatusForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
-                  statusName={status}
+                  parentData={status}
                   data={data}
                 />
               )}
@@ -376,6 +391,7 @@ export default function InputForm(props: { baseData: IformData }) {
               dialogTitle={"Add Action"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
               fetchDataFn={getEnquiryAction}
+              fnFetchDataByID={getActionById}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ActionForm
                   setDialogOpen={fnDialogOpen}

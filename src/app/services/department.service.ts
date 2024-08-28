@@ -78,7 +78,6 @@ export async function updateDepartmentDb(
   return null;
 }
 
-
 export async function Pagination(
   crmDb: string,
   page: number,
@@ -111,7 +110,10 @@ export async function Pagination(
   }
 }
 
-export async function getDepartmentCount(crmDb: string, value: string | undefined) {
+export async function getDepartmentCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

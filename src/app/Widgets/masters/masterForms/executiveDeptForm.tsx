@@ -73,11 +73,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
   };
 
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <>
