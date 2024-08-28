@@ -480,3 +480,24 @@ export const nameAliasData = z.object({
   name: z.string().min(1).max(45),
   alias: z.string().max(45),
 });
+
+export const enquirySupportConfig = z.object({
+
+  enquiryReqd: z.boolean().optional(),
+  supportReqd: z.boolean().optional(),
+
+  enquiryCloseCall: z.boolean().optional(),
+  enquiryMaintainItems: z.boolean().optional(),
+  enquirySaveFAQ: z.boolean().optional(),
+  enquiryMaintainAction: z.boolean().optional(),
+
+  supportCloseCall: z.boolean().optional(),
+  supportMaintainItems: z.boolean().optional(),
+  supportSaveFAQ: z.boolean().optional(),
+  supportMaintainAction: z.boolean().optional(),
+
+  generalMaintainArea: z.boolean().optional(),
+  generalMaintainImage: z.boolean().optional(),
+  generalShowList: z.boolean().optional(),
+
+});
