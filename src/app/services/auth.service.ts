@@ -23,9 +23,9 @@ export async function authenticateUser(credData: any) {
     if (result.length > 0) {
       if (await hashCompare(credData.password, result[0].password)) {
         const user = {
-          id: result[0].userId,
+          id: result[0].id,
           email: result[0].email,
-          name: result[0].firstName + " " +result[0].lastName,
+          name: result[0].name,
         };
         return user;
       }

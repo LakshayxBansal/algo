@@ -6,6 +6,7 @@ import {
   SyntheticEvent,
   Dispatch,
   SetStateAction,
+  HTMLAttributes,
 } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import { debounce } from "@mui/material/utils";
@@ -108,8 +109,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
       loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
       renderOption={(p, option) => {
-        const { ["key"]: _, ...newP } = p;
-        return <li key={p.key} {...newP}>{option.name}</li>;
+        const pWithKey = p as HTMLAttributes<HTMLLIElement> & {key: string}
+        const { ["key"]: _, ...newP } = pWithKey;
+        return <li key={pWithKey.key} {...newP}>{option.name}</li>;
         //return <li>{getOptions(option, props.renderOptions)}</li>;
       }}
       sx={{ width: { width } }}
