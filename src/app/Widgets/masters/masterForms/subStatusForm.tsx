@@ -3,77 +3,121 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import { createEnquirySubStatus } from "@/app/controllers/enquirySubStatus.controller";
+import {
+  createEnquirySubStatus,
+  updateEnquirySubStatus,
+} from "@/app/controllers/enquirySubStatus.controller";
 import Grid from "@mui/material/Grid";
-import { enquirySubStatusMaster } from "../../../zodschema/zodschema";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  enquirySubStatusMasterT,
+  masterFormPropsWithDataT,
+} from "@/app/models/models";
 
-export default function SubStatusForm(props: {
-  setDialogOpen?: (props: any) => void;
-  setDialogValue?: (props: any) => void;
-  statusName?: string;
-  data?: any;
-}) {
+export default function SubStatusForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
+  const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
+  const statusName = props.parentData === "1" ? "Open" : "Closed";
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
-    formData.append("status", props.statusName as string);
-    let result;
-    let issues;
+    // formData.append("status", props.statusName as string);
+
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    const parsed = enquirySubStatusMaster.safeParse(data);
-    if (parsed.success) {
-      result = await createEnquirySubStatus(formData);
-      if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name };
-        props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-        setSnackOpen(true);
-      } else {
-        issues = result?.data;
-      }
-    } else {
-      issues = parsed.error.issues;
-    }
 
-    if (parsed.success && result?.status) {
+    data["status"] = statusName;
+
+    // let result;
+    // let issues;
+    // let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    // for (const [key, value] of formData.entries()) {
+    //   data[key] = value;
+    // }
+    // const parsed = enquirySubStatusMaster.safeParse(data);
+    // if (parsed.success) {
+    //   result = await createEnquirySubStatus(formData);
+    //   if (result.status){
+    //     const newVal = {id: result.data[0].id, name: result.data[0].name};
+    //     props.setDialogValue? props.setDialogValue(newVal.name) : null;
+    //     setSnackOpen(true);
+    //   } else {
+    //     issues = result?.data;
+    //   }
+    // } else {
+    //   issues = parsed.error.issues;
+    // }
+
+    // if (parsed.success && result?.status) {
+    //   props.setDialogOpen? props.setDialogOpen(false) : null;
+    // } else {
+    //   // show error on screen
+    //   const errorState: Record<string, {msg: string, error: boolean}> = {};
+    //   for (const issue of issues) {
+    //     errorState[issue.path[0]] = {msg: issue.message, error: true};
+    //   }
+    //   setFormError(errorState);
+    // }
+    const result = await persistEntity(data as enquirySubStatusMasterT);
+    if (result.status) {
+      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
+      setFormError({});
+      setSnackOpen(true);
     } else {
+      const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
       }
+      // errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
+
+  async function persistEntity(data: enquirySubStatusMasterT) {
+    let result;
+    if (props.data) {
+      data["id"] = entityData.id;
+      result = await updateEnquirySubStatus(data);
+    } else result = await createEnquirySubStatus(data);
+    return result;
+  }
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <Paper>
-      <Seperator>{"Add Sub-Status for " + props.statusName} </Seperator>
+      <Seperator>
+        {(props.data ? "Update " : "Add ") +
+          "Sub-Status for " +
+          (props.parentData === 1 ? "Open" : "Closed")}{" "}
+      </Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -108,11 +152,12 @@ export default function SubStatusForm(props: {
               label="Sub-Status Name"
               inputType={InputType.TEXT}
               name="name"
+              defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
             />
           </Box>
-          <Grid container xs={12} md={12}>
+          <Grid container>
             <Grid item xs={6} md={6}>
               <Box margin={1} sx={{ display: "flex" }}>
                 <Box

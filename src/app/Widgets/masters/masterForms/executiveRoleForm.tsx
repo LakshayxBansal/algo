@@ -21,8 +21,8 @@ import {
 import { Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
@@ -119,11 +119,11 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   };
 
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <>
@@ -173,7 +173,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
-              defaultValue={{id: entityData.id, name: entityData.parentRole} as optionsDataT}
+              defaultValue={
+                {
+                  id: entityData.id,
+                  name: entityData.parentRole,
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, parentRole: val })
               }

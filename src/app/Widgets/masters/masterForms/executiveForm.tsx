@@ -4,23 +4,23 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { executiveSchema } from "@/app/zodschema/zodschema";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { createExecutive } from "@/app/controllers/executive.controller";
 import AreaForm from "./areaForm";
 import { getArea } from "@/app/controllers/area.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
 } from "@/app/controllers/executiveRole.controller";
-import { getExecutiveGroup, getExecutiveGroupById } from "@/app/controllers/executiveGroup.controller";
+import {
+  getExecutiveGroup,
+  getExecutiveGroupById,
+} from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import ExecutiveRoleForm from "./executiveRoleForm";
 import ExecutiveGroupForm from "./executiveGroupForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
-import { selectKeyValueT } from "@/app/models/models";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
 import { getCountries, getStates } from "@/app/controllers/masters.controller";
@@ -28,21 +28,28 @@ import {
   getDeptById,
   getExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
+import {
+  createExecutive,
+  updateExecutive,
+} from "@/app/controllers/executive.controller";
+import {
+  executiveSchemaT,
+  masterFormPropsT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
+import dayjs from "dayjs";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
-export default function ExecutiveForm(props: {
-  setDialogOpen?: (props: any) => void;
-  setDialogValue?: (props: any) => void;
-  data?: any;
-}) {
+export default function ExecutiveForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  // const [executiveDepartment, setExecutiveDepartment] = useState("");
+  const entityData: executiveSchemaT = props.data ? props.data : {};
 
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
@@ -59,39 +66,43 @@ export default function ExecutiveForm(props: {
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
-    formData.append("area_id", selectValues.area?.id);
-    formData.append("department_id", selectValues.department?.id);
-    formData.append("role_id", selectValues.role?.id);
-    formData.append("group_id", selectValues.group?.id);
-    formData.append("crm_user_id", selectValues.crm_user?.id);
-    formData.append("country_id", selectValues.country?.id);
-    formData.append("state_id", selectValues.state?.id);
+    // formData.append("area_id", selectValues.area?.id);
+    // formData.append("department_id", selectValues.department?.id);
+    // formData.append("role_id", selectValues.role?.id);
+    // formData.append("group_id", selectValues.group?.id);
+    // formData.append("crm_user_id", selectValues.crm_user?.id);
+    // formData.append("country_id", selectValues.country?.id);
+    // formData.append("state_id", selectValues.state?.id);
     formData.append("call_type", "Enquiry");
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
 
-    const parsed = executiveSchema.safeParse(data);
-    let result;
-    let issues;
+    formData = updateFormData(data);
+    // const parsed = executiveSchema.safeParse(data);
+    // let result;
+    // let issues;
+    // console.log(parsed);
+    data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
+    data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
+    data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
+    // if (parsed.success) {
+    const result = await persistEntity(data as executiveSchemaT);
 
-    if (parsed.success) {
-      result = await createExecutive(formData);
-      if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name };
-        props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-        setSnackOpen(true);
-      } else {
-        issues = result?.data;
-      }
+    if (result.status) {
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+      };
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
-      issues = parsed.error.issues;
-    }
-
-    if (parsed.success && result?.status) {
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
-    } else {
+      const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
@@ -99,8 +110,49 @@ export default function ExecutiveForm(props: {
           errorState[path] = { msg: issue.message, error: true };
         }
       }
+      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
+  };
+
+  const updateFormData = (data: any) => {
+    data.executive_group_id = selectValues.executive_group
+      ? selectValues.executive_group.id
+      : entityData.executive_group_id
+      ? entityData.executive_group_id
+      : 0;
+    data.role_id = selectValues.role
+      ? selectValues.role.id
+      : entityData.role_id
+      ? entityData.role_id
+      : 0;
+    data.area_id = selectValues.area
+      ? selectValues.area.id
+      : entityData.area_id
+      ? entityData.area_id
+      : 0;
+    data.crm_user_id = selectValues.crm_user
+      ? selectValues.crm_user.id
+      : entityData.crm_user_id
+      ? entityData.crm_user_id
+      : 0;
+    data.executive_dept_id = selectValues.executive_dept
+      ? selectValues.executive_dept.id
+      : entityData.executive_dept_id
+      ? entityData.executive_dept_id
+      : 0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country_id
+      ? entityData.country_id
+      : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state_id
+      ? entityData.state_id
+      : 0;
+
+    return data;
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -140,12 +192,28 @@ export default function ExecutiveForm(props: {
     getRolesforDepartment("");
   }, [selectValues.department]);
 
+  async function persistEntity(data: executiveSchemaT) {
+    let result;
+    let flag;
+    if (props.data) {
+      data["id"] = entityData.id;
+      result = await updateExecutive(data);
+    } else {
+      result = await createExecutive(data);
+    }
+    return result;
+    // if (entityData) {
+    //   data["id"] = entityData.id;
+    //   result = await updateExecutive(data);
+    // } else
+  }
+
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <>
@@ -168,8 +236,29 @@ export default function ExecutiveForm(props: {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+        {formError?.form?.error && (
+          <p style={{ color: "red" }}>{formError?.form.msg}</p>
+        )}
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -184,9 +273,10 @@ export default function ExecutiveForm(props: {
               id="name"
               label="Name"
               name="name"
-              required
+              // required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -195,6 +285,7 @@ export default function ExecutiveForm(props: {
               name="alias"
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+              defaultValue={entityData.alias}
             />
             <SelectMasterWrapper
               name={"area"}
@@ -202,8 +293,15 @@ export default function ExecutiveForm(props: {
               label={"Area"}
               width={210}
               dialogTitle={"Add Area"}
+              defaultValue={
+                {
+                  id: entityData.area_id,
+                  name: entityData.area,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn={getArea}
+              // defaultValue={entityData.}
               renderForm={(fnDialogOpen, fnDialogValue) => (
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
@@ -212,11 +310,17 @@ export default function ExecutiveForm(props: {
               )}
             />
             <SelectMasterWrapper
-              name={"department"}
+              name={"executive_dept"}
               id={"department"}
               label={"Department"}
               width={210}
               dialogTitle={"Add Department"}
+              defaultValue={
+                {
+                  id: entityData.executive_dept_id,
+                  name: entityData.executive_dept,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn={getExecutiveDept}
               fnFetchDataByID={getDeptById}
@@ -236,6 +340,12 @@ export default function ExecutiveForm(props: {
               dialogTitle={"Add Role"}
               fetchDataFn={getRolesforDepartment}
               fnFetchDataByID={getExecutiveRoleById}
+              defaultValue={
+                {
+                  id: entityData.role_id,
+                  name: entityData.role,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
               disable={selectValues.department ? false : true}
@@ -250,21 +360,27 @@ export default function ExecutiveForm(props: {
               )}
             />
             <SelectMasterWrapper
-              name={"group"}
+              name={"executive_group"}
               id={"group"}
               label={"Executive Group"}
               width={210}
               dialogTitle={"Add Executive Group"}
+              defaultValue={
+                {
+                  id: entityData.executive_group_id,
+                  name: entityData.executive_group,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "group")}
-              fetchDataFn = {getExecutiveGroup}
+              fetchDataFn={getExecutiveGroup}
               fnFetchDataByID={getExecutiveGroupById}
-              renderForm={(fnDialogOpen, fnDialogValue, data?) => 
+              renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                 <ExecutiveGroupForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                />  
-              }
+                />
+              )}
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -273,6 +389,7 @@ export default function ExecutiveForm(props: {
               name="pan"
               error={formError?.pan?.error}
               helperText={formError?.pan?.msg}
+              defaultValue={entityData.pan}
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -281,6 +398,7 @@ export default function ExecutiveForm(props: {
               name="aadhaar"
               error={formError?.aadhaar?.error}
               helperText={formError?.aadhaar?.msg}
+              defaultValue={entityData.aadhaar}
             />
             <SelectMasterWrapper
               name={"crm_user"}
@@ -288,8 +406,15 @@ export default function ExecutiveForm(props: {
               label={"Map to App User"}
               width={210}
               dialogTitle={"Add App User"}
+              defaultValue={
+                {
+                  id: entityData.crm_user_id,
+                  name: entityData.crm_user,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
               fetchDataFn={getApplicationUser}
+              formError={formError.crm_user}
               renderForm={(fnDialogOpen, fnDialogValue) => (
                 <ExecutiveGroupForm
                   setDialogOpen={fnDialogOpen}
@@ -305,6 +430,7 @@ export default function ExecutiveForm(props: {
               placeholder="Email address"
               error={formError?.email?.error}
               helperText={formError?.email?.msg}
+              defaultValue={entityData.email}
             />
             <InputControl
               inputType={InputType.PHONE}
@@ -313,6 +439,7 @@ export default function ExecutiveForm(props: {
               name="mobile"
               error={formError?.mobile?.error}
               helperText={formError?.mobile?.msg}
+              defaultValue={entityData.mobile}
             />
             <InputControl
               inputType={InputType.PHONE}
@@ -321,6 +448,7 @@ export default function ExecutiveForm(props: {
               name="whatsapp"
               error={formError?.whatsapp?.error}
               helperText={formError?.whatsapp?.msg}
+              defaultValue={entityData.whatsapp}
             />
 
             <InputControl
@@ -328,6 +456,7 @@ export default function ExecutiveForm(props: {
               id="dob"
               label="Date of Birth"
               name="dob"
+              defaultValue={entityData.dob ? dayjs(entityData.dob) : null}
               slotProps={{
                 textField: {
                   error: formError?.dob?.error,
@@ -340,6 +469,8 @@ export default function ExecutiveForm(props: {
               id="doa"
               label="Anniversary Date"
               name="doa"
+              // defaultValue={entityData.doa}
+              defaultValue={entityData.doa ? dayjs(entityData.doa) : null}
               slotProps={{
                 textField: {
                   error: formError?.doa?.error,
@@ -352,6 +483,8 @@ export default function ExecutiveForm(props: {
               id="doj"
               label="Joining Date"
               name="doj"
+              // defaultValue={entityData.doj}
+              defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
               slotProps={{
                 textField: {
                   error: formError?.doj?.error,
@@ -373,6 +506,7 @@ export default function ExecutiveForm(props: {
               label="Address Line 1"
               name="address1"
               id="address1"
+              defaultValue={entityData.address1}
               error={formError?.address1?.error}
               helperText={formError?.address1?.msg}
               fullWidth
@@ -382,6 +516,7 @@ export default function ExecutiveForm(props: {
               label="Address Line 2"
               name="address2"
               id="address2"
+              defaultValue={entityData.address2}
               error={formError?.address2?.error}
               helperText={formError?.address2?.msg}
               fullWidth
@@ -391,6 +526,7 @@ export default function ExecutiveForm(props: {
               label="Address Line 3"
               name="address3"
               id="address3"
+              defaultValue={entityData.address3}
               error={formError?.address3?.error}
               helperText={formError?.address3?.msg}
               fullWidth
@@ -400,6 +536,7 @@ export default function ExecutiveForm(props: {
               name="city"
               id="city"
               label="City"
+              defaultValue={entityData.city}
               error={formError?.city?.error}
               helperText={formError?.city?.msg}
             />
@@ -418,6 +555,12 @@ export default function ExecutiveForm(props: {
               label={"Country"}
               width={210}
               dialogTitle={"Add country"}
+              defaultValue={
+                {
+                  id: entityData.country_id,
+                  name: entityData.country,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
               fetchDataFn={getCountries}
               renderForm={(fnDialogOpen, fnDialogValue) => (
@@ -433,6 +576,12 @@ export default function ExecutiveForm(props: {
               label={"State"}
               width={210}
               dialogTitle={"Add State"}
+              defaultValue={
+                {
+                  id: entityData.state_id,
+                  name: entityData.state,
+                } as optionsDataT
+              }
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
               fetchDataFn={getStatesforCountry}
               renderForm={(fnDialogOpen, fnDialogValue) => (
@@ -448,6 +597,7 @@ export default function ExecutiveForm(props: {
               name="pincode"
               id="pincode"
               label="Pin Code"
+              defaultValue={entityData.pincode}
               error={formError?.pincode?.error}
               helperText={formError?.pincode?.msg}
             />
@@ -482,7 +632,7 @@ export default function ExecutiveForm(props: {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={3000}
+          autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
