@@ -37,7 +37,7 @@ export default async function Companies() {
 
   if (session) {
     console.log(session)
-    const rows:dbInfoT[] = await getCompanyList(session.user?.email);
+    const rows:dbInfoT[] = await getCompanyList(session.user?.userId);
     return (
       <Paper sx={{ p: 2, height: '100vh'}}>
         <React.Fragment>
@@ -58,7 +58,7 @@ export default async function Companies() {
             <TableBody>
               {rows?.map((row) => (
                 <TableRow key={row.company_id}>
-                  <CellDbName row={row} userEmail={session.user.email as string}></CellDbName>
+                  <CellDbName row={row} userId={session.user.userId as number}></CellDbName>
                   <TableCell>{row.dbName}</TableCell>
                 </TableRow>
               ))}

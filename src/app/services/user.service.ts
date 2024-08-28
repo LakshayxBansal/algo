@@ -79,3 +79,19 @@ export async function getBizAppUserList(crmDb: string, searchString: string, inv
     console.log(e);
   }
 }
+
+export async function getIdByContact(contact:string) {
+  try {
+    // check if the user exists
+    const user = await excuteQuery({
+      host: 'userDb',
+      query: 'select id from userDb.user where contact = ?',
+      values: [contact],
+    })
+    console.log("getIdByContact : ", user)
+    return user[0].id;
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+}
