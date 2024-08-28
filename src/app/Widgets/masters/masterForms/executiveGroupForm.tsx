@@ -19,7 +19,6 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<Record<string, { msg: string, error: boolean }>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveGroupSchemaT = props.data ? props.data : {};
-  console.log(entityData)
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -28,9 +27,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
       data[key] = value;
     }
     formData = updateFormData(data);
-    console.log(data);
     const result = await persistEntity(data as executiveGroupSchemaT);
-    // console.log(result);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;

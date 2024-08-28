@@ -26,7 +26,6 @@ export async function createOrganisation(data: zm.organisationSchemaT) {
           session,
           data as zm.organisationSchemaT
         );
-        console.log(dbResult);
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -59,7 +58,6 @@ export async function createOrganisation(data: zm.organisationSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -117,7 +115,6 @@ export async function updateOrganisation(data: zm.organisationSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -193,7 +190,6 @@ export async function getOrganisations(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "Organisation Admin, E-Code:369";
 

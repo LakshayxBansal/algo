@@ -22,7 +22,6 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
 
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveDeptSchemaT = props.data ? props.data : {};
-  console.log(entityData);
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {

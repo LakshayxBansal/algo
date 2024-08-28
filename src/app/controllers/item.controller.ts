@@ -55,7 +55,6 @@ export async function createItem(data: itemSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -111,7 +110,6 @@ export async function updateItem(data: itemSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -146,7 +144,6 @@ export async function getItem(searchString: string) {
 export async function DeleteItem(id: number) {
   try {
     const session = await getSession();
-    console.log(session);
 
     if (session?.user.dbInfo) {
       return DeleteItemList(session.user.dbInfo.dbName, id);
@@ -205,7 +202,6 @@ export async function getItems(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "item Admin, E-Code:369";
 
@@ -241,7 +237,6 @@ export async function getItemData(id: number) {
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "item Admin, E-Code:369";
 

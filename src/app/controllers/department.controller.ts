@@ -167,7 +167,6 @@ export async function getDepartments(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "Department Admin, E-Code:369";
 

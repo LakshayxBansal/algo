@@ -81,7 +81,6 @@ export async function createExecutiveRole(data: executiveRoleSchemaT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -139,7 +138,6 @@ export async function updateExecutiveRole(data: executiveRoleSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -188,7 +186,6 @@ export async function getExecutiveRoles(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "ExecutiveRole Admin, E-Code:369";
 

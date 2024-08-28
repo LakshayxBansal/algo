@@ -55,7 +55,6 @@ export async function createContact(data: contactSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -113,7 +112,6 @@ export async function updateContact(data: contactSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -166,7 +164,6 @@ export async function getContactById(id: number) {
 export async function DeleteContact(id: number) {
   try {
     const session = await getSession();
-    console.log(session);
 
     if (session?.user.dbInfo) {
       return DeleteContactList(session.user.dbInfo.dbName, id);
@@ -211,7 +208,6 @@ export async function getConts(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "Contact Admin, E-Code:369";
 

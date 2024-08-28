@@ -27,12 +27,10 @@ export const options: NextAuthOptions  = {
       },
       async authorize(credentials, req){
         // get the data from the db
-        console.log(credentials);
         const user = await authenticateUser({email: credentials?.username, password: credentials?.password});
         if(credentials?.username === user?.email){
           return user;
         } else {
-          console.log("user not found");
           return null;
         }
       }

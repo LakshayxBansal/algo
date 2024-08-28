@@ -79,7 +79,6 @@ export default function ContactForm(props: masterFormPropsT) {
     } else {
       const issues = result.data;
       // show error on screen
-      // console.log(issues);
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
         for (const path of issue.path) {

@@ -22,7 +22,6 @@ export function makeInputReadOnly(inputId) {
         },
         body: JSON.stringify({"email": email, "password": password}),
     });
-    console.log(externalApiResponse);
   } else {
     alert("Not Found");
   }

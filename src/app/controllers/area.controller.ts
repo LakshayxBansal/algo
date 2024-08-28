@@ -70,7 +70,6 @@ export async function createArea(data: areaSchemaT){
     }
     return result;
   } catch (e) {
-    console.log(e);
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;
@@ -110,7 +109,6 @@ export async function updateArea(data: areaSchemaT){
     }
     return result;
   } catch (e) {
-    console.log(e);
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;
@@ -153,7 +151,6 @@ export async function getAreas(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "Area Admin, E-Code:369";
 

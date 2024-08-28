@@ -6,7 +6,6 @@ import { Session } from "next-auth";
 
 export async function createItemDB(session: Session, data: zm.itemSchemaT) {
   try {
-    console.log("Data in service : ", data);
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createItem(?,?,?,?,?,?);",
@@ -27,7 +26,6 @@ export async function createItemDB(session: Session, data: zm.itemSchemaT) {
 
 export async function updateItemDB(session: Session, data: zm.itemSchemaT) {
   try {
-    console.log("Data in service : ", data);
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateItem(?,?,?,?,?,?,?);",

@@ -48,7 +48,6 @@ export async function createEnquirySubStatus(formData: FormData){
     }
     return result;
   } catch (e) {
-    console.log(e);
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;
@@ -102,7 +101,6 @@ export async function getEnquirySubStatus1(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "EnquirySubStatus Admin, E-Code:369";
 

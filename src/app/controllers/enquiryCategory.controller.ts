@@ -71,7 +71,6 @@ export async function createEnquiryCategory(data: nameMasterDataT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -93,7 +92,6 @@ export async function updateEnquiryCategory(data: nameMasterDataT) {
     const session = await getSession();
     if (session) {
       const parsed = zs.nameMasterData.safeParse(data);
-      // console.log(parsed);
 
       if (parsed.success) {
         let dbResult = await updateEnquiryCategoryDb(
@@ -101,16 +99,11 @@ export async function updateEnquiryCategory(data: nameMasterDataT) {
           data as nameMasterDataT
         );
 
-        // console.log(dbResult);
 
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
-          // console.log(dbResult);
-          // console.log(dbResult[1]);
 
           result = { status: true, data: dbResult[1] };
         } else {
-          // console.log(dbResult[0]);
-          // console.log(dbResult[1]);
           result = {
             status: false,
             data: [
@@ -137,7 +130,6 @@ export async function updateEnquiryCategory(data: nameMasterDataT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -186,7 +178,6 @@ export async function getEnquiryCategorys(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "Category Admin, E-Code:369";
 

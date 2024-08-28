@@ -67,7 +67,6 @@ export async function getEnquiryActions(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "enquiryAction Admin, E-Code:369";
 
@@ -113,7 +112,6 @@ export async function createEnquiryAction(formData: FormData) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;
