@@ -8,7 +8,6 @@ import { dbInfoT, userSchemaT } from '../../../models/models';
 // import { Session, User } from 'next-auth';
 
 export const options: NextAuthOptions = {
-export const options: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -101,7 +100,6 @@ export const options: NextAuthOptions = {
           session.user.dbInfo = token.dbInfo as dbInfoT;
         }
       }
-      console.log("session : ", session);
       return session;
     },
   },
