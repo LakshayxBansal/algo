@@ -6,9 +6,9 @@ import {
   createAreaDb,
   getAreaByIDList,
   updateAreaDb,
-  Pagination,
   getAreaCount,
   fetchAreaById,
+  getAreaByPageDb,
 } from "../services/area.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -157,7 +157,7 @@ export async function updateArea(data: areaSchemaT) {
   return result;
 }
 
-export async function getAreas(
+export async function getAreaByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -172,7 +172,7 @@ export async function getAreas(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getAreaByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

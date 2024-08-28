@@ -4,7 +4,7 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getItemById, getItems } from '@/app/controllers/item.controller';
+import { getItemById, getItemByPage } from '@/app/controllers/item.controller';
 import ItemForm from '@/app/Widgets/masters/masterForms/itemForm';
 
 
@@ -30,7 +30,7 @@ export default function Items() {
               data={data}
             />
           )}
-        fetchDataFn={getItems}
+        fetchDataFn={getItemByPage}
         fnFetchDataByID={getItemById}
         customCols={columns}
         AddAllowed={true}>

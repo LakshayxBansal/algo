@@ -93,7 +93,7 @@ export async function updateExecutiveGroupDb(
   return null;
 }
 
-export async function Pagination(
+export async function getExecutiveGroupByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

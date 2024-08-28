@@ -96,7 +96,7 @@ export async function updateExecutiveRoleDb(
   return null;
 }
 
-export async function Pagination(
+export async function getExecutiveRoleByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

@@ -6,8 +6,8 @@ import {
   createEnquirySourceDb,
   getEnquirySourceDetailsById,
   updateEnquirySourceDb,
-  Pagination,
   getEnquirySourceCount,
+  getEnquirySourceByPageDb,
 } from "../services/enquirySource.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -131,7 +131,7 @@ export async function updateEnquirySource(data: nameMasterDataT) {
   return result;
 }
 
-export async function getEnquirySources(
+export async function getEnquirySourceByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -146,7 +146,7 @@ export async function getEnquirySources(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getEnquirySourceByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

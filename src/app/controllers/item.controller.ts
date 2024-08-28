@@ -4,10 +4,10 @@ import * as zs from "../zodschema/zodschema";
 import { itemSchemaT } from "../models/models";
 import {
   createItemDB,
-  Pagination,
   getItemCount,
   DeleteItemList,
   getItemList,
+  getItemByPageDb,
 } from "../services/item.service";
 import { getSession } from "../services/session.service";
 import { updateItemDB } from "../services/item.service";
@@ -169,7 +169,7 @@ export async function getItemById(id: number) {
   }
 }
 
-export async function getItems(
+export async function getItemByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -184,7 +184,7 @@ export async function getItems(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getItemByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

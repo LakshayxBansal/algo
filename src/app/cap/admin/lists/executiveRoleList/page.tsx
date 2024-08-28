@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import ExecutiveRoleForm from '@/app/Widgets/masters/masterForms/executiveRoleForm';
-import { getExecutiveRoleById, getExecutiveRoles } from '@/app/controllers/executiveRole.controller';
+import { getExecutiveRoleById, getExecutiveRoleByPage } from '@/app/controllers/executiveRole.controller';
 
 
 export default function executiveRole() {
@@ -31,7 +31,7 @@ export default function executiveRole() {
               data={data}
             />
           )}
-        fetchDataFn={getExecutiveRoles}
+        fetchDataFn={getExecutiveRoleByPage}
         fnFetchDataByID={getExecutiveRoleById}
         customCols={columns}
         AddAllowed={true}>

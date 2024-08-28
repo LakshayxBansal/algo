@@ -8,7 +8,7 @@ import {
   getDeptDetailsById,
   updateExecutiveDeptDb,
   getExecutiveDeptCount,
-  Pagination,
+  getExecutiveDeptByPageDb,
 } from "../services/executiveDept.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -154,7 +154,7 @@ export async function getDeptById(id: number) {
   }
 }
 
-export async function getExecutiveDepts(
+export async function getExecutiveDeptByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -169,7 +169,7 @@ export async function getExecutiveDepts(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getExecutiveDeptByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

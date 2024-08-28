@@ -78,7 +78,7 @@ export async function updateDepartmentDb(
   return null;
 }
 
-export async function Pagination(
+export async function getDepartmentByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

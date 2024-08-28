@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import DepartmentForm from '@/app/Widgets/masters/masterForms/departmentForm';
-import { getDepartmentById, getDepartments } from '@/app/controllers/department.controller';
+import { getDepartmentById, getDepartmentByPage } from '@/app/controllers/department.controller';
 
 
 export default function Department() {
@@ -31,7 +31,7 @@ export default function Department() {
               data={data}
             />
           )}
-        fetchDataFn={getDepartments}
+        fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         customCols={columns}
         AddAllowed={true}>

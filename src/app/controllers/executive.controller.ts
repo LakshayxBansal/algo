@@ -4,9 +4,9 @@ import * as zs from "../zodschema/zodschema";
 import { executiveSchemaT } from "../models/models";
 import {
   createExecutiveDB,
+  getExecutiveByPageDb,
   getExecutiveCount,
   getExecutiveDetailsById,
-  Pagination,
   updateExecutiveDB,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
@@ -234,7 +234,7 @@ export async function getExecutiveById(id: number) {
   }
 }
 
-export async function getExecutives(
+export async function getExecutiveByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -249,7 +249,7 @@ export async function getExecutives(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getExecutiveByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

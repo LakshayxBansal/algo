@@ -160,7 +160,7 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getExecutiveByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
-import { getEnquirySubSatusById, getEnquirySubStatus1 } from '@/app/controllers/enquirySubStatus.controller';
+import { getEnquirySubSatusById, getEnquirySubStatusByPage } from '@/app/controllers/enquirySubStatus.controller';
 
 
 export default function subStatus() {
@@ -31,7 +31,7 @@ const columns: GridColDef[] = [
               data={data}
             />
           )}
-        fetchDataFn={getEnquirySubStatus1}
+        fetchDataFn={getEnquirySubStatusByPage}
         fnFetchDataByID={getEnquirySubSatusById}
         customCols={columns}
         AddAllowed={true}>

@@ -6,15 +6,20 @@ import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { itemSchemaT, masterFormPropsT, optionsDataT, selectKeyValueT } from "@/app/models/models";
-import { createItem, getItem } from "@/app/controllers/item.controller";
+import {
+  itemSchemaT,
+  masterFormPropsT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
+import { createItem } from "@/app/controllers/item.controller";
 import { getItemGroup } from "@/app/controllers/itemGroup.controller";
 import { getUnit } from "@/app/controllers/unit.controller";
 import ItemGroupForm from "./itemGroupForm";
 import UnitForm from "./unitForm";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import { updateItem } from "@/app/controllers/item.controller";
 
 export default function ItemForm(props: masterFormPropsT) {
@@ -61,29 +66,36 @@ export default function ItemForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.group = selectValues.itemGroup ? selectValues.itemGroup.id : entityData.group ? entityData.group_name: 0;
-    data.unit = selectValues.unit ? selectValues.unit.id : entityData.unit ? entityData.unit_name: 0;
+    data.group = selectValues.itemGroup
+      ? selectValues.itemGroup.id
+      : entityData.group
+      ? entityData.group_name
+      : 0;
+    data.unit = selectValues.unit
+      ? selectValues.unit.id
+      : entityData.unit
+      ? entityData.unit_name
+      : 0;
     return data;
   };
 
   async function persistEntity(data: itemSchemaT) {
     let result;
-    if(props.data){
-      Object.assign(data, {id: props.data.id});
+    if (props.data) {
+      Object.assign(data, { id: props.data.id });
       result = await updateItem(data);
-    }
-    else {
-     result = await createItem(data);
+    } else {
+      result = await createItem(data);
     }
     return result;
   }
 
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
-  }
+  };
 
   return (
     <>
@@ -146,7 +158,7 @@ export default function ItemForm(props: masterFormPropsT) {
               defaultValue={
                 {
                   id: entityData.group,
-                  name: entityData.group_name, 
+                  name: entityData.group_name,
                 } as optionsDataT
               }
               onChange={(e, val, s) =>

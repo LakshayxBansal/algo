@@ -142,7 +142,7 @@ export async function getContactDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function getContactList2(
+export async function getContactByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

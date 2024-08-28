@@ -101,7 +101,7 @@ export async function DeleteItemList(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getItemByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

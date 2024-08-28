@@ -113,7 +113,7 @@ export async function getOrganisationDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getOrganisationByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

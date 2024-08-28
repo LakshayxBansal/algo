@@ -81,7 +81,7 @@ export async function updateEnquiryActionDb(
   return null;
 }
 
-export async function Pagination(
+export async function getEnquiryActionByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

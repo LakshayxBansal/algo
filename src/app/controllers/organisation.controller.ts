@@ -4,9 +4,9 @@ import * as zs from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import {
   createOrganisationDB,
+  getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
-  Pagination,
   updateOrganisationDB,
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
@@ -157,7 +157,7 @@ export async function getOrganisationById(id: number) {
   }
 }
 
-export async function getOrganisations(
+export async function getOrganisationByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -172,7 +172,7 @@ export async function getOrganisations(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getOrganisationByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

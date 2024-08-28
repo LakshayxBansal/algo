@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import ExecutiveForm from '@/app/Widgets/masters/masterForms/executiveForm';
-import { getExecutiveById, getExecutives } from '@/app/controllers/executive.controller';
+import { getExecutiveById, getExecutiveByPage } from '@/app/controllers/executive.controller';
 
 export default function executive() {
 const columns: GridColDef[] = [
@@ -48,7 +48,7 @@ const columns: GridColDef[] = [
               data={data}
             />
           )}
-        fetchDataFn={getExecutives}
+        fetchDataFn={getExecutiveByPage}
         fnFetchDataByID={getExecutiveById}
         customCols={columns}
         AddAllowed={true}>

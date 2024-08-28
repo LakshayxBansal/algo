@@ -80,7 +80,7 @@ export async function getDeptDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getExecutiveDeptByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

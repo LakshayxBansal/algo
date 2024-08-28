@@ -80,7 +80,7 @@ export async function updateEnquiryCategoryDb(
   return null;
 }
 
-export async function Pagination(
+export async function getEnquiryCategoryByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,

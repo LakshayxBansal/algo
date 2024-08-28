@@ -109,7 +109,7 @@ export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContsT = [
+export type getContactByPageT = [
   {
     id: number;
     name: string;
