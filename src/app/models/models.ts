@@ -135,3 +135,5 @@ export type getUnitT = [
     email: string;
   }
 ];
+
+export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
