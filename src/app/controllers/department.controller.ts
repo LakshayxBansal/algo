@@ -6,11 +6,15 @@ import {
   createDepartmentDb,
   getDepartmentDetailsById,
   updateDepartmentDb,
+  Pagination,
+  getDepartmentCount,
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { nameMasterDataT } from "../models/models";
 import { logger } from "@/app/utils/logger.utils";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getDepartment(searchString: string) {
   try {
@@ -128,4 +132,50 @@ export async function updateDepartment(data: nameMasterDataT) {
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
   };
   return result;
+}
+
+export async function getDepartments(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getDepartment = {
+    status: false,
+    data: {} as mdl.nameMasterDataT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await Pagination(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getDepartmentCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getDepartment = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+
+    let err = "Department Admin, E-Code:369";
+
+    getDepartment = {
+      ...getDepartment,
+      status: false,
+      data: {} as mdl.nameMasterDataT,
+      error: err,
+    };
+  }
+  return getDepartment;
 }

@@ -42,6 +42,9 @@ import {
 } from "@/app/controllers/masters.controller";
 import { masterFormPropsT } from "@/app/models/models";
 import { Paper } from "@mui/material";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ContactForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -51,7 +54,7 @@ export default function ContactForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data ? props.data : {};
-  
+
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
@@ -76,7 +79,6 @@ export default function ContactForm(props: masterFormPropsT) {
     } else {
       const issues = result.data;
       // show error on screen
-      // console.log(issues);
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
         for (const path of issue.path) {
@@ -134,13 +136,35 @@ export default function ContactForm(props: masterFormPropsT) {
     return result;
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <>
       <Seperator>{props.data ? "Update Contact" : "Add Contact"}</Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
             <Seperator>Contact Details</Seperator>

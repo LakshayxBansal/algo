@@ -44,7 +44,6 @@ export async function hashText(data: any) {
     // creating hash object
   const hash = crypto.createHash(<string>process.env.HASH_ALGO).update(data).digest('hex');
 
-  console.log(`Hash: ${hash}`);
   return hash;
 }
 

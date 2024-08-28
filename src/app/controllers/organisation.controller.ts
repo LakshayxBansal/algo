@@ -4,13 +4,17 @@ import * as zs from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import {
   createOrganisationDB,
+  getOrganisationCount,
   getOrganisationDetailsById,
+  Pagination,
   updateOrganisationDB,getOrgsList,getOrgsCount
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function createOrganisation(data: zm.organisationSchemaT) {
   let result;
@@ -23,7 +27,6 @@ export async function createOrganisation(data: zm.organisationSchemaT) {
           session,
           data as zm.organisationSchemaT
         );
-        console.log(dbResult);
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -56,7 +59,6 @@ export async function createOrganisation(data: zm.organisationSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -114,7 +116,6 @@ export async function updateOrganisation(data: zm.organisationSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -157,14 +158,14 @@ export async function getOrganisationById(id: number) {
   }
 }
 
-export async function getOrgns(
+export async function getOrganisations(
   page: number,
   filter: string | undefined,
   limit: number
 ) {
-  let getOrgs = {
+  let getOrg = {
     status: false,
-    data: {} as zm.getOrgansT,
+    data: {} as mdl.organisationSchemaT,
     count: 0,
     error: {},
   };
@@ -172,35 +173,33 @@ export async function getOrgns(
     const appSession = await getSession();
 
     if (appSession) {
-      const orgs = await getOrgsList(
-        // appSession.dbSession?.dbInfo.dbName as string,
+      const conts = await Pagination(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
-      const rowCount = await getOrgsCount(
+      const rowCount = await getOrganisationCount(
         appSession.user.dbInfo.dbName as string,
         filter
       );
-      getOrgs = {
+      getOrg = {
         status: true,
-        data: orgs.map(bigIntToNum) as zm.getOrgansT,
-        count: Number(rowCount[0]['rowCount']),
+        data: conts.map(bigIntToNum) as mdl.organisationSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
     }
   } catch (e: any) {
-    console.log(e);
 
-    let err = 'Contact Admin, E-Code:369';
+    let err = "Organisation Admin, E-Code:369";
 
-    getOrgs = {
-      ...getOrgs,
+    getOrg = {
+      ...getOrg,
       status: false,
-      data: {} as zm.getOrgansT,
+      data: {} as mdl.organisationSchemaT,
       error: err,
     };
   }
-  return getOrgs;
+  return getOrg;
 }

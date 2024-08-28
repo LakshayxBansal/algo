@@ -176,7 +176,6 @@ export async function createCountry(data: zm.countrySchemaT){
           session,
           data as zm.countrySchemaT
         );
-        console.log(dbResult);
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -209,7 +208,6 @@ export async function createCountry(data: zm.countrySchemaT){
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -236,7 +234,6 @@ export async function updateCountry(data: zm.countrySchemaT){
           session,
           data as zm.countrySchemaT
         );
-        console.log(dbResult);
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -269,7 +266,6 @@ export async function updateCountry(data: zm.countrySchemaT){
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -334,7 +330,6 @@ export async function createState(data: zm.stateSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -393,7 +388,6 @@ export async function updateState(data : zm.stateSchemaT){
     }
     return result;
   } catch (e: any) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,

@@ -8,6 +8,7 @@ import { dbInfoT, userSchemaT } from '../../../models/models';
 // import { Session, User } from 'next-auth';
 
 export const options: NextAuthOptions = {
+export const options: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -32,11 +33,10 @@ export const options: NextAuthOptions = {
         if (credentials?.userContact === user?.contact) {
           return user;
         } else {
-          console.log("user not found");
           return null;
         }
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
@@ -46,7 +46,7 @@ export const options: NextAuthOptions = {
           contact: user.email as string,
           provider: "google",
           name: user.name as string,
-        }
+        };
         const result = await authenticateUser(data);
         if (!result) {
           //add the user to the db
@@ -60,10 +60,10 @@ export const options: NextAuthOptions = {
       }
 
       if (isAllowedToSignIn) {
-        return true
+        return true;
       } else {
         // Return false to display a default error message
-        return "false"
+        return "false";
         // Or you can return a URL to redirect to:
         // return '/unauthorized'
       }
@@ -80,7 +80,7 @@ export const options: NextAuthOptions = {
         }
         const sessionDbData = await getDbSession(userId as number);
         if (sessionDbData) {
-          token.dbInfo = sessionDbData
+          token.dbInfo = sessionDbData;
         }
         token.userid = userId;
       }
@@ -101,10 +101,11 @@ export const options: NextAuthOptions = {
           session.user.dbInfo = token.dbInfo as dbInfoT;
         }
       }
+      console.log("session : ", session);
       return session;
-    }
+    },
   },
   pages: {
-    signIn: '/signin',
-  }
-}
+    signIn: "/signin",
+  },
+};

@@ -1,7 +1,7 @@
 import React from 'react';
 import { getSession } from '@/app/services/session.service';
 import { redirect } from 'next/navigation';
-import ContactForm from '@/app/Widgets/masters/masterForms/contactForm/contactForm';
+import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
 import Box from '@mui/material/Box';
 import { logger } from '@/app/utils/logger.utils';
 

@@ -12,6 +12,9 @@ import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function CategoryForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -26,7 +29,6 @@ export default function CategoryForm(props: masterFormPropsT) {
       data.id = entityData.id;
       result = await updateEnquiryCategory(data);
     } else result = await createEnquiryCategory(data);
-    console.log(result);
 
     return result;
   }
@@ -36,7 +38,7 @@ export default function CategoryForm(props: masterFormPropsT) {
     const data = {
       name: formData.get("name") as string,
     };
-    
+
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -65,13 +67,35 @@ export default function CategoryForm(props: masterFormPropsT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <Paper>
       <Seperator>{entityData ? "Update Category" : "Add Category"}</Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{

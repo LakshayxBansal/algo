@@ -1,7 +1,6 @@
 "use server";
 
 import excuteQuery from "../utils/db/db";
-import * as z from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import { Session } from "next-auth";
 
@@ -37,7 +36,7 @@ export async function createOrganisationDB(
 
 export async function updateOrganisationDB(
   session: Session,
-  data: zm.organisationSchemaT,
+  data: zm.organisationSchemaT
 ) {
   try {
     return excuteQuery({
@@ -45,7 +44,7 @@ export async function updateOrganisationDB(
       query:
         "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        data.id, 
+        data.id,
         data.alias,
         data.name,
         data.printName,
@@ -67,7 +66,6 @@ export async function updateOrganisationDB(
   return null;
 }
 
-
 /**
  *
  * @param crmDb database to search in
@@ -76,7 +74,8 @@ export async function updateOrganisationDB(
  */
 export async function getOrganisationList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from organisation_master";
+    let query =
+      "select id as id, name as name, alias as alias from organisation_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -156,6 +155,55 @@ export async function getOrganisationDetailsById(crmDb: string, id: number) {
     });
 
     return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function Pagination(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT name,RowNum as RowID,id, alias \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM organisation_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getOrganisationCount(
+  crmDb: string,
+  value: string | undefined
+) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from organisation_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
   } catch (e) {
     console.log(e);
   }

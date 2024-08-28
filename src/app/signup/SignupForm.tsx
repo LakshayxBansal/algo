@@ -68,7 +68,6 @@ export default function SignUpForm() {
     formattedValue: string
   ) {
     setPhoneNumber(value);
-    console.log(phoneNumber);
   }
 
   return (

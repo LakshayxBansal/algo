@@ -14,13 +14,17 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
   masterFormPropsT,
-  masterFormPropsWithDataT,
+  masterFormPropsWithParentT,
+  optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
-export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
+export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -114,16 +118,35 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <>
-      {/* {formError?.form?.error && (
-        <p style={{ color: "red" }}>{formError?.form.msg}</p>
-      )} */}
       <Seperator>{entityData.id ? "Update Role" : "Add Role"}</Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{
@@ -150,7 +173,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT) {
               width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
-              defaultValue={entityData.parentRole}
+              defaultValue={
+                {
+                  id: entityData.id,
+                  name: entityData.parentRole,
+                } as optionsDataT
+              }
               onChange={(e, val, s) =>
                 setSelectValues({ ...selectValues, parentRole: val })
               }
