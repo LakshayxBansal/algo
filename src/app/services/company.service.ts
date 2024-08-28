@@ -3,6 +3,25 @@ import excuteQuery, {executeQueryPool}  from '../utils/db/db';
 import * as zm from "../models/models";
 import { dbTableAndProScript } from '../utils/tableScript';
 
+export async function getCompanyDetailsById(id: number) {
+  try {
+    const result = await excuteQuery({
+      host: 'user',
+      query:
+        "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, \
+        s.name state, co.name company \
+        left outer join state_master s on c.state_id = s.id \
+        left outer join country_master co on c.country_id = co.id \
+        where c.id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getHostId() {
   let result
   try {
@@ -21,17 +40,9 @@ export async function getHostId() {
       data: [{ path: ["form"], message: "Error: Server Error" }],
     }
   }
-  return result
+  return result;
 }
 
-/**
- * creates a database for the company name specified. 
- * Removes spaces from the name and adds 4 random letters.
- * right now just returns an unused db from the dbInfo
- * Returns the dbInfo object with {dbId, dbName}
- * @param compName Name of the company
- * 
-*/
 export async function createCompanyDB(dbName: string, host: string, port: number) {
   let result
   try {
@@ -82,61 +93,13 @@ export async function createTablesAndProc(dbName: string, host: string, port: nu
   }
   return result;
 }
-// export async function createTables(dbName: string, host: string, port: number) {
-//   try {
-//     const scripts : string[] = dbTableScript.split('~')  
-//     let result
-//     for(let idx in scripts){
-//       let query = scripts[idx]
-//       result += await executeQueryPool({
-//         dbName: dbName,
-//         host: host,
-//         port: port,
-//         query: query,
-//         values: [],
-//       });
-//     }
-//     return result
-//   } catch (e) {
-//     console.log(e);
-//   }
-//   return null;
-// }
 
-// export async function createProcedures(dbName: string, host: string, port: number) {
-//   try {
-//     const scripts : string[] = dbProcedures.split('~')  
-//     let result
-//     for(let idx in scripts){
-//       let query = scripts[idx]
-      
-//       result += await executeQueryPool({
-//         dbName: dbName,
-//         host: host,
-//         port: port,
-//         query: query,
-//         values: [],
-//       });
-//     }
-//     return result
-//   } catch (e) {
-//     console.log(e);
-//   }
-//   return null;
-// }
-
-
-/**
- * creates the compnay record and associates a blank DB with it
- * @param param0 json object with company infor
- * @param dbId database id to be associated with company
- */
-export async function createCompanyAndInfoDb(hostId: number, dbName: string, dbInfo: zm.companySchemaT) {
+export async function createCompanyAndInfoDb(hostId: number, dbName: string, company: zm.companySchemaT, userEmail: string) {
   try {    
     const result = await excuteQuery({
       host: 'userDb',
-      query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-      values: [dbName, hostId, dbInfo.name, dbInfo.alias, dbInfo.add1, dbInfo.add2, dbInfo.country_id, dbInfo.state_id, dbInfo.city, dbInfo.pincode] 
+      query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+      values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userEmail] 
     });
     return result;
   } catch(e) {
@@ -144,32 +107,20 @@ export async function createCompanyAndInfoDb(hostId: number, dbName: string, dbI
   }
 }
 
-// export async function updateCompanyInfo( dbInfoId: number, companyId: number) {
+
+// export async function assignUserCompany(companyId: number, email: string){
 //   try {
 //     const result = await excuteQuery({
 //       host: 'userDb',
-//       query: 'update company c set c.dbinfo_id = ? where c.id = ?', 
-//       values: [dbInfoId, companyId] 
-//     });
+//       query: 'INSERT INTO userCompany (user_id, company_id, isAdmin) values \
+//         ((select id from user where email=?), ?, 0)',
+//       values:[email, companyId]
+//     }); 
 //     return result;
-//   } catch(e) {
+//   } catch (e) {
 //     console.log(e);
 //   }
 // }
-
-export async function assignUserCompany(companyId: number, email: string){
-  try {
-    const result = await excuteQuery({
-      host: 'userDb',
-      query: 'INSERT INTO userCompany (user_id, company_id, isAdmin) values \
-        ((select id from user where email=?), ?, 0)',
-      values:[email, companyId]
-    }); 
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
 
 export async function dropDatabase(dbName: string){
   try {
@@ -184,7 +135,7 @@ export async function dropDatabase(dbName: string){
   }
 }
 
-export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number){
+export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number, userCompanyId: number){
   try {
     let result = await excuteQuery({
       host: 'userDb',
@@ -196,6 +147,12 @@ export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number
       host: 'userDb',
       query: 'DELETE FROM dbInfo WHERE id = ?',
       values:[dbInfoId]
+    });
+
+    result += await excuteQuery({
+      host: 'userDb',
+      query: 'DELETE FROM userCompany WHERE id = ?',
+      values:[userCompanyId]
     });
 
     return result;

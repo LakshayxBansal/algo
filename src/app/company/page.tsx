@@ -6,14 +6,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { Paper } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 import { getCompanyList } from '../services/masters.service';
 import { getSession }  from '../services/session.service';
 import CellDbName from './cellDBName';
 import CreateCompanyDialog from './CreateCompanyDialog';
 import { redirect } from 'next/navigation';
 import {dbInfoT} from '../models/models';
-
+import EditIcon from "@mui/icons-material/Edit";
 
 interface TitleProps {
   children?: React.ReactNode;
@@ -31,13 +31,15 @@ export default async function Companies() {
   
   async function callBackAfterAddCo() {
     'use server'
-    redirect('/company')
+    redirect('/company');
   }
 
-  if (session) {
+  if (session) {    
+    console.log(session);
+    
     const rows:dbInfoT[] = await getCompanyList(session.user?.email);
     return (
-      <Paper sx={{ p: 2, height: '100vh'}}>
+      <Paper sx={{ p: 2}}>
         <React.Fragment>
           <Grid sx={{ display: 'flex' }}>
             <Title>Choose Company</Title>
@@ -51,6 +53,7 @@ export default async function Companies() {
               <TableRow sx={{ '& th': { color: 'black', fontWeight: 'bold' } }}>
                 <TableCell>Name</TableCell>
                 <TableCell>DB Name</TableCell>
+                <TableCell>Edit</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -58,6 +61,11 @@ export default async function Companies() {
                 <TableRow key={row.company_id}>
                   <CellDbName row={row} userEmail={session.user.email as string}></CellDbName>
                   <TableCell>{row.dbName}</TableCell>
+                  <TableCell>
+                    <IconButton>
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

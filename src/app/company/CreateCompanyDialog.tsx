@@ -66,7 +66,6 @@ export default function CreateCompanyDialog(props: compDialogPropT) {
           errorState[path] = { msg: issue.message, error: true };
         }
       }
-      // errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   }
@@ -74,13 +73,6 @@ export default function CreateCompanyDialog(props: compDialogPropT) {
   const handleCancel = ()=> {
     setDialogOpen(false);
   }
-
-
-  // const handleClose: DialogProps["onClose"] = (event, reason) => {
-  //   if (reason && reason === "backdropClick")
-  //       return;
-  //   setDialogOpen(false);
-  // };
 
   const clearFormError = () => {
     setFormError(curr => {
