@@ -20,7 +20,7 @@ export function CompanyEntityList(){
         },
         {
           field: "Open",
-          headerName: "Select",
+          headerName: "",
           width: 150,
           renderCell: (params) => (
             <CellDbName

@@ -243,12 +243,12 @@ export default function CreateCompany(props: masterFormPropsT) {
               display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
             <Button type="submit" variant="contained">
-              Create
+              Submit
             </Button>
           </Box>
         </form>

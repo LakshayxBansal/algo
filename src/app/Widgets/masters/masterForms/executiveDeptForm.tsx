@@ -60,8 +60,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     if (entityData.id) {
       data = { ...data, id: entityData.id };
       result = await updateExecutiveDept(data);
-    } else result = await createExecutiveDept(data);
-
+    }
+    else{
+      result = await createExecutiveDept(data);
+    }
+    
     return result;
   }
 
