@@ -1,18 +1,19 @@
 'use client'
 
 import { DataGrid, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import { deleteEntityDlgT, modifyEntityDlgT } from '@/app/models/models';
+// import { deleteEntityDlgT, modifyEntityDlgT } from '@/app/models/models';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, InputAdornment, Toolbar } from '@mui/material';
+import { TextField, Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, InputAdornment, Menu, MenuItem, MenuProps, Toolbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
-import InputForm from '@/app/cap/enquiry/InputForm';
-import ContactForm from './masterForms/contactForm';
 import { AddDialog } from './addDialog';
-import { SocketAddress } from 'net';
-// import { Container } from '@mui/material';
+import { StripedDataGrid, StyledInputBase } from '@/app/utils/styledComponents';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AddIcon from '@mui/icons-material/Add';
+import TuneIcon from '@mui/icons-material/Tune';
+
+
 
 type renderAddForm = (
   addDialogOpen: (props: any) => void,
@@ -43,6 +44,7 @@ type ModifyT = {
 
 
 
+
 export default function EntityList<ModEntityT>(props: ModifyT) {
 
   const [modifyDlgState, setModifyDlgState] = useState<boolean>(false);
@@ -61,7 +63,20 @@ export default function EntityList<ModEntityT>(props: ModifyT) {
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
   const [searchText, setSearchText] = useState<String>('');
   const [dummyText, setDummyText] = useState("");
+  // const [pgSize, setpgSize] = useState(5);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
+
+  const handleClick = (event: { currentTarget: SetStateAction<null>; }) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     async function fetchData() { // the fecth data function will come from props
@@ -81,113 +96,149 @@ export default function EntityList<ModEntityT>(props: ModifyT) {
   }
 
 
-
-  const columns: GridColDef[] = props.customCols.concat(
-    [
-
-      {
-        field: 'Edit', headerName: 'Edit', width: 100, renderCell: (params) => (
-          <IconButton onClick={() => {
-            setId(params.row.id)
-            setModifyDlgState(true)
-          }}>
-            <EditIcon />
+  const columns1: GridColDef[] = [
+    {
+      field: "Icon menu", headerName: "Options", width: 100, renderCell: (params) => (
+        <Box>
+          <IconButton
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+          >
+            <MoreVertIcon />
           </IconButton>
-        )
-      },
-      {
-        field: 'Delete', headerName: 'Delete', width: 100, renderCell: (params) => (
-          <IconButton onClick={() => {
-            setId(params.row.id)
-            setName(params.row.name)
-            setDeleteDlgState(true)
-          }}>
-            <DeleteIcon />
-          </IconButton>
-        )
-      }
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleClose}>
+              <IconButton onClick={() => {
+                setId(params.row.id)
+                setModifyDlgState(true)
+              }}>
+                <EditIcon />
+                Edit
+              </IconButton>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>     <IconButton onClick={() => {
+              setId(params.row.id)
+              setName(params.row.name)
+              setDeleteDlgState(true)
+            }}>
+              <DeleteIcon />
+              Delete
+            </IconButton></MenuItem>
+          </Menu>
+        </Box>
 
-    ]);
+      )
+    }
+  ];
 
+  // const columns: GridColDef[] = props.customCols.concat(columns1);
+  const columns: GridColDef[] = columns1.concat(props.customCols);
 
   const addNewClick = () => {
     setAddDlgState(true);
   }
 
   return (
-    <Container maxWidth="lg">
-      <div style={{ height: 300, width: '100%', padding: "25px" }}>
-        {/* <Toolbar/> */}
-        <Box sx={{ display: 'flex', alignItems: "center", p: 2 }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <TextField
-              // label="Search..."
-              name="search"
-              id="search"
-              placeholder="Search..."
-              type="search"
-              variant="filled"
-              onChange={(e) => setSearchText(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="medium" style={{ verticalAlign: "middle", marginBottom: "0.2rem", fontWeight: "bold" }} />
-                  </InputAdornment>
-                ), disableUnderline: true, sx: { borderRadius: 0, justifyContent: "center", width: "fit-content", flexGrow: 1 }, style: { fontSize: '1.2rem', alignItems: "center" }
-              }}
+    <Container maxWidth="lg" style={{ height: "500px", width: '100%', padding: "25px" }}>
+      {/* <Box style={{ height: 300, width: '100%', padding: "25px" }}> */}
+      <Grid container spacing={2} style={{ verticalAlign: "center" }}>
+        <Grid item xs={8}>
+          <Box sx={{ width: '75%', paddingRight:"20px" }}>
+
+          <TextField
+            // label="Search"
+            variant="outlined"
+            fullWidth
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            margin="normal"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              style: {
+                backgroundColor: '#f5f5f5' // Set the background color
+              }
+            }}
+            InputLabelProps={{
+              style: {
+                backgroundColor: '#f5f5f5' // Ensure label background matches
+              }
+            }}
             />
-          </Box>
-          <Box>
-            <Button variant="contained" onClick={() => setAddDlgState(true)}>
-              ADD NEW
-            </Button>
-          </Box>
-        </Box>
-        {addDlgState && (
-          <AddDialog
-            title={''}
-            open={addDlgState}
-            setDialogOpen={setAddDlgState}
-          >
-            {props.renderAddForm(setAddDlgState, setDummyText)}
-          </AddDialog>
-        )}
-        {/* The Below dialogs shall come fro  props */}
-        {modifyDlgState && (
-          <AddDialog
-            title={''}
-            open={modifyDlgState}
-            setDialogOpen={setModifyDlgState}
-          >
-            {props.renderModForm(modifyDlgState, setModifyDlgState, id)}
-          </AddDialog>
-        )}
-        {deleteDlgState && (
-          <AddDialog
-            title={''}
-            open={deleteDlgState}
-            setDialogOpen={setDeleteDlgState}
-          >
-            {props.renderDelForm(deleteDlgState, setDeleteDlgState, "String", id)}
-          </AddDialog>
-        )}
+            </Box>
+        </Grid>
+        <Grid item xs={3} sx={{ textAlign: "right", marginTop: "1.1rem", paddingRight: "45px" }}>
+          <Button variant="contained" onClick={() => setAddDlgState(true)}>
+            <AddIcon sx={{ paddingRight: "5px" }} />
+            ADD NEW
+          </Button>
+        </Grid>
+        <Grid item xs={1} sx={{verticalAlign:"center", marginTop:"10px"}}>
+          <IconButton>
+          <TuneIcon fontSize='large'/>
+          </IconButton>
+        </Grid>
+      </Grid>
+      <Divider sx={{
+        margin: "20px"
+      }} />
+      <StripedDataGrid
+        rows={data ? data : []}
+        columns={columns}
+        rowCount={NRows}
+        getRowId={(row) => row.id}
+        pagination={true}
+        pageSizeOptions={[pgSize, 20, 30]}
+        paginationMode="server"
+        paginationModel={PageModel}
+        onPaginationModelChange={setPageModel}
+        filterMode='server'
+        onFilterModelChange={setFilterModel}
+        loading={!data}
+      />
 
-        <DataGrid
-          rows={data ? data : []}
-          columns={columns}
-          rowCount={NRows}
-          getRowId={(row) => row.id}
-          pagination={true}
-          pageSizeOptions={[pgSize]}
-          paginationMode="server"
-          paginationModel={PageModel}
-          onPaginationModelChange={setPageModel}
-          filterMode='server'
-          onFilterModelChange={setFilterModel}
-          loading={!data}
-        />
+      {addDlgState && (
+        <AddDialog
+          title={''}
+          open={addDlgState}
+          setDialogOpen={setAddDlgState}
+        >
+          {props.renderAddForm(setAddDlgState, setDummyText)}
+        </AddDialog>
+      )}
+      {/* The Below dialogs shall come fro  props */}
+      {modifyDlgState && (
+        <AddDialog
+          title={''}
+          open={modifyDlgState}
+          setDialogOpen={setModifyDlgState}
+        >
+          {props.renderModForm(modifyDlgState, setModifyDlgState, id)}
+        </AddDialog>
+      )}
+      {deleteDlgState && (
+        <AddDialog
+          title={''}
+          open={deleteDlgState}
+          setDialogOpen={setDeleteDlgState}
+        >
+          {props.renderDelForm(deleteDlgState, setDeleteDlgState, "String", id)}
+        </AddDialog>
+      )}
 
-      </div>
+
+
+      {/* </Box> */}
     </Container>
   );
 }
