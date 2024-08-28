@@ -67,7 +67,6 @@ export async function createExecutiveDept(data: executiveDeptSchemaT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -129,7 +128,6 @@ export async function updateExecutiveDept(data: executiveDeptSchemaT) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -189,7 +187,6 @@ export async function getExecutiveDepts(
       };
     }
   } catch (e: any) {
-    console.log(e);
 
     let err = "ExecutiveDept Admin, E-Code:369";
 

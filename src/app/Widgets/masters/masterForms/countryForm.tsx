@@ -26,7 +26,6 @@ export default function CountryForm(props: masterFormPropsT) {
       alias: formData.get("alias") as string,
     };
     const result = await persistEntity(data);
-    console.log(result);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
@@ -50,7 +49,6 @@ export default function CountryForm(props: masterFormPropsT) {
     let result;
     if (props.data) {
       Object.assign(data, { id: props.data.id });
-      // console.log(data)
       result = await updateCountry(data);
     } else {
       result = await createCountry(data);

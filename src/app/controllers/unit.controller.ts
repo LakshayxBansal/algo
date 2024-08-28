@@ -21,7 +21,6 @@ export async function createUnit(data: mdl.unitSchemaT) {
 
       if (parsed.success) {
         const dbResult = await createUnitDB(session, data as mdl.unitSchemaT);
-        console.log(dbResult);
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {

@@ -16,7 +16,6 @@ interface IButtonProps extends ButtonProps {
 
 export default function ProviderButton({ provider, callbackUrl, children, ...rest }: IButtonProps) {
 
-  console.log("provider")
 
   return (
     <div key={provider.name}>

@@ -28,7 +28,6 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: a
     });
     setOpen(idToOpenMap);
     const str = ShowMenu({pages: pages, level:0, menuLevel:0});
-    console.log(str);
   }, []);
 
 
