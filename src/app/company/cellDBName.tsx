@@ -1,6 +1,5 @@
 'use client'
 import * as React from 'react';
-import TableCell from '@mui/material/TableCell';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import selectUserCompany from './SelectCompany';
@@ -18,10 +17,10 @@ export default function CellDbName(props : {row:dbInfoT, userEmail: string }) {
   }
 
   return (
-    <TableCell>
+    // <TableCell>
     <Link href="" onClick={handleClick}>
       <Button>Open</Button>
     </Link>
-  </TableCell>
+  // </TableCell>
   );
 }

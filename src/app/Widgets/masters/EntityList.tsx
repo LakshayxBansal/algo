@@ -15,8 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
-import { dbInfoT, RenderFormFunctionT } from "@/app/models/models";
-import CellDbName from "@/app/company/cellDBName";
+import { RenderFormFunctionT } from "@/app/models/models";
 
 type ModifyT = {
   renderForm?: RenderFormFunctionT;
@@ -93,19 +92,7 @@ export default function EntityList(props: ModifyT) {
           <DeleteIcon />
         </IconButton>
       ),
-    },
-    {
-      field: "Open",
-      headerName: "",
-      width: 100,
-      renderCell: (params) => (
-        <CellDbName
-          row={params.row}
-          // {params.row}
-          userEmail={params.row.email as string}
-        ></CellDbName>
-      ),
-    },
+    }
   ]);
 
   async function onModifyDialog(modId: number) {

@@ -3,6 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { getCompanies, getCompanyById } from "../controllers/company.controller"
 import EntityList from "../Widgets/masters/EntityList"
 import CreateCompany from "./CreateCompany"
+import CellDbName from "./cellDBName";
 
 export function CompanyEntityList(){
     const columns: GridColDef[] = [
@@ -11,13 +12,22 @@ export function CompanyEntityList(){
           field: 'companyName',
           headerName: 'Name',
           width: 150,
-          editable: true,
         },
         {
           field: 'companyAlias',
           headerName: 'Alias',
           width: 150,
-          editable: true,
+        },
+        {
+          field: "Open",
+          headerName: "Select",
+          width: 150,
+          renderCell: (params) => (
+            <CellDbName
+              row={params.row}
+              userEmail={params.row.email as string}
+            ></CellDbName>
+          ),
         }
       ];
     return <>
