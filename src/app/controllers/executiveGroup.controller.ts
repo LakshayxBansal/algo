@@ -7,8 +7,8 @@ import {
   createExecutiveGroupDb,
   updateExecutiveGroupDb,
   getExecutiveGroupByIDList,
-  Pagination,
   getExecutiveGroupCount,
+  getExecutiveGroupByPageDb,
 } from "../services/executiveGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -165,7 +165,7 @@ export async function updateExecutiveGroup(data: executiveGroupSchemaT) {
   return result;
 }
 
-export async function getExecutiveGroups(
+export async function getExecutiveGroupByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -180,7 +180,7 @@ export async function getExecutiveGroups(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getExecutiveGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

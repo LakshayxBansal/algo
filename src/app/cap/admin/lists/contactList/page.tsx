@@ -3,7 +3,7 @@ import * as React from "react";
 
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
-import { getContactById, getConts } from "@/app/controllers/contact.controller";
+import { getContactById, getContactByPage } from "@/app/controllers/contact.controller";
 import AppBar from "@mui/material/AppBar";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 
@@ -42,7 +42,7 @@ export default function ManageContacts() {
             data={data}
           />
         )}
-        fetchDataFn={getConts}
+        fetchDataFn={getContactByPage}
         fnFetchDataByID={getContactById}
         customCols={columns}
         AddAllowed={true}

@@ -101,7 +101,7 @@ export async function DeleteItemList(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getItemByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -117,11 +117,12 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,group_id,id,alias,unit_id,hsn_code \
-       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-          FROM item_master " +
+        "SELECT *,RowNum as RowID \
+       FROM (Select im.*, gm.name as group_name, um.name as unit_name, ROW_NUMBER() OVER () AS RowNum\
+       from item_master im left join item_group_master gm on im.group_id=gm.id \
+       left join unit_master um on im.unit_id=um.id " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
-        "order by name\
+        "order by im.name\
       ) AS NumberedRows\
       WHERE RowNum > ?*?\
       ORDER BY RowNum\

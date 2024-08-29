@@ -5,7 +5,7 @@ import {
   getEnquirySubStatusList,
   createEnquirySubStatusDb,
   getEnquirySubStatusDetailsById,
-  Pagination,
+  getEnquirySubStatusByPageDb,
   getEnquirySubStatusCount,
   updateEnquirySubStatusDb,
 } from "../services/enquirySubStatus.service";
@@ -155,7 +155,7 @@ export async function updateEnquirySubStatus(data: enquirySubStatusMasterT) {
   return result;
 }
 
-export async function getEnquirySubStatus1(
+export async function getEnquirySubStatusByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -170,7 +170,7 @@ export async function getEnquirySubStatus1(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getEnquirySubStatusByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
