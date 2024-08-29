@@ -344,3 +344,81 @@ export async function updateStateDb(session: Session, sourceData: zm.stateSchema
   }
   return null;
 }
+
+export async function getCountryByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT *,RowNum as RowID FROM (SELECT *, ROW_NUMBER() OVER () AS RowNum FROM country_master " + (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") + "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+      values: vals,
+    });   
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCountryCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from country_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getStateByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT *,RowNum as RowID FROM (select s.*, c.name as Country_name, ROW_NUMBER() OVER () AS RowNum from state_master s left outer join country_master c on c.id = s.country_id " + (filter ? "WHERE s.name LIKE CONCAT('%',?,'%') " : "") + "order by s.name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+      values: vals,
+    });   
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getStateCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from state_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
