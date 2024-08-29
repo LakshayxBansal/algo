@@ -1,6 +1,6 @@
 "use server"
 
-import { addUser, getBizAppUserList } from '../services/user.service';
+import { addUser, getBizAppUserList,getUserDetailsByEmailList } from '../services/user.service';
 import { hashText } from '../utils/encrypt.utils';
 import * as zs from '../zodschema/zodschema';
 import { userSchemaT } from '@/app/models/models';
@@ -72,4 +72,16 @@ export async function getBizAppUser(searchString: string, invited: boolean, acce
   } catch (error) {
     throw error;
   }
+}
+
+export async function getUserDetailsByEmail(email : string){
+  try{
+    if(email){
+      const user = await getUserDetailsByEmailList(email);
+      return user;
+    }
+  }catch(e){
+    throw e;
+  }
+  return null;
 }
