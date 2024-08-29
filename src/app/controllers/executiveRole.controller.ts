@@ -7,8 +7,8 @@ import {
   createExecutiveRoleDb,
   getExecutiveRoleDetailsById,
   updateExecutiveRoleDb,
-  Pagination,
   getExecutiveRoleCount,
+  getExecutiveRoleByPageDb,
 } from "../services/executiveRole.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -153,7 +153,7 @@ export async function updateExecutiveRole(data: executiveRoleSchemaT) {
   return result;
 }
 
-export async function getExecutiveRoles(
+export async function getExecutiveRoleByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -168,7 +168,7 @@ export async function getExecutiveRoles(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getExecutiveRoleByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

@@ -80,7 +80,7 @@ export async function getDeptDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getExecutiveDeptByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -96,7 +96,7 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id \
+        "SELECT *, RowNum as RowID \
        FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
           FROM executive_dept_master " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +

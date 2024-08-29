@@ -8,7 +8,7 @@ import { Button } from '@mui/material';
 import { getSession } from 'next-auth/react';
 
 
-export default function CellDbName(props : {row:dbInfoT, userEmail: string }) {
+export default function CellDbName(props : {row:dbInfoT, userId: number }) {
   const row = props.row;
   const router = useRouter();
 

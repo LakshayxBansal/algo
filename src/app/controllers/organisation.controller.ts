@@ -4,12 +4,14 @@ import * as zs from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import {
   createOrganisationDB,
+  getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
   Pagination,
-  updateOrganisationDB,
+  updateOrganisationDB,getOrgsList,getOrgsCount
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
+import { bigIntToNum } from "../utils/db/types";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
@@ -157,7 +159,7 @@ export async function getOrganisationById(id: number) {
   }
 }
 
-export async function getOrganisations(
+export async function getOrganisationByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -172,7 +174,7 @@ export async function getOrganisations(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getOrganisationByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

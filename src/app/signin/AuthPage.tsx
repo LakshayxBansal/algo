@@ -1,71 +1,151 @@
-'use client'
-import React, { useState } from 'react';
-import Button from '@mui/material/Button';
-import { TextField, Divider, Paper } from '@mui/material';
-import Link from '@mui/material/Link';
-import ProviderButton from '../Widgets/providerButton';
+"use client";
+import React, { useState } from "react";
+import Button from "@mui/material/Button";
+import { TextField, Divider, Paper } from "@mui/material";
+import Link from "@mui/material/Link";
+import ProviderButton from "../Widgets/providerButton";
 import { ClientSafeProvider, getCsrfToken } from "next-auth/react";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 import { signIn } from "next-auth/react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { InputControl, InputType } from "../Widgets/input/InputControl";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
 }
 
 /**
- * 
+ *
  * @param formData to be used with form action
  */
 
-
 export default function AuthPage(props: authPagePropsType) {
-  const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
+  const [formError, setFormError] = useState<
+    Record<string, { msg: string; error: boolean }>
+  >({});
+
+  const [email, setEmail] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+
   const router = useRouter();
   let csrfToken;
   const providerArr = props.providers;
-  const successCallBackUrl = '/company';
+  const successCallBackUrl = "/company";
 
+  const contactHandler = () => {
+    setEmail(!email);
+  };
   function actValidate(formData: FormData) {
-    signIn("credentials",  { redirect: false, username: formData.get("username"), password: formData.get("password") })
-      .then((status)=>{
-        if (status?.ok) {
-          router.push(successCallBackUrl);
-        } else {
-          const errorState: Record<string, {msg: string, error: boolean}> = {};
-          errorState["form"] = {msg: "Invalid Credentials", error: true};
-          setFormError(errorState);
-          if (status?.error === "CredentialsSignin") {
-            console.log(status);
-          }
+    console.log(formData);
+    signIn("credentials", {
+      redirect: false,
+      userContact: formData.get("usercontact"),
+      password: formData.get("password"),
+    }).then((status) => {
+      if (status?.ok) {
+        router.push(successCallBackUrl);
+      } else {
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Invalid Credentials", error: true };
+        setFormError(errorState);
+        if (status?.error === "CredentialsSignin") {
+          console.log(status);
         }
-      });  
+      }
+    });
   }
 
-  getCsrfToken().then((token) => {csrfToken = token}).catch((error) => {console.log(error)});
+  getCsrfToken()
+    .then((token) => {
+      csrfToken = token;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   return (
     <form action={actValidate}>
-      {formError?.form?.error && <p style={{ color: "red" }}>{formError?.form.msg}</p>}
+      {formError?.form?.error && (
+        <p style={{ color: "red" }}>{formError?.form.msg}</p>
+      )}
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-      <TextField
+      {/* <TextField
         margin="normal"
         required
         fullWidth
         id="username"
-        label="Email Address"
+        label="Email Address or Phone"
         name="username"
         autoComplete="email"
         autoFocus
-      />
+      /> */}
+      {email && (
+        <Grid item xs={12}>
+          <InputControl
+            inputType={InputType.EMAIL}
+            error={formError?.email?.error}
+            helperText={formError?.email?.msg}
+            required
+            fullWidth
+            id="usercontact"
+            label="Email Address"
+            name="usercontact"
+          />
+        </Grid>
+      )}
+      {!email && (
+        <Grid item xs={12}>
+          <InputControl
+            inputType={InputType.PHONE}
+            id="usercontact"
+            label="Phone No"
+            name="usercontact"
+            fullWidth
+            required
+            error={formError?.phone?.error}
+            helperText={formError?.phone?.msg}
+            country={"in"}
+            preferredCountries={["in", "gb"]}
+            dropdownClass={["in", "gb"]}
+            disableDropdown={false}
+            // onkeydown={onPhoneChange}
+          />
+        </Grid>
+      )}
+      <Link
+        onClick={contactHandler}
+        sx={{
+          display: "inline-block",
+          textAlign: "right",
+          width: "100%",
+          cursor: "pointer",
+          textDecoration: "none",
+          marginTop: "14px",
+
+          ":hover": {
+            textDecoration: "underline",
+          },
+        }}
+      >
+        Use {email ? "phone" : "email"} instead
+      </Link>
       <TextField
         margin="normal"
         required
         fullWidth
         name="password"
         label="Password"
-        type="password"
+        type={!showPassword ? "password" : "text"}
         id="password"
       />
+      <Button
+        type="button"
+        sx={{ marginLeft: "-65px", marginTop: "24px" }}
+        onClick={() => setShowPassword(!showPassword)}
+      >
+        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+      </Button>
       <Link href="#" variant="body2">
         Forgot password?
       </Link>
@@ -85,15 +165,22 @@ export default function AuthPage(props: authPagePropsType) {
           </Link>
         </Grid>
       </Grid>
-      <Divider orientation="horizontal" variant="fullWidth" flexItem={true} component="li">Or</Divider>
+      <Divider
+        orientation="horizontal"
+        variant="fullWidth"
+        flexItem={true}
+        component="li"
+      >
+        Or
+      </Divider>
       <Paper>
         {providerArr.map((provider) => (
           <ProviderButton
             key={provider.id}
             provider={provider}
             callbackUrl={successCallBackUrl}
-            >
-              Sign In with
+          >
+            Sign In with
           </ProviderButton>
         ))}
       </Paper>

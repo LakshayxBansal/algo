@@ -12,8 +12,8 @@ import Grid from "@mui/material/Grid";
 import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
 
 export default function ExecutiveDeptForm(props: masterFormPropsT) {
