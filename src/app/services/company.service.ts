@@ -174,25 +174,29 @@ export async function getCompaniesDb(
       vals.unshift(filter);
     }
 
-    return excuteQuery({
+    const result = await excuteQuery({
       host: "userDb",
-      query: "SELECT company_id id, companyName, companyAlias, dbinfo_id, host, port, dbName, email, RowNum as RowID\
+      query: "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
+         (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
+          CONCAT(dbInfoName, dbInfoId) dbName, host, port, email, RowNum as RowID\
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
-          h.host host, h.port port, d.name as dbName, u.email as email, ROW_NUMBER() OVER () AS RowNum \
+          c.created_by createdBy, c.created_on createdOn,\
+          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.email as email, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \
           dbInfo d, dbHost h,\
           company c WHERE\
-          u.email=? and \
           u.id = uc.user_id and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
-          d.host_id = h.id AND c.name LIKE CONCAT('%','','%') order by c.name) AS NumberedRows\
+          d.host_id = h.id AND" + (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") + " u.email=? \
+          order by c.name) AS NumberedRows\
           WHERE RowNum > ?*?\
           ORDER BY RowNum\
           LIMIT ?;",
           values: vals,
         });
+        return result
   } catch (e) {
     console.log(e);
   }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import selectUserCompany from './SelectCompany';
 import {dbInfoT} from '../models/models';
 import { Button } from '@mui/material';
+import { getSession } from 'next-auth/react';
 
 
 export default function CellDbName(props : {row:dbInfoT, userEmail: string }) {
@@ -14,12 +15,14 @@ export default function CellDbName(props : {row:dbInfoT, userEmail: string }) {
   const handleClick = async (event: any) => {
     event.preventDefault();
     const result = await selectUserCompany(row, props.userEmail);
+    const session = await getSession();
+    console.log("Session CellDbName", session);
   }
 
   return (
     // <TableCell>
-    <Link href="" onClick={handleClick}>
-      <Button>Open</Button>
+    <Link href="" onClick={handleClick} style={{"textDecoration": "none"}}>
+      {row.companyName}
     </Link>
   // </TableCell>
   );

@@ -7,20 +7,10 @@ import CellDbName from "./cellDBName";
 
 export function CompanyEntityList(){
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'RowID', headerName: 'ID', width: 90 },
         {
           field: 'companyName',
           headerName: 'Name',
-          width: 150,
-        },
-        {
-          field: 'companyAlias',
-          headerName: 'Alias',
-          width: 150,
-        },
-        {
-          field: "Open",
-          headerName: "",
           width: 150,
           renderCell: (params) => (
             <CellDbName
@@ -28,6 +18,21 @@ export function CompanyEntityList(){
               userEmail={params.row.email as string}
             ></CellDbName>
           ),
+        },
+        {
+          field: 'companyAlias',
+          headerName: 'Alias',
+          width: 150,
+        },
+        {
+          field: 'createdBy',
+          headerName: 'Created By',
+          width: 150,
+        },
+        {
+          field: 'createdOn',
+          headerName: 'Created On',
+          width: 150,
         }
       ];
     return <>
