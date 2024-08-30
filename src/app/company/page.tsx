@@ -8,7 +8,6 @@ export default async function Companies() {
 
   if (session) {
     console.log(session)
-    const rows:dbInfoT[] = await getCompanyList(session.user?.userId);
     return (
       <CompanyEntityList/>
     );

@@ -15,7 +15,7 @@ export function CompanyEntityList(){
           renderCell: (params) => (
             <CellDbName
               row={params.row}
-              userEmail={params.row.email as string}
+              userId={params.row.userId as number}
             ></CellDbName>
           ),
         },

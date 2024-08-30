@@ -162,13 +162,13 @@ export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number
 }
 
 export async function getCompaniesDb(
-  email: string,
+  userId: number,
   page: number,
   filter: string | undefined,
   limit: number
 ) {
   try {
-    const vals: any = [email, page, limit, limit];
+    const vals: any = [userId, page, limit, limit];
 
     if (filter) {
       vals.unshift(filter);
@@ -178,10 +178,10 @@ export async function getCompaniesDb(
       host: "userDb",
       query: "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
-          CONCAT(dbInfoName, dbInfoId) dbName, host, port, email, RowNum as RowID\
+          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID\
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
           c.created_by createdBy, c.created_on createdOn,\
-          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.email as email, ROW_NUMBER() OVER () AS RowNum \
+          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \
           dbInfo d, dbHost h,\
@@ -189,7 +189,7 @@ export async function getCompaniesDb(
           u.id = uc.user_id and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
-          d.host_id = h.id AND" + (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") + " u.email=? \
+          d.host_id = h.id AND" + (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") + " u.id=? \
           order by c.name) AS NumberedRows\
           WHERE RowNum > ?*?\
           ORDER BY RowNum\
@@ -202,7 +202,7 @@ export async function getCompaniesDb(
   }
 }
 
-export async function getCompanyCount(email: string, value: string | undefined) {
+export async function getCompanyCount(userId: number, value: string | undefined) {
   try {
     return excuteQuery({
       host: "userDb",
@@ -212,10 +212,10 @@ export async function getCompanyCount(email: string, value: string | undefined) 
           userCompany as uc, \
           user as u\
           where \
-          u.email=? and \
+          u.id=? and \
           u.id = uc.user_id and \
           uc.company_id = c.id' + (value ? " and c.name LIKE CONCAT('%',?,'%')" : ''),
-      values: [email, value],
+      values: [userId, value],
     });
   } catch (e) {
     console.log(e);

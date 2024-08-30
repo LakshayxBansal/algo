@@ -179,16 +179,16 @@ export async function getCompanies(
     const appSession = await getSession();    
 
     if (appSession) {
-      const email = appSession.user.email;
+      const userId = appSession.user.userId;
       const conts = await getCompaniesDb(
-        email as string,
+        userId as number,
         page as number,
         filter,
         limit as number
       );
 
       const rowCount = await getCompanyCount(
-        email as string,
+        userId as number,
         filter
       );
       
