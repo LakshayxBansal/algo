@@ -160,6 +160,62 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function getExecutiveByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT *,RowNum AS RowID \
+              FROM (select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+         s.name state, co.name country, us.name as crm_user, ROW_NUMBER() OVER () AS RowNum\
+         from executive_master em left join area_master am on am.id=em.area_id\
+         left outer join department_master d on d.id=em.dept_id\
+         left outer join  executive_role_master e on em.role_id = e.id \
+         left outer join executive_group_master egm on egm.id=em.group_id\
+         left outer join state_master s on em.state_id = s.id \
+         left outer join country_master co on em.country_id = co.id \
+         left outer join userDb.user us on em.crm_user_id=us.id " +
+            (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by em.name\
+              ) AS NumberedRows \
+            WHERE RowNum > ?*? \
+            ORDER BY RowNum \
+            LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getExecutiveCount(
+  crmDb: string,
+  value: string | undefined
+) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from executive_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveIdFromEmailList(crmDb: string, email: string){
   
   try {

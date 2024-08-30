@@ -34,7 +34,7 @@ export async function getCountryList(crmDb: string, searchString: string) {
   }
 }
 
-export async function getCountryByIDList(crmDb : string, id : string){
+export async function getCountryByIDList(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,
@@ -80,7 +80,7 @@ export async function getStateList(crmDb: string, searchState: string, country: 
   }
 }
 
-export async function getStateListById(crmDb : string, id : string){
+export async function getStateListById(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,
@@ -189,25 +189,23 @@ export async function getOrganizationList(crmDb: string, searchString: string) {
  * @param email: <sring> email for the user for which the eligible companies to be returned.
  * @returns list of companies
  */
-export async function getCompanyList(email: string | undefined | null) {
+export async function getCompanyList(userId: number | undefined | null) {
   try {
-    if (email) {
+    if (userId) {
       const result = await excuteQuery({
         host: 'userDb',
         query: 'select c.id as company_id, c.name as companyName, c.dbinfo_id, h.host, h.port, d.name as dbName from \
         company as c, \
           userCompany as uc, \
-          user as u, \
           dbInfo as d, \
           dbHost as h \
           where \
-          u.email=? and \
-          u.id = uc.user_id and \
+          uc.user_id = ? and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
           d.host_id = h.id \
           ;', 
-        values: [email],
+        values: [userId],
       });
       //Object.values(JSON.parse(JSON.stringify(
       //const stringf = JSON.stringify(result);

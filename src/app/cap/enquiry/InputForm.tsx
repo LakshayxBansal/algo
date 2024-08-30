@@ -1,31 +1,60 @@
-'use client'
-import React, {useState} from 'react';
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
-import { createEnquiry } from '@/app/controllers/enquiry.controller';
-import Seperator from '@/app/Widgets/seperator';
-import {InputControl} from '@/app/Widgets/input/InputControl';
-import {InputType} from '@/app/Widgets/input/InputControl';
-import { SelectMasterWrapper } from '@/app/Widgets/masters/selectMasterWrapper';
-import { getEnquirySource } from '@/app/controllers/enquirySource.controller';
-import { getContact } from '@/app/controllers/contact.controller';
-import { getExecutive } from '@/app/controllers/executive.controller';
-import { getEnquiryCategory } from '@/app/controllers/enquiryCategory.controller';
-import { getEnquirySubStatus } from '@/app/controllers/enquirySubStatus.controller';
-import {getEnquiryAction} from '@/app/controllers/enquiryAction.controller';
-import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
-import ContactForm from '@/app/Widgets/masters/masterForms/contactForm';
-import ExecutiveForm from '@/app/Widgets/masters/masterForms/executiveForm';
-import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
-import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
-import {getContactById} from '@/app/controllers/contact.controller';
+"use client";
+import React, { useState } from "react";
+import {
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
+import { createEnquiry } from "@/app/controllers/enquiry.controller";
+import Seperator from "@/app/Widgets/seperator";
+import { InputControl } from "@/app/Widgets/input/InputControl";
+import { InputType } from "@/app/Widgets/input/InputControl";
+import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import {
+  getEnquirySource,
+  getEnquirySourceById,
+} from "@/app/controllers/enquirySource.controller";
+import {
+  getContact,
+  getContactById,
+} from "@/app/controllers/contact.controller";
+import {
+  getCategoryById,
+  getEnquiryCategory,
+} from "@/app/controllers/enquiryCategory.controller";
+import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
+import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
+import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
+import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
+import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
+
+import {
+  getExecutive,
+  getExecutiveById,
+} from "@/app/controllers/executive.controller";
+import {
+  getEnquirySubSatusById,
+  getEnquirySubStatus,
+} from "@/app/controllers/enquirySubStatus.controller";
+import {
+  getActionById,
+  getEnquiryAction,
+} from "@/app/controllers/enquiryAction.controller";
 
 import dayjs from "dayjs";
-import { enquiryHeaderSchema, enquiryLedgerSchema } from '@/app/zodschema/zodschema';
-import { ZodIssue } from 'zod';
-import {selectKeyValueT} from '@/app/models/models';
+import {
+  enquiryHeaderSchema,
+  enquiryLedgerSchema,
+} from "@/app/zodschema/zodschema";
+import { ZodIssue } from "zod";
+import { selectKeyValueT } from "@/app/models/models";
 
 const strA = "custom_script.js";
 const scrA = require("./" + strA);
@@ -45,22 +74,23 @@ const formConfig = {
   showItems: false,
 };
 
-
-export default function InputForm(props: {baseData: IformData}) {
+export default function InputForm(props: { baseData: IformData }) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [formError, setFormError] = useState<Record<string, {msg: string, error: boolean}>>({});
+  const [formError, setFormError] = useState<
+    Record<string, { msg: string; error: boolean }>
+  >({});
 
   let result;
   let issues;
 
-  const handleSubmit = async (formData: FormData)=> {
-
-
+  const handleSubmit = async (formData: FormData) => {
     let dt = new Date(formData.get("date") as string);
-    const date = (dt.toISOString().slice(0,10)+ " " + dt.toISOString().slice(11,19));
+    const date =
+      dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
     dt = new Date(formData.get("next_action_date") as string);
-    const nextActionDate = (dt.toISOString().slice(0,10)+ " " + dt.toISOString().slice(11,19));
+    const nextActionDate =
+      dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
 
     const headerData = {
       enq_number: formData.get("enq_number") as string,
@@ -77,7 +107,7 @@ export default function InputForm(props: {baseData: IformData}) {
     let ledgerData = {
       status_version: 0,
       allocated_to_id: 0,
-      allocated_to: '',
+      allocated_to: "",
       date: date,
       status_id: Number(formData.get("status")),
       sub_status_id: selectValues.sub_status?.id,
@@ -87,43 +117,44 @@ export default function InputForm(props: {baseData: IformData}) {
       next_action_id: selectValues.next_action?.id,
       next_action: selectValues.next_action?.name,
       next_action_date: nextActionDate,
-      enquiry_remark: (formData.get("enquiry_remark") ?? '') as string,
-      suggested_action_remark: (formData.get("suggested_action_remark") ?? '') as string,
-      action_taken_remark: (formData.get("action_taken_remark") ?? '') as string,
-      closure_remark: (formData.get("closure_remark") ?? '') as string,
+      enquiry_remark: (formData.get("enquiry_remark") ?? "") as string,
+      suggested_action_remark: (formData.get("suggested_action_remark") ??
+        "") as string,
+      action_taken_remark: (formData.get("action_taken_remark") ??
+        "") as string,
+      closure_remark: (formData.get("closure_remark") ?? "") as string,
       enquiry_tran_type: 1,
-      active : 1
-    }
+      active: 1,
+    };
 
     const headerParsed = enquiryHeaderSchema.safeParse(headerData);
     const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
-      result = await createEnquiry({head: headerData, ledger: ledgerData});
-      if (result.status){
-        const newVal = {id: result.data[0].id, name: result.data[0].name};
+      result = await createEnquiry({ head: headerData, ledger: ledgerData });
+      if (result.status) {
+        const newVal = { id: result.data[0].id, name: result.data[0].name };
       } else {
         issues = result?.data;
       }
-      console.log("parsed.error.issues")
     } else {
       if (!ledgerParsed.success) {
-        issues = [...ledgerParsed.error.issues]
+        issues = [...ledgerParsed.error.issues];
       }
       if (!headerParsed.success) {
-        issues = [...issues, ...headerParsed.error.issues]
+        issues = [...issues, ...headerParsed.error.issues];
       }
     }
-    
+
     if (issues.length > 0) {
       // show error on screen
-      const errorState: Record<string, {msg: string, error: boolean}> = {};
+      const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = {msg: issue.message, error: true};
+        errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
       setFormError(errorState);
-    } 
-  }
+    }
+  };
 
   const handleButtonClick = async () => {
     scrA.makeInputReadOnly("ticket_description");
@@ -134,94 +165,109 @@ export default function InputForm(props: {baseData: IformData}) {
 
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getEnquirySubStatus(stateStr, status);
-    if (subStatus?.length > 0){
+    if (subStatus?.length > 0) {
       return subStatus;
-    } 
+    }
   }
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
   }
 
-  function onSelectChange(event: React.SyntheticEvent, val: any, setDialogValue: any, name: string){
-    let values =  {...selectValues};
+  function onSelectChange(
+    event: React.SyntheticEvent,
+    val: any,
+    setDialogValue: any,
+    name: string
+  ) {
+    let values = { ...selectValues };
     values[name] = val;
     setSelectValues(values);
   }
 
   return (
     <form action={handleSubmit}>
-      <Grid container spacing={1} style={{ marginLeft: '10px', marginTop: '5px' }}>
+      <Grid
+        container
+        spacing={1}
+        style={{ marginLeft: "10px", marginTop: "5px" }}
+      >
         <Grid item xs={11}>
           <Seperator>Enquiry Details</Seperator>
         </Grid>
-        <Grid item xs={11}> 
+        <Grid item xs={11}>
           <Box
             sx={{
-              display: 'grid',
+              display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: '2fr 1fr 1fr',
-            }}>
-            <InputControl label="Enquiry Description" 
+              gridTemplateColumns: "2fr 1fr 1fr",
+            }}
+          >
+            <InputControl
+              label="Enquiry Description"
               id="enq_number"
               inputType={InputType.TEXT}
-              name="enq_number" 
+              name="enq_number"
               fullWidth
               required
               error={formError?.enq_number?.error}
-              helperText={formError?.enq_number?.msg} 
+              helperText={formError?.enq_number?.msg}
             />
-            <InputControl label="Received on "
+            <InputControl
+              label="Received on "
               inputType={InputType.DATETIMEINPUT}
               id="date"
               name="date"
               defaultValue={dayjs(new Date())}
               required
               error={formError?.date?.error}
-              helperText={formError?.date?.msg} 
+              helperText={formError?.date?.msg}
             />
             <SelectMasterWrapper
-              name = {"contact"}
-              id = {"contact"}
-              label = {"Contact"}
+              name={"contact"}
+              id={"contact"}
+              label={"Contact"}
               dialogTitle={"Add Contact"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
-              fetchDataFn = {getContact}
+              fetchDataFn={getContact}
               fnFetchDataByID={getContactById}
               required
-              formError={formError?.contact?? formError.contact}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => 
+              formError={formError?.contact ?? formError.contact}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ContactForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
-              }
+              )}
             />
           </Box>
           <Box
             sx={{
-              display: 'grid',
+              display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: 'repeat(3, 1fr)',
-            }}>
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+          >
             <SelectMasterWrapper
-              name = {"category"}
-              id = {"category"}
-              label = {"Category"}
+              name={"category"}
+              id={"category"}
+              label={"Category"}
               dialogTitle={"Add Category"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
-              fetchDataFn = {getEnquiryCategory}
+              fetchDataFn={getEnquiryCategory}
+              fnFetchDataByID={getCategoryById}
               required
-              formError={formError?.category?? formError.category}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => 
+              formError={formError?.category ?? formError.category}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <CategoryForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                />}
+                />
+              )}
             />
             <SelectMasterWrapper
               name={"source"}
@@ -230,8 +276,9 @@ export default function InputForm(props: {baseData: IformData}) {
               dialogTitle={"Add Source"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
               fetchDataFn={getEnquirySource}
+              fnFetchDataByID={getEnquirySourceById}
               required
-              formError={formError?.source?? formError.source}
+              formError={formError?.source ?? formError.source}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <SourceForm
                   setDialogOpen={fnDialogOpen}
@@ -241,107 +288,137 @@ export default function InputForm(props: {baseData: IformData}) {
               )}
             />
             <SelectMasterWrapper
-              name = {"received_by"}
-              id = {"received_by"}
-              label = {"Received By"}
+              name={"received_by"}
+              id={"received_by"}
+              label={"Received By"}
               dialogTitle={"Add Executive"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
-              fetchDataFn = {getExecutive}
+              fetchDataFn={getExecutive}
+              fnFetchDataByID={getExecutiveById}
               required
-              formError={formError?.received_by?? formError.received_by}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => 
-                  <ExecutiveForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                }
+              formError={formError?.received_by ?? formError.received_by}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <ExecutiveForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
             />
           </Box>
 
           <Grid item xs={12} md={12}>
             <Grid item xs={6} md={12}>
-              <TextField placeholder="Call receipt remarks" label="Call receipt remarks" multiline name="enquiry_remark" id="enquiry_remark" rows={6} fullWidth />
+              <TextField
+                placeholder="Call receipt remarks"
+                label="Call receipt remarks"
+                multiline
+                name="enquiry_remark"
+                id="enquiry_remark"
+                rows={6}
+                fullWidth
+              />
             </Grid>
           </Grid>
           <Grid item xs={12} md={12}>
             <Grid item xs={6} md={12}>
-              <TextField placeholder="Suggested Action Remarks" label="Suggested Action Remarks" multiline name="suggested_action_remark" id="suggested_action_remark" rows={6} fullWidth />
+              <TextField
+                placeholder="Suggested Action Remarks"
+                label="Suggested Action Remarks"
+                multiline
+                name="suggested_action_remark"
+                id="suggested_action_remark"
+                rows={6}
+                fullWidth
+              />
             </Grid>
           </Grid>
           <Grid item xs={12}>
             <Seperator>Final Status</Seperator>
           </Grid>
-          <Box 
-            sx={{ display: 'grid', 
-                  columnGap: 3,
-                  rowGap: 1,
-                  gridTemplateColumns: 'repeat(3, 1fr)', 
-                }}>
+          <Box
+            sx={{
+              display: "grid",
+              columnGap: 3,
+              rowGap: 1,
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+          >
             <FormControl>
               <RadioGroup
                 row
                 name="status"
                 id="status"
-                defaultValue='1'
+                defaultValue="1"
                 onChange={onStatusChange}
               >
-                <FormControlLabel value="Status" control={<label />} label="Status :" />
+                <FormControlLabel
+                  value="Status"
+                  control={<label />}
+                  label="Status :"
+                />
                 <FormControlLabel value="1" control={<Radio />} label="Open" />
-                <FormControlLabel value="2" control={<Radio />} label="Closed" />
+                <FormControlLabel
+                  value="2"
+                  control={<Radio />}
+                  label="Closed"
+                />
               </RadioGroup>
             </FormControl>
             <SelectMasterWrapper
-              name = {"sub_status"}
-              id = {"sub_status"}
-              label = {"Call Sub-Status"}
+              name={"sub_status"}
+              id={"sub_status"}
+              label={"Call Sub-Status"}
               dialogTitle={"Add Sub-Status for " + status}
               onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
-              fetchDataFn = {getSubStatusforStatus}
+              fetchDataFn={getSubStatusforStatus}
+              fnFetchDataByID={getEnquirySubSatusById}
               required
-              formError={formError?.sub_status?? formError.sub_status}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => 
+              formError={formError?.sub_status ?? formError.sub_status}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <SubStatusForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
-                  statusName={status}
+                  parentData={status}
                   data={data}
                 />
-              }
+              )}
             />
             <SelectMasterWrapper
-                name = {"action_taken"}
-                id = {"action_taken"}
-                label = {"Action Taken"}
-                dialogTitle={"Add Action"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
-                fetchDataFn = {getEnquiryAction}
-                renderForm={(fnDialogOpen, fnDialogValue, data) => 
-                  <ActionForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                }
+              name={"action_taken"}
+              id={"action_taken"}
+              label={"Action Taken"}
+              dialogTitle={"Add Action"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
+              fetchDataFn={getEnquiryAction}
+              fnFetchDataByID={getActionById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <ActionForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
             />
             <SelectMasterWrapper
-                name = {"next_action"}
-                id = {"next_action"}
-                label = {"Next Action"}
-                dialogTitle={"Add Action"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
-                fetchDataFn = {getEnquiryAction}
-                required
-                formError={formError?.next_action?? formError.next_action}
-                renderForm={(fnDialogOpen, fnDialogValue, data) => 
-                  <ActionForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                }
+              name={"next_action"}
+              id={"next_action"}
+              label={"Next Action"}
+              dialogTitle={"Add Action"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
+              fetchDataFn={getEnquiryAction}
+              required
+              formError={formError?.next_action ?? formError.next_action}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <ActionForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
             />
-            <InputControl label="When "
+            <InputControl
+              label="When "
               inputType={InputType.DATETIMEINPUT}
               id="next_action_date"
               name="next_action_date"
@@ -349,35 +426,47 @@ export default function InputForm(props: {baseData: IformData}) {
             />
             <Grid item xs={12} md={12}>
               <Grid item xs={6} md={12}>
-                <TextField 
-                  placeholder="Closure remarks" 
-                  label="Closure remarks" 
-                  multiline name="closure_remark" 
-                  id="closure_remark" 
-                  rows={2} 
+                <TextField
+                  placeholder="Closure remarks"
+                  label="Closure remarks"
+                  multiline
+                  name="closure_remark"
+                  id="closure_remark"
+                  rows={2}
                   fullWidth
-                  required={status==="2"} 
-                  disabled={status==="1"}
+                  required={status === "2"}
+                  disabled={status === "1"}
                 />
               </Grid>
             </Grid>
           </Box>
-
         </Grid>
         <Grid item xs={11}>
-            <Seperator></Seperator>
-          </Grid>
+          <Seperator></Seperator>
+        </Grid>
         <Grid container>
           <Grid item xs={5} md={5}>
-            <Box  margin={1} sx={{display: "flex"}}>
-              <Box display="flex" justifyContent="flex-start" alignItems="flex-start" m={1}>
+            <Box margin={1} sx={{ display: "flex" }}>
+              <Box
+                display="flex"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                m={1}
+              >
                 <Button>Cancel</Button>
               </Box>
             </Box>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Box display="flex" justifyContent="flex-end" alignItems="flex-end" m={1}>
-              <Button type="submit" variant="contained">Submit</Button>
+            <Box
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="flex-end"
+              m={1}
+            >
+              <Button type="submit" variant="contained">
+                Submit
+              </Button>
             </Box>
           </Grid>
         </Grid>
@@ -385,7 +474,6 @@ export default function InputForm(props: {baseData: IformData}) {
     </form>
   );
 }
-
 
 /*
             <AutocompleteDB<optionsDataT>

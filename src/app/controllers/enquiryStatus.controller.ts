@@ -51,7 +51,6 @@ export async function createEnquiryStatus(formData: FormData) {
     }
     return result;
   } catch (e) {
-    console.log(e);
     if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
       result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
       return result;

@@ -1,14 +1,12 @@
-'use server'
+"use server";
 
-import * as zm from '../models/models';
-import { Session } from 'next-auth';
-import excuteQuery  from '../utils/db/db';
-
+import * as zm from "../models/models";
+import { Session } from "next-auth";
+import excuteQuery from "../utils/db/db";
 
 export async function getContactGroupList(crmDb: string, searchString: string) {
-
   try {
-    let query = 'select id as id, name as name from contact_group_master';
+    let query = "select id as id, name as name from contact_group_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -17,33 +15,35 @@ export async function getContactGroupList(crmDb: string, searchString: string) {
     }
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }
 }
 
-
 /**
- * 
+ *
  * @param session : user session
  * @param sourceData : data for saving
  * @returns result from DB (returning *)
  */
-export async function createContactGroupDb(session: Session, sourceData: zm.contactGroupSchemaT) {
+export async function createContactGroupDb(
+  session: Session,
+  sourceData: zm.contactGroupSchemaT
+) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into contact_group_master (name, created_by, created_on) \
-       values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createContactGroup(?,?,?,?)",
       values: [
         sourceData.name,
-        session.user.email
+        sourceData.alias,
+        sourceData.parent_id,
+        session.user.email,
       ],
     });
   } catch (e) {
@@ -52,25 +52,46 @@ export async function createContactGroupDb(session: Session, sourceData: zm.cont
   return null;
 }
 
+export async function updateContactGroupDb(
+  session: Session,
+  sourceData: zm.contactGroupSchemaT
+) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateContactGroup(?,?,?,?,?);",
+
+      values: [
+        sourceData.id,
+        sourceData.name,
+        sourceData.alias,
+        sourceData.parent_id,
+        session.user.email,
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
 
 /**
- * 
+ *
  * @param crmDb database to search in
  * @param id id to search in contact_master
- * @returns 
+ * @returns
  */
-export async function getContactGroupDetailsById(crmDb: string, id: string){
-  
+export async function getContactGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: 'SELECT c1.*, c2.name parent FROM contact_group_master c1 left outer join contact_group_master c2 on c1.parent_id = c2.id \
-        where c1.id=?;', 
+      query:
+        "SELECT c1.*, c2.name parent FROM contact_group_master c1 left outer join contact_group_master c2 on c1.parent_id = c2.id \
+        where c1.id=?;",
       values: [id],
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }

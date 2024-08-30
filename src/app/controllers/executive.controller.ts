@@ -4,12 +4,16 @@ import * as zs from "../zodschema/zodschema";
 import { executiveSchemaT } from "../models/models";
 import {
   createExecutiveDB,
+  getExecutiveByPageDb,
+  getExecutiveCount,
   getExecutiveDetailsById,
-  updateExecutiveDB,getExecutiveIdFromEmailList
+  updateExecutiveDB,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
 import { getBizAppUserList } from "../services/user.service";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 const inviteSring = "Send Invite...";
 
@@ -101,8 +105,8 @@ export async function updateExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      let inviteResult = true;
-      let crm_map_id = 1;
+      let inviteResult = false;
+      let crm_map_id = 0;
       console.log("data:" + data);
 
       const parsed = zs.executiveSchema.safeParse(data);
@@ -196,17 +200,6 @@ export async function getExecutive(searchString: string) {
   }
 }
 
-export async function getExecutiveIdFromEmail(email: string) {
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getExecutiveIdFromEmailList(session.user.dbInfo.dbName, email);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-
 function inviteUser(data: executiveSchemaT) {
   return true;
 }
@@ -239,4 +232,51 @@ export async function getExecutiveById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getExecutiveByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getExecutive = {
+    status: false,
+    data: {} as mdl.executiveSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await getExecutiveByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getExecutiveCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getExecutive = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.executiveSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    console.log(e);
+
+    let err = "Executive Admin, E-Code:369";
+
+    getExecutive = {
+      ...getExecutive,
+      status: false,
+      data: {} as mdl.executiveSchemaT,
+      error: err,
+    };
+  }
+  return getExecutive;
 }

@@ -164,7 +164,7 @@ export default function MenuBar(props : propsType) {
               <Divider />
                 <LeftMenuTree pages={pages} setOpenDrawer={setOpenDrawer}></LeftMenuTree>
             </Drawer>
-            <Box>
+            <Box style={{width:"100%"}}>
               {children}
             </Box>
           </Box>
