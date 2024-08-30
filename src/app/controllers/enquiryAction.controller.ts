@@ -5,9 +5,9 @@ import {
   getEnquiryActionList,
   createEnquiryActionDb,
   getEnquiryActionCount,
-  Pagination,
   getActionDetailsById,
   updateEnquiryActionDb,
+  getEnquiryActionByPageDb,
 } from "../services/enquiryAction.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -42,7 +42,7 @@ export async function getActionById(id: number) {
  * @returns
  */
 
-export async function getEnquiryActions(
+export async function getEnquiryActionByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -57,7 +57,7 @@ export async function getEnquiryActions(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getEnquiryActionByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

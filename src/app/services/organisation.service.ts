@@ -94,6 +94,53 @@ export async function getOrganisationList(crmDb: string, searchString: string) {
   }
 }
 
+export async function getOrgsList(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        'SELECT name,alias,RowNum as RowID, id,print_name,stamp \
+     FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+        FROM organisation_master ' +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : '') +
+        'order by name\
+    ) AS NumberedRows\
+    WHERE RowNum > ?*?\
+    ORDER BY RowNum\
+    LIMIT ?;',
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getOrgsCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        'SELECT count(*) as rowCount from organisation_master ' +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ''),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
 export async function getOrganisationDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
@@ -113,7 +160,7 @@ export async function getOrganisationDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function Pagination(
+export async function getOrganisationByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -129,11 +176,13 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id, alias \
-       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-          FROM organisation_master " +
+        "SELECT *, RowNum as RowID \
+       FROM (select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.address3, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
+        s.name state, co.name country, ROW_NUMBER() OVER () AS RowNum  \
+        from organisation_master o left outer join state_master s on o.state_id = s.id \
+        left outer join country_master co on o.country_id = co.id " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
-        "order by name\
+        "order by o.name\
       ) AS NumberedRows\
       WHERE RowNum > ?*?\
       ORDER BY RowNum\

@@ -1,11 +1,11 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT, getContsT } from "../models/models";
+import { contactSchemaT, getContactByPageT } from "../models/models";
 import {
   createContactDB,
   DeleteContactList,
-  getContactList2,
+  getContactByPageDb,
   getContCount,
   updateContactDB,
 } from "../services/contact.service";
@@ -178,14 +178,14 @@ export async function DeleteContact(id: number) {
   }
 }
 
-export async function getConts(
+export async function getContactByPage(
   page: number,
   filter: string | undefined,
   limit: number
 ) {
-  let getConts = {
+  let getContactByPage = {
     status: false,
-    data: {} as getContsT,
+    data: {} as getContactByPageT,
     count: 0,
     error: {},
   };
@@ -193,7 +193,7 @@ export async function getConts(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getContactList2(
+      const conts = await getContactByPageDb(
         // appSession.dbSession?.dbInfo.dbName as string,
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -204,9 +204,9 @@ export async function getConts(
         appSession.user.dbInfo.dbName as string,
         filter
       );
-      getConts = {
+      getContactByPage = {
         status: true,
-        data: conts.map(bigIntToNum) as getContsT,
+        data: conts.map(bigIntToNum) as getContactByPageT,
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -215,12 +215,12 @@ export async function getConts(
 
     let err = "Contact Admin, E-Code:369";
 
-    getConts = {
-      ...getConts,
+    getContactByPage = {
+      ...getContactByPage,
       status: false,
-      data: {} as getContsT,
+      data: {} as getContactByPageT,
       error: err,
     };
   }
-  return getConts;
+  return getContactByPage;
 }

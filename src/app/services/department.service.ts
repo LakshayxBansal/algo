@@ -78,7 +78,7 @@ export async function updateDepartmentDb(
   return null;
 }
 
-export async function Pagination(
+export async function getDepartmentByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -94,7 +94,7 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id \
+        "SELECT *, RowNum as RowID  \
        FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
           FROM department_master " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +

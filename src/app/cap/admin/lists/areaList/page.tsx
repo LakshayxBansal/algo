@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import AreaForm from '@/app/Widgets/masters/masterForms/areaForm';
-import { getAreas, getById } from '@/app/controllers/area.controller';
+import { getAreaByPage, getById } from '@/app/controllers/area.controller';
 
 
 export default function Area() {
@@ -31,7 +31,7 @@ export default function Area() {
               data={data}
             />
           )}
-        fetchDataFn={getAreas}
+        fetchDataFn={getAreaByPage}
         fnFetchDataByID={getById}
         customCols={columns}
         AddAllowed={true}>

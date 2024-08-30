@@ -105,11 +105,20 @@ export type dbInfoT = {
   dbName: string;
 };
 
+export type getOrgansT = [{
+  id : string
+  name : string
+  printName : string
+  alias : string
+  rowID : number
+  stamp : string
+}]
+
 export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContsT = [
+export type getContactByPageT = [
   {
     id: number;
     name: string;

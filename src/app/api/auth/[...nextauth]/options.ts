@@ -1,10 +1,12 @@
-import type { NextAuthOptions, User } from "next-auth";
+import type { NextAuthOptions } from 'next-auth';
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { authenticateUser } from "../../../services/auth.service";
-import { addUser } from "../../../services/user.service";
-import { getDbSession } from "../../../services/session.service";
-import { dbInfoT } from "../../../models/models";
+import { authenticateUser } from '../../../services/auth.service';
+import { getUserDetailsByEmail } from '../../../controllers/user.controller';
+import { addUser } from '@/app/services/user.service';
+import { getDbSession } from '../../../services/session.service';
+import { dbInfoT, userSchemaT } from '../../../models/models';
+// import { Session, User } from 'next-auth';
 
 export const options: NextAuthOptions = {
   providers: [
@@ -15,23 +17,20 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username",
+        userContact: {
+          label: "User Contact",
           type: "text",
-          placeholder: "username",
+          placeholder: "user email/phone"
         },
         password: {
           label: "Password",
-          type: "password",
+          type: "password"
         },
       },
       async authorize(credentials, req) {
         // get the data from the db
-        const user = await authenticateUser({
-          email: credentials?.username,
-          password: credentials?.password,
-        });
-        if (credentials?.username === user?.email) {
+        const user = await authenticateUser({ contact: credentials?.userContact, password: credentials?.password });
+        if (credentials?.userContact === user?.contact) {
           return user;
         } else {
           return null;
@@ -44,19 +43,19 @@ export const options: NextAuthOptions = {
       let isAllowedToSignIn = true;
       if (account?.provider === "google") {
         const data = {
-          email: user.email as string,
+          contact: user.email as string,
           provider: "google",
           name: user.name as string,
         };
         const result = await authenticateUser(data);
         if (!result) {
           //add the user to the db
-          const res = await addUser(data);
+          const res = await addUser(data as userSchemaT);
           if (!res) {
             isAllowedToSignIn = false;
           }
         } else {
-          isAllowedToSignIn = result?.email === user.email;
+          isAllowedToSignIn = result?.contact === user.email;
         }
       }
 
@@ -69,22 +68,32 @@ export const options: NextAuthOptions = {
         // return '/unauthorized'
       }
     },
-    async jwt({ token, user, account, profile, trigger, session }) {
+    async jwt({ user, token, account, profile }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
+      let userId: number = 0;
       if (account) {
-        const sessionDbData = await getDbSession(token?.email as string);
+        if (account.provider === "google") {
+          const userDetails = await getUserDetailsByEmail(user.email as string);
+          userId = userDetails.id;
+        }
+        else if (account?.provider === "credentials") {
+          userId = user.id as unknown as number;
+        }
+        const sessionDbData = await getDbSession(userId as number);
         if (sessionDbData) {
           token.dbInfo = sessionDbData;
         }
+        token.userid = userId;
       }
-      console.log("jwt token : ", token);
-      return token;
+
+      return token
     },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
       if (token) {
+        session.user.userId = token.userid as number;
         if (!token.dbInfo) {
-          const dbInfo = await getDbSession(session.user.email as string);
+          const dbInfo = await getDbSession(session.user.userId);
           if (dbInfo) {
             token.dbInfo = dbInfo;
           }
@@ -93,7 +102,6 @@ export const options: NextAuthOptions = {
           session.user.dbInfo = token.dbInfo as dbInfoT;
         }
       }
-      console.log("session : ", session);
       return session;
     },
   },
