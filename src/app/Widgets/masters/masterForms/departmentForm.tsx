@@ -8,7 +8,7 @@ import {
   updateDepartment,
 } from "../../../controllers/department.controller";
 import Grid from "@mui/material/Grid";
-import { nameMasterDataT, selectKeyValueT } from "@/app/models/models";
+import { nameMasterDataT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
@@ -37,7 +37,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {

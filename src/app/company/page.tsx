@@ -7,7 +7,6 @@ export default async function Companies() {
   const session = await getSession();
 
   if (session) {
-    console.log(session)
     return (
       <CompanyEntityList/>
     );

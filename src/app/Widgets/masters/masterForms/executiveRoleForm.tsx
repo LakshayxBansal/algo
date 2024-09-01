@@ -72,7 +72,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {

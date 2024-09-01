@@ -4,6 +4,7 @@ import { getCompanies, getCompanyById } from "../controllers/company.controller"
 import EntityList from "../Widgets/masters/EntityList"
 import CreateCompany from "./CreateCompany"
 import CellDbName from "./cellDBName";
+import AuthWrapper from "./AuthWrapper";
 
 export function CompanyEntityList(){
     const columns: GridColDef[] = [
@@ -13,10 +14,12 @@ export function CompanyEntityList(){
           headerName: 'Name',
           width: 150,
           renderCell: (params) => (
-            <CellDbName
-              row={params.row}
-              userId={params.row.userId as number}
-            ></CellDbName>
+            <AuthWrapper>
+              <CellDbName
+                row={params.row}
+                userId={params.row.userId as number}
+              ></CellDbName>
+            </AuthWrapper>
           ),
         },
         {

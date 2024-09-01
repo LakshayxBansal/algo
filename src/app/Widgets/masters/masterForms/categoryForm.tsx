@@ -7,7 +7,6 @@ import {
   createEnquiryCategory,
   updateEnquiryCategory,
 } from "../../../controllers/enquiryCategory.controller";
-import { nameMasterData } from "../../../zodschema/zodschema";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
@@ -42,7 +41,7 @@ export default function CategoryForm(props: masterFormPropsT) {
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
