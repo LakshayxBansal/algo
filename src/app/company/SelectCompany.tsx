@@ -10,5 +10,8 @@ export default async function selectUserCompany(row: dbInfoT, userId: number) {
   } else {
     redirect('/error');
   }
+}
 
+export async function redirectToCap() {
+  redirect('/cap');
 }
