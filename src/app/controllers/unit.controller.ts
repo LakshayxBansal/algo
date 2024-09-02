@@ -3,8 +3,10 @@
 import * as zs from "../zodschema/zodschema";
 import {
   createUnitDB,
-  Pagination,
   getUnitCount,
+  getUnitByPageDb,
+  DeleteUnitList,
+  updateUnitDB,
 } from "../services/unit.service"
 import { getSession } from "../services/session.service";
 import { getUnitList, fetchUnitById } from "@/app/services/unit.service";
@@ -21,17 +23,19 @@ export async function createUnit(data: mdl.unitSchemaT) {
 
       if (parsed.success) {
         const dbResult = await createUnitDB(session, data as mdl.unitSchemaT);
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+        if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
           result = {
             status: false,
-            data: [
-              {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
-              },
-            ],
+            data: errorState,
           };
         }
       } else {
@@ -66,6 +70,62 @@ export async function createUnit(data: mdl.unitSchemaT) {
   return result;
 }
 
+export async function updateUnit(data: mdl.unitSchemaT) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = zs.ItemSchema.safeParse(data);
+
+      if (parsed.success) {
+        const dbResult = await updateUnitDB(session, data as mdl.unitSchemaT);
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e: any) {
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
+      return result;
+    }
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+
 /**
  *
  * @param searchString partial string for unit name
@@ -82,12 +142,24 @@ export async function getUnit(searchString: string) {
   }
 }
 
+export async function DeleteUnit(id: number) {
+  try {
+    const session = await getSession();
+
+    if (session?.user.dbInfo) {
+      return DeleteUnitList(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 /**
  *
  * @param Id id of the unit to be searched
  * @returns
  */
-export async function getUnitById(id: string) {
+export async function getUnitById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -98,7 +170,7 @@ export async function getUnitById(id: string) {
   }
 }
 
-export async function getUnits(
+export async function getUnitByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -113,7 +185,7 @@ export async function getUnits(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getUnitByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -145,7 +217,7 @@ export async function getUnits(
   return getUnit;
 }
 
-export async function getUnitData(id: string) {
+export async function getUnitData(id: number) {
   let getUnit = {
     status: false,
     data: [{}] as mdl.getUnitT,
@@ -157,7 +229,7 @@ export async function getUnitData(id: string) {
     if (appSession) {
       const dep = await fetchUnitById(
         appSession.user.dbInfo.dbName as string,
-        id as string
+        id as number
       );
 
       getUnit = {

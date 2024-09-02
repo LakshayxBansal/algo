@@ -7,14 +7,12 @@ import {
   getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
-  Pagination,
-  updateOrganisationDB,getOrgsList,getOrgsCount
+  updateOrganisationDB
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
-import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 
 export async function createOrganisation(data: zm.organisationSchemaT) {
