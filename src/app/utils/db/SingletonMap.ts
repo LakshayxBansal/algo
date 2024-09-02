@@ -8,13 +8,20 @@ type record = {
 const dbMap = function () {
     const map: record[] = [];
 
+
     return {
         set(key: string, value: mariadb.Pool): void {
             map.push({key, value});
         },
     
         get(key: string): mariadb.Pool | undefined {
-            return map.find((val) => val.key === key)?.value;
+            const valu = map.find((val) => val.key === key);
+            let val;
+            if (valu) val = valu.value; 
+            map.forEach((val) => console.log(val.key));
+            console.log("No of connextions -- ", val?.activeConnections)
+
+            return val;
         }
     };
 }();
