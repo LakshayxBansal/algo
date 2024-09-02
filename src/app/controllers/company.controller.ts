@@ -35,9 +35,9 @@ export async function createCompany(data: companySchemaT) {
         else{
           return hostRes;
         }
-        const userEmail = session.user.email;
+        const userId = session.user.userId;
         
-        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userEmail as string);
+        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userId as number);
         
         if (companyData[0].length === 0) {
           dbName += companyData[2][0].id;

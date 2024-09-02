@@ -94,33 +94,18 @@ export async function createTablesAndProc(dbName: string, host: string, port: nu
   return result;
 }
 
-export async function createCompanyAndInfoDb(hostId: number, dbName: string, company: zm.companySchemaT, userEmail: string) {
+export async function createCompanyAndInfoDb(hostId: number, dbName: string, company: zm.companySchemaT, userId: number) {
   try {    
     const result = await excuteQuery({
       host: 'userDb',
       query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-      values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userEmail] 
+      values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userId] 
     });
     return result;
   } catch(e) {
     console.log(e);
   }
 }
-
-
-// export async function assignUserCompany(companyId: number, email: string){
-//   try {
-//     const result = await excuteQuery({
-//       host: 'userDb',
-//       query: 'INSERT INTO userCompany (user_id, company_id, isAdmin) values \
-//         ((select id from user where email=?), ?, 0)',
-//       values:[email, companyId]
-//     }); 
-//     return result;
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
 
 export async function dropDatabase(dbName: string){
   try {
