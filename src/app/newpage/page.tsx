@@ -87,27 +87,44 @@ export default function AutoGrid() {
         </Grid>
 
         <Grid item xs={4}>
-          <Item1>xs=4</Item1>
+          <Box sx={{gridTemplateColumns: "repeat(2, 1fr)",
+            border:"1px dashed black",
+            width:"32.5vw"
+          }}>
+            <FormControlLabel control={<Checkbox size='small'/>} label="Open Calls" />
+            <Box >
+            <FormControlLabel control={<Checkbox size='small'/>} label="Allocated Calls" />
+            <FormControlLabel control={<Checkbox size='small'/>} label="Unallocated Calls" />
+            <FormControlLabel control={<Checkbox size='small'/>} label="Both Calls" />
+            <FormControlLabel control={<Checkbox size='small'/>} label="Sub Status" />            
+            </Box>
+            <FormControlLabel control={<Checkbox size='small'/>} label="Closed Calls" />
+          </Box>
         </Grid>
         <Grid  item xs={3}>
           <Box sx={{
             display: 'flex',
-            flexDirection:"column"}}>
+            flexDirection:"column",
+            border:"1px dashed black",
+            }}>
         <FormControlLabel control={<Checkbox/>} label="Area" />
         <FormControlLabel control={<Checkbox/>} label="Executive" />
         </Box>
         
         <Box  sx={{
           display: 'flex',
+          alignContent: 'space-between' ,
           flexDirection:"row",
-          border:"2px dashed black",
-          width: '15rem',
-          height: '8rem',
-          paddingTop:"3vh"
+          border:"1px dashed black",
+          width: '21.25rem',
+          height: '18vh',
+          marginTop:"1vh",
+          paddingTop:"2vh",
+          gridTemplateColumns: "repeat(2, 1fr)"
         }}
         justifyContent={'space-between'}
           >
-          <Typography>Filter On:</Typography>
+          <Typography sx={{paddingLeft:"15px"}}>Filter On:</Typography>          
         <FormControl variant="outlined" sx={{ m: 1, Width: 50 }} size='small'>
         <Select
                 labelId="filter-on-label"
@@ -123,15 +140,24 @@ export default function AutoGrid() {
                 <MenuItem value={3}>Date Range</MenuItem> 
               </Select>
               </FormControl>
+              <Typography sx={{paddingLeft:"15px"}}>From:</Typography>
+              <Typography>To:</Typography>
               </Box>
+
         </Grid>
-        <Grid  item xs={3}>
-          <Item1>xs3</Item1>
+        <Grid  item xs={3}
+        sx={{ border:"1px dashed black",
+        }}>
+        <FormControlLabel control={<Checkbox/>} label="Call Type" sx={{marginLeft:"5vw"}} />
+        <FormControlLabel control={<Checkbox/>} label="Catagory" sx={{marginLeft:"5vw"}} />
+        <FormControlLabel control={<Checkbox/>} label="Source" sx={{marginLeft:"5vw"}} />
+        <FormControlLabel control={<Checkbox/>} label="Next Action" sx={{marginLeft:"5vw"}} />
+        <FormControlLabel control={<Checkbox/>} label="Action Taken" sx={{marginLeft:"5vw"}} />
         </Grid>
       </Grid>
     </Box>
     <Box sx={{ flexGrow:1 }}>
-    <Grid >
+    <Grid sx={{ border:"2px solid black"}}>
     <DataGridComp 
     rows={row1}
     columns={column1}
@@ -149,13 +175,32 @@ export default function AutoGrid() {
         </Button>
         </Box>
     </Box>
-    <Grid >
+    <Grid sx={{marginTop:"2vh",
+       border:"2px solid black"
+    }}>
     <DataGridComp 
     rows={row2}
     columns={column2}
     />
     </Grid>
     </Box>
+    <Box>
+    <Button variant="outlined" size="small">
+          Hide Details
+        </Button>
+        <FormControlLabel control={<Checkbox/>} label="Show Remarks" sx={{marginLeft:"5vw"}} />
+        </Box>
+        <Box>
+        <Button variant="outlined" size="small">
+          New Call Receipt
+        </Button>
+        <Button variant="outlined" size="small">
+          New Call Allocation
+        </Button>
+        <Button variant="outlined" size="small">
+          New Call Report
+        </Button>
+        </Box>
     </>
   );
 }
