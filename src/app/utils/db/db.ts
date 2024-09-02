@@ -5,21 +5,19 @@ import { dbMap } from './SingletonMap';
 //const dbMap = SingletonMap<string, mariadb.Pool>;
 
 function getPool(host: string) {
-  const pool = dbMap.get(host);
-  if (pool) {
-    return pool;
-  } else {
-    dbMap.set(host, mariadb.createPool({
-        host: process.env.MYSQL_HOST,
-        port: 3306,
-        database: host,
-        user: process.env.USERDB_USER,
-        password: process.env.USERDB_PASSWORD,
-        connectionLimit: 5
-      }
-    ));
-    return dbMap.get(host) ?? null;
+  let pool = dbMap.get(host);
+  if (!pool) {
+    pool = mariadb.createPool({
+      host: process.env.MYSQL_HOST,
+      port: 3306,
+      database: host,
+      user: process.env.USERDB_USER,
+      password: process.env.USERDB_PASSWORD,
+      connectionLimit: 3
+    });
+    dbMap.set(host, pool);
   }
+  return pool ?? null;
 }
 
 /**
