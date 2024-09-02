@@ -8,7 +8,10 @@ import Grid from "@mui/material/Grid";
 import { masterFormPropsT, selectKeyValueT, unitSchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { createUnit } from "@/app/controllers/unit.controller";
+import { createUnit, updateUnit } from "@/app/controllers/unit.controller";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function UnitForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -21,6 +24,8 @@ export default function UnitForm(props: masterFormPropsT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
+  const entityData: unitSchemaT = props.data ? props.data : {};
+
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -30,11 +35,12 @@ export default function UnitForm(props: masterFormPropsT) {
       data[key] = value;
     }
 
-    const result = await createEntity(data as unitSchemaT);
+    const result = await persistEntity(data as unitSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      setTimeout(() => {props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
       setFormError({});
       setSnackOpen(true);
     } else {
@@ -42,8 +48,9 @@ export default function UnitForm(props: masterFormPropsT) {
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
-      }
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }      }
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
@@ -53,18 +60,46 @@ export default function UnitForm(props: masterFormPropsT) {
     return formData;
   };
 
-  async function createEntity(data: unitSchemaT) {
-    const result = await createUnit(data);
+  async function persistEntity(data: unitSchemaT) {
+    let result;
+    if (props.data) {
+      Object.assign(data, { id: props.data.id });
+      result = await updateUnit(data);
+    } else {
+      result = await createUnit(data);
+    }
     return result;
+  }
+
+  const clearFormError = () => {
+    setFormError(curr => {
+      const {form, ...rest} = curr;
+      return rest;
+    });
   }
 
   return (
     <>
-      <Seperator>Add Unit</Seperator>
+      <Seperator>{entityData.id ? "Update Unit" : "Add Unit"}</Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{
@@ -82,6 +117,7 @@ export default function UnitForm(props: masterFormPropsT) {
               name="name"
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
             />
             <InputControl
               autoFocus
@@ -91,6 +127,7 @@ export default function UnitForm(props: masterFormPropsT) {
               name="uqc"
               error={formError?.uqc?.error}
               helperText={formError?.uqc?.msg}
+              defaultValue={entityData.uqc}
             />
           </Box>
           <Grid container xs={12} md={12}>

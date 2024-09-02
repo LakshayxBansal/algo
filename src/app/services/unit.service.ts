@@ -17,6 +17,19 @@ export async function createUnitDB(session: Session, data: zm.unitSchemaT) {
   return null;
 }
 
+export async function updateUnitDB(session: Session, data: zm.unitSchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateUnit(?,?,?,?);",
+      values: [data.id, data.name, data.uqc, session.user.email],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
 /**
  *
  * @param crmDb database to search in
@@ -44,7 +57,23 @@ export async function getUnitList(crmDb: string, searchString: string) {
   }
 }
 
-export async function Pagination(
+export async function DeleteUnitList(crmDb: string, id: number) {
+  try {
+    let query = "Delete from unit_master where id=?";
+    let values: any[] = [id];
+
+    await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+
+    return;
+  } catch (e) {
+    console.log(e);
+  }
+}
+export async function getUnitByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -60,7 +89,7 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id, uqc\
+        "SELECT *, RowNum as RowID\
      FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
         FROM unit_master " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
@@ -96,7 +125,7 @@ export async function getUnitCount(crmDb: string, value: string | undefined) {
  * @param id id to search in unit_master
  * @returns
  */
-export async function fetchUnitById(crmDb: string, id: string) {
+export async function fetchUnitById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,

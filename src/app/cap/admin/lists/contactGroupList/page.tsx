@@ -4,34 +4,35 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getItemById, getItems } from '@/app/controllers/item.controller';
-import ItemForm from '@/app/Widgets/masters/masterForms/itemForm';
+import ContactGroupForm from '@/app/Widgets/masters/masterForms/contactGroupForm';
+import { getContactGroupById, getContactGroupByPage } from '@/app/controllers/contactGroup.controller';
 
 
-export default function Items() {
+export default function ContactGroup() {
   const columns: GridColDef[] = [
-    { field: "id", headerName: "S.No." },
-    { field: "name", headerName: "Name", width: 100 },
-    { field: "group_id", headerName: "Group Id", width: 100 },
-    { field: "alias", headerName: "Alias", width: 100 },
-    { field: "unit_id", headerName: "Unit Id", width: 100 },
-    { field: "hsn_code", headerName: "Hsn Code", width: 100 },
+    { field: 'id', headerName: 'ID', width: 90 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      width: 150,
+      editable: true,
+    }
   ];
-
+  
   return (
     <div style={{ height: 800, width: '100%' }}>
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-              <ItemForm
+              <ContactGroupForm
               setDialogOpen={fnDialogOpen}
               setDialogValue={fnDialogValue}
               data={data}
             />
           )}
-        fetchDataFn={getItems}
-        fnFetchDataByID={getItemById}
+        fetchDataFn={getContactGroupByPage}
+        fnFetchDataByID={getContactGroupById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

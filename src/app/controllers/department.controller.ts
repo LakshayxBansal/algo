@@ -6,8 +6,8 @@ import {
   createDepartmentDb,
   getDepartmentDetailsById,
   updateDepartmentDb,
-  Pagination,
   getDepartmentCount,
+  getDepartmentByPageDb,
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -134,7 +134,7 @@ export async function updateDepartment(data: nameMasterDataT) {
   return result;
 }
 
-export async function getDepartments(
+export async function getDepartmentByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -149,7 +149,7 @@ export async function getDepartments(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getDepartmentByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

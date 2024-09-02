@@ -80,7 +80,7 @@ export async function updateEnquiryCategoryDb(
   return null;
 }
 
-export async function Pagination(
+export async function getEnquiryCategoryByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -96,7 +96,7 @@ export async function Pagination(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT name,RowNum as RowID,id \
+        "SELECT * ,RowNum as RowID\
        FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
           FROM enquiry_category_master " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +

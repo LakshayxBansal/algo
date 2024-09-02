@@ -9,13 +9,13 @@ import { dbInfoT } from '../models/models'
 const sessionDb = 'userDb';
 
 
-export async function getDbSession(email: string): Promise<dbInfoT | null> {
+export async function getDbSession(userId: number): Promise<dbInfoT | null> {
   try {
 
     const result = await excuteQuery({
       host: sessionDb,
-      query: 'select * from session where email=?', 
-      values: [email],
+      query: 'select * from session where userId=?',
+      values: [userId],
     });
 
     if (result?.length > 0) {
@@ -78,17 +78,17 @@ async function getLastSession(idUser: number){
  * @param dbInfo object containing the user email, companyinfo and db info
  * @returns 
  */
-export async function updateSession(dbInfo: dbInfoT, email: string){
+export async function updateSession(dbInfo: dbInfoT, userId: number){
   try {
-    let dbData = await getDbSession(email);
+    let dbData = await getDbSession(userId);
     const json = JSON.stringify(dbInfo);
-    const updQry = 'update session set data=?, last_access=now() where email=?';
-    const insertQry = 'insert into session (data, last_access, email) values (?, now(), ?)';
+    const updQry = 'update session set data=?, last_access=now() where userId=?';
+    const insertQry = 'insert into session (data, last_access, userId) values (?, now(), ?)';
 
     const result = await excuteQuery({
       host: sessionDb,
       query: dbData ? updQry: insertQry, 
-      values: [json, email],
+      values: [json, userId],
       });
     return result;
   } catch(e) {

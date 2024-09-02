@@ -13,7 +13,6 @@ import { nameMasterData } from "../../../zodschema/zodschema";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
-  masterFormPropsT,
   masterFormPropsWithParentT,
   optionsDataT,
   selectKeyValueT,
@@ -175,7 +174,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               fetchDataFn={getExecutiveRole}
               defaultValue={
                 {
-                  id: entityData.id,
+                  id: entityData.parent_id,
                   name: entityData.parentRole,
                 } as optionsDataT
               }

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getOrganisationById, getOrganisations } from '@/app/controllers/organisation.controller';
+import { getOrganisationById, getOrganisationByPage } from '@/app/controllers/organisation.controller';
 import OrganisationForm from '@/app/Widgets/masters/masterForms/organisationForm';
 
 
@@ -37,7 +37,7 @@ const columns: GridColDef[] = [
               data={data}
             />
           )}
-        fetchDataFn={getOrganisations}
+        fetchDataFn={getOrganisationByPage}
         fnFetchDataByID={getOrganisationById}
         customCols={columns}
         AddAllowed={true}>

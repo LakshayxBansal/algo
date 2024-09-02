@@ -7,9 +7,13 @@ import { nameMasterDataT } from "../models/models";
 import {
   createAllocationTypeDb,
   getAllocationDetailsById,
+  getAllocationTypeByPageDb,
+  getAllocationTypeCount,
   getAllocationTypeList,
   updateAllocationTypeDb,
 } from "../services/allocationType.service";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getAllocationType(searchString: string) {
   try {
@@ -145,4 +149,49 @@ export async function updateAllocationType(data: nameMasterDataT) {
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
   };
   return result;
+}
+
+export async function getAllocationTypeByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getAllocationType = {
+    status: false,
+    data: {} as mdl.nameMasterDataT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      const conts = await getAllocationTypeByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      const rowCount = await getAllocationTypeCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getAllocationType = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "AllocationType Admin, E-Code:369";
+
+    getAllocationType = {
+      ...getAllocationType,
+      status: false,
+      data: {} as mdl.nameMasterDataT,
+      error: err,
+    };
+  }
+  return getAllocationType;
 }

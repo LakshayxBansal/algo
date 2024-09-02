@@ -6,8 +6,8 @@ import {
   createEnquiryCategoryDb,
   getCategoryDetailsById,
   updateEnquiryCategoryDb,
-  Pagination,
   getEnquiryCategoryCount,
+  getEnquiryCategoryByPageDb,
 } from "../services/enquiryCategory.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -145,7 +145,7 @@ export async function updateEnquiryCategory(data: nameMasterDataT) {
   return result;
 }
 
-export async function getEnquiryCategorys(
+export async function getEnquiryCategoryByPage(
   page: number,
   filter: string | undefined,
   limit: number
@@ -160,7 +160,7 @@ export async function getEnquiryCategorys(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await Pagination(
+      const conts = await getEnquiryCategoryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,

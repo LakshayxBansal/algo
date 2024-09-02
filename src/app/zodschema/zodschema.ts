@@ -15,7 +15,8 @@ const passwordRegex = new RegExp(
 
 export const userSchema = z
   .object({
-    email: z.union([z.string().optional(), z.string().email()]),
+    // email: z.union([z.string().optional(), z.string().email()]),
+    email: z.string().regex(emailRegex, "Input must be in email format").optional(),
     password: z.union([
       z.string().optional(),
       z
@@ -28,7 +29,8 @@ export const userSchema = z
         ),
     ]),
     name: z.string().min(1).max(45),
-    phone: z.string().max(15).optional(),
+    phone: z.string().min(10).max(15).optional(),
+    contact : z.string().optional(),
     repassword: z.string().max(50).optional(),
     provider: z.string().max(15).optional(),
   })
@@ -40,10 +42,15 @@ export const userSchema = z
   )
   .refine(
     (schema) => {
-      return !(schema.email === "" && schema.phone === "");
+      return !(schema.email === "");
     },
-    { message: "please provide email, or phone no", path: ["email", "phone"] }
-  );
+    { message: "please provide email", path: ["email"] }
+  ).refine(
+    (schema) => {
+      return !(schema.phone === "");
+    },
+    { message: "please provide phone", path: ["phone"] }
+  )
 
 /*
 refine(schema => {

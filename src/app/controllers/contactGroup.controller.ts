@@ -7,9 +7,13 @@ import {
   createContactGroupDb,
   getContactGroupDetailsById,
   updateContactGroupDb,
+  getContactGroupByPageDb,
+  getContactGroupCount,
 } from "../services/contactGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getContactGroup(searchString: string) {
   try {
@@ -159,4 +163,51 @@ export async function getContactGroupById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getContactGroupByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getContactGroup = {
+    status: false,
+    data: {} as mdl.contactGroupSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      
+      const conts = await getContactGroupByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      
+      const rowCount = await getContactGroupCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getContactGroup = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.contactGroupSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "ContactGroup Admin, E-Code:369";
+
+    getContactGroup = {
+      ...getContactGroup,
+      status: false,
+      data: {} as mdl.contactGroupSchemaT,
+      error: err,
+    };
+  }
+  return getContactGroup;
 }
