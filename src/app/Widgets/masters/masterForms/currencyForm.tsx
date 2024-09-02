@@ -4,13 +4,6 @@ import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import {
-  createContactGroup,
-  updateContactGroup,
-} from "../../../controllers/contactGroup.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { getContactGroup } from "@/app/controllers/contactGroup.controller";
-import {
-  contactGroupSchemaT,
   currencySchemaT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -20,7 +13,6 @@ import { masterFormPropsT } from "@/app/models/models";
 import Paper from "@mui/material/Paper";
 import {
   FormControl,
-  Input,
   InputLabel,
   MenuItem,
   Select,
@@ -35,7 +27,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = useState(false);
   const [currencySystem, setCurrencySystem] = useState("ind");
   const [decimalPlaces, setDecimalPlaces] = useState("2");

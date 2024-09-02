@@ -7,9 +7,13 @@ import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import {
   createCurrencyDb,
+  getCurrencyByPageDb,
+  getCurrencyCount,
   getCurrencyDetailsById,
   updateCurrencyDb,
 } from "../services/currency.services";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getContactGroup(searchString: string) {
   try {
@@ -145,7 +149,7 @@ export async function updateCurrency(data: currencySchemaT) {
 
 /**
  *
- * @param Id id of the contact to be searched
+ * @param Id id of the currency to be searched
  * @returns
  */
 export async function getCurrencyById(id: number) {
@@ -157,4 +161,51 @@ export async function getCurrencyById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getCurrencyByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getCurrency = {
+    status: false,
+    data: {} as mdl.currencySchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      
+      const conts = await getCurrencyByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      
+      const rowCount = await getCurrencyCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getCurrency = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.currencySchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "Currency Admin, E-Code:369";
+
+    getCurrency = {
+      ...getCurrency,
+      status: false,
+      data: {} as mdl.currencySchemaT,
+      error: err,
+    };
+  }
+  return getCurrency;
 }
