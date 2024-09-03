@@ -80,3 +80,49 @@ export async function updateAllocationTypeDb(
   }
   return null;
 }
+
+export async function getAllocationTypeByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT * ,RowNum as RowID \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+          FROM allocation_type_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
+      LIMIT ?;",
+      values: vals,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getAllocationTypeCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from allocation_type_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}

@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid";
 import { masterFormPropsT, selectKeyValueT, unitSchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { createUnit } from "@/app/controllers/unit.controller";
+import { createUnit, updateUnit } from "@/app/controllers/unit.controller";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
@@ -35,11 +35,12 @@ export default function UnitForm(props: masterFormPropsT) {
       data[key] = value;
     }
 
-    const result = await createEntity(data as unitSchemaT);
+    const result = await persistEntity(data as unitSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      setTimeout(() => {props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
       setFormError({});
       setSnackOpen(true);
     } else {
@@ -47,8 +48,9 @@ export default function UnitForm(props: masterFormPropsT) {
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
-      }
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }      }
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
@@ -58,8 +60,14 @@ export default function UnitForm(props: masterFormPropsT) {
     return formData;
   };
 
-  async function createEntity(data: unitSchemaT) {
-    const result = await createUnit(data);
+  async function persistEntity(data: unitSchemaT) {
+    let result;
+    if (props.data) {
+      Object.assign(data, { id: props.data.id });
+      result = await updateUnit(data);
+    } else {
+      result = await createUnit(data);
+    }
     return result;
   }
 
@@ -72,7 +80,7 @@ export default function UnitForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>Add Unit</Seperator>
+      <Seperator>{entityData.id ? "Update Unit" : "Add Unit"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
