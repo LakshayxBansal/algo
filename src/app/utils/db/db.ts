@@ -14,7 +14,7 @@ function getPool(host: string) {
         database: host,
         user: process.env.USERDB_USER,
         password: process.env.USERDB_PASSWORD,
-        connectionLimit: 5
+        connectionLimit: Number(process.env.DB_POOL_SIZE)
       });
       dbMap.set(host, pool);
     }
