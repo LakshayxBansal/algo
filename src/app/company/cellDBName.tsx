@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
-import selectUserCompany, {redirectToCap} from './SelectCompany';
+import selectUserCompany, {redirectToPage} from './SelectCompany';
 import {dbInfoT} from '../models/models';
 import { useSession } from 'next-auth/react';
 
@@ -15,8 +15,11 @@ export default function CellDbName(props : {row:dbInfoT, userId: number }) {
     if(result){
       const data = await update();
       if(data){
-        redirectToCap()
+        redirectToPage('/cap');
       }
+    }
+    else{
+      redirectToPage('/error');
     }
   }
 

@@ -8,10 +8,10 @@ export default async function selectUserCompany(row: dbInfoT, userId: number) {
   if (result) {
     return true;
   } else {
-    redirect('/error');
+    return false;
   }
 }
 
-export async function redirectToCap() {
-  redirect('/cap');
+export async function redirectToPage(url: string) {
+  redirect(`${url}`);
 }
