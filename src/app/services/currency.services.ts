@@ -89,11 +89,52 @@ export async function getCurrencyDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select * from currncy_data a where a.id=?;",
+      query: "select * from currency_data a where a.id=?;",
       values: [id],
     });
 
     return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCurrencyByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT *,RowNum as RowID FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum FROM currency_data " + (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") + "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+      values: vals,
+    });
+    console.log(result);
+    
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCurrencyCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from currency_data" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
   } catch (e) {
     console.log(e);
   }

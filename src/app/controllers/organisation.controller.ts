@@ -7,7 +7,7 @@ import {
   getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
-  updateOrganisationDB,getOrgsList,getOrgsCount
+  updateOrganisationDB
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
