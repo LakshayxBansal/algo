@@ -35,7 +35,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     if (result.status) {
       setSnackOpen(true);
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);

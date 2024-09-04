@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
-import { getArea } from "@/app/controllers/area.controller";
+import { getArea,getAreaById } from "@/app/controllers/area.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -206,7 +206,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>Add Executive</Seperator>
+      <Seperator>{entityData ? "Update Executive":"Add Executive"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -272,11 +272,12 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               }
               onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn={getArea}
-              // defaultValue={entityData.}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              fnFetchDataByID={getAreaById}
+              renderForm={(fnDialogOpen, fnDialogValue,data) => (
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
             />
@@ -547,6 +548,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"State"}
               width={210}
               dialogTitle={"Add State"}
+              disable={selectValues.country ? false : true}
               defaultValue={
                 {
                   id: entityData.state_id,
