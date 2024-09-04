@@ -9,7 +9,6 @@ import {
   updateExecutiveRole,
 } from "@/app/controllers/executiveRole.controller";
 import Grid from "@mui/material/Grid";
-import { nameMasterData } from "../../../zodschema/zodschema";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
@@ -31,14 +30,10 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveRoleSchemaT = props.data ? props.data : {};
+  
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
-    // let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    // for (const [key, value] of formData.entries()) {
-    //   data[key] = value;
-    // }
     // const parsed = nameMasterData.safeParse(data);
     // let result;
     // let issues;
@@ -77,7 +72,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
@@ -175,7 +170,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               defaultValue={
                 {
                   id: entityData.parent_id,
-                  name: entityData.parentRole,
+                  name: entityData.parentRole
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
