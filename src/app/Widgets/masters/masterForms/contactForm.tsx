@@ -156,6 +156,7 @@ export default function ContactForm(props: masterFormPropsT) {
               </IconButton>
             </Box>
         </Seperator>
+      </Box>
         <Collapse in={formError?.form ? true : false}>
           <Alert
             severity="error"
@@ -174,7 +175,6 @@ export default function ContactForm(props: masterFormPropsT) {
             {formError?.form?.msg}
           </Alert>
         </Collapse>
-      </Box>
       <Box id="sourceForm" sx={{ p: 3 }}>
         <form action={handleSubmit}>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
