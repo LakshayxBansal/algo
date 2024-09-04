@@ -8,11 +8,17 @@ import { getCountryList,
   createCountryDb,
   updateCountryDb,
   createStateDb, 
-  getStateList,getCountryByIDList,updateStateDb,getStateListById } from '../services/masters.service';
+  getStateList,getCountryByIDList,updateStateDb,getStateListById, 
+  getCountryByPageDb,
+  getCountryCount,
+  getStateByPageDb,
+  getStateCount} from '../services/masters.service';
 import { getSession } from '../services/session.service';
 import * as zs from '../zodschema/zodschema';
 import * as zm from '../models/models';
 import { SqlError } from 'mariadb';
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
  
 
@@ -403,3 +409,96 @@ export async function updateState(data : zm.stateSchemaT){
   return result;
 }
 
+export async function getCountryByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getCountry = {
+    status: false,
+    data: {} as mdl.countrySchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      
+      const conts = await getCountryByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      
+      const rowCount = await getCountryCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getCountry = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.countrySchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "Country Admin, E-Code:369";
+
+    getCountry = {
+      ...getCountry,
+      status: false,
+      data: {} as mdl.countrySchemaT,
+      error: err,
+    };
+  }
+  return getCountry;
+}
+
+export async function getStateByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getState = {
+    status: false,
+    data: {} as mdl.stateSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      
+      const conts = await getStateByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      
+      const rowCount = await getStateCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getState = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.stateSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "State Admin, E-Code:369";
+
+    getState = {
+      ...getState,
+      status: false,
+      data: {} as mdl.stateSchemaT,
+      error: err,
+    };
+  }
+  return getState;
+}
