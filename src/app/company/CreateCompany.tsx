@@ -88,25 +88,25 @@ export default function CreateCompany(props: masterFormPropsT) {
   }
   return (
     <Paper>
-      <Seperator>{entityData.id ? "Update Company" : "Add Company"}</Seperator>
-      <Collapse in={formError?.form ? true : false}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={clearFormError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {formError?.form?.msg}
-        </Alert>
-      </Collapse>
+        <Seperator>{entityData.id ? "Update Company" : "Add Company"}</Seperator>
+        <Collapse in={formError?.form ? true : false}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={clearFormError}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {formError?.form?.msg}
+          </Alert>
+        </Collapse>
       <Box sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit}>
           <Box

@@ -142,26 +142,40 @@ export default function ContactForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>{props.data ? "Update Contact" : "Add Contact"}</Seperator>
-      <Collapse in={formError?.form ? true : false}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={clearFormError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {formError?.form?.msg}
-        </Alert>
-      </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box sx={{
+        position: "sticky", top: "0px",
+        zIndex: 2, 
+        paddingTop: "10px", paddingBottom: "25px",
+        bgcolor: "white"
+      }}>
+        <Seperator>
+            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+              {props.data ? "Update Contact" : "Add Contact"}
+              <IconButton onClick={handleCancel}>
+                <CloseIcon/>
+              </IconButton>
+            </Box>
+        </Seperator>
+        <Collapse in={formError?.form ? true : false}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={clearFormError}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {formError?.form?.msg}
+          </Alert>
+        </Collapse>
+      </Box>
+      <Box id="sourceForm" sx={{ p: 3 }}>
         <form action={handleSubmit}>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
             <Seperator>Contact Details</Seperator>
@@ -502,16 +516,12 @@ export default function ContactForm(props: masterFormPropsT) {
 
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end"
             }}
           >
-            <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" sx={{width: "15%", marginLeft: "5%"}}>
               Submit
             </Button>
           </Box>
