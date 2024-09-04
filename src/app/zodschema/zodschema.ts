@@ -488,6 +488,7 @@ export const nameAliasData = z.object({
   alias: z.string().max(45),
 });
 
+
 export const enquirySupportConfig = z.object({
 
   enquiryReqd: z.boolean().optional(),
@@ -507,4 +508,19 @@ export const enquirySupportConfig = z.object({
   generalMaintainImage: z.boolean().optional(),
   generalShowList: z.boolean().optional(),
 
+});
+
+export const companySchema = z.object({
+  id: z.number().optional(),
+  alias: z.string().min(1).max(60),
+  name: z.string().min(1, "Please enter company name").max(55),
+  add1: z.string().min(1, "Please enter address"),
+  add2: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  state_id: z.number().optional(),
+  country: z.string().optional(),
+  country_id: z.number().optional(),
+  pincode: z.string().optional(),
+  stamp: z.number().optional()
 });

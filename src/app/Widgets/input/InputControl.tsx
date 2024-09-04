@@ -73,6 +73,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, cust
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
+    console.log('datechange')
+    console.log(value)
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
