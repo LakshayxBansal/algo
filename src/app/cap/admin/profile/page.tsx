@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { logger } from '@/app/utils/logger.utils';
 import { getExecutiveById } from "@/app/controllers/executive.controller";
 import { executiveSchemaT } from "@/app/models/models";
-import SnackModal from "@/app/miscellenous/SnackModal";
+import SnackModal from "@/app/miscellaneous/SnackModal";
 
 export default async function Profile() {
     try {

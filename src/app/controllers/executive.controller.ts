@@ -7,7 +7,7 @@ import {
   getExecutiveByPageDb,
   getExecutiveCount,
   getExecutiveDetailsById,
-  updateExecutiveDB,
+  updateExecutiveDB,getExecutiveProfileImageByCrmUserIdList
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -279,4 +279,17 @@ export async function getExecutiveByPage(
     };
   }
   return getExecutive;
+}
+
+export async function getExecutiveProfileImageByCrmUserId(crmUserId : number){
+  try {
+      const session = await getSession();
+      if(session?.user.dbInfo){
+      const profileImg = await getExecutiveProfileImageByCrmUserIdList(session.user.dbInfo.dbName, crmUserId);
+      return profileImg[0]?.profileImg;
+      }
+      return null;
+  } catch (error) {
+    throw error;
+  }
 }

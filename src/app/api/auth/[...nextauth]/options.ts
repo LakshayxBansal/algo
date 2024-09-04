@@ -76,7 +76,7 @@ export const options: NextAuthOptions = {
           const userDetails = await getUserDetailsByEmail(user.email as string);
           userId = userDetails.id;
         }
-        else if (account?.provider === "credentials") {
+        else if (account.provider === "credentials") {
           userId = user.id as unknown as number;
         }
         const sessionDbData = await getDbSession(userId as number);

@@ -234,3 +234,20 @@ export async function getExecutiveIdFromEmailList(crmDb: string, email: string){
     console.log(e);
   }
 }
+
+export async function getExecutiveProfileImageByCrmUserIdList(crmDb : string,crmUserId : number){
+  try{
+    let query = 'select profile_img as profileImg from executive_master where crm_user_id = ?';
+    let values: any[] = [crmUserId];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
