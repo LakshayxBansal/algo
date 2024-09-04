@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import {
-  getExecutiveDept,
   createExecutiveDept,
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
@@ -12,8 +11,8 @@ import Grid from "@mui/material/Grid";
 import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
 
 export default function ExecutiveDeptForm(props: masterFormPropsT) {
@@ -60,8 +59,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     if (entityData.id) {
       data = { ...data, id: entityData.id };
       result = await updateExecutiveDept(data);
-    } else result = await createExecutiveDept(data);
-
+    }
+    else{
+      result = await createExecutiveDept(data);
+    }
+    
     return result;
   }
 
@@ -78,8 +80,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
 
   return (
     <>
-    <Seperator>{entityData.id ? "Update Department" : "Add Department"}</Seperator>
-
+    <Seperator>{props.data ? "Update Department" : "Add Department"}</Seperator>
     <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
