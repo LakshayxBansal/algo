@@ -145,7 +145,7 @@ export default function ContactForm(props: masterFormPropsT) {
       <Box sx={{
         position: "sticky", top: "0px",
         zIndex: 2, 
-        paddingTop: "10px", paddingBottom: "25px",
+        paddingY: "10px",
         bgcolor: "white"
       }}>
         <Seperator>
