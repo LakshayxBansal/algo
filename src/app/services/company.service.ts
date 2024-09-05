@@ -233,3 +233,18 @@ export async function updateCompanyDB(
   }
   return null;
 }
+
+export async function getHostDetailsService(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: "userDb",
+      query: 'select dh.host as hostIp, dh.port as hostPort from dbHost dh left join dbInfo d on d.host_id=dh.id where concat(d.name, d.id)=?;',
+      values: [dbName],
+    });
+
+    return result[0];
+  } catch (e) {
+    console.log(e)
+  }
+  return null
+}
