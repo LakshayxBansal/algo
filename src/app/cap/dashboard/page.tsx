@@ -12,100 +12,17 @@ import Deposits from './Deposits';
 import Orders from './Orders';
 import { getSession } from '../../services/session.service';
 import { redirect } from 'next/navigation';
-import Title from './Title';
-import { Typography } from '@mui/material';
-import Link from 'next/link';
-import { BarChart, LineChart } from '@mui/x-charts';
-import { axisClasses } from '@mui/x-charts/ChartsAxis';
-import StackedBarChart from './BarChart';
-import CompositionChart from './CompositionChart';
+
 
 
 export default async function Dashboard() {
   const session = await getSession();
   if (session?.user.dbInfo) {
+
     return (
-      <Box>
+      <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <Box sx={{
-          display: "flex",
-          width: "90%", 
-          margin: "auto", 
-          justifyContent: "space-between", 
-          flexWrap: "wrap", 
-          rowGap: 2, 
-          paddingTop: 2, 
-          alignItems: 'center',
-          }}>
-        
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 200,
-              pr: 2
-            }}
-          >
-            <Deposits title="Total Open" data={5}/>
-          </Paper>
-          <Paper 
-            sx={{
-              p: 2,
-              height: 200,
-            }}
-          >
-            <Deposits title="Unassigned" data={5}/>
-          </Paper>
-          <Paper
-            sx={{
-              p: 2,
-              height: 200,
-            }}
-          >
-            <Deposits title="Closed" data={5}/>
-          </Paper>
-          <Paper
-            sx={{
-              p: 2,
-              height: 200,
-            }}
-          >
-            <Deposits title="Average" data={5}/>
-          </Paper>
-        </Box>
-        <Box>
-          <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: "center"}}>
-            <Paper
-              sx={{
-                // p: 2,
-                m: 2,
-                display: "flex",
-                flexDirection: "column",
-                width: "45%",
-                height: 300
-              }}
-            >
-            <CompositionChart/>
-            </Paper>
-            <Paper
-              sx={{
-                // p: 2,
-                m: 2,
-                display: "flex",
-                flexDirection: "column",
-                width: "45%",
-                height: 300
-              }}
-            >
-              <CompositionChart/>
-            </Paper>
-          </Box>
-        </Box>
-        <Paper sx={{m: 3, p: 2}}>
-          <Orders/>
-        </Paper>
-        {/* <Box
+        <Box
           component="main"
           sx={{
             flexGrow: 1,
@@ -147,7 +64,7 @@ export default async function Dashboard() {
               </Grid>
             </Grid>
           </Container>
-        </Box> */}
+        </Box>
       </Box>
     );
 
@@ -155,4 +72,3 @@ export default async function Dashboard() {
     redirect('/signin');
   }
 }
-
