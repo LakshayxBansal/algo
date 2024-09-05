@@ -4,12 +4,14 @@ import { redirect } from 'next/navigation';
 import {dbInfoT} from '../models/models';
 
 export default async function selectUserCompany(row: dbInfoT, userId: number) {
-  console.log(row);
   const result = await updateSession(row, userId);
   if (result) {
-    redirect('/cap')
+    return true;
   } else {
-    redirect('/error');
+    return false;
   }
+}
 
+export async function redirectToPage(url: string) {
+  redirect(`${url}`);
 }
