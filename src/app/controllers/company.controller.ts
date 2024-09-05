@@ -25,8 +25,8 @@ async function createCompanyDbAndTableProc(dbName: string, host: string, port: n
     return dbRes;
   }
   
-  const tableAndProcRes = await createTablesAndProc(dbName, host, port);  
-  if(!tableAndProcRes){
+  const tableAndProcRes = await createTablesAndProc(dbName);  
+  if(!tableAndProcRes.status){
     const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId, userCompanyId);
     const dropDb = await dropDatabase(dbName);
     return tableAndProcRes;

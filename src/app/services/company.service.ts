@@ -1,5 +1,5 @@
 'use server'
-import excuteQuery, {executeQueryPool}  from '../utils/db/db';
+import excuteQuery, {createDbConn}  from '../utils/db/db';
 import * as zm from "../models/models";
 import { dbTableAndProScript } from '../utils/tableScript';
 
@@ -46,11 +46,10 @@ export async function getHostId() {
 export async function createCompanyDB(dbName: string, host: string, port: number) {
   let result
   try {
-    const data = await executeQueryPool({
-      host: host,
-      port: port,
+    const data = await createDbConn({
+      hostIp: host,
+      hostPort: port,
       query: 'create database ' + dbName,
-      values: [dbName],
     });
     result = {
       status: true,
@@ -65,17 +64,15 @@ export async function createCompanyDB(dbName: string, host: string, port: number
   return result;
 }
 
-export async function createTablesAndProc(dbName: string, host: string, port: number) {
+export async function createTablesAndProc(dbName: string) {
   let result
   try {
     const scripts : string[] = dbTableAndProScript.split('~')  
     let data
     for(let idx in scripts){
       let query = scripts[idx]
-      data += await executeQueryPool({
-        dbName: dbName,
-        host: host,
-        port: port,
+      data += await excuteQuery({
+        host: dbName,
         query: query,
         values: [],
       });
