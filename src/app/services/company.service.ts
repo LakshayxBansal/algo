@@ -47,7 +47,6 @@ export async function createCompanyDB(dbName: string, host: string, port: number
   let result
   try {
     const data = await executeQueryPool({
-      dbName: 'userDb',
       host: host,
       port: port,
       query: 'create database ' + dbName,
@@ -101,6 +100,7 @@ export async function createCompanyAndInfoDb(hostId: number, dbName: string, com
       query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
       values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userId] 
     });
+    
     return result;
   } catch(e) {
     console.log(e);

@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import Title from './Title';
+import { Box, Paper } from '@mui/material';
 
 const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
 const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
@@ -17,9 +18,8 @@ const xLabels = [
 
 export default function StackedBarChart() {
   return (
-    <>
-        <Title>Today</Title>
-        <div style={{ width: '100%', flexGrow: 1, overflow: 'hidden' }}>
+    <Box sx={{ width: '100%', height: 300 }}>
+      <Paper sx={{ width: '100%' }} elevation={3}>
             <BarChart
             width={700}
             height={300}
@@ -29,7 +29,7 @@ export default function StackedBarChart() {
             ]}
             xAxis={[{ data: xLabels, scaleType: 'band' }]}
             />
-        </div>
-    </>
+      </Paper>
+    </Box>
   );
 }

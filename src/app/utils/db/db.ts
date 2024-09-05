@@ -1,5 +1,6 @@
 // db.js
 import mariadb from 'mariadb';
+// import { dbMap } from './SingletonMap';
 import { dbMap } from './SingletonMap';
 
 //const dbMap = SingletonMap<string, mariadb.Pool>;
@@ -7,6 +8,7 @@ import { dbMap } from './SingletonMap';
 function getPool(host: string) {
   try {
     let pool = dbMap.get(host);
+    
     if (!pool) {
       pool = mariadb.createPool({
         host: process.env.USERDB_HOST,
@@ -26,21 +28,30 @@ function getPool(host: string) {
 
 }
 
-function getHostPool(dbName: string, host: string, port: number) {
-  const pool = dbMap.get(dbName);
-  if (pool) {
-    return pool;
-  } else {
-    dbMap.set(dbName, mariadb.createPool({
+function getHostPool(host: string, port: number, dbName?: string) {
+  try {
+    let pool
+    if(dbName){
+      pool = dbMap.get(dbName);
+    }
+    if (!pool) {
+      pool = mariadb.createPool({
         host: host,
         port: port,
-        database: dbName,
-        user: process.env.USERDB_USER,
+        database: dbName ? dbName : undefined,
+        user: process.env.HOST_USER,
         password: process.env.USERDB_PASSWORD,
-        connectionLimit: 5
+        connectionLimit: Number(process.env.DB_POOL_SIZE)
+      });
+
+      if(dbName){
+        dbMap.set(dbName, pool);
       }
-    ));
-    return dbMap.get(dbName) ?? null;
+    }
+    return pool ?? null;
+  } catch (e) {
+    console.log(e);
+    return null;
   }
 }
 /**
@@ -65,14 +76,20 @@ export default async function excuteQuery({host, query, values }: {host: string,
 }
 
 
-export async function executeQueryPool({dbName, host, port, query, values}: {dbName: string, host: string, port: number, query: string, values: any}) {
+export async function executeQueryPool({host, port, query, values, dbName}: {host: string, port: number, query: string, values: any, dbName?: string}) {
   let db;
   let results;
   try {
-    db = getHostPool(dbName, host, port);
-    
+    db = getHostPool(host, port, dbName);
     if (db) {
-      results = await db.query(query, values);
+      if(!dbName){
+        let conn = await db.getConnection();
+          // Create a new database
+        results = await conn.query(query, values);
+      }
+      else{
+        results = await db.query(query, values);        
+      }
     }
   } catch (e) {
     throw (e);
