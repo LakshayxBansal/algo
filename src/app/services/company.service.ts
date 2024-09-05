@@ -1,64 +1,118 @@
 'use server'
+import excuteQuery, {executeQueryPool}  from '../utils/db/db';
+import * as zm from "../models/models";
+import { dbTableAndProScript } from '../utils/tableScript';
 
-import excuteQuery  from '../utils/db/db';
-
-
-/**
- * creates a database for the company name specified. 
- * Removes spaces from the name and adds 4 random letters.
- * right now just returns an unused db from the dbInfo
- * Returns the dbInfo object with {dbId, dbName}
- * @param compName Name of the company
- * 
- */
-export async function createCompanyDB(compName: string) {
+export async function getCompanyDetailsById(id: number) {
   try {
-    // create dbName
-    let companyName = compName?.replace(/\s/g, "");
-    if (companyName.length >= 40) {
-      companyName = companyName.substring(0,40);
-    }
-    const dbName = companyName + generateRandomString(4);
-
     const result = await excuteQuery({
       host: 'userDb',
-      query: 'select d.dbId from dbInfo d, company c where d.dbId not in (select dbId from company) LIMIT 1;', 
-      values: [],
+      query:
+        "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, \
+        s.name state, co.name country from company c\
+        left outer join crmapp.state_master s on c.state_id = s.id \
+        left outer join crmapp.country_master co on c.country_id = co.id \
+        where c.id=?;",
+      values: [id],
     });
-    return JSON.parse(JSON.stringify(result));
+
+    return result;
   } catch (e) {
     console.log(e);
   }
-  return null;
 }
 
-/**
- * creates the compnay record and associates a blank DB with it
- * @param param0 json object with company infor
- * @param dbId database id to be associated with company
- */
-export async function createCompanyInfo(dbInfo: {name:string, add1: string, add2: string, state: string, city: string, pin: string}, 
-          dbId: number) {
+export async function getHostId() {
+  let result
   try {
+    const data = await excuteQuery({
+      host: 'userDb',
+      query: 'select * from dbHost d where d.useForNextDb = 1;', 
+      values: [],
+    });
+    result = {
+      status: true,
+      data: data[0]
+    }
+  } catch (e) {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    }
+  }
+  return result;
+}
+
+export async function createCompanyDB(dbName: string, host: string, port: number) {
+  let result
+  try {
+    const data = await executeQueryPool({
+      dbName: 'userDb',
+      host: host,
+      port: port,
+      query: 'create database ' + dbName,
+      values: [dbName],
+    });
+    result = {
+      status: true,
+      data: data[0]
+    }
+  } catch (e) {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    }
+  }
+  return result;
+}
+
+export async function createTablesAndProc(dbName: string, host: string, port: number) {
+  let result
+  try {
+    const scripts : string[] = dbTableAndProScript.split('~')  
+    let data
+    for(let idx in scripts){
+      let query = scripts[idx]
+      data += await executeQueryPool({
+        dbName: dbName,
+        host: host,
+        port: port,
+        query: query,
+        values: [],
+      });
+    }
+    result = {
+      status: true,
+      data: data
+    }
+  } catch (e) {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    }
+  }
+  return result;
+}
+
+export async function createCompanyAndInfoDb(hostId: number, dbName: string, company: zm.companySchemaT, userId: number) {
+  try {    
     const result = await excuteQuery({
       host: 'userDb',
-      query: 'insert into company (nameVal, add1, add2, city, pincode, dbId) values \
-        (?, ?, ?, ?, ?, ?) returning *;', 
-      values: [dbInfo.name, dbInfo.add1, dbInfo.add2, dbInfo.city, dbInfo.pin, dbId]        
+      query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+      values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userId] 
     });
-    return result;  
+    return result;
   } catch(e) {
     console.log(e);
   }
 }
 
-export async function assignUserCompany(companyId: number, email: string){
+export async function dropDatabase(dbName: string){
   try {
     const result = await excuteQuery({
-      host: 'userDb',
-      query: 'INSERT INTO userCompany (userId, companyId, isAdmin) \
-        select userId, ?, 1 from user where email=?;',
-      values:[companyId, email]
+      host: dbName,
+      query: 'DROP DATABASE ' + dbName,
+      values:[]
     }); 
     return result;
   } catch (e) {
@@ -66,13 +120,116 @@ export async function assignUserCompany(companyId: number, email: string){
   }
 }
 
+export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number, userCompanyId: number){
+  try {
+    let result = await excuteQuery({
+      host: 'userDb',
+      query: 'DELETE FROM company WHERE id = ?',
+      values:[companyId]
+    }); 
 
-function generateRandomString(length: number): string {
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * letters.length);
-      result += letters[randomIndex];
+    result += await excuteQuery({
+      host: 'userDb',
+      query: 'DELETE FROM dbInfo WHERE id = ?',
+      values:[dbInfoId]
+    });
+
+    result += await excuteQuery({
+      host: 'userDb',
+      query: 'DELETE FROM userCompany WHERE id = ?',
+      values:[userCompanyId]
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
   }
-  return result;
+}
+
+export async function getCompaniesDb(
+  userId: number,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [userId, page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: "userDb",
+      query: "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
+         (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
+          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID\
+          FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
+          c.created_by createdBy, c.created_on createdOn,\
+          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId, ROW_NUMBER() OVER () AS RowNum \
+          FROM userCompany as uc, \
+          user u, \
+          dbInfo d, dbHost h,\
+          company c WHERE\
+          u.id = uc.user_id and \
+          uc.company_id = c.id and \
+          c.dbinfo_id = d.id and \
+          d.host_id = h.id AND" + (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") + " u.id=? \
+          order by c.name) AS NumberedRows\
+          WHERE RowNum > ?*?\
+          ORDER BY RowNum\
+          LIMIT ?;",
+          values: vals,
+        });
+        return result
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCompanyCount(userId: number, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: "userDb",
+      query:
+        'Select count(*) as rowCount from \
+          company as c, \
+          userCompany as uc, \
+          user as u\
+          where \
+          u.id=? and \
+          u.id = uc.user_id and \
+          uc.company_id = c.id' + (value ? " and c.name LIKE CONCAT('%',?,'%')" : ''),
+      values: [userId, value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+export async function updateCompanyDB(
+  data: zm.companySchemaT,
+) {
+  try {
+    return excuteQuery({
+      host: "userDb",
+      query:
+        "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        data.id, 
+        data.name,
+        data.alias,
+        data.add1,
+        data.add2,
+        data.country_id,
+        data.state_id,
+        data.city,
+        data.pincode,
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
 }
