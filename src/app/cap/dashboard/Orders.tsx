@@ -7,6 +7,8 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
+import { StripedDataGrid } from '@/app/utils/styledComponents';
+import { GridColDef } from '@mui/x-data-grid';
 
 // Generate Order Data
 function createData(
@@ -20,51 +22,51 @@ function createData(
   return { id, date, name, shipTo, paymentMethod, amount };
 }
 
-const rows = [
-  createData(
-    0,
-    '16 Mar, 2019',
-    'Elvis Presley',
-    'Tupelo, MS',
-    'VISA ⠀•••• 3719',
-    312.44,
-  ),
-  createData(
-    1,
-    '16 Mar, 2019',
-    'Paul McCartney',
-    'London, UK',
-    'VISA ⠀•••• 2574',
-    866.99,
-  ),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(
-    3,
-    '16 Mar, 2019',
-    'Michael Jackson',
-    'Gary, IN',
-    'AMEX ⠀•••• 2000',
-    654.39,
-  ),
-  createData(
-    4,
-    '15 Mar, 2019',
-    'Bruce Springsteen',
-    'Long Branch, NJ',
-    'VISA ⠀•••• 5919',
-    212.79,
-  ),
-];
-
 function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
+const pgSize = 5;
 
 export default function Orders() {
+  const [PageModel, setPageModel] = React.useState({ pageSize: pgSize, page: 0 });
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    {
+      field: 'executive',
+      headerName: 'Executive',
+      width: 200,
+    },
+    {
+      field: 'totalOpen',
+      headerName: 'Total Open',
+      width: 200,
+    },
+    {
+      field: 'since1w',
+      headerName: 'Since 1 week',
+      width: 200,
+    },
+    {
+      field: 'since2w',
+      headerName: 'Since 2 week',
+      width: 200,
+    },
+    {
+      field: 'since3w',
+      headerName: 'Since 3 week',
+      width: 200,
+    }
+  ];
+
+  const data = [
+    {id: '1', executive: 'Ankit', totalOpen: '10', since1w: '3', since2w: '3', since3w: '4'},
+    {id: '2', executive: 'Ankit', totalOpen: '10', since1w: '3', since2w: '3', since3w: '4'}
+  ];
+  
   return (
     <React.Fragment>
       <Title>Recent Orders</Title>
-      <Table size="small">
+      {/* <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Date</TableCell>
@@ -85,10 +87,23 @@ export default function Orders() {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+      </Table> */}
+      <StripedDataGrid
+        rows={data ? data : []}
+        columns={columns}
+        rowCount={data.length}
+        getRowId={(row) => row.id}
+        pagination={true}
+        pageSizeOptions={[pgSize, 20, 30]}
+        paginationMode="server"
+        paginationModel={PageModel}
+        onPaginationModelChange={setPageModel}
+        filterMode="server"
+        loading={!data}
+      />
+      {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
         See more orders
-      </Link>
+      </Link> */}
     </React.Fragment>
   );
 }

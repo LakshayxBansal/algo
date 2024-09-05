@@ -42,7 +42,7 @@ export async function createExecutiveDeptDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createExecutiveDept(?, ?);",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);

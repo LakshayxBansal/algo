@@ -180,18 +180,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     setSelectValues(values);
   }
 
-  async function getRolesforDepartment(stateStr: string) {
-    let roles;
-    if (selectValues.department)
-      roles = await getExecutiveRole(stateStr, selectValues.department.id);
-    if (roles?.length > 0) {
-      return roles;
-    }
-  }
-  useEffect(() => {
-    getRolesforDepartment("");
-  }, [selectValues.department]);
-
   async function persistEntity(data: executiveSchemaT) {
     let result;
     let flag;
@@ -338,7 +326,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"Role"}
               width={210}
               dialogTitle={"Add Role"}
-              fetchDataFn={getRolesforDepartment}
+              fetchDataFn={(roleStr: string) =>
+                getExecutiveRole(roleStr, selectValues.department?.id)
+              }
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
