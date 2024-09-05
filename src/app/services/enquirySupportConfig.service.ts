@@ -4,6 +4,34 @@ import { enquiryConfigSchemaT } from '../models/models';
 import { Session } from 'next-auth';
 import executeQuery from "../utils/db/db";
 
+
+export async function getEnquirySupportConfigDB(
+    crmDb: string,
+    configType: string = 'enquiry_support'
+): Promise<enquiryConfigSchemaT | null> {
+    try {
+        const query = `SELECT config FROM app_config WHERE config_type = ?`;
+        const values = [configType];
+
+        const result = await executeQuery({
+            host: crmDb,
+            query: query,
+            values: values,
+        });
+
+        console.log(result)
+
+        if (result && result.length > 0) {
+            return JSON.parse(result[0].config);
+        }
+
+        return null;
+    } catch (e) {
+        console.error("Error fetching config data:", e);
+        return null;
+    }
+}
+
 export async function updateEnquirySupportConfigDB(
     session: Session,
     data: enquiryConfigSchemaT
