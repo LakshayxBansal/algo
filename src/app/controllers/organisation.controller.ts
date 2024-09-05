@@ -10,7 +10,6 @@ import {
   updateOrganisationDB,
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
-import { bigIntToNum } from "../utils/db/types";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
 import * as mdl from "../models/models";
