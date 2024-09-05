@@ -191,10 +191,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       result = await createExecutive(data);
     }
     return result;
-    // if (entityData) {
-    //   data["id"] = entityData.id;
-    //   result = await updateExecutive(data);
-    // } else
   }
 
   const clearFormError = () => {

@@ -15,7 +15,6 @@ export default function ProfileModal({img,name}:{img : string | undefined, name 
     const handleClose = () => {
         setAnchorEl(null);
     };
-
     return (
         <div>
             <Button

@@ -5,7 +5,7 @@ import { CompanyEntityList } from './CompanyEntityList';
 
 export default async function Companies() {
   const session = await getSession();
-
+  console.log(session);
   if (session) {
     return (
       <CompanyEntityList/>

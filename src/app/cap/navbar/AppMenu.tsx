@@ -19,7 +19,6 @@ const pages = [
 export default async function AppMenu(props: {children: React.ReactNode}) {
   try {
     const session = await getSession();
-
     if (session?.user.dbInfo) {
       const menuOptions= await getMenuOptions(session.user.dbInfo.dbName);
       const img_src = await getExecutiveProfileImageByCrmUserId(session.user.userId);
@@ -29,7 +28,7 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
             pages= {menuOptions}
             username = {session.user?.name!}
             companyName = {session.user.dbInfo.companyName}
-            profileImg = {img_src ? img_src : session.user?.image}
+            profileImg = {img_src ? img_src : session.user.image}
             >
             <Box component="span" sx={{ display: 'block',  mt: 8 }}>
               {props.children}

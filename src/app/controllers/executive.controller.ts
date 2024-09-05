@@ -22,7 +22,7 @@ export async function createExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      let inviteResult = false;
+      let inviteResult = true;
       let crm_map_id = 0;
       console.log("data:" + data);
 
@@ -32,18 +32,18 @@ export async function createExecutive(data: executiveSchemaT) {
 
       if (parsed.success) {
         // check if invite needs to be sent
-        if (data.crm_user === inviteSring) {
-          inviteResult = inviteUser(data as executiveSchemaT);
-          data.crm_map_id = 0;
-        } else {
-          crm_map_id = await getCrmUserId(
-            session.user.dbInfo.dbName,
-            data.crm_user
-          );
-          data.crm_map_id = crm_map_id;
-        }
-        console.log("inviteResult", inviteResult);
-        console.log("CRM", crm_map_id);
+        // if (data.crm_user === inviteSring) {
+        //   inviteResult = inviteUser(data as executiveSchemaT);
+        //   data.crm_map_id = 0;
+        // } else {
+        //   crm_map_id = await getCrmUserId(
+        //     session.user.dbInfo.dbName,
+        //     data.crm_user
+        //   );
+        //   data.crm_map_id = crm_map_id;
+        // }
+        // console.log("inviteResult", inviteResult);
+        // console.log("CRM", crm_map_id);
         if (inviteResult || crm_map_id) {
           const dbResult = await createExecutiveDB(
             session,
@@ -105,26 +105,24 @@ export async function updateExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      let inviteResult = false;
+      let inviteResult = true;
       let crm_map_id = 0;
-      console.log("data:" + data);
 
       const parsed = zs.executiveSchema.safeParse(data);
       console.log(parsed);
-      // console.log(parsed.error.issues);
 
       if (parsed.success) {
         // check if invite needs to be sent
-        if (data.crm_user === inviteSring) {
-          inviteResult = inviteUser(data as executiveSchemaT);
-          data.crm_map_id = 0;
-        } else {
-          crm_map_id = await getCrmUserId(
-            session.user.dbInfo.dbName,
-            data.crm_user
-          );
-          data.crm_map_id = crm_map_id;
-        }
+        // if (data.crm_user === inviteSring) {
+        //   inviteResult = inviteUser(data as executiveSchemaT);
+        //   data.crm_map_id = 0;
+        // } else {
+        //   crm_map_id = await getCrmUserId(
+        //     session.user.dbInfo.dbName,
+        //     data.crm_user
+        //   );
+        //   data.crm_map_id = crm_map_id;
+        // }
         console.log("inviteResult", inviteResult);
         console.log("CRM", crm_map_id);
         if (inviteResult || crm_map_id) {
