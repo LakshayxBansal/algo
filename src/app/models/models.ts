@@ -13,6 +13,7 @@ export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
 
+export type companySchemaT = z.infer<typeof zs.companySchema>;
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
 
