@@ -4,6 +4,7 @@ import EnquiryConfigForm from '../enquirySupportConfig/enquirySupportConfig';
 import { loadEnquirySupportConfig } from '@/app/controllers/enquirySupportConfig.controller';
 import { enquiryConfigSchemaT } from '@/app/models/models';
 
+
 const getEnquiryConfigData = async (): Promise<enquiryConfigSchemaT | null> => {
     try {
         const session = await getSession();
@@ -21,16 +22,18 @@ const getEnquiryConfigData = async (): Promise<enquiryConfigSchemaT | null> => {
     }
 };
 
+
 const EnquiryConfigPage = async () => {
     const enquiryConfig = await getEnquiryConfigData();
-
+    console.log(enquiryConfig);
 
     if (!enquiryConfig) {
         redirect('/signin');
     }
 
-  
+
     return <EnquiryConfigForm {...enquiryConfig} />;
 };
+
 
 export default EnquiryConfigPage;
