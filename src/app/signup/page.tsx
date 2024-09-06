@@ -1,42 +1,45 @@
-
-import { getProviders } from "next-auth/react"
-import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
-
-import Avatar from '@mui/material/Avatar';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { Container } from '@mui/material';
-import ProviderButton from '../Widgets/providerButton';
-import SignUpForm from "./SignupForm";
+import { getProviders } from "next-auth/react";
+import SignupForm1 from "./SignUpForm";
 
 export default async function SignUp() {
-  const providerArr = Object.values((await getProviders())!).filter((provider) => provider.name!=="Credentials");
+  const providerArr = Object.values((await getProviders())!).filter(
+    (provider) => provider.name !== "Credentials"
+  );
+  return <SignupForm1 provider={providerArr} />;
+  // return (
+  // <Container
+  // component="main"
+  // maxWidth="xs"
+  //   sx={{
+  //     backgroundColor: "skyblue",
+  //     border: "1px solid black",
+  //     width: "100%",
+  //   }}
+  // >
+  // <CssBaseline />
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-
-      <Box
+  {
+    /* <Box
         sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
         }}
+      > */
+  }
+  {
+    /* </Box> */
+  }
+  {
+    /* <Divider
+        orientation="horizontal"
+        variant="fullWidth"
+        flexItem={true}
+        component="li"
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign up
-        </Typography>
-        <SignUpForm></SignUpForm>
-
-      </Box>
-      <Divider orientation="horizontal" variant="fullWidth" flexItem={true} component="li">Or</Divider>
+        Or
+      </Divider>
 
       <Paper>
         {providerArr.map((provider) => (
@@ -44,13 +47,12 @@ export default async function SignUp() {
             key={provider.id}
             provider={provider}
             callbackUrl="/company"
-            >
-          </ProviderButton>
+          ></ProviderButton>
         ))}
-      </Paper>
-
-    </Container>
-  );
+      </Paper> */
+  }
+  // </Container>
+  // );
 }
 
 // onClick={() => signIn(provider.id)}
