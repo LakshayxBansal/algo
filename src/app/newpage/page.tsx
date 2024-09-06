@@ -126,8 +126,10 @@ export default function AutoGrid() {
         container
         sx={{
           display: "flex",
-          // justifyContent: "space-between",
-          // height: "40vh",
+          justifyContent: "space-between",
+          height: "40vh",
+          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+          fontSize: "12px",
         }}
       >
         <Grid
@@ -163,10 +165,9 @@ export default function AutoGrid() {
           sx={{
             // display: "grid",
             // border: "0.01rem solid #686D76",
-            width: "38vw",
+            // width: "38vw",
             padding: "0vw",
             // height: "33.25vh",
-
             // columnGap: 3,
             // rowGap: 1,
             // gridTemplateColumns: "repeat(1, 1fr)",
@@ -187,7 +188,7 @@ export default function AutoGrid() {
                   // component="fieldset"
                   sx={{
                     // border: "0.01rem solid #686D76",
-                    width: "40vw",
+                    width: "80%",
                     // marginLeft: "1.1vw",
                     padding: "0px",
                   }}
@@ -231,9 +232,11 @@ export default function AutoGrid() {
                   // component="fieldset"
                   sx={{
                     // border: "0.01rem solid #686D76",
-                    width: "40vw",
+                    width: "80%",
                     ml: "-9px",
                     padding: "0px",
+                    height: "5%",
+                    mb: "2%",
                   }}
                 >
                   <Paper
@@ -263,7 +266,16 @@ export default function AutoGrid() {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={2.5} height="100%">
+        <Grid
+          item
+          xs={2.5}
+          height="100%"
+          sx={
+            {
+              // border: "0.01rem solid #686D76",
+            }
+          }
+        >
           <Box
             // component="fieldset"
             sx={{
@@ -424,7 +436,7 @@ export default function AutoGrid() {
           bgcolor: "white",
         }}
       >
-        <Paper component="fieldset" sx={{ height: "90%" }}>
+        <Paper component="fieldset">
           <DataGridComp rows={row1} columns={column1} />
         </Paper>
       </Grid>
@@ -457,7 +469,7 @@ export default function AutoGrid() {
       <Grid
         sx={{
           marginTop: "2vh",
-          // border: "0.01rem solid #686D76",
+          border: "0.01rem solid #686D76",
           bgcolor: "white",
         }}
       >
