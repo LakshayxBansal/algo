@@ -1,5 +1,5 @@
 'use server'
-import excuteQuery, {executeQueryPool}  from '../utils/db/db';
+import excuteQuery, {createDbConn}  from '../utils/db/db';
 import * as zm from "../models/models";
 import { dbTableAndProScript } from '../utils/tableScript';
 
@@ -46,12 +46,10 @@ export async function getHostId() {
 export async function createCompanyDB(dbName: string, host: string, port: number) {
   let result
   try {
-    const data = await executeQueryPool({
-      dbName: 'userDb',
-      host: host,
-      port: port,
+    const data = await createDbConn({
+      hostIp: host,
+      hostPort: port,
       query: 'create database ' + dbName,
-      values: [dbName],
     });
     result = {
       status: true,
@@ -66,17 +64,15 @@ export async function createCompanyDB(dbName: string, host: string, port: number
   return result;
 }
 
-export async function createTablesAndProc(dbName: string, host: string, port: number) {
+export async function createTablesAndProc(dbName: string) {
   let result
   try {
     const scripts : string[] = dbTableAndProScript.split('~')  
     let data
     for(let idx in scripts){
       let query = scripts[idx]
-      data += await executeQueryPool({
-        dbName: dbName,
-        host: host,
-        port: port,
+      data += await excuteQuery({
+        host: dbName,
         query: query,
         values: [],
       });
@@ -101,6 +97,7 @@ export async function createCompanyAndInfoDb(hostId: number, dbName: string, com
       query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
       values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userId] 
     });
+    
     return result;
   } catch(e) {
     console.log(e);
@@ -232,4 +229,19 @@ export async function updateCompanyDB(
     console.log(e);
   }
   return null;
+}
+
+export async function getHostDetailsService(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: "userDb",
+      query: 'select dh.host as hostIp, dh.port as hostPort from dbHost dh left join dbInfo d on d.host_id=dh.id where concat(d.name, d.id)=?;',
+      values: [dbName],
+    });
+
+    return result[0];
+  } catch (e) {
+    console.log(e)
+  }
+  return null
 }
