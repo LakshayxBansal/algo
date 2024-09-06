@@ -8,6 +8,7 @@ import {
   updateDepartmentDb,
   getDepartmentCount,
   getDepartmentByPageDb,
+  delDepartmentDetailsById
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
