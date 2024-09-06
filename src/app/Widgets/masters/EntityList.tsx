@@ -1,6 +1,6 @@
 "use client";
 
-import { DataGrid, GridColDef, GridFilterModel } from "@mui/x-data-grid";
+import { GridColDef, GridFilterModel } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -12,7 +12,6 @@ import {
   InputAdornment,
   Menu,
   MenuItem,
-  Toolbar,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,9 +28,9 @@ type ModifyT = {
   renderForm?: RenderFormFunctionT;
   fetchDataFn: (
     page: number,
-    value: any,
+    searchText: string,
+    // value: any,
     pgSize: number,
-    searchText: string
   ) => Promise<any>;
   fnFetchDataByID?: (id: number) => Promise<any>;
   customCols: GridColDef[];
@@ -64,9 +63,8 @@ export default function EntityList(props: ModifyT) {
       // the fecth data function will come from props
       const rows: any = await props.fetchDataFn(
         PageModel.page,
-        filterModel?.items[0]?.value,
+        searchText as string,
         pgSize as number,
-        searchText as string
       );
       setData(rows.data);
 
@@ -238,7 +236,7 @@ export default function EntityList(props: ModifyT) {
         rowCount={NRows}
         getRowId={(row) => row.id}
         pagination={true}
-        pageSizeOptions={[pgSize, 20, 30]}
+        pageSizeOptions={[pgSize]}
         paginationMode="server"
         paginationModel={PageModel}
         onPaginationModelChange={setPageModel}

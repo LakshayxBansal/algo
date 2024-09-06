@@ -38,6 +38,18 @@ export async function getDepartmentById(id: number) {
   }
 }
 
+
+export async function delDepartmentById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = delDepartmentDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function createDepartment(data: nameMasterDataT) {
   let result;
   try {
@@ -139,6 +151,7 @@ export async function getDepartmentByPage(
   filter: string | undefined,
   limit: number
 ) {
+  console.log("controller params",page,filter,limit)
   let getDepartment = {
     status: false,
     data: {} as mdl.nameMasterDataT,
