@@ -121,7 +121,7 @@ export default function AutoGrid() {
     setFilter(event.target.value as string);
   };
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d" }}>
+    <Box sx={{ bgcolor: "#f3f1f17d", width: "100%" }}>
       <Grid
         container
         sx={{
@@ -434,6 +434,7 @@ export default function AutoGrid() {
         sx={{
           // border: "0.01rem solid #686D76",
           bgcolor: "white",
+          width: "100%",
         }}
       >
         <Paper component="fieldset">
@@ -442,7 +443,7 @@ export default function AutoGrid() {
       </Grid>
       <Grid sx={{ display: "flex", marginTop: "1vh" }}>
         {/* <Typography sx={{ marginLeft: "20vw", mt: "10px" }}>
-          Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger)
+          Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger:)
         </Typography> */}
         <Box sx={{ marginLeft: "auto" }}>
           <Button
@@ -471,10 +472,11 @@ export default function AutoGrid() {
           marginTop: "2vh",
           border: "0.01rem solid #686D76",
           bgcolor: "white",
+          // width: "100%",
         }}
       >
         <Paper sx={{ height: "90%" }}>
-          <legend> Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger)</legend>
+          <legend> Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger:)</legend>
           <DataGridComp rows={row2} columns={column2} />
         </Paper>
       </Grid>
