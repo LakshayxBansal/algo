@@ -31,15 +31,15 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
 
     const result = await persistEntity(data as inviteUserSchemaT);
     if (result.status) {
-      // let notifyBody;
-      // if(result.data[0].usercontact.includes('@')){
-      //   notifyBody = {event_type_id : 2, event_id : result.data[0].id,name:"algofast",passkey:"369",app_name:session?.user.dbInfo.companyName};
-      // }
-      // else{
-      //   notifyBody = {event_type_id : 3, event_id : result.data[0].id,name:"algofast",passkey:"369",app_name:session?.user.dbInfo.companyName};
-      // }
-      // const notifResp = await axios.post('http://192.168.1.200:3001/addNotification', notifyBody
-      // )
+      let notifyBody;
+      if(result.data[0].usercontact.includes('@')){
+        notifyBody = {event_type_id : 2, event_id : result.data[0].id,name:"algofast",passkey:"369",app_name:session?.user.dbInfo.companyName};
+      }
+      else{
+        notifyBody = {event_type_id : 3, event_id : result.data[0].id,name:"algofast",passkey:"369",app_name:session?.user.dbInfo.companyName};
+      }
+      const notifResp = await axios.post('http://192.168.1.200:80/addNotification', notifyBody
+      )
       let newVal;
       if(props.isExecutive===true){
         newVal = { id: result.data[0].id, name: result.data[0].usercontact };

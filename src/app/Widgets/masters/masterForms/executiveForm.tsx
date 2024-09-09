@@ -7,6 +7,7 @@ import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea,getAreaById } from "@/app/controllers/area.controller";
+import { getInviteDetailByContact } from "@/app/controllers/inviteUser.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -16,10 +17,12 @@ import {
   getExecutiveGroupById,
 } from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
+import { insertExecutiveIdToInviteUser } from "@/app/controllers/inviteUser.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import ExecutiveRoleForm from "./executiveRoleForm";
 import ExecutiveGroupForm from "./executiveGroupForm";
+import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
@@ -42,6 +45,7 @@ import dayjs from "dayjs";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { getSession } from "@/app/services/session.service";
 
 export default function ExecutiveForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -50,7 +54,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
-
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
     dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
@@ -64,6 +67,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   // }
 
   const handleSubmit = async (formData: FormData) => {
+    const session  = await getSession();
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     formData.append("call_type", "Enquiry");
@@ -77,6 +81,12 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
     data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
     // if (parsed.success) {
+    const inviteUser = data.crm_user;
+    let inviteId;
+    if( session && inviteUser ){
+      const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
+      inviteId = invite.id;
+    }
     const result = await persistEntity(data as executiveSchemaT);
 
     if (result.status) {
@@ -84,6 +94,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
         id: result.data[0].id,
         name: result.data[0].name,
       };
+      if(inviteId){
+        await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
+      }
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
@@ -171,7 +184,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
-    let flag;
     if (props.data) {
       data["id"] = entityData.id;
       result = await updateExecutive(data);
@@ -190,7 +202,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>{entityData ? "Update Executive":"Add Executive"}</Seperator>
+      <Seperator>{props.data ? "Update Executive":"Add Executive"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -370,13 +382,18 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   name: entityData.crm_user,
                 } as optionsDataT
               }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
+              // onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, crm_user: val })
+              }
               fetchDataFn={getApplicationUser}
               formError={formError.crm_user}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ExecutiveGroupForm
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <InviteUserForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  isExecutive={true}
                 />
               )}
             />

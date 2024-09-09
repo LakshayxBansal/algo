@@ -84,11 +84,12 @@ export async function getInviteDetailByContact(usercontact : string,companyId : 
 
 export async function getInviteDetailById(inviteId : number) {
   try{
-    const session = await getSession();
-    if(session){
+    // const session = await getSession();
+    // if(session){
       const result = await getInviteDetailByIdList(inviteId);
+      console.log(result)
       return result[0];
-    }
+    // }
   }catch(error){
     throw error;
   }
