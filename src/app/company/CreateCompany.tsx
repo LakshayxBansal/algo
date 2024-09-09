@@ -73,7 +73,10 @@ export default function CreateCompany(props: masterFormPropsT) {
       data = { ...data, id: entityData.id };
 
       result = await updateCompany(data);
-    } else result = await createCompany(data);
+    }
+    else {
+      result = await createCompany(data);
+    }
 
     return result;
   }
