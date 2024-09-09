@@ -40,13 +40,6 @@ export type RenderFormFunctionT = (
   parentData?: any
 ) => JSX.Element;
 
-export type RenderDelFormFunctionT = (
-  fnDialogOpen: (props: any) => void,
-  fnDialogValue: (props: any) => void,
-  data?: any,
-  parentData?: any
-) => JSX.Element;
-
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
@@ -113,14 +106,16 @@ export type dbInfoT = {
   dbName: string;
 };
 
-export type getOrgansT = [{
-  id : string
-  name : string
-  printName : string
-  alias : string
-  rowID : number
-  stamp : string
-}]
+export type getOrgansT = [
+  {
+    id: string;
+    name: string;
+    printName: string;
+    alias: string;
+    rowID: number;
+    stamp: string;
+  }
+];
 
 export type selectKeyValueT = {
   [key: string]: any;

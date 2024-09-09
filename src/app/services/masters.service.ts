@@ -273,7 +273,7 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
       values: [
         statusData.name,
         statusData.alias,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -290,7 +290,7 @@ export async function updateCountryDb(session: Session, sourceData: zm.countrySc
         sourceData.name,
         sourceData.id,
         sourceData.alias,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -315,7 +315,7 @@ export async function createStateDb(session: Session, sourceData: zm.stateSchema
         sourceData.name,
         sourceData.alias,
         sourceData.country_id,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -334,7 +334,7 @@ export async function updateStateDb(session: Session, sourceData: zm.stateSchema
         sourceData.id,
         sourceData.alias,
         sourceData.country_id,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {

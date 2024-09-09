@@ -8,6 +8,7 @@ import {
   getActionDetailsById,
   updateEnquiryActionDb,
   getEnquiryActionByPageDb,
+  DeleteActionByIdDb,
 } from "../services/enquiryAction.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -31,6 +32,18 @@ export async function getActionById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getActionDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function DeleteActionById(id: number) {
+  try {
+    const session = await getSession();
+
+    if (session?.user.dbInfo) {
+      const result = DeleteActionByIdDb(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;

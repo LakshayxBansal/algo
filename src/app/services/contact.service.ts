@@ -36,7 +36,7 @@ export async function createContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -77,7 +77,7 @@ export async function updateContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {

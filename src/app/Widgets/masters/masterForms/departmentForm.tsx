@@ -21,7 +21,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {};  
+  const entityData: nameMasterDataT = props.data ? props.data : {};
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -74,9 +74,24 @@ export default function DepartmentForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>
-        {entityData.id ? "Update Department" : "Add Department"}
-      </Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Department" : "Add Department"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -96,7 +111,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="departmentForm" sx={{ m: 2, p: 3 }}>
-         <form action={handleSubmit}>
+        <form action={handleSubmit}>
           <Box
             sx={{
               display: "grid",
@@ -116,32 +131,21 @@ export default function DepartmentForm(props: masterFormPropsT) {
               defaultValue={entityData.name}
             />
           </Box>
-          <Grid container>
-            <Grid item xs={6} md={6}>
-              <Box margin={1} sx={{ display: "flex" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-start"
-                  alignItems="flex-start"
-                  m={1}
-                >
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}

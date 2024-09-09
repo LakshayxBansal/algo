@@ -62,7 +62,7 @@ export async function createExecutiveGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -84,7 +84,7 @@ export async function updateExecutiveGroupDb(
         sourceData.alias,
         sourceData.id,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {

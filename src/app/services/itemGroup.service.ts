@@ -44,7 +44,7 @@ export async function createItemGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -67,7 +67,7 @@ export async function updateItemGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -85,7 +85,7 @@ export async function updateItemGroupDb(
 //       query:
 //         "insert into item_group_master (name, created_by, created_on) \
 //        values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
-//       values: [sourceData.name, session.user.email],
+//       values: [sourceData.name, session.user.userId],
 //     });
 //   } catch (e) {
 //     console.log(e);

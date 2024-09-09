@@ -62,7 +62,7 @@ export async function createEnquirySubStatusDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createEnquirySubStatusDb(?,?,?)",
-      values: [sourceData.name, sourceData.status, session.user.email],
+      values: [sourceData.name, sourceData.status, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -79,7 +79,7 @@ export async function updateEnquirySubStatusDb(
       host: session.user.dbInfo.dbName,
       query: "call UpdateEnquirySubStatus(?,?,?);",
 
-      values: [statusData.id, statusData.name, session.user.email],
+      values: [statusData.id, statusData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);

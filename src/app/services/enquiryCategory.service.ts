@@ -56,7 +56,7 @@ export async function createEnquiryCategoryDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createCategory(?, ?)",
-      values: [categoryData.name, session.user.email],
+      values: [categoryData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -72,7 +72,7 @@ export async function updateEnquiryCategoryDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateCategory(?, ?, ?);",
-      values: [categoryData.id, categoryData.name, session.user.email],
+      values: [categoryData.id, categoryData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);

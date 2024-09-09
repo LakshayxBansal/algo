@@ -9,6 +9,7 @@ import {
   getAreaCount,
   fetchAreaById,
   getAreaByPageDb,
+  deleteAreaByIdDb,
 } from "../services/area.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -43,6 +44,18 @@ export async function getById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return fetchAreaById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteAreaById(id: number) {
+  try {
+    const session = await getSession();
+
+    if (session?.user.dbInfo) {
+      const result = deleteAreaByIdDb(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;

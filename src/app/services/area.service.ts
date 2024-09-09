@@ -59,6 +59,20 @@ export async function fetchAreaById(crmDb: string, id: number) {
   }
 }
 
+export async function deleteAreaByIdDb(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "Delete from area_master where id=?;",
+      values: [id],
+    });
+    console.log(result);
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 /**
  *
  * @param session : user session
@@ -73,7 +87,7 @@ export async function createAreaDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createArea(?,?);",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);

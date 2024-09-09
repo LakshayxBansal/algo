@@ -21,19 +21,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
-import {
-  RenderFormFunctionT,
-  RenderDelFormFunctionT,
-} from "@/app/models/models";
+import { RenderFormFunctionT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
 import { StyledMenu } from "../../utils/styledComponents";
+import DeleteForm from "./masterForms/deleteForm";
 
 type ModifyT = {
+  title: string;
   renderForm?: RenderFormFunctionT;
-  renderDelForm?: RenderDelFormFunctionT;
   fetchDataFn: (
     page: number,
     searchText: string,
@@ -185,6 +183,8 @@ export default function EntityList(props: ModifyT) {
       maxWidth="lg"
       style={{ height: "700px", width: "100%", padding: "25px" }}
     >
+      <Typography variant="h4">{props.title}</Typography>
+      <Divider />
       <Grid container spacing={2} style={{ verticalAlign: "center" }}>
         <Grid item xs={8}>
           <Box sx={{ width: "75%", marginLeft: "30px" }}>
@@ -268,11 +268,6 @@ export default function EntityList(props: ModifyT) {
           </Box>
         </Grid>
       </Grid>
-      <Divider
-        sx={{
-          margin: "20px",
-        }}
-      />
       {dialogOpen && (
         <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
           {props.renderForm
@@ -288,9 +283,11 @@ export default function EntityList(props: ModifyT) {
           open={dialogOpenDelete}
           setDialogOpen={setDialogOpenDelete}
         >
-          {props.renderDelForm
-            ? props.renderDelForm(setDialogOpenDelete, (arg) => {}, ids)
-            : 1}
+          <DeleteForm
+            setDialogOpen={setDialogOpenDelete}
+            setDialogValue={(arg) => {}}
+            data={ids}
+          />
         </AddDialog>
       )}
       <StripedDataGrid

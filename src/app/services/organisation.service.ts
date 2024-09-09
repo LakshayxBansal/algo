@@ -25,7 +25,7 @@ export async function createOrganisationDB(
         data.state_id,
         data.pincode,
         data.country_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -57,7 +57,7 @@ export async function updateOrganisationDB(
         data.state_id,
         data.pincode,
         data.country_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
