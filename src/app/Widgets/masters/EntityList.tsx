@@ -1,39 +1,46 @@
 "use client";
 
-import { DataGrid, GridColDef, GridFilterModel } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import { GridColDef, GridFilterModel } from "@mui/x-data-grid";
 import {
   Box,
   Button,
+  Checkbox,
   Container,
+  debounce,
   Divider,
+  FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
-  Menu,
   MenuItem,
-  Toolbar,
+  Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
-import { RenderFormFunctionT } from "@/app/models/models";
+import {
+  RenderFormFunctionT,
+  RenderDelFormFunctionT,
+} from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
+import { StyledMenu } from "../../utils/styledComponents";
 
 type ModifyT = {
   renderForm?: RenderFormFunctionT;
+  renderDelForm?: RenderDelFormFunctionT;
   fetchDataFn: (
     page: number,
-    value: any,
-    pgSize: number,
-    searchText: string
+    searchText: string,
+    pgSize: number
   ) => Promise<any>;
   fnFetchDataByID?: (id: number) => Promise<any>;
+  fnDeleteDataByID?: (id: number) => Promise<any>;
   customCols: GridColDef[];
   AddAllowed: boolean;
 };
@@ -43,96 +50,52 @@ const pgSize = 10;
 enum dialogMode {
   Add,
   Modify,
+  Delete,
 }
 
 export default function EntityList(props: ModifyT) {
-  const [id, setId] = useState("-1");
-  const [name, setName] = useState<String>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [data, setData] = useState([]); // change to rows and type will be dynamic
+  const [dialogOpenDelete, setDialogOpenDelete] = useState<boolean>(false);
+  const [data, setData] = useState([]);
   const [NRows, setNRows] = useState<number>(0);
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
-  const [searchText, setSearchText] = useState("");
   const [modData, setModData] = useState({});
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [search, setSearch] = useState("");
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
+  const [ids, setIds] = useState(0);
+  let searchText;
 
   useEffect(() => {
-    async function fetchData() {
-      // the fecth data function will come from props
+    const fetchData = debounce(async (searchText) => {
       const rows: any = await props.fetchDataFn(
         PageModel.page,
-        filterModel?.items[0]?.value,
-        pgSize as number,
-        searchText as string
+        searchText as string,
+        pgSize as number
       );
       setData(rows.data);
-
       setNRows(rows.count as number);
-    }
-    if(!dialogOpen){
-    fetchData();
-    }
-  }, [PageModel, filterModel, searchText, dialogOpen]);
+    }, 400);
 
-  const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget);
+    fetchData(search);
+  }, [
+    PageModel,
+    filterModel,
+    searchText,
+    search,
+    dialogOpen,
+    dialogOpenDelete,
+  ]);
+
+  const handleClick1 = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl2(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleClose1 = () => {
+    setAnchorEl2(null);
   };
-
-  const columns1: GridColDef[] = [
-    {
-      field: "Icon menu",
-      headerName: "Options",
-      width: 100,
-      renderCell: (params) => (
-        <Box>
-          <IconButton
-            aria-controls="simple-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleClose}>
-              <IconButton
-         onClick={() => onModifyDialog(params.row.id)}
-              >
-                <EditIcon />
-                Edit
-              </IconButton>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              {" "}
-              <IconButton
-         onClick={() => {
-          setId(params.row.id);
-          setName(params.row.name);
-          //setDeleteDlgState(true)
-        }}
-              >
-                <DeleteIcon />
-                Delete
-              </IconButton>
-            </MenuItem>
-          </Menu>
-        </Box>
-      ),
-    },
-  ];
-
-  const columns: GridColDef[] = columns1.concat(props.customCols);
 
   async function onModifyDialog(modId: number) {
     if (props.fnFetchDataByID && modId) {
@@ -143,21 +106,96 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
+  const handleColumnVisibilityChange = (field: string) => {
+    setColumnVisibilityModel((prev: { [x: string]: any }) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
+  type iconT = {
+    id: number;
+  };
+
+  function IconComponent(props: iconT) {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    return (
+      <Box>
+        <IconButton
+          aria-controls="simple-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <StyledMenu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem>
+            <IconButton
+              onClick={() => {
+                onModifyDialog(props.id);
+              }}
+            >
+              <EditIcon fontSize="large" />
+              <Typography variant="h6">Edit</Typography>
+            </IconButton>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            {" "}
+            <IconButton
+              onClick={() => {
+                setDialogOpenDelete(true);
+                setIds(props.id);
+              }}
+            >
+              <DeleteIcon />
+              <Typography variant="h6">Delete</Typography>
+            </IconButton>
+          </MenuItem>
+        </StyledMenu>
+      </Box>
+    );
+  }
+  const columns1: GridColDef[] = [
+    {
+      field: "Icon menu",
+      headerName: "Options",
+      renderCell: (params) => {
+        return <IconComponent id={params.row.id} />;
+      },
+    },
+  ];
+
+  const columns: GridColDef[] = columns1.concat(props.customCols);
+
   return (
     <Container
       maxWidth="lg"
-      style={{ height: "500px", width: "100%", padding: "25px" }}
+      style={{ height: "700px", width: "100%", padding: "25px" }}
     >
       <Grid container spacing={2} style={{ verticalAlign: "center" }}>
         <Grid item xs={8}>
-          <Box sx={{ width: "75%", marginLeft:"30px" }}>
+          <Box sx={{ width: "75%", marginLeft: "30px" }}>
             <TextField
-              // label="Search"
               variant="outlined"
               fullWidth
               placeholder="Search..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
               margin="normal"
               InputProps={{
                 startAdornment: (
@@ -166,12 +204,12 @@ export default function EntityList(props: ModifyT) {
                   </InputAdornment>
                 ),
                 style: {
-                  backgroundColor: "#f5f5f5", // Set the background color
+                  backgroundColor: "#f5f5f5",
                 },
               }}
               InputLabelProps={{
                 style: {
-                  backgroundColor: "#f5f5f5", // Ensure label background matches
+                  backgroundColor: "#f5f5f5",
                 },
               }}
             />
@@ -198,9 +236,36 @@ export default function EntityList(props: ModifyT) {
           )}
         </Grid>
         <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
-          <IconButton>
+          <IconButton
+            aria-controls="tune-menu"
+            aria-haspopup="true"
+            onClick={handleClick1}
+          >
             <TuneIcon fontSize="large" />
           </IconButton>
+          <Box>
+            <StyledMenu
+              id="tune-menu"
+              anchorEl={anchorEl2}
+              open={Boolean(anchorEl2)}
+              onClose={handleClose1}
+            >
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {columns.map((col) => (
+                  <FormControlLabel
+                    key={col.field}
+                    control={
+                      <Checkbox
+                        checked={columnVisibilityModel[col.field] !== false}
+                        onChange={() => handleColumnVisibilityChange(col.field)}
+                      />
+                    }
+                    label={col.headerName}
+                  />
+                ))}
+              </div>
+            </StyledMenu>
+          </Box>
         </Grid>
       </Grid>
       <Divider
@@ -208,21 +273,6 @@ export default function EntityList(props: ModifyT) {
           margin: "20px",
         }}
       />
-
-      {/* {props.AddAllowed && (
-            <Box>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  setDialogOpen(true);
-                  setDlgMode(dialogMode.Add);
-                }}
-              >
-                ADD NEW
-              </Button>
-            </Box>
-          )} */}
-
       {dialogOpen && (
         <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
           {props.renderForm
@@ -232,19 +282,35 @@ export default function EntityList(props: ModifyT) {
             : 1}
         </AddDialog>
       )}
+      {dialogOpenDelete && (
+        <AddDialog
+          title={""}
+          open={dialogOpenDelete}
+          setDialogOpen={setDialogOpenDelete}
+        >
+          {props.renderDelForm
+            ? props.renderDelForm(setDialogOpenDelete, (arg) => {}, ids)
+            : 1}
+        </AddDialog>
+      )}
       <StripedDataGrid
         rows={data ? data : []}
         columns={columns}
         rowCount={NRows}
         getRowId={(row) => row.id}
         pagination={true}
-        pageSizeOptions={[pgSize, 20, 30]}
+        pageSizeOptions={[pgSize]}
         paginationMode="server"
         paginationModel={PageModel}
         onPaginationModelChange={setPageModel}
         filterMode="server"
         onFilterModelChange={setFilterModel}
         loading={!data}
+        columnVisibilityModel={columnVisibilityModel}
+        onColumnVisibilityModelChange={(newModel) =>
+          setColumnVisibilityModel(newModel)
+        }
+        disableRowSelectionOnClick
       />
     </Container>
   );
