@@ -1,7 +1,7 @@
 "use server";
 import * as zs from "../zodschema/zodschema";
 import { getSession } from "../services/session.service";
-import { getInviteUserByIdList,getInviteUserCount,getInviteUserDb,createUserToInviteDb } from "../services/inviteUser.service";
+import { getInviteUserByIdList,getInviteUserCount,getInviteUserDb,createUserToInviteDb,insertExecutiveIdToInviteUserList,getInviteDetailByContactList,getInviteDetailByIdList } from "../services/inviteUser.service";
 import { inviteUserSchemaT } from "../models/models";
 import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from "mariadb";
@@ -58,6 +58,42 @@ export async function createUserToInvite(data : inviteUserSchemaT) {
   };
   return result;
 }
+
+export async function insertExecutiveIdToInviteUser(executiveId:number,inviteId:number) {
+  try{
+    const session = await getSession();
+    if(session){
+      await insertExecutiveIdToInviteUserList(executiveId,inviteId);
+    }
+  }catch(error){
+    throw error;
+  }
+}
+
+export async function getInviteDetailByContact(usercontact : string,companyId : number) {
+  try{
+    const session = await getSession();
+    if(session){
+      const result = await getInviteDetailByContactList(usercontact,companyId);
+      return result[0];
+    }
+  }catch(error){
+    throw error;
+  }
+}
+
+export async function getInviteDetailById(inviteId : number) {
+  try{
+    const session = await getSession();
+    if(session){
+      const result = await getInviteDetailByIdList(inviteId);
+      return result[0];
+    }
+  }catch(error){
+    throw error;
+  }
+}
+
 
 export async function getInviteUserByCompany(
     page: number,

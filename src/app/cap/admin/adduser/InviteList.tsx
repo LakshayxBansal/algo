@@ -2,7 +2,7 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { getInviteUserByCompany,getInviteUserById } from "@/app/controllers/inviteUser.controller";
 import EntityList from "../../../Widgets/masters/EntityList";
-import InviteUser from "./InviteUser";
+import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
 
 export default function InviteList(){
     const columns: GridColDef[] = [
@@ -21,7 +21,7 @@ export default function InviteList(){
     return <>
         <EntityList
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <InviteUser
+          <InviteUserForm
           setDialogOpen={fnDialogOpen}
           setDialogValue={fnDialogValue}
           data={data}

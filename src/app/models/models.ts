@@ -57,6 +57,10 @@ export type masterFormPropsWithParentT = masterFormPropsT & {
   parentData?: number;
 };
 
+export type masterFormPropsWithExecutive = masterFormPropsT & {
+  isExecutive?: boolean
+}
+
 // export type masterFormPropsWithParentT = {
 //     setDialogOpen?: (props: any) => void,
 //     setDialogValue?: (props: any) => void,

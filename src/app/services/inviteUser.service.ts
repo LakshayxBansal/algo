@@ -15,6 +15,45 @@ export async function createUserToInviteDb(data : inviteUserSchemaT) {
   return null;
 }
 
+export async function insertExecutiveIdToInviteUserList(executiveId:number,inviteId:number) {
+  try {
+    return excuteQuery({
+      host: "userDb",
+      query: "UPDATE inviteUser SET executive_id = ? WHERE id = ?;",
+      values: [executiveId,inviteId],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function getInviteDetailByContactList(usercontact : string, companyId : number) {
+  try {
+    return excuteQuery({
+      host: "userDb",
+      query: "select * from inviteUser WHERE usercontact = ? and company_id = ?;",
+      values: [usercontact,companyId],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function getInviteDetailByIdList(inviteId : number) {
+  try {
+    return excuteQuery({
+      host: "userDb",
+      query: "select * from inviteUser WHERE id = ?;",
+      values: [inviteId],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
 export async function getInviteUserDb(
     companyId: number,
     page: number,
