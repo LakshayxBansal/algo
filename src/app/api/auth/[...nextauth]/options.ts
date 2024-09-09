@@ -68,7 +68,7 @@ export const options: NextAuthOptions = {
         // return '/unauthorized'
       }
     },
-    async jwt({ user, token, account, profile }) {
+    async jwt({ user, token, account, profile, trigger }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       let userId: number = 0;
       if (account) {
@@ -76,7 +76,7 @@ export const options: NextAuthOptions = {
           const userDetails = await getUserDetailsByEmail(user.email as string);
           userId = userDetails.id;
         }
-        else if (account?.provider === "credentials") {
+        else if (account.provider === "credentials") {
           userId = user.id as unknown as number;
         }
         const sessionDbData = await getDbSession(userId as number);
@@ -84,6 +84,13 @@ export const options: NextAuthOptions = {
           token.dbInfo = sessionDbData;
         }
         token.userid = userId;
+      }
+      if(trigger === 'update'){                       
+        const sessionDbData = await getDbSession(token.userid as number);
+        
+        if (sessionDbData) {
+          token.dbInfo = sessionDbData;
+        }
       }
 
       return token

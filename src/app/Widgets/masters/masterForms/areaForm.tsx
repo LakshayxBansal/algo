@@ -18,20 +18,15 @@ export default function AreaForm(props: masterFormPropsT) {
   >({});
   const entityData: areaSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
-
+  console.log(entityData)
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
     };
-    // const parsed = nameMasterData.safeParse(data);
-    // let result;
-    // let issues;
-
-    // if (parsed.success) {
     const result = await persistEntity(data);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
     }

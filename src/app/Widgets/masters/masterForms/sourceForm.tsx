@@ -7,7 +7,6 @@ import {
   createEnquirySource,
   updateEnquirySource,
 } from "../../../controllers/enquirySource.controller";
-import { nameMasterData } from "../../../zodschema/zodschema";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
@@ -32,7 +31,7 @@ export default function SourceForm(props: masterFormPropsT) {
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
@@ -75,7 +74,7 @@ export default function SourceForm(props: masterFormPropsT) {
 
   return (
     <Paper>
-      <Seperator>Add Source</Seperator>
+      <Seperator>{entityData.id ? "Update Source" : "Add Source"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

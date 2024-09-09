@@ -13,6 +13,7 @@ export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
 
+export type companySchemaT = z.infer<typeof zs.companySchema>;
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
 
@@ -33,6 +34,13 @@ export type stateSchemaT = z.infer<typeof zs.stateSchema>;
 export type formErrorT = { msg: string; error: boolean };
 
 export type RenderFormFunctionT = (
+  fnDialogOpen: (props: any) => void,
+  fnDialogValue: (props: any) => void,
+  data?: any,
+  parentData?: any
+) => JSX.Element;
+
+export type RenderDelFormFunctionT = (
   fnDialogOpen: (props: any) => void,
   fnDialogValue: (props: any) => void,
   data?: any,

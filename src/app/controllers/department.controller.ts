@@ -8,6 +8,7 @@ import {
   updateDepartmentDb,
   getDepartmentCount,
   getDepartmentByPageDb,
+  delDepartmentDetailsById
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -32,6 +33,18 @@ export async function getDepartmentById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getDepartmentDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+export async function delDepartmentById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = delDepartmentDetailsById(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;
@@ -139,6 +152,7 @@ export async function getDepartmentByPage(
   filter: string | undefined,
   limit: number
 ) {
+  console.log("controller params",page,filter,limit)
   let getDepartment = {
     status: false,
     data: {} as mdl.nameMasterDataT,
