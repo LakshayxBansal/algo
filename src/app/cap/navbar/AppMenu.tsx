@@ -3,7 +3,7 @@ import * as React from 'react';
 import MenuBar from './MenuBar';
 import Box from '@mui/material/Box';
 import {getSession} from '../../services/session.service';
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 import { getMenuOptions } from '../../controllers/masters.controller';
 import { getExecutiveProfileImageByCrmUserId } from '@/app/controllers/executive.controller';
 
