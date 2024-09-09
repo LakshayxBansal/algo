@@ -1,7 +1,7 @@
 'use server'
 import { enquiryConfigSchemaT } from '../models/models';
 import { getSession } from '../services/session.service';
-import { updateEnquirySupportConfigDB } from '../services/enquirySupportConfig.service';
+import { getEnquirySupportConfigDB, updateEnquirySupportConfigDB } from '../services/enquirySupportConfig.service';
 import { enquirySupportConfig } from '../zodschema/zodschema';
 import { SqlError } from "mariadb";
 import { logger } from '@/app/utils/logger.utils';
@@ -71,6 +71,25 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
 
   return result;
 }
+
+
+export async function loadEnquirySupportConfig() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const config = await getEnquirySupportConfigDB(session.user.dbInfo.dbName);
+      return config;
+    } else {
+      throw new Error("Session or database info not available");
+    }
+  } catch (error) {
+    console.error("Error loading enquiry support config:", error);
+    return null;
+  }
+}
+
+
+
 
 
 

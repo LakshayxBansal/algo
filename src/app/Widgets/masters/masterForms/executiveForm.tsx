@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
-import { getArea } from "@/app/controllers/area.controller";
+import { getArea,getAreaById } from "@/app/controllers/area.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -66,13 +66,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
-    // formData.append("area_id", selectValues.area?.id);
-    // formData.append("department_id", selectValues.department?.id);
-    // formData.append("role_id", selectValues.role?.id);
-    // formData.append("group_id", selectValues.group?.id);
-    // formData.append("crm_user_id", selectValues.crm_user?.id);
-    // formData.append("country_id", selectValues.country?.id);
-    // formData.append("state_id", selectValues.state?.id);
     formData.append("call_type", "Enquiry");
 
     for (const [key, value] of formData.entries()) {
@@ -80,10 +73,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
-    // const parsed = executiveSchema.safeParse(data);
-    // let result;
-    // let issues;
-    // console.log(parsed);
     data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
     data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
     data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
@@ -119,38 +108,38 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-      ? entityData.executive_group_id
-      : 0;
+        ? entityData.executive_group_id
+        : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-      ? entityData.role_id
-      : 0;
+        ? entityData.role_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-      ? entityData.crm_user_id
-      : 0;
+        ? entityData.crm_user_id
+        : 0;
     data.executive_dept_id = selectValues.executive_dept
       ? selectValues.executive_dept.id
       : entityData.executive_dept_id
-      ? entityData.executive_dept_id
-      : 0;
+        ? entityData.executive_dept_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -180,18 +169,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     setSelectValues(values);
   }
 
-  async function getRolesforDepartment(stateStr: string) {
-    let roles;
-    if (selectValues.department)
-      roles = await getExecutiveRole(stateStr, selectValues.department.id);
-    if (roles?.length > 0) {
-      return roles;
-    }
-  }
-  useEffect(() => {
-    getRolesforDepartment("");
-  }, [selectValues.department]);
-
   async function persistEntity(data: executiveSchemaT) {
     let result;
     let flag;
@@ -202,10 +179,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       result = await createExecutive(data);
     }
     return result;
-    // if (entityData) {
-    //   data["id"] = entityData.id;
-    //   result = await updateExecutive(data);
-    // } else
   }
 
   const clearFormError = () => {
@@ -217,25 +190,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>Add Executive</Seperator>
-      <Collapse in={formError?.form ? true : false}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={clearFormError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {formError?.form?.msg}
-        </Alert>
-      </Collapse>
+      <Seperator>{entityData ? "Update Executive":"Add Executive"}</Seperator>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -301,11 +256,12 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               }
               onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn={getArea}
-              // defaultValue={entityData.}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              fnFetchDataByID={getAreaById}
+              renderForm={(fnDialogOpen, fnDialogValue,data) => (
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
             />
@@ -338,7 +294,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"Role"}
               width={210}
               dialogTitle={"Add Role"}
-              fetchDataFn={getRolesforDepartment}
+              fetchDataFn={(roleStr: string) =>
+                getExecutiveRole(roleStr, selectValues.department?.id)
+              }
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
@@ -576,6 +534,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"State"}
               width={210}
               dialogTitle={"Add State"}
+              disable={selectValues.country ? false : true}
               defaultValue={
                 {
                   id: entityData.state_id,

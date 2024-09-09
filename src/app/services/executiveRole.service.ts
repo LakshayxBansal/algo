@@ -10,15 +10,11 @@ export async function getExecutiveRoleList(
   department?: number
 ) {
   try {
-    let query = "select id as id, name as name from executive_role_master rm";
+    let query = "select id as id, name as name from executive_role_master rm where rm.department_id= ?";
     let values: any[] = [department];
 
-    if (department) query += " where rm.department_id= ?";
     if (searchString !== "") {
-      if (department) query += " AND";
-      else query += " Where";
-      query = query + " name like '%" + searchString + "%'";
-      values = [];
+      query = query + " and name like '%" + searchString + "%'";
     }
     const result = await excuteQuery({
       host: crmDb,
@@ -50,7 +46,7 @@ export async function createExecutiveRoleDb(
         sourceData.name,
         sourceData.parent_id,
         sourceData.department_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
