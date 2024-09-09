@@ -12,7 +12,7 @@ export type itemSchemaT = z.infer<typeof zs.ItemSchema>;
 export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
-
+export type inviteUserSchemaT = z.infer<typeof zs.inviteUserSchema>;
 export type companySchemaT = z.infer<typeof zs.companySchema>;
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
@@ -98,7 +98,7 @@ export type menuTreeT = {
 };
 
 export type dbInfoT = {
-  company_id: number;
+  id: number;
   companyName: string;
   db_id: number;
   host: string;
