@@ -10,7 +10,6 @@ import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
 
 export default function Action() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

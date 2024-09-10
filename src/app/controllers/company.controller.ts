@@ -17,6 +17,24 @@ export async function getCompanyById(id: number) {
   }
 }
 
+
+async function createCompanyDbAndTableProc(dbName: string, host: string, port: number, companyId: number, dbInfoId: number, userCompanyId: number){
+  const dbRes = await createCompanyDB(dbName, host, port);
+  if(!dbRes.status){
+    const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId, userCompanyId);
+    return dbRes;
+  }
+  
+  const tableAndProcRes = await createTablesAndProc(dbName);  
+  if(!tableAndProcRes.status){
+    const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId, userCompanyId);
+    const dropDb = await dropDatabase(dbName);
+    return tableAndProcRes;
+  }
+  return tableAndProcRes
+}
+
+
 export async function createCompany(data: companySchemaT) {
   let result
   try {    
@@ -92,23 +110,6 @@ export async function createCompany(data: companySchemaT) {
   return result;
 }
 
-
-async function createCompanyDbAndTableProc(dbName: string, host: string, port: number, companyId: number, dbInfoId: number, userCompanyId: number){
-  const dbRes = await createCompanyDB(dbName, host, port);
-  if(!dbRes.status){
-    const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId, userCompanyId);
-    return dbRes;
-  }
-  
-  const tableAndProcRes = await createTablesAndProc(dbName, host, port);
-  if(!tableAndProcRes){
-    const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId, userCompanyId);
-    const dropDb = await dropDatabase(dbName);
-    return tableAndProcRes;
-  }
-
-  return tableAndProcRes
-}
 
 export async function updateCompany(data: companySchemaT) {
   let result;

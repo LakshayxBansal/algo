@@ -19,6 +19,9 @@ import {
   createCurrency,
   updateCurrency,
 } from "@/app/controllers/currency.controller";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function CurrencyForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -122,15 +125,37 @@ export default function CurrencyForm(props: masterFormPropsT) {
     }
   }, [symbol, decimalPlaces, currencySystem]);
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <Paper sx={{ margin: "auto", width: "37vw" }}>
       <Seperator>
         {entityData.id ? "Update Currency" : "Add Currency"}
       </Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{
