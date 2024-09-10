@@ -17,8 +17,13 @@ const splitDataByMonth = (enquiries: any) => {
     if(month >= 5 && (year == item.date.getFullYear())){
       ind = month - item.date.getMonth();
     }
-    else if(month < 5 && (year - item.date.getFullYear()) === 1){
-      ind = month + (11 - item.date.getMonth());
+    else if(month < 5){
+      if(year === item.date.getFullYear()){
+        ind = month - item.date.getMonth();
+      }
+      if((year - item.date.getFullYear()) === 1){
+        ind = month + (11 - item.date.getMonth()) + 2;
+      }
     }
     if(ind >= 0 && ind <= 5){
       arr[ind]++;
