@@ -5,6 +5,9 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
 import {
@@ -59,15 +62,37 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     return result;
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <Paper sx={{ width: "50%", margin: "auto", marginTop: "10rem" }}>
       <Seperator>
         {props.data ? "Update Allocation type" : "Add Allocation Type"}
       </Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{

@@ -10,7 +10,6 @@ import { getAllocationTypeById, getAllocationTypeByPage } from '@/app/controller
 
 export default function AllocationType() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',
