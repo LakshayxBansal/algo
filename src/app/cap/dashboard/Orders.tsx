@@ -1,94 +1,116 @@
 'use client'
 import * as React from 'react';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { StripedDataGrid } from '@/app/utils/styledComponents';
+import { GridColDef } from '@mui/x-data-grid';
 import Title from './Title';
+import { array, string } from 'zod';
+import { enquiryLedgerSchemaT } from '@/app/models/models';
 
-// Generate Order Data
-function createData(
-  id: number,
-  date: string,
-  name: string,
-  shipTo: string,
-  paymentMethod: string,
-  amount: number,
-) {
-  return { id, date, name, shipTo, paymentMethod, amount };
+const pgSize = 5;
+interface HashMap {
+  [key: string]: object[];
+}
+const splitDataByExecutive = (openEnquiries: any) => {
+  let data: HashMap = {};
+  for (const ele of openEnquiries) {
+    if(ele.executiveName){
+      if (!data[ele.executiveName]) {
+        data[ele.executiveName] = [];
+      }
+      data[ele.executiveName].push(ele);
+    }
+  }
+  return data;  
 }
 
-const rows = [
-  createData(
-    0,
-    '16 Mar, 2019',
-    'Elvis Presley',
-    'Tupelo, MS',
-    'VISA ⠀•••• 3719',
-    312.44,
-  ),
-  createData(
-    1,
-    '16 Mar, 2019',
-    'Paul McCartney',
-    'London, UK',
-    'VISA ⠀•••• 2574',
-    866.99,
-  ),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(
-    3,
-    '16 Mar, 2019',
-    'Michael Jackson',
-    'Gary, IN',
-    'AMEX ⠀•••• 2000',
-    654.39,
-  ),
-  createData(
-    4,
-    '15 Mar, 2019',
-    'Bruce Springsteen',
-    'Long Branch, NJ',
-    'VISA ⠀•••• 5919',
-    212.79,
-  ),
-];
+const createData = (enquiries: any) => {
+  let data: any = []; 
+  for (let key in enquiries) {
+    let obj: any = {};
+    obj["id"] = data.length + 1;
+    obj["executive"] = key;
+    obj["total"] = enquiries[key].length;
+    obj["since1w"] = 0;
+    obj["since2w"] = 0;
+    obj["since3w"] = 0;
 
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
+    let currDate = new Date();
+    for (const ele of enquiries[key]) {
+      const eleDate = ele.date;
+      const millisecondsPerDay = 86400000;
+      const diffInMilliseconds = currDate.getTime() - eleDate.getTime();
+      
+      const diffInDays = diffInMilliseconds / millisecondsPerDay;
+    
+      if(diffInDays < 7){
+        obj["since1w"]++;
+      }
+      if(diffInDays < 14){
+        obj["since2w"]++;
+      }
+      if(diffInDays < 21){
+        obj["since3w"]++;
+      }
+    }
+    data.push(obj);
+  }
+  return data;
 }
+export default function Orders(props: {
+  openEnquiries: any
+}) {
+  const executiveEnquiries = splitDataByExecutive(props.openEnquiries);
+  const [PageModel, setPageModel] = React.useState({ pageSize: pgSize, page: 0 });
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID' },
+    {
+      field: 'executive',
+      headerName: 'Executive',
+      width: 200,
+    },
+    {
+      field: 'total',
+      headerName: 'Total Open',
+      width: 150,
+    },
+    {
+      field: 'since1w',
+      headerName: 'Since 1 week',
+      width: 150,
+    },
+    {
+      field: 'since2w',
+      headerName: 'Since 2 week',
+      width: 150,
+    },
+    {
+      field: 'since3w',
+      headerName: 'Since 3 week',
+      width: 150,
+    }
+  ];
 
-export default function Orders() {
+  const data = createData(executiveEnquiries);
+  // const data = [
+  //   {id: '1', executive: 'Ankit', totalOpen: '10', since1w: '3', since2w: '3', since3w: '4'},
+  // ];
+  
   return (
-    <React.Fragment>
-      <Title>Recent Orders</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link>
-    </React.Fragment>
+    <>
+      <Title>Enquiries</Title>
+      <StripedDataGrid
+        rows={data ? data : []}
+        columns={columns}
+        rowCount={data.length}
+        getRowId={(row) => row.id}
+        pagination={true}
+        pageSizeOptions={[pgSize, 20, 30]}
+        paginationMode="server"
+        paginationModel={PageModel}
+        onPaginationModelChange={setPageModel}
+        filterMode="server"
+        loading={!data}
+      />
+    </>
   );
 }
