@@ -264,7 +264,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
               {sample}
             </Box> */}
             <InputControl
-              // autoFocus
+              autoFocus
               id="Sample"
               // label="Sample"
               inputType={InputType.TEXT}

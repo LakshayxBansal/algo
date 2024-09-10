@@ -7,16 +7,20 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  Menu,
   MenuItem,
   Paper,
   Radio,
   Select,
   SelectChangeEvent,
+  TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import DataGridComp from "../miscellaneous/datagrid";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 // const Item1 = styled(Paper)(({ theme }) => ({
 //   backgroundColor: '#fff',
@@ -32,31 +36,10 @@ import DataGridComp from "../miscellaneous/datagrid";
 //   }),
 // }));
 
-const column1: GridColDef[] = [
-  { field: "callNo", headerName: "Call No.", width: 70 },
-  { field: "contactParty", headerName: "Contact/Party", width: 130 },
-  { field: "date", headerName: "Date", width: 130 },
-  {
-    field: "time",
-    headerName: "Time",
-    width: 100,
-  },
-  {
-    field: "callCategory",
-    headerName: "Call Category",
-    width: 120,
-  },
-  { field: "area", headerName: "Area", width: 100 },
-  { field: "executive", headerName: "Executive", width: 100 },
-  { field: "callStatus", headerName: "Call Status", width: 100 },
-  { field: "subStatus", headerName: "Sub Status", width: 100 },
-  { field: "nextAction", headerName: "Next Action", width: 100 },
-  { field: "actionDate", headerName: "Action Date", width: 100 },
-];
-
 const row1 = [
   {
     id: 1,
+    Type: "",
     callNo: "1/2024-2025",
     contactParty: "Ramlal",
     date: dayjs(),
@@ -69,6 +52,7 @@ const row1 = [
     subStatus: "Demo Done",
     nextAction: "Specify Latest",
     actionDate: "",
+    color: "purple",
   },
   {
     id: 2,
@@ -82,23 +66,9 @@ const row1 = [
     callStatus: "Open",
     subStatus: "Unallocated",
     nextAction: "Call",
-    actionDate: "15-5-2024",
+    actionDate: "2024-05-15",
+    color: "blue",
   },
-];
-
-const column2: GridColDef[] = [
-  { field: "type", headerName: "Type", width: 70 },
-  { field: "date", headerName: "Date", width: 130 },
-  { field: "time", headerName: "Time", width: 130 },
-  {
-    field: "executive",
-    headerName: "Executive",
-    width: 200,
-  },
-  { field: "subStatus", headerName: "Sub Status", width: 130 },
-  { field: "actionTaken", headerName: "Next Action", width: 130 },
-  { field: "nextAction", headerName: "Next Action", width: 130 },
-  { field: "actionDate", headerName: "Action Date", width: 130 },
 ];
 
 const row2 = [
@@ -116,9 +86,210 @@ const row2 = [
 ];
 
 export default function AutoGrid() {
-  const [Filter, setFilter] = React.useState("--None--");
+  const [rows, setRows] = React.useState(row1);
+  const [anchorElDate, setAnchorElDate] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [initialDate, setInitialDate] = React.useState<string>("");
+  const [finalDate, setFinalDate] = React.useState<string>("");
+
+  const [Filter, setFilter] = React.useState("0");
+  const handleClickDate = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElDate(event.currentTarget);
+  };
+  const handleCloseDate = () => {
+    setAnchorElDate(null);
+  };
+
+  const handleFilterChangeDate = () => {
+    const filteredRows = row1.filter((row) => {
+      const rowDate = new Date(row.actionDate).getTime();
+      const initial =
+        initialDate !== "" ? new Date(initialDate).getTime() : null;
+      const final = finalDate !== "" ? new Date(finalDate).getTime() : null;
+
+      if (initial !== null && final !== null) {
+        return rowDate >= initial && rowDate <= final;
+      } else if (initial !== null) {
+        return rowDate >= initial;
+      } else if (final !== null) {
+        return rowDate <= final;
+      } else {
+        return true;
+      }
+    });
+
+    setRows(filteredRows);
+  };
+
+  type customCol = { id: any; dataColor: string };
+
+  const CustomColor = (props: customCol) => {
+    // console.log("these are the params",props.id)
+    return (
+      <div>
+        {props.dataColor == "purple" ? (
+          <Box
+            sx={{
+              width: "10px",
+              height: "10px",
+              bgcolor: "purple",
+              margin: "20px",
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              width: "10px",
+              height: "10px",
+              bgcolor: "blue",
+              margin: "20px",
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
+  const column1: GridColDef[] = [
+    {
+      field: "Type",
+      headerName: "",
+      width: 50,
+      renderCell: (params) => {
+        return <CustomColor id={params.row.id} dataColor={params.row.color} />;
+      },
+    },
+    { field: "callNo", headerName: "Call No.", width: 70 },
+    { field: "contactParty", headerName: "Contact/Party", width: 130 },
+    { field: "date", headerName: "Date", width: 130 },
+    {
+      field: "time",
+      headerName: "Time",
+      width: 100,
+    },
+    {
+      field: "callCategory",
+      headerName: "Call Category",
+      width: 120,
+    },
+    { field: "area", headerName: "Area", width: 100 },
+    { field: "executive", headerName: "Executive", width: 100 },
+    { field: "callStatus", headerName: "Call Status", width: 100 },
+    { field: "subStatus", headerName: "Sub Status", width: 100 },
+    { field: "nextAction", headerName: "Next Action", width: 100 },
+    {
+      field: "actionDate",
+      headerName: "Action Date",
+      width: 100,
+      // type: "dateTime",
+      filterable: false, // Disable default filtering for date
+      renderHeader: () => (
+        <Box>
+          <Button
+            startIcon={
+              <Tooltip title="Filter Date" arrow>
+                <FilterListIcon />
+              </Tooltip>
+            }
+            onClick={handleClickDate}
+          >
+            Date
+          </Button>
+          <Menu
+            anchorEl={anchorElDate}
+            open={Boolean(anchorElDate)}
+            onClose={handleCloseDate}
+          >
+            <MenuItem>
+              <Typography>Filter On:</Typography>
+              <FormControl
+                variant="outlined"
+                sx={{ m: 1, Width: 50, marginLeft: "3vw" }}
+                size="small"
+              >
+                <Select
+                  labelId="filter-on-label"
+                  id="filter-on"
+                  datatype="string"
+                  name="filter-on"
+                  value={Filter}
+                  onChange={handleFilterChange}
+                >
+                  <MenuItem value={"0"}>--None--</MenuItem>
+                  <MenuItem value={"1"}>Current Date</MenuItem>
+                  <MenuItem value={"2"}>Next Date</MenuItem>
+                  <MenuItem value={"3"}>Date Range</MenuItem>
+                </Select>
+              </FormControl>
+            </MenuItem>
+            {Filter === "3" && (
+              <>
+                <MenuItem>
+                  <TextField
+                    label="Initial Date"
+                    variant="outlined"
+                    size="small"
+                    value={initialDate}
+                    onChange={(e) => setInitialDate(e.target.value)}
+                    type="date"
+                    fullWidth
+                  />
+                </MenuItem>
+
+                <MenuItem>
+                  <TextField
+                    label="Final Date"
+                    variant="outlined"
+                    size="small"
+                    value={finalDate}
+                    onChange={(e) => setFinalDate(e.target.value)}
+                    type="date"
+                    fullWidth
+                  />
+                </MenuItem>
+              </>
+            )}
+            <MenuItem>
+              <Button
+                onClick={() => {
+                  handleFilterChangeDate();
+                  handleCloseDate();
+                }}
+                fullWidth
+                variant="contained"
+              >
+                Apply Filter
+              </Button>
+            </MenuItem>
+          </Menu>
+        </Box>
+      ),
+    },
+  ];
+
+  const column2: GridColDef[] = [
+    { field: "type", headerName: "Type", width: 70 },
+    { field: "date", headerName: "Date", width: 130 },
+    { field: "time", headerName: "Time", width: 130 },
+    {
+      field: "executive",
+      headerName: "Executive",
+      width: 200,
+    },
+    { field: "subStatus", headerName: "Sub Status", width: 130 },
+    { field: "actionTaken", headerName: "Next Action", width: 130 },
+    { field: "nextAction", headerName: "Next Action", width: 130 },
+    {
+      field: "actionDate",
+      headerName: "Action Date",
+      width: 130,
+    },
+  ];
+
   const handleFilterChange = (event: SelectChangeEvent) => {
     setFilter(event.target.value as string);
+    console.log(Filter);
   };
   return (
     <Box sx={{ bgcolor: "#f3f1f17d", width: "100%" }}>
@@ -141,7 +312,7 @@ export default function AutoGrid() {
             // display: "flex",
             // flexDirection: "column",
             // border: "0.01rem solid #686D76",
-            // justifyContent: "center",
+            justifyContent: "center",
             // alignContent: "center",
             padding: "0px",
             // height: "33.25vh",
@@ -149,13 +320,36 @@ export default function AutoGrid() {
         >
           <Paper
             component="fieldset"
-            sx={{ height: "90%", border: "1px solid #64748b" }}
+            sx={{ height: "45%", border: "1px solid #64748b" }}
           >
             <legend>Date-Range</legend>
             <Typography>Start Date: 01-04-2024</Typography>
             <Typography>End Date: 15-05-2024</Typography>
             <Typography>Status 29-08-2024</Typography>
           </Paper>
+          <Box
+            // component="fieldset"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              // border: "0.01rem solid #686D76",
+              paddingLeft: "15px",
+              padding: "0px",
+            }}
+          >
+            <Paper
+              component="fieldset"
+              sx={{ height: "90%", border: "1px solid #64748b" }}
+            >
+              <legend>Filter-On:</legend>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Area"
+                sx={{ mt: "0vh" }}
+              />
+              <FormControlLabel control={<Checkbox />} label="Executive" />
+            </Paper>
+          </Box>
         </Grid>
 
         <Grid
@@ -266,7 +460,7 @@ export default function AutoGrid() {
             </Box>
           </Paper>
         </Grid>
-        <Grid
+        {/* <Grid
           item
           xs={2.5}
           height="100%"
@@ -361,7 +555,7 @@ export default function AutoGrid() {
               marginTop: "2vh",
             }}
           >
-            {/* <Button
+            <Button
                 variant="outlined"
                 size="small"
                 sx={{
@@ -379,12 +573,12 @@ export default function AutoGrid() {
                 sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
               >
                 Refresh Calls
-              </Button> */}
+              </Button>
           </Box>
-        </Grid>
+        </Grid> */}
         <Grid
           item
-          xs={1.5}
+          xs={3.5}
           // component="fieldset"
           sx={{
             // border: "0.01rem solid #686D76",
@@ -432,13 +626,13 @@ export default function AutoGrid() {
 
       <Grid
         sx={{
-          // border: "0.01rem solid #686D76",
+          border: "0.01rem solid #686D76",
           bgcolor: "white",
           width: "100%",
         }}
       >
-        <Paper component="fieldset">
-          <DataGridComp rows={row1} columns={column1} />
+        <Paper>
+          <DataGridComp rows={rows} columns={column1} />
         </Paper>
       </Grid>
       <Grid sx={{ display: "flex", marginTop: "1vh" }}>
@@ -470,13 +664,11 @@ export default function AutoGrid() {
       <Grid
         sx={{
           marginTop: "2vh",
-          border: "0.01rem solid #686D76",
-          bgcolor: "white",
-          // width: "100%",
+          width: "100%",
         }}
       >
-        <Paper sx={{ height: "90%" }}>
-          <legend> Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger:)</legend>
+        <Box> Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger:)</Box>
+        <Paper sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
           <DataGridComp rows={row2} columns={column2} />
         </Paper>
       </Grid>
@@ -533,7 +725,7 @@ export default function AutoGrid() {
                 bgcolor: "purple",
                 marginRight: "5px",
               }}
-            ></Box>
+            />
             <Typography>Open-Alllocated</Typography>
           </Box>
           <Box
