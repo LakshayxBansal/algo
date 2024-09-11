@@ -5,6 +5,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import Title from './Title';
 import { Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
@@ -15,8 +16,14 @@ export default function Deposits(props: {
     data: number
   }) {    
     const d = new Date();
+    const theme = useTheme();
+
   return (
-    <Box sx={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}>
+    <Box sx={{display: "flex", 
+      flexDirection: "column", 
+      justifyContent: "space-between", 
+      height: "100%", 
+      }}>
       <Box>
         <Title>{props.title}</Title>
         <Typography component="p" variant="h4">
