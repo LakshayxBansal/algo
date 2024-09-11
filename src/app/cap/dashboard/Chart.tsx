@@ -58,9 +58,9 @@ export default function Chart(props: {
           yAxis={[{ id: 'y-axis-id' }]}
           height={300}
         >
+          <ChartsLegend direction="row"/>
           <BarPlot />
           <LinePlot />
-          <ChartsLegend direction="row" />
           <ChartsXAxis label="Month" position="bottom" axisId="x-axis-id" />
           <ChartsYAxis axisId="y-axis-id" />
           <ChartsTooltip/>
