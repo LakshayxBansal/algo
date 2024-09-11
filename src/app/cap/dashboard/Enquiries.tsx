@@ -3,6 +3,7 @@ import * as React from 'react';
 import { StripedDataGrid } from '@/app/utils/styledComponents';
 import { GridColDef } from '@mui/x-data-grid';
 import Title from './Title';
+import { Paper } from '@mui/material';
 
 const pgSize = 5;
 interface HashMap {
@@ -94,7 +95,7 @@ export default function Enquiries(props: {
   // ];
   
   return (
-    <>
+    <Paper elevation={2} sx={{p: 2, borderRadius: "16px",}}>
       <Title>Enquiries</Title>
       <StripedDataGrid
         rows={data ? data : []}
@@ -102,13 +103,13 @@ export default function Enquiries(props: {
         rowCount={data.length}
         getRowId={(row) => row.id}
         pagination={true}
-        pageSizeOptions={[pgSize, 20, 30]}
+        pageSizeOptions={[pgSize, 10, 20]}
         paginationMode="server"
         paginationModel={PageModel}
         onPaginationModelChange={setPageModel}
         filterMode="server"
-        loading={!data}
+        loading={data ? false : true}
       />
-    </>
+    </Paper>
   );
 }
