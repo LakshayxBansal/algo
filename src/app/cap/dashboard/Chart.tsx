@@ -9,23 +9,18 @@ import { ChartsLegend, ChartsTooltip, ChartsXAxis, ChartsYAxis } from '@mui/x-ch
 
 const splitDataByMonth = (enquiries: any) => {
   let arr = new Array(6).fill(0);
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
+  const currMonth = new Date().getMonth();
+  const currYear = new Date().getFullYear();
   
   enquiries.map((item: any) => {  
     let ind = -1;
-    if(month >= 5 && (year == item.date.getFullYear())){
-      ind = month - item.date.getMonth();
+    if(currYear === item.date.getFullYear()){
+      ind = currMonth - item.date.getMonth();
     }
-    else if(month < 5){
-      if(year === item.date.getFullYear()){
-        ind = month - item.date.getMonth();
-      }
-      if((year - item.date.getFullYear()) === 1){
-        ind = month + (11 - item.date.getMonth()) + 2;
-      }
+    else if(currMonth < 5 && (currYear - item.date.getFullYear()) === 1){
+      ind = currMonth + (11 - item.date.getMonth()) + 1;
     }
-    if(ind >= 0 && ind <= 5){
+    if(ind >= 0 && ind < arr.length){
       arr[ind]++;
     }
   });

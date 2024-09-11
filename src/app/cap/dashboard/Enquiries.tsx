@@ -3,8 +3,6 @@ import * as React from 'react';
 import { StripedDataGrid } from '@/app/utils/styledComponents';
 import { GridColDef } from '@mui/x-data-grid';
 import Title from './Title';
-import { array, string } from 'zod';
-import { enquiryLedgerSchemaT } from '@/app/models/models';
 
 const pgSize = 5;
 interface HashMap {
@@ -56,7 +54,7 @@ const createData = (enquiries: any) => {
   }
   return data;
 }
-export default function Orders(props: {
+export default function Enquiries(props: {
   openEnquiries: any
 }) {
   const executiveEnquiries = splitDataByExecutive(props.openEnquiries);

@@ -3,11 +3,12 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Deposits from './Deposits';
-import Orders from './Orders';
+import Orders from './Enquiries';
 import { getSession } from '../../services/session.service';
 import { redirect } from 'next/navigation';
 import { getClosedEnquiries, getOpenEnquiries } from '@/app/controllers/dashboard.controller';
 import Chart from './Chart';
+import Enquiries from './Enquiries';
 
 const getUnassignedEnquiries = (openEnquiries: any) => {
   const result = openEnquiries.filter((item: any) => {
@@ -102,7 +103,7 @@ export default async function Dashboard() {
         </Box>
         <Box sx={{width: "95%", margin: "auto"}}>
           <Paper elevation={2} sx={{p: 2}}>
-            <Orders openEnquiries={openEnquiries}/>
+            <Enquiries openEnquiries={openEnquiries}/>
           </Paper>
         </Box>
       </Box>
