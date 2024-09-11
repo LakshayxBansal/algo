@@ -510,3 +510,12 @@ export const companySchema = z.object({
   pincode: z.string().optional(),
   stamp: z.number().optional()
 });
+
+export const inviteUserSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1, "Please enter Name").max(55),
+  usercontact: z.string(),
+  isInvited: z.number().optional(),
+  companyId: z.number(),
+  executiveId: z.number().optional()
+})
