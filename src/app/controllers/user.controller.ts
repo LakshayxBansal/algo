@@ -1,6 +1,6 @@
 "use server"
 
-import { addUser, getBizAppUserList,getUserDetailsByEmailList } from '../services/user.service';
+import { addUser, getBizAppUserList,getUserDetailsByEmailList,getUserDetailsByIdList } from '../services/user.service';
 import { hashText } from '../utils/encrypt.utils';
 import * as zs from '../zodschema/zodschema';
 import { userSchemaT } from '@/app/models/models';
@@ -67,7 +67,7 @@ export async function getBizAppUser(searchString: string, invited: boolean, acce
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getBizAppUserList(session.user.dbInfo.dbName, searchString, invited, accepted, mapped, admin);
+      return getBizAppUserList(session.user.dbInfo.id, searchString, invited, accepted, mapped, admin);
     }
   } catch (error) {
     throw error;
@@ -78,6 +78,18 @@ export async function getUserDetailsByEmail(email : string){
   try{
     if(email){
       const user = await getUserDetailsByEmailList(email);
+      return user;
+    }
+  }catch(e){
+    throw e;
+  }
+  return null;
+}
+
+export async function getUserDetailsById(userId : number){
+  try{
+    if(userId){
+      const user = await getUserDetailsByIdList(userId);
       return user;
     }
   }catch(e){

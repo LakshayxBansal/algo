@@ -4,20 +4,22 @@ import { getInviteUserByCompany,getInviteUserById } from "@/app/controllers/invi
 import EntityList from "../../../Widgets/masters/EntityList";
 import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
 
+const columns: GridColDef[] = [
+  { field: 'RowID', headerName: 'ID', width: 90 },
+  {
+    field: 'name',
+    headerName: 'Name',
+    width: 150
+  },
+  {
+    field: 'usercontact',
+    headerName: 'Contact',
+    width: 150
+  }
+];
+
 export default function InviteList(){
-    const columns: GridColDef[] = [
-        { field: 'RowID', headerName: 'ID', width: 90 },
-        {
-          field: 'name',
-          headerName: 'Name',
-          width: 150
-        },
-        {
-          field: 'usercontact',
-          headerName: 'Contact',
-          width: 150
-        }
-      ];
+
     return <>
         <EntityList
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

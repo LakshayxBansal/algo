@@ -251,3 +251,18 @@ export async function getExecutiveProfileImageByCrmUserIdList(crmDb : string,crm
     console.log(error);
   }
 }
+
+export async function insertUserIdInExecutiveDb(crmDb:string,executiveId:number,userId:number) {
+  try{
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "update executive_master set crm_user_id =  ? where id = ?;", 
+      values: [userId,executiveId],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}

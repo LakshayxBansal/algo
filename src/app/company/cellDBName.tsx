@@ -6,7 +6,6 @@ import { useSession } from 'next-auth/react';
 
 export default function CellDbName(props : {row:dbInfoT, userId: number }) {
   const row = props.row;
-
   const {update} =  useSession();
 
   const handleClick = async (event: any) => {

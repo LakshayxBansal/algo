@@ -20,26 +20,23 @@ export async function POST(
         }
         if(event_type_id===2 || event_type_id===3) {
             det = await getInviteDetailById(event_id as number);
-            Object.assign(det,{companyName : companyName})
-            // det['companyName'] = companyName;
+            // Object.assign(det,{companyName : companyName})
+            det['companyName'] = companyName;
         }
 
         
         
-        if (!det || det.length == 0) 
-            {
+        if (!det || det.length == 0){
             return Response.json({message : "No data found"});
         }
         let config = "";
         // for email
         if(event_type_id===2){
-            config= '{"email":{"to":"${usercontact}","from":"admin@lgofast.in","replyTo":"admin@lgofast.in","subject":"Invite to Join the Company","text":"Sensei": "Hello ${name}, you are invited by ${companyName} to join."}}';
-
+            config= '{"email":{"to":"${usercontact}","from":"admin@lgofast.in","replyTo":"admin@lgofast.in","subject":"Invite to Join the Company","text":"Hello ${name}, you are invited by ${companyName} to join."}}';
         }
         // for sms
         if(event_type_id===3){
             config= '{"email":{"to":"${allocated_to.email}","from":"${created_by.email}","cc":"[${received_by_id.email}, ${created_by.email}]","replyTo":"${created_by.email}","subject":"hello","text":"Sensei ${allocated_to.name}"},"sms":{"to":"${allocated_to.mobile}","from":"${created_by.mobile}"}}'
-
         }
         // const notif = {
         //     to : det[0].allocated_to,

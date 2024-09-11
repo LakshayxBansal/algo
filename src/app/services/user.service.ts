@@ -51,18 +51,17 @@ export async function checkUser(email: string) {
 } 
 
 
-export async function getBizAppUserList(crmDb: string, searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean){
+export async function getBizAppUserList(companyId: number, searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean){
   try {
-    let query = 'select uc.user_id as id, u.name as name from userCompany uc, dbInfo db, company co, user u where \
-                    db.name = ? and \
-                    db.id = co.dbInfo_id and \
+    let query = 'select uc.user_id as id, u.name as name from userCompany uc, company co, user u where \
+                    co.id = ? and \
                     co.id = uc.company_id and \
                     uc.user_id = u.id and \
                     uc.isInvited = ? and \
                     uc.isAccepted = ? and \
                     uc.isMapped = ? and \
                     uc.isAdmin = ?';
-    let values: any[] = [crmDb, invited, accepted, mapped, admin];
+    let values: any[] = [companyId, invited, accepted, mapped, admin];
 
     if (searchString !== "") {
       query = query + " and u.name like '%" + searchString + "%' ";
@@ -86,6 +85,20 @@ export async function getUserDetailsByEmailList(email:string) {
       host: 'userDb',
       query: 'select * from userDb.user where contact = ?',
       values: [email],
+    })
+    return user[0];
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+}
+
+export async function getUserDetailsByIdList(userId:number) {
+  try {
+    const user = await excuteQuery({
+      host: 'userDb',
+      query: 'select * from userDb.user where id = ?',
+      values: [userId],
     })
     return user[0];
   } catch (e) {

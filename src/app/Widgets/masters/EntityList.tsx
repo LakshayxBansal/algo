@@ -183,7 +183,7 @@ export default function EntityList(props: ModifyT) {
   return (
     <Container
       maxWidth="lg"
-      style={{ height: "700px", width: "100%", padding: "25px" }}
+      style={{ height: "500px", width: "100%", padding: "25px" }}
     >
       <Grid container spacing={2} style={{ verticalAlign: "center" }}>
         <Grid item xs={8}>

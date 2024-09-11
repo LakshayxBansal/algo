@@ -7,7 +7,7 @@ import {
   getExecutiveByPageDb,
   getExecutiveCount,
   getExecutiveDetailsById,
-  updateExecutiveDB,getExecutiveProfileImageByCrmUserIdList
+  updateExecutiveDB,getExecutiveProfileImageByCrmUserIdList,insertUserIdInExecutiveDb
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -226,6 +226,17 @@ export async function getExecutiveById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function insertUserIdInExecutive(crmDb:string,executiveId:number,userId:number) {
+  try {
+    const session = await getSession();
+    if (session) {
+      return insertUserIdInExecutiveDb(crmDb,executiveId,userId);
     }
   } catch (error) {
     throw error;

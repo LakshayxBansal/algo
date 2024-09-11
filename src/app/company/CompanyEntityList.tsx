@@ -6,7 +6,7 @@ import CreateCompany from "./CreateCompany"
 import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
 
-export function CompanyEntityList(){
+export default function CompanyEntityList(){
     const columns: GridColDef[] = [
         { field: 'RowID', headerName: 'ID', width: 90 },
         {

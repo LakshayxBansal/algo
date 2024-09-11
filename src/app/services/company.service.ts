@@ -22,6 +22,21 @@ export async function getCompanyDetailsById(id: number) {
   }
 }
 
+export async function getCompanyDbByIdList(id:number) {
+  try {
+    const result = await excuteQuery({
+      host: 'userDb',
+      query:
+        "select c.dbinfo_id from company c where c.id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getHostId() {
   let result
   try {

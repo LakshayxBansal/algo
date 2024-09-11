@@ -1,6 +1,6 @@
 'use server'
 import { companySchemaT, dbInfoT } from "../models/models";
-import { createCompanyDB, getHostId, createCompanyAndInfoDb, deleteCompanyAndDbInfo, dropDatabase, createTablesAndProc, getCompanyDetailsById, getCompaniesDb, getCompanyCount, updateCompanyDB } from "../services/company.service";
+import { createCompanyDB, getHostId, createCompanyAndInfoDb,getCompanyDbByIdList, deleteCompanyAndDbInfo, dropDatabase, createTablesAndProc, getCompanyDetailsById, getCompaniesDb, getCompanyCount, updateCompanyDB } from "../services/company.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
@@ -11,6 +11,18 @@ export async function getCompanyById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getCompanyDetailsById(id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getCompanyDbById(id: number) {
+  try {
+    const session = await getSession();
+    if (session) {
+      const dbInfo = await getCompanyDbByIdList(id);
+      return "crmapp".concat(dbInfo[0].dbinfo_id);
     }
   } catch (error) {
     throw error;

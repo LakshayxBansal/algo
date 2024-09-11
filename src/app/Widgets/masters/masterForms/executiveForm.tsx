@@ -56,10 +56,10 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   const entityData: executiveSchemaT = props.data ? props.data : {};
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
-    dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
-    if (dbResult.length > 0) {
+    // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
+    // if (dbResult.length > 0) {
       return dbResult;
-    }
+    // }
   }
 
   // function onDepartmentChange(event: React.SyntheticEvent, value: any) {
@@ -67,6 +67,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   // }
 
   const handleSubmit = async (formData: FormData) => {
+    try{
     const session  = await getSession();
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -115,6 +116,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
+  }catch(error){
+    throw error;
+  }
   };
 
   const updateFormData = (data: any) => {
@@ -382,10 +386,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   name: entityData.crm_user,
                 } as optionsDataT
               }
-              // onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, crm_user: val })
-              }
+              onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
               fetchDataFn={getApplicationUser}
               formError={formError.crm_user}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
