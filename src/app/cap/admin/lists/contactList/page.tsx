@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use client'
 import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
@@ -43,43 +44,57 @@ const columns: GridColDef[] = [
     valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
   },
 ];
+=======
+"use client";
+import * as React from "react";
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
 
+import { GridColDef } from "@mui/x-data-grid";
+import EntityList from "@/app/Widgets/masters/EntityList";
+import { getContactById, getContactByPage } from "@/app/controllers/contact.controller";
+import AppBar from "@mui/material/AppBar";
+import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 
 export default function ManageContacts() {
-
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID", width: 90 },
+    {
+      field: "name",
+      headerName: "Name",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "whatsapp",
+      headerName: "Whatsapp",
+      type: "number",
+      width: 110,
+      editable: true,
+    },
+  ];
 
   return (
-    <div style={{ height: 800, width: '100%' }}>
-      <AppBar position="static" color="default">
-        <Toolbar
-          sx={{
-            pr: '24px', // keep right padding when drawer closed
-          }}>
-          <Box sx={{flexGrow: 1, display: 'flex' }}>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon/>
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
-          </Box>
-          <Box sx={{flexGrow: 1, display: 'flex' }}>
-            <Button variant="contained">Add New</Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <EntityList 
-        ModForm={(id) => 
+    <div style={{ height: 800, width: "100%" }}>
+      <AppBar position="static" color="default"></AppBar>
+      <EntityList
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ContactForm
-            id={id}
-          />}
-        fetchDataFn={getContact}
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
+        fetchDataFn={getContactByPage}
+        fnFetchDataByID={getContactById}
         customCols={columns}
-        AddAllowed={true}>
-      </EntityList>
+        AddAllowed={true}
+      ></EntityList>
     </div>
   );
 }

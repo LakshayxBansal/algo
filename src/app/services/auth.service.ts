@@ -16,16 +16,16 @@ export async function authenticateUser(credData: any) {
   try {
     const result = await excuteQuery({
       host:'userDb',
-      query: 'select * from user where email=?', 
-      values: [credData.email],
+      query: 'select * from user where contact=?', 
+      values: [credData.contact],
     });
 
     if (result.length > 0) {
       if (await hashCompare(credData.password, result[0].password)) {
         const user = {
-          id: result[0].userId,
-          email: result[0].email,
-          name: result[0].firstName + " " +result[0].lastName,
+          id: result[0].id,
+          contact: result[0].contact,
+          name: result[0].name
         };
         return user;
       }

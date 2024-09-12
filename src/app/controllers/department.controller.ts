@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use server'
  
 import * as zs from '../zodschema/zodschema';
@@ -8,7 +9,25 @@ import { nameMasterDataT } from '../models/models';
 import {logger} from '@/app/utils/logger.utils';
 import * as mdl from "../models/models"  // jp_dev
 import { bigIntToNum } from '../utils/db/types';
+=======
+"use server";
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
 
+import * as zs from "../zodschema/zodschema";
+import {
+  getDepartmentList,
+  createDepartmentDb,
+  getDepartmentDetailsById,
+  updateDepartmentDb,
+  getDepartmentCount,
+  getDepartmentByPageDb,
+} from "../services/department.service";
+import { getSession } from "../services/session.service";
+import { SqlError } from "mariadb";
+import { nameMasterDataT } from "../models/models";
+import { logger } from "@/app/utils/logger.utils";
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
 export async function getDepartment(searchString: string) {
   try {
@@ -21,40 +40,66 @@ export async function getDepartment(searchString: string) {
   }
 }
 
+export async function getDepartmentById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getDepartmentDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
 
-
-export async function createDepartment(data: nameMasterDataT){
+export async function createDepartment(data: nameMasterDataT) {
   let result;
-    try {
+  try {
     const session = await getSession();
     if (session) {
-
       const parsed = zs.nameMasterData.safeParse(data);
-      if(parsed.success) {
+      if (parsed.success) {
         const dbResult = await createDepartmentDb(session, data);
-        if (dbResult.length >0 ) {
-         result = {status: true, data:dbResult};
+        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+          result = { status: true, data: dbResult[1] };
         } else {
-          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+          result = {
+            status: false,
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
+          };
         }
       } else {
-        result = {status: false, data: parsed.error.issues };
+        result = { status: false, data: parsed.error.issues };
       }
     } else {
-      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
     }
     return result;
   } catch (e) {
     logger.error(e);
-    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
-      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
       return result;
     }
   }
-  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
   return result;
 }
 
+<<<<<<< HEAD
 //added from jp_dev
 // getAppSession to getSession
 export async function createDept(formData: FormData) {
@@ -165,13 +210,70 @@ export async function modifyDept(
 
 //jp_dev
 export async function getDepts(
+=======
+export async function updateDepartment(data: nameMasterDataT) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = zs.nameMasterData.safeParse(data);
+      if (parsed.success) {
+        const dbResult = await updateDepartmentDb(session, data);
+        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          result = {
+            status: false,
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
+          };
+        }
+      } else {
+        result = { status: false, data: parsed.error.issues };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e) {
+    logger.error(e);
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
+      return result;
+    }
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function getDepartmentByPage(
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
   page: number,
   filter: string | undefined,
   limit: number
 ) {
+<<<<<<< HEAD
   let getDeps = {
     status: false,
     data: {} as mdl.getDeptsT,
+=======
+  let getDepartment = {
+    status: false,
+    data: {} as mdl.nameMasterDataT,
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
     count: 0,
     error: {},
   };
@@ -179,13 +281,18 @@ export async function getDepts(
     const appSession = await getSession();
 
     if (appSession) {
+<<<<<<< HEAD
       const deps = await getDeptList(
         // appSession.dbSession?.dbInfo.dbName as string,
+=======
+      const conts = await getDepartmentByPageDb(
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
+<<<<<<< HEAD
       const rowCount = await getDeptCount(
         appSession.user.dbInfo.dbName as string,
         filter
@@ -194,10 +301,21 @@ export async function getDepts(
         status: true,
         data: deps.map(bigIntToNum) as mdl.getDeptsT,
         count: Number(rowCount[0]['rowCount']),
+=======
+      const rowCount = await getDepartmentCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getDepartment = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        count: Number(rowCount[0]["rowCount"]),
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
         error: {},
       };
     }
   } catch (e: any) {
+<<<<<<< HEAD
     console.log(e);
 
     let err = 'Contact Admin, E-Code:369';
@@ -287,3 +405,17 @@ export async function getDeptData(
 
 
 
+=======
+
+    let err = "Department Admin, E-Code:369";
+
+    getDepartment = {
+      ...getDepartment,
+      status: false,
+      data: {} as mdl.nameMasterDataT,
+      error: err,
+    };
+  }
+  return getDepartment;
+}
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df

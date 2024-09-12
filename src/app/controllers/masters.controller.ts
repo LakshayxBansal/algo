@@ -6,12 +6,19 @@ import { getCountryList,
   getOrganizationList,
   getMenuOptionsList,
   createCountryDb,
+  updateCountryDb,
   createStateDb, 
-  getStateList } from '../services/masters.service';
+  getStateList,getCountryByIDList,updateStateDb,getStateListById, 
+  getCountryByPageDb,
+  getCountryCount,
+  getStateByPageDb,
+  getStateCount} from '../services/masters.service';
 import { getSession } from '../services/session.service';
 import * as zs from '../zodschema/zodschema';
 import * as zm from '../models/models';
 import { SqlError } from 'mariadb';
+import { bigIntToNum } from "../utils/db/types";
+import * as mdl from "../models/models";
 
  
 
@@ -74,6 +81,17 @@ export async function getCountries(searchString: string) {
   }
 }
 
+export async function getCountryById(id : number){
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getCountryByIDList(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 /**
  * 
  * @param searchState : partial state string to search for
@@ -85,6 +103,17 @@ export async function getStates(searchState: string, country: string) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getStateList(session.user.dbInfo.dbName, searchState, country);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getStateById( state_id: number){
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getStateListById(session.user.dbInfo.dbName, state_id);
     }
   } catch (error) {
     throw error;
@@ -142,41 +171,119 @@ export async function getOrganization(searchString: string) {
  * @param formData 
  * @returns object with status, record if success and error
  */
-export async function createCountry(formData: FormData) {
+export async function createCountry(data: zm.countrySchemaT){
   let result;
-    try {
+  try {
     const session = await getSession();
     if (session) {
-      const data = {
-        name: formData.get("name") as string,
-        alias: formData.get("alias") as string,
-      };
-  
-      const parsed = zs.nameMasterData.safeParse(data);
-      if(parsed.success) {
-        const dbResult = await createCountryDb(session, data);
-        if (dbResult.length >0 ) {
-         result = {status: true, data:dbResult};
+      const parsed = zs.countrySchema.safeParse(data);
+      if (parsed.success) {
+        const dbResult = await createCountryDb(
+          session,
+          data as zm.countrySchemaT
+        );
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
         } else {
-          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
         }
       } else {
-        //result = {status: false, data: parsed.error.flatten().fieldErrors };
-        result = {status: false, data: parsed.error.issues };
-
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
       }
     } else {
-      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
     }
     return result;
-  } catch (e) {
-    console.log(e);
-    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
-      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+  } catch (e: any) {
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
       return result;
     }
   }
-  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function updateCountry(data: zm.countrySchemaT){
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = zs.countrySchema.safeParse(data);
+      if (parsed.success) {
+        const dbResult = await updateCountryDb(
+          session,
+          data as zm.countrySchemaT
+        );
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e: any) {
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
+      return result;
+    }
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
   return result;
 }
 
@@ -186,41 +293,212 @@ export async function createCountry(formData: FormData) {
  * @param formData 
  * @returns object with status, record if success and error
  */
-export async function createState(formData: FormData) {
+export async function createState(data: zm.stateSchemaT) {
   let result;
-    try {
+  try {
     const session = await getSession();
     if (session) {
-      const data = {
-        name: formData.get("name") as string,
-        alias: formData.get("alias") as string,
-      };
-  
-      const parsed = zs.nameMasterData.safeParse(data);
-      if(parsed.success) {
-        const dbResult = await createStateDb(session, data);
-        if (dbResult.length >0 ) {
-         result = {status: true, data:dbResult};
+      const parsed = zs.stateSchema.safeParse(data);
+      if (parsed.success) {
+        const dbResult = await createStateDb(
+          session,
+          data as zm.stateSchemaT
+        );
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
         } else {
-          result = {status: false, data: [{path:["form"], message:"Error: Error saving record"}] };
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
         }
       } else {
-        //result = {status: false, data: parsed.error.flatten().fieldErrors };
-        result = {status: false, data: parsed.error.issues };
-
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
       }
     } else {
-      result = {status: false, data: [{path:["form"], message:"Error: Server Error"}] };
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
     }
     return result;
-  } catch (e) {
-    console.log(e);
-    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY' ) {
-      result = {status: false, data: [{path:["name"], message:"Error: Value already exist"}] };
+  } catch (e: any) {
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
       return result;
     }
   }
-  result = {status: false, data: [{path:["form"], message:"Error: Unknown Error"}] };
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
   return result;
 }
 
+export async function updateState(data : zm.stateSchemaT){
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = zs.stateSchema.safeParse(data);
+      if (parsed.success) {
+        const dbResult = await updateStateDb(
+          session,
+          data as zm.stateSchemaT
+        );
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e: any) {
+    if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      result = {
+        status: false,
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
+      };
+      return result;
+    }
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function getCountryByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getCountry = {
+    status: false,
+    data: {} as mdl.countrySchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      
+      const conts = await getCountryByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      
+      const rowCount = await getCountryCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getCountry = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.countrySchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "Country Admin, E-Code:369";
+
+    getCountry = {
+      ...getCountry,
+      status: false,
+      data: {} as mdl.countrySchemaT,
+      error: err,
+    };
+  }
+  return getCountry;
+}
+
+export async function getStateByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let getState = {
+    status: false,
+    data: {} as mdl.stateSchemaT,
+    count: 0,
+    error: {},
+  };
+  try {
+    const appSession = await getSession();
+
+    if (appSession) {
+      
+      const conts = await getStateByPageDb(
+        appSession.user.dbInfo.dbName as string,
+        page as number,
+        filter,
+        limit as number
+      );
+      
+      const rowCount = await getStateCount(
+        appSession.user.dbInfo.dbName as string,
+        filter
+      );
+      getState = {
+        status: true,
+        data: conts.map(bigIntToNum) as mdl.stateSchemaT,
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (e: any) {
+    let err = "State Admin, E-Code:369";
+
+    getState = {
+      ...getState,
+      status: false,
+      data: {} as mdl.stateSchemaT,
+      error: err,
+    };
+  }
+  return getState;
+}

@@ -34,6 +34,20 @@ export async function getCountryList(crmDb: string, searchString: string) {
   }
 }
 
+export async function getCountryByIDList(crmDb : string, id : number){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias from country_master cm where cm.id=?;', 
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 
 
 /**
@@ -63,6 +77,20 @@ export async function getStateList(crmDb: string, searchState: string, country: 
 
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function getStateListById(crmDb : string, id : number){
+  try{
+    const result = await excuteQuery({
+      host: crmDb,
+      query: 'select id as id, name as name, alias as alias from state_master sm where sm.id=?;',
+      values: [id],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
   }
 }
 
@@ -161,25 +189,23 @@ export async function getOrganizationList(crmDb: string, searchString: string) {
  * @param email: <sring> email for the user for which the eligible companies to be returned.
  * @returns list of companies
  */
-export async function getCompanyList(email: string | undefined | null) {
+export async function getCompanyList(userId: number | undefined | null) {
   try {
-    if (email) {
+    if (userId) {
       const result = await excuteQuery({
         host: 'userDb',
         query: 'select c.id as company_id, c.name as companyName, c.dbinfo_id, h.host, h.port, d.name as dbName from \
         company as c, \
           userCompany as uc, \
-          user as u, \
           dbInfo as d, \
           dbHost as h \
           where \
-          u.email=? and \
-          u.id = uc.user_id and \
+          uc.user_id = ? and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
           d.host_id = h.id \
           ;', 
-        values: [email],
+        values: [userId],
       });
       //Object.values(JSON.parse(JSON.stringify(
       //const stringf = JSON.stringify(result);
@@ -243,11 +269,27 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into country_master (name, alias, created_by, created_on) \
-       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createCountry(?,?,?);",
       values: [
         statusData.name,
         statusData.alias,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+export async function updateCountryDb(session: Session, sourceData: zm.countrySchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateCountry(?,?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.alias,
         session.user.email
       ],
     });
@@ -264,15 +306,15 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
  * @param statusData : data for saving
  * @returns result from DB (returning *)
  */
-export async function createStateDb(session: Session, statusData: zm.nameAliasDataT) {
+export async function createStateDb(session: Session, sourceData: zm.stateSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "insert into state_master (name, alias, created_by, created_on) \
-       values (?, ?, (select crm_user_id from executive_master where email=?), now()) returning *",
+      query: "call createState(?,?,?,?);",
       values: [
-        statusData.name,
-        statusData.alias,
+        sourceData.name,
+        sourceData.alias,
+        sourceData.country_id,
         session.user.email
       ],
     });
@@ -280,4 +322,101 @@ export async function createStateDb(session: Session, statusData: zm.nameAliasDa
     console.log(e);
   }
   return null;
+}
+
+export async function updateStateDb(session: Session, sourceData: zm.stateSchemaT) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call updateState(?,?,?,?,?);",
+      values: [
+        sourceData.name,
+        sourceData.id,
+        sourceData.alias,
+        sourceData.country_id,
+        session.user.email
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function getCountryByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT *,RowNum as RowID FROM (SELECT *, ROW_NUMBER() OVER () AS RowNum FROM country_master " + (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") + "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+      values: vals,
+    });   
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCountryCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from country_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getStateByPageDb(
+  crmDb: string,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const vals: any = [page, limit, limit];
+
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT *,RowNum as RowID FROM (select s.*, c.name as Country_name, ROW_NUMBER() OVER () AS RowNum from state_master s left outer join country_master c on c.id = s.country_id " + (filter ? "WHERE s.name LIKE CONCAT('%',?,'%') " : "") + "order by s.name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+      values: vals,
+    });   
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getStateCount(crmDb: string, value: string | undefined) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from state_master" +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
 }

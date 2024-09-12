@@ -1,13 +1,14 @@
 import mariadb from 'mariadb';
 
-class SingletonMap<K, V> {
-    private static instance: SingletonMap<any, any>;
-    private map: Map<K, V>;
+type record = {
+    key: string,
+    value: mariadb.Pool
+};
 
-    private constructor() {
-        this.map = new Map<K, V>();
-    }
+const dbMap = function () {
+    const map: record[] = [];
 
+<<<<<<< HEAD
     public static getInstance<K, V>(): SingletonMap<K, V> {
         console.log("--------get instance-----------");
         // console.log(!SingletonMap.instance);
@@ -30,16 +31,20 @@ class SingletonMap<K, V> {
 
 const dbMap = SingletonMap.getInstance<string, mariadb.Pool>();
 // console.log(dbMap)
+=======
+
+    return {
+        set(key: string, value: mariadb.Pool): void {
+            map.push({key, value});
+            //console.log("Push host ---", key, ", connections ---", value.totalConnections());
+        },
+    
+        get(key: string): mariadb.Pool | undefined {
+            //map.forEach((val)=> console.log("Read host ---", val.key, ", connections -- ", val.value.totalConnections()));
+            return map.find((val) => val.key === key)?.value;
+        }
+    };
+}();
+>>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
 
 export {dbMap};
-
-/* Example usage
-const mySingletonMap = SingletonMap.getInstance<string, number>();
-const singletonMap = SingletonMap.getInstance<string, number>();
-mySingletonMap.set('one', 1);
-mySingletonMap.set('two', 2);
-
-console.log(mySingletonMap.get('one')); // Output: 1
-console.log(mySingletonMap.get('two')); // Output: 2
-console.log(mySingletonMap.get('three')); // Output: undefined
-*/
