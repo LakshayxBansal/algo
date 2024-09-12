@@ -82,12 +82,12 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
     data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
     // if (parsed.success) {
-    const inviteUser = data.crm_user;
-    let inviteId;
-    if( session && inviteUser ){
-      const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
-      inviteId = invite.id;
-    }
+    // const inviteUser = data.crm_user;
+    // let inviteId;
+    // if( session && inviteUser ){
+    //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
+    //   inviteId = invite.id;
+    // }
     const result = await persistEntity(data as executiveSchemaT);
 
     if (result.status) {
@@ -95,9 +95,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
         id: result.data[0].id,
         name: result.data[0].name,
       };
-      if(inviteId){
-        await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
-      }
+      // if(inviteId){
+      //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
+      // }
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
@@ -394,7 +394,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  isExecutive={true}
+                  // isExecutive={true}
                 />
               )}
             />

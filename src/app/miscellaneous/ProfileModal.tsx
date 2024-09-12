@@ -5,8 +5,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Link from "next/link";
 import { Box } from '@mui/material';
 import ProfileImage from './ProfileImage';
+import { deleteSession } from '../services/session.service';
+import { deRegisterFromApp,deRegisterFromCompany } from '../controllers/user.controller';
+import { redirectToPage } from '../company/SelectCompany';
+import { signOut } from "next-auth/react";
 
-export default function ProfileModal({img,name}:{img : string | undefined, name : string}) {
+export default function ProfileModal({img,name,userId,companyId,companyName}:{img : string | undefined, name : string, userId : number, companyId : number, companyName : string}) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -15,6 +19,22 @@ export default function ProfileModal({img,name}:{img : string | undefined, name 
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const handleLogout = async() => {
+        signOut({ callbackUrl: 'http://localhost:3000/signin' });
+        await deleteSession(userId);
+        handleClose();
+        redirectToPage("/signin");
+    }
+    const handleDeregisterFormCompany = async()=>{
+        // await Promise.all([deRegisterFromCompany(userId,companyId),deleteSession(userId)]);
+        handleClose();
+        redirectToPage("/company");
+    }
+    const handleDeregisterFormApp = async()=>{
+        await Promise.all([deRegisterFromApp(userId),deleteSession(userId)]);
+        handleClose();
+        redirectToPage("/signin");
+    }
     return (
         <div>
             <Button
@@ -51,7 +71,9 @@ export default function ProfileModal({img,name}:{img : string | undefined, name 
                 </Link>
                 </MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={handleDeregisterFormCompany}>De register with {companyName}</MenuItem>
+                <MenuItem onClick={handleDeregisterFormApp}>De register from App</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
     );

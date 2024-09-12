@@ -28,6 +28,18 @@ export async function getDbSession(userId: number): Promise<dbInfoT | null> {
   return null;
 }
 
+export async function deleteSession(userId : number) {
+  try{
+    await excuteQuery({
+      host: sessionDb,
+      query: 'delete from session where userId=?',
+      values: [userId],
+    });
+  }catch(error){
+    console.log(error);
+  }
+  return null;
+}
 
 /*
 export async function createSession(value: any) {

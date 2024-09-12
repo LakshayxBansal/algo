@@ -83,7 +83,7 @@ export async function getUserDetailsByEmailList(email:string) {
   try {
     const user = await excuteQuery({
       host: 'userDb',
-      query: 'select * from userDb.user where contact = ?',
+      query: 'select * from user where contact = ?',
       values: [email],
     })
     return user[0];
@@ -97,7 +97,7 @@ export async function getUserDetailsByIdList(userId:number) {
   try {
     const user = await excuteQuery({
       host: 'userDb',
-      query: 'select * from userDb.user where id = ?',
+      query: 'select * from user where id = ?',
       values: [userId],
     })
     return user[0];
@@ -105,4 +105,88 @@ export async function getUserDetailsByIdList(userId:number) {
     console.log(e);
   }
   return false;
+}
+
+export async function deRegisterFromCompanyDB(id : number | null, userId : number | null, companyId : number | null) {
+  try {
+    
+    const user = await excuteQuery({
+      host: 'userDb',
+      query: 'delete from userCompany where user_id = ? and company_id = ?',
+      values: [userId,companyId],
+    })
+    return user[0];
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+}
+
+export async function deRegisterFromAppDB(userId : number) {
+  try {
+    const user = await excuteQuery({
+      host: 'userDb',
+      query: 'update user set active = -1 where id = ?;',
+      values: [userId],
+    })
+    return user[0];
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+}
+
+export async function getCompanyUserDB(
+  companyId: number,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+      const vals: any = [page, limit, limit];
+
+      if (filter) {
+          vals.unshift(filter);
+      }
+      vals.unshift(companyId);
+
+      const result = await excuteQuery({
+          host: "userDb",
+          query:
+                "SELECT * \
+       FROM (SELECT uc.id as id,uc.user_id as userId, uc.isAdmin as admin ,u.name as name,u.contact as contact, ROW_NUMBER() OVER () AS RowID \
+          FROM userCompany uc left join user u on uc.user_id = u.id where uc.company_id = ? " +
+                (filter ? "and u.name LIKE CONCAT('%',?,'%') " : "") +
+                "order by uc.isAdmin desc, u.name asc \
+      ) AS NumberedRows\
+      WHERE RowID > ?*?\
+      ORDER BY RowID\
+      LIMIT ?;",
+          values: vals,
+      });
+      return result
+  } catch (e) {
+      console.log(e);
+  }
+}
+
+export async function getCompanyUserCount(
+  companyId : number,
+  filter: string | undefined
+) {
+  try {
+    const vals: any = [companyId];
+    if(filter){
+      vals.push(filter);
+    }
+    return excuteQuery({
+      host: "userDb",
+      query:
+        "SELECT count(*) as rowCount from userCompany uc left join user u on uc.user_id = u.id where uc.company_id = ?" +
+        (filter ? "and u.name LIKE CONCAT('%',?,'%'); " : ";"),
+      values: [vals],
+    });
+  } catch (e) {
+    console.log(e);
+  }
 }

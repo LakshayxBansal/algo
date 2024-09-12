@@ -78,7 +78,9 @@ interface propsType {
   pages: menuTreeT[],
   username: string,
   companyName: string,
-  profileImg?: string
+  profileImg?: string,
+  userId: number,
+  companyId : number,
   children: React.ReactNode
 }
 
@@ -143,7 +145,7 @@ export default function MenuBar(props : propsType) {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <ProfileModal img={props.profileImg} name={props.username}/>
+              <ProfileModal userId={props.userId} companyId={props.companyId} img={props.profileImg} name={props.username} companyName={props.companyName}/>
             </Toolbar>
           </AppBar>
           <Box sx={{display: 'flex'}}>

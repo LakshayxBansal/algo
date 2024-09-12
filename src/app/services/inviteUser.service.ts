@@ -58,17 +58,17 @@ export async function createInUsercompany(accept: boolean,executiveId:number | n
   try{
     let query;
     if(accept){
-      if(executiveId){
-        query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate,mappedDate) values (?,?,0,1,1,1,?,now(),now());"
-      }else{
+      // if(executiveId){
+      //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate,mappedDate) values (?,?,0,1,1,1,?,now(),now());"
+      // }else{
         query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate) values (?,?,0,1,1,0,?,now());"
-      }
+      // }
     }else{
-      if(executiveId){
+      // if(executiveId){
+      //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
+      // }else{
         query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
-      }else{
-        query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
-      }
+      // }
     }
     return excuteQuery({
       host: "userDb",
@@ -145,6 +145,7 @@ export async function getInviteUserCount(
       console.log(e);
     }
   }
+  
   export async function getInvitesDb(
     userContact: string,
     page: number,

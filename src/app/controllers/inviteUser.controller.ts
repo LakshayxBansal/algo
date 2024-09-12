@@ -103,12 +103,12 @@ export async function acceptInvite(inviteDetail : inviteUserSchemaT){
   try{
     const session = await getSession();
     if(session){
-      if(inviteDetail.executiveId){
-        const companyDb = await getCompanyDbById(inviteDetail.companyId);
-        await Promise.all([createInUsercompany(true,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId), insertUserIdInExecutive(companyDb as string,inviteDetail.executiveId,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-      }else{
+      // if(inviteDetail.executiveId){
+      //   const companyDb = await getCompanyDbById(inviteDetail.companyId);
+      //   await Promise.all([createInUsercompany(true,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId), insertUserIdInExecutive(companyDb as string,inviteDetail.executiveId,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+      // }else{
         await Promise.all([createInUsercompany(true,null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-      }
+      // }
     }
   }catch(error){
     throw(error);
@@ -220,13 +220,13 @@ export async function getInviteByUserContact(
         userContact,
         filter
       );
-      for (const ele of invites) {
-        if(ele.executiveId){
-          ele.inviteType = "Executive"
-        }else{
-          ele.inviteType = "User"
-        }
-      }
+      // for (const ele of invites) {
+      //   if(ele.executiveId){
+      //     ele.inviteType = "Executive"
+      //   }else{
+      //     ele.inviteType = "User"
+      //   }
+      // }
       getInvites = {
         status: true,
         data: invites.map(bigIntToNum) as inviteUserSchemaT,

@@ -30,7 +30,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
       data[key] = value;
     }   
 
-    const result = await persistEntity(data as inviteUserSchemaT);
+    const result = await createUserToInvite(data as inviteUserSchemaT);
     if (result.status) {
       // let notifyBody;
       // if(result.data[0].usercontact.includes('@')){
@@ -40,13 +40,13 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
       //   notifyBody = {event_type_id : 3, event_id : result.data[0].id,name:"algofast",passkey:"369",app_name:session?.user.dbInfo.dbName};
       // }
       // const notifResp = await axios.post('http://192.168.1.200:80/addNotification', notifyBody);
-      let newVal;
-      if(props.isExecutive === true){
-        newVal = { id: result.data[0].id, name: result.data[0].usercontact };
-      }else{
-        newVal = { id: result.data[0].id, name: result.data[0].name };
-      }
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      // let newVal;
+      // if(props.isExecutive === true){
+      //   newVal = { id: result.data[0].id, name: result.data[0].usercontact };
+      // }else{
+      //   newVal = { id: result.data[0].id, name: result.data[0].name };
+      // }
+      // props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
@@ -73,19 +73,6 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
-  async function persistEntity(data: inviteUserSchemaT) {
-    // let result;
-    // if (entityData?.id) {
-    //   data = { ...data, id: entityData.id };
-
-    // //   result = await updateCompany(data);
-    // }else{
-    //     result = await createUserToInvite(data);
-    // }
-    const result = await createUserToInvite(data);
-    return result;
-  }
-
   const clearFormError = () => {
     setFormError(curr => {
       // remove form key from object
@@ -96,7 +83,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
 
   return (
     <Paper>
-        <Seperator>{entityData.id ? "Update Invite User" : " Add Invite User"}</Seperator>
+        <Seperator>Add Invite User</Seperator>
         <Collapse in={formError?.form ? true : false}>
           <Alert
             severity="error"

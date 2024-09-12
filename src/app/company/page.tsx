@@ -8,12 +8,14 @@ export default async function Companies() {
   const session = await getSession();
   console.log(session);
   if (session) {
+    console.log("company");
+    
     return (
       <>
       <h1>Company List</h1>
       <CompanyEntityList/>
       <h1>Invite List</h1>
-      <InviteEntityList/>
+      {/* <InviteEntityList/> */}
       </>
     );
   } else {
