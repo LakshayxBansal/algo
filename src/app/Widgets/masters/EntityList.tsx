@@ -1,39 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GridColDef, GridFilterModel } from "@mui/x-data-grid";
 import {
   Box,
   Button,
+  ButtonGroup,
   Checkbox,
+  ClickAwayListener,
   Container,
   debounce,
   Divider,
   FormControlLabel,
   Grid,
+  Grow,
   IconButton,
   InputAdornment,
   MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Snackbar,
+  Tooltip,
   Typography,
+  TextField,
+  styled,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
-import {
-  RenderFormFunctionT,
-  RenderDelFormFunctionT,
-} from "@/app/models/models";
+import { RenderFormFunctionT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
 import { StyledMenu } from "../../utils/styledComponents";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
+import { any } from "zod";
 
 type ModifyT = {
+  title: string;
   renderForm?: RenderFormFunctionT;
-  renderDelForm?: RenderDelFormFunctionT;
   fetchDataFn: (
     page: number,
     searchText: string,
@@ -65,7 +74,11 @@ export default function EntityList(props: ModifyT) {
   const [search, setSearch] = useState("");
   const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
-  const [ids, setIds] = useState(0);
+  const [ids, setIds] = useState<number>(0);
+  const [snackOpen, setSnackOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+
   let searchText;
 
   useEffect(() => {
@@ -106,12 +119,59 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
+  async function onDeleteDialog(modId: number) {
+    console.log("clicked delete dialog");
+    if (props.fnDeleteDataByID && modId) {
+      const data = await props.fnDeleteDataByID(modId);
+      if (data.status) {
+        // setSnackOpen(true);
+      }
+      setTimeout(() => {
+        dialogOpenDelete ? setDialogOpenDelete(false) : null;
+      }, 1000);
+    }
+  }
+
   const handleColumnVisibilityChange = (field: string) => {
     setColumnVisibilityModel((prev: { [x: string]: any }) => ({
       ...prev,
       [field]: !prev[field],
     }));
   };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleCloseButtonMenu = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    // setSelectedIndex(index);
+    setOpen(false);
+  };
+
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
 
   type iconT = {
     id: number;
@@ -168,26 +228,66 @@ export default function EntityList(props: ModifyT) {
       </Box>
     );
   }
+
   const columns1: GridColDef[] = [
     {
       field: "Icon menu",
       headerName: "Options",
+      minWidth:200, 
       renderCell: (params) => {
         return <IconComponent id={params.row.id} />;
       },
     },
   ];
 
-  const columns: GridColDef[] = columns1.concat(props.customCols);
+  // const columns: GridColDef[] = columns1.concat(props.customCols);
+
+  
+
+  const columns2: GridColDef[] = [];
+  let columnHeading = {
+    field: "",
+    headerName: "",
+    editable: true,
+    minWidth: 200,
+  };
+  
+  const dataObj:{ [key: string]: any } = data[0];
+  if (dataObj) {
+    for (const key in dataObj) {
+      const seenKeys = new Set();
+      if (dataObj.hasOwnProperty(key)) {
+        if (seenKeys.has(key)) {
+          break;
+        }
+        seenKeys.add(key);  
+        columnHeading = {
+          ...columnHeading,
+          field:key,
+          headerName:key,
+        }
+      columns2.push(columnHeading);
+      }
+    }
+  }
+
+  const columns: GridColDef[] = columns1.concat(columns2);
+
+
+
+
+  // console.log(columns2);
 
   return (
     <Container
       maxWidth="lg"
       style={{ height: "700px", width: "100%", padding: "25px" }}
     >
+      <Typography variant="h4">{props.title}</Typography>
+      <Divider />
       <Grid container spacing={2} style={{ verticalAlign: "center" }}>
         <Grid item xs={8}>
-          <Box sx={{ width: "75%", marginLeft: "30px" }}>
+          <Box sx={{ width: "75%" }}>
             <TextField
               variant="outlined"
               fullWidth
@@ -222,27 +322,95 @@ export default function EntityList(props: ModifyT) {
         >
           {props.AddAllowed && (
             <Box>
-              <Button
+              <ButtonGroup
                 variant="contained"
-                onClick={() => {
-                  setDialogOpen(true);
-                  setDlgMode(dialogMode.Add);
-                }}
+                ref={anchorRef}
+                aria-label="Button group with a nested menu"
               >
-                <AddIcon sx={{ paddingRight: "5px" }} />
-                ADD NEW
-              </Button>
+                <Tooltip title="Add New">
+                  <Button
+                    onClick={() => {
+                      setDialogOpen(true);
+                      setDlgMode(dialogMode.Add);
+                    }}
+                  >
+                    <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
+                    Add New
+                  </Button>
+                </Tooltip>
+                <Tooltip title="More Options">
+                  <Button
+                    size="small"
+                    aria-controls={open ? "split-button-menu" : undefined}
+                    aria-expanded={open ? "true" : undefined}
+                    aria-label="select merge strategy"
+                    aria-haspopup="menu"
+                    onClick={handleToggle}
+                  >
+                    <ArrowDropDownIcon />
+                  </Button>
+                </Tooltip>
+              </ButtonGroup>
+              <Popper
+                sx={{ zIndex: 1 }}
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                disablePortal
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin:
+                        placement === "bottom" ? "center top" : "center bottom",
+                    }}
+                  >
+                    <Paper>
+                      <ClickAwayListener onClickAway={handleCloseButtonMenu}>
+                        <Tooltip title="Upload File">
+                          <Button
+                            key={"Upload File"}
+                            onClick={handleMenuItemClick}
+                            component="label"
+                            role={undefined}
+                            variant="outlined"
+                            tabIndex={-1}
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            <VisuallyHiddenInput
+                              type="file"
+                              onChange={(event: { target: { files: any } }) => {
+                                const file = event.target.files[0];
+                                if (file) {
+                                  console.log("Selected file:", file.name);
+                                  // Add your file upload logic here
+                                }
+                              }}
+                              multiple
+                            />
+                            Upload File
+                          </Button>
+                        </Tooltip>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
             </Box>
           )}
         </Grid>
         <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
-          <IconButton
-            aria-controls="tune-menu"
-            aria-haspopup="true"
-            onClick={handleClick1}
-          >
-            <TuneIcon fontSize="large" />
-          </IconButton>
+          <Tooltip title="Manage Columns">
+            <IconButton
+              aria-controls="tune-menu"
+              aria-haspopup="true"
+              onClick={handleClick1}
+            >
+              <TuneIcon fontSize="large" />
+            </IconButton>
+          </Tooltip>
           <Box>
             <StyledMenu
               id="tune-menu"
@@ -268,11 +436,6 @@ export default function EntityList(props: ModifyT) {
           </Box>
         </Grid>
       </Grid>
-      <Divider
-        sx={{
-          margin: "20px",
-        }}
-      />
       {dialogOpen && (
         <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
           {props.renderForm
@@ -288,9 +451,44 @@ export default function EntityList(props: ModifyT) {
           open={dialogOpenDelete}
           setDialogOpen={setDialogOpenDelete}
         >
-          {props.renderDelForm
-            ? props.renderDelForm(setDialogOpenDelete, (arg) => {}, ids)
-            : 1}
+          <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
+            <form>
+              <Typography variant={"h4"} style={{ paddingBottom: "10px" }}>
+                Are you sure you want to delete?
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="flex-end"
+                m={1}
+              >
+                <Button
+                  style={{ paddingRight: "20px" }}
+                  onClick={() => {
+                    setDialogOpenDelete(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    onDeleteDialog(ids);
+                    setSnackOpen(true);
+                  }}
+                  variant="contained"
+                >
+                  Delete
+                </Button>
+              </Box>
+            </form>
+            <Snackbar
+              open={snackOpen}
+              autoHideDuration={1000}
+              onClose={() => setSnackOpen(false)}
+              message="Record Deleted!"
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            />
+          </Box>
         </AddDialog>
       )}
       <StripedDataGrid
