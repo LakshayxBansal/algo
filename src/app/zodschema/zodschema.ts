@@ -469,6 +469,16 @@ export const nameMasterData = z.object({
   name: z.string().min(1).max(45),
 });
 
+// export const nameMasterData = z.object({
+//   id: z.number().optional(),
+//   name: z.string().min(1).max(45),
+//   // stamp: z.number().optional(),
+//   // created_by:z.string().optional(),
+//   // modified_by: z.string().optional(),
+//   // created_on: z.date().optional(),
+//   // modified_on: z.date().optional(),
+// });
+
 /**
  * used for storing name, alias master
  */
@@ -514,3 +524,12 @@ export const companySchema = z.object({
   pincode: z.string().optional(),
   stamp: z.number().optional()
 });
+
+export const inviteUserSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1, "Please enter Name").max(55),
+  usercontact: z.string(),
+  isInvited: z.number().optional(),
+  companyId: z.number(),
+  executiveId: z.number().optional()
+})

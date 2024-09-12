@@ -281,6 +281,7 @@ CREATE TABLE `executive_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL,\
+  `profile_img` varchar(100),\
   `address1` varchar(75) DEFAULT NULL,\
   `address2` varchar(75) DEFAULT NULL,\
   `address3` varchar(75) DEFAULT NULL,\

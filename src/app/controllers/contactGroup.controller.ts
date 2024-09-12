@@ -9,6 +9,7 @@ import {
   updateContactGroupDb,
   getContactGroupByPageDb,
   getContactGroupCount,
+  delContactDetailsById,
 } from "../services/contactGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -163,6 +164,29 @@ export async function getContactGroupById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function delContactById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delContactDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }
 
 export async function getContactGroupByPage(

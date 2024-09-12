@@ -97,6 +97,20 @@ export async function getContactGroupDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function delContactDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from contact_group_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getContactGroupByPageDb(
   crmDb: string,
   page: number,

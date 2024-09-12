@@ -4,13 +4,12 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getActionById, getEnquiryActionByPage } from '@/app/controllers/enquiryAction.controller';
+import { delActionById, getActionById, getEnquiryActionByPage } from '@/app/controllers/enquiryAction.controller';
 import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
 
 
 export default function Action() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',
@@ -24,6 +23,7 @@ export default function Action() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+      title="Action List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <ActionForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +33,7 @@ export default function Action() {
           )}
         fetchDataFn={getEnquiryActionByPage}
         fnFetchDataByID={getActionById}
+        fnDeleteDataByID={delActionById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

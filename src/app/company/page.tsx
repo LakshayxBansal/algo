@@ -8,7 +8,12 @@ export default async function Companies() {
   console.log(session);
   if (session) {
     return (
+      <>
+      <h1>Company List</h1>
       <CompanyEntityList/>
+      <h1>Invite List</h1>
+      
+      </>
     );
   } else {
     redirect("/signin");

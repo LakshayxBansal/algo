@@ -21,6 +21,7 @@ import {
   updateDepartmentDb,
   getDepartmentCount,
   getDepartmentByPageDb,
+  delDepartmentDetailsById
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -50,6 +51,31 @@ export async function getDepartmentById(id: number) {
     throw error;
   }
 }
+
+
+export async function delDepartmentById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delDepartmentDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
+}
+
 
 export async function createDepartment(data: nameMasterDataT) {
   let result;
@@ -265,11 +291,7 @@ export async function getDepartmentByPage(
   filter: string | undefined,
   limit: number
 ) {
-<<<<<<< HEAD
-  let getDeps = {
-    status: false,
-    data: {} as mdl.getDeptsT,
-=======
+  // console.log("controller params",page,filter,limit)
   let getDepartment = {
     status: false,
     data: {} as mdl.nameMasterDataT,
@@ -310,102 +332,11 @@ export async function getDepartmentByPage(
         status: true,
         data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
         count: Number(rowCount[0]["rowCount"]),
->>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
         error: {},
       };
+      // console.log("this is the result",conts);  
     }
   } catch (e: any) {
-<<<<<<< HEAD
-    console.log(e);
-
-    let err = 'Contact Admin, E-Code:369';
-
-    getDeps = {
-      ...getDeps,
-      status: false,
-      data: {} as mdl.getDeptsT,
-      error: err,
-    };
-  }
-  return getDeps;
-}
-
-//jp_dev
-export async function deleteDept(
-  id: number
-) {
-  let deptDeleted = { status: false, error: {} };
-  try {
-    const appSession = await getSession();
-
-    if (appSession) {
-      
-        const dept = await deleteDeptDB(
-          appSession.user.dbInfo.dbName as string,
-          id
-        );
-        console.log(dept.affectedRows);
-
-        if ((dept.affectedRows = 1)) {
-          deptDeleted = { status: true, error: {} };
-        } else if ((dept.affectedRows = 0)) {
-          deptDeleted = {
-            ...deptDeleted,
-            error: 'Record Not Found',
-          };
-        }} }
-  catch (e: any) {
-    console.log(e);
-
-    let err = 'Contact Admin, E-Code:369';
-
-    deptDeleted = { status: false, error: err };
-  }
-  return deptDeleted;
-}
-
-//jp mail files
-export async function getDeptData(
-  id:number
-) {
-  let getDep = {
-    status: false,
-    data: [{}] as mdl.getDeptT,
-    error: {},
-  };
-  try {
-    const appSession = await getSession();
-
-    if (appSession) {
-      const dep = await getDeptDataDb(
-        appSession.user.dbInfo.dbName as string,
-        id as number
-      );
-      
-      getDep = {
-        status: true,
-        data: dep.map(bigIntToNum) as mdl.getDeptT,
-        error: {},
-      };
-    }
-  } catch (e: any) {
-    console.log(e);
-
-    let err = 'Contact Admin, E-Code:369';
-
-    getDep = {
-      ...getDep,
-      status: false,
-      data: {} as mdl.getDeptT,
-      error: err,
-    };
-  }
-  return getDep;
-}
-
-
-
-=======
 
     let err = "Department Admin, E-Code:369";
 
@@ -416,6 +347,7 @@ export async function getDeptData(
       error: err,
     };
   }
+  // console.log("this is the return",getDepartment);
   return getDepartment;
 }
 >>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
