@@ -1,9 +1,7 @@
 'use client'
 import * as React from 'react';
-import { StripedDataGrid } from '@/app/utils/styledComponents';
-import { GridColDef } from '@mui/x-data-grid';
-import Title from './Title';
-import { Paper } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Paper, Typography } from '@mui/material';
 
 const pgSize = 5;
 interface HashMap {
@@ -55,61 +53,38 @@ const createData = (enquiries: any) => {
   }
   return data;
 }
-export default function Enquiries(props: {
+
+export default function ExecutiveEnquiryList(props: {
   openEnquiries: any
 }) {
   const executiveEnquiries = splitDataByExecutive(props.openEnquiries);
-  const [PageModel, setPageModel] = React.useState({ pageSize: pgSize, page: 0 });
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID' },
-    {
-      field: 'executive',
-      headerName: 'Executive',
-      width: 200,
-    },
-    {
-      field: 'total',
-      headerName: 'Total Open',
-      width: 150,
-    },
-    {
-      field: 'since1w',
-      headerName: 'Since 1 week',
-      width: 150,
-    },
-    {
-      field: 'since2w',
-      headerName: 'Since 2 week',
-      width: 150,
-    },
-    {
-      field: 'since3w',
-      headerName: 'Since 3 week',
-      width: 150,
-    }
+    { field: 'executive', headerName: 'Executive', width: 200 },
+    { field: 'total', headerName: 'Total Open', width: 150 },
+    { field: 'since1w', headerName: 'Since 1 week', width: 150 },
+    { field: 'since2w', headerName: 'Since 2 week', width: 150 },
+    { field: 'since3w', headerName: 'Since 3 week', width: 150 }
   ];
 
   const data = createData(executiveEnquiries);
-  // const data = [
-  //   {id: '1', executive: 'Ankit', totalOpen: '10', since1w: '3', since2w: '3', since3w: '4'},
-  // ];
   
   return (
-    <Paper elevation={2} sx={{p: 2, borderRadius: "16px",}}>
-      <Title>Enquiries</Title>
-      <StripedDataGrid
-        rows={data ? data : []}
-        columns={columns}
-        rowCount={data.length}
-        getRowId={(row) => row.id}
-        pagination={true}
-        pageSizeOptions={[pgSize, 10, 20]}
-        paginationMode="server"
-        paginationModel={PageModel}
-        onPaginationModelChange={setPageModel}
-        filterMode="server"
-        loading={data ? false : true}
-      />
+      <Paper elevation={2} sx={{p: 2, borderRadius: "16px",}}>
+        <Typography component="h2" variant="h6" color="primary" gutterBottom>Enquiries</Typography>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+          pageSizeOptions={[pgSize, 10, 20]}
+          disableRowSelectionOnClick
+        />
     </Paper>
   );
 }
