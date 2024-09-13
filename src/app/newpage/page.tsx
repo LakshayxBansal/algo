@@ -110,7 +110,7 @@ export default function AutoGrid() {
   const [endDate, setEndDate] = React.useState<string>(""); // End date state
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const [filterColor, setFilterColor] = React.useState<boolean>(true);
+  const [filterColor, setFilterColor] = React.useState<boolean>(false);
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     if (selectionModel.length > 0) {
@@ -139,6 +139,7 @@ export default function AutoGrid() {
     });
 
     setRows(filteredRows); // Set filtered rows
+    setFilterColor(true);
   };
 
   const handleSelectedStatus = (e: SelectChangeEvent) => {
@@ -166,6 +167,7 @@ export default function AutoGrid() {
       row.subStatus.toLowerCase().includes(subStatusSearchText.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
+    setFilterColor(true);
     handleCloseSubStatus(); // Close the filter menu after applying the filter
   };
 
@@ -185,14 +187,13 @@ export default function AutoGrid() {
       row.callCategory.toLowerCase().includes(categorySearchText.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
+    setFilterColor(true);
     handleCloseCategory(); // Close the filter menu after applying the filter
   };
 
   // Handle filter menu open/close for Area
   const handleClickArea = (event: React.MouseEvent<HTMLElement>) => {
-
     setAnchorElArea(event.currentTarget);
-    console.log(anchorElArea);
   };
 
   const handleCloseArea = () => {
@@ -205,6 +206,7 @@ export default function AutoGrid() {
       row.area.toLowerCase().includes(areaSearchText.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
+    setFilterColor(true);
     handleCloseArea(); // Close the filter menu after applying the filter
   };
 
@@ -232,6 +234,7 @@ export default function AutoGrid() {
     }
 
     setRows(filteredRows);
+    setFilterColor(true);
     handleCloseExec(); // Close the filter menu after applying the filter
   };
 
@@ -256,6 +259,7 @@ export default function AutoGrid() {
       row.nextAction.toLowerCase().includes(nextActionFilter.name.toLowerCase())
     ) : row1;
     setRows(filteredRows);
+    setFilterColor(true);
     handleCloseNextAction(); // Close the menu after filtering
   };
 
@@ -290,19 +294,22 @@ export default function AutoGrid() {
       const filteredRows = row1.filter((row) => (
         row.callStatus === selectedStatus)
       );
-      setRows(filteredRows)
+      setRows(filteredRows);
+      setFilterColor(true);
     }
     if (selectedStatus == "Open" && callFilter == "1") {
       const filteredRows = row1.filter((row) => {
         row.executive.length > 0 && row.callStatus === selectedStatus
       })
       setRows(filteredRows)
+      setFilterColor(true);
     }
     if (selectedStatus == "Open" && callFilter == "2") {
       const filteredRows = row1.filter((row) => {
         row.executive.length == 0 && row.callStatus === selectedStatus
       })
       setRows(filteredRows)
+      setFilterColor(true);
     }
     else {
       setRows(row1); // Reset to initial if no filter is applied
@@ -369,10 +376,13 @@ export default function AutoGrid() {
     });
 
     setRows(filteredRows);
+    setFilterColor(true);
   };
 
   const handleFilterReset = () => {
     setRows(row1); // Set filtered rows using setRows
+    setFilterColor(false)
+    setCategorySearchText({})
     handleCloseArea();
     handleClose1();
     handleCloseCallStatus();
@@ -439,7 +449,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterColor ? "blue" : "black" }}
+          <Button sx={{ color: Object.keys(categorySearchText).length ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Call Category" arrow>
                 <FilterListIcon />
@@ -505,7 +515,7 @@ export default function AutoGrid() {
       field: "area", headerName: "Area", width: 100, filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElArea ? "blue" : "black" }}
+          <Button sx={{ color: Object.keys(areaSearchText).length ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Area" arrow>
                 <FilterListIcon />
@@ -586,7 +596,7 @@ export default function AutoGrid() {
     {
       field: "executive", headerName: "Executive", width: 100, renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElExec ? "blue" : "black" }}
+          <Button sx={{ color: execSearchText.name || filterType !== "reset" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Executive" arrow>
                 <FilterListIcon />
@@ -687,7 +697,7 @@ export default function AutoGrid() {
     {
       field: "callStatus", headerName: "Call Status", width: 100, renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElCallStatus ? "blue" : "black" }}
+          <Button sx={{ color: selectedStatus !== "" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Call Status" arrow>
                 <FilterListIcon />
@@ -773,7 +783,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElSubStatus ? "blue" : "black" }}
+          <Button sx={{ color: filterColor ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Sub Status" arrow>
                 <FilterListIcon />
@@ -860,7 +870,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filtering
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElNextAction ? "blue" : "black" }}
+          <Button sx={{ color: filterColor ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Next Action" arrow>
                 <FilterListIcon />
@@ -926,7 +936,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filtering for date
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElDate ? "blue" : "black" }}
+          <Button sx={{ color: filterColor ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Date" arrow>
                 <FilterListIcon />

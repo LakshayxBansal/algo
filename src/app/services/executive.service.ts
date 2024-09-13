@@ -160,6 +160,20 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function delExecutiveDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from executive_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveByPageDb(
   crmDb: string,
   page: number,
