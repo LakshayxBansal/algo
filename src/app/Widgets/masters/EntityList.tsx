@@ -39,6 +39,7 @@ import { StyledMenu } from "../../utils/styledComponents";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import { any } from "zod";
+import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 
 type ModifyT = {
   title: string;
@@ -80,7 +81,6 @@ export default function EntityList(props: ModifyT) {
   const anchorRef = useRef<HTMLDivElement>(null);
 
   let searchText;
-
   useEffect(() => {
     const fetchData = debounce(async (searchText) => {
       const rows: any = await props.fetchDataFn(
@@ -120,11 +120,9 @@ export default function EntityList(props: ModifyT) {
   }
 
   async function onDeleteDialog(modId: number) {
-    console.log("clicked delete dialog");
     if (props.fnDeleteDataByID && modId) {
       const data = await props.fnDeleteDataByID(modId);
       if (data.status) {
-        // setSnackOpen(true);
       }
       setTimeout(() => {
         dialogOpenDelete ? setDialogOpenDelete(false) : null;
@@ -132,12 +130,7 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
-  const handleColumnVisibilityChange = (field: string) => {
-    setColumnVisibilityModel((prev: { [x: string]: any }) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
+
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -157,21 +150,71 @@ export default function EntityList(props: ModifyT) {
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
-    // setSelectedIndex(index);
     setOpen(false);
   };
 
-  const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-  });
+  const columns1: GridColDef[] = [
+    {
+      field: "Icon menu",
+      headerName: "Options",
+      minWidth: 200,
+      renderCell: (params) => {
+        return <IconComponent id={params.row.id} />;
+      },
+    },
+  ];
+
+  const columns: GridColDef[] = columns1.concat(props.customCols);
+
+  const columns3: GridColDef[] = columns1.concat(props.customCols);
+  const [columns4, setColumns4] = useState(columns3);
+
+
+  type colu = {
+    field: keyof GridColDef;
+    headerName:  keyof GridColDef;
+    editable:  keyof GridColDef;
+    minWidth:  keyof GridColDef;
+  }
+
+  const handleColumnVisibilityChange = (col: GridColDef) => {
+    setColumnVisibilityModel((prev: any) => {
+        const newVisibilityModel = {
+            ...prev,
+            [col.field]: !prev[col.field] 
+        };
+        setColumns4((prevColumns) => {
+            const isColumnVisible = newVisibilityModel[col.field];
+            if (isColumnVisible) {
+                if (!prevColumns.some(item => item.field === col.field)) {
+                    return [...prevColumns, col];
+                }
+            } else {
+                return prevColumns.filter(item => item.field !== col.field);
+            }
+            return prevColumns;
+        });
+
+        return newVisibilityModel;
+    });
+};
+
+  function ColumnVisibilityToggle(props: { columns1: GridColDef[]; columns2: GridColDef[]; handleColumnVisibilityChange:any }) {
+    const [columns1, setColumns1] = useState(props.columns1);
+    const column1Fields = new Set(columns1.map(col => col.field));
+    return (
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {props.columns2.map((col) => (
+          <FormControlLabel
+            key={col.field}
+            control={<Checkbox
+              checked={column1Fields.has(col.field)} // Check if field exists in columns1
+              onChange={() => props.handleColumnVisibilityChange(col)} />}
+            label={col.headerName} />
+        ))}
+      </div>
+    );
+  }
 
   type iconT = {
     id: number;
@@ -229,20 +272,12 @@ export default function EntityList(props: ModifyT) {
     );
   }
 
-  const columns1: GridColDef[] = [
-    {
-      field: "Icon menu",
-      headerName: "Options",
-      minWidth:200, 
-      renderCell: (params) => {
-        return <IconComponent id={params.row.id} />;
-      },
-    },
-  ];
-
-  // const columns: GridColDef[] = columns1.concat(props.customCols);
-
+ 
   
+  function isSnakeCase(str: string): boolean {
+    const snakeCaseRegex = /^[a-z]+(_[a-z]+)*$/;
+    return snakeCaseRegex.test(str);
+  }
 
   const columns2: GridColDef[] = [];
   let columnHeading = {
@@ -251,32 +286,81 @@ export default function EntityList(props: ModifyT) {
     editable: true,
     minWidth: 200,
   };
-  
-  const dataObj:{ [key: string]: any } = data[0];
-  if (dataObj) {
-    for (const key in dataObj) {
-      const seenKeys = new Set();
-      if (dataObj.hasOwnProperty(key)) {
-        if (seenKeys.has(key)) {
-          break;
+
+
+  type dataObj1 = { [key: string]: any };
+
+  // function getUniqueObjects(
+  //   arr1: GridColDef[],
+  //   arr2: GridColDef[],
+  //   key: keyof GridColDef
+  // ) {
+  //   // Combine both arrays
+  //   const combined = [...arr1, ...arr2];
+
+  //   // Create a Set to track unique values
+  //   const uniqueSet = new Set();
+
+  //   // Filter out unique objects based on the specified key
+  //   const uniqueObjects = combined.filter((obj) => {
+  //     // Create a unique identifier for the object based on the key
+  //     const keyValue = obj[key];
+
+  //     if (uniqueSet.has(keyValue)) {
+  //       return false; // Object is not unique
+  //     } else {
+  //       uniqueSet.add(keyValue); // Add key value to Set
+  //       return true; // Object is unique
+  //     }
+  //   });
+
+  //   // Push unique objects from arr2 to arr1
+  //   arr1.push(
+  //     ...uniqueObjects.filter(
+  //       (obj) => !arr1.some((existingObj) => existingObj[key] === obj[key])
+  //     )
+  //   );
+
+  //   return arr1;
+  // }
+
+  function pushColumns(dataObj: dataObj1) {
+    if (dataObj) {
+      for (const key in dataObj) {
+        const seenKeys = new Set();
+        if (dataObj.hasOwnProperty(key)) {
+          if (seenKeys.has(key)) {
+            break;
+          }
+          seenKeys.add(key);
+          let keyToUse: string;
+          const result = isSnakeCase(key);
+          let KeyToU: string;
+          if (result) {
+            keyToUse = key.replace(/_/g, " ");
+            KeyToU = keyToUse.charAt(0).toUpperCase();
+            KeyToU = KeyToU + keyToUse.slice(1);
+            KeyToU = KeyToU.toLowerCase() // Ensure the string is in lowercase before capitalizing
+              .replace(/\b\w/g, (char) => char.toUpperCase());
+          } else {
+            continue;
+          }
+          columnHeading = {
+            ...columnHeading,
+            field: key,
+            headerName: KeyToU,
+          };
+          const exists = columns.some(
+            (obj) => obj["field"] === columnHeading["field"]
+          );
+          if (!exists) {
+               columns.push(columnHeading);
+          }
+
         }
-        seenKeys.add(key);  
-        columnHeading = {
-          ...columnHeading,
-          field:key,
-          headerName:key,
-        }
-      columns2.push(columnHeading);
       }
     }
   }
-
-  const columns: GridColDef[] = columns1.concat(columns2);
-
-
-
-
-  // console.log(columns2);
 
   return (
     <Container
@@ -418,20 +502,26 @@ export default function EntityList(props: ModifyT) {
               open={Boolean(anchorEl2)}
               onClose={handleClose1}
             >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {columns.map((col) => (
+              {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
+                {/* {columns2.map((col) => 
+             {   return(
                   <FormControlLabel
                     key={col.field}
                     control={
                       <Checkbox
                         checked={columnVisibilityModel[col.field] !== false}
-                        onChange={() => handleColumnVisibilityChange(col.field)}
+                        onChange={() => {
+                          // handleColumnVisibilityChange(col.field);
+                          handleColumnVisibilityChange(col.field);
+                        }}
                       />
                     }
                     label={col.headerName}
                   />
-                ))}
-              </div>
+                )})} */}
+              {/* </div> */}
+              {pushColumns(data[0])}
+                <ColumnVisibilityToggle columns1={columns4} columns2={columns} handleColumnVisibilityChange={handleColumnVisibilityChange}/>
             </StyledMenu>
           </Box>
         </Grid>
@@ -453,7 +543,7 @@ export default function EntityList(props: ModifyT) {
         >
           <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
             <form>
-              <Typography variant={"h4"} style={{ paddingBottom: "10px" }}>
+              <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
                 Are you sure you want to delete?
               </Typography>
               <Box
@@ -493,7 +583,7 @@ export default function EntityList(props: ModifyT) {
       )}
       <StripedDataGrid
         rows={data ? data : []}
-        columns={columns}
+        columns={columns4}
         rowCount={NRows}
         getRowId={(row) => row.id}
         pagination={true}
