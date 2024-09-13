@@ -2,7 +2,7 @@
 import { alpha, styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import { Menu } from '@mui/material';
+import { Box, Button, Menu } from '@mui/material';
 
 
 
@@ -87,8 +87,6 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-
-
 export const StyledMenu = styled(Menu)(({ theme }) => ({
   '& .MuiPaper-root': {
     borderRadius: 6,
@@ -119,5 +117,41 @@ export const StyledMenu = styled(Menu)(({ theme }) => ({
   },
 }));
 
+export const CombinedButton = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  minWidth: 0,
+  height: "40px", // Adjust the height as needed
+  borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.primary.main,
+  "& .separator": {
+    height: "30px", // Adjust the height as needed
+    width: "1px",
+    backgroundColor: "#fff",
+    margin: "0 4px", // Adjust spacing between icons and separator
+  },
+  "& .MuiBox-root":{
+    padding:0,
+    margin:0,
+    minWidth: 0,
+  },
+  "& .MuiButtonBase-root":{
+    color:"#fff",
+    fontSize:20,
+    fontWeight:500,
+    minWidth:0,
+    
+    "& .MuiSvgIcon-root":{
+      color:"#fff",
+      fontSize:25,
+    },
+  },
+  
+
+  
+}));
 
 
