@@ -1,7 +1,7 @@
-'use client'
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Paper, Typography } from '@mui/material';
+import { getOpenEnquiries } from '@/app/controllers/dashboard.controller';
 
 const pgSize = 5;
 interface HashMap {
@@ -54,10 +54,10 @@ const createData = (enquiries: any) => {
   return data;
 }
 
-export default function ExecutiveEnquiryList(props: {
-  openEnquiries: any
-}) {
-  const executiveEnquiries = splitDataByExecutive(props.openEnquiries);
+export default async function ExecutiveEnquiryList() {
+  let openEnquiries = await getOpenEnquiries();
+
+  const executiveEnquiries = splitDataByExecutive(openEnquiries);
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID' },
     { field: 'executive', headerName: 'Executive', width: 200 },

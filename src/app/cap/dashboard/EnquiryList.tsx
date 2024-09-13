@@ -1,10 +1,10 @@
-'use client'
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Paper, Typography } from '@mui/material';
+import { getOpenEnquiries } from '@/app/controllers/dashboard.controller';
 
-export default function EnquiryList(props: {
-  openEnquiries: any
-}) {
+export default async function EnquiryList() {
+  let openEnquiries = await getOpenEnquiries();
+
   const columns: GridColDef[] = [
     { field: 'RowID', headerName: 'ID', width: 50 },
     {
@@ -23,15 +23,13 @@ export default function EnquiryList(props: {
       width: 150,
     }
   ];
-
-  const data = props.openEnquiries;
   
   return (
     <Paper elevation={2} sx={{borderRadius: "16px", py: 1, px: 2}}>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>Enquiries</Typography>
       <Box sx={{height: 380}}>
         <DataGrid
-          rows={data}
+          rows={openEnquiries}
           columns={columns}
           initialState={{
             pagination: {

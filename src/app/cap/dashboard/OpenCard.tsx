@@ -1,12 +1,11 @@
-'use client'
 import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
+import { getOpenEnquiries } from '@/app/controllers/dashboard.controller';
 
-export default function OpenCard(props: {
-    data: number,
-  }) {    
+export default async function OpenCard() {    
+    let openEnquiries = await getOpenEnquiries();
   return (
     <Paper sx={{
         p: "24px",
@@ -23,10 +22,10 @@ export default function OpenCard(props: {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Open Enquiries</Typography>
-            <Typography component="p" variant="h4">{props.data}</Typography>
+            <Typography component="p" variant="h4">{openEnquiries.length}</Typography>
         </Box>
         <Box>
-            <Link color="primary" href="#">View balance</Link>
+            <Link color="primary" href="#">View details</Link>
         </Box>
         </Box>
     </Paper>

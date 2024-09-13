@@ -1,14 +1,12 @@
-'use client'
 import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
+import { getClosedEnquiries } from '@/app/controllers/dashboard.controller';
 
-export default function ClosedCard(props: {
-    data: number,
-    date: Date
-  }) {    
-    const date = new Date();
+export default async function ClosedCard() {    
+    let closedEnquiries = await getClosedEnquiries();
+    const date =  closedEnquiries.at(-1).date;
   return (
     <Paper
         sx={{
@@ -26,14 +24,14 @@ export default function ClosedCard(props: {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Closed Enquiries</Typography>
-            <Typography component="p" variant="h4">{props.data}</Typography>
+            <Typography component="p" variant="h4">{closedEnquiries.length}</Typography>
             <Typography color="text.secondary" sx={{ flex: 1 }}>
-                since {props.date.toDateString()}
+                since {date.toDateString()}
             </Typography>
         </Box>
         <Box>
             <Link color="primary" href="#">
-            View balance
+            View details
             </Link>
         </Box>
         </Box>

@@ -1,12 +1,12 @@
-'use client'
 import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
+import { getUnassignedEnquiries } from '@/app/controllers/dashboard.controller';
 
-export default function UnassignedCard(props: {
-    data: number,
-  }) {    
+export default async function UnassignedCard() {    
+    let unassignedEnquiries = await getUnassignedEnquiries();
+
   return (
     <Paper
         sx={{
@@ -24,10 +24,10 @@ export default function UnassignedCard(props: {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Unassigned Enquiries</Typography>
-            <Typography component="p" variant="h4">{props.data}</Typography>
+            <Typography component="p" variant="h4">{unassignedEnquiries.length}</Typography>
         </Box>
         <Box>
-            <Link color="primary" href="#">View balance</Link>
+            <Link color="primary" href="#">View details</Link>
         </Box>
         </Box>
     </Paper>

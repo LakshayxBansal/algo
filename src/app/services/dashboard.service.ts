@@ -18,6 +18,19 @@ export async function getOpenEnquiriesDb(dbName: string) {
       console.log(e);
     }
 }
+export async function getUnassignedEnquiriesDb(dbName: string) {
+    try {
+      const result = await excuteQuery({
+        host: dbName,
+        query: "SELECT * FROM enquiry_ledger_tran WHERE status_id=1 AND allocated_to IS NULL",
+        values: [],
+      });
+  
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
+}
 export async function getClosedEnquiriesDb(dbName: string) {
     try {
       const result = await excuteQuery({
