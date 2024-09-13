@@ -13,6 +13,7 @@ import { getSession } from "../services/session.service";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
 import * as mdl from "../models/models";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function createOrganisation(data: zm.organisationSchemaT) {
   let result;

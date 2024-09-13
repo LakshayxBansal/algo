@@ -1,6 +1,7 @@
 "use server"
-import { getClosedEnquiriesDb, getOpenEnquiriesDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
+import { getClosedEnquiriesDb, getEnquiriesOverviewDb, getOpenEnquiriesDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
 import { getSession } from "../services/session.service";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function getOpenEnquiries() {
     try {
@@ -30,6 +31,18 @@ export async function getClosedEnquiries() {
       const session = await getSession();
       if (session?.user.dbInfo) {
         const result = await getClosedEnquiriesDb(session.user.dbInfo.dbName);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+}
+export async function getEnquiriesOverview() {
+    try {
+      const session = await getSession();
+      if (session?.user.dbInfo) {
+        const data = await getEnquiriesOverviewDb(session.user.dbInfo.dbName);
+        const result = data.map(bigIntToNum);
         return result;
       }
     } catch (error) {

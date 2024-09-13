@@ -1,3 +1,4 @@
+"use server"
 import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -44,7 +45,8 @@ const getXAxisData = (currMonth: number) => {
 }
 
 export default async function OverviewCard() {
-  let [openEnquiries, closedEnquiries] = await Promise.all([getOpenEnquiries(), getClosedEnquiries()]);
+  let [openEnquiries, closedEnquiries] = await Promise.all([getOpenEnquiries(), getClosedEnquiries()]);  
+
   const currMonth = new Date().getMonth();
   const currYear = new Date().getFullYear();
   const openData = splitDataByMonth(openEnquiries, currMonth, currYear);
@@ -58,29 +60,12 @@ export default async function OverviewCard() {
   dispYear += currYear;
   
   return (
-    <Box sx={{ width: '100%'}}>
+    <Box>
       <Paper sx={{ width: "100%", borderRadius: "16px"}} elevation={2}>
         <Box sx={{display: "flex", justifyContent: "space-between", paddingTop: "10px", width: "90%", margin: "auto"}}>
           <Typography component="h2" variant="h6" color="primary" gutterBottom>Enquiries Overview</Typography>
           <Typography component="h2" variant="h6" color="primary" gutterBottom>{dispYear}</Typography>
         </Box>
-         {/* <ResponsiveChartContainer
-          series={[
-            { type: "bar", data: openData, stack: "group1", label: 'Open', color: "rgba(144, 202, 249, 0.85)", highlightScope: {highlighted: "item"}},
-            { type: "bar", data: closedData, stack: "group1", label: 'Closed', color: "rgba(30, 136, 229, 0.85)", highlightScope: {highlighted: "item"}},
-            { type: "line", data: lineData, label: 'Cumulative open', color:"rgba(103, 58, 183, 0.85)"},
-          ]}
-          xAxis={[{ scaleType: "band",  data: xAxisData, id: 'x-axis-id' }]}
-          yAxis={[{ id: 'y-axis-id' }]}
-          height={380}
-        >
-          <ChartsLegend direction="row"/>
-          <BarPlot />
-          <LinePlot />
-          <ChartsXAxis label="Month" position="bottom" axisId="x-axis-id" />
-          <ChartsYAxis axisId="y-axis-id" />
-          <ChartsTooltip/>
-        </ResponsiveChartContainer> */}
         <ChartContainer openData={openData} closedData={closedData} lineData={lineData} xAxisData={xAxisData}/>
       </Paper>
     </Box>

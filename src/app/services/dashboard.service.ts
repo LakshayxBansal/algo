@@ -18,6 +18,24 @@ export async function getOpenEnquiriesDb(dbName: string) {
       console.log(e);
     }
 }
+
+export async function getEnquiriesOverviewDb(dbName: string) {
+    try {
+      const result = await excuteQuery({
+        host: dbName,
+        query: "select em.id as executiveId, count(*) as total, em.name, ROW_NUMBER() OVER () as id,\
+ (select count(*) from enquiry_ledger_tran et where DATEDIFF(now(), date) < 7 AND et.allocated_to=executiveId) as since1w,\
+ (select count(*) from enquiry_ledger_tran et where DATEDIFF(now(), date) < 14 AND et.allocated_to=executiveId) as since2w,\
+ (select count(*) from enquiry_ledger_tran et where DATEDIFF(now(), date) < 21 AND et.allocated_to=executiveId) as since3w\
+ from enquiry_ledger_tran et left join executive_master em on em.id=et.allocated_to where et.allocated_to IS NOT null AND et.status_id=1 group by allocated_to;",
+        values: [],
+      });
+  
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
+}
 export async function getUnassignedEnquiriesDb(dbName: string) {
     try {
       const result = await excuteQuery({

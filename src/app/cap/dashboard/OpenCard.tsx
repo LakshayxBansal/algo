@@ -4,8 +4,14 @@ import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
 import { getOpenEnquiries } from '@/app/controllers/dashboard.controller';
 
+function getCount(data: any){
+    const currDate = new Date().toLocaleDateString()
+    let count = 0;
+    return count;
+}
 export default async function OpenCard() {    
     let openEnquiries = await getOpenEnquiries();
+    const count = getCount(openEnquiries);
   return (
     <Paper sx={{
         p: "24px",

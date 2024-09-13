@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import { getSession } from '../../services/session.service';
 import { redirect } from 'next/navigation';
 import ExecutiveEnquiryList from './ExecutiveEnquiryList';
@@ -14,41 +13,41 @@ import OverviewCard from './OverviewCard';
 
 export default async function Dashboard() {
   const session = await getSession();
-  if (session?.user.dbInfo) {    
+  if (session?.user.dbInfo) {  
     return (
       <Box sx= {{maxWidth: "100%", bgcolor: "#F9FAFB"}}>
         <Box sx={{ py: 3, maxWidth:"90vw", margin:"auto"}}>
-          <Grid container spacing={3} sx={{ }}>
+          <Grid container spacing={3}>
             <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-              <OpenCard/>
+              <div> <OpenCard/> </div>
             </Grid>
             <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-              <UnassignedCard/>
+              <div> <UnassignedCard/> </div>
             </Grid>
             <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-              <ClosedCard/>
+              <div> <ClosedCard/> </div>
             </Grid>
             <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-              <AverageAgeCard/>
+              <div> <AverageAgeCard/> </div>
             </Grid>
           </Grid>
           <Grid container spacing={3} sx={{pt: 4}}>
-            <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
-              <Paper
-                sx={{
-                  borderRadius: "16px",
-                }}
-              >
+            <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>            
+              <div>
                 <OverviewCard/>
-              </Paper>
+              </div>
             </Grid>
             <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
+              <div>
                 <EnquiryList/>
+              </div>
             </Grid>
           </Grid>
           <Grid container spacing={3} sx={{mt: 4}}>
             <Grid item xs={11} sm={12} md={12} sx={{margin: "auto"}}>
-              <ExecutiveEnquiryList/>
+              <div>
+                <ExecutiveEnquiryList/>
+              </div>
             </Grid>
           </Grid>
         </Box>
