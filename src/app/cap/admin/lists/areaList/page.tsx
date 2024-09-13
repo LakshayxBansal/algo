@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import AreaForm from '@/app/Widgets/masters/masterForms/areaForm';
-import { getAreaByPage, getById } from '@/app/controllers/area.controller';
+import { delAreaById, getAreaByPage, getById } from '@/app/controllers/area.controller';
 
 
 export default function Area() {
@@ -24,6 +24,7 @@ export default function Area() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+      title='Area Master'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <AreaForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +34,7 @@ export default function Area() {
           )}
         fetchDataFn={getAreaByPage}
         fnFetchDataByID={getById}
+        fnDeleteDataByID={delAreaById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

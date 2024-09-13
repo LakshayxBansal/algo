@@ -40,12 +40,6 @@ export type RenderFormFunctionT = (
   parentData?: any
 ) => JSX.Element;
 
-export type RenderDelFormFunctionT = (
-  fnDialogOpen: (props: any) => void,
-  fnDialogValue: (props: any) => void,
-  data?: any,
-  parentData?: any
-) => JSX.Element;
 
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
