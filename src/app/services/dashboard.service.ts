@@ -19,6 +19,20 @@ export async function getOpenEnquiriesDb(dbName: string) {
     }
 }
 
+export async function getOpenEnquiriesCountDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query: "select count(*) as total from enquiry_ledger_tran lt where datediff(lt.date, now())=0;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getEnquiriesOverviewDb(dbName: string) {
     try {
       const result = await excuteQuery({

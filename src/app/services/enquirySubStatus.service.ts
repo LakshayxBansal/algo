@@ -135,3 +135,17 @@ export async function getEnquirySubStatusCount(
     console.log(e);
   }
 }
+
+export async function delSubStatusDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from enquiry_sub_status_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

@@ -4,6 +4,7 @@ import * as zs from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import {
   createOrganisationDB,
+  delOrganisationDetailsById,
   getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
@@ -201,4 +202,27 @@ export async function getOrganisationByPage(
     };
   }
   return getOrg;
+}
+
+export async function delOrganisationById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delOrganisationDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }

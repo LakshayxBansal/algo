@@ -2,16 +2,11 @@ import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
-import { getOpenEnquiries } from '@/app/controllers/dashboard.controller';
+import {  getOpenEnquiriesCount } from '@/app/controllers/dashboard.controller';
 
-function getCount(data: any){
-    const currDate = new Date().toLocaleDateString()
-    let count = 0;
-    return count;
-}
 export default async function OpenCard() {    
-    let openEnquiries = await getOpenEnquiries();
-    const count = getCount(openEnquiries);
+    let openEnquiriesCount = (await getOpenEnquiriesCount())[0];
+    
   return (
     <Paper sx={{
         p: "24px",
@@ -28,7 +23,7 @@ export default async function OpenCard() {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Open Enquiries</Typography>
-            <Typography component="p" variant="h4">{openEnquiries.length}</Typography>
+            <Typography component="p" variant="h4">{openEnquiriesCount.total}</Typography>
         </Box>
         <Box>
             <Link color="primary" href="#">View details</Link>
