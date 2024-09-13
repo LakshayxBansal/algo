@@ -362,6 +362,8 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
+  pushColumns(data[0])
+
   return (
     <Container
       maxWidth="lg"
@@ -502,25 +504,6 @@ export default function EntityList(props: ModifyT) {
               open={Boolean(anchorEl2)}
               onClose={handleClose1}
             >
-              {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
-                {/* {columns2.map((col) => 
-             {   return(
-                  <FormControlLabel
-                    key={col.field}
-                    control={
-                      <Checkbox
-                        checked={columnVisibilityModel[col.field] !== false}
-                        onChange={() => {
-                          // handleColumnVisibilityChange(col.field);
-                          handleColumnVisibilityChange(col.field);
-                        }}
-                      />
-                    }
-                    label={col.headerName}
-                  />
-                )})} */}
-              {/* </div> */}
-              {pushColumns(data[0])}
                 <ColumnVisibilityToggle columns1={columns4} columns2={columns} handleColumnVisibilityChange={handleColumnVisibilityChange}/>
             </StyledMenu>
           </Box>
