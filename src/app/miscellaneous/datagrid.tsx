@@ -8,6 +8,7 @@ export default function DataGridComp(props: any) {
       pageSizeOptions={[5, 10]}
       // checkboxSelection
       sx={{ overflow: "clip" }}
+      // columnVisibilityModel={}
     />
   );
 }

@@ -10,7 +10,11 @@ export async function getEnquirySubStatusList(
   status: string
 ) {
   try {
+    console.log(status);
+    
     const nStatus = Number(status);
+    console.log(nStatus);
+    
     let query =
       "select sb.id as id, sb.name as name from enquiry_sub_status_master sb where \
                   sb.enquiry_status_id= ?";
