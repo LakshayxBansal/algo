@@ -19,7 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { StyledMenu } from "../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -109,10 +109,20 @@ export default function AutoGrid() {
   const [startDate, setStartDate] = React.useState<string>(""); // Start date state
   const [endDate, setEndDate] = React.useState<string>(""); // End date state
   const [callFilter, setCallFilter] = React.useState<string>("0");
+  const [selectedRow, setSelectedRow] = React.useState<any>(null);
+  const [filterColor, setFilterColor] = React.useState<boolean>(true);
+
+  const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
+    if (selectionModel.length > 0) {
+      const selectedId = selectionModel[0]; // Get the ID of the selected row
+      const selectedData = rows.find((row) => row.id === selectedId); // Find the corresponding row data
+      setSelectedRow(selectedData); // Set the selected row data
+    }
+  };
 
   // Handle the filtering of rows based on the date range
-  const handleFilter = () => {
-    const filteredRows = row1.filter((row) => {
+  const handleDateFilter = () => {
+    const filteredRows = rows.filter((row) => {
       const rowDate = new Date(row.date).getTime(); // Convert row date to timestamp
       const start = startDate ? new Date(startDate).getTime() : null;
       const end = endDate ? new Date(endDate).getTime() : null;
@@ -152,7 +162,7 @@ export default function AutoGrid() {
 
   // Filter rows based on Sub Status search
   const handleFilterChangeSubStatus = () => {
-    const filteredRows = subStatusSearchText ? row1.filter((row) =>
+    const filteredRows = subStatusSearchText ? rows.filter((row) =>
       row.subStatus.toLowerCase().includes(subStatusSearchText.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
@@ -171,7 +181,7 @@ export default function AutoGrid() {
 
   // Filter rows based on Call Category search
   const handleFilterChangeCategory = () => {
-    const filteredRows = categorySearchText ? row1.filter((row) =>
+    const filteredRows = categorySearchText ? rows.filter((row) =>
       row.callCategory.toLowerCase().includes(categorySearchText.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
@@ -180,7 +190,9 @@ export default function AutoGrid() {
 
   // Handle filter menu open/close for Area
   const handleClickArea = (event: React.MouseEvent<HTMLElement>) => {
+
     setAnchorElArea(event.currentTarget);
+    console.log(anchorElArea);
   };
 
   const handleCloseArea = () => {
@@ -189,7 +201,7 @@ export default function AutoGrid() {
 
   // Filter rows based on Area search
   const handleFilterChangeArea = () => {
-    const filteredRows = areaSearchText ? row1.filter((row) =>
+    const filteredRows = areaSearchText ? rows.filter((row) =>
       row.area.toLowerCase().includes(areaSearchText.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
@@ -208,7 +220,7 @@ export default function AutoGrid() {
     let filteredRows;
 
     if (filterType === "allocated") {
-      filteredRows = execSearchText.name ? row1.filter((row) =>
+      filteredRows = execSearchText.name ? rows.filter((row) =>
         row.executive.toLowerCase().includes(execSearchText.name.toLowerCase())
       ) : row1;
 
@@ -240,7 +252,7 @@ export default function AutoGrid() {
 
   // Handle filtering rows based on the search string
   const handleFilterChangeNextAction = () => {
-    const filteredRows = nextActionFilter ? row1.filter(row =>
+    const filteredRows = nextActionFilter ? rows.filter(row =>
       row.nextAction.toLowerCase().includes(nextActionFilter.name.toLowerCase())
     ) : row1;
     setRows(filteredRows);
@@ -331,7 +343,7 @@ export default function AutoGrid() {
     const today = new Date();
     const todayDateString = today.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
 
-    const filteredRows = row1.filter((row) => {
+    const filteredRows = rows.filter((row) => {
       // Convert row actionDate to date and compare
       const rowDate = new Date(row.actionDate).toLocaleDateString('en-CA');
       const initial = initialDate ? new Date(initialDate).toLocaleDateString('en-CA') : null;
@@ -361,7 +373,14 @@ export default function AutoGrid() {
 
   const handleFilterReset = () => {
     setRows(row1); // Set filtered rows using setRows
-    handleCloseArea(); // Close the filter menu after applying the filter
+    handleCloseArea();
+    handleClose1();
+    handleCloseCallStatus();
+    handleCloseCategory();
+    handleCloseDate();
+    handleCloseExec();
+    handleCloseNextAction();
+    handleCloseSubStatus();
   };
 
 
@@ -420,7 +439,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: anchorElCategory ? "blue" : "black" }}
+          <Button sx={{ color: filterColor ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Call Category" arrow>
                 <FilterListIcon />
@@ -951,6 +970,9 @@ export default function AutoGrid() {
                     label="Initial Date"
                     variant="outlined"
                     size="small"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     value={initialDate}
                     onChange={(e) => setInitialDate(e.target.value)}
                     type="date"
@@ -963,6 +985,9 @@ export default function AutoGrid() {
                     label="Final Date"
                     variant="outlined"
                     size="small"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     value={finalDate}
                     onChange={(e) => setFinalDate(e.target.value)}
                     type="date"
@@ -1113,10 +1138,18 @@ export default function AutoGrid() {
               }}
               sx={{ mr: 2 }}
               size="small"
-
             />
-            <Button variant="contained" onClick={handleFilter}>
+            <Button variant="contained"
+              onClick={handleDateFilter}
+              sx={{ height: "6vh", fontSize: '10px' }} size="small"
+            >
               Apply Filter
+            </Button>
+            <Button onClick={handleFilterReset}
+              variant="contained"
+              sx={{ ml: "2%", height: "6vh", fontSize: '10px' }} size="small"
+            >
+              Reset Filter
             </Button>
           </Grid>
         </Paper>
@@ -1149,8 +1182,22 @@ export default function AutoGrid() {
         }}
       >
         <Paper>
-          <DataGrid rows={rows} columns={column1} columnVisibilityModel={columnVisibilityModel} onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)} />
+          <DataGrid
+            rows={rows}
+            columns={column1}
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+            onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
+            rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+          />
         </Paper>
+        {/* {selectedRow && (
+          <Box mt={2}>
+            <Typography variant="h6">Selected Row Data:</Typography>
+            <Typography>Date: {selectedRow.date}</Typography>
+            <Typography>Status: {selectedRow.status}</Typography>
+          </Box>
+        )} */}
       </Grid>
       <Grid sx={{ display: "flex", marginTop: "1vh" }}>
         {/* <Typography sx={{ marginLeft: "20vw", mt: "10px" }}>
@@ -1184,7 +1231,7 @@ export default function AutoGrid() {
           width: "100%",
         }}
       >
-        <Box> Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger:)</Box>
+        {selectedRow && (<Box> Call Details : {selectedRow.callNo} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
         <Paper sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
           <CallDetailList />
         </Paper>
