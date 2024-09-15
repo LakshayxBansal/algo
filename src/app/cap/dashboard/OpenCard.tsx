@@ -6,7 +6,7 @@ import {  getOpenEnquiriesCount } from '@/app/controllers/dashboard.controller';
 
 export default async function OpenCard() {    
     let openEnquiriesCount = (await getOpenEnquiriesCount())[0];
-    
+    let date = new Date();
   return (
     <Paper sx={{
         p: "24px",
@@ -24,6 +24,9 @@ export default async function OpenCard() {
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Open Enquiries</Typography>
             <Typography component="p" variant="h4">{openEnquiriesCount.total}</Typography>
+            <Typography color="text.secondary" sx={{ flex: 1 }}>
+                on {date.toDateString()}
+            </Typography>
         </Box>
         <Box>
             <Link color="primary" href="#">View details</Link>

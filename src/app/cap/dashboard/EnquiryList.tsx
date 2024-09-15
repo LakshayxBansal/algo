@@ -6,15 +6,15 @@ export default async function EnquiryList() {
   let openEnquiries = await getOpenEnquiries();
 
   const columns: GridColDef[] = [
-    { field: 'RowID', headerName: 'ID', width: 50 },
+    { field: 'id', headerName: 'ID', width: 50 },
     {
-      field: 'executiveName',
-      headerName: 'Allocated To',
+      field: 'contactName',
+      headerName: 'Contact',
       width: 150,
     },
     {
-      field: 'enquiry_remark',
-      headerName: 'Remarks',
+      field: 'category',
+      headerName: 'Category',
       width: 150,
     },
     {

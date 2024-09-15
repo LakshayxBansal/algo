@@ -11,10 +11,10 @@ export default async function ExecutiveEnquiryList() {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID' },
     { field: 'name', headerName: 'Executive', width: 200 },
-    { field: 'total', headerName: 'Total Open', width: 150 },
-    { field: 'since1w', headerName: 'Since 1 week', width: 150 },
-    { field: 'since2w', headerName: 'Since 2 week', width: 150 },
-    { field: 'since3w', headerName: 'Since 3 week', width: 150 }
+    { field: 'currDay', headerName: 'Open', width: 150 },
+    { field: 'since1w', headerName: 'Since 1 week', width: 150, description: 'Number of open enquiries since 1 week' },
+    { field: 'since2w', headerName: 'Since 2 week', width: 150, description: 'Number of open enquiries since 2 week' },
+    { field: 'since3w', headerName: 'Since 3 week', width: 150, description: 'Number of open enquiries since 3 week' }
   ];
 
 

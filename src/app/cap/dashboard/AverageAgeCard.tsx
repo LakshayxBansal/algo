@@ -2,13 +2,11 @@ import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
-import { getClosedEnquiries } from '@/app/controllers/dashboard.controller';
+import { getAverageAge } from '@/app/controllers/dashboard.controller';
 
-const getAverageDate = (data: any) => {}
 export default async function AverageAgeCard() {
-    let closedEnquiries = await getClosedEnquiries();
-    const averageDate = getAverageDate(closedEnquiries);
-    const sinceDate = closedEnquiries.at(-1).date;
+    const averageAge = (await getAverageAge())[0];    
+    const sinceDate = averageAge.since;
   return (
     <Paper
         sx={{
@@ -26,7 +24,7 @@ export default async function AverageAgeCard() {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Average Age</Typography>
-            <Typography component="p" variant="h4">5 Days</Typography>
+            <Typography component="p" variant="h4">{averageAge.age} Days</Typography>
             <Typography color="text.secondary" sx={{ flex: 1 }}>
                 since {sinceDate.toDateString()}
             </Typography>

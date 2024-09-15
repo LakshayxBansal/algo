@@ -2,11 +2,11 @@ import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { Box, Paper } from '@mui/material';
-import { getClosedEnquiries } from '@/app/controllers/dashboard.controller';
+import { getClosedEnquiriesCount } from '@/app/controllers/dashboard.controller';
 
 export default async function ClosedCard() {    
-    let closedEnquiries = await getClosedEnquiries();
-    const date =  closedEnquiries.at(-1).date;
+    let result = (await getClosedEnquiriesCount())[0];
+    
   return (
     <Paper
         sx={{
@@ -24,9 +24,9 @@ export default async function ClosedCard() {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Closed Enquiries</Typography>
-            <Typography component="p" variant="h4">{closedEnquiries.length}</Typography>
+            <Typography component="p" variant="h4">{result.count}</Typography>
             <Typography color="text.secondary" sx={{ flex: 1 }}>
-                since {date.toDateString()}
+                since {result.since.toDateString()}
             </Typography>
         </Box>
         <Box>
