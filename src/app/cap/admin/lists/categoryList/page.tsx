@@ -10,7 +10,6 @@ import { delCategoryById, getCategoryById, getEnquiryCategoryByPage } from '@/ap
 
 export default function Category() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

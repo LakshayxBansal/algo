@@ -93,7 +93,7 @@ export default function SignupForm1(props: any) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#8FA8D7",
+        backgroundColor: "#AEC4F1",
         padding: "5% 5%",
       }}
     >

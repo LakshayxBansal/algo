@@ -46,7 +46,7 @@ export async function delCategoryDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from department_master where id=?;",
+      query: "delete from enquiry_category_master where id=?;",
       values: [id],
     });
 

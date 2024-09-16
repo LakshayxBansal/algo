@@ -73,7 +73,7 @@ export default function AuthPage(props: authPagePropsType) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#8FA8D7",
+        backgroundColor: "#ECECEC",
         padding: "5% 5%",
         height: "100%",
       }}

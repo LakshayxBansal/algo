@@ -98,20 +98,6 @@ export async function updateEnquiryActionDb(
   return null;
 }
 
-export async function DeleteActionByIdDb(crmDb: string, id: number) {
-  try {
-    const result = await excuteQuery({
-      host: crmDb,
-      query: "Delete from enquiry_action_master where id=?;",
-      values: [id],
-    });
-    console.log(result);
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 export async function getEnquiryActionByPageDb(
   crmDb: string,
   page: number,
