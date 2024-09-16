@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import {
   Button,
   Checkbox,
+  colors,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -23,7 +24,6 @@ import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { StyledMenu } from "../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
-import { SelectMasterWrapper } from "../Widgets/masters/selectMasterWrapper";
 import { getExecutive } from "../controllers/executive.controller";
 import { optionsDataT, selectKeyValueT } from "../models/models";
 import { getArea } from "../controllers/area.controller";
@@ -84,33 +84,46 @@ const row1 = [
 
 export default function AutoGrid() {
   const [rows, setRows] = React.useState(row1);
-  const [anchorElDate, setAnchorElDate] = React.useState<null | HTMLElement>(null);
-  const [initialDate, setInitialDate] = React.useState<string>("");
-  const [finalDate, setFinalDate] = React.useState<string>("");
   const [dateFilter, setDateFilter] = React.useState("0");
-  const [anchorElCallStatus, setAnchorElCallStatus] = React.useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>("");
-  const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({} as any);
-  const [anchorElNextAction, setAnchorElNextAction] = React.useState<null | HTMLElement>(null);
-  const [nextActionFilter, setNextActionFilter] = React.useState<selectKeyValueT>({});
-  const [anchorElExec, setAnchorElExec] = React.useState<null | HTMLElement>(null);
-  const [execSearchText, setExecSearchText] = React.useState<selectKeyValueT>({});
   const [filterType, setFilterType] = React.useState<string>("reset"); // Default to "reset"
-  const [anchorElArea, setAnchorElArea] = React.useState<null | HTMLElement>(null);
-  const [areaSearchText, setAreaSearchText] = React.useState<selectKeyValueT>({});
-  const [anchorElCategory, setAnchorElCategory] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [categorySearchText, setCategorySearchText] = React.useState<selectKeyValueT>({});
-  const [anchorElSubStatus, setAnchorElSubStatus] = React.useState<null | HTMLElement>(null);
-  const [subStatusSearchText, setSubStatusSearchText] = React.useState<selectKeyValueT>({});
   const [status, setStatus] = React.useState("1");
   const [startDate, setStartDate] = React.useState<string>(""); // Start date state
   const [endDate, setEndDate] = React.useState<string>(""); // End date state
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const [filterColor, setFilterColor] = React.useState<boolean>(false);
+
+  type DlgState = {
+    [key: string]: HTMLElement | null;
+  };
+
+  const [dlgState, setDlgState] = React.useState<DlgState>({});
+
+  const handleClickFilter = (column: string) => (event: React.MouseEvent<HTMLElement>) => {
+    setDlgState({
+      ...dlgState,
+      [column]: event.currentTarget,
+    });
+  };
+
+  const handleCloseFilter = (field: string) => {
+    setDlgState((prevState) => ({
+      ...prevState,
+      [field]: null,
+    }));
+  };
+
+  const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
+
+  const handleFilterChange = (field: string, value: any) => {
+    setFilterValueState((prevState) => ({
+      ...prevState,
+      [field]: value, // Set the selected value for the specific field
+    }));
+  };
+
+
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     if (selectionModel.length > 0) {
@@ -121,26 +134,48 @@ export default function AutoGrid() {
   };
 
   // Handle the filtering of rows based on the date range
+  // const handleDateFilter = () => {
+  //   const filteredRows = rows.filter((row) => {
+  //     const rowDate = new Date(row.date).getTime(); // Convert row date to timestamp
+  //     const start = filterValueState.date?.initial ? new Date(filterValueState.date?.initial).toLocaleDateString('en-CA') : null;
+
+  //     const end = filterValueState.date?.final ? new Date(filterValueState.date?.final).toLocaleDateString('en-CA') : null;
+
+  //     if (start !== null && end !== null) {
+  //       return rowDate >= start && rowDate <= end; // Filter between start and end date
+  //     } else if (start !== null) {
+  //       return rowDate >= start; // Filter from start date onward
+  //     } else if (end !== null) {
+  //       return rowDate <= end; // Filter up to end date
+  //     } else {
+  //       return true; // No filter applied
+  //     }
+  //   });
+
+  //   setRows(filteredRows); // Set filtered rows
+  // };
+
   const handleDateFilter = () => {
     const filteredRows = rows.filter((row) => {
-      const rowDate = new Date(row.date).getTime(); // Convert row date to timestamp
-      const start = startDate ? new Date(startDate).getTime() : null;
-      const end = endDate ? new Date(endDate).getTime() : null;
+      // Convert row actionDate to date and compare
+      const rowDate = new Date(row.actionDate).toLocaleDateString('en-CA');
+      const initial = filterValueState.date?.initial ? new Date(filterValueState.sate?.initial).toLocaleDateString('en-CA') : null;
 
-      if (start !== null && end !== null) {
-        return rowDate >= start && rowDate <= end; // Filter between start and end date
-      } else if (start !== null) {
-        return rowDate >= start; // Filter from start date onward
-      } else if (end !== null) {
-        return rowDate <= end; // Filter up to end date
-      } else {
-        return true; // No filter applied
+      const final = filterValueState.date?.final ? new Date(filterValueState.date?.final).toLocaleDateString('en-CA') : null;
+
+      if (initial && final) {
+        return rowDate >= initial && rowDate <= final;
+      } else if (initial) {
+        return rowDate >= initial;
+      } else if (final) {
+        return rowDate <= final;
       }
+      return true; // No filter applied
     });
-
-    setRows(filteredRows); // Set filtered rows
-    setFilterColor(true);
+    setRows(filteredRows);
   };
+
+
 
   const handleSelectedStatus = (e: SelectChangeEvent) => {
     setSelectedStatus(e.target.value);
@@ -149,127 +184,70 @@ export default function AutoGrid() {
 
   const handleSelectedSubStatus = (e: SelectChangeEvent) => {
     setStatus(e.target.value);
-    setSubStatusSearchText({});
+    setFilterValueState((prevState) => ({
+      ...prevState,
+      ["subStatus"]: null, // Set the selected value for the specific field
+    }));
   }
-
-  // Handle filter menu open/close for Sub Status
-  const handleClickSubStatus = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElSubStatus(event.currentTarget);
-  };
-
-  const handleCloseSubStatus = () => {
-    setAnchorElSubStatus(null);
-  };
 
   // Filter rows based on Sub Status search
   const handleFilterChangeSubStatus = () => {
-    const filteredRows = subStatusSearchText ? rows.filter((row) =>
-      row.subStatus.toLowerCase().includes(subStatusSearchText.name.toLowerCase())
+    const filteredRows = filterValueState['subStatus'] ? rows.filter((row) =>
+      row.subStatus.toLowerCase().includes(filterValueState['subStatus']?.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
-    setFilterColor(true);
-    handleCloseSubStatus(); // Close the filter menu after applying the filter
+    handleCloseFilter('subStatus');
   };
 
 
-
-  const handleClickCategory = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElCategory(event.currentTarget);
-  };
-
-  const handleCloseCategory = () => {
-    setAnchorElCategory(null);
-  };
 
   // Filter rows based on Call Category search
   const handleFilterChangeCategory = () => {
-    const filteredRows = categorySearchText ? rows.filter((row) =>
-      row.callCategory.toLowerCase().includes(categorySearchText.name.toLowerCase())
+    const filteredRows = filterValueState['callCategory'] ? rows.filter((row) =>
+      row.callCategory.toLowerCase().includes(filterValueState['callCategory']?.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
-    setFilterColor(true);
-    handleCloseCategory(); // Close the filter menu after applying the filter
-  };
-
-  // Handle filter menu open/close for Area
-  const handleClickArea = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElArea(event.currentTarget);
-  };
-
-  const handleCloseArea = () => {
-    setAnchorElArea(null);
+    handleCloseFilter('callCategory'); // Close the filter menu after applying the filter
   };
 
   // Filter rows based on Area search
   const handleFilterChangeArea = () => {
-    const filteredRows = areaSearchText ? rows.filter((row) =>
-      row.area.toLowerCase().includes(areaSearchText.name.toLowerCase())
+    const filteredRows = filterValueState['area'] ? rows.filter((row) =>
+      row.area.toLowerCase().includes(filterValueState['area']?.name.toLowerCase())
     ) : row1;
     setRows(filteredRows); // Set filtered rows using setRows
-    setFilterColor(true);
-    handleCloseArea(); // Close the filter menu after applying the filter
-  };
-
-  const handleClickExec = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElExec(event.currentTarget);
-  };
-
-  const handleCloseExec = () => {
-    setAnchorElExec(null);
+    handleCloseFilter('area'); // Close the filter menu after applying the filter
   };
 
   const handleFilterChangeExec = () => {
     let filteredRows;
 
     if (filterType === "allocated") {
-      filteredRows = execSearchText.name ? rows.filter((row) =>
-        row.executive.toLowerCase().includes(execSearchText.name.toLowerCase())
+      filteredRows = filterValueState['executive'] ? rows.filter((row) =>
+        row.executive.toLowerCase().includes(filterValueState['executive']?.name.toLowerCase())
       ) : row1;
-
     } else if (filterType === "unallocated") {
       filteredRows = row1.filter((row) => row.executive === "");
     } else {
-      setExecSearchText({});
+      setFilterValueState((prevState) => ({
+        ...prevState,
+        ["executive"]: null, // Set the selected value for the specific field
+      }));
       filteredRows = row1; // Reset filter
     }
 
     setRows(filteredRows);
-    setFilterColor(true);
-    handleCloseExec(); // Close the filter menu after applying the filter
+    handleCloseFilter("executive")
   };
 
-  // Handle custom filter menu open for Next Action
-  const handleClickNextAction = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNextAction(event.currentTarget);
-  };
-
-  // Handle custom filter menu close for Next Action
-  const handleCloseNextAction = () => {
-    setAnchorElNextAction(null);
-  };
-
-  // Handle input change for the search string
-  const handleSearchChange = (value: selectKeyValueT) => {
-    setNextActionFilter(value);
-  };
 
   // Handle filtering rows based on the search string
   const handleFilterChangeNextAction = () => {
-    const filteredRows = nextActionFilter ? rows.filter(row =>
-      row.nextAction.toLowerCase().includes(nextActionFilter.name.toLowerCase())
+    const filteredRows = filterValueState['nextAction'] ? rows.filter(row =>
+      row.nextAction.toLowerCase().includes(filterValueState['nextAction'].name.toLowerCase())
     ) : row1;
     setRows(filteredRows);
-    setFilterColor(true);
-    handleCloseNextAction(); // Close the menu after filtering
-  };
-
-
-  const handleClick1 = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl2(event.currentTarget);
-  };
-
-  const handleClose1 = () => {
-    setAnchorEl2(null);
+    handleCloseFilter('nextAction');
   };
 
   const handleColumnVisibilityChange = (field: string) => {
@@ -279,15 +257,6 @@ export default function AutoGrid() {
     }));
   };
 
-  const handleClickCallStatus = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElCallStatus(event.currentTarget);
-  };
-
-  // Handle custom filter menu close for Call Status
-  const handleCloseCallStatus = () => {
-    setAnchorElCallStatus(null);
-  };
-
   // Handle custom filter for call status
   const handleFilterChangeCallStatus = () => {
     if (selectedStatus && callFilter == "0") {
@@ -295,33 +264,26 @@ export default function AutoGrid() {
         row.callStatus === selectedStatus)
       );
       setRows(filteredRows);
-      setFilterColor(true);
     }
     if (selectedStatus == "Open" && callFilter == "1") {
       const filteredRows = row1.filter((row) => {
         row.executive.length > 0 && row.callStatus === selectedStatus
       })
       setRows(filteredRows)
-      setFilterColor(true);
     }
     if (selectedStatus == "Open" && callFilter == "2") {
       const filteredRows = row1.filter((row) => {
         row.executive.length == 0 && row.callStatus === selectedStatus
       })
       setRows(filteredRows)
-      setFilterColor(true);
     }
     else {
       setRows(row1); // Reset to initial if no filter is applied
     }
+    handleCloseFilter("callStatus")
   };
 
-  const handleClickDate = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElDate(event.currentTarget);
-  };
-  const handleCloseDate = () => {
-    setAnchorElDate(null);
-  };
+
 
   // const handleFilterChangeDate = () => {
   //   const today = new Date();
@@ -353,8 +315,9 @@ export default function AutoGrid() {
     const filteredRows = rows.filter((row) => {
       // Convert row actionDate to date and compare
       const rowDate = new Date(row.actionDate).toLocaleDateString('en-CA');
-      const initial = initialDate ? new Date(initialDate).toLocaleDateString('en-CA') : null;
-      const final = finalDate ? new Date(finalDate).toLocaleDateString('en-CA') : null;
+      const initial = filterValueState.actionDate?.initial ? new Date(filterValueState.actionDate?.initial).toLocaleDateString('en-CA') : null;
+
+      const final = filterValueState.actionDate?.final ? new Date(filterValueState.actionDate?.final).toLocaleDateString('en-CA') : null;
 
       // Check for Current Date
       if (dateFilter === '1') {
@@ -376,21 +339,16 @@ export default function AutoGrid() {
     });
 
     setRows(filteredRows);
-    setFilterColor(true);
+    handleCloseFilter("date")
   };
 
-  const handleFilterReset = () => {
-    setRows(row1); // Set filtered rows using setRows
-    setFilterColor(false)
-    setCategorySearchText({})
-    handleCloseArea();
-    handleClose1();
-    handleCloseCallStatus();
-    handleCloseCategory();
-    handleCloseDate();
-    handleCloseExec();
-    handleCloseNextAction();
-    handleCloseSubStatus();
+
+  const newhandleFilterReset = (field: string) => {
+    setFilterValueState((prevState) => ({
+      ...prevState,
+      [field]: null, // Reset the specific field's filter
+    }));
+    setRows(row1); // Reset rows to initial data
   };
 
 
@@ -449,37 +407,38 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: Object.keys(categorySearchText).length ? "blue" : "black" }}
+          <Button sx={{ color: filterValueState.callCategory ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Call Category" arrow>
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickCategory}
+            onClick={handleClickFilter('callCategory')}
           >
             Call Category
           </Button>
           <Menu
-            anchorEl={anchorElCategory}
-            open={Boolean(anchorElCategory)}
-            onClose={handleCloseCategory}
+            anchorEl={dlgState['callCategory']}
+            open={Boolean(dlgState['callCategory'])}
+            onClose={() => handleCloseFilter('callCategory')}
           >
             <MenuItem>
               <AutocompleteDB
                 name={"category"}
                 id={"category"}
                 label={"Category"}
-                onChange={(e, val, s) => setCategorySearchText(val)}
+                // onChange={(e, val, s) => setCategorySearchText(val)}
+                onChange={(e, val, s) => handleFilterChange('callCategory', val)}
                 fetchDataFn={getEnquiryCategory}
                 defaultValue={
                   {
-                    id: categorySearchText?.id,
-                    name: categorySearchText?.name,
+                    id: filterValueState?.callCategory?.id,
+                    name: filterValueState?.callCategory?.name,
                   } as optionsDataT
                 }
                 diaglogVal={{
-                  id: categorySearchText?.id,
-                  name: categorySearchText?.name,
+                  id: filterValueState?.callCategory?.id,
+                  name: filterValueState?.callCategory?.name,
                   detail: undefined
                 }}
                 setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
@@ -498,7 +457,7 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => newhandleFilterReset('callCategory')}
                   fullWidth
                   variant="contained"
                 >
@@ -515,53 +474,38 @@ export default function AutoGrid() {
       field: "area", headerName: "Area", width: 100, filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: Object.keys(areaSearchText).length ? "blue" : "black" }}
+          <Button sx={{ color: filterValueState.area ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Area" arrow>
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickArea}
+            onClick={handleClickFilter('area')}
           >
             Area
           </Button>
           <Menu
-            anchorEl={anchorElArea}
-            open={Boolean(anchorElArea)}
-            onClose={handleCloseArea}
+            anchorEl={dlgState['area']}
+            open={Boolean(dlgState['area'])}
+            onClose={() => handleCloseFilter('area')}
           >
             <MenuItem>
-              {/* <SelectMasterWrapper
-                name={"area"}
-                id={"area"}
-                label={"Area"}
-                width={210}
-                dialogTitle={"Add Area"}
-                fetchDataFn={getArea}
-                defaultValue={
-                  {
-                    id: areaSearchText?.id,
-                    name: areaSearchText?.name,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) => setAreaSearchText(val)}
-                allowNewAdd={false}
-                allowModify={false}
-              /> */}
               <AutocompleteDB
                 name={"area"}
                 id={"area"}
                 label={"Area"}
                 width={210}
                 fetchDataFn={getArea}
-                defaultValue={{
-                  id: areaSearchText?.id,
-                  name: areaSearchText?.name,
-                } as optionsDataT}
-                onChange={(e, val, s) => setAreaSearchText(val)}
+                onChange={(e, val, s) => handleFilterChange('area', val)}
+                defaultValue={
+                  {
+                    id: filterValueState?.area?.id,
+                    name: filterValueState?.area?.name,
+                  } as optionsDataT
+                }
                 diaglogVal={{
-                  id: areaSearchText?.id,
-                  name: areaSearchText?.name,
+                  id: filterValueState?.area?.id,
+                  name: filterValueState?.area?.name,
                   detail: undefined
                 }}
                 setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
@@ -580,7 +524,7 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => newhandleFilterReset('area')}
                   fullWidth
                   variant="contained"
                 >
@@ -596,20 +540,20 @@ export default function AutoGrid() {
     {
       field: "executive", headerName: "Executive", width: 100, renderHeader: () => (
         <Box>
-          <Button sx={{ color: execSearchText.name || filterType !== "reset" ? "blue" : "black" }}
+          <Button sx={{ color: filterValueState.executive || filterType !== "reset" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Executive" arrow>
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickExec}
+            onClick={handleClickFilter('executive')}
           >
             Executive
           </Button>
           <Menu
-            anchorEl={anchorElExec}
-            open={Boolean(anchorElExec)}
-            onClose={handleCloseExec}
+            anchorEl={dlgState['executive']}
+            open={Boolean(dlgState['executive'])}
+            onClose={() => handleCloseFilter('executive')}
           >
 
             <MenuItem sx={{ bgcolor: "white" }}>
@@ -650,18 +594,17 @@ export default function AutoGrid() {
                   id={"executive"}
                   label={"Executive"}
                   // width={210}
-                  onChange={(e, val, s) =>
-                    setExecSearchText(val)
-                  }
+                  onChange={(e, val, s) => handleFilterChange('executive', val)}
                   fetchDataFn={getExecutive}
                   defaultValue={
                     {
-                      id: execSearchText?.id,
-                      name: execSearchText?.name,
-                    } as optionsDataT}
+                      id: filterValueState?.executive?.id,
+                      name: filterValueState?.executive?.name,
+                    } as optionsDataT
+                  }
                   diaglogVal={{
-                    id: execSearchText?.id,
-                    name: execSearchText?.name,
+                    id: filterValueState?.executive?.id,
+                    name: filterValueState?.executive?.name,
                     detail: undefined
                   }}
                   setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
@@ -682,7 +625,11 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => {
+                    newhandleFilterReset('executive')
+                    setFilterType("reset")
+                  }
+                  }
                   fullWidth
                   variant="contained"
                 >
@@ -703,14 +650,14 @@ export default function AutoGrid() {
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickCallStatus}
+            onClick={handleClickFilter('callStatus')}
           >
             Call Status
           </Button>
           <Menu
-            anchorEl={anchorElCallStatus}
-            open={Boolean(anchorElCallStatus)}
-            onClose={handleCloseCallStatus}
+            anchorEl={dlgState['callStatus']}
+            open={Boolean(dlgState['callStatus'])}
+            onClose={() => handleCloseFilter('callStatus')}
           >
             <MenuItem>
               <FormControl component="fieldset">
@@ -754,7 +701,6 @@ export default function AutoGrid() {
               <Button
                 onClick={() => {
                   handleFilterChangeCallStatus();
-                  handleCloseCallStatus();
                 }}
                 fullWidth
                 variant="contained"
@@ -763,7 +709,11 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => {
+                    newhandleFilterReset('callStatus')
+                    setSelectedStatus("")
+                    handleCloseFilter("callStatus")
+                  }}
                   fullWidth
                   variant="contained"
                 >
@@ -783,20 +733,20 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterColor ? "blue" : "black" }}
+          <Button sx={{ color: filterValueState.subStatus || filterType !== "reset" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Sub Status" arrow>
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickSubStatus}
+            onClick={handleClickFilter('subStatus')}
           >
             Sub Status
           </Button>
           <Menu
-            anchorEl={anchorElSubStatus}
-            open={Boolean(anchorElSubStatus)}
-            onClose={handleCloseSubStatus}
+            anchorEl={dlgState['subStatus']}
+            open={Boolean(dlgState['subStatus'])}
+            onClose={() => handleCloseFilter('subStatus')}
           >
             <MenuItem>
               <RadioGroup
@@ -821,20 +771,20 @@ export default function AutoGrid() {
                 name={"sub_status"}
                 id={"sub_status"}
                 label={"Call Sub-Status"}
-                onChange={(e, v, s) => setSubStatusSearchText(v)}
+                onChange={(e, val, s) => handleFilterChange('subStatus', val)}
                 // fetchDataFn={getSubStatusforStatus}
-                defaultValue={
-                  {
-                    id: subStatusSearchText?.id,
-                    name: subStatusSearchText?.name,
-                  } as optionsDataT
-                }
                 fetchDataFn={(roleStr: string) =>
                   getEnquirySubStatus(roleStr, status)
                 }
+                defaultValue={
+                  {
+                    id: filterValueState?.subStatus?.id,
+                    name: filterValueState?.subStatus?.name,
+                  } as optionsDataT
+                }
                 diaglogVal={{
-                  id: subStatusSearchText?.id,
-                  name: subStatusSearchText?.name,
+                  id: filterValueState?.subStatus?.id,
+                  name: filterValueState?.subStatus?.name,
                   detail: undefined
                 }}
                 setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
@@ -853,7 +803,10 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => {
+                    newhandleFilterReset('subStatus')
+                    handleCloseFilter("subStatus")
+                  }}
                   fullWidth
                   variant="contained"
                 >
@@ -870,31 +823,37 @@ export default function AutoGrid() {
       filterable: false, // Disable default filtering
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterColor ? "blue" : "black" }}
+          <Button sx={{ color: filterValueState.nextAction ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Next Action" arrow>
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickNextAction}
+            onClick={handleClickFilter('nextAction')}
           >
             Next Action
           </Button>
           <Menu
-            anchorEl={anchorElNextAction}
-            open={Boolean(anchorElNextAction)}
-            onClose={handleCloseNextAction}
+            anchorEl={dlgState['nextAction']}
+            open={Boolean(dlgState['nextAction'])}
+            onClose={() => handleCloseFilter('nextAction')}
           >
             <MenuItem>
               <AutocompleteDB
                 name={"next_action"}
                 id={"next_action"}
                 label={"Next Action"}
-                onChange={(e, v, s) => handleSearchChange(v)}
+                onChange={(e, val, s) => handleFilterChange('nextAction', val)}
                 fetchDataFn={getEnquiryAction}
+                defaultValue={
+                  {
+                    id: filterValueState?.nextAction?.id,
+                    name: filterValueState?.nextAction?.name,
+                  } as optionsDataT
+                }
                 diaglogVal={{
-                  id: nextActionFilter?.id,
-                  name: nextActionFilter?.name,
+                  id: filterValueState?.nextAction?.id,
+                  name: filterValueState?.nextAction?.name,
                   detail: undefined
                 }}
                 setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
@@ -913,7 +872,7 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => newhandleFilterReset('nextAction')}
                   fullWidth
                   variant="contained"
                 >
@@ -936,20 +895,20 @@ export default function AutoGrid() {
       filterable: false, // Disable default filtering for date
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterColor ? "blue" : "black" }}
+          <Button sx={{ color: dateFilter !== "0" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Date" arrow>
                 <FilterListIcon />
               </Tooltip>
             }
-            onClick={handleClickDate}
+            onClick={handleClickFilter('actionDate')}
           >
-            Date
+            Action Date
           </Button>
           <Menu
-            anchorEl={anchorElDate}
-            open={Boolean(anchorElDate)}
-            onClose={handleCloseDate}
+            anchorEl={dlgState['actionDate']}
+            open={Boolean(dlgState['actionDate'])}
+            onClose={() => handleCloseFilter('actionDate')}
           >
             <MenuItem>
               <Typography>Filter On:</Typography>
@@ -983,8 +942,9 @@ export default function AutoGrid() {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={initialDate}
-                    onChange={(e) => setInitialDate(e.target.value)}
+                    value={filterValueState?.actionDate?.initial}
+                    // onChange={(e) => setInitialDate(e.target.value)}
+                    onChange={(e) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "initial": e.target.value })}
                     type="date"
                     fullWidth
                   />
@@ -998,8 +958,9 @@ export default function AutoGrid() {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={finalDate}
-                    onChange={(e) => setFinalDate(e.target.value)}
+                    value={filterValueState?.actionDate?.final}
+                    // onChange={(e) => setFinalDate(e.target.value)}
+                    onChange={(e) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "final": e.target.value })}
                     type="date"
                     fullWidth
                   />
@@ -1010,7 +971,7 @@ export default function AutoGrid() {
               <Button
                 onClick={() => {
                   handleFilterChangeDate();
-                  handleCloseDate();
+                  handleCloseFilter('actionDate');
                 }}
                 fullWidth
                 variant="contained"
@@ -1019,7 +980,11 @@ export default function AutoGrid() {
               </Button>
               <MenuItem>
                 <Button
-                  onClick={handleFilterReset}
+                  onClick={() => {
+                    newhandleFilterReset("actionDate")
+                    setDateFilter("0")
+                  }
+                  }
                   fullWidth
                   variant="contained"
                 >
@@ -1038,16 +1003,16 @@ export default function AutoGrid() {
           <IconButton
             aria-controls="tune-menu"
             aria-haspopup="true"
-            onClick={handleClick1}
+            onClick={handleClickFilter('columnConfig')}
           >
             <TuneIcon fontSize="small" />
           </IconButton>
           <Box>
             <StyledMenu
               id="tune-menu"
-              anchorEl={anchorEl2}
-              open={Boolean(anchorEl2)}
-              onClose={handleClose1}
+              anchorEl={dlgState['columnConfig']}
+              open={Boolean(dlgState['columnConfig'])}
+              onClose={() => handleCloseFilter('columnConfig')}
             >
               <div style={{ display: "flex", flexDirection: "column" }}>
                 {column1
@@ -1079,7 +1044,6 @@ export default function AutoGrid() {
 
   const handleCallFilterChange = (event: SelectChangeEvent) => {
     setCallFilter(event.target.value as string);
-    console.log(callFilter);
   };
 
 
@@ -1130,8 +1094,9 @@ export default function AutoGrid() {
             <TextField
               label="Start Date"
               type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              value={filterValueState?.date?.initial}
+              // onChange={(e) => setInitialDate(e.target.value)}
+              onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "initial": e.target.value })}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -1141,8 +1106,10 @@ export default function AutoGrid() {
             <TextField
               label="End Date"
               type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              // value={endDate}
+              // onChange={(e) => setEndDate(e.target.value)}
+              value={filterValueState?.date?.final}
+              onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "final": e.target.value })}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -1155,7 +1122,7 @@ export default function AutoGrid() {
             >
               Apply Filter
             </Button>
-            <Button onClick={handleFilterReset}
+            <Button onClick={() => newhandleFilterReset("date")}
               variant="contained"
               sx={{ ml: "2%", height: "6vh", fontSize: '10px' }} size="small"
             >
