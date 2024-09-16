@@ -10,7 +10,6 @@ import { delEnquirySourceById, getEnquirySourceById, getEnquirySourceByPage } fr
 
 export default function enquirySource() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

@@ -10,12 +10,10 @@ import ItemForm from '@/app/Widgets/masters/masterForms/itemForm';
 
 export default function Items() {
   const columns: GridColDef[] = [
-    { field: "id", headerName: "S.No." },
-    { field: "name", headerName: "Name", width: 100 },
-    { field: "group_id", headerName: "Group Id", width: 100 },
-    { field: "alias", headerName: "Alias", width: 100 },
-    { field: "unit_id", headerName: "Unit Id", width: 100 },
-    { field: "hsn_code", headerName: "Hsn Code", width: 100 },
+    { field: "name", headerName: "Name", width: 100, editable: true,},
+    { field: "group_id", headerName: "Group Id", width: 100, editable: true,},
+    { field: "alias", headerName: "Alias", width: 100, editable: true},
+    { field: "unit_id", headerName: "Unit Id", width: 100, editable: true},
   ];
 
   return (

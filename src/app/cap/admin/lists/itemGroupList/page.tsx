@@ -10,7 +10,6 @@ import { delItemGroupById, getItemGroupById, getItemGroupByPage } from '@/app/co
 
 export default function ItemGroup() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',
@@ -33,6 +32,7 @@ export default function ItemGroup() {
           />
         )}
         fetchDataFn={getItemGroupByPage}
+        fnFetchDataByID={getItemGroupById}
         fnDeleteDataByID={delItemGroupById}
         customCols={columns}
         AddAllowed={true}>

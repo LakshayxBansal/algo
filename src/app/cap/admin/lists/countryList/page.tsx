@@ -10,7 +10,6 @@ import { getCountryById, getCountryByPage } from '@/app/controllers/masters.cont
 
 export default function Country() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',
@@ -24,6 +23,7 @@ export default function Country() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title="Country List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <CountryForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +33,7 @@ export default function Country() {
           )}
         fetchDataFn={getCountryByPage}
         fnFetchDataByID={getCountryById}
+        fnDeleteDataByID={}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

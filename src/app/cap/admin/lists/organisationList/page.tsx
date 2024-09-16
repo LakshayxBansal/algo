@@ -10,7 +10,6 @@ import OrganisationForm from '@/app/Widgets/masters/masterForms/organisationForm
 
 export default function organisation() {
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90 },
   {
     field: 'name',
     headerName: 'Name',

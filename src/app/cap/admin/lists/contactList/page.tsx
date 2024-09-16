@@ -3,13 +3,12 @@ import * as React from "react";
 
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
-import { getContactById, getContactByPage } from "@/app/controllers/contact.controller";
+import { DeleteContact, getContactById, getContactByPage } from "@/app/controllers/contact.controller";
 import AppBar from "@mui/material/AppBar";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 
 export default function ManageContacts() {
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 90 },
     {
       field: "name",
       headerName: "Name",
@@ -35,6 +34,7 @@ export default function ManageContacts() {
     <div style={{ height: 800, width: "100%" }}>
       <AppBar position="static" color="default"></AppBar>
       <EntityList
+        title="Contact List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
@@ -44,6 +44,7 @@ export default function ManageContacts() {
         )}
         fetchDataFn={getContactByPage}
         fnFetchDataByID={getContactById}
+        fnDeleteDataByID={DeleteContact}
         customCols={columns}
         AddAllowed={true}
       ></EntityList>

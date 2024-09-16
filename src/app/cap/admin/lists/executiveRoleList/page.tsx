@@ -10,7 +10,6 @@ import { delExecutiveRoleById, getExecutiveRoleById, getExecutiveRoleByPage } fr
 
 export default function executiveRole() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

@@ -9,7 +9,6 @@ import { delExecutiveGroupById, getExecutiveGroupById, getExecutiveGroupByPage }
 
 export default function executiveGroup() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

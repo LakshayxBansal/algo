@@ -10,7 +10,6 @@ import { delUnitById, getUnitById, getUnitByPage } from '@/app/controllers/unit.
 
 export default function Unit() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

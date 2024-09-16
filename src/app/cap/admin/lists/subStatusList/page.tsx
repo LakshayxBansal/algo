@@ -10,7 +10,6 @@ import { delSubStatusById, getEnquirySubSatusById, getEnquirySubStatusByPage } f
 
 export default function subStatus() {
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90 },
   {
     field: 'name',
     headerName: 'Name',

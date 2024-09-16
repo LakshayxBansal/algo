@@ -10,7 +10,6 @@ import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
 
 export default function State() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',

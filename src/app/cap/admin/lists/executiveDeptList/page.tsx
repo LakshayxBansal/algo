@@ -5,12 +5,11 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import ExecutiveDeptForm from '@/app/Widgets/masters/masterForms/executiveDeptForm';
-import { getDeptById, getExecutiveDeptByPage } from '@/app/controllers/executiveDept.controller';
+import { delExecutiveDeptById, getDeptById, getExecutiveDeptByPage } from '@/app/controllers/executiveDept.controller';
 
 
 export default function executiveDept() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
       headerName: 'Name',
@@ -24,6 +23,7 @@ export default function executiveDept() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+      title='Executive Dept List'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <ExecutiveDeptForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +33,7 @@ export default function executiveDept() {
           )}
         fetchDataFn={getExecutiveDeptByPage}
         fnFetchDataByID={getDeptById}
+        fnDeleteDataByID={delExecutiveDeptById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

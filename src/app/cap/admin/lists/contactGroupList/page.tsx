@@ -13,7 +13,6 @@ import {
 
 export default function ContactGroup() {
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 90 },
     {
       field: "name",
       headerName: "Name",

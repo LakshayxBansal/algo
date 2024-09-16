@@ -198,13 +198,13 @@ export async function DeleteContactList(crmDb: string, id: number) {
     let query = "Delete from contact_master where id=?";
     let values: any[] = [id];
 
-    await excuteQuery({
+    const result = await excuteQuery({
       host: crmDb,
       query: query,
       values: values,
     });
 
-    return;
+    return result
   } catch (e) {
     console.log(e);
   }
