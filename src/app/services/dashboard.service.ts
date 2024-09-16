@@ -12,7 +12,7 @@ export async function getOpenEnquiriesDb(dbName: string) {
                 left join contact_master cm on cm.id=ht.contact_id\
                 left join enquiry_category_master em on em.id=ht.category_id\
                 left join enquiry_sub_status_master es on lt.sub_status_id=es.id\
-                where lt.status_id=1;",
+                where lt.status_id=1 limit 10;",
         values: [],
       });      
   
@@ -26,7 +26,7 @@ export async function getOpenEnquiriesCountDb(dbName: string) {
   try {
     const result = await excuteQuery({
       host: dbName,
-      query: "select count(*) as total from enquiry_ledger_tran lt where datediff(lt.date, now())=0;",
+      query: "select count(*) as total from enquiry_ledger_tran lt where status_id=1",
       values: [],
     });
 
@@ -36,7 +36,7 @@ export async function getOpenEnquiriesCountDb(dbName: string) {
   }
 }
 
-export async function getEnquiriesOverviewDb(dbName: string) {
+export async function getExecutiveEnquiriesOverviewDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
@@ -92,7 +92,9 @@ export async function getClosedEnquiriesCountDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
-        query: "select MAX(modified_on) as since, count(*) as count from enquiry_ledger_tran where status_id=2;",
+        query: "select DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') as since, count(*) as count from enquiry_ledger_tran lt\
+                left join enquiry_status_master sm on sm.id=lt.status_id where sm.name='Closed'\
+                AND lt.date BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AND LAST_DAY(CURDATE());",
         values: [],
       });
   
@@ -119,10 +121,12 @@ export async function getAverageAgeDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
-        query: "SELECT ROUND(AVG(DATEDIFF(lt.modified_on, lt.date))) AS age, MAX(modified_on) as since\
-                FROM enquiry_ledger_tran lt WHERE\
-                lt.status_id = 2 AND lt.date IS NOT NULL\
-                AND lt.modified_on IS NOT NULL;",
+        query: "SELECT ROUND(AVG(DATEDIFF(lt.modified_on, lt.date))) AS age, DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01 00:00:00') as since\
+                FROM enquiry_ledger_tran lt left join enquiry_status_master sm\
+                on sm.id=lt.status_id \
+                WHERE sm.name='Closed' AND lt.date IS NOT NULL\
+                AND lt.modified_on IS NOT NULL \
+                AND lt.date BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AND LAST_DAY(CURDATE())",
         values: [],
       });
   
