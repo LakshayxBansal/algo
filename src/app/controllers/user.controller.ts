@@ -1,6 +1,6 @@
 "use server"
 
-import { addUser, getBizAppUserList,getCompanyUserCount, getUserDetailsByEmailList,getCompanyUserDB, getUserDetailsByIdList, deRegisterFromAppDB, deRegisterFromCompanyDB } from '../services/user.service';
+import { addUser, getBizAppUserList,checkInActiveUserDB,makeUserActiveDB, getCompanyUserCount, checkUserInCompanyDB, getUserDetailsByEmailList, getCompanyUserDB, getUserDetailsByIdList, deRegisterFromAppDB, deRegisterFromCompanyDB, deRegisterFromAllCompanyDB, deleteUserDB } from '../services/user.service';
 import { hashText } from '../utils/encrypt.utils';
 import * as zs from '../zodschema/zodschema';
 import { userSchemaT } from '@/app/models/models';
@@ -28,18 +28,23 @@ export async function registerUser(formData: userSchemaT) {
           contact = formData.phone;
           delete formData?.phone;
         }
-
         formData.contact = contact;
+        // const inActiveUser = await checkInActiveUser(contact as string);
+        // if (inActiveUser) {
+        //   await makeUserActive(inActiveUser.id);
+        //   return result = { status: true, data: [inActiveUser] };
+        // } else {
 
-        const hashedPassword = await hashText(formData.password);
-        formData.password = hashedPassword;
+          const hashedPassword = await hashText(formData.password);
+          formData.password = hashedPassword;
 
-        const dbResult = await addUser(formData as userSchemaT);
-        if (dbResult[0][0].error === 0) {
-          result = { status: true, data: dbResult[1] };
-        } else {
-          result = { status: false, data: [{ path: [dbResult[0][0].error_path], message: dbResult[0][0].error_text }] };
-        }
+          const dbResult = await addUser(formData as userSchemaT);
+          if (dbResult[0][0].error === 0) {
+            result = { status: true, data: dbResult[1] };
+          } else {
+            result = { status: false, data: [{ path: [dbResult[0][0].error_path], message: dbResult[0][0].error_text }] };
+          }
+        // }
       } else {
         let errorState: { path: (string | number)[], message: string }[] = [];
         for (const issue of parsed.error.issues) {
@@ -86,6 +91,17 @@ export async function getUserDetailsByEmail(email: string) {
   }
   return null;
 }
+export async function checkInActiveUser(contact: string) {
+  try {
+    if (contact) {
+      const user = await checkInActiveUserDB(contact);
+      return user;
+    }
+  } catch (e) {
+    throw e;
+  }
+  return null;
+}
 
 export async function getUserDetailsById(userId: number) {
   try {
@@ -99,9 +115,40 @@ export async function getUserDetailsById(userId: number) {
   return null;
 }
 
-export async function deRegisterFromCompany(id : number | null, userId: number | null, companyId: number | null) {
+export async function makeUserActive(userId: number | undefined) {
   try {
-      await deRegisterFromCompanyDB(id,userId, companyId);
+    if (userId) {
+      await makeUserActiveDB(userId);
+    }
+  } catch (e) {
+    throw e;
+  }
+  return null;
+}
+
+export async function deleteUser(userId: number | undefined) {
+  try {
+    if (userId) {
+      await deleteUserDB(userId);
+    }
+  } catch (e) {
+    throw e;
+  }
+  return null;
+}
+
+export async function deRegisterFromCompany(id: number | null, userId: number | null, companyId: number | null) {
+  try {
+    await deRegisterFromCompanyDB(id, userId, companyId);
+  } catch (e) {
+    throw e;
+  }
+  return null;
+}
+
+export async function deRegisterFromAllCompany(userId: number) {
+  try {
+    await deRegisterFromAllCompanyDB(userId);
   } catch (e) {
     throw e;
   }
@@ -147,10 +194,10 @@ export async function getCompanyUser(
         companyId,
         filter
       );
-      for(const ele of companyUsers){
-        if(ele.admin===1){
+      for (const ele of companyUsers) {
+        if (ele.admin === 1) {
           ele.role = "Admin"
-        }else{
+        } else {
           ele.role = "User";
         }
       }
@@ -173,4 +220,13 @@ export async function getCompanyUser(
     };
   }
   return getCompanyUsers;
+}
+
+export async function checkUserInCompany(userId: number, companyId: number) {
+  try {
+    const user = await checkUserInCompanyDB(userId, companyId);
+    return user;
+  } catch (error) {
+    throw (error);
+  }
 }

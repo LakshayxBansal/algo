@@ -3,19 +3,21 @@ import { getSession }  from '../services/session.service';
 import { redirect } from 'next/navigation';
 import CompanyEntityList from './CompanyEntityList';
 import InviteEntityList from './InviteEntityList';
+import { Box } from '@mui/material';
 
 export default async function Companies() {
   const session = await getSession();
   console.log(session);
   if (session) {
-    console.log("company");
     
     return (
       <>
-      <h1>Company List</h1>
-      <CompanyEntityList/>
-      <h1>Invite List</h1>
-      {/* <InviteEntityList/> */}
+      <Box>
+        <CompanyEntityList/>
+      </Box>
+      <Box sx={{mt: 12}}>
+        <InviteEntityList/>
+      </Box>
       </>
     );
   } else {

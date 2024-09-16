@@ -32,18 +32,64 @@ export async function addUser(data: userSchemaT) {
  * @param email: email to be checked in the db 
  * @returns true if exists else returns false
  */
-export async function checkUser(email: string) {
+export async function checkUser(contact: string) {
   try {
     // check if the user exists
     const user = await excuteQuery({
       host: 'userDb',
-      query: 'select * from userDb.user where email = ?',
-      values: [email],
+      query: 'select * from user where contact = ?',
+      values: [contact],
     })
 
     if (user.length > 0) {
       return true;
     }
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+} 
+
+export async function checkInActiveUserDB(contact: string) {
+  try {
+    // check if the user exists
+    const user = await excuteQuery({
+      host: 'userDb',
+      query: 'select * from user where contact = ? and active = -1',
+      values: [contact],
+    })
+
+    if (user.length > 0) {
+      return user[0];
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+} 
+
+export async function makeUserActiveDB(id: number | undefined) {
+  try {
+    // check if the user exists
+    await excuteQuery({
+      host: 'userDb',
+      query: 'update user set active = 1 where id = ?',
+      values: [id],
+    })
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+} 
+
+export async function deleteUserDB(id: number | undefined) {
+  try {
+    // check if the user exists
+    await excuteQuery({
+      host: 'userDb',
+      query: 'delete from user where id = ?',
+      values: [id],
+    })
   } catch (e) {
     console.log(e);
   }
@@ -109,13 +155,38 @@ export async function getUserDetailsByIdList(userId:number) {
 
 export async function deRegisterFromCompanyDB(id : number | null, userId : number | null, companyId : number | null) {
   try {
-    
-    const user = await excuteQuery({
+    let query;
+    let values = [];
+    if(id){
+      query = "delete from userCompany where id = ?;"
+      values = [id];
+    }else{
+      query = "delete from userCompany where user_id = ? and company_id = ?;"
+      values = [userId,companyId]
+    }
+
+    await excuteQuery({
       host: 'userDb',
-      query: 'delete from userCompany where user_id = ? and company_id = ?',
-      values: [userId,companyId],
+      query: query,
+      values: values,
     })
-    return user[0];
+    // return user[0];
+    return;
+  } catch (e) {
+    console.log(e);
+  }
+  return false;
+}
+
+export async function deRegisterFromAllCompanyDB(userId : number) {
+  try {
+
+    await excuteQuery({
+      host: 'userDb',
+      query: "delete from userCompany where user_id = ?;",
+      values: [userId],
+    })
+    return;
   } catch (e) {
     console.log(e);
   }
@@ -155,7 +226,7 @@ export async function getCompanyUserDB(
           query:
                 "SELECT * \
        FROM (SELECT uc.id as id,uc.user_id as userId, uc.isAdmin as admin ,u.name as name,u.contact as contact, ROW_NUMBER() OVER () AS RowID \
-          FROM userCompany uc left join user u on uc.user_id = u.id where uc.company_id = ? " +
+          FROM userCompany uc left join user u on uc.user_id = u.id where uc.company_id = ? and uc.isAccepted = 1 " +
                 (filter ? "and u.name LIKE CONCAT('%',?,'%') " : "") +
                 "order by uc.isAdmin desc, u.name asc \
       ) AS NumberedRows\
@@ -188,5 +259,23 @@ export async function getCompanyUserCount(
     });
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function checkUserInCompanyDB(userId : number, companyId : number) {
+  try{
+    const user =  excuteQuery({
+      host : "userDb",
+      query : "select * from userCompany where user_id = ? and company_id = ?;",
+      values : [userId,companyId]
+    })
+    if(user){
+      return user;
+    }else{
+      return null;
+    }
+
+  }catch(error){
+    console.log(error);
   }
 }

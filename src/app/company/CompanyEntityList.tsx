@@ -40,6 +40,7 @@ export default function CompanyEntityList(){
       ];
     return <>
         <EntityList
+        title="Company List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CreateCompany
           setDialogOpen={fnDialogOpen}

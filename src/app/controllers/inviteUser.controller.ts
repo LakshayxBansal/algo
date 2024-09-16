@@ -1,13 +1,13 @@
 "use server";
 import * as zs from "../zodschema/zodschema";
 import { getSession } from "../services/session.service";
-import { getInviteUserByIdList, getInviteUserCount, getInviteUserDb, createUserToInviteDb, insertExecutiveIdToInviteUserList, getInviteDetailByContactList, getInviteDetailByIdList,getInvitesDb,getInvitesCount,createInUsercompany,deleteInvite } from "../services/inviteUser.service";
+import { getInviteUserByIdList, getInviteUserCount,updateInUsercompany, getInviteUserDb, createUserToInviteDb, insertExecutiveIdToInviteUserList, getInviteDetailByContactList, getInviteDetailByIdList,getInvitesDb,getInvitesCount,createInUsercompany,deleteInvite } from "../services/inviteUser.service";
 import { inviteUserSchemaT } from "../models/models";
 import {getCompanyDbById} from "@/app/controllers/company.controller";
 import {insertUserIdInExecutive} from "@/app/controllers/executive.controller"
 import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from "mariadb";
-import { getUserDetailsById } from "./user.controller";
+import { getUserDetailsById,checkUserInCompany } from "./user.controller";
 import { getCompanyById } from "./company.controller";
 
 export async function createUserToInvite(data: inviteUserSchemaT) {
@@ -107,7 +107,12 @@ export async function acceptInvite(inviteDetail : inviteUserSchemaT){
       //   const companyDb = await getCompanyDbById(inviteDetail.companyId);
       //   await Promise.all([createInUsercompany(true,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId), insertUserIdInExecutive(companyDb as string,inviteDetail.executiveId,session.user.userId),deleteInvite(inviteDetail.id as number)]);
       // }else{
-        await Promise.all([createInUsercompany(true,null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+        const user = await checkUserInCompany(session.user.userId,inviteDetail.companyId);
+        if(user.length>0){
+          await Promise.all([updateInUsercompany(null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+        }else{
+          await Promise.all([createInUsercompany(true,null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+        }
       // }
     }
   }catch(error){
@@ -119,12 +124,12 @@ export async function rejectInvite(inviteDetail : inviteUserSchemaT){
   try{
     const session = await getSession();
     if(session){
-      if(inviteDetail.executiveId){
-        const companyDb = await getCompanyDbById(inviteDetail.companyId);
-        await Promise.all([createInUsercompany(false,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-      }else{
+      // if(inviteDetail.executiveId){
+        // const companyDb = await getCompanyDbById(inviteDetail.companyId);
+        // await Promise.all([createInUsercompany(false,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+      // }else{
         await Promise.all([createInUsercompany(false,null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-      }
+      // }
     }
   }catch(error){
     throw(error);

@@ -76,9 +76,36 @@ export async function createInUsercompany(accept: boolean,executiveId:number | n
       values: [userId,companyId,inviteDate],
     });
   }catch(error){
-    throw error;
+    console.log(error);
   }
 }
+
+export async function updateInUsercompany(executiveId:number | null,companyId:number,inviteDate : Date | undefined,userId : number){
+  try{
+    let query;
+    // if(accept){
+      // if(executiveId){
+      //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate,mappedDate) values (?,?,0,1,1,1,?,now(),now());"
+      // }else{
+        query = "update userCompany set isAccepted = 1, invitedDate = ? where user_id = ? and company_id = ?;"
+      // }
+    // }else{
+      // if(executiveId){
+      //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
+      // }else{
+        // query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
+      // }
+    // }
+    return excuteQuery({
+      host: "userDb",
+      query: query,
+      values: [inviteDate,userId,companyId],
+    });
+  }catch(error){
+    console.log(error);
+  }
+}
+
 export async function deleteInvite(inviteId : number){
   try{
     return excuteQuery({
@@ -87,7 +114,7 @@ export async function deleteInvite(inviteId : number){
       values: [inviteId],
     });
   }catch(error){
-    throw error;
+    console.log(error);
   }
 }
 

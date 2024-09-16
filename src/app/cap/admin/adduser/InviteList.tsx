@@ -22,6 +22,7 @@ export default function InviteList(){
 
     return <>
         <EntityList
+        title="Add User"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <InviteUserForm
           setDialogOpen={fnDialogOpen}

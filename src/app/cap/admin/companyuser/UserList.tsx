@@ -18,11 +18,11 @@ const columns: GridColDef[] = [
     headerName: 'Contact',
     width: 150
   },
-  {
-    field: 'role',
-    headerName: 'Role',
-    width: 150
-  },
+  // {
+  //   field: 'role',
+  //   headerName: 'Role',
+  //   width: 150
+  // },
   {
     field: 'remove',
     headerName: 'Remove',
@@ -35,15 +35,15 @@ const columns: GridColDef[] = [
 
 const handleRemove = async(params : any)=>{
   console.log(params.row)
-  const userId = params.row.userId;
-  const companyId = params.row.companyId;
-  // await deRegisterFromCompany(userId,companyId)
+  const id = params.row.id;
+  await deRegisterFromCompany(id,null,null);
 }
 
 export default function UserList(){
 
     return <>
         <EntityList
+        title="User List"
         // renderForm={(fnDialogOpen, fnDialogValue, data) => (
         //   <InviteUserForm
         //   setDialogOpen={fnDialogOpen}

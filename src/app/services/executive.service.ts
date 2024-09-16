@@ -86,7 +86,7 @@ export async function updateExecutiveDB(
         data.doj,
         data.area_id,
         data.call_type,
-        data.crm_map_id,
+        data.crm_user_id,
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,

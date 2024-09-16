@@ -184,6 +184,7 @@ export async function getCompaniesDb(
           dbInfo d, dbHost h,\
           company c WHERE\
           u.id = uc.user_id and \
+          uc.isAccepted = 1 and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
           d.host_id = h.id AND" + (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") + " u.id=? \

@@ -43,5 +43,5 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
     }
   } catch (e) {
     console.log(e);
-  } 
+  }
 }

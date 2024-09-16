@@ -1,11 +1,10 @@
 "use client";
-
 import React, { useState, ChangeEvent } from "react";
 import { Box, Divider, Paper, TextField, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-import { registerUser } from "@/app/controllers/user.controller";
+import { registerUser,checkInActiveUser } from "@/app/controllers/user.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { useRouter } from "next/navigation";
 import { CountryData } from "react-phone-input-material-ui";
@@ -14,12 +13,16 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { userSchemaT } from "../models/models";
 import Image from "next/image";
 import GoogleSignUpButton from "./customButton";
+import { AddDialog } from "../Widgets/masters/addDialog";
+import Confirmation from "./Confirmation";
 
 export default function SignupForm1(props: any) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [dialogOpen,setDialogOpen] = useState(false);
+  const [inActiveUserId,setInActiveUserId] = useState<number | undefined>();
   const [emailElement, setEmailElement] = useState(true);
   const [contact, setContact] = useState("phone");
   const [showPassword, setShowPassword] = useState(false);
@@ -41,6 +44,11 @@ export default function SignupForm1(props: any) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
+    const inActiveUser = await checkInActiveUser(data.email || data.phone as string);
+    if(inActiveUser){
+      setInActiveUserId(inActiveUser.id);
+      setDialogOpen(true);
+    }else{
     const result = await registerUser(data as userSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -63,6 +71,7 @@ export default function SignupForm1(props: any) {
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
+  }
   };
 
   function onPhoneChange(
@@ -136,6 +145,16 @@ export default function SignupForm1(props: any) {
               src="/signup.png"
             />
           </Grid>
+          {dialogOpen && (
+        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
+          {/* {props.renderForm
+            ? dlgMode === dialogMode.Add
+              ? props.renderForm(setDialogOpen, (arg) => {})
+              : props.renderForm(setDialogOpen, (arg) => {}, modData)
+            : 1} */}
+            <Confirmation setDialogOpen={setDialogOpen} userId={inActiveUserId}/>
+        </AddDialog>
+      )}
           <Grid item xs={12} sm={6} md={6} style={{ margin: "5%" }}>
             <Box style={{ display: "flex", flexDirection: "row" }}>
               <Image

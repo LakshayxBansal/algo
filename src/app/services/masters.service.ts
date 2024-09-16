@@ -420,3 +420,17 @@ export async function getStateCount(crmDb: string, value: string | undefined) {
     console.log(e);
   }
 }
+
+export async function delCountryByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from country_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

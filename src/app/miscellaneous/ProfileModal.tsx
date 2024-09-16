@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Box } from '@mui/material';
 import ProfileImage from './ProfileImage';
 import { deleteSession } from '../services/session.service';
-import { deRegisterFromApp,deRegisterFromCompany } from '../controllers/user.controller';
+import { deRegisterFromAllCompany, deRegisterFromApp,deRegisterFromCompany } from '../controllers/user.controller';
 import { redirectToPage } from '../company/SelectCompany';
 import { signOut } from "next-auth/react";
 
@@ -20,18 +20,19 @@ export default function ProfileModal({img,name,userId,companyId,companyName}:{im
         setAnchorEl(null);
     };
     const handleLogout = async() => {
-        signOut({ callbackUrl: 'http://localhost:3000/signin' });
         await deleteSession(userId);
+        // signOut({ callbackUrl: 'http://localhost:3000/signin' });
+        signOut();
         handleClose();
         redirectToPage("/signin");
     }
     const handleDeregisterFormCompany = async()=>{
-        // await Promise.all([deRegisterFromCompany(userId,companyId),deleteSession(userId)]);
+        await Promise.all([deRegisterFromCompany(null,userId,companyId),deleteSession(userId)]);
         handleClose();
         redirectToPage("/company");
     }
     const handleDeregisterFormApp = async()=>{
-        await Promise.all([deRegisterFromApp(userId),deleteSession(userId)]);
+        await Promise.all([deRegisterFromApp(userId),deRegisterFromAllCompany(userId),deleteSession(userId)]);
         handleClose();
         redirectToPage("/signin");
     }

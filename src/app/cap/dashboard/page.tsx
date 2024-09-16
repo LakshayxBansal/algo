@@ -18,6 +18,7 @@ const getUnassignedEnquiries = (openEnquiries: any) => {
 }
 export default async function Dashboard() {
   const session = await getSession();
+  console.log(session);
   if (session?.user.dbInfo) {
     let [openEnquiries, closedEnquiries] = await Promise.all([getOpenEnquiries(), getClosedEnquiries()]);
     const unassignedEnquiries = getUnassignedEnquiries(openEnquiries);
