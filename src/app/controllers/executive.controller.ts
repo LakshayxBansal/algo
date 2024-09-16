@@ -7,7 +7,8 @@ import {
   getExecutiveByPageDb,
   getExecutiveCount,
   getExecutiveDetailsById,
-  updateExecutiveDB,getExecutiveProfileImageByCrmUserIdList
+  updateExecutiveDB,getExecutiveProfileImageByCrmUserIdList,
+  delExecutiveDetailsById
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -230,6 +231,29 @@ export async function getExecutiveById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function delExecutiveById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delExecutiveDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }
 
 export async function getExecutiveByPage(

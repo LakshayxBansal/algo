@@ -8,7 +8,7 @@ import {
   getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
-  updateOrganisationDB
+  updateOrganisationDB,
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
 import { getOrganisationList } from "@/app/services/organisation.service";
@@ -191,7 +191,6 @@ export async function getOrganisationByPage(
       };
     }
   } catch (e: any) {
-
     let err = "Organisation Admin, E-Code:369";
 
     getOrg = {
