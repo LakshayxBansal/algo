@@ -14,7 +14,7 @@ import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
-import {optionsDataT} from '@/app/models/models';
+import { optionsDataT } from '@/app/models/models';
 
 type OnChangeFunction = (
   event: any,
@@ -40,8 +40,8 @@ type autocompleteDBT = {
   required?: boolean;
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
-  fnSetModifyMode: (id: string)=> void,
-  disable? : boolean
+  fnSetModifyMode: (id: string) => void,
+  disable?: boolean
   //children: React.FunctionComponentElements
 };
 
@@ -63,15 +63,15 @@ export function AutocompleteDB(props: autocompleteDBT) {
       setOptions([] as optionsDataT[]);
       setLoading(false);
       if (results) {
-        if (autoSelect && inputValue === "" ) {
+        if (autoSelect && inputValue === "") {
           props.setDialogVal(results[0]);
         }
         setOptions(results);
-        
+
       }
     }, 400);
     if (valueChange || autoSelect) {
-      if(selectDefault) { 
+      if (selectDefault) {
         props.setDialogVal(props.defaultValue as optionsDataT)
         setSelectDefault(false)
       } else {
@@ -109,7 +109,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
       renderOption={(p, option) => {
-        const pWithKey = p as HTMLAttributes<HTMLLIElement> & {key: string}
+        const pWithKey = p as HTMLAttributes<HTMLLIElement> & { key: string }
         const { ["key"]: _, ...newP } = pWithKey;
         return <li key={pWithKey.key} {...newP}>{option.name}</li>;
         //return <li>{getOptions(option, props.renderOptions)}</li>;
@@ -155,6 +155,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
+        console.log(newValue);
+
         if (reason != "blur") {
           props.setDialogVal(newValue ? (newValue as optionsDataT) : ({} as optionsDataT));
           props.onChange

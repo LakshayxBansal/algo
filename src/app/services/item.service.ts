@@ -84,18 +84,17 @@ export async function getItemList(crmDb: string, searchString: string) {
   }
 }
 
-export async function DeleteItemList(crmDb: string, id: number) {
-  try {
-    let query = "Delete from item_master where id=?";
-    let values: any[] = [id];
 
-    await excuteQuery({
+
+export async function deleteItemListDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
       host: crmDb,
-      query: query,
-      values: values,
+      query: "delete from item_master where id=?;",
+      values: [id],
     });
 
-    return;
+    return result;
   } catch (e) {
     console.log(e);
   }

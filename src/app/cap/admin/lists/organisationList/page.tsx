@@ -4,7 +4,7 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getOrganisationById, getOrganisationByPage } from '@/app/controllers/organisation.controller';
+import { delOrganisationById, getOrganisationById, getOrganisationByPage } from '@/app/controllers/organisation.controller';
 import OrganisationForm from '@/app/Widgets/masters/masterForms/organisationForm';
 
 
@@ -30,6 +30,7 @@ const columns: GridColDef[] = [
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title='Organisation List'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <OrganisationForm
               setDialogOpen={fnDialogOpen}
@@ -39,6 +40,7 @@ const columns: GridColDef[] = [
           )}
         fetchDataFn={getOrganisationByPage}
         fnFetchDataByID={getOrganisationById}
+        fnDeleteDataByID={delOrganisationById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

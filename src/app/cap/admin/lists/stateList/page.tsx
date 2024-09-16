@@ -4,7 +4,7 @@ import * as React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
-import { getStateById, getStateByPage } from '@/app/controllers/masters.controller';
+import { delStateById, getStateById, getStateByPage } from '@/app/controllers/masters.controller';
 import StateForm from '@/app/Widgets/masters/masterForms/stateForm';
 
 
@@ -24,6 +24,7 @@ export default function State() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title='State List'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <StateForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +34,7 @@ export default function State() {
           )}
         fetchDataFn={getStateByPage}
         fnFetchDataByID={getStateById}
+        fnDeleteDataByID={delStateById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>
