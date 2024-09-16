@@ -20,6 +20,8 @@ export async function getEnquirySubStatus(
   status: string
 ) {
   try {
+    console.log("controller", status);
+    
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getEnquirySubStatusList(
