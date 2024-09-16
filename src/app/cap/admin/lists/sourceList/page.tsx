@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
-import { getEnquirySourceById, getEnquirySourceByPage } from '@/app/controllers/enquirySource.controller';
+import { delEnquirySourceById, getEnquirySourceById, getEnquirySourceByPage } from '@/app/controllers/enquirySource.controller';
 
 
 export default function enquirySource() {
@@ -24,6 +24,7 @@ export default function enquirySource() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title='Source List'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <SourceForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +34,7 @@ export default function enquirySource() {
           )}
         fetchDataFn={getEnquirySourceByPage}
         fnFetchDataByID={getEnquirySourceById}
+        fnDeleteDataByID={delEnquirySourceById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

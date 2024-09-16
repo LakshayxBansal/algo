@@ -1,115 +1,60 @@
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Overview from './Overview';
 import { getSession } from '../../services/session.service';
 import { redirect } from 'next/navigation';
-import { getClosedEnquiries, getOpenEnquiries } from '@/app/controllers/dashboard.controller';
-import Chart from './Chart';
-import Enquiries from './Enquiries';
+import ExecutiveEnquiryList from './ExecutiveEnquiryList';
 import { Grid } from '@mui/material';
+import EnquiryList from './EnquiryList';
+import AverageAgeCard from './AverageAgeCard';
+import ClosedCard from './ClosedCard';
+import OpenCard from './OpenCard';
+import UnassignedCard from './UnassignedCard';
+import OverviewCard from './OverviewCard';
 
-const getUnassignedEnquiries = (openEnquiries: any) => {
-  const result = openEnquiries.filter((item: any) => {
-    return item.allocated_to === null;
-  })
-  return result;
-}
 export default async function Dashboard() {
   const session = await getSession();
-  if (session?.user.dbInfo) {
-    let [openEnquiries, closedEnquiries] = await Promise.all([getOpenEnquiries(), getClosedEnquiries()]);
-    const unassignedEnquiries = getUnassignedEnquiries(openEnquiries);
-
+  if (session?.user.dbInfo) {  
     return (
       <Box sx= {{maxWidth: "100%", bgcolor: "#F9FAFB"}}>
-      <Box sx={{ py: 2, maxWidth:"90vw", margin:"auto"}}>
-        <Grid container spacing={3} sx={{ mb: 0 }}>
-          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-            <Paper
-              sx={{
-                p: "24px",
-                height: 220,
-                borderRadius: "16px",
-                background: 'linear-gradient(135deg, rgba(208, 236, 254, 0.48), rgba(115, 186, 251, 0.48))',
-                color: "#042174"
-              }}
-            >
-              <Overview title="Open Enquiries" data={openEnquiries.length} />
-            </Paper>
+        <Box sx={{ py: 3, maxWidth:"90vw", margin:"auto"}}>
+          <Grid container spacing={3}>
+            <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+              <div> <OpenCard/> </div>
+            </Grid>
+            <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+              <div> <UnassignedCard/> </div>
+            </Grid>
+            <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+              <div> <ClosedCard/> </div>
+            </Grid>
+            <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+              <div> <AverageAgeCard/> </div>
+            </Grid>
           </Grid>
-          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-            <Paper
-              sx={{
-                p: "24px",
-                height: 220,
-                borderRadius: "16px",
-                background: 'linear-gradient(135deg, rgba(255, 245, 204, 0.48), rgba(255, 214, 102, 0.48))',
-                color: "#7A4100"
-              }}
-            >
-              <Overview title="Closed Enquiries" data={closedEnquiries.length} />
-            </Paper>
+          <Grid container spacing={3} sx={{pt: 4}}>
+            <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>            
+              <div>
+                <OverviewCard/>
+              </div>
+            </Grid>
+            <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
+              <div>
+                <EnquiryList/>
+              </div>
+            </Grid>
           </Grid>
-          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-            <Paper
-              sx={{
-                p: "24px",
-                height: 220,
-                borderRadius: "16px",
-                background: 'linear-gradient(135deg, rgba(239, 214, 255, 0.48), rgba(198, 132, 255, 0.48))',
-                color: "#27097A"
-              }}
-            >
-              <Overview title="Unassigned Enquiries" data={unassignedEnquiries.length} />
-            </Paper>
+          <Grid container spacing={3} sx={{mt: 4}}>
+            <Grid item xs={11} sm={12} md={12} sx={{margin: "auto"}}>
+              <div>
+                <ExecutiveEnquiryList/>
+              </div>
+            </Grid>
           </Grid>
-          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
-            <Paper
-              sx={{
-                p: "24px",
-                height: 220,
-                borderRadius: "16px",
-                background: 'linear-gradient(135deg, rgba(255, 233, 213, 0.48), rgba(255, 172, 130, 0.48))',
-                color: "#7A0916"
-              }}
-            >
-              <Overview title="Average Age" data={5} />
-            </Paper>
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} sx={{ my: 2 }}>
-          <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
-            <Paper
-              sx={{
-                borderRadius: "16px",
-              }}
-            >
-              <Chart openEnquiries={openEnquiries} closedEnquiries={closedEnquiries} />
-            </Paper>
-          </Grid>
-          <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
-            <Paper
-              sx={{
-                borderRadius: "16px",
-              }}
-              >
-              <Chart openEnquiries={openEnquiries} closedEnquiries={closedEnquiries} />
-            </Paper>
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} sx={{}}>
-          <Grid item xs={11} sm={12} md={12} sx={{margin: "auto"}}>
-            <Enquiries openEnquiries={openEnquiries} />
-          </Grid>
-        </Grid>
+        </Box>
       </Box>
-    </Box>
     );
 
   } else {
     redirect('/signin');
   }
 }
-
