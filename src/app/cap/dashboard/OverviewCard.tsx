@@ -6,6 +6,23 @@ import { Typography } from '@mui/material';
 import { getOverviewGraphData } from '@/app/controllers/dashboard.controller';
 import ChartContainer from './ChartContainer';
 
+const getBarData = (data: any, currMonth: number) => {
+  let result: Array<Number> = new Array(6).fill(0);
+  
+  data.forEach((ele: any) => {
+    let ind = -1;
+    if(currMonth < 6){
+      const month = ele["month"];
+      ind = currMonth + (12 - month);
+    }
+    else{
+      ind = currMonth - ele["month"];
+    }
+    const count = Number(ele["count"]);
+    result[ind] = count;
+  });
+  return result.reverse();
+}
 const getLineData = (totalOpen: any, openData: any, closedData: any) => {
   let initial = totalOpen - openData.reduce((accumulator: number, curr: number) => accumulator + curr);
   let arr = [initial + openData[0] - closedData[0]];
@@ -28,24 +45,19 @@ const getXAxisData = (currMonth: number) => {
 }
 
 export default async function OverviewCard() {
-  let data = await getOverviewGraphData();  
-  const result: Array<Array<Number>> = [];
-  for(let i = 0; i < data.length - 1; i++){
-    for (const ele of data[i]) {
-      let arr = [];
-      for(const key in ele){
-        arr.push(Number(ele[key]));
-      }
-      result.push(arr);
-    }
-  }  
-  const lineData = getLineData(result[0][0], result[1], result[2]);
-
-  const currMonth = new Date().getMonth();
+  const data = await getOverviewGraphData();
+  const totalOpen = Number(data[0][0].totalOpen);
+  
+  
+  const currMonth = (new Date().getMonth() + 1);
   const currYear = new Date().getFullYear();
+
+  const openData = getBarData(data[1], currMonth);
+  const closedData = getBarData(data[2], currMonth);
+  const lineData = getLineData(totalOpen, openData, closedData);  
   const xAxisData = getXAxisData(currMonth);
   let dispYear = "";
-  if(currMonth < 5){
+  if(currMonth < 6){
     dispYear = currYear - 1 + "-";
   }
   dispYear += currYear;
@@ -57,7 +69,7 @@ export default async function OverviewCard() {
           <Typography component="h2" variant="h6" color="primary" gutterBottom>Enquiries Overview</Typography>
           <Typography component="h2" variant="h6" color="primary" gutterBottom>{dispYear}</Typography>
         </Box>
-        <ChartContainer openData={result[1]} closedData={result[2]} lineData={lineData} xAxisData={xAxisData}/>
+        <ChartContainer openData={openData} closedData={closedData} lineData={lineData} xAxisData={xAxisData}/>
       </Paper>
     </Box>
   );

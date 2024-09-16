@@ -5,14 +5,14 @@ export async function getOpenEnquiriesDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
-        query: 
-                "select ROW_NUMBER() OVER (order by lt.date desc) AS id, ht.created_by, ht.created_on, lt.date,\
-                ht.enq_number, cm.name contactName, em.name category, es.name subStatus from enquiry_ledger_tran lt \
+        query: "select ROW_NUMBER() OVER (order by lt.date desc) AS id, ht.created_by, ht.created_on, lt.date,\
+                ht.enq_number, cm.name contactName, em.name category, es.name subStatus from enquiry_ledger_tran lt\
                 left join enquiry_header_tran ht on lt.enquiry_id=ht.id \
                 left join contact_master cm on cm.id=ht.contact_id\
                 left join enquiry_category_master em on em.id=ht.category_id\
                 left join enquiry_sub_status_master es on lt.sub_status_id=es.id\
-                where lt.status_id=1 limit 10;",
+                left join enquiry_status_master sm on lt.status_id=sm.id\
+                where sm.name='Open' limit 10;",
         values: [],
       });      
   
@@ -64,21 +64,9 @@ export async function getUnassignedEnquiriesDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
-        query: "SELECT * FROM enquiry_ledger_tran WHERE status_id=1 AND allocated_to IS NULL",
-        values: [],
-      });
-  
-      return result;
-    } catch (e) {
-      console.log(e);
-    }
-}
-
-export async function getClosedEnquiriesDb(dbName: string) {
-    try {
-      const result = await excuteQuery({
-        host: dbName,
-        query: "select * from enquiry_ledger_tran where status_id=2",
+        query: "SELECT COUNT(*) as count FROM enquiry_ledger_tran lt\
+                left join enquiry_status_master sm on sm.id=lt.status_id\
+                WHERE sm.name='Open' AND allocated_to IS NULL;",
         values: [],
       });
   
@@ -108,7 +96,7 @@ export async function getOverviewGraphDataDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
-        query: "call getOverviewGraphData()",
+        query: "call getOverviewGraphData1()",
         values: [],
       });
   
@@ -117,6 +105,7 @@ export async function getOverviewGraphDataDb(dbName: string) {
       console.log(e);
     }
 }
+
 export async function getAverageAgeDb(dbName: string) {
     try {
       const result = await excuteQuery({

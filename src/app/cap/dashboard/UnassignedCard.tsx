@@ -5,8 +5,9 @@ import { Box, Paper } from '@mui/material';
 import { getUnassignedEnquiries } from '@/app/controllers/dashboard.controller';
 
 export default async function UnassignedCard() {    
-    let unassignedEnquiries = await getUnassignedEnquiries();
-    let date = new Date();
+    const result = (await getUnassignedEnquiries())[0];
+    const unassignedEnquiriesCount = Number(result.count)    
+    const date = new Date();
   return (
     <Paper
         sx={{
@@ -24,7 +25,7 @@ export default async function UnassignedCard() {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Unassigned Enquiries</Typography>
-            <Typography component="p" variant="h4">{unassignedEnquiries.length}</Typography>
+            <Typography component="p" variant="h4">{unassignedEnquiriesCount}</Typography>
             <Typography color="text.secondary" sx={{ flex: 1 }}>
                 on {date.toDateString()}
             </Typography>
