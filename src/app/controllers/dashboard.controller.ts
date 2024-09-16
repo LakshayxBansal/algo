@@ -1,5 +1,5 @@
 "use server"
-import { getAverageAgeDb, getClosedEnquiriesCountDb, getClosedEnquiriesDb, getEnquiriesOverviewDb, getOpenEnquiriesCountDb, getOpenEnquiriesDb, getOverviewGraphDataDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
+import { getAverageAgeDb, getClosedEnquiriesCountDb, getClosedEnquiriesDb, getExecutiveEnquiriesOverviewDb, getOpenEnquiriesCountDb, getOpenEnquiriesDb, getOverviewGraphDataDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 
@@ -62,11 +62,11 @@ export async function getClosedEnquiriesCount() {
       throw error;
     }
 }
-export async function getEnquiriesOverview() {
+export async function getExecutiveEnquiriesOverview() {
     try {
       const session = await getSession();
       if (session?.user.dbInfo) {
-        const data = await getEnquiriesOverviewDb(session.user.dbInfo.dbName);
+        const data = await getExecutiveEnquiriesOverviewDb(session.user.dbInfo.dbName);
         const result = data.map(bigIntToNum);
         return result;
       }

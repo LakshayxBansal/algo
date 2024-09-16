@@ -5,8 +5,8 @@ import { Box, Paper } from '@mui/material';
 import { getClosedEnquiriesCount } from '@/app/controllers/dashboard.controller';
 
 export default async function ClosedCard() {    
-    let result = (await getClosedEnquiriesCount())[0];
-    
+    const result = (await getClosedEnquiriesCount())[0];
+    const sinceDate = new Date(result.since);
   return (
     <Paper
         sx={{
@@ -26,7 +26,7 @@ export default async function ClosedCard() {
             <Typography component="h2" variant="h6" gutterBottom>Closed Enquiries</Typography>
             <Typography component="p" variant="h4">{result.count}</Typography>
             <Typography color="text.secondary" sx={{ flex: 1 }}>
-                since {result.since.toDateString()}
+                since {sinceDate.toDateString()}
             </Typography>
         </Box>
         <Box>

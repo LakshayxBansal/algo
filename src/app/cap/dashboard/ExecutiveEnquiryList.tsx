@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Paper, Typography } from '@mui/material';
-import { getEnquiriesOverview } from '@/app/controllers/dashboard.controller';
+import { getExecutiveEnquiriesOverview } from '@/app/controllers/dashboard.controller';
 
 const pgSize = 5;
 
 export default async function ExecutiveEnquiryList() {
-  let data = await getEnquiriesOverview();  
+  const data = await getExecutiveEnquiriesOverview();  
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID' },
