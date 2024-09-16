@@ -64,6 +64,20 @@ export async function getAllocationDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function delAllocationDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from allocation_type_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function updateAllocationTypeDb(
   session: Session,
   statusData: zm.nameMasterDataT

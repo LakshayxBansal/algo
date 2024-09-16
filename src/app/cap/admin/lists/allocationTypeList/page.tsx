@@ -1,15 +1,12 @@
 "use client";
 import * as React from "react";
 
-import { GridColDef } from "@mui/x-data-grid";
-import EntityList from "@/app/Widgets/masters/EntityList";
-import AppBar from "@mui/material/AppBar";
-import AllocationTypeMasterForm from "@/app/Widgets/masters/masterForms/allocationTypeMaster";
-import {
-  deleteAllocationTypeById,
-  getAllocationTypeById,
-  getAllocationTypeByPage,
-} from "@/app/controllers/allocationType.controller";
+import { GridColDef } from '@mui/x-data-grid';
+import EntityList from '@/app/Widgets/masters/EntityList';
+import AppBar from '@mui/material/AppBar';
+import AllocationTypeMasterForm from '@/app/Widgets/masters/masterForms/allocationTypeMaster';
+import { delAllocationTypeById, getAllocationTypeById, getAllocationTypeByPage } from '@/app/controllers/allocationType.controller';
+
 
 export default function AllocationType() {
   const columns: GridColDef[] = [
@@ -25,7 +22,7 @@ export default function AllocationType() {
     <div style={{ height: 800, width: "100%" }}>
       <AppBar position="static" color="default"></AppBar>
       <EntityList
-        title="Allocation Form"
+      title="Allocation Type List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <AllocationTypeMasterForm
             setDialogOpen={fnDialogOpen}
@@ -35,7 +32,7 @@ export default function AllocationType() {
         )}
         fetchDataFn={getAllocationTypeByPage}
         fnFetchDataByID={getAllocationTypeById}
-        fnDeleteDataByID={deleteAllocationTypeById}
+        fnDeleteDataByID={delAllocationTypeById}
         customCols={columns}
         AddAllowed={true}
       ></EntityList>

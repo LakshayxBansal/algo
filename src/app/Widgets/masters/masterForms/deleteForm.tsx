@@ -7,13 +7,14 @@ import { DeleteActionById } from "@/app/controllers/enquiryAction.controller";
 
 export default function DeleteForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = useState(false);
-  console.log(props);
+
+  console.log("thsi is delete form",props.data);
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
   const handleSubmit = async () => {
-    const result: any = await DeleteActionById(props.data);
+    const result: any = await props.data();
     props.setDialogOpen ? props.setDialogOpen(false) : null;
     setSnackOpen(true);
   };
@@ -23,7 +24,7 @@ export default function DeleteForm(props: masterFormPropsT) {
       <form>
         <Typography variant={"h4"}>Are you sure you want to delete?</Typography>
 
-        {/* <Grid container>
+        <Grid container>
           <Grid item xs={6} md={6}>
             <Box margin={1} sx={{ display: "flex" }}>
             </Box>
@@ -44,8 +45,8 @@ export default function DeleteForm(props: masterFormPropsT) {
               </Button>
             </Box>
           </Grid>
-        </Grid> */}
-        <Box
+        </Grid>
+        {/* <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
@@ -60,7 +61,7 @@ export default function DeleteForm(props: masterFormPropsT) {
           >
             Delete
           </Button>
-        </Box>
+        </Box> */}
       </form>
       <Snackbar
         open={snackOpen}

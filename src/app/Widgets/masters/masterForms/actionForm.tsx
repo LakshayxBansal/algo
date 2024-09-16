@@ -24,7 +24,13 @@ export default function ActionForm(props: masterFormPropsT) {
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
-    const data = { name: formData.get("name") as string };
+    // const data = { name: formData.get("name") as string };
+    // console.log(data);
+    let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
     // const parsed = nameMasterData.safeParse(data);
     // let result;
     // let issues;
@@ -55,6 +61,7 @@ export default function ActionForm(props: masterFormPropsT) {
     //   setFormError(errorState);
     // }
     const result = await persistEntity(data as nameMasterDataT);
+    console.log(result)
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
@@ -63,6 +70,7 @@ export default function ActionForm(props: masterFormPropsT) {
       setSnackOpen(true);
     } else {
       const issues = result.data;
+      console.log("these are issues",issues);
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -88,11 +96,14 @@ export default function ActionForm(props: masterFormPropsT) {
   };
 
   async function persistEntity(data: nameMasterDataT) {
+    console.log(data);
     let result;
     if (props.data) {
+      console.log("prosp",props.data)
       data["id"] = entityData.id;
       result = await updateEnquiryAction(data);
     } else result = await createEnquiryAction(data);
+    console.log("result",result);
     return result;
   }
 

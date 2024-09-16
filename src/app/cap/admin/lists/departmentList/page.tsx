@@ -10,7 +10,6 @@ import {
   getDepartmentById,
   getDepartmentByPage,
 } from "@/app/controllers/department.controller";
-import DeleteForm from "../../../../Widgets/masters/masterForms/deleteForm";
 
 export default function Department() {
   const columns: GridColDef[] = [

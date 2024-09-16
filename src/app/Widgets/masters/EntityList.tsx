@@ -1,24 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GridColDef, GridFilterModel } from "@mui/x-data-grid";
 import {
   Box,
   Button,
+  ButtonGroup,
   Checkbox,
+  ClickAwayListener,
   Container,
   debounce,
   Divider,
   FormControlLabel,
   Grid,
+  Grow,
   IconButton,
   InputAdornment,
   MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Snackbar,
+  Tooltip,
   Typography,
+  TextField,
+  styled,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
 import { RenderFormFunctionT } from "@/app/models/models";
@@ -27,7 +36,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
 import { StyledMenu } from "../../utils/styledComponents";
-import DeleteForm from "./masterForms/deleteForm";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
+import { any } from "zod";
+import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 
 type ModifyT = {
   title: string;
@@ -63,9 +75,12 @@ export default function EntityList(props: ModifyT) {
   const [search, setSearch] = useState("");
   const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
-  const [ids, setIds] = useState(0);
-  let searchText;
+  const [ids, setIds] = useState<number>(0);
+  const [snackOpen, setSnackOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
+  let searchText;
   useEffect(() => {
     const fetchData = debounce(async (searchText) => {
       const rows: any = await props.fetchDataFn(
@@ -104,12 +119,102 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
-  const handleColumnVisibilityChange = (field: string) => {
-    setColumnVisibilityModel((prev: { [x: string]: any }) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
+  async function onDeleteDialog(modId: number) {
+    if (props.fnDeleteDataByID && modId) {
+      const data = await props.fnDeleteDataByID(modId);
+      if (data.status) {
+      }
+      setTimeout(() => {
+        dialogOpenDelete ? setDialogOpenDelete(false) : null;
+      }, 1000);
+    }
+  }
+
+
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
   };
+
+  const handleCloseButtonMenu = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    setOpen(false);
+  };
+
+  const columns1: GridColDef[] = [
+    {
+      field: "Icon menu",
+      headerName: "Options",
+      minWidth: 200,
+      renderCell: (params) => {
+        return <IconComponent id={params.row.id} />;
+      },
+    },
+  ];
+
+  const columns: GridColDef[] = columns1.concat(props.customCols);
+
+  const columns3: GridColDef[] = columns1.concat(props.customCols);
+  const [columns4, setColumns4] = useState(columns3);
+
+
+  type colu = {
+    field: keyof GridColDef;
+    headerName:  keyof GridColDef;
+    editable:  keyof GridColDef;
+    minWidth:  keyof GridColDef;
+  }
+
+  const handleColumnVisibilityChange = (col: GridColDef) => {
+    setColumnVisibilityModel((prev: any) => {
+        const newVisibilityModel = {
+            ...prev,
+            [col.field]: !prev[col.field] 
+        };
+        setColumns4((prevColumns) => {
+            const isColumnVisible = newVisibilityModel[col.field];
+            if (isColumnVisible) {
+                if (!prevColumns.some(item => item.field === col.field)) {
+                    return [...prevColumns, col];
+                }
+            } else {
+                return prevColumns.filter(item => item.field !== col.field);
+            }
+            return prevColumns;
+        });
+
+        return newVisibilityModel;
+    });
+};
+
+  function ColumnVisibilityToggle(props: { columns1: GridColDef[]; columns2: GridColDef[]; handleColumnVisibilityChange:any }) {
+    const [columns1, setColumns1] = useState(props.columns1);
+    const column1Fields = new Set(columns1.map(col => col.field));
+    return (
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {props.columns2.map((col) => (
+          <FormControlLabel
+            key={col.field}
+            control={<Checkbox
+              checked={column1Fields.has(col.field)} // Check if field exists in columns1
+              onChange={() => props.handleColumnVisibilityChange(col)} />}
+            label={col.headerName} />
+        ))}
+      </div>
+    );
+  }
 
   type iconT = {
     id: number;
@@ -166,17 +271,98 @@ export default function EntityList(props: ModifyT) {
       </Box>
     );
   }
-  const columns1: GridColDef[] = [
-    {
-      field: "Icon menu",
-      headerName: "Options",
-      renderCell: (params) => {
-        return <IconComponent id={params.row.id} />;
-      },
-    },
-  ];
 
-  const columns: GridColDef[] = columns1.concat(props.customCols);
+ 
+  
+  function isSnakeCase(str: string): boolean {
+    const snakeCaseRegex = /^[a-z]+(_[a-z]+)*$/;
+    return snakeCaseRegex.test(str);
+  }
+
+  const columns2: GridColDef[] = [];
+  let columnHeading = {
+    field: "",
+    headerName: "",
+    editable: true,
+    minWidth: 200,
+  };
+
+
+  type dataObj1 = { [key: string]: any };
+
+  // function getUniqueObjects(
+  //   arr1: GridColDef[],
+  //   arr2: GridColDef[],
+  //   key: keyof GridColDef
+  // ) {
+  //   // Combine both arrays
+  //   const combined = [...arr1, ...arr2];
+
+  //   // Create a Set to track unique values
+  //   const uniqueSet = new Set();
+
+  //   // Filter out unique objects based on the specified key
+  //   const uniqueObjects = combined.filter((obj) => {
+  //     // Create a unique identifier for the object based on the key
+  //     const keyValue = obj[key];
+
+  //     if (uniqueSet.has(keyValue)) {
+  //       return false; // Object is not unique
+  //     } else {
+  //       uniqueSet.add(keyValue); // Add key value to Set
+  //       return true; // Object is unique
+  //     }
+  //   });
+
+  //   // Push unique objects from arr2 to arr1
+  //   arr1.push(
+  //     ...uniqueObjects.filter(
+  //       (obj) => !arr1.some((existingObj) => existingObj[key] === obj[key])
+  //     )
+  //   );
+
+  //   return arr1;
+  // }
+
+  function pushColumns(dataObj: dataObj1) {
+    if (dataObj) {
+      for (const key in dataObj) {
+        const seenKeys = new Set();
+        if (dataObj.hasOwnProperty(key)) {
+          if (seenKeys.has(key)) {
+            break;
+          }
+          seenKeys.add(key);
+          let keyToUse: string;
+          const result = isSnakeCase(key);
+          let KeyToU: string;
+          if (result) {
+            keyToUse = key.replace(/_/g, " ");
+            KeyToU = keyToUse.charAt(0).toUpperCase();
+            KeyToU = KeyToU + keyToUse.slice(1);
+            KeyToU = KeyToU.toLowerCase() // Ensure the string is in lowercase before capitalizing
+              .replace(/\b\w/g, (char) => char.toUpperCase());
+          } else {
+            continue;
+          }
+          columnHeading = {
+            ...columnHeading,
+            field: key,
+            headerName: KeyToU,
+          };
+          const exists = columns.some(
+            (obj) => obj["field"] === columnHeading["field"]
+          );
+          if (!exists) {
+               columns.push(columnHeading);
+          }
+
+        }
+      }
+    }
+  }
+
+  pushColumns(data[0])
 
   return (
     <Container
@@ -187,7 +373,7 @@ export default function EntityList(props: ModifyT) {
       <Divider />
       <Grid container spacing={2} style={{ verticalAlign: "center" }}>
         <Grid item xs={8}>
-          <Box sx={{ width: "75%", marginLeft: "30px" }}>
+          <Box sx={{ width: "75%" }}>
             <TextField
               variant="outlined"
               fullWidth
@@ -222,27 +408,95 @@ export default function EntityList(props: ModifyT) {
         >
           {props.AddAllowed && (
             <Box>
-              <Button
+              <ButtonGroup
                 variant="contained"
-                onClick={() => {
-                  setDialogOpen(true);
-                  setDlgMode(dialogMode.Add);
-                }}
+                ref={anchorRef}
+                aria-label="Button group with a nested menu"
               >
-                <AddIcon sx={{ paddingRight: "5px" }} />
-                ADD NEW
-              </Button>
+                <Tooltip title="Add New">
+                  <Button
+                    onClick={() => {
+                      setDialogOpen(true);
+                      setDlgMode(dialogMode.Add);
+                    }}
+                  >
+                    <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
+                    Add New
+                  </Button>
+                </Tooltip>
+                <Tooltip title="More Options">
+                  <Button
+                    size="small"
+                    aria-controls={open ? "split-button-menu" : undefined}
+                    aria-expanded={open ? "true" : undefined}
+                    aria-label="select merge strategy"
+                    aria-haspopup="menu"
+                    onClick={handleToggle}
+                  >
+                    <ArrowDropDownIcon />
+                  </Button>
+                </Tooltip>
+              </ButtonGroup>
+              <Popper
+                sx={{ zIndex: 1 }}
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                disablePortal
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin:
+                        placement === "bottom" ? "center top" : "center bottom",
+                    }}
+                  >
+                    <Paper>
+                      <ClickAwayListener onClickAway={handleCloseButtonMenu}>
+                        <Tooltip title="Upload File">
+                          <Button
+                            key={"Upload File"}
+                            onClick={handleMenuItemClick}
+                            component="label"
+                            role={undefined}
+                            variant="outlined"
+                            tabIndex={-1}
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            <VisuallyHiddenInput
+                              type="file"
+                              onChange={(event: { target: { files: any } }) => {
+                                const file = event.target.files[0];
+                                if (file) {
+                                  console.log("Selected file:", file.name);
+                                  // Add your file upload logic here
+                                }
+                              }}
+                              multiple
+                            />
+                            Upload File
+                          </Button>
+                        </Tooltip>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
             </Box>
           )}
         </Grid>
         <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
-          <IconButton
-            aria-controls="tune-menu"
-            aria-haspopup="true"
-            onClick={handleClick1}
-          >
-            <TuneIcon fontSize="large" />
-          </IconButton>
+          <Tooltip title="Manage Columns">
+            <IconButton
+              aria-controls="tune-menu"
+              aria-haspopup="true"
+              onClick={handleClick1}
+            >
+              <TuneIcon fontSize="large" />
+            </IconButton>
+          </Tooltip>
           <Box>
             <StyledMenu
               id="tune-menu"
@@ -250,20 +504,7 @@ export default function EntityList(props: ModifyT) {
               open={Boolean(anchorEl2)}
               onClose={handleClose1}
             >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {columns.map((col) => (
-                  <FormControlLabel
-                    key={col.field}
-                    control={
-                      <Checkbox
-                        checked={columnVisibilityModel[col.field] !== false}
-                        onChange={() => handleColumnVisibilityChange(col.field)}
-                      />
-                    }
-                    label={col.headerName}
-                  />
-                ))}
-              </div>
+                <ColumnVisibilityToggle columns1={columns4} columns2={columns} handleColumnVisibilityChange={handleColumnVisibilityChange}/>
             </StyledMenu>
           </Box>
         </Grid>
@@ -283,16 +524,49 @@ export default function EntityList(props: ModifyT) {
           open={dialogOpenDelete}
           setDialogOpen={setDialogOpenDelete}
         >
-          <DeleteForm
-            setDialogOpen={setDialogOpenDelete}
-            setDialogValue={(arg) => {}}
-            data={ids}
-          />
+          <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
+            <form>
+              <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
+                Are you sure you want to delete?
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="flex-end"
+                m={1}
+              >
+                <Button
+                  style={{ paddingRight: "20px" }}
+                  onClick={() => {
+                    setDialogOpenDelete(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    onDeleteDialog(ids);
+                    setSnackOpen(true);
+                  }}
+                  variant="contained"
+                >
+                  Delete
+                </Button>
+              </Box>
+            </form>
+            <Snackbar
+              open={snackOpen}
+              autoHideDuration={1000}
+              onClose={() => setSnackOpen(false)}
+              message="Record Deleted!"
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            />
+          </Box>
         </AddDialog>
       )}
       <StripedDataGrid
         rows={data ? data : []}
-        columns={columns}
+        columns={columns4}
         rowCount={NRows}
         getRowId={(row) => row.id}
         pagination={true}

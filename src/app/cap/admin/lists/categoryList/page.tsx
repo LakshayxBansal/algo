@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import CategoryForm from '@/app/Widgets/masters/masterForms/categoryForm';
-import { getCategoryById, getEnquiryCategoryByPage } from '@/app/controllers/enquiryCategory.controller';
+import { delCategoryById, getCategoryById, getEnquiryCategoryByPage } from '@/app/controllers/enquiryCategory.controller';
 
 
 export default function Category() {
@@ -24,6 +24,7 @@ export default function Category() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+      title='Enquiry Category Master'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <CategoryForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +34,7 @@ export default function Category() {
           )}
         fetchDataFn={getEnquiryCategoryByPage}
         fnFetchDataByID={getCategoryById}
+        fnDeleteDataByID={delCategoryById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

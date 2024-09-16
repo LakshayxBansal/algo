@@ -1,74 +1,115 @@
 
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import CustomPaper from './CustomPaper';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import Overview from './Overview';
 import { getSession } from '../../services/session.service';
 import { redirect } from 'next/navigation';
+import { getClosedEnquiries, getOpenEnquiries } from '@/app/controllers/dashboard.controller';
+import Chart from './Chart';
+import Enquiries from './Enquiries';
+import { Grid } from '@mui/material';
 
-
-
+const getUnassignedEnquiries = (openEnquiries: any) => {
+  const result = openEnquiries.filter((item: any) => {
+    return item.allocated_to === null;
+  })
+  return result;
+}
 export default async function Dashboard() {
   const session = await getSession();
   if (session?.user.dbInfo) {
+    let [openEnquiries, closedEnquiries] = await Promise.all([getOpenEnquiries(), getClosedEnquiries()]);
+    const unassignedEnquiries = getUnassignedEnquiries(openEnquiries);
 
     return (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <CustomPaper />
-                  <Chart />
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
+      <Box sx= {{maxWidth: "100%", bgcolor: "#F9FAFB"}}>
+      <Box sx={{ py: 2, maxWidth:"90vw", margin:"auto"}}>
+        <Grid container spacing={3} sx={{ mb: 0 }}>
+          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+            <Paper
+              sx={{
+                p: "24px",
+                height: 220,
+                borderRadius: "16px",
+                background: 'linear-gradient(135deg, rgba(208, 236, 254, 0.48), rgba(115, 186, 251, 0.48))',
+                color: "#042174"
+              }}
+            >
+              <Overview title="Open Enquiries" data={openEnquiries.length} />
+            </Paper>
+          </Grid>
+          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+            <Paper
+              sx={{
+                p: "24px",
+                height: 220,
+                borderRadius: "16px",
+                background: 'linear-gradient(135deg, rgba(255, 245, 204, 0.48), rgba(255, 214, 102, 0.48))',
+                color: "#7A4100"
+              }}
+            >
+              <Overview title="Closed Enquiries" data={closedEnquiries.length} />
+            </Paper>
+          </Grid>
+          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+            <Paper
+              sx={{
+                p: "24px",
+                height: 220,
+                borderRadius: "16px",
+                background: 'linear-gradient(135deg, rgba(239, 214, 255, 0.48), rgba(198, 132, 255, 0.48))',
+                color: "#27097A"
+              }}
+            >
+              <Overview title="Unassigned Enquiries" data={unassignedEnquiries.length} />
+            </Paper>
+          </Grid>
+          <Grid item xs={11} sm={6} md={3} sx={{margin: "auto"}}>
+            <Paper
+              sx={{
+                p: "24px",
+                height: 220,
+                borderRadius: "16px",
+                background: 'linear-gradient(135deg, rgba(255, 233, 213, 0.48), rgba(255, 172, 130, 0.48))',
+                color: "#7A0916"
+              }}
+            >
+              <Overview title="Average Age" data={5} />
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} sx={{ my: 2 }}>
+          <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
+            <Paper
+              sx={{
+                borderRadius: "16px",
+              }}
+            >
+              <Chart openEnquiries={openEnquiries} closedEnquiries={closedEnquiries} />
+            </Paper>
+          </Grid>
+          <Grid item xs={11} sm={12} md={6} sx={{margin: "auto"}}>
+            <Paper
+              sx={{
+                borderRadius: "16px",
+              }}
+              >
+              <Chart openEnquiries={openEnquiries} closedEnquiries={closedEnquiries} />
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} sx={{}}>
+          <Grid item xs={11} sm={12} md={12} sx={{margin: "auto"}}>
+            <Enquiries openEnquiries={openEnquiries} />
+          </Grid>
+        </Grid>
       </Box>
+    </Box>
     );
 
   } else {
     redirect('/signin');
   }
 }
+
