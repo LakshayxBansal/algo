@@ -5,9 +5,8 @@ import { Box, Paper } from "@mui/material";
 import { getAverageAge } from "@/app/controllers/dashboard.controller";
 
 export default async function AverageAgeCard() {
-  const averageAge = (await getAverageAge())[0];
-
-  const sinceDate = new Date(averageAge.since);
+    const averageAge = (await getAverageAge())[0];        
+    const sinceDate = new Date(averageAge.since);
   return (
     <Paper
       sx={{

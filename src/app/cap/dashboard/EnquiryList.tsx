@@ -10,23 +10,28 @@ export default async function EnquiryList() {
     {
       field: 'contactName',
       headerName: 'Contact',
-      width: 150,
+      width: 140,
     },
     {
       field: 'category',
       headerName: 'Category',
-      width: 150,
+      width: 140,
     },
     {
       field: 'subStatus',
       headerName: 'Sub Status',
-      width: 150,
+      width: 140,
+    },
+    {
+      field: 'date',
+      headerName: 'Created On',
+      width: 140,
     }
   ];
   
   return (
     <Paper elevation={2} sx={{borderRadius: "16px", py: 1, px: 2}}>
-      <Typography component="h2" variant="h6" color="primary" gutterBottom>Enquiries</Typography>
+      <Typography component="h2" variant="h6" color="primary" gutterBottom>Recent Enquiries</Typography>
       <Box sx={{height: 380}}>
         <DataGrid
           rows={openEnquiries}
@@ -40,6 +45,11 @@ export default async function EnquiryList() {
           }}
           pageSizeOptions={[5]}
           disableRowSelectionOnClick
+          sx={{
+            '& .MuiDataGrid-cell:hover': {
+              color: 'primary.main',
+            },
+          }}
         />
       </Box>
     </Paper>
