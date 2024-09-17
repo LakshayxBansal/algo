@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import {
   Button,
   Checkbox,
-  colors,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -25,7 +24,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { StyledMenu } from "../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../controllers/executive.controller";
-import { optionsDataT, selectKeyValueT } from "../models/models";
+import { optionsDataT } from "../models/models";
 import { getArea } from "../controllers/area.controller";
 import { getEnquiryCategory } from "../controllers/enquiryCategory.controller";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
@@ -130,28 +129,6 @@ export default function AutoGrid() {
       setSelectedRow(selectedData); // Set the selected row data
     }
   };
-
-  // Handle the filtering of rows based on the date range
-  // const handleDateFilter = () => {
-  //   const filteredRows = rows.filter((row) => {
-  //     const rowDate = new Date(row.date).getTime(); // Convert row date to timestamp
-  //     const start = filterValueState.date?.initial ? new Date(filterValueState.date?.initial).toLocaleDateString('en-CA') : null;
-
-  //     const end = filterValueState.date?.final ? new Date(filterValueState.date?.final).toLocaleDateString('en-CA') : null;
-
-  //     if (start !== null && end !== null) {
-  //       return rowDate >= start && rowDate <= end; // Filter between start and end date
-  //     } else if (start !== null) {
-  //       return rowDate >= start; // Filter from start date onward
-  //     } else if (end !== null) {
-  //       return rowDate <= end; // Filter up to end date
-  //     } else {
-  //       return true; // No filter applied
-  //     }
-  //   });
-
-  //   setRows(filteredRows); // Set filtered rows
-  // };
 
   const handleDateFilter = () => {
     const filteredRows = rows.filter((row) => {
@@ -280,31 +257,6 @@ export default function AutoGrid() {
     }
     handleCloseFilter("callStatus")
   };
-
-
-
-  // const handleFilterChangeDate = () => {
-  //   const today = new Date();
-  //   const filteredRows = row1.filter((row) => {
-
-  //     const rowDate = new Date(row.actionDate).getTime();
-  //     const initial =
-  //       initialDate !== "" ? new Date(initialDate).getTime() : null;
-  //     const final = finalDate !== "" ? new Date(finalDate).getTime() : null;
-
-  //     if (initial !== null && final !== null) {
-  //       return rowDate >= initial && rowDate <= final;
-  //     } else if (initial !== null) {
-  //       return rowDate >= initial;
-  //     } else if (final !== null) {
-  //       return rowDate <= final;
-  //     } else {
-  //       return true;
-  //     }
-  //   });
-
-  //   setRows(filteredRows);
-  // };
 
   const handleFilterChangeDate = () => {
     const today = new Date();
@@ -578,15 +530,6 @@ export default function AutoGrid() {
             </MenuItem>
             {filterType === "allocated" && (
               <MenuItem>
-                {/* <TextField
-                      label="Search Executive"
-                      variant="outlined"
-                      size="small"
-                      value={execSearchText}
-                      onChange={(e) => setExecSearchText(e.target.value)}
-                      fullWidth
-                    /> */}
-
                 <AutocompleteDB
                   name={"executive"}
                   id={"executive"}
@@ -1045,13 +988,6 @@ export default function AutoGrid() {
   };
 
 
-  // async function getSubStatusforStatus(stateStr: string) {
-  //   const subStatus = await getEnquirySubStatus(stateStr, "1");
-  //   if (subStatus?.length > 0) {
-  //     return subStatus;
-  //   }
-  // }
-
   const status_date = new Date();
 
   return (
@@ -1104,8 +1040,6 @@ export default function AutoGrid() {
             <TextField
               label="End Date"
               type="date"
-              // value={endDate}
-              // onChange={(e) => setEndDate(e.target.value)}
               value={filterValueState?.date?.final}
               onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "final": e.target.value })}
               InputLabelProps={{
@@ -1137,15 +1071,10 @@ export default function AutoGrid() {
             display: "flex", flexDirection: "row", width: "100%", alignItems: "center", // Align vertically
             justifyContent: "flex-start",
           }}>
-            {/* Input fields for start date and end date */}
             <Typography sx={{ mr: "1vw", fontSize: "16px" }}>Status:</Typography>
             <Box sx={{ fontSize: "16px" }}>{status_date.toDateString()}</Box>
           </Grid>
         </Paper>
-
-        {/* </Grid> */}
-
-
       </Grid>
 
       <Grid
@@ -1166,18 +1095,8 @@ export default function AutoGrid() {
             rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
           />
         </Paper>
-        {/* {selectedRow && (
-          <Box mt={2}>
-            <Typography variant="h6">Selected Row Data:</Typography>
-            <Typography>Date: {selectedRow.date}</Typography>
-            <Typography>Status: {selectedRow.status}</Typography>
-          </Box>
-        )} */}
       </Grid>
       <Grid sx={{ display: "flex", marginTop: "1vh" }}>
-        {/* <Typography sx={{ marginLeft: "20vw", mt: "10px" }}>
-          Call Details : 1/2024-2025 (Ramlal)(Org:)(Ledger:)
-        </Typography> */}
         <Box sx={{ marginLeft: "auto" }}>
           <Button
             variant="outlined"
