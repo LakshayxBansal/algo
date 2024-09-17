@@ -158,8 +158,8 @@ export default function AutoGrid() {
   const handleDateFilter = () => {
     const filteredRows = rows.filter((row) => {
       // Convert row actionDate to date and compare
-      const rowDate = new Date(row.actionDate).toLocaleDateString('en-CA');
-      const initial = filterValueState.date?.initial ? new Date(filterValueState.sate?.initial).toLocaleDateString('en-CA') : null;
+      const rowDate = new Date(row.date).toLocaleDateString('en-CA');
+      const initial = filterValueState.date?.initial ? new Date(filterValueState.date?.initial).toLocaleDateString('en-CA') : null;
 
       const final = filterValueState.date?.final ? new Date(filterValueState.date?.final).toLocaleDateString('en-CA') : null;
 
