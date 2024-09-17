@@ -89,8 +89,6 @@ export default function AutoGrid() {
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({} as any);
   const [filterType, setFilterType] = React.useState<string>("reset"); // Default to "reset"
   const [status, setStatus] = React.useState("1");
-  const [startDate, setStartDate] = React.useState<string>(""); // Start date state
-  const [endDate, setEndDate] = React.useState<string>(""); // End date state
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
 
@@ -733,7 +731,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterValueState.subStatus || filterType !== "reset" ? "blue" : "black" }}
+          <Button sx={{ color: filterValueState.subStatus ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Sub Status" arrow>
                 <FilterListIcon />
