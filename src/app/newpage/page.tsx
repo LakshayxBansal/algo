@@ -1,3 +1,4 @@
+
 "use client";
 import * as React from "react";
 import Box from "@mui/material/Box";
@@ -91,9 +92,13 @@ export default function AutoGrid() {
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
 
+
   type DlgState = {
     [key: string]: HTMLElement | null;
   };
+
+
+  // type FilterKeys = "date" | "callCategory" | "area" | "executive" | "callStatus" | "subStatus" | "nextAction" | "actionDate";
 
   const [dlgState, setDlgState] = React.useState<DlgState>({});
 
