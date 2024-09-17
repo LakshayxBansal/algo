@@ -1,6 +1,7 @@
 import { Box,Button } from "@mui/material";
 import { makeUserActive,deleteUser } from "../controllers/user.controller";
 import { redirect, useRouter } from "next/navigation";
+import { logger } from "../utils/logger.utils";
 
 export default function Confirmation({setDialogOpen,userId}:{setDialogOpen:any,userId:number | undefined}){
     const router = useRouter();
@@ -9,7 +10,7 @@ export default function Confirmation({setDialogOpen,userId}:{setDialogOpen:any,u
             await makeUserActive(userId);
             router.push("/congrats");
         }catch(error){
-            throw(error);
+            logger.info(error);
         }finally{
             setDialogOpen(false);
         }
@@ -18,7 +19,7 @@ export default function Confirmation({setDialogOpen,userId}:{setDialogOpen:any,u
         try{
             await deleteUser(userId);
         }catch(error){
-            throw(error);
+            logger.info(error);
         }finally{
             setDialogOpen(false);
         }

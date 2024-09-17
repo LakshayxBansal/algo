@@ -19,6 +19,8 @@ import { useRouter } from 'next/navigation'
 import LeftMenuTree from './leftmenutree';
 import {menuTreeT} from '../../models/models';
 import ProfileModal from '@/app/miscellaneous/ProfileModal';
+import { SessionProvider } from 'next-auth/react';
+
 
 const drawerWidth: number = 240;
 
@@ -148,7 +150,9 @@ export default function MenuBar(props : propsType) {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
+              <SessionProvider>
               <ProfileModal userId={props.userId} companyId={props.companyId} img={props.profileImg} name={props.username} companyName={props.companyName}/>
+              </SessionProvider>
             </Toolbar>
           </AppBar>
           <Box sx={{display: 'flex'}}>

@@ -8,9 +8,10 @@ import ProfileImage from './ProfileImage';
 import { deleteSession } from '../services/session.service';
 import { deRegisterFromAllCompany, deRegisterFromApp,deRegisterFromCompany } from '../controllers/user.controller';
 import { redirectToPage } from '../company/SelectCompany';
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function ProfileModal({img,name,userId,companyId,companyName}:{img : string | undefined, name : string, userId : number, companyId : number, companyName : string}) {
+    const {update} = useSession();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,7 +23,8 @@ export default function ProfileModal({img,name,userId,companyId,companyName}:{im
     const handleLogout = async() => {
         await deleteSession(userId);
         // signOut({ callbackUrl: 'http://localhost:3000/signin' });
-        signOut();
+        // signOut();
+        await update();
         handleClose();
         redirectToPage("/signin");
     }
