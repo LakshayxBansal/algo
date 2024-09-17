@@ -5,8 +5,13 @@ import { Box, Paper } from '@mui/material';
 import { getUnassignedEnquiries } from '@/app/controllers/dashboard.controller';
 
 export default async function UnassignedCard() {    
-    const result = (await getUnassignedEnquiries())[0];
-    const unassignedEnquiriesCount = Number(result.count)    
+    let result, unassignedEnquiriesCount;
+    try {
+        result = (await getUnassignedEnquiries())[0];
+        unassignedEnquiriesCount = Number(result.count)    
+    } catch (e) {
+        console.log(e);
+    }
     const date = new Date();
   return (
     <Paper

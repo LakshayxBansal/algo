@@ -45,15 +45,22 @@ const getXAxisData = (currMonth: number) => {
 }
 
 export default async function OverviewCard() {
-  const data = await getOverviewGraphData();
-  const totalOpen = Number(data[0][0].totalOpen);
+  let data, totalOpen, openEnquiries, closedEnquiries;
+  try {
+    data = await getOverviewGraphData();
+    totalOpen = Number(data[0][0].totalOpen);
+    openEnquiries = data[1];
+    closedEnquiries = data[2];
+  } catch (e) {
+    console.log(e);
+  }
   
   
   const currMonth = (new Date().getMonth() + 1);
   const currYear = new Date().getFullYear();
 
-  const openData = getBarData(data[1], currMonth);
-  const closedData = getBarData(data[2], currMonth);
+  const openData = getBarData(openEnquiries, currMonth);
+  const closedData = getBarData(closedEnquiries, currMonth);
   const lineData = getLineData(totalOpen, openData, closedData);  
   const xAxisData = getXAxisData(currMonth);
   let dispYear = "";

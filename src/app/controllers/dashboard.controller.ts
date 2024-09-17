@@ -1,5 +1,5 @@
 "use server"
-import { getAverageAgeDb, getClosedEnquiriesCountDb, getExecutiveEnquiriesOverviewDb, getOpenEnquiriesCountDb, getOpenEnquiriesDb, getOverviewGraphDataDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
+import { getAverageAgeDb, getClosedEnquiriesCountDb, getExecutiveEnquiriesOverviewDb, getExecutiveEnquiriesOverviewDb1, getOpenEnquiriesCountDb, getOpenEnquiriesDb, getOverviewGraphDataDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 
@@ -15,6 +15,7 @@ export async function getOpenEnquiries() {
       throw error;
     }
 }
+
 export async function getOpenEnquiriesCount() {
   try {
     const session = await getSession();
@@ -27,6 +28,7 @@ export async function getOpenEnquiriesCount() {
     throw error;
   }
 }
+
 export async function getUnassignedEnquiries() {
     try {
       const session = await getSession();
@@ -38,6 +40,7 @@ export async function getUnassignedEnquiries() {
       throw error;
     }
 }
+
 export async function getClosedEnquiriesCount() {
     try {
       const session = await getSession();
@@ -50,6 +53,7 @@ export async function getClosedEnquiriesCount() {
       throw error;
     }
 }
+
 export async function getExecutiveEnquiriesOverview() {
     try {
       const session = await getSession();
@@ -62,6 +66,19 @@ export async function getExecutiveEnquiriesOverview() {
       throw error;
     }
 }
+
+export async function getExecutiveEnquiriesOverview1() {
+    try {
+      const session = await getSession();
+      if (session?.user.dbInfo) {
+        const result = await getExecutiveEnquiriesOverviewDb1(session.user.dbInfo.dbName);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+}
+
 export async function getOverviewGraphData() {
     try {
       const session = await getSession();

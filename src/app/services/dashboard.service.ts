@@ -26,7 +26,9 @@ export async function getOpenEnquiriesCountDb(dbName: string) {
   try {
     const result = await excuteQuery({
       host: dbName,
-      query: "select count(*) as total from enquiry_ledger_tran lt where status_id=1",
+      query: "select count(*) as total from enquiry_ledger_tran lt \
+              left join enquiry_status_master sm on sm.id=lt.status_id \
+              where sm.name='Open';",
       values: [],
     });
 
@@ -41,16 +43,29 @@ export async function getExecutiveEnquiriesOverviewDb(dbName: string) {
       const result = await excuteQuery({
         host: dbName,
         query: "SELECT em.name, ROW_NUMBER() OVER () as id, \
-	COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 1 THEN 1 \
-              ELSE NULL END) AS currDay, \
-    COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 7 THEN 1 \
-              ELSE NULL END) AS since1w, \
-    COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 14 THEN 1 \
-              ELSE NULL END) AS since2w, \
-    COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 21 THEN 1 \
-              ELSE NULL END) AS since3w \
-FROM enquiry_ledger_tran lt left join executive_master em on lt.allocated_to=em.id \
-WHERE lt.status_id = 1 AND lt.allocated_to IS NOT NULL GROUP BY em.name;",
+                COUNT(*) AS total,\
+                COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 7 THEN 1 \
+                  ELSE NULL END) AS since1w, \
+                COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 14 THEN 1 \
+                  ELSE NULL END) AS since2w, \
+                COUNT(CASE WHEN DATEDIFF(now(), lt.date) < 21 THEN 1 \
+                  ELSE NULL END) AS since3w \
+                FROM enquiry_ledger_tran lt left join executive_master em on lt.allocated_to=em.id \
+                left join enquiry_status_master sm on sm.id=lt.status_id\
+                WHERE sm.name='Open' AND lt.allocated_to IS NOT NULL GROUP BY em.name;",
+        values: [],
+      });
+  
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
+}
+export async function getExecutiveEnquiriesOverviewDb1(dbName: string) {
+    try {
+      const result = await excuteQuery({
+        host: dbName,
+        query: "call getExecutiveEnquiriesData()",
         values: [],
       });
   
