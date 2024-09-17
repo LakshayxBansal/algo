@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Paper, Typography } from '@mui/material';
-import { getExecutiveEnquiriesOverview, getExecutiveEnquiriesOverview1 } from '@/app/controllers/dashboard.controller';
+import { getExecutiveEnquiriesOverview } from '@/app/controllers/dashboard.controller';
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import dayjs from 'dayjs';
 
@@ -49,7 +49,7 @@ export default async function ExecutiveEnquiryList() {
   dayjs.extend(weekOfYear);
   let result, data;
   try {
-    result = await getExecutiveEnquiriesOverview1();
+    result = await getExecutiveEnquiriesOverview();
     console.log(result);
     
     const groupedData = groupByName(result[1], result[0]);
