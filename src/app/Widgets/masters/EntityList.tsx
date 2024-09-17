@@ -208,7 +208,7 @@ export default function EntityList(props: ModifyT) {
           <FormControlLabel
             key={col.field}
             control={<Checkbox
-              checked={column1Fields.has(col.field)} 
+              checked={column1Fields.has(col.field)} // Check if field exists in columns1
               onChange={() => props.handleColumnVisibilityChange(col)} />}
             label={col.headerName} />
         ))}
@@ -279,6 +279,7 @@ export default function EntityList(props: ModifyT) {
     return snakeCaseRegex.test(str);
   }
 
+
   const columns2: GridColDef[] = [];
   let columnHeading = {
     field: "",
@@ -289,6 +290,40 @@ export default function EntityList(props: ModifyT) {
 
 
   type dataObj1 = { [key: string]: any };
+
+  // function getUniqueObjects(
+  //   arr1: GridColDef[],
+  //   arr2: GridColDef[],
+  //   key: keyof GridColDef
+  // ) {
+  //   // Combine both arrays
+  //   const combined = [...arr1, ...arr2];
+
+  //   // Create a Set to track unique values
+  //   const uniqueSet = new Set();
+
+  //   // Filter out unique objects based on the specified key
+  //   const uniqueObjects = combined.filter((obj) => {
+  //     // Create a unique identifier for the object based on the key
+  //     const keyValue = obj[key];
+
+  //     if (uniqueSet.has(keyValue)) {
+  //       return false; // Object is not unique
+  //     } else {
+  //       uniqueSet.add(keyValue); // Add key value to Set
+  //       return true; // Object is unique
+  //     }
+  //   });
+
+  //   // Push unique objects from arr2 to arr1
+  //   arr1.push(
+  //     ...uniqueObjects.filter(
+  //       (obj) => !arr1.some((existingObj) => existingObj[key] === obj[key])
+  //     )
+  //   );
+
+  //   return arr1;
+  // }
 
   function pushColumns(dataObj: dataObj1) {
     if (dataObj) {
@@ -306,7 +341,8 @@ export default function EntityList(props: ModifyT) {
             keyToUse = key.replace(/_/g, " ");
             KeyToU = keyToUse.charAt(0).toUpperCase();
             KeyToU = KeyToU + keyToUse.slice(1);
-            KeyToU = KeyToU.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+            KeyToU = KeyToU.toLowerCase() // Ensure the string is in lowercase before capitalizing
+              .replace(/\b\w/g, (char) => char.toUpperCase());
           } else {
             continue;
           }
@@ -327,7 +363,7 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
-  pushColumns(data[0]);
+  pushColumns(data[0])
 
   return (
     <Container

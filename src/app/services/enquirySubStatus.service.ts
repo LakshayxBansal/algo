@@ -10,7 +10,11 @@ export async function getEnquirySubStatusList(
   status: string
 ) {
   try {
+    console.log(status);
+    
     const nStatus = Number(status);
+    console.log(nStatus);
+    
     let query =
       "select sb.id as id, sb.name as name from enquiry_sub_status_master sb where \
                   sb.enquiry_status_id= ?";
@@ -131,6 +135,20 @@ export async function getEnquirySubStatusCount(
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delSubStatusDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from enquiry_sub_status_master where id=?;",
+      values: [id],
+    });
+
+    return result;
   } catch (e) {
     console.log(e);
   }

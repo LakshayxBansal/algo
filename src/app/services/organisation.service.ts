@@ -210,3 +210,17 @@ export async function getOrganisationCount(
     console.log(e);
   }
 }
+
+export async function delOrganisationDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from organisation_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

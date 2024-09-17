@@ -5,9 +5,9 @@ import { itemSchemaT } from "../models/models";
 import {
   createItemDB,
   getItemCount,
-  DeleteItemList,
   getItemList,
   getItemByPageDb,
+  deleteItemListDetailsById,
 } from "../services/item.service";
 import { getSession } from "../services/session.service";
 import { updateItemDB } from "../services/item.service";
@@ -141,17 +141,6 @@ export async function getItem(searchString: string) {
   }
 }
 
-export async function DeleteItem(id: number) {
-  try {
-    const session = await getSession();
-
-    if (session?.user.dbInfo) {
-      return DeleteItemList(session.user.dbInfo.dbName, id);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
 
 /**
  *
@@ -167,6 +156,29 @@ export async function getItemById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function delItemById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await deleteItemListDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }
 
 export async function getItemByPage(

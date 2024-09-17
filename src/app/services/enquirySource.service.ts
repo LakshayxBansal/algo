@@ -128,3 +128,17 @@ export async function getEnquirySourceCount(
     console.log(e);
   }
 }
+
+export async function delEnquirySourceDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from enquiry_source_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
