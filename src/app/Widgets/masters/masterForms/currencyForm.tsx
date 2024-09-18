@@ -189,9 +189,9 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Name"
                 inputType={InputType.TEXT}
                 name="Name"
-                // defaultValue={entityData.Name}
-                // error={formError?.Name?.error}
-                // helperText={formError?.Name?.msg}
+                defaultValue={entityData.Name}
+                error={formError?.Name?.error}
+                helperText={formError?.Name?.msg}
               />
             </Box>
             <Box
@@ -209,9 +209,9 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Currency Short Form"
                 inputType={InputType.TEXT}
                 name="ShortForm"
-                // defaultValue={entityData.ShortForm}
-                // error={formError?.ShortForm?.error}
-                // helperText={formError?.ShortForm?.msg}
+                defaultValue={entityData.ShortForm}
+                error={formError?.ShortForm?.error}
+                helperText={formError?.ShortForm?.msg}
               />
               <FormControl
                 fullWidth
@@ -311,15 +311,16 @@ export default function CurrencyForm(props: masterFormPropsT) {
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

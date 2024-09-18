@@ -3,30 +3,47 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
+import {
+  createEnquirySubStatus,
+  updateEnquirySubStatus,
+} from "@/app/controllers/enquirySubStatus.controller";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import Paper from "@mui/material/Paper";
+import {
+  Collapse,
+  FormControl,
+  FormControlLabel,
+  IconButton,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
 import {
-  createAllocationType,
-  updateAllocationType,
-} from "@/app/controllers/allocationType.controller";
+  enquirySubStatusMasterT,
+  masterFormPropsWithDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 
-export default function AllocationTypeMasterForm(props: masterFormPropsT) {
+export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-
-  const entityData: nameMasterDataT = props.data ? props.data : {};
+  const [status_id, setStatus] = useState<number>(1);
+  const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
 
   const handleSubmit = async (formData: FormData) => {
-    const data = { name: formData.get("name") as string };
+    let data: { [key: string]: any } = {};
 
-    const result = await persistEntity(data as nameMasterDataT);
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+
+    data["status_id"] = status_id;
+
+    const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
@@ -35,32 +52,32 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       setSnackOpen(true);
     } else {
       const issues = result.data;
-
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
-  const handleCancel = () => {
-    props.setDialogOpen ? props.setDialogOpen(false) : null;
-  };
+  function onStatusChange(event: React.SyntheticEvent) {
+    setStatus(Number((event.target as HTMLInputElement).value));
+  }
 
-  async function persistEntity(data: nameMasterDataT) {
+  async function persistEntity(data: enquirySubStatusMasterT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-
-      result = await updateAllocationType(data);
-    } else result = await createAllocationType(data);
+      result = await updateEnquirySubStatus(data);
+    } else result = await createEnquirySubStatus(data);
     return result;
   }
+
+  const handleCancel = () => {
+    props.setDialogOpen ? props.setDialogOpen(false) : null;
+  };
 
   const clearFormError = () => {
     setFormError((curr) => {
@@ -70,7 +87,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper sx={{ width: "50%", margin: "auto", marginTop: "10rem" }}>
+    <Paper>
       <Box
         sx={{
           position: "sticky",
@@ -82,7 +99,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Allocation type" : "Add Allocation Type"}
+            {props.data ? "Update Sub-Status" : "Add Sub-Status"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -107,7 +124,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit}>
           <Box
             sx={{
@@ -117,14 +134,34 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
+            <FormControl>
+              <RadioGroup
+                row
+                name="status"
+                id="status"
+                defaultValue={1}
+                onChange={onStatusChange}
+              >
+                <FormControlLabel
+                  value="Status"
+                  control={<label />}
+                  label="Status :"
+                />
+                <FormControlLabel value={1} control={<Radio />} label="Open" />
+                <FormControlLabel
+                  value={2}
+                  control={<Radio />}
+                  label="Closed"
+                />
+              </RadioGroup>
+            </FormControl>
             <InputControl
               autoFocus
               id="name"
-              label="Name"
+              label="Sub-Status Name"
               inputType={InputType.TEXT}
               name="name"
-              defaultValue={props.data?.name}
-              fullWidth
+              defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
             />

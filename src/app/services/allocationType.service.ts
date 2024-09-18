@@ -42,7 +42,7 @@ export async function createAllocationTypeDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createAllocationType(?,?)",
-      values: [statusData.name, session.user.email],
+      values: [statusData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -87,7 +87,7 @@ export async function updateAllocationTypeDb(
       host: session.user.dbInfo.dbName,
       query: "call updateAllocationType(?,?,?);",
 
-      values: [statusData.id, statusData.name, session.user.email],
+      values: [statusData.id, statusData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -136,6 +136,20 @@ export async function getAllocationTypeCount(crmDb: string, value: string | unde
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function deleteAllocationTypeByIdDb(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "Delete from allocation_type_master where id=?;",
+      values: [id],
+    });
+    console.log(result);
+    return result;
   } catch (e) {
     console.log(e);
   }

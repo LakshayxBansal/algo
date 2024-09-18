@@ -9,7 +9,7 @@ export async function createUnitDB(session: Session, data: zm.unitSchemaT) {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createUnit(?,?,?);",
-      values: [data.name, data.uqc, session.user.email],
+      values: [data.name, data.uqc, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -22,7 +22,7 @@ export async function updateUnitDB(session: Session, data: zm.unitSchemaT) {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateUnit(?,?,?,?);",
-      values: [data.id, data.name, data.uqc, session.user.email],
+      values: [data.id, data.name, data.uqc, session.user.userId],
     });
   } catch (e) {
     console.log(e);

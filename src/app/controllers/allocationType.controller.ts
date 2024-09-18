@@ -219,3 +219,15 @@ export async function getAllocationTypeByPage(
   }
   return getAllocationType;
 }
+
+// export async function deleteAllocationTypeById(id: number) {
+//   try {
+//     const session = await getSession();
+
+//     if (session?.user.dbInfo) {
+//       const result = deleteAllocationTypeByIdDb(session.user.dbInfo.dbName, id);
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// }

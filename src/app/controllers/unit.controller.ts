@@ -8,12 +8,13 @@ import {
   DeleteUnitList,
   updateUnitDB,
   delUnitDetailsById,
-} from "../services/unit.service"
+} from "../services/unit.service";
 import { getSession } from "../services/session.service";
 import { getUnitList, fetchUnitById } from "@/app/services/unit.service";
 import * as mdl from "../models/models";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
+import { logger } from "../utils/logger.utils";
 
 export async function createUnit(data: mdl.unitSchemaT) {
   let result;
@@ -24,7 +25,7 @@ export async function createUnit(data: mdl.unitSchemaT) {
 
       if (parsed.success) {
         const dbResult = await createUnitDB(session, data as mdl.unitSchemaT);
-        if (dbResult[0].length === 0) {
+        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -125,7 +126,49 @@ export async function updateUnit(data: mdl.unitSchemaT) {
   };
   return result;
 }
-
+//         } else {
+//           let errorState: { path: (string | number)[]; message: string }[] = [];
+//           dbResult[0].forEach((error: any) => {
+//             errorState.push({
+//               path: [error.error_path],
+//               message: error.error_text,
+//             });
+//           });
+//           result = {
+//             status: false,
+//             data: errorState,
+//           };
+//         }
+//       } else {
+//         let errorState: { path: (string | number)[]; message: string }[] = [];
+//         for (const issue of parsed.error.issues) {
+//           errorState.push({ path: issue.path, message: issue.message });
+//         }
+//         result = { status: false, data: errorState };
+//         return result;
+//       }
+//     } else {
+//       result = {
+//         status: false,
+//         data: [{ path: ["form"], message: "Error: Server Error" }],
+//       };
+//     }
+//     return result;
+//   } catch (e: any) {
+//     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+//       result = {
+//         status: false,
+//         data: [{ path: ["name"], message: "Error: Value already exist" }],
+//       };
+//       return result;
+//     }
+//   }
+//   result = {
+//     status: false,
+//     data: [{ path: ["form"], message: "Error: Unknown Error" }],
+//   };
+//   return result;
+// }
 
 /**
  *
@@ -263,16 +306,16 @@ export async function delUnitById(id: number) {
 
       if ((result.affectedRows = 1)) {
         errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
+      } else if ((result.affectedRows = 0)) {
         errorResult = {
           ...errorResult,
           error: "Record Not Found",
         };
       }
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
-    errorResult= { status: false, error: error };
+    errorResult = { status: false, error: error };
   }
   return errorResult;
 }

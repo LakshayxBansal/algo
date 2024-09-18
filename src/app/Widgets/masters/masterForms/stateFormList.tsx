@@ -1,61 +1,79 @@
-"use client";
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import { createArea, updateArea } from "../../../controllers/area.controller";
-import Grid from "@mui/material/Grid";
-import { nameMasterData } from "../../../zodschema/zodschema";
-import { masterFormPropsT, areaSchemaT } from "@/app/models/models";
+import {
+  createState,
+  getCountries,
+  updateState,
+  getCountryById,
+} from "@/app/controllers/masters.controller";
+import {
+  masterFormPropsWithParentT,
+  optionsDataT,
+  selectKeyValueT,
+  stateListSchemaT,
+} from "@/app/models/models";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { SelectMasterWrapper } from "../selectMasterWrapper";
+import CountryForm from "./countryForm";
 
-export default function AreaForm(props: masterFormPropsT) {
+export default function StateFormList(props: masterFormPropsWithParentT) {
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const entityData: areaSchemaT = props.data ? props.data : {};
-  // submit function. Save to DB and set value to the dropdown control
-  console.log(entityData);
+  const entityData: stateListSchemaT = props.data ? props.data : {};
+
   const handleSubmit = async (formData: FormData) => {
-    const data = {
-      name: formData.get("name") as string,
-    };
-    const result = await persistEntity(data);
+    let data: { [key: string]: any } = {};
+
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+    formData = updateFormData(data);
+
+    const result = await persistEntity(data as stateListSchemaT);
+
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
-    }
-    // } else {
-    //   issues = parsed.error.issues;
-    // }
-
-    // if (parsed.success && result?.status) {
-    //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-    // }
-    else {
-      // show error on screen
+    } else {
       const issues = result.data;
+      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
       }
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
-  async function persistEntity(data: areaSchemaT) {
+  const updateFormData = (data: any) => {
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country_id
+      ? entityData.country_id
+      : 0;
+
+    return data;
+  };
+
+  async function persistEntity(data: stateListSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
-      result = await updateArea(data);
+      Object.assign(data, { id: entityData.id });
+      result = await updateState(data);
     } else {
-      result = await createArea(data);
+      result = await createState(data);
     }
     return result;
   }
@@ -84,7 +102,7 @@ export default function AreaForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify Area" : "Add Area"}
+            {props.data ? "Modify State" : "Add State"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -115,19 +133,51 @@ export default function AreaForm(props: masterFormPropsT) {
             display: "grid",
             columnGap: 3,
             rowGap: 1,
-            gridTemplateColumns: "repeat(2, 1fr)",
+            gridTemplateColumns: "repeat(3, 0.70fr)",
           }}
         >
+          <SelectMasterWrapper
+            name={"country"}
+            id={"country"}
+            label={"Country"}
+            dialogTitle={"country"}
+            onChange={(e, val, s) =>
+              setSelectValues({ ...selectValues, country: val })
+            }
+            fetchDataFn={getCountries}
+            fnFetchDataByID={getCountryById}
+            defaultValue={
+              {
+                id: entityData.country_id,
+                name: entityData.country,
+              } as optionsDataT
+            }
+            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              <CountryForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+                data={data}
+              />
+            )}
+          />
           <InputControl
             autoFocus
             id="name"
-            label="Area Name"
-            required
-            defaultValue={entityData.name}
+            label="State Name"
             inputType={InputType.TEXT}
+            defaultValue={entityData.name}
             name="name"
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+          />
+          <InputControl
+            id="alias"
+            label="Alias"
+            defaultValue={entityData.alias}
+            inputType={InputType.TEXT}
+            name="alias"
+            error={formError?.alias?.error}
+            helperText={formError?.alias?.msg}
           />
         </Box>
         <Box

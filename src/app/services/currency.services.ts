@@ -62,7 +62,7 @@ export async function updateCurrencyDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateContactGroup(?,?,?,?,?,?);",
+      query: "call updateCurrency(?,?,?,?,?,?);",
 
       values: [
         sourceData.id,
@@ -115,18 +115,23 @@ export async function getCurrencyByPageDb(
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT *,RowNum as RowID FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum FROM currency_data " + (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") + "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+        "SELECT *,RowNum as RowID FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum FROM currency_data " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
     });
     console.log(result);
-    
+
     return result;
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function getCurrencyCount(crmDb: string, value: string | undefined) {
+export async function getCurrencyCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

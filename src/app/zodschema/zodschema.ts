@@ -16,7 +16,10 @@ const passwordRegex = new RegExp(
 export const userSchema = z
   .object({
     // email: z.union([z.string().optional(), z.string().email()]),
-    email: z.string().regex(emailRegex, "Input must be in email format").optional(),
+    email: z
+      .string()
+      .regex(emailRegex, "Input must be in email format")
+      .optional(),
     password: z.union([
       z.string().optional(),
       z
@@ -30,7 +33,7 @@ export const userSchema = z
     ]),
     name: z.string().min(1).max(45),
     phone: z.string().min(10).max(15).optional(),
-    contact : z.string().optional(),
+    contact: z.string().optional(),
     repassword: z.string().max(50).optional(),
     provider: z.string().max(15).optional(),
   })
@@ -45,12 +48,13 @@ export const userSchema = z
       return !(schema.email === "");
     },
     { message: "please provide email", path: ["email"] }
-  ).refine(
+  )
+  .refine(
     (schema) => {
       return !(schema.phone === "");
     },
     { message: "please provide phone", path: ["phone"] }
-  )
+  );
 
 /*
 refine(schema => {
@@ -183,6 +187,16 @@ export const contactSchema = z.object({
 export const areaSchema = z.object({
   id: z.number().optional(),
   name: z.string().max(60),
+});
+
+export const stateListSchema = z.object({
+  id: z.number().optional(),
+  country: z.string().max(60).optional(),
+  state_id: z.number().optional(),
+  state: z.string().max(60).optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().min(1).max(45),
+  country_id: z.number(),
 });
 
 export const executiveSchema = z
@@ -478,9 +492,7 @@ export const nameAliasData = z.object({
   alias: z.string().max(45),
 });
 
-
 export const enquirySupportConfig = z.object({
-
   enquiryReqd: z.boolean().optional(),
   supportReqd: z.boolean().optional(),
 
@@ -497,7 +509,6 @@ export const enquirySupportConfig = z.object({
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
   generalShowList: z.boolean().optional(),
-
 });
 
 export const companySchema = z.object({
@@ -512,7 +523,7 @@ export const companySchema = z.object({
   country: z.string().optional(),
   country_id: z.number().optional(),
   pincode: z.string().optional(),
-  stamp: z.number().optional()
+  stamp: z.number().optional(),
 });
 
 export const inviteUserSchema = z.object({

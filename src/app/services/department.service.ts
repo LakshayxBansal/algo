@@ -68,7 +68,7 @@ export async function createDepartmentDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createDepartment(?, ?)",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     logger.error(e);
@@ -84,7 +84,7 @@ export async function updateDepartmentDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateDepartment(?, ?, ?)",
-      values: [sourceData.id, sourceData.name, session.user.email],
+      values: [sourceData.id, sourceData.name, session.user.userId],
     });
   } catch (e) {
     logger.error(e);

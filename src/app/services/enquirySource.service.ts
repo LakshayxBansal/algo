@@ -56,7 +56,7 @@ export async function createEnquirySourceDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createEnquirySource(?, ?)",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -72,7 +72,7 @@ export async function updateEnquirySourceDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateEnquirySource(?, ?, ?)",
-      values: [sourceData.id, sourceData.name, session.user.email],
+      values: [sourceData.id, sourceData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);

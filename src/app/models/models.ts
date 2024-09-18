@@ -31,6 +31,8 @@ export type countrySchemaT = z.infer<typeof zs.countrySchema>;
 
 export type stateSchemaT = z.infer<typeof zs.stateSchema>;
 
+export type stateListSchemaT = z.infer<typeof zs.stateListSchema>;
+
 export type formErrorT = { msg: string; error: boolean };
 
 export type RenderFormFunctionT = (
@@ -111,14 +113,16 @@ export type dbInfoT = {
   dbName: string;
 };
 
-export type getOrgansT = [{
-  id : string
-  name : string
-  printName : string
-  alias : string
-  rowID : number
-  stamp : string
-}]
+export type getOrgansT = [
+  {
+    id: string;
+    name: string;
+    printName: string;
+    alias: string;
+    rowID: number;
+    stamp: string;
+  }
+];
 
 export type selectKeyValueT = {
   [key: string]: any;

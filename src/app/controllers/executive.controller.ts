@@ -51,7 +51,7 @@ export async function createExecutive(data: executiveSchemaT) {
           );
           console.log("DbResult", dbResult);
 
-          if (dbResult.length > 0 && dbResult[0].length === 0) {
+          if (dbResult.length > 0 && dbResult[0][0].error === 0) {
             result = { status: true, data: dbResult[1] };
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =

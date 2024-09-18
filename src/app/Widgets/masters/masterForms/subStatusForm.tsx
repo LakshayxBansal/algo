@@ -113,11 +113,26 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
 
   return (
     <Paper>
-      <Seperator>
-        {(props.data ? "Update " : "Add ") +
-          "Sub-Status for " +
-          (props.parentData === 1 ? "Open" : "Closed")}{" "}
-      </Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {(props.data ? "Update " : "Add ") +
+              "Sub-Status for " +
+              (props.parentData === 1 ? "Open" : "Closed")}{" "}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -157,32 +172,21 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
               helperText={formError?.name?.msg}
             />
           </Box>
-          <Grid container>
-            <Grid item xs={6} md={6}>
-              <Box margin={1} sx={{ display: "flex" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-start"
-                  alignItems="flex-start"
-                  m={1}
-                >
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}
