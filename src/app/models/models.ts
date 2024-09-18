@@ -31,6 +31,8 @@ export type countrySchemaT = z.infer<typeof zs.countrySchema>;
 
 export type stateSchemaT = z.infer<typeof zs.stateSchema>;
 
+export type stateListSchemaT = z.infer<typeof zs.stateListSchema>;
+
 export type formErrorT = { msg: string; error: boolean };
 
 export type RenderFormFunctionT = (

@@ -1,27 +1,25 @@
-'use client'
-import * as React from 'react';
+"use client";
+import * as React from "react";
+import { GridColDef } from "@mui/x-data-grid";
+import EntityList from "@/app/Widgets/masters/EntityList";
+import ExecutiveRoleForm from "@/app/Widgets/masters/masterForms/executiveRoleForm";
+import {
+  delExecutiveRoleById,
+  getExecutiveRoleById,
+  getExecutiveRoleByPage,
+} from "@/app/controllers/executiveRole.controller";
 
-import { GridColDef } from '@mui/x-data-grid';
-import EntityList from '@/app/Widgets/masters/EntityList';
-import AppBar from '@mui/material/AppBar';
-import ExecutiveRoleForm from '@/app/Widgets/masters/masterForms/executiveRoleForm';
-import { delExecutiveRoleById, getExecutiveRoleById, getExecutiveRoleByPage } from '@/app/controllers/executiveRole.controller';
-
+const columns: GridColDef[] = [
+  {
+    field: "name",
+    headerName: "Name",
+    editable: true,
+  },
+];
 
 export default function executiveRole() {
-  const columns: GridColDef[] = [
-    {
-      field: 'name',
-      headerName: 'Name',
-      width: 150,
-      editable: true,
-    }
-  ];
-
   return (
-    <div style={{ height: 800, width: '100%' }}>
-      <AppBar position="static" color="default">
-      </AppBar>
+    <>
       <EntityList
         title="Executive Role Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -35,8 +33,8 @@ export default function executiveRole() {
         fnFetchDataByID={getExecutiveRoleById}
         fnDeleteDataByID={delExecutiveRoleById}
         customCols={columns}
-        AddAllowed={true}>
-      </EntityList>
-    </div>
+        AddAllowed={true}
+      ></EntityList>
+    </>
   );
 }

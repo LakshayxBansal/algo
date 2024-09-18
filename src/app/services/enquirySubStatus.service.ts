@@ -11,10 +11,10 @@ export async function getEnquirySubStatusList(
 ) {
   try {
     console.log(status);
-    
+
     const nStatus = Number(status);
     console.log(nStatus);
-    
+
     let query =
       "select sb.id as id, sb.name as name from enquiry_sub_status_master sb where \
                   sb.enquiry_status_id= ?";
@@ -66,7 +66,7 @@ export async function createEnquirySubStatusDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createEnquirySubStatusDb(?,?,?)",
-      values: [sourceData.name, sourceData.status, session.user.userId],
+      values: [sourceData.name, sourceData.status_id, session.user.userId],
     });
   } catch (e) {
     console.log(e);

@@ -2,8 +2,6 @@
 import React, { useRef, useState } from "react";
 import { Box, Button, Grid, Snackbar, Typography } from "@mui/material";
 import { masterFormPropsT } from "@/app/models/models";
-import { delDepartmentById } from "@/app/controllers/department.controller";
-import { DeleteActionById } from "@/app/controllers/enquiryAction.controller";
 
 export default function DeleteForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = useState(false);

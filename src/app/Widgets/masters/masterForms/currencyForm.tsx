@@ -133,7 +133,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper sx={{margin: "auto", width: "37vw"}}>
+    <Paper sx={{ margin: "auto", width: "37vw" }}>
       <Seperator>
         {entityData.id ? "Update Currency" : "Add Currency"}
       </Seperator>
@@ -189,9 +189,9 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Name"
                 inputType={InputType.TEXT}
                 name="Name"
-                // defaultValue={entityData.Name}
-                // error={formError?.Name?.error}
-                // helperText={formError?.Name?.msg}
+                defaultValue={entityData.Name}
+                error={formError?.Name?.error}
+                helperText={formError?.Name?.msg}
               />
             </Box>
             <Box
@@ -209,9 +209,9 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Currency Short Form"
                 inputType={InputType.TEXT}
                 name="ShortForm"
-                // defaultValue={entityData.ShortForm}
-                // error={formError?.ShortForm?.error}
-                // helperText={formError?.ShortForm?.msg}
+                defaultValue={entityData.ShortForm}
+                error={formError?.ShortForm?.error}
+                helperText={formError?.ShortForm?.msg}
               />
               <FormControl
                 fullWidth

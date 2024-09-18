@@ -1,27 +1,27 @@
 "use client";
 import * as React from "react";
+import { GridColDef } from "@mui/x-data-grid";
+import EntityList from "@/app/Widgets/masters/EntityList";
+import {
+  delActionById,
+  getActionById,
+  getEnquiryActionByPage,
+} from "@/app/controllers/enquiryAction.controller";
+import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 
-import { GridColDef } from '@mui/x-data-grid';
-import EntityList from '@/app/Widgets/masters/EntityList';
-import AppBar from '@mui/material/AppBar';
-import { delActionById, getActionById, getEnquiryActionByPage } from '@/app/controllers/enquiryAction.controller';
-import ActionForm from '@/app/Widgets/masters/masterForms/actionForm';
-
+const columns: GridColDef[] = [
+  {
+    field: "name",
+    headerName: "Name",
+    editable: true,
+  },
+];
 
 export default function Action() {
-  const columns: GridColDef[] = [
-    {
-      field: "name",
-      headerName: "Name",
-      editable: true,
-    },
-  ];
-
   return (
-    <div style={{ height: 800, width: "100%" }}>
-      <AppBar position="static" color="default"></AppBar>
+    <>
       <EntityList
-      title="Action List"
+        title="Action List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ActionForm
             setDialogOpen={fnDialogOpen}
@@ -35,6 +35,6 @@ export default function Action() {
         customCols={columns}
         AddAllowed={true}
       ></EntityList>
-    </div>
+    </>
   );
 }

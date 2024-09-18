@@ -84,7 +84,7 @@ export async function getStateListById(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,
-      query: 'select id as id, name as name, alias as alias from state_master sm where sm.id=?;',
+      query: 'select sm.*, cm.name as country from state_master sm left join country_master cm on sm.country_id=cm.id where sm.id=?;',
       values: [id],
     });
 
@@ -426,6 +426,20 @@ export async function delStateDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query: "delete from state_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delCountryByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from country_master where id=?;",
       values: [id],
     });
 
