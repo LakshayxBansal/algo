@@ -84,7 +84,7 @@ export async function getStateListById(crmDb : string, id : number){
   try{
     const result = await excuteQuery({
       host: crmDb,
-      query: 'select id as id, name as name, alias as alias from state_master sm where sm.id=?;',
+      query: 'select sm.*, cm.name as country from state_master sm left join country_master cm on sm.country_id=cm.id where sm.id=?;',
       values: [id],
     });
 
@@ -273,7 +273,7 @@ export async function createCountryDb(session: Session, statusData: zm.nameAlias
       values: [
         statusData.name,
         statusData.alias,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -290,7 +290,7 @@ export async function updateCountryDb(session: Session, sourceData: zm.countrySc
         sourceData.name,
         sourceData.id,
         sourceData.alias,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -315,7 +315,7 @@ export async function createStateDb(session: Session, sourceData: zm.stateSchema
         sourceData.name,
         sourceData.alias,
         sourceData.country_id,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -334,7 +334,7 @@ export async function updateStateDb(session: Session, sourceData: zm.stateSchema
         sourceData.id,
         sourceData.alias,
         sourceData.country_id,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {
@@ -441,6 +441,20 @@ export async function delStateDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query: "delete from state_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delCountryByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from country_master where id=?;",
       values: [id],
     });
 

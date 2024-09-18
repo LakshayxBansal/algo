@@ -125,38 +125,38 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-        ? entityData.executive_group_id
-        : 0;
+      ? entityData.executive_group_id
+      : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-        ? entityData.role_id
-        : 0;
+      ? entityData.role_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-        ? entityData.crm_user_id
-        : 0;
+      ? entityData.crm_user_id
+      : 0;
     data.executive_dept_id = selectValues.executive_dept
       ? selectValues.executive_dept.id
       : entityData.executive_dept_id
-        ? entityData.executive_dept_id
-        : 0;
+      ? entityData.executive_dept_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -206,7 +206,24 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>{props.data ? "Update Executive":"Add Executive"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData ? "Add Executive" : "Update Executive"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -226,9 +243,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
+        {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
+        )} */}
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
@@ -273,7 +290,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn={getArea}
               fnFetchDataByID={getAreaById}
-              renderForm={(fnDialogOpen, fnDialogValue,data) => (
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
@@ -579,33 +596,21 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               helperText={formError?.pincode?.msg}
             />
           </Box>
-
-          <Grid container>
-            <Grid item xs={6} md={6}>
-              <Box margin={1} sx={{ display: "flex" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-start"
-                  alignItems="flex-start"
-                  m={1}
-                >
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}

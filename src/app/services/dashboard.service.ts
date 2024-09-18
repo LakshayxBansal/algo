@@ -1,4 +1,4 @@
-'use server'
+"use server";
 import excuteQuery from "../utils/db/db";
 
 export async function getOpenEnquiriesDb(dbName: string) {
@@ -84,17 +84,17 @@ export async function getClosedEnquiriesCountDb(dbName: string) {
 }
 
 export async function getOverviewGraphDataDb(dbName: string) {
-    try {
-      const result = await excuteQuery({
-        host: dbName,
-        query: "call getOverviewGraphData()",
-        values: [],
-      });
-  
-      return result;
-    } catch (e) {
-      console.log(e);
-    }
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query: "call getOverviewGraphData()",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 export async function getAverageAgeDb(dbName: string) {

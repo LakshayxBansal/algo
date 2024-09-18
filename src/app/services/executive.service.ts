@@ -41,7 +41,7 @@ export async function createExecutiveDB(
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
     return result;
@@ -56,7 +56,7 @@ export async function updateExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    // console.log("email", session.user.email);
+    // console.log("email", session.user.userId);
     // const placeholderDate = new Date("1900-01-01");
     // data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
 

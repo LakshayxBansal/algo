@@ -15,7 +15,7 @@ export async function createItemDB(session: Session, data: zm.itemSchemaT) {
         data.alias,
         data.unit,
         data.hsn_code,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -41,7 +41,7 @@ export async function updateItemDB(session: Session, data: zm.itemSchemaT) {
         // data.modified_by,
         // data.created_on,
         // data.modified_on,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {

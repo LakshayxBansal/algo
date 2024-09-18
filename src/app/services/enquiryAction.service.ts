@@ -53,11 +53,14 @@ export async function createEnquiryActionDb(
   statusData: zm.nameMasterDataT
 ) {
   try {
-    return excuteQuery({
+    console.log(session.user.dbInfo);
+
+    const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createAction(?,?)",
-      values: [statusData.name, session.user.email],
+      values: [statusData.name, session.user.userId],
     });
+    return result;
   } catch (e) {
     console.log(e);
   }
@@ -87,7 +90,7 @@ export async function updateEnquiryActionDb(
       host: session.user.dbInfo.dbName,
       query: "call updateAction(?,?,?);",
 
-      values: [statusData.id, statusData.name, session.user.email],
+      values: [statusData.id, statusData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -127,7 +130,10 @@ export async function getEnquiryActionByPageDb(
   }
 }
 
-export async function getEnquiryActionCount(crmDb: string, value: string | undefined) {
+export async function getEnquiryActionCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

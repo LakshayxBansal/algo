@@ -97,7 +97,7 @@ export async function updateExecutiveRoleDb(
         executiveRoleData.id,
         executiveRoleData.name,
         executiveRoleData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {

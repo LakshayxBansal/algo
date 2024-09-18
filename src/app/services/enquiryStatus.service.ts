@@ -43,7 +43,7 @@ export async function createEnquiryStatusDb(session: Session, statusData: zm.nam
        values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
       values: [
         statusData.name,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {

@@ -2,7 +2,6 @@
 import React, { useRef, useState } from "react";
 import { Box, Button, Grid, Snackbar, Typography } from "@mui/material";
 import { masterFormPropsT } from "@/app/models/models";
-import { delDepartmentById } from "@/app/controllers/department.controller";
 
 export default function DeleteForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -15,12 +14,12 @@ export default function DeleteForm(props: masterFormPropsT) {
   const handleSubmit = async () => {
     const result: any = await props.data();
     props.setDialogOpen ? props.setDialogOpen(false) : null;
-    setSnackOpen(true)
+    setSnackOpen(true);
   };
 
   return (
     <Box id="sourceForm">
-      <form >
+      <form>
         <Typography variant={"h4"}>Are you sure you want to delete?</Typography>
 
         <Grid container>
@@ -45,6 +44,22 @@ export default function DeleteForm(props: masterFormPropsT) {
             </Box>
           </Grid>
         </Grid>
+        {/* <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            variant="contained"
+            sx={{ width: "15%", marginLeft: "5%" }}
+          >
+            Delete
+          </Button>
+        </Box> */}
       </form>
       <Snackbar
         open={snackOpen}
