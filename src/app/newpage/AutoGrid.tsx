@@ -103,16 +103,7 @@ export default function AutoGrid() {
 
 
 
-  useEffect(() => {
-    async function getEnquiries() {
-      const result = await getCallEnquiries();
-      // if (result) {
-      setData(result);
-      // }
-      // console.log(result);
-    }
-    getEnquiries();
-  }, [])
+
 
 
   // type FilterKeys = "date" | "callCategory" | "area" | "executive" | "callStatus" | "subStatus" | "nextAction" | "actionDate";
@@ -142,6 +133,16 @@ export default function AutoGrid() {
     }));
   };
 
+  useEffect(() => {
+    async function getEnquiries() {
+      const result = await getCallEnquiries(filterValueState);
+      // if (result) {
+      setData(result);
+      // }
+    }
+    getEnquiries();
+  }, [filterValueState])
+  console.log(data);
 
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
@@ -1076,13 +1077,13 @@ export default function AutoGrid() {
               />
               <Button variant="contained"
                 onClick={handleDateFilter}
-                sx={{ mr: "2%", height: "90%", fontSize: '10px' }}
+                sx={{ mr: "2%", height: "2.3rem", fontSize: '10px' }}
               >
                 Apply Filter
               </Button>
               <Button onClick={() => newhandleFilterReset("date")}
                 variant="contained"
-                sx={{ height: "90%", fontSize: '10px' }}
+                sx={{ height: "2.3rem", fontSize: '10px' }}
               >
                 Reset Filter
               </Button>
