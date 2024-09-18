@@ -59,6 +59,20 @@ export async function fetchAreaById(crmDb: string, id: number) {
   }
 }
 
+export async function delAreaDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from area_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 /**
  *
  * @param session : user session

@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import AllocationTypeMasterForm from '@/app/Widgets/masters/masterForms/allocationTypeMaster';
-import { getAllocationTypeById, getAllocationTypeByPage } from '@/app/controllers/allocationType.controller';
+import { delAllocationTypeById, getAllocationTypeById, getAllocationTypeByPage } from '@/app/controllers/allocationType.controller';
 
 
 export default function AllocationType() {
@@ -23,6 +23,7 @@ export default function AllocationType() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+      title="Allocation Type List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <AllocationTypeMasterForm
               setDialogOpen={fnDialogOpen}
@@ -32,6 +33,7 @@ export default function AllocationType() {
           )}
         fetchDataFn={getAllocationTypeByPage}
         fnFetchDataByID={getAllocationTypeById}
+        fnDeleteDataByID={delAllocationTypeById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

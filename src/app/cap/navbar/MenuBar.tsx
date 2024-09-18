@@ -67,6 +67,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         [theme.breakpoints.up('sm')]: {
           width: theme.spacing(4),
         },
+        [theme.breakpoints.up('xs')]: {
+          width: theme.spacing(4),
+        },
       }),
     },
   }),

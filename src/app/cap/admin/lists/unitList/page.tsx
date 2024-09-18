@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import UnitForm from '@/app/Widgets/masters/masterForms/unitForm';
-import { getUnitById, getUnitByPage } from '@/app/controllers/unit.controller';
+import { delUnitById, getUnitById, getUnitByPage } from '@/app/controllers/unit.controller';
 
 
 export default function Unit() {
@@ -24,6 +24,7 @@ export default function Unit() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title='Unit List'
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <UnitForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +34,7 @@ export default function Unit() {
           )}
         fetchDataFn={getUnitByPage}
         fnFetchDataByID={getUnitById}
+        fnDeleteDataByID={delUnitById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

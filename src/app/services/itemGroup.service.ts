@@ -116,6 +116,20 @@ export async function getItemGroupDetailsById(crmDb: string, id: number){
   }
 }
 
+export async function delItemGroupDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from item_group_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getItemGroupByPageDb(
   crmDb: string,
   page: number,

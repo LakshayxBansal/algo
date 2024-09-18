@@ -7,6 +7,7 @@ import {
   getUnitByPageDb,
   DeleteUnitList,
   updateUnitDB,
+  delUnitDetailsById,
 } from "../services/unit.service"
 import { getSession } from "../services/session.service";
 import { getUnitList, fetchUnitById } from "@/app/services/unit.service";
@@ -251,4 +252,27 @@ export async function getUnitData(id: number) {
     };
   }
   return getUnit;
+}
+
+export async function delUnitById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delUnitDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }
