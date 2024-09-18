@@ -99,20 +99,6 @@ export async function getCurrencyDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function delCurrencyByIdDB(crmDb: string, id: number) {
-  try {
-    const result = await excuteQuery({
-      host: crmDb,
-      query: "delete from currency_data where id=?;",
-      values: [id],
-    });
-
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 export async function getCurrencyByPageDb(
   crmDb: string,
   page: number,
@@ -154,6 +140,20 @@ export async function getCurrencyCount(
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delCurrencyByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from currency_master where id=?;",
+      values: [id],
+    });
+
+    return result;
   } catch (e) {
     console.log(e);
   }

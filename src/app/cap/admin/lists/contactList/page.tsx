@@ -8,6 +8,7 @@ import {
   getContactByPage,
 } from "@/app/controllers/contact.controller";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
+import { delContactById } from "@/app/controllers/contact.controller";
 
 const columns: GridColDef[] = [
   {

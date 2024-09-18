@@ -254,13 +254,7 @@ export const executiveSchema = z
       return !(schema.email === "" && schema.mobile === "");
     },
     { message: "please provide email, or phone no", path: ["mobile", "email"] }
-  );
-// .refine(
-//   (schema) => {
-//     return !(schema.crm_user.length == 0);
-//   },
-//   { message: "Please provide crm user", path: ["crm_user"] }
-// );
+  )
 /**
  * validate enquiry header schema
  */
@@ -534,9 +528,14 @@ export const companySchema = z.object({
 
 export const inviteUserSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1, "Please enter Name").max(55),
-  usercontact: z.string(),
-  isInvited: z.number().optional(),
+  name: z.string().min(1, "Please enter Name").max(45),
+  usercontact: z.string().min(1, "Please enter Contact").max(60),
   companyId: z.number(),
   executiveId: z.number().optional(),
-});
+  inviteDate: z.date().optional()
+}).refine(
+    (schema) => {
+      return (emailRegex.test(schema.usercontact) || phoneRegex.test(schema.usercontact));
+    },
+    { message: "Invalid Input Format", path: ["usercontact"] }
+  );
