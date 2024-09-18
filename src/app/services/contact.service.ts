@@ -209,3 +209,17 @@ export async function DeleteContactList(crmDb: string, id: number) {
     console.log(e);
   }
 }
+
+export async function delContactByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from contact_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

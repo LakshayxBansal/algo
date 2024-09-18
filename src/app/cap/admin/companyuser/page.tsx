@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { getSession }  from '../../../services/session.service';
 import { redirect } from 'next/navigation';
-import InviteList from './InviteList';
+import UserList from './UserList';
 
-export default async function AddUser() {
+export default async function CompanyUser() {
   const session = await getSession();
   if (session) {
     return (
-      <InviteList/>
+      <UserList/>
     );
   } else {
     redirect("/signin");

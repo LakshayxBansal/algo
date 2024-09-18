@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import CurrencyForm from '@/app/Widgets/masters/masterForms/currencyForm';
-import { getCurrencyById, getCurrencyByPage } from '@/app/controllers/currency.controller';
+import { getCurrencyById, getCurrencyByPage,delCurrencyById } from '@/app/controllers/currency.controller';
 
 
 export default function Currency() {
@@ -30,6 +30,7 @@ export default function Currency() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title = "Currency List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <CurrencyForm
               setDialogOpen={fnDialogOpen}
@@ -39,6 +40,7 @@ export default function Currency() {
           )}
         fetchDataFn={getCurrencyByPage}
         fnFetchDataByID={getCurrencyById}
+        fnDeleteDataByID={delCurrencyById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>
