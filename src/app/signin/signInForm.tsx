@@ -67,6 +67,7 @@ export default function AuthPage(props: authPagePropsType) {
     .catch((error) => {
       console.log(error);
     });
+    
   return (
     <Box
       sx={{

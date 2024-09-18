@@ -9,7 +9,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-
 import {menuTreeT} from '../../models/models';
 import {nameIconArr} from '../../utils/iconmap.utils';
 
@@ -29,6 +28,14 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: a
     setOpen(idToOpenMap);
     const str = ShowMenu({pages: pages, level:0, menuLevel:0});
   }, []);
+
+  function generateHref(optionName : string){
+    let href = "#";
+    if(optionName==="Add User"){
+      href = "/cap/admin/adduser";
+    }
+    return href;
+  }
 
 
   function handleHeaderMenuClick(id: number) {
@@ -57,7 +64,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: a
             {page.parent_id === level && 
             <>
               <Tooltip title={page.name} placement="right">
-                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href}>
+                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href!=="#" ? page.href : generateHref(page.name)}>
                   <ListItemIcon style={{minWidth: '30px'}}>
                     {SelectIcon({Page: page})}
                   </ListItemIcon>
@@ -70,7 +77,6 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: a
                   {ShowMenu({pages: page.children, level:page.id, menuLevel: indent+2})}
                 </List>
               </Collapse>
-
             </>
             }
           </div>

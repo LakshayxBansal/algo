@@ -6,6 +6,7 @@ import EntityList from "@/app/Widgets/masters/EntityList";
 import { getContactById, getContactByPage } from "@/app/controllers/contact.controller";
 import AppBar from "@mui/material/AppBar";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
+import { delContactById } from "@/app/controllers/contact.controller";
 
 export default function ManageContacts() {
   const columns: GridColDef[] = [
@@ -35,6 +36,7 @@ export default function ManageContacts() {
     <div style={{ height: 800, width: "100%" }}>
       <AppBar position="static" color="default"></AppBar>
       <EntityList
+        title="Contact List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
@@ -44,6 +46,7 @@ export default function ManageContacts() {
         )}
         fetchDataFn={getContactByPage}
         fnFetchDataByID={getContactById}
+        fnDeleteDataByID={delContactById}
         customCols={columns}
         AddAllowed={true}
       ></EntityList>

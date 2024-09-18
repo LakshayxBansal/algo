@@ -279,6 +279,7 @@ export default function EntityList(props: ModifyT) {
     return snakeCaseRegex.test(str);
   }
 
+
   const columns2: GridColDef[] = [];
   let columnHeading = {
     field: "",
@@ -471,7 +472,6 @@ export default function EntityList(props: ModifyT) {
                                 const file = event.target.files[0];
                                 if (file) {
                                   console.log("Selected file:", file.name);
-                                  // Add your file upload logic here
                                 }
                               }}
                               multiple

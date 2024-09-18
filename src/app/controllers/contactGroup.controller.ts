@@ -166,7 +166,7 @@ export async function getContactGroupById(id: number) {
   }
 }
 
-export async function delContactById(id: number) {
+export async function delContactGroupById(id: number) {
   let errorResult = { status: false, error: {} };
   try {
     const session = await getSession();

@@ -5,7 +5,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import EntityList from '@/app/Widgets/masters/EntityList';
 import AppBar from '@mui/material/AppBar';
 import CountryForm from '@/app/Widgets/masters/masterForms/countryForm';
-import { getCountryById, getCountryByPage } from '@/app/controllers/masters.controller';
+import { getCountryById, getCountryByPage,delCountryById } from '@/app/controllers/masters.controller';
 
 
 export default function Country() {
@@ -24,6 +24,7 @@ export default function Country() {
       <AppBar position="static" color="default">
       </AppBar>
       <EntityList
+        title = "Country List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <CountryForm
               setDialogOpen={fnDialogOpen}
@@ -33,6 +34,7 @@ export default function Country() {
           )}
         fetchDataFn={getCountryByPage}
         fnFetchDataByID={getCountryById}
+        fnDeleteDataByID={delCountryById}
         customCols={columns}
         AddAllowed={true}>
       </EntityList>

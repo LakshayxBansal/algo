@@ -6,7 +6,7 @@ import EntityList from "@/app/Widgets/masters/EntityList";
 import AppBar from "@mui/material/AppBar";
 import ContactGroupForm from "@/app/Widgets/masters/masterForms/contactGroupForm";
 import {
-  delContactById,
+  delContactGroupById,
   getContactGroupById,
   getContactGroupByPage,
 } from "@/app/controllers/contactGroup.controller";
@@ -36,7 +36,7 @@ export default function ContactGroup() {
         )}
         fetchDataFn={getContactGroupByPage}
         fnFetchDataByID={getContactGroupById}
-        fnDeleteDataByID={delContactById}
+        fnDeleteDataByID={delContactGroupById}
         customCols={columns}
         AddAllowed={true}
       ></EntityList>

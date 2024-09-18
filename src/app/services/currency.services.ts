@@ -139,3 +139,17 @@ export async function getCurrencyCount(crmDb: string, value: string | undefined)
     console.log(e);
   }
 }
+
+export async function delCurrencyByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from currency_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
