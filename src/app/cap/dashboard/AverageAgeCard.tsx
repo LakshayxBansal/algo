@@ -5,10 +5,11 @@ import { Box, Paper } from '@mui/material';
 import { getAverageAge } from '@/app/controllers/dashboard.controller';
 
 export default async function AverageAgeCard() {
-    let averageAge, sinceDate;
+    let result, averageAge, sinceDate;
     try {
-        averageAge = (await getAverageAge())[0];        
-        sinceDate = (new Date(averageAge.since)).toDateString();
+        result = (await getAverageAge())[0];        
+        averageAge = result.age ? result.age : 0;
+        sinceDate = (new Date(result.since)).toDateString();
     } catch (e) {
         console.log(e);
     }
@@ -29,7 +30,7 @@ export default async function AverageAgeCard() {
         }}>
         <Box>
             <Typography component="h2" variant="h6" gutterBottom>Average Age</Typography>
-            <Typography component="p" variant="h4">{averageAge.age} Days</Typography>
+            <Typography component="p" variant="h4">{averageAge} Days</Typography>
             <Typography color="text.secondary" sx={{ flex: 1 }}>
                 since {sinceDate}
             </Typography>
