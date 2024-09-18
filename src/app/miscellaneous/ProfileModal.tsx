@@ -8,10 +8,17 @@ import ProfileImage from './ProfileImage';
 import { deleteSession } from '../services/session.service';
 import { deRegisterFromAllCompany, deRegisterFromApp,deRegisterFromCompany } from '../controllers/user.controller';
 import { redirectToPage } from '../company/SelectCompany';
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
-export default function ProfileModal({img,name,userId,companyId,companyName}:{img : string | undefined, name : string, userId : number, companyId : number, companyName : string}) {
-    const {update} = useSession();
+type profileModalT = { 
+    img? : string,
+    name : string,
+    userId : number,
+    companyId : number,
+    companyName : string
+}
+
+export default function ProfileModal(props : profileModalT) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,20 +28,19 @@ export default function ProfileModal({img,name,userId,companyId,companyName}:{im
         setAnchorEl(null);
     };
     const handleLogout = async() => {
-        await deleteSession(userId);
+        await deleteSession(props.userId);
         // signOut({ callbackUrl: 'http://localhost:3000/signin' });
-        // signOut();
-        await update();
+        signOut();
         handleClose();
         redirectToPage("/signin");
     }
     const handleDeregisterFormCompany = async()=>{
-        await Promise.all([deRegisterFromCompany(null,userId,companyId),deleteSession(userId)]);
+        await Promise.all([deRegisterFromCompany(null,props.userId,props.companyId),deleteSession(props.userId)]);
         handleClose();
         redirectToPage("/company");
     }
     const handleDeregisterFormApp = async()=>{
-        await Promise.all([deRegisterFromApp(userId),deRegisterFromAllCompany(userId),deleteSession(userId)]);
+        await Promise.all([deRegisterFromApp(props.userId),deRegisterFromAllCompany(props.userId),deleteSession(props.userId)]);
         handleClose();
         redirectToPage("/signin");
     }
@@ -47,16 +53,16 @@ export default function ProfileModal({img,name,userId,companyId,companyName}:{im
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
             >
-                {img ? <Box
+                {props?.img ? <Box
                     component="img"
                     sx={{
                         height: 40,
                         width: 40,
                         borderRadius: "50%",
                     }}
-                    alt={img}
-                    src={img}
-                /> : <ProfileImage name={name}/>}
+                    alt={props?.img}
+                    src={props?.img}
+                /> : <ProfileImage name={props.name}/>}
             </Button>
             <Menu
                 id="basic-menu"
@@ -74,7 +80,7 @@ export default function ProfileModal({img,name,userId,companyId,companyName}:{im
                 </Link>
                 </MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleDeregisterFormCompany}>De register with {companyName}</MenuItem>
+                <MenuItem onClick={handleDeregisterFormCompany}>De register with {props.companyName}</MenuItem>
                 <MenuItem onClick={handleDeregisterFormApp}>De register from App</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
