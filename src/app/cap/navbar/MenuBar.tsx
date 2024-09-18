@@ -138,7 +138,6 @@ export default function MenuBar(props : propsType) {
                 variant="h6"
                 color="inherit"
               >
-
                   {props.companyName}
               </Typography>    
               </Box>
@@ -150,9 +149,7 @@ export default function MenuBar(props : propsType) {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <SessionProvider>
               <ProfileModal userId={props.userId} companyId={props.companyId} img={props.profileImg} name={props.username} companyName={props.companyName}/>
-              </SessionProvider>
             </Toolbar>
           </AppBar>
           <Box sx={{display: 'flex'}}>
