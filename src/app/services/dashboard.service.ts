@@ -87,7 +87,7 @@ export async function getOverviewGraphDataDb(dbName: string) {
     try {
       const result = await excuteQuery({
         host: dbName,
-        query: "call getOverviewGraphData1()",
+        query: "call getOverviewGraphData()",
         values: [],
       });
   
