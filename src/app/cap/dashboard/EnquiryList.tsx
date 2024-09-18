@@ -3,7 +3,12 @@ import { Box, Paper, Typography } from '@mui/material';
 import { getOpenEnquiries } from '@/app/controllers/dashboard.controller';
 
 export default async function EnquiryList() {
-  let openEnquiries = await getOpenEnquiries();
+  let openEnquiries;
+  try {
+    openEnquiries = await getOpenEnquiries();
+  } catch (e) {
+    console.log(e);
+  }
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 50 },
