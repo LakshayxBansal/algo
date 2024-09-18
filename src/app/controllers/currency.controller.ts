@@ -11,7 +11,7 @@ import {
   getCurrencyByPageDb,
   getCurrencyCount,
   getCurrencyDetailsById,
-  updateCurrencyDb,delCurrencyByIdDB
+  updateCurrencyDb,
 } from "../services/currency.services";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
@@ -180,9 +180,9 @@ export async function delCurrencyById(id: number) {
         };
       }
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
-    errorResult= { status: false, error: error };
+    errorResult = { status: false, error: error };
   }
   return errorResult;
 }
@@ -202,14 +202,13 @@ export async function getCurrencyByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      
       const conts = await getCurrencyByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
-      
+
       const rowCount = await getCurrencyCount(
         appSession.user.dbInfo.dbName as string,
         filter
@@ -232,27 +231,4 @@ export async function getCurrencyByPage(
     };
   }
   return getCurrency;
-}
-
-export async function delCurrencyById(id: number) {
-  let errorResult = { status: false, error: {} };
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      const result = await delCurrencyByIdDB(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
-      }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
-  }
-  return errorResult;
 }
