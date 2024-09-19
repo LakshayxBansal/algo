@@ -326,34 +326,37 @@ export default function AutoGrid() {
       [field]: null, // Reset the specific field's filter
     }));
     setRows(row1); // Reset rows to initial data
+    handleCloseFilter(field);
   };
 
 
-  type customCol = { id: any; dataColor: string };
+  type customCol = { row: any; };
 
   const CustomColor = (props: customCol) => {
     // console.log("these are the params",props.id)
+    let color;
+    if (props.row.callStatus === "Open") {
+      if (props.row.executive === null) { color = "blue" }
+      else { color = "purple" }
+    }
+    else {
+      if (props.row.subStatus === "Success") { color = "green" }
+      else { color = "red" }
+    }
+    console.log(color);
+
     return (
+
       <div>
-        {props.dataColor == "purple" ? (
-          <Box
-            sx={{
-              width: "10px",
-              height: "10px",
-              bgcolor: "purple",
-              margin: "20px",
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              width: "10px",
-              height: "10px",
-              bgcolor: "blue",
-              margin: "20px",
-            }}
-          />
-        )}
+        <Box
+          sx={{
+            width: "10px",
+            height: "10px",
+            bgcolor: color,
+            margin: "20px",
+          }}
+        />
+
       </div>
     );
   };
@@ -366,7 +369,7 @@ export default function AutoGrid() {
       headerName: "",
       width: 50,
       renderCell: (params) => {
-        return <CustomColor id={params.row.id} dataColor={params.row.color} />;
+        return <CustomColor row={params.row} />;
       },
     },
     { field: "id", headerName: "Call No.", width: 70, sortable: false },
@@ -517,7 +520,7 @@ export default function AutoGrid() {
     {
       field: "executive", headerName: "Executive", width: 100, renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterValueState.executive || filterType !== "reset" ? "blue" : "black" }}
+          <Button sx={{ color: filterType !== "reset" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Executive" arrow>
                 <FilterListIcon />

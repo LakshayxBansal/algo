@@ -1,42 +1,45 @@
-'use server'
- 
-import { getCountryList, 
-  getExecutiveList, 
-  getEnquiryCategoryList, 
+"use server";
+
+import {
+  getCountryList,
+  getExecutiveList,
+  getEnquiryCategoryList,
   getOrganizationList,
   getMenuOptionsList,
   createCountryDb,
   updateCountryDb,
-  createStateDb, 
-  getStateList,getCountryByIDList,updateStateDb,getStateListById, 
+  createStateDb,
+  getStateList,
+  getCountryByIDList,
+  updateStateDb,
+  getStateListById,
   getCountryByPageDb,
   getCountryCount,
   getStateByPageDb,
   getStateCount,
   delStateDetailsById,
-  delCountryByIdDB} from '../services/masters.service';
-import { getSession } from '../services/session.service';
-import * as zs from '../zodschema/zodschema';
-import * as zm from '../models/models';
-import { SqlError } from 'mariadb';
+  delCountryByIdDB,
+} from "../services/masters.service";
+import { getSession } from "../services/session.service";
+import * as zs from "../zodschema/zodschema";
+import * as zm from "../models/models";
+import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 
- 
-
 export async function authenticate(formData: FormData) {
   try {
-    const email = formData.get('email');
+    const email = formData.get("email");
     const password = formData.get("password");
-    
-    const externalApiUrl = 'http://127.0.0.1/auth';
+
+    const externalApiUrl = "http://127.0.0.1/auth";
     const externalApiResponse = await fetch(externalApiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Add any other required headers
-        },
-        body: JSON.stringify({"email": email, "password": password}),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add any other required headers
+      },
+      body: JSON.stringify({ email: email, password: password }),
     });
 
     return externalApiResponse;
@@ -46,31 +49,28 @@ export async function authenticate(formData: FormData) {
   return false;
 }
 
-
 export async function getMenuOptions(crmDb: string) {
   try {
-    let menuOptions=[];
-    const result =  await getMenuOptionsList(crmDb);
+    let menuOptions = [];
+    const result = await getMenuOptionsList(crmDb);
 
     // create top level menu
     const tree = createTree(result, 0);
     return tree;
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
   return null;
 }
 
-
 function createTree(flatArray: zm.menuTreeT[], parentId = 0): zm.menuTreeT[] {
   return flatArray
-    .filter(item => item.parent_id === parentId)
-    .map(item => ({
+    .filter((item) => item.parent_id === parentId)
+    .map((item) => ({
       ...item,
-      children: createTree(flatArray, item.id)
+      children: createTree(flatArray, item.id),
     }));
 }
-
 
 export async function getCountries(searchString: string) {
   try {
@@ -83,7 +83,7 @@ export async function getCountries(searchString: string) {
   }
 }
 
-export async function getCountryById(id : number){
+export async function getCountryById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -95,10 +95,10 @@ export async function getCountryById(id : number){
 }
 
 /**
- * 
+ *
  * @param searchState : partial state string to search for
  * @param country : country for which the states need to be searched
- * @returns 
+ * @returns
  */
 export async function getStates(searchState: string, country: string) {
   try {
@@ -111,7 +111,7 @@ export async function getStates(searchState: string, country: string) {
   }
 }
 
-export async function getStateById( state_id: number){
+export async function getStateById(state_id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -121,7 +121,6 @@ export async function getStateById( state_id: number){
     throw error;
   }
 }
-
 
 export async function getExecutive(crmDb: string, departmentName: string) {
   try {
@@ -133,11 +132,10 @@ export async function getExecutive(crmDb: string, departmentName: string) {
   }
 }
 
-
 /**
  * get categories for the ticket
  *
- */ 
+ */
 
 export async function getTicketCategory(crmDb: string, ticketTypeId: number) {
   try {
@@ -149,12 +147,10 @@ export async function getTicketCategory(crmDb: string, ticketTypeId: number) {
   }
 }
 
-
-
 export async function getOrganization(searchString: string) {
   try {
     const session = await getSession();
-    if (session?.user.dbInfo.dbName){
+    if (session?.user.dbInfo.dbName) {
       return getOrganizationList(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
@@ -162,18 +158,12 @@ export async function getOrganization(searchString: string) {
   }
 }
 
-
-
-
-
-
-
 /**
- * 
- * @param formData 
+ *
+ * @param formData
  * @returns object with status, record if success and error
  */
-export async function createCountry(data: zm.countrySchemaT){
+export async function createCountry(data: zm.countrySchemaT) {
   let result;
   try {
     const session = await getSession();
@@ -231,7 +221,7 @@ export async function createCountry(data: zm.countrySchemaT){
   return result;
 }
 
-export async function updateCountry(data: zm.countrySchemaT){
+export async function updateCountry(data: zm.countrySchemaT) {
   let result;
   try {
     const session = await getSession();
@@ -289,10 +279,9 @@ export async function updateCountry(data: zm.countrySchemaT){
   return result;
 }
 
-
 /**
- * 
- * @param formData 
+ *
+ * @param formData
  * @returns object with status, record if success and error
  */
 export async function createState(data: zm.stateSchemaT) {
@@ -302,10 +291,7 @@ export async function createState(data: zm.stateSchemaT) {
     if (session) {
       const parsed = zs.stateSchema.safeParse(data);
       if (parsed.success) {
-        const dbResult = await createStateDb(
-          session,
-          data as zm.stateSchemaT
-        );
+        const dbResult = await createStateDb(session, data as zm.stateSchemaT);
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -353,17 +339,14 @@ export async function createState(data: zm.stateSchemaT) {
   return result;
 }
 
-export async function updateState(data : zm.stateSchemaT){
+export async function updateState(data: zm.stateSchemaT) {
   let result;
   try {
     const session = await getSession();
     if (session) {
       const parsed = zs.stateSchema.safeParse(data);
       if (parsed.success) {
-        const dbResult = await updateStateDb(
-          session,
-          data as zm.stateSchemaT
-        );
+        const dbResult = await updateStateDb(session, data as zm.stateSchemaT);
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -426,14 +409,13 @@ export async function getCountryByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      
       const conts = await getCountryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
-      
+
       const rowCount = await getCountryCount(
         appSession.user.dbInfo.dbName as string,
         filter
@@ -473,14 +455,13 @@ export async function getStateByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      
       const conts = await getStateByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
-      
+
       const rowCount = await getStateCount(
         appSession.user.dbInfo.dbName as string,
         filter
@@ -514,16 +495,16 @@ export async function delCountryById(id: number) {
 
       if ((result.affectedRows = 1)) {
         errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
+      } else if ((result.affectedRows = 0)) {
         errorResult = {
           ...errorResult,
           error: "Record Not Found",
         };
       }
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
-    errorResult= { status: false, error: error };
+    errorResult = { status: false, error: error };
   }
   return errorResult;
 }
@@ -537,39 +518,16 @@ export async function delStateById(id: number) {
 
       if ((result.affectedRows = 1)) {
         errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
+      } else if ((result.affectedRows = 0)) {
         errorResult = {
           ...errorResult,
           error: "Record Not Found",
         };
       }
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
-    errorResult= { status: false, error: error };
-  }
-  return errorResult;
-}
-
-export async function delCountryById(id: number) {
-  let errorResult = { status: false, error: {} };
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      const result = await delCountryByIdDB(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
-      }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
+    errorResult = { status: false, error: error };
   }
   return errorResult;
 }
