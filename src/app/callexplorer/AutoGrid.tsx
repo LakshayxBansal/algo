@@ -84,8 +84,9 @@ const row1 = [
   },
 ];
 
-export default function AutoGrid() {
 
+export default function AutoGrid() {
+  const pgSize = 10;
   const [rows, setRows] = React.useState(row1);
   const [data, setData] = React.useState([]);
   const [dateFilter, setDateFilter] = React.useState("0");
@@ -95,16 +96,13 @@ export default function AutoGrid() {
   const [status, setStatus] = React.useState("1");
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
+  const [PageModel, setPageModel] = React.useState({ pageSize: pgSize, page: 0 });
+
 
 
   type DlgState = {
     [key: string]: HTMLElement | null;
   };
-
-
-
-
-
 
   // type FilterKeys = "date" | "callCategory" | "area" | "executive" | "callStatus" | "subStatus" | "nextAction" | "actionDate";
 
@@ -135,13 +133,11 @@ export default function AutoGrid() {
 
   useEffect(() => {
     async function getEnquiries() {
-      const result = await getCallEnquiries(filterValueState);
-      // if (result) {
+      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter);
       setData(result);
-      // }
     }
     getEnquiries();
-  }, [filterValueState])
+  }, [filterValueState, filterType])
   console.log(data);
 
 
@@ -1141,6 +1137,11 @@ export default function AutoGrid() {
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
             onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
             rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+          // pagination={true}
+          // pageSizeOptions={[pgSize]}
+          // paginationMode="server"
+          // paginationModel={PageModel}
+          // onPaginationModelChange={setPageModel}
           />
         </Paper>
       </Grid>

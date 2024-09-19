@@ -1,9 +1,16 @@
-"use server"
+"use server";
 import excuteQuery from "../utils/db/db";
 
-export async function getCallEnquiriesDb(crmDb: string,filterValueState: any) {
-    try {
-      let query: string =  "select eh.id, ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
+export async function getCallEnquiriesDb(
+  crmDb: string,
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string
+) {
+  try {
+    let query: string =
+      "select eh.id, ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
                 essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate\
                 from enquiry_header_tran eh \
                 left join enquiry_ledger_tran el on el.enquiry_id=eh.id \
@@ -15,33 +22,52 @@ export async function getCallEnquiriesDb(crmDb: string,filterValueState: any) {
                 left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
                 left join area_master am on am.id=cm.area_id\
                 left join executive_master em on em.id=el.allocated_to";
-                
-                const whereConditions: string[] = [];
-                let values = [];
 
-      if (filterValueState.callCategory) {       
-        whereConditions.push(`ecm.name = ?`);     
-        values.push(filterValueState.callCategory.name)
-      }
-      if (filterValueState.area) {           
-        whereConditions.push(`am.name = ?`);       
-        values.push(filterValueState.area.name)
-      }
-      if (filterValueState.nextAction) {           
-        whereConditions.push(`eaxm.name = ?`);       
-        values.push(filterValueState.nextAction.name)
-      }
+    const whereConditions: string[] = [];
+    let values = [];
 
-      if (whereConditions.length > 0) {
-        query += ` WHERE ` + whereConditions.join(' AND ');
-      }
-
-      const result = await excuteQuery({
-      host: crmDb,query,
-      values: values,
-      });
-      return result;
-    } catch (e) {
-      console.log(e);
+    if (filterValueState.callCategory) {
+      whereConditions.push(`ecm.name = ?`);
+      values.push(filterValueState.callCategory.name);
     }
+    if (filterValueState.area) {
+      whereConditions.push(`am.name = ?`);
+      values.push(filterValueState.area.name);
+    }
+    if (filterValueState.nextAction) {
+      whereConditions.push(`eaxm.name = ?`);
+      values.push(filterValueState.nextAction.name);
+    }
+    if (filterType === "allocated") {
+      whereConditions.push(`el.allocated_to is not null`);
+      if (filterValueState.executive) {
+        whereConditions.push(
+          `em.name like "%${filterValueState.executive.name}%"`
+        );
+      }
+    } else if (filterType === "unallocated") {
+      whereConditions.push(`el.allocated_to is null`);
+    }
+    if (filterValueState.subStatus) {
+      whereConditions.push(`essm.name = ?`);
+      values.push(filterValueState.subStatus.name);
+    }
+    if (selectedStatus == "Open" && callFilter == "1") {
+      whereConditions.push(`esm.name = "${selectedStatus}"`);
+      values.push(filterValueState.subStatus.name);
+    }
+
+    if (whereConditions.length > 0) {
+      query += ` WHERE ` + whereConditions.join(" AND ");
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query,
+      values: values,
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
   }
+}
