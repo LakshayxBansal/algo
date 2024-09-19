@@ -449,3 +449,17 @@ export async function delStateDetailsById(crmDb: string, id: number) {
     console.log(e);
   }
 }
+
+export async function checkStateIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(DISTINCT sm.id) as count FROM state_master sm LEFT JOIN organisation_master om ON om.state_id = sm.id LEFT JOIN contact_master cm ON cm.state_id = sm.id LEFT JOIN executive_master em ON em.state_id = sm.id WHERE (om.state_id IS NOT NULL OR cm.state_id IS NOT NULL OR em.state_id IS NOT NULL) AND sm.id=?",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

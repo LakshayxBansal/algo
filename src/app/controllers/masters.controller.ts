@@ -14,7 +14,8 @@ import { getCountryList,
   getStateByPageDb,
   getStateCount,
   delStateDetailsById,
-  delCountryByIdDB} from '../services/masters.service';
+  delCountryByIdDB,
+  checkStateIfUsed} from '../services/masters.service';
 import { getSession } from '../services/session.service';
 import * as zs from '../zodschema/zodschema';
 import * as zm from '../models/models';
@@ -533,16 +534,23 @@ export async function delStateById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await delStateDetailsById(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
+      const check = await checkStateIfUsed(session.user.dbInfo.dbName, id);
+      if(check[0].count>0){
+        return ("Can't Be DELETED!");
       }
+      else{
+        const result = await delStateDetailsById(session.user.dbInfo.dbName, id);
+        return ("Record Deleted");
+      }
+      //   if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result.affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Can't Be DELETED!",
+      //   };
+      // }
+      // return ("Record Deleted");
     }
   } catch (error:any) {
     throw error;
