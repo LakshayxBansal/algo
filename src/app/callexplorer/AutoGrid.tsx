@@ -34,6 +34,7 @@ import CallDetailList from "./CallDetailList";
 import { getEnquirySubStatus } from "../controllers/enquirySubStatus.controller";
 import { getEnquiryAction } from "../controllers/enquiryAction.controller";
 import { getCallEnquiries } from "../controllers/callExplorer.controller";
+import styles from "./AutoGrid.module.css";
 
 const row1 = [
   {
@@ -1012,137 +1013,176 @@ export default function AutoGrid() {
 
   const status_date = new Date();
 
-  return (
-    <Box sx={{ bgcolor: "#f3f1f17d", width: "100%", height: "100vh" }}>
-      <Grid
-        container
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          // height: "40%",
-          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-          fontSize: "12px",
-          alignItems: "center"
-        }}
+
+  const CallType = (props: { text: string, color: string }) => {
+    return (
+      <Box
+        sx={{ display: "flex", alignItems: "center" }}
       >
-        <Grid
-          item
-          xs={4}
-          // component="fieldset"
+        <Box
           sx={{
-            // width: "15vw",
-            // display: "flex",
-            // flexDirection: "column",
-            // border: "0.01rem solid #686D76",
-            justifyContent: "center",
-            // alignContent: "center",
-            padding: "0px",
-            // height: "50%",
+            width: "10px",
+            height: "10px",
+            bgcolor: props.color,
+            marginRight: "5px",
           }}
-        >
+        ></Box>
+        <Typography>{props.text}</Typography>
+      </Box>
+    )
+  }
+
+  return (
+    <Box sx={{ bgcolor: "#f3f1f17d" }}>
+      <Grid container>
+
+        <Grid item md={8} sm={6} lg={8} xl={8}>
           <Paper
             component="fieldset"
-            sx={{ height: "50%", border: "1px solid #64748b", p: "10px" }}
+            sx={{ border: "1px solid #64748b" }}
+          // className={styles.dateRange}
+          // className="flex flex-row"
           >
             <legend>Date-Range</legend>
-            <Grid sx={{ display: "flex", flexDirection: "row", width: "45vw", flexWrap: "wrap" }}>
-              {/* Input fields for start date and end date */}
-              <TextField
-                label="Start Date"
-                type="date"
-                value={filterValueState?.date?.initial}
-                // onChange={(e) => setInitialDate(e.target.value)}
-                onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "initial": e.target.value })}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                sx={{ mr: 2 }}
-                size="small"
-              />
-              <TextField
-                label="End Date"
-                type="date"
-                value={filterValueState?.date?.final}
-                onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "final": e.target.value })}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                sx={{ mr: 2 }}
-                size="small"
-              />
-              <Button variant="contained"
-                onClick={handleDateFilter}
-                sx={{ mr: "2%", height: "2.3rem", fontSize: '10px' }}
-              >
-                Apply Filter
-              </Button>
-              <Button onClick={() => newhandleFilterReset("date")}
-                variant="contained"
-                sx={{ height: "2.3rem", fontSize: '10px' }}
-              >
-                Reset Filter
-              </Button>
+            <Grid container>
+              <Grid item xs={12} md={7} lg={8} xl={8}>
+                <Box>
+
+                  <TextField
+                    label="Start Date"
+                    type="date"
+                    value={filterValueState?.date?.initial}
+                    // onChange={(e) => setInitialDate(e.target.value)}
+                    onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "initial": e.target.value })}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{ mr: 2 }}
+                    size="small"
+                  />
+                  <TextField
+                    label="End Date"
+                    type="date"
+                    value={filterValueState?.date?.final}
+                    onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "final": e.target.value })}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{ mr: 2 }}
+                    size="small"
+                  />
+                </Box>
+
+
+              </Grid>
+              <Grid item xs={12} md={5} lg={4} xl={4}>
+                <Box style={{ flexGrow: 1 }}
+                  className="justify-between">
+
+                  <Button variant="contained"
+                    onClick={handleDateFilter}
+                    sx={{ mr: "2%", height: "2.3rem", fontSize: '10px' }}
+                  >
+                    Apply Filter
+                  </Button>
+                  <Button onClick={() => newhandleFilterReset("date")}
+                    variant="contained"
+                    sx={{ height: "2.3rem", fontSize: '10px' }}
+                  >
+                    Reset Filter
+                  </Button>
+                </Box>
+              </Grid>
+
             </Grid>
+
           </Paper>
         </Grid>
-        <Grid
-          item
-          xs={3}
-          // component="fieldset"
-          sx={{
-            // width: "15vw",
-            // display: "flex",
-            // flexDirection: "column",
-            // border: "0.01rem solid #686D76",
-            justifyContent: "center",
-            // alignContent: "center",
-            padding: "0px",
-            // height: "50%",
-          }}
-        >
+        <Grid item md={4} sm={6} lg={4} xl={4}>
           <Paper
             component="fieldset"
-            sx={{ height: "50%", border: "1px solid #64748b", p: "10px" }}
+            sx={{ border: "1px solid #64748b" }}
           >
             <legend>Today's Date</legend>
-            <Grid sx={{
-              display: "flex", flexDirection: "row", width: "100%", alignItems: "center", // Align vertically
-              justifyContent: "flex-start",
-            }}>
-              <Typography sx={{ mr: "1vw", fontSize: "16px" }}>Status:</Typography>
-              <Box sx={{ fontSize: "16px" }}>{status_date.toDateString()}</Box>
-            </Grid>
+            <Typography sx={{ mr: "1vw", fontSize: "16px" }}>Status:</Typography>
+            <Box sx={{ fontSize: "16px" }}>{status_date.toDateString()}</Box>
           </Paper>
         </Grid>
       </Grid>
-
-      <Grid
+      <Paper>
+        <DataGrid
+          // rows={rows}
+          rows={data ? data : []}
+          columns={column1}
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+          onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
+          rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+          paginationMode="server"
+          pageSizeOptions={[5, 10, 20]}
+          paginationModel={pageModel}
+          onPaginationModelChange={setPageModel}
+          rowCount={totalRowCount}
+        />
+      </Paper>
+      <Button
+        variant="outlined"
+        size="small"
         sx={{
-          border: "0.01rem solid #686D76",
-          bgcolor: "white",
-          width: "100%",
-          mt: "2%"
+          bgcolor: "#dedfe0",
+          color: "black",
+          boxShadow: "3",
+          marginRight: "1vw",
         }}
       >
-        <Paper>
-          <DataGrid
-            // rows={rows}
-            rows={data ? data : []}
-            columns={column1}
-            columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
-            onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
-            rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
-            paginationMode="server"
-            pageSizeOptions={[5, 10, 20]}
-            paginationModel={pageModel}
-            onPaginationModelChange={setPageModel}
-            rowCount={totalRowCount}
-          />
-        </Paper>
-      </Grid>
-      <Grid sx={{ display: "flex", marginTop: "1vh" }}>
-        <Box sx={{ marginLeft: "auto" }}>
+        Allocate Call
+      </Button>
+      <Button
+        variant="outlined"
+        size="small"
+        sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+      >
+        Feed Report
+      </Button>
+      {selectedRow && (<Box> Call Details : {selectedRow.callNo} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
+      <Paper sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
+        <CallDetailList />
+      </Paper>
+      <Box
+        sx={{
+          // display: "flex",
+          // flexWrap: "wrap",
+          rowGap: 1,
+          columnGap: 3,
+        }}
+      >
+        <Grid container
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+            >
+              Hide Details
+            </Button>
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Show Remarks"
+              sx={{ marginLeft: "0vw" }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={8} md={8} lg={8}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", border: "1px solid black", width: "100%" }}>
+              <CallType text="Open-Unallocated" color="blue" />
+              <CallType text="Open-Allocated" color="purple" />
+              <CallType text="Closed-Failure" color="red" />
+              <CallType text="Closed-Success" color="green" />
+            </Box>
+          </Grid>
+        </Grid>
+        <Box sx={{ display: "flex", marginTop: "1vh" }}>
           <Button
             variant="outlined"
             size="small"
@@ -1153,165 +1193,41 @@ export default function AutoGrid() {
               marginRight: "1vw",
             }}
           >
-            Allocate Call
+            New Call Receipt
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{
+              bgcolor: "#dedfe0",
+              color: "black",
+              boxShadow: "3",
+              marginRight: "1vw",
+            }}
+          >
+            New Call Allocation
           </Button>
           <Button
             variant="outlined"
             size="small"
             sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
           >
-            Feed Report
+            New Call Report
           </Button>
-        </Box>
-      </Grid>
-      <Grid
-        sx={{
-          marginTop: "2vh",
-          width: "100%",
-        }}
-      >
-        {selectedRow && (<Box> Call Details : {selectedRow.callNo} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
-        <Paper sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
-          <CallDetailList />
-        </Paper>
-      </Grid>
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          marginTop: "1vh",
-
-          justifyContent: "space-between"
-        }}
-      >
-        <Box sx={{ display: "flex" }}>
           <Button
             variant="outlined"
             size="small"
-            sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+            sx={{
+              gcolor: "#dedfe0",
+              color: "black",
+              boxShadow: "3",
+              marginLeft: "auto",
+            }}
           >
-            Hide Details
+            Quit
           </Button>
-          <FormControlLabel
-            control={<Checkbox />}
-            label="Show Remarks"
-            sx={{ marginLeft: "0vw" }}
-          />
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            // alignItems: "center",
-            flexWrap: "wrap",
-            width: "50%",
-            // justifyContent: "space-between",
-            rowGap: 1,
-            columnGap: 3,
-            // border: "1px solid black"
-          }}
-        >
-          <Box
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <Box
-              sx={{
-                width: "10px",
-                height: "10px",
-                bgcolor: "blue",
-                // marginLeft: "40px",
-                marginRight: "5px",
-              }}
-            ></Box>
-            <Typography>Open-Unalllocated</Typography>
-          </Box>
-          <Box
-            sx={{ display: "flex", alignItems: "center", }}
-          >
-            <Box
-              sx={{
-                width: "10px",
-                height: "10px",
-                bgcolor: "purple",
-                marginRight: "5px",
-              }}
-            />
-            <Typography>Open-Alllocated</Typography>
-          </Box>
-          <Box
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <Box
-              sx={{
-                width: "10px",
-                height: "10px",
-                bgcolor: "red  ",
-                marginRight: "5px",
-              }}
-            ></Box>
-            <Typography>Close-Failure</Typography>
-          </Box>
-          <Box
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <Box
-              sx={{
-                width: "10px",
-                height: "10px",
-                bgcolor: "green",
-                marginRight: "5px",
-              }}
-            ></Box>
-            <Typography>Close-Success</Typography>
-          </Box>
-        </Box>
-      </Box>
-      <Box sx={{ display: "flex", marginTop: "1vh" }}>
-        <Button
-          variant="outlined"
-          size="small"
-          sx={{
-            bgcolor: "#dedfe0",
-            color: "black",
-            boxShadow: "3",
-            marginRight: "1vw",
-          }}
-        >
-          New Call Receipt
-        </Button>
-        <Button
-          variant="outlined"
-          size="small"
-          sx={{
-            bgcolor: "#dedfe0",
-            color: "black",
-            boxShadow: "3",
-            marginRight: "1vw",
-          }}
-        >
-          New Call Allocation
-        </Button>
-        <Button
-          variant="outlined"
-          size="small"
-          sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
-        >
-          New Call Report
-        </Button>
-        <Button
-          variant="outlined"
-          size="small"
-          sx={{
-            gcolor: "#dedfe0",
-            color: "black",
-            boxShadow: "3",
-            marginLeft: "auto",
-          }}
-        >
-          Quit
-        </Button>
       </Box>
     </Box>
-
   );
 }
