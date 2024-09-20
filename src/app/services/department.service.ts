@@ -40,6 +40,20 @@ export async function getDepartmentDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(DISTINCT dm.id) as count FROM department_master dm LEFT JOIN contact_master nm ON nm.department_id = dm.id WHERE (nm.department_id IS NOT NULL) AND dm.id=?",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delDepartmentDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({

@@ -10,6 +10,7 @@ import {
   getExecutiveRoleCount,
   getExecutiveRoleByPageDb,
   delExecutiveRoleDetailsById,
+  checkIfUsed,
 } from "../services/executiveRole.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -51,16 +52,22 @@ export async function delExecutiveRoleById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await delExecutiveRoleDetailsById(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
+      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
+      if(check[0].count>0){
+        return ("Can't Be DELETED!");
       }
+      else{
+        const result = await delExecutiveRoleDetailsById(session.user.dbInfo.dbName, id);
+        return ("Record Deleted");
+      }
+      // if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result .affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Not Found",
+      //   };
+      // }
     }
   } catch (error:any) {
     throw error;

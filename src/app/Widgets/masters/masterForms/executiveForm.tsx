@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
-import { getArea,getAreaById } from "@/app/controllers/area.controller";
+import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import { getInviteDetailByContact } from "@/app/controllers/inviteUser.controller";
 import {
   getExecutiveRole,
@@ -58,7 +58,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
     // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
     // if (dbResult.length > 0) {
-      return dbResult;
+    return dbResult;
     // }
   }
 
@@ -67,58 +67,59 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   // }
 
   const handleSubmit = async (formData: FormData) => {
-    try{
-    const session  = await getSession();
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    try {
+      const session = await getSession();
+      let data: { [key: string]: any } = {}; // Initialize an empty object
 
-    formData.append("call_type", "Enquiry");
+      formData.append("call_type", "Enquiry");
 
-    for (const [key, value] of formData.entries()) {
-      data[key] = value;
-    }
-
-    formData = updateFormData(data);
-    data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
-    data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
-    data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
-    // if (parsed.success) {
-    // const inviteUser = data.crm_user;
-    // let inviteId;
-    // if( session && inviteUser ){
-    //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
-    //   inviteId = invite.id;
-    // }
-    const result = await persistEntity(data as executiveSchemaT);
-
-    if (result.status) {
-      const newVal = {
-        id: result.data[0].id,
-        name: result.data[0].name,
-      };
-      // if(inviteId){
-      //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
-      // }
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setFormError({});
-      setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
-    } else {
-      const issues = result.data;
-      // show error on screen
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      for (const issue of issues) {
-        for (const path of issue.path) {
-          errorState[path] = { msg: issue.message, error: true };
-        }
+      for (const [key, value] of formData.entries()) {
+        data[key] = value;
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
-      setFormError(errorState);
+      console.log(selectValues);
+
+      formData = updateFormData(data);
+      data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
+      data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
+      data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
+      // if (parsed.success) {
+      // const inviteUser = data.crm_user;
+      // let inviteId;
+      // if( session && inviteUser ){
+      //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
+      //   inviteId = invite.id;
+      // }
+      const result = await persistEntity(data as executiveSchemaT);
+
+      if (result.status) {
+        const newVal = {
+          id: result.data[0].id,
+          name: result.data[0].name,
+        };
+        // if(inviteId){
+        //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
+        // }
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
+        setFormError({});
+        setSnackOpen(true);
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        const issues = result.data;
+        // show error on screen
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        for (const issue of issues) {
+          for (const path of issue.path) {
+            errorState[path] = { msg: issue.message, error: true };
+          }
+        }
+        errorState["form"] = { msg: "Error encountered", error: true };
+        setFormError(errorState);
+      }
+    } catch (error) {
+      throw error;
     }
-  }catch(error){
-    throw error;
-  }
   };
 
   const updateFormData = (data: any) => {
@@ -362,7 +363,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   name: entityData.executive_group,
                 } as optionsDataT
               }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "group")}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "executive_group")}
               fetchDataFn={getExecutiveGroup}
               fnFetchDataByID={getExecutiveGroupById}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => (

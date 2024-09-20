@@ -31,7 +31,7 @@ const CustomButton = styled(Box)(({ theme }) => ({
   textAlign: "center",
   transition: "background-color .218s, border-color .218s, box-shadow .218s",
   whiteSpace: "nowrap",
-  maxWidth: "400px",
+  // maxWidth: "400px",
   // minWidth: "min-content",
   borderColor: "#8e918f",
   display: "flex",
