@@ -96,7 +96,8 @@ export default function AutoGrid() {
   const [status, setStatus] = React.useState("1");
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const [PageModel, setPageModel] = React.useState({ pageSize: pgSize, page: 0 });
+  const [pageModel, setPageModel] = React.useState({ page: 0, pageSize: pgSize });
+  const [totalRowCount, setTotalRowCount] = React.useState(0); // State for row count
 
 
 
@@ -133,8 +134,10 @@ export default function AutoGrid() {
 
   useEffect(() => {
     async function getEnquiries() {
-      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter);
-      setData(result);
+      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
+      console.log(result);
+      setData(result?.result);
+      setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
   }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter])
@@ -142,11 +145,8 @@ export default function AutoGrid() {
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     if (selectionModel.length > 0) {
-
       const selectedId = selectionModel[0]; // Get the ID of the selected row
-
       const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
-
       setSelectedRow(selectedData); // Set the selected row data
     }
   };
@@ -337,8 +337,6 @@ export default function AutoGrid() {
       if (props.row.subStatus === "Success") { color = "green" }
       else { color = "red" }
     }
-    console.log(color);
-
     return (
 
       <div>
@@ -1135,11 +1133,11 @@ export default function AutoGrid() {
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
             onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
             rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
-          // pagination={true}
-          // pageSizeOptions={[pgSize]}
-          // paginationMode="server"
-          // paginationModel={PageModel}
-          // onPaginationModelChange={setPageModel}
+            paginationMode="server"
+            pageSizeOptions={[5, 10, 20]}
+            paginationModel={pageModel}
+            onPaginationModelChange={setPageModel}
+            rowCount={totalRowCount}
           />
         </Paper>
       </Grid>

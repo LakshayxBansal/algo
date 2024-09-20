@@ -7,7 +7,9 @@ export async function getCallEnquiriesDb(
   filterType: string,
   selectedStatus: string | null,
   callFilter: string,
-  dateFilter: string
+  dateFilter: string,
+  page: number,
+  pageSize: number
 ) {
   try {
     let query: string =
@@ -95,12 +97,121 @@ export async function getCallEnquiriesDb(
       query += ` WHERE ` + whereConditions.join(" AND ");
     }
 
+    const offset = (page - 1) * pageSize;
+    query += ` LIMIT ? OFFSET ?`;
+    values.push(pageSize, offset);
+
     const result = await excuteQuery({
       host: crmDb,
       query,
       values: values,
     });
     return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCallEnquiriesCountDb(
+  crmDb: string,
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string
+) {
+  try {
+    let query: string =
+      "SELECT COUNT(*) as totalCount \
+      FROM enquiry_header_tran eh \
+      LEFT JOIN enquiry_ledger_tran el ON el.enquiry_id=eh.id \
+      LEFT JOIN contact_master cm ON eh.contact_id=cm.id \
+      LEFT JOIN enquiry_category_master ecm ON eh.category_id=ecm.id \
+      LEFT JOIN enquiry_status_master esm ON el.status_id=esm.id \
+      LEFT JOIN enquiry_sub_status_master essm ON el.sub_status_id=essm.id \
+      LEFT JOIN enquiry_action_master eam ON el.action_taken_id=eam.id \
+      LEFT JOIN enquiry_action_master eaxm ON el.action_taken_id=eaxm.id \
+      LEFT JOIN area_master am ON am.id=cm.area_id \
+      LEFT JOIN executive_master em ON em.id=el.allocated_to";
+
+    const whereConditions: string[] = [];
+    let values = [];
+
+    if (filterValueState.callCategory) {
+      whereConditions.push(`ecm.name = ?`);
+      values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.area) {
+      whereConditions.push(`am.name = ?`);
+      values.push(filterValueState.area.name);
+    }
+    if (filterValueState.nextAction) {
+      whereConditions.push(`eaxm.name = ?`);
+      values.push(filterValueState.nextAction.name);
+    }
+    if (filterType === "allocated") {
+      whereConditions.push(`el.allocated_to is not null`);
+      if (filterValueState.executive) {
+        whereConditions.push(
+          `em.name like "%${filterValueState.executive.name}%"`
+        );
+      }
+    } else if (filterType === "unallocated") {
+      whereConditions.push(`el.allocated_to is null`);
+    }
+    if (filterValueState.subStatus) {
+      whereConditions.push(`essm.name = ?`);
+      values.push(filterValueState.subStatus.name);
+    }
+    if (selectedStatus == "Open" && callFilter == "1") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND el.allocated_to is not null`
+      );
+    } else if (selectedStatus == "Open" && callFilter == "2") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND el.allocated_to is null`
+      );
+    }
+    if (selectedStatus == "Closed" && callFilter == "3") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND essm.name="Success"`
+      );
+    } else if (selectedStatus == "Closed" && callFilter == "4") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND essm.name="Failure"`
+      );
+    }
+    if (selectedStatus !== "" && callFilter === "0") {
+      whereConditions.push(`esm.name = "${selectedStatus}"`);
+    }
+    if (dateFilter !== "0") {
+      const initial = filterValueState.date?.initial
+        ? new Date(filterValueState.date?.initial).toLocaleDateString("en-CA")
+        : null;
+      const final = filterValueState.date?.final
+        ? new Date(filterValueState.date?.final).toLocaleDateString("en-CA")
+        : null;
+      if (dateFilter === "1") {
+        whereConditions.push(`DATE(el.next_action_date) = CURDATE()`);
+      }
+      if (dateFilter === "2") {
+        whereConditions.push(
+          `DATE(el.next_action_date) BETWEEN '${initial}' AND '${final}'`
+        );
+      }
+    }
+
+    if (whereConditions.length > 0) {
+      query += ` WHERE ` + whereConditions.join(" AND ");
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query,
+      values: values,
+    });
+
+    return result[0].totalCount;
   } catch (e) {
     console.log(e);
   }
