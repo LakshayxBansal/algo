@@ -1,4 +1,11 @@
-export const dbTableAndProScript = "CREATE TABLE `menu_option_master` (\
+export const dbTableAndProScript =
+  "CREATE TABLE config_meta_data (\
+  id int NOT NULL AUTO_INCREMENT,\
+  config_type varchar(100) COLLATE utf8mb4_general_ci NOT NULL,\
+  PRIMARY KEY (id),\
+  UNIQUE KEY config_type_UNIQUE (config_type)\
+);~\
+CREATE TABLE `menu_option_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` text DEFAULT NULL,\
   `short_name` text DEFAULT NULL,\
@@ -12,13 +19,14 @@ export const dbTableAndProScript = "CREATE TABLE `menu_option_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   `menu_order` int(11) DEFAULT NULL\
 );~\
-CREATE TABLE `app_config` (\
-  `id` int(11) NOT NULL AUTO_INCREMENT,\
-  `config_type` varchar(45) NOT NULL,\
-  `config` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`config`)),\
-  PRIMARY KEY (`id`),\
-  UNIQUE KEY `id_UNIQUE` (`id`),\
-  UNIQUE KEY `config_type_UNIQUE` (`config_type`)\
+CREATE TABLE app_config (\
+  id int NOT NULL AUTO_INCREMENT,\
+  config_type_id int NOT NULL,\
+  config longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\
+  PRIMARY KEY (id),\
+  UNIQUE KEY config_type_id_UNIQUE (config_type_id),\
+  CONSTRAINT app_config_ibfk_1 FOREIGN KEY (config_type_id) REFERENCES config_meta_data (id) ON DELETE CASCADE ON UPDATE CASCADE,\
+  CONSTRAINT app_config_chk_1 CHECK (json_valid(config))\
 );~\
 CREATE TABLE `allocation_type_master` (\
   `id` int(11) DEFAULT NULL,\
@@ -2359,4 +2367,4 @@ BEGIN\
 	commit;\
     select * from temp_error_log;\
     select * from state_master sm where sm.id = id;\
-END ;"
+END ;";
