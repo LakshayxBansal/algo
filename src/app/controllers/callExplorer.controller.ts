@@ -6,7 +6,8 @@ export async function getCallEnquiries(
   filterValueState: any,
   filterType: string,
   selectedStatus: string | null,
-  callFilter: string
+  callFilter: string,
+  dateFilter: string
 ) {
   try {
     const session = await getSession();
@@ -16,7 +17,8 @@ export async function getCallEnquiries(
         filterValueState,
         filterType,
         selectedStatus,
-        callFilter
+        callFilter,
+        dateFilter
       );
       return result;
     }

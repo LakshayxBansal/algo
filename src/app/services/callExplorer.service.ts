@@ -6,7 +6,8 @@ export async function getCallEnquiriesDb(
   filterValueState: any,
   filterType: string,
   selectedStatus: string | null,
-  callFilter: string
+  callFilter: string,
+  dateFilter: string
 ) {
   try {
     let query: string =
@@ -53,8 +54,41 @@ export async function getCallEnquiriesDb(
       values.push(filterValueState.subStatus.name);
     }
     if (selectedStatus == "Open" && callFilter == "1") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND el.allocated_to is not null`
+      );
+    } else if (selectedStatus == "Open" && callFilter == "2") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND el.allocated_to is null`
+      );
+    }
+    if (selectedStatus == "Closed" && callFilter == "3") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND essm.name="Success"`
+      );
+    } else if (selectedStatus == "Closed" && callFilter == "4") {
+      whereConditions.push(
+        `esm.name = "${selectedStatus}" AND essm.name="Failure"`
+      );
+    }
+    if (selectedStatus !== "" && callFilter === "0") {
       whereConditions.push(`esm.name = "${selectedStatus}"`);
-      values.push(filterValueState.subStatus.name);
+    }
+    if (dateFilter !== "0") {
+      const initial = filterValueState.date?.initial
+        ? new Date(filterValueState.date?.initial).toLocaleDateString("en-CA")
+        : null;
+      const final = filterValueState.date?.final
+        ? new Date(filterValueState.date?.final).toLocaleDateString("en-CA")
+        : null;
+      if (dateFilter === "1") {
+        whereConditions.push(`DATE(el.next_action_date) = CURDATE()`);
+      }
+      if (dateFilter === "2") {
+        whereConditions.push(
+          `DATE(el.next_action_date) BETWEEN '${initial}' AND '${final}'`
+        );
+      }
     }
 
     if (whereConditions.length > 0) {

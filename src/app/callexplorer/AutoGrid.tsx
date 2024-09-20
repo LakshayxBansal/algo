@@ -133,19 +133,17 @@ export default function AutoGrid() {
 
   useEffect(() => {
     async function getEnquiries() {
-      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter);
+      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter);
       setData(result);
     }
     getEnquiries();
-  }, [filterValueState, filterType])
-  console.log(data);
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter])
 
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     if (selectionModel.length > 0) {
 
       const selectedId = selectionModel[0]; // Get the ID of the selected row
-      console.log(data);
 
       const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
 
