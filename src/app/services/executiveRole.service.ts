@@ -71,6 +71,20 @@ export async function getExecutiveRoleDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+     "SELECT COUNT(*) as count FROM executive_role_master er INNER JOIN executive_master em ON em.role_id = er.id where er.id=?;",      
+     values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delExecutiveRoleDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
