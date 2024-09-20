@@ -75,6 +75,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
     if (entityData?.id) {
       data["id"] = entityData.id;
       result = await updateCurrency(data);
+      console.log(entityData);
     } else {
       result = await createCurrency(data);
     }
@@ -178,7 +179,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Currency Symbol"
                 inputType={InputType.TEXT}
                 name="Symbol"
-                defaultValue={entityData.Symbol}
+                defaultValue={entityData.symbol}
                 error={formError?.Symbol?.error}
                 helperText={formError?.Symbol?.msg}
                 onChange={onSymbolChange}
@@ -189,7 +190,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Name"
                 inputType={InputType.TEXT}
                 name="Name"
-                defaultValue={entityData.Name}
+                defaultValue={entityData.name}
                 error={formError?.Name?.error}
                 helperText={formError?.Name?.msg}
               />
@@ -209,7 +210,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Currency Short Form"
                 inputType={InputType.TEXT}
                 name="ShortForm"
-                defaultValue={entityData.ShortForm}
+                defaultValue={entityData.shortForm}
                 error={formError?.ShortForm?.error}
                 helperText={formError?.ShortForm?.msg}
               />
