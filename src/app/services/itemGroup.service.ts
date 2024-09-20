@@ -116,6 +116,20 @@ export async function getItemGroupDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+     "SELECT COUNT(*) as count FROM item_group_master ig INNER JOIN item_master im ON im.group_id = ig.id where ig.id=?;",      
+     values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delItemGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({

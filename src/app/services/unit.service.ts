@@ -139,6 +139,19 @@ export async function fetchUnitById(crmDb: string, id: number) {
   }
 }
 
+export async function checksIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "SELECT COUNT(*) as count FROM unit_master um INNER JOIN item_master im ON im.unit_id = um.id where um.id=?;",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delUnitDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
