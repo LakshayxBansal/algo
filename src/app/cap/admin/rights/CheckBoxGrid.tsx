@@ -42,10 +42,10 @@ export function CheckBoxGrid({ roles, rights, rightsData, objects }: { roles: st
     return (
         <>
             {roles.map((role) => (
-                <Grid md={3} item spacing={2}>
+                <Grid md={3} item spacing={2} key={role}>
                     <Grid container spacing={1}>
                         {rights.map((right) => (
-                            <Grid item md={3} spacing={1}>
+                            <Grid item md={3} spacing={1} key={right}>
                                 <Typography variant="h6" component="h6">
                                     {right}
                                 </Typography>

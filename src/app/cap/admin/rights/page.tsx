@@ -17,7 +17,7 @@ function ObjectName() {
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
             {objects.map((i) => (
-                <Typography variant="h6" component="h6">
+                <Typography variant="h6" component="h6" key={i}>
                     {i}
                 </Typography>
 
@@ -41,7 +41,7 @@ export default async function Rights() {
                                     {/* <SubmitButton /> */}
                                 </Grid>
                                 {roles.map((role) => (
-                                    <Grid md={3} item spacing={2}>
+                                    <Grid md={3} item spacing={2} key={role}>
                                         <Typography variant="h6" component="h6">
                                             {role.charAt(0).toUpperCase() + role.slice(1)}
                                         </Typography>

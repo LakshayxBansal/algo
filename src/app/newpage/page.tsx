@@ -1167,7 +1167,7 @@ export default function AutoGrid() {
           component="fieldset"
           sx={{ height: "50%", border: "1px solid #64748b", p: "10px" }}
         >
-          <legend>Today's Date</legend>
+          {/* <legend>Today's Date</legend> */}
           <Grid sx={{
             display: "flex", flexDirection: "row", width: "100%", alignItems: "center", // Align vertically
             justifyContent: "flex-start",
