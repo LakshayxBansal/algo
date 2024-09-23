@@ -20,40 +20,37 @@ export const userSchema = z
       .string()
       .regex(emailRegex, "Input must be in email format")
       .optional(),
-    password: z.union([
-      z.string().optional(),
-      z
-        .string()
-        .min(8)
-        .max(50)
-        .regex(
-          passwordRegex,
-          "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
-        ),
-    ]),
-    name: z.string().min(1).max(45),
-    phone: z.string().min(10).max(15).optional(),
+    password :   z
+    .string()
+    .min(8)
+    .max(50)
+    .regex(
+      passwordRegex,
+      "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+    ),
+    name: z.string().min(1,"Name must not be empty").max(45),
+    phone: z.string().min(10,"Phone number should be atleast 10 digits").max(15,"Phone number should be atmost 15 digits").optional(),
     contact: z.string().optional(),
-    repassword: z.string().max(50).optional(),
+    repassword: z.string().max(50),
     provider: z.string().max(15).optional(),
   })
   .refine(
     (schema) => {
       return schema.password === schema.repassword;
     },
-    { message: "passwords should match", path: ["password", "repassword"] }
+    { message: "Passwords should match", path: ["password", "repassword"] }
   )
   .refine(
     (schema) => {
       return !(schema.email === "");
     },
-    { message: "please provide email", path: ["email"] }
+    { message: "Please provide email", path: ["email"] }
   )
   .refine(
     (schema) => {
       return !(schema.phone === "");
     },
-    { message: "please provide phone", path: ["phone"] }
+    { message: "Please provide phone", path: ["phone"] }
   );
 
 /*
