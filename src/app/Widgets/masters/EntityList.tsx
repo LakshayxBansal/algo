@@ -79,6 +79,7 @@ export default function EntityList(props: ModifyT) {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const [deleteMsg,setDeleteMsg] = useState<string>();
 
   let searchText;
   useEffect(() => {
@@ -122,8 +123,8 @@ export default function EntityList(props: ModifyT) {
   async function onDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
       const data = await props.fnDeleteDataByID(modId);
-      if (data.status) {
-      }
+        setDeleteMsg(data);
+      
       setTimeout(() => {
         dialogOpenDelete ? setDialogOpenDelete(false) : null;
       }, 1000);
@@ -558,7 +559,7 @@ export default function EntityList(props: ModifyT) {
               open={snackOpen}
               autoHideDuration={1000}
               onClose={() => setSnackOpen(false)}
-              message="Record Deleted!"
+              message={deleteMsg}
               anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             />
           </Box>
