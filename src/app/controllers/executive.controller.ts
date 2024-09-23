@@ -12,7 +12,7 @@ import {
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
-import { getBizAppUserList } from "../services/user.service";
+import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 
@@ -23,13 +23,7 @@ export async function createExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      let inviteResult = true;
-      let crm_map_id = 0;
-      console.log("data:" + data);
-
       const parsed = zs.executiveSchema.safeParse(data);
-      console.log(parsed);
-      // console.log(parsed.error.issues);
 
       if (parsed.success) {
         // check if invite needs to be sent
@@ -49,10 +43,12 @@ export async function createExecutive(data: executiveSchemaT) {
             session,
             data as executiveSchemaT
           );
-          console.log("DbResult", dbResult);
 
-          if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+          if (dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };
+            if(dbResult[1].crm_user_id){
+              await mapUser(dbResult[1].crm_user_id,session.user.dbInfo.id);
+            }
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =
               [];
@@ -110,6 +106,9 @@ export async function updateExecutive(data: executiveSchemaT) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          if(dbResult[1].crm_user_id){
+            await mapUser(dbResult[1].crm_user_id,session.user.dbInfo.id);
+          }
         } else {
           let errorState: { path: (string | number)[]; message: string }[] =
             [];
