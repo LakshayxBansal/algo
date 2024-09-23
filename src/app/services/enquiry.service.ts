@@ -30,7 +30,7 @@ export async function createEnquiryDB(session: Session, enqData: { head: enquiry
         enqData.ledger.closure_remark,
         enqData.ledger.enquiry_tran_type,
         1,
-        session.user.email
+        session.user.userId
       ],
     });
   } catch (e) {

@@ -1,4 +1,34 @@
-export const dbTableAndProScript = "CREATE TABLE `allocation_type_master` (\
+export const dbTableAndProScript =
+  "CREATE TABLE config_meta_data (\
+  id int NOT NULL AUTO_INCREMENT,\
+  config_type varchar(100) COLLATE utf8mb4_general_ci NOT NULL,\
+  PRIMARY KEY (id),\
+  UNIQUE KEY config_type_UNIQUE (config_type)\
+);~\
+CREATE TABLE `menu_option_master` (\
+  `id` int(11) DEFAULT NULL,\
+  `name` text DEFAULT NULL,\
+  `short_name` text DEFAULT NULL,\
+  `parent_id` int(11) DEFAULT NULL,\
+  `icon` text DEFAULT NULL,\
+  `href` text DEFAULT NULL,\
+  `default_open` int(11) DEFAULT NULL,\
+  `created_on` text DEFAULT NULL,\
+  `modified_on` text DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `menu_order` int(11) DEFAULT NULL\
+);~\
+CREATE TABLE app_config (\
+  id int NOT NULL AUTO_INCREMENT,\
+  config_type_id int NOT NULL,\
+  config longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\
+  PRIMARY KEY (id),\
+  UNIQUE KEY config_type_id_UNIQUE (config_type_id),\
+  CONSTRAINT app_config_ibfk_1 FOREIGN KEY (config_type_id) REFERENCES config_meta_data (id) ON DELETE CASCADE ON UPDATE CASCADE,\
+  CONSTRAINT app_config_chk_1 CHECK (json_valid(config))\
+);~\
+CREATE TABLE `allocation_type_master` (\
   `id` int(11) DEFAULT NULL,\
   `name` varchar(50) DEFAULT NULL,\
   `stamp` int(11) DEFAULT NULL,\
@@ -259,6 +289,7 @@ CREATE TABLE `executive_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL,\
+  `profile_img` varchar(100),\
   `address1` varchar(75) DEFAULT NULL,\
   `address2` varchar(75) DEFAULT NULL,\
   `address3` varchar(75) DEFAULT NULL,\
@@ -330,21 +361,6 @@ CREATE TABLE `master_tran_types` (\
   `full_name` varchar(60) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `short_name` (`short_name`) USING BTREE\
-);~\
-CREATE TABLE `menu_option_master` (\
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
-  `name` varchar(100) DEFAULT NULL,\
-  `short_name` varchar(100) DEFAULT NULL,\
-  `parent_id` int(11) DEFAULT NULL,\
-  `icon` varchar(45) DEFAULT NULL,\
-  `href` varchar(100) DEFAULT NULL,\
-  `default_open` int(11) DEFAULT NULL,\
-  `created_on` datetime DEFAULT NULL,\
-  `modified_on` datetime DEFAULT NULL,\
-  `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL,\
-  `menu_order` int(11) NOT NULL DEFAULT 0,\
-  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `organisation_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -2351,4 +2367,4 @@ BEGIN\
 	commit;\
     select * from temp_error_log;\
     select * from state_master sm where sm.id = id;\
-END ;"
+END ;";

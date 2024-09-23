@@ -10,15 +10,11 @@ export async function getExecutiveRoleList(
   department?: number
 ) {
   try {
-    let query = "select id as id, name as name from executive_role_master rm";
+    let query = "select id as id, name as name from executive_role_master rm where rm.department_id= ?";
     let values: any[] = [department];
 
-    if (department) query += " where rm.department_id= ?";
     if (searchString !== "") {
-      if (department) query += " AND";
-      else query += " Where";
-      query = query + " name like '%" + searchString + "%'";
-      values = [];
+      query = query + " and name like '%" + searchString + "%'";
     }
     const result = await excuteQuery({
       host: crmDb,
@@ -50,7 +46,7 @@ export async function createExecutiveRoleDb(
         sourceData.name,
         sourceData.parent_id,
         sourceData.department_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -75,6 +71,34 @@ export async function getExecutiveRoleDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+     "SELECT COUNT(*) as count FROM executive_role_master er INNER JOIN executive_master em ON em.role_id = er.id where er.id=?;",      
+     values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delExecutiveRoleDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from executive_role_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function updateExecutiveRoleDb(
   session: Session,
   executiveRoleData: zm.executiveRoleSchemaT
@@ -87,7 +111,7 @@ export async function updateExecutiveRoleDb(
         executiveRoleData.id,
         executiveRoleData.name,
         executiveRoleData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {

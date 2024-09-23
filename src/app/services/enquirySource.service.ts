@@ -56,7 +56,7 @@ export async function createEnquirySourceDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createEnquirySource(?, ?)",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -72,7 +72,7 @@ export async function updateEnquirySourceDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateEnquirySource(?, ?, ?)",
-      values: [sourceData.id, sourceData.name, session.user.email],
+      values: [sourceData.id, sourceData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -124,6 +124,20 @@ export async function getEnquirySourceCount(
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delEnquirySourceDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from enquiry_source_master where id=?;",
+      values: [id],
+    });
+
+    return result;
   } catch (e) {
     console.log(e);
   }

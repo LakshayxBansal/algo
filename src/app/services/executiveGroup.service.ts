@@ -29,6 +29,20 @@ export async function getExecutiveGroupList(
   }
 }
 
+export async function delExecutiveGroupDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from executive_group_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveGroupByIDList(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
@@ -62,7 +76,7 @@ export async function createExecutiveGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -84,7 +98,7 @@ export async function updateExecutiveGroupDb(
         sourceData.alias,
         sourceData.id,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {

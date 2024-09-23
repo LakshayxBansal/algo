@@ -8,6 +8,7 @@ import {
   updateDepartmentDb,
   getDepartmentCount,
   getDepartmentByPageDb,
+  delDepartmentDetailsById
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -37,6 +38,31 @@ export async function getDepartmentById(id: number) {
     throw error;
   }
 }
+
+
+export async function delDepartmentById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delDepartmentDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
+}
+
 
 export async function createDepartment(data: nameMasterDataT) {
   let result;
@@ -139,6 +165,7 @@ export async function getDepartmentByPage(
   filter: string | undefined,
   limit: number
 ) {
+  // console.log("controller params",page,filter,limit)
   let getDepartment = {
     status: false,
     data: {} as mdl.nameMasterDataT,
@@ -165,6 +192,7 @@ export async function getDepartmentByPage(
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
+      // console.log("this is the result",conts);  
     }
   } catch (e: any) {
 
@@ -177,5 +205,6 @@ export async function getDepartmentByPage(
       error: err,
     };
   }
+  // console.log("this is the return",getDepartment);
   return getDepartment;
 }

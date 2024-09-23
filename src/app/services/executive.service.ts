@@ -41,7 +41,7 @@ export async function createExecutiveDB(
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
     return result;
@@ -56,7 +56,7 @@ export async function updateExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    // console.log("email", session.user.email);
+    // console.log("email", session.user.userId);
     // const placeholderDate = new Date("1900-01-01");
     // data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
 
@@ -85,12 +85,12 @@ export async function updateExecutiveDB(
         data.doa,
         data.doj,
         data.area_id,
-        data.call_type_id,
-        data.crm_map_id,
+        data.call_type,
+        data.crm_user_id,
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -160,6 +160,20 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function delExecutiveDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from executive_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveByPageDb(
   crmDb: string,
   page: number,
@@ -213,5 +227,56 @@ export async function getExecutiveCount(
     });
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function getExecutiveIdFromEmailList(crmDb: string, email: string){
+  
+  try {
+    let query = 'select id as id from executive_master where email = ?';
+    let values: any[] = [email];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getExecutiveProfileImageByCrmUserIdList(crmDb : string,crmUserId : number){
+  try{
+    let query = 'select profile_img as profileImg from executive_master where crm_user_id = ?';
+    let values: any[] = [crmUserId];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
+export async function insertUserIdInExecutiveDb(crmDb:string,executiveId:number,userId:number) {
+  try{
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "update executive_master set crm_user_id =  ? where id = ?;", 
+      values: [userId,executiveId],
+    });
+
+    return result;
+  }catch(error){
+    console.log(error);
   }
 }

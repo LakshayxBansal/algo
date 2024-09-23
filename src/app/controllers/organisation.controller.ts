@@ -3,16 +3,19 @@
 import * as zs from "../zodschema/zodschema";
 import * as zm from "../models/models";
 import {
+  checkIfUsed,
   createOrganisationDB,
+  delOrganisationDetailsById,
   getOrganisationByPageDb,
   getOrganisationCount,
   getOrganisationDetailsById,
-  updateOrganisationDB
+  updateOrganisationDB,
 } from "../services/organisation.service";
 import { getSession } from "../services/session.service";
 import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
 import * as mdl from "../models/models";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function createOrganisation(data: zm.organisationSchemaT) {
   let result;
@@ -189,7 +192,6 @@ export async function getOrganisationByPage(
       };
     }
   } catch (e: any) {
-
     let err = "Organisation Admin, E-Code:369";
 
     getOrg = {
@@ -200,4 +202,33 @@ export async function getOrganisationByPage(
     };
   }
   return getOrg;
+}
+
+export async function delOrganisationById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
+      if(check[0].count>0){
+        return ("Can't Be DELETED!");
+      }
+      else{
+        const result = await delOrganisationDetailsById(session.user.dbInfo.dbName, id);
+        return ("Record Deleted");
+      }
+      // if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result .affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Not Found",
+      //   };
+      // }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }

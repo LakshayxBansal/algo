@@ -30,7 +30,6 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveRoleSchemaT = props.data ? props.data : {};
-  
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -121,7 +120,24 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
 
   return (
     <>
-      <Seperator>{entityData.id ? "Update Role" : "Add Role"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Role" : "Add Role"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -170,7 +186,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               defaultValue={
                 {
                   id: entityData.parent_id,
-                  name: entityData.parentRole
+                  name: entityData.parentRole,
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
@@ -185,33 +201,21 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               )}
             />
           </Box>
-          {/* <Grid container xs={12} md={12}> */}
-          <Grid container>
-            <Grid item xs={6} md={6}>
-              <Box margin={1} sx={{ display: "flex" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-start"
-                  alignItems="flex-start"
-                  m={1}
-                >
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}

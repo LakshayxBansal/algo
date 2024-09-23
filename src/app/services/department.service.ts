@@ -40,6 +40,20 @@ export async function getDepartmentDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function delDepartmentDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from department_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 /**
  *
  * @param session : user session
@@ -54,7 +68,7 @@ export async function createDepartmentDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createDepartment(?, ?)",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     logger.error(e);
@@ -70,7 +84,7 @@ export async function updateDepartmentDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateDepartment(?, ?, ?)",
-      values: [sourceData.id, sourceData.name, session.user.email],
+      values: [sourceData.id, sourceData.name, session.user.userId],
     });
   } catch (e) {
     logger.error(e);

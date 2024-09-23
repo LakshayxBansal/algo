@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import {
-  currencySchemaT,
-  selectKeyValueT,
-} from "@/app/models/models";
+import { currencySchemaT, selectKeyValueT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
@@ -22,6 +19,9 @@ import {
   createCurrency,
   updateCurrency,
 } from "@/app/controllers/currency.controller";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function CurrencyForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -75,6 +75,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
     if (entityData?.id) {
       data["id"] = entityData.id;
       result = await updateCurrency(data);
+      console.log(entityData);
     } else {
       result = await createCurrency(data);
     }
@@ -125,70 +126,115 @@ export default function CurrencyForm(props: masterFormPropsT) {
     }
   }, [symbol, decimalPlaces, currencySystem]);
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
-    <Paper sx={{ width: "50%", margin: "auto", marginTop: "5rem" }}>
+    <Paper sx={{ margin: "auto", width: "37vw" }}>
       <Seperator>
         {entityData.id ? "Update Currency" : "Add Currency"}
       </Seperator>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(1, 1fr)",
             }}
           >
-            <InputControl
-              autoFocus
-              id="Symbol"
-              label="Currency Symbol"
-              inputType={InputType.TEXT}
-              name="Symbol"
-              defaultValue={entityData.Symbol}
-              error={formError?.Symbol?.error}
-              helperText={formError?.Symbol?.msg}
-              onChange={onSymbolChange}
-            />
-            <InputControl
-              autoFocus
-              id="Name"
-              label="Name"
-              inputType={InputType.TEXT}
-              name="Name"
-              defaultValue={entityData.Name}
-              error={formError?.Name?.error}
-              helperText={formError?.Name?.msg}
-            />
-            <InputControl
-              autoFocus
-              id="shortForm"
-              label="Currency Short Form"
-              inputType={InputType.TEXT}
-              name="ShortForm"
-              defaultValue={entityData.ShortForm}
-              error={formError?.ShortForm?.error}
-              helperText={formError?.ShortForm?.msg}
-            />
-            <FormControl fullWidth>
-              <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
-              <Select
-                labelId="decmal-place-label"
-                id="decimal-place"
-                datatype="number"
-                name="decimal_places"
-                value={decimalPlaces}
-                label="Decimal Places"
-                onChange={handleDecimalChange}
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <InputControl
+                autoFocus
+                id="Symbol"
+                label="Currency Symbol"
+                inputType={InputType.TEXT}
+                name="Symbol"
+                defaultValue={entityData.symbol}
+                error={formError?.Symbol?.error}
+                helperText={formError?.Symbol?.msg}
+                onChange={onSymbolChange}
+              />
+              <InputControl
+                autoFocus
+                id="Name"
+                label="Name"
+                inputType={InputType.TEXT}
+                name="Name"
+                defaultValue={entityData.name}
+                error={formError?.Name?.error}
+                helperText={formError?.Name?.msg}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                // border: "1px solid black",
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
+              <InputControl
+                autoFocus
+                id="shortForm"
+                label="Currency Short Form"
+                inputType={InputType.TEXT}
+                name="ShortForm"
+                defaultValue={entityData.shortForm}
+                error={formError?.ShortForm?.error}
+                helperText={formError?.ShortForm?.msg}
+              />
+              <FormControl
+                fullWidth
+                size="small"
+                sx={{ marginTop: "0.9vh", width: "46.2%" }}
               >
-                <MenuItem value={2}>Two Digits</MenuItem>
-                <MenuItem value={3}>Three Digits</MenuItem>
-              </Select>
-            </FormControl>
+                <InputLabel id="demo-simple-select-label">
+                  Currency System
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="currency_system"
+                  value={currencySystem}
+                  label="Currency System"
+                  onChange={handleSystemChange}
+                >
+                  <MenuItem value="ind">Indian</MenuItem>
+                  <MenuItem value="int">International</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             {/* <InputControl
               autoFocus
               id="placeValueSystem"
@@ -199,20 +245,25 @@ export default function CurrencyForm(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
             /> */}
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Currency System
-              </InputLabel>
+
+            <FormControl
+              fullWidth
+              size="small"
+              sx={{ marginTop: "1.3vh", width: "46.2%" }}
+            >
+              <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="currency_system"
-                value={currencySystem}
-                label="Currency System"
-                onChange={handleSystemChange}
+                labelId="decmal-place-label"
+                id="decimal-place"
+                datatype="number"
+                name="decimal_places"
+                value={decimalPlaces}
+                label="Decimal Places"
+                onChange={handleDecimalChange}
+                sx={{ height: "6.1vh" }}
               >
-                <MenuItem value="ind">Indian</MenuItem>
-                <MenuItem value="int">International</MenuItem>
+                <MenuItem value={2}>Two Digits</MenuItem>
+                <MenuItem value={3}>Three Digits</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -225,7 +276,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            <Box
+            {/* <Box
               sx={{
                 mt: 1,
                 display: "grid",
@@ -237,7 +288,20 @@ export default function CurrencyForm(props: masterFormPropsT) {
               }}
             >
               {sample}
-            </Box>
+            </Box> */}
+            <InputControl
+              autoFocus
+              id="Sample"
+              // label="Sample"
+              inputType={InputType.TEXT}
+              name="Sample"
+              // defaultValue={sample}
+              value={sample}
+              // error={formError?.Name?.error}
+              // helperText={formError?.Name?.msg}
+              disabled
+            />
+
             {/* sx={{
                 mt: 3,
                 display: "grid",
@@ -248,15 +312,16 @@ export default function CurrencyForm(props: masterFormPropsT) {
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

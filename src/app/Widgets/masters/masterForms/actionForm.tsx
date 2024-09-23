@@ -24,7 +24,13 @@ export default function ActionForm(props: masterFormPropsT) {
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
-    const data = { name: formData.get("name") as string };
+    // const data = { name: formData.get("name") as string };
+    // console.log(data);
+    let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
     // const parsed = nameMasterData.safeParse(data);
     // let result;
     // let issues;
@@ -55,6 +61,7 @@ export default function ActionForm(props: masterFormPropsT) {
     //   setFormError(errorState);
     // }
     const result = await persistEntity(data as nameMasterDataT);
+    console.log(result)
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
@@ -63,6 +70,7 @@ export default function ActionForm(props: masterFormPropsT) {
       setSnackOpen(true);
     } else {
       const issues = result.data;
+      console.log("these are issues",issues);
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -88,17 +96,37 @@ export default function ActionForm(props: masterFormPropsT) {
   };
 
   async function persistEntity(data: nameMasterDataT) {
+    console.log(data);
     let result;
     if (props.data) {
+      console.log("prosp",props.data)
       data["id"] = entityData.id;
       result = await updateEnquiryAction(data);
     } else result = await createEnquiryAction(data);
+    console.log("result",result);
     return result;
   }
 
   return (
     <Paper>
-      <Seperator>{props.data ? "Update Action" : "Add Action"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Update Action" : "Add Action"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -118,9 +146,6 @@ export default function ActionForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{
@@ -144,16 +169,16 @@ export default function ActionForm(props: masterFormPropsT) {
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
-            <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

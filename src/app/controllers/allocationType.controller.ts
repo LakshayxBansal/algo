@@ -6,6 +6,7 @@ import { SqlError } from "mariadb";
 import { nameMasterDataT } from "../models/models";
 import {
   createAllocationTypeDb,
+  delAllocationDetailsById,
   getAllocationDetailsById,
   getAllocationTypeByPageDb,
   getAllocationTypeCount,
@@ -35,6 +36,29 @@ export async function getAllocationTypeById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function delAllocationTypeById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delAllocationDetailsById(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }
 
 /**
@@ -195,3 +219,15 @@ export async function getAllocationTypeByPage(
   }
   return getAllocationType;
 }
+
+// export async function deleteAllocationTypeById(id: number) {
+//   try {
+//     const session = await getSession();
+
+//     if (session?.user.dbInfo) {
+//       const result = deleteAllocationTypeByIdDb(session.user.dbInfo.dbName, id);
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// }
