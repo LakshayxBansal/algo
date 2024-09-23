@@ -26,34 +26,6 @@ export async function getConfigTypeId(crmDb: string, configType: string): Promis
 }
 
 
-// export async function getEnquirySupportConfigDB(
-//     crmDb: string,
-//     configType: string = 'enquiry_support'
-// ): Promise<enquiryConfigSchemaT | null> {
-//     try {
-//         const query = `SELECT config FROM app_config WHERE config_type = ?`;
-//         const values = [configType];
-
-//         const result = await executeQuery({
-//             host: crmDb,
-//             query: query,
-//             values: values,
-//         });
-
-//         if (result && result.length > 0) {
-//             return result[0].config;
-//         }
-
-//         return initEnquiryConfigSchema();
-
-//         return null;
-//     } catch (e) {
-//         console.error("Error fetching config data:", e);
-//         return null;
-//     }
-// }
-
-
 
 export async function getEnquirySupportConfigDB(
     crmDb: string,
@@ -61,7 +33,7 @@ export async function getEnquirySupportConfigDB(
 ): Promise<enquiryConfigSchemaT | null> {
     try {
         const configTypeId = await getConfigTypeId(crmDb, configType);
-
+        console.log('config id : ', configTypeId);
         if (!configTypeId) {
             throw new Error(`No config type found for ${configType}`);
         }
@@ -73,61 +45,20 @@ export async function getEnquirySupportConfigDB(
             values: [configTypeId],
         });
 
+        console.log("result", configResult[0]);
+
         if (configResult && configResult.length > 0) {
-            return configResult[0].config;
+            return JSON.parse(configResult[0].config);
         }
 
         return initEnquiryConfigSchema();
+
     } catch (e) {
         console.error("Error fetching config data:", e);
         return null;
     }
 }
 
-
-
-
-// export async function updateEnquirySupportConfigDB(
-//     session: Session,
-//     data: enquiryConfigSchemaT
-// ) {
-//     try {
-//         const query = `
-//             INSERT INTO app_config (config_type, config)
-//             VALUES (?, ?)
-//             ON DUPLICATE KEY UPDATE
-//               config = VALUES(config)
-//         `;
-//         console.log(query);
-//         const values = [
-//             'enquiry_support',
-//             JSON.stringify(data),
-//         ];
-
-//         const result = await executeQuery({
-//             host: session.user.dbInfo.dbName,
-//             query,
-//             values,
-//         });
-
-//         if (result.affectedRows > 0) {
-//             const selectQuery = `SELECT * FROM app_config WHERE config_type = ?`;
-//             const selectValues = ['enquiry_support'];
-//             const selectResult = await executeQuery({
-//                 host: session.user.dbInfo.dbName,
-//                 query: selectQuery,
-//                 values: selectValues,
-//             });
-
-//             return selectResult;
-//         }
-
-//         return result;
-
-//     } catch (e) {
-//         return null;
-//     }
-// }
 
 
 
