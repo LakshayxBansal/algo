@@ -216,3 +216,45 @@ export async function getCallEnquiriesCountDb(
     console.log(e);
   }
 }
+
+// export async function updateCallAllocationDb(dbName: string, data: any) {
+//   try {
+//     let query =
+//       "update enquiry_ledger_tran set allocated_to=? AND suggested_action_remark=?\
+//       where id in (";
+//     for (let i = 0; i < data.id.length - 1; i++) {
+//       query += "?, ";
+//     }
+//     query += "?);";
+//     console.log(query);
+//     console.log(...data.id);
+
+//     return excuteQuery({
+//       host: dbName,
+//       query: query,
+//       values: [data.executiveId, data.remark, ...data.id],
+//     });
+//   } catch (e) {
+//     console.log(e);
+//   }
+//   return null;
+// }
+export async function updateCallAllocationDb(dbName: string, data: any) {
+  try {
+    // Convert the array of IDs into a comma-delimited string
+    const idList = data.id.join(",");
+
+    // Define the stored procedure query
+    let query = "CALL updateCallAllocation(?, ?, ?, ?)";
+
+    // Execute the query, passing in the required parameters
+    return excuteQuery({
+      host: dbName,
+      query: query,
+      values: [data.executiveId, data.remark, idList, ","],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}

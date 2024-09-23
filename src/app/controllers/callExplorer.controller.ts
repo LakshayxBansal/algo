@@ -3,8 +3,8 @@ import { getSession } from "../services/session.service";
 import {
   getCallEnquiriesCountDb,
   getCallEnquiriesDb,
+  updateCallAllocationDb,
 } from "../services/callExplorer.service";
-import { bigIntToNum } from "../utils/db/types";
 
 export async function getCallEnquiries(
   filterValueState: any,
@@ -63,6 +63,26 @@ export async function getCallEnquiries(
         result,
         count,
       };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateCallAllocation(
+  executiveId: number,
+  remark: string,
+  id: Array<number>
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const data = { executiveId, remark, id };
+      const result = await updateCallAllocationDb(
+        session.user.dbInfo.dbName,
+        data
+      );
+      return result.affectedRows;
     }
   } catch (error) {
     throw error;

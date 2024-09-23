@@ -34,7 +34,8 @@ import CallDetailList from "./CallDetailList";
 import { getEnquirySubStatus } from "../controllers/enquirySubStatus.controller";
 import { getEnquiryAction } from "../controllers/enquiryAction.controller";
 import { getCallEnquiries } from "../controllers/callExplorer.controller";
-import styles from "./AutoGrid.module.css";
+import { AddDialog } from "../Widgets/masters/addDialog";
+import AllocateCall from "./AllocateCall";
 
 const row1 = [
   {
@@ -99,7 +100,11 @@ export default function AutoGrid() {
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
   const [pageModel, setPageModel] = React.useState({ page: 0, pageSize: pgSize });
   const [totalRowCount, setTotalRowCount] = React.useState(0); // State for row count
-
+  const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
+  const [dialogValue, setDialogValue] = React.useState<optionsDataT>(
+    {} as optionsDataT
+  );
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
 
   type DlgState = {
@@ -141,20 +146,22 @@ export default function AutoGrid() {
       setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter])
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen])
 
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
-    if (selectionModel.length > 0) {
-      const selectedId = selectionModel[0]; // Get the ID of the selected row
-      const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
-      setSelectedRow(selectedData); // Set the selected row data
+    setRowSelectionModel(selectionModel);
+
+    const selectedId = selectionModel[0]; // Get the ID of the selected row
+    const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
+    setSelectedRow(selectedData); // Set the selected row data
+    if (selectionModel.length > 1) {
+      setSelectedRow(null);
     }
   };
 
   const handleDateFilter = () => {
     const filteredRows = rows.filter((row) => {
-      // Convert row actionDate to date and compare
       const rowDate = new Date(row.date).toLocaleDateString('en-CA');
       const initial = filterValueState.date?.initial ? new Date(filterValueState.date?.initial).toLocaleDateString('en-CA') : null;
 
@@ -320,7 +327,6 @@ export default function AutoGrid() {
       ...prevState,
       [field]: null, // Reset the specific field's filter
     }));
-    setRows(row1); // Reset rows to initial data
     handleCloseFilter(field);
   };
 
@@ -489,7 +495,7 @@ export default function AutoGrid() {
             </MenuItem>
             <MenuItem>
               <Button
-                onClick={handleFilterChangeArea}
+                onClick={() => handleCloseFilter('area')}
                 fullWidth
                 variant="contained"
               >
@@ -581,7 +587,7 @@ export default function AutoGrid() {
 
             <MenuItem>
               <Button
-                onClick={handleFilterChangeExec}
+                onClick={() => handleCloseFilter("executive")}
                 fullWidth
                 variant="contained"
               >
@@ -1117,12 +1123,14 @@ export default function AutoGrid() {
           columnVisibilityModel={columnVisibilityModel}
           onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
           onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
-          rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+          // rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+          rowSelectionModel={rowSelectionModel}
           paginationMode="server"
           pageSizeOptions={[5, 10, 20]}
           paginationModel={pageModel}
           onPaginationModelChange={setPageModel}
           rowCount={totalRowCount}
+          checkboxSelection
         />
       </Paper>
       <Button
@@ -1134,6 +1142,7 @@ export default function AutoGrid() {
           boxShadow: "3",
           marginRight: "1vw",
         }}
+        onClick={() => setDialogOpen(true)}
       >
         Allocate Call
       </Button>
@@ -1228,6 +1237,11 @@ export default function AutoGrid() {
           </Button>
         </Box>
       </Box>
+      {dialogOpen && <AddDialog title={"Allocate Executive"}
+        open={dialogOpen}
+        setDialogOpen={setDialogOpen}>
+        <AllocateCall setDialogOpen={setDialogOpen} setDialogValue={setDialogValue} data={rowSelectionModel} />
+      </AddDialog>}
     </Box>
   );
 }
