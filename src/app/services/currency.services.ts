@@ -42,9 +42,9 @@ export async function createCurrencyDb(
         // "insert into currency_data (symbol,name,shortForm,decimal_places,currency_system) values(?,?,?,?,?) returning*",
         "call createCurrency(?,?,?,?,?)",
       values: [
-        sourceData.Symbol,
-        sourceData.Name,
-        sourceData.ShortForm,
+        sourceData.symbol,
+        sourceData.name,
+        sourceData.shortForm,
         sourceData.decimal_places,
         sourceData.currency_system,
       ],
@@ -66,9 +66,9 @@ export async function updateCurrencyDb(
 
       values: [
         sourceData.id,
-        sourceData.Symbol,
-        sourceData.Name,
-        sourceData.ShortForm,
+        sourceData.symbol,
+        sourceData.name,
+        sourceData.shortForm,
         sourceData.decimal_places,
         sourceData.currency_system,
       ],
