@@ -7,6 +7,8 @@ import Grid from "@mui/material/Grid";
 import {
   Button,
   Checkbox,
+  Divider,
+  dividerClasses,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -23,7 +25,12 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { StyledMenu } from "../utils/styledComponents";
+import {
+  ContainedButton,
+  OutlinedButton,
+  StripedDataGrid,
+  StyledMenu,
+} from "../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../controllers/executive.controller";
 import { optionsDataT } from "../models/models";
@@ -36,7 +43,8 @@ import { getEnquiryAction } from "../controllers/enquiryAction.controller";
 import { getCallEnquiries } from "../controllers/callExplorer.controller";
 import { AddDialog } from "../Widgets/masters/addDialog";
 import AllocateCall from "./AllocateCall";
-
+import styles from "./AutoGrid.module.css";
+import { useTheme } from "@emotion/react";
 const row1 = [
   {
     id: 1,
@@ -405,7 +413,8 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterValueState.callCategory ? "blue" : "black" }}
+          <OutlinedButton
+            sx={{ color: filterValueState.callCategory ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Call Category" arrow>
                 <FilterListIcon />
@@ -414,7 +423,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('callCategory')}
           >
             Call Category
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['callCategory']}
             open={Boolean(dlgState['callCategory'])}
@@ -446,21 +455,20 @@ export default function AutoGrid() {
               />
             </MenuItem>
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={handleFilterChangeCategory}
                 fullWidth
                 variant="contained"
               >
                 Apply Filter
-              </Button>
-              <MenuItem>
-                <Button
-                  onClick={() => newhandleFilterReset('callCategory')}
+              </ContainedButton>              <MenuItem>
+                <ContainedButton
+                  onClick={() => newhandleFilterReset("callCategory")}
                   fullWidth
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
 
@@ -472,7 +480,7 @@ export default function AutoGrid() {
       field: "area", headerName: "Area", width: 100, filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterValueState.area ? "blue" : "black" }}
+          <OutlinedButton sx={{ color: filterValueState.area ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Area" arrow>
                 <FilterListIcon />
@@ -481,7 +489,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('area')}
           >
             Area
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['area']}
             open={Boolean(dlgState['area'])}
@@ -513,21 +521,21 @@ export default function AutoGrid() {
               />
             </MenuItem>
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={() => handleCloseFilter('area')}
                 fullWidth
                 variant="contained"
               >
                 Apply Filter
-              </Button>
+              </ContainedButton>
               <MenuItem>
-                <Button
+                <ContainedButton
                   onClick={() => newhandleFilterReset('area')}
                   fullWidth
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
 
@@ -538,7 +546,7 @@ export default function AutoGrid() {
     {
       field: "executive", headerName: "Executive", width: 100, renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterType !== "reset" ? "blue" : "black" }}
+          <OutlinedButton sx={{ color: filterType !== "reset" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Executive" arrow>
                 <FilterListIcon />
@@ -547,7 +555,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('executive')}
           >
             Executive
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['executive']}
             open={Boolean(dlgState['executive'])}
@@ -605,15 +613,15 @@ export default function AutoGrid() {
             )}
 
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={() => handleCloseFilter("executive")}
                 fullWidth
                 variant="contained"
               >
                 Apply Filter
-              </Button>
+              </ContainedButton>
               <MenuItem>
-                <Button
+                <ContainedButton
                   onClick={() => {
                     newhandleFilterReset('executive')
                     setFilterType("reset")
@@ -623,7 +631,7 @@ export default function AutoGrid() {
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
           </Menu>
@@ -633,7 +641,7 @@ export default function AutoGrid() {
     {
       field: "callStatus", headerName: "Call Status", width: 100, renderHeader: () => (
         <Box>
-          <Button sx={{ color: selectedStatus !== "" ? "blue" : "black" }}
+          <OutlinedButton sx={{ color: selectedStatus !== "" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Call Status" arrow>
                 <FilterListIcon />
@@ -642,7 +650,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('callStatus')}
           >
             Call Status
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['callStatus']}
             open={Boolean(dlgState['callStatus'])}
@@ -687,7 +695,7 @@ export default function AutoGrid() {
               }
             </MenuItem>
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={() => {
                   handleFilterChangeCallStatus();
                 }}
@@ -695,9 +703,9 @@ export default function AutoGrid() {
                 variant="contained"
               >
                 Apply Filter
-              </Button>
+              </ContainedButton>
               <MenuItem>
-                <Button
+                <ContainedButton
                   onClick={() => {
                     newhandleFilterReset('callStatus')
                     setSelectedStatus("")
@@ -707,7 +715,7 @@ export default function AutoGrid() {
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
           </Menu>
@@ -722,7 +730,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filter
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterValueState.subStatus ? "blue" : "black" }}
+          <OutlinedButton sx={{ color: filterValueState.subStatus ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter by Sub Status" arrow>
                 <FilterListIcon />
@@ -731,7 +739,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('subStatus')}
           >
             Sub Status
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['subStatus']}
             open={Boolean(dlgState['subStatus'])}
@@ -783,15 +791,15 @@ export default function AutoGrid() {
               />
             </MenuItem>
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={handleFilterChangeSubStatus}
                 fullWidth
                 variant="contained"
               >
                 Apply Filter
-              </Button>
+              </ContainedButton>
               <MenuItem>
-                <Button
+                <ContainedButton
                   onClick={() => {
                     newhandleFilterReset('subStatus')
                     handleCloseFilter("subStatus")
@@ -800,7 +808,7 @@ export default function AutoGrid() {
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
           </Menu>
@@ -812,7 +820,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filtering
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: filterValueState.nextAction ? "blue" : "black" }}
+          <OutlinedButton sx={{ color: filterValueState.nextAction ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Next Action" arrow>
                 <FilterListIcon />
@@ -821,7 +829,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('nextAction')}
           >
             Next Action
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['nextAction']}
             open={Boolean(dlgState['nextAction'])}
@@ -852,21 +860,21 @@ export default function AutoGrid() {
               />
             </MenuItem>
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={handleFilterChangeNextAction}
                 fullWidth
                 variant="contained"
               >
                 Apply Filter
-              </Button>
+              </ContainedButton>
               <MenuItem>
-                <Button
+                <ContainedButton
                   onClick={() => newhandleFilterReset('nextAction')}
                   fullWidth
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
           </Menu>
@@ -887,7 +895,7 @@ export default function AutoGrid() {
       filterable: false, // Disable default filtering for date
       renderHeader: () => (
         <Box>
-          <Button sx={{ color: dateFilter !== "0" ? "blue" : "black" }}
+          <OutlinedButton sx={{ color: dateFilter !== "0" ? "blue" : "black" }}
             startIcon={
               <Tooltip title="Filter Date" arrow>
                 <FilterListIcon />
@@ -896,7 +904,7 @@ export default function AutoGrid() {
             onClick={handleClickFilter('actionDate')}
           >
             Action Date
-          </Button>
+          </OutlinedButton>
           <Menu
             anchorEl={dlgState['actionDate']}
             open={Boolean(dlgState['actionDate'])}
@@ -960,7 +968,7 @@ export default function AutoGrid() {
               </>
             )}
             <MenuItem>
-              <Button
+              <ContainedButton
                 onClick={() => {
                   handleFilterChangeDate();
                   handleCloseFilter('actionDate');
@@ -969,9 +977,9 @@ export default function AutoGrid() {
                 variant="contained"
               >
                 Apply Filter
-              </Button>
+              </ContainedButton>
               <MenuItem>
-                <Button
+                <ContainedButton
                   onClick={() => {
                     newhandleFilterReset("actionDate")
                     setDateFilter("0")
@@ -981,7 +989,7 @@ export default function AutoGrid() {
                   variant="contained"
                 >
                   Reset Filter
-                </Button>
+                </ContainedButton>
               </MenuItem>
             </MenuItem>
           </Menu>
@@ -1069,203 +1077,311 @@ export default function AutoGrid() {
 
   return (
     <Box sx={{ bgcolor: "#f3f1f17d" }}>
-      <Grid container>
 
-        <Grid item md={8} sm={6} lg={8} xl={8}>
-          <Paper
-            component="fieldset"
-            sx={{ border: "1px solid #64748b" }}
-          // className={styles.dateRange}
-          // className="flex flex-row"
-          >
-            <legend>Date-Range</legend>
-            <Grid container>
-              <Grid item xs={12} md={7} lg={8} xl={8}>
-                <Box>
+      <Paper
+        elevation={2}
+        style={{ padding: "0.5%", borderRadius: "1em" }}
+      >
+        <Box>
+
+
+          <Grid container>
+            <Grid item xs={12} md={8} lg={8}>
+              <Typography variant="body1" style={{ padding: "0 2%" }}>Date Range</Typography>
+              <Divider variant="middle" />
+              <Grid
+                container
+                spacing={2}
+                direction={{ xs: "column", md: "row", sm: "row", lg: "row" }}
+                style={{ padding: "2% 2%" }}
+              >
+                <Grid item xs={12} sm={6} md={3}>
 
                   <TextField
                     label="Start Date"
                     type="date"
                     value={filterValueState?.date?.initial}
                     // onChange={(e) => setInitialDate(e.target.value)}
-                    onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "initial": e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange("date", {
+                        ...filterValueState?.date,
+                        initial: e.target.value,
+                      })
+                    }
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    sx={{ mr: 2 }}
+                    // sx={{ mr: 2 }}
                     size="small"
+                    fullWidth
+                    sx={{ flexGrow: { xs: 1, sm: 1, md: 0 } }}
+
                   />
+                </Grid>
+                {/* <Divider orientation="vertical" flexItem /> */}
+                <Grid item xs={12} sm={6} md={3}>
                   <TextField
                     label="End Date"
                     type="date"
                     value={filterValueState?.date?.final}
-                    onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "final": e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange("date", {
+                        ...filterValueState?.date,
+                        final: e.target.value,
+                      })
+                    }
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    sx={{ mr: 2 }}
+                    // sx={{ ml: 2 }}
                     size="small"
+                    fullWidth
+                    sx={{ flexGrow: { xs: 1, sm: 1, md: 0 } }}
+
                   />
-                </Box>
-
-
-              </Grid>
-              <Grid item xs={12} md={5} lg={4} xl={4}>
-                <Box style={{ flexGrow: 1 }}
-                  className="justify-between">
-
-                  <Button variant="contained"
+                </Grid>
+                <Grid item xs={6} sm={6} md={3}>
+                  <ContainedButton
+                    variant="contained"
                     onClick={handleDateFilter}
-                    sx={{ mr: "2%", height: "2.3rem", fontSize: '10px' }}
+                    sx={{ flexGrow: { xs: 1, sm: 1, md: 0 } }}
+                    fullWidth
+
                   >
                     Apply Filter
-                  </Button>
-                  <Button onClick={() => newhandleFilterReset("date")}
+                  </ContainedButton>
+                </Grid>
+                <Grid item xs={6} sm={6} md={3}>
+                  <ContainedButton
+                    onClick={() => newhandleFilterReset("date")}
                     variant="contained"
-                    sx={{ height: "2.3rem", fontSize: '10px' }}
+                    // sx={{ height: "2.3rem", fontSize: '10px' }}
+                    sx={{ flexGrow: { xs: 1, sm: 1, md: 0 } }}
+                    fullWidth
                   >
                     Reset Filter
-                  </Button>
-                </Box>
+                  </ContainedButton>
+                </Grid>
               </Grid>
+            </Grid>
+            <Grid item xs={12} md={4} lg={4} alignItems="flex-start"
+            // display={{ xs: 'none', sm: 'block' }}
+            // order={{ xs: -1, sm: 0}}
+            >
+              <Paper elevation={3} style={{ borderRadius: "18em" }}>
+                <Box style={{ display: "flex" }} justifyContent="center"
+                // {{xs:"flex-start", md:"flex-end"}}
+                >
+                  <Typography variant="subtitle1" style={{ marginRight: "1%" }}>
+                    Today's Date:
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    {status_date.toDateString()}
+                  </Typography>
+                </Box>
+              </Paper>
 
             </Grid>
+          </Grid>
 
-          </Paper>
-        </Grid>
-        <Grid item md={4} sm={6} lg={4} xl={4}>
-          <Paper
-            component="fieldset"
-            sx={{ border: "1px solid #64748b" }}
-          >
-            <legend>Today's Date</legend>
-            <Typography sx={{ mr: "1vw", fontSize: "16px" }}>Status:</Typography>
-            <Box sx={{ fontSize: "16px" }}>{status_date.toDateString()}</Box>
-          </Paper>
-        </Grid>
-      </Grid>
-      <Paper>
-        <DataGrid
-          // rows={rows}
-          rows={data ? data : []}
-          columns={column1}
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
-          onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
-          // rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
-          rowSelectionModel={rowSelectionModel}
-          paginationMode="server"
-          pageSizeOptions={[5, 10, 20]}
-          paginationModel={pageModel}
-          onPaginationModelChange={setPageModel}
-          rowCount={totalRowCount}
-          checkboxSelection
-
-        />
+        </Box>
       </Paper>
-      <Button
-        variant="outlined"
-        size="small"
-        sx={{
-          bgcolor: "#dedfe0",
-          color: "black",
-          boxShadow: "3",
-          marginRight: "1vw",
-        }}
-        onClick={() => setDialogOpen(true)}
-      >
-        Allocate Call
-      </Button>
-      <Button
-        variant="outlined"
-        size="small"
-        sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
-      >
-        Feed Report
-      </Button>
+      <StripedDataGrid
+        // rows={rows}
+        rows={data ? data : []}
+        columns={column1}
+        columnVisibilityModel={columnVisibilityModel}
+        onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+        onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
+        // rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+        rowSelectionModel={rowSelectionModel}
+        paginationMode="server"
+        pageSizeOptions={[5, 10, 20]}
+        paginationModel={pageModel}
+        onPaginationModelChange={setPageModel}
+        rowCount={totalRowCount}
+        checkboxSelection
+        sx={{ mt: "1%" }}
+      />
+      <Box style={{ padding: "20px 0" }}>
+        <ContainedButton
+          variant="contained"
+          size="small"
+          sx={{
+            // bgcolor: "#dedfe0",
+            // color: "black",
+            // boxShadow: "3",
+            margin: "0 1vw",
+          }}
+          onClick={() => setDialogOpen(true)}
+        >
+          Allocate Call
+        </ContainedButton>
+        <ContainedButton
+          variant="contained"
+          size="small"
+        // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+        >
+          Feed Report
+        </ContainedButton>
+      </Box>
       {selectedRow && (<Box> Call Details : {selectedRow.callNo} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
       <Paper sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
         <CallDetailList selectedRow={selectedRow} />
       </Paper>
       <Box
         sx={{
-          // display: "flex",
-          // flexWrap: "wrap",
           rowGap: 1,
           columnGap: 3,
         }}
       >
-        <Grid container
-          sx={{ display: "flex", alignItems: "center" }}
-        >
+        {/* <Grid container sx={{ display: "flex", alignItems: "center" }}>
           <Grid item xs={12} sm={12} md={4} lg={4}>
-            <Button
-              variant="outlined"
+            <ContainedButton
+              variant="contained"
               size="small"
-              sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+              // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+              sx={{ margin: "0 1vw" }}
             >
               Hide Details
-            </Button>
+            </ContainedButton>
             <FormControlLabel
               control={<Checkbox />}
               label="Show Remarks"
               sx={{ marginLeft: "0vw" }}
             />
           </Grid>
-          <Grid item xs={12} sm={8} md={8} lg={8}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", border: "1px solid black", width: "100%" }}>
-              <CallType text="Open-Unallocated" color="blue" />
-              <CallType text="Open-Allocated" color="purple" />
-              <CallType text="Closed-Failure" color="red" />
-              <CallType text="Closed-Success" color="green" />
+          <Grid item xs={12} sm={8} md={8} lg={8}> */}
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={4}>
+            <ContainedButton
+              variant="contained"
+              size="small"
+              // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+              sx={{ margin: "0 1vw" }}
+            >
+              Hide Details
+            </ContainedButton>
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Show Remarks"
+              sx={{ marginLeft: { xs: "0vw", sm: "1vw" }, marginTop: { xs: 1, md: 0 } }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={8}>
+            <Box
+              // sx={{
+              //   display: "flex",
+              //   justifyContent: "space-between",
+              //   width: "100%",
+              // }}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexWrap: "wrap", // Wraps items on smaller screens
+                width: "100%",
+                flexDirection: "row"
+              }}
+            >
+              <Grid >
+                <CallType text="Open-Unallocated" color="blue" />
+              </Grid>
+              <Grid >
+                <CallType text="Open-Allocated" color="purple" />
+              </Grid>
+              <Grid >
+                <CallType text="Closed-Failure" color="red" />
+              </Grid>
+              <Grid >
+                <CallType text="Closed-Success" color="green" />
+              </Grid>
+
             </Box>
           </Grid>
         </Grid>
-        <Box sx={{ display: "flex", marginTop: "1vh" }}>
-          <Button
-            variant="outlined"
+        {/* <Box
+          sx={{ display: "flex", marginTop: "1vh" }}
+          justifyContent={"space-between"}
+        >
+          <ContainedButton
+            variant="contained"
             size="small"
-            sx={{
-              bgcolor: "#dedfe0",
-              color: "black",
-              boxShadow: "3",
-              marginRight: "1vw",
-            }}
+          // sx={{
+          //   bgcolor: "#dedfe0",
+          //   color: "black",
+          //   boxShadow: "3",
+          //   marginRight: "1vw",
+          // }}
           >
             New Call Receipt
-          </Button>
-          <Button
-            variant="outlined"
+          </ContainedButton>
+          <ContainedButton
+            variant="contained"
             size="small"
-            sx={{
-              bgcolor: "#dedfe0",
-              color: "black",
-              boxShadow: "3",
-              marginRight: "1vw",
-            }}
+          // sx={{
+          //   bgcolor: "#dedfe0",
+          //   color: "black",
+          //   boxShadow: "3",
+          //   marginRight: "1vw",
+          // }}
           >
             New Call Allocation
-          </Button>
-          <Button
-            variant="outlined"
+          </ContainedButton>
+          <ContainedButton
+            variant="contained"
             size="small"
-            sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
+          // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
           >
             New Call Report
-          </Button>
-          <Button
-            variant="outlined"
+          </ContainedButton>
+          <ContainedButton
+            variant="contained"
+            size="small"
+          // sx={{
+          //   gcolor: "#dedfe0",
+          //   // color: "black",
+          //   boxShadow: "3",
+          //   marginLeft: "auto",
+          // }}
+          >
+            Quit
+          </ContainedButton>
+        </Box> */}
+        <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "1vh" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2, // Adds space between the first three buttons
+              flexWrap: "wrap", // Allows wrapping on smaller screens
+              width: { xs: '100%', sm: 'auto' }, // Ensures full width on extra small screens
+            }}
+          >
+            <ContainedButton variant="contained" size="small">
+              New Call Receipt
+            </ContainedButton>
+            <ContainedButton variant="contained" size="small">
+              New Call Allocation
+            </ContainedButton>
+            <ContainedButton variant="contained" size="small">
+              New Call Report
+            </ContainedButton>
+          </Box>
+
+          <ContainedButton
+            variant="contained"
             size="small"
             sx={{
-              gcolor: "#dedfe0",
-              color: "black",
-              boxShadow: "3",
-              marginLeft: "auto",
+              marginLeft: { xs: 0, sm: 'auto' }, // Aligns right from small screens (600px) and up
+              marginTop: { xs: 2, sm: 0 }, // Adds margin on small screens for spacing
+              width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
             }}
           >
             Quit
-          </Button>
+          </ContainedButton>
         </Box>
+
+
       </Box>
       {
         dialogOpen && <AddDialog title={"Allocate Executive"}
@@ -1274,6 +1390,6 @@ export default function AutoGrid() {
           <AllocateCall setDialogOpen={setDialogOpen} setDialogValue={setDialogValue} data={rowSelectionModel} />
         </AddDialog>
       }
-    </Box >
+    </Box>
   );
 }
