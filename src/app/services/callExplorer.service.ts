@@ -24,7 +24,9 @@ export async function getCallEnquiriesDb(
                 left join enquiry_action_master eam on el.action_taken_id=eam.id\
                 left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
                 left join area_master am on am.id=cm.area_id\
-                left join executive_master em on em.id=el.allocated_to";
+                left join executive_master em on em.id=el.allocated_to\
+                where el.id = (SELECT MAX(lt.id) from enquiry_ledger_tran lt\
+                where lt.enquiry_id=el.enquiry_id) ";
 
     const whereConditions: string[] = [];
     let values = [];
@@ -94,7 +96,7 @@ export async function getCallEnquiriesDb(
     }
 
     if (whereConditions.length > 0) {
-      query += ` WHERE ` + whereConditions.join(" AND ");
+      query += whereConditions.join(" AND ");
     }
 
     const offset = (page - 1) * pageSize;
@@ -106,6 +108,27 @@ export async function getCallEnquiriesDb(
       query,
       values: values,
     });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCallEnquiriesDetailsDb(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate\
+    from enquiry_ledger_tran el\
+    left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
+    left join enquiry_action_master eam on el.action_taken_id=eam.id\
+    left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
+    left join executive_master em on em.id=el.allocated_to\
+    where el.enquiry_id = ?",
+      values: [id],
+    });
+
     return result;
   } catch (e) {
     console.log(e);
@@ -132,7 +155,8 @@ export async function getCallEnquiriesCountDb(
       LEFT JOIN enquiry_action_master eam ON el.action_taken_id=eam.id \
       LEFT JOIN enquiry_action_master eaxm ON el.action_taken_id=eaxm.id \
       LEFT JOIN area_master am ON am.id=cm.area_id \
-      LEFT JOIN executive_master em ON em.id=el.allocated_to";
+      LEFT JOIN executive_master em ON em.id=el.allocated_to where el.date = (SELECT MAX(lt.date) from enquiry_ledger_tran lt\
+      where lt.enquiry_id=el.enquiry_id) ";
 
     const whereConditions: string[] = [];
     let values = [];
@@ -202,7 +226,7 @@ export async function getCallEnquiriesCountDb(
     }
 
     if (whereConditions.length > 0) {
-      query += ` WHERE ` + whereConditions.join(" AND ");
+      query += whereConditions.join(" AND ");
     }
 
     const result = await excuteQuery({

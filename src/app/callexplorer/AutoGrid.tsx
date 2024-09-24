@@ -155,10 +155,12 @@ export default function AutoGrid() {
     const selectedId = selectionModel[0]; // Get the ID of the selected row
     const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
     setSelectedRow(selectedData); // Set the selected row data
+
     if (selectionModel.length > 1) {
       setSelectedRow(null);
     }
   };
+  console.log(selectedRow);
 
   const handleDateFilter = () => {
     const filteredRows = rows.filter((row) => {
@@ -330,6 +332,13 @@ export default function AutoGrid() {
     handleCloseFilter(field);
   };
 
+  const options = {
+    timeZone: 'Asia/Kolkata',
+    hour12: true, // Use 12-hour format with AM/PM
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+
 
   type customCol = { row: any; };
 
@@ -373,11 +382,21 @@ export default function AutoGrid() {
     },
     { field: "id", headerName: "Call No.", width: 70, sortable: false },
     { field: "contactParty", headerName: "Contact/Party", width: 130 },
-    { field: "date", headerName: "Date", width: 130 },
+    {
+      field: "date", headerName: "Date", width: 130,
+      renderCell: (params) => {
+        return params.row.date.toDateString();
+      },
+    },
     {
       field: "time",
       headerName: "Time",
       width: 100,
+      renderCell: (params) => {
+        console.log(params.row.date);
+
+        return params.row.date.toLocaleString('en-IN', options);
+      },
     },
     {
       field: "callCategory",
@@ -861,6 +880,9 @@ export default function AutoGrid() {
       field: "actionDate",
       headerName: "Action Date",
       width: 100,
+      renderCell: (params) => {
+        return params.row.actionDate.toDateString();
+      },
       // type: "dateTime",
       filterable: false, // Disable default filtering for date
       renderHeader: () => (
@@ -965,6 +987,13 @@ export default function AutoGrid() {
           </Menu>
         </Box>
       ),
+    },
+    {
+      field: "actionTime",
+      headerName: "Time",
+      renderCell: (params) => {
+        return params.row.actionDate.toLocaleString('en-IN', options);
+      },
     },
     {
       field: "columnConfig", headerName: "Column Config",
@@ -1131,6 +1160,7 @@ export default function AutoGrid() {
           onPaginationModelChange={setPageModel}
           rowCount={totalRowCount}
           checkboxSelection
+
         />
       </Paper>
       <Button
@@ -1155,7 +1185,7 @@ export default function AutoGrid() {
       </Button>
       {selectedRow && (<Box> Call Details : {selectedRow.callNo} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
       <Paper sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
-        <CallDetailList />
+        <CallDetailList selectedRow={selectedRow} />
       </Paper>
       <Box
         sx={{
@@ -1237,11 +1267,13 @@ export default function AutoGrid() {
           </Button>
         </Box>
       </Box>
-      {dialogOpen && <AddDialog title={"Allocate Executive"}
-        open={dialogOpen}
-        setDialogOpen={setDialogOpen}>
-        <AllocateCall setDialogOpen={setDialogOpen} setDialogValue={setDialogValue} data={rowSelectionModel} />
-      </AddDialog>}
-    </Box>
+      {
+        dialogOpen && <AddDialog title={"Allocate Executive"}
+          open={dialogOpen}
+          setDialogOpen={setDialogOpen}>
+          <AllocateCall setDialogOpen={setDialogOpen} setDialogValue={setDialogValue} data={rowSelectionModel} />
+        </AddDialog>
+      }
+    </Box >
   );
 }

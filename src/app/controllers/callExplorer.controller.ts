@@ -3,6 +3,7 @@ import { getSession } from "../services/session.service";
 import {
   getCallEnquiriesCountDb,
   getCallEnquiriesDb,
+  getCallEnquiriesDetailsDb,
   updateCallAllocationDb,
 } from "../services/callExplorer.service";
 
@@ -83,6 +84,23 @@ export async function updateCallAllocation(
         data
       );
       return result.affectedRows;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getCallEnquiryDetails(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await getCallEnquiriesDetailsDb(
+        session.user.dbInfo.dbName,
+        id
+      );
+
+      // console.log("res", result);
+      return result;
     }
   } catch (error) {
     throw error;
