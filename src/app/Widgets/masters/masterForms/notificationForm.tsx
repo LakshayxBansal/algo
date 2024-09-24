@@ -26,6 +26,7 @@ export default function NotificationForm(props: masterFormPropsT) {
   const [channelType, setChannelType] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [nameType, setNameType] = useState("");
+  const [selectedNames, setSelectedNames] = useState<string[]>([]);
   const entityData: masterFormPropsT = props.data ? props.data : {};
 
   const handleCancel = () => {
@@ -98,8 +99,17 @@ export default function NotificationForm(props: masterFormPropsT) {
     setChannelType(event.target.value as string);
   };
 
+  const handleRemoveName = (nameToRemove: string) => {
+    setSelectedNames((prev) => prev.filter(name => name !== nameToRemove));
+  };
+
   const handleNameChange = (event: SelectChangeEvent) => {
-    setNameType(event.target.value as string);
+    const newName = event.target.value as string;
+    setNameType(newName);
+    // Add selected name to the state if not already present
+    if (!selectedNames.includes(newName)) {
+      setSelectedNames((prev) => [...prev, newName]);
+    }
   };
 
   const clearFormError = () => {
@@ -154,9 +164,9 @@ export default function NotificationForm(props: masterFormPropsT) {
             <Box
               sx={{
                 display: "grid",
-                columnGap: 3,
+                columnGap: 2,
                 rowGap: 1,
-                gridTemplateColumns: "repeat(5, 1fr)",
+                gridTemplateColumns: "repeat(2, 1fr)",
                 p: 2,
               }}
             >
@@ -168,15 +178,28 @@ export default function NotificationForm(props: masterFormPropsT) {
                   datatype="string"
                   name="name"
                   value={nameType}
-                  label="name"
+                  label="Select Data Name"
                   onChange={handleNameChange}
                 >
-                  <MenuItem value={2}>Enquiry</MenuItem>
-                  <MenuItem value={3}>Executive</MenuItem>
+                  <MenuItem value={"Create Enquiry"}>Create Enquiry</MenuItem>
+                  <MenuItem value={"Read Enquiry"}>Read Enquiry</MenuItem>
+                  <MenuItem value={"Update Enquiry"}>Update Enquiry</MenuItem>
+                  <MenuItem value={"Delete Enquiry"}>Delete Enquiry</MenuItem>
+                  <MenuItem value={"Create Executive"}>Create Executive</MenuItem>
+                  <MenuItem value={"Read Executive"}>Read Executive</MenuItem>
+                  <MenuItem value={"Update Executive"}>Update Executive</MenuItem>
+                  <MenuItem value={"Delete Executive"}>Delete Executive</MenuItem>
                 </Select>
               </FormControl>
 
-              {nameType && (
+              {selectedNames.map((name) => (
+                <Button key={name} onClick={() => handleRemoveName(name)}>
+                  {name}
+                </Button>
+              ))}
+            </Box>
+
+              {/* {nameType && (
                 <>
                   <Button onClick={handleCreate}>Create</Button>
                   <Button onClick={handleRead}>Read</Button>
@@ -184,6 +207,42 @@ export default function NotificationForm(props: masterFormPropsT) {
                   <Button onClick={handleDelete}>Delete</Button>
                 </>
               )}
+            </Box> */}
+          </Paper>
+
+          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
+            <Box
+              sx={{
+                position: "sticky",
+                top: "0px",
+                zIndex: 2,
+                paddingY: "10px",
+                bgcolor: "white",
+              }}
+            >
+              <Seperator>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  Already Added Notifications
+                  {/* <Button
+                    sx={{ marginBottom: "2%" }}
+                    type="submit"
+                    variant="contained"
+                  >
+                    Edit
+                  </Button> */}
+                </Box>
+              </Seperator>
+            </Box>
+            <Box
+              sx={{
+                display: "grid",
+                columnGap: 4,
+                rowGap: 1,
+                gridTemplateColumns: "repeat(3, 1fr)",
+                p: 1,
+              }}
+            >
+              
             </Box>
           </Paper>
 
@@ -210,13 +269,19 @@ export default function NotificationForm(props: masterFormPropsT) {
                 </Box>
               </Seperator>
             </Box>
+            <Box sx={{display: "grid",
+                columnGap: 2,
+                rowGap: 1,
+                gridTemplateColumns: "repeat(2, 1fr)",
+                p: 1,}}
+                >
             <Box
               sx={{
                 display: "grid",
-                columnGap: 4,
+                columnGap: 2,
                 rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
+                gridTemplateColumns: "repeat(2, 1fr)",
+                p: 1,
               }}
             >
               <FormControl fullWidth>
@@ -244,26 +309,40 @@ export default function NotificationForm(props: masterFormPropsT) {
                   value={channelType}
                   label="Channel"
                   onChange={handleChannelChange}
-                >
+                  >
                   <MenuItem value={2}>Email</MenuItem>
                   <MenuItem value={3}>Mobile Number</MenuItem>
                 </Select>
               </FormControl>
+              </Box>
 
               <InputControl
                 inputType={InputType.TEXT}
+                fullWidth
                 id="message"
                 label="Message"
                 name="message"
+                sx={{
+                  "& .MuiInputBase-input": {
+                    height: "6rem",
+                    padding: "0 14px",
+                    textAlign: "center"
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    height: "3.5rem",
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: "1rem",
+                  },
+                  mt: 1,
+                }}
                 // error={formError?.message.error}
                 // helperText={formError?.message?.msg}
                 // defaultValue={entityData.message}
-              />
+                />
 
-              {/* <Button type="submit" variant="contained">
-                Add
-              </Button> */}
-            </Box>
+                </Box>
+            {/* </Box> */}
           </Paper>
 
           <Box
