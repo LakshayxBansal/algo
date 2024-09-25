@@ -220,23 +220,33 @@ export async function getCallEnquiriesCountDb(
       whereConditions.push(`esm.name = "${selectedStatus}"`);
     }
     if (dateFilter !== "0") {
-      const initial = filterValueState.date?.initial
-        ? new Date(filterValueState.date?.initial).toLocaleDateString("en-CA")
+      const initial = filterValueState.actionDate?.initial
+        ? filterValueState.actionDate?.initial
         : null;
-      const final = filterValueState.date?.final
-        ? new Date(filterValueState.date?.final).toLocaleDateString("en-CA")
+      const final = filterValueState.actionDate?.final
+        ? filterValueState.actionDate?.final
         : null;
       if (dateFilter === "1") {
-        whereConditions.push(`DATE(el.next_action_date) = CURDATE()`);
+        whereConditions.push(`el.next_action_date = CURDATE()`);
       }
-      if (dateFilter === "2") {
+      if (dateFilter === "3") {
         whereConditions.push(
-          `DATE(el.next_action_date) BETWEEN '${initial}' AND '${final}'`
+          `el.next_action_date BETWEEN '${initial}' AND '${final}'`
         );
       }
     }
+    if (filterValueState.date) {
+      const initial = filterValueState.date?.initial
+        ? filterValueState.date?.initial
+        : null;
+      const final = filterValueState.date?.final
+        ? filterValueState.date?.final
+        : null;
+      whereConditions.push(`eh.date BETWEEN '${initial}' AND '${final}'`);
+    }
 
     if (whereConditions.length > 0) {
+      query += " AND ";
       query += whereConditions.join(" AND ");
     }
 
@@ -252,28 +262,6 @@ export async function getCallEnquiriesCountDb(
   }
 }
 
-// export async function updateCallAllocationDb(dbName: string, data: any) {
-//   try {
-//     let query =
-//       "update enquiry_ledger_tran set allocated_to=? AND suggested_action_remark=?\
-//       where id in (";
-//     for (let i = 0; i < data.id.length - 1; i++) {
-//       query += "?, ";
-//     }
-//     query += "?);";
-//     console.log(query);
-//     console.log(...data.id);
-
-//     return excuteQuery({
-//       host: dbName,
-//       query: query,
-//       values: [data.executiveId, data.remark, ...data.id],
-//     });
-//   } catch (e) {
-//     console.log(e);
-//   }
-//   return null;
-// }
 export async function updateCallAllocationDb(dbName: string, data: any) {
   try {
     // Convert the array of IDs into a comma-delimited string

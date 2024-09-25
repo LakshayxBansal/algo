@@ -134,7 +134,7 @@ export default function AutoGrid() {
   const newhandleFilterReset = (field: string) => {
     setFilterValueState((prevState) => ({
       ...prevState,
-      [field]: null, // Reset the specific field's filter
+      [field]: null,
     }));
     handleCloseFilter(field);
   };
