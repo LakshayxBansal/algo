@@ -60,12 +60,10 @@ export async function updateItemDB(session: Session, data: zm.itemSchemaT) {
 export async function getItemList(crmDb: string, searchString: string) {
   try {
     let query =
-      "SELECT im.id AS rowId, im.name, ig.id AS group_id, im.alias, um.id AS unit_id, im.hsn_code \
+      "SELECT im.id AS id, im.name, ig.id AS group_id, im.alias, um.id AS unit_id, im.hsn_code \
         FROM item_master im \
-        INNER JOIN unit_master um ON im.unit_id = um.id \
-        INNER JOIN item_group_master ig ON im.group_id = ig.id \
-        WHERE im.id > 0\
-        ORDER BY im.id ";
+        LEFT JOIN unit_master um ON im.unit_id = um.id \
+        LEFT JOIN item_group_master ig ON im.group_id = ig.id"
     let values: any[] = [];
 
     if (searchString !== "") {

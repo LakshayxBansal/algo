@@ -29,11 +29,6 @@ export async function registerUser(formData: userSchemaT) {
           delete formData?.phone;
         }
         formData.contact = contact;
-        // const inActiveUser = await checkInActiveUser(contact as string);
-        // if (inActiveUser) {
-        //   await makeUserActive(inActiveUser.id);
-        //   return result = { status: true, data: [inActiveUser] };
-        // } else {
 
           const hashedPassword = await hashText(formData.password);
           formData.password = hashedPassword;
