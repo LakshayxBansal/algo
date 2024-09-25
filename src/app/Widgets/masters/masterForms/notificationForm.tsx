@@ -258,6 +258,42 @@ export default function NotificationForm(props: masterFormPropsT) {
             >
               <Seperator>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  Notifications to be Added!
+                  {/* <Button
+                    sx={{ marginBottom: "2%" }}
+                    type="submit" 
+                    variant="contained"
+                  >
+                    Edit
+                  </Button> */}
+                </Box>
+              </Seperator>
+            </Box>
+            <Box
+              sx={{
+                display: "grid",
+                columnGap: 4,
+                rowGap: 1,
+                gridTemplateColumns: "repeat(3, 1fr)",
+                p: 1,
+              }}
+            >
+              
+            </Box>
+          </Paper>
+
+          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
+            <Box
+              sx={{
+                position: "sticky",
+                top: "0px",
+                zIndex: 2,
+                paddingY: "10px",
+                bgcolor: "white",
+              }}
+            >
+              <Seperator>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   Notification
                   <Button
                     sx={{ marginBottom: "2%" }}
