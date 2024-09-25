@@ -1,12 +1,12 @@
 import { Alert, Box, Button, Collapse, IconButton, Paper, Snackbar } from "@mui/material";
-import AutocompleteDB from "../Widgets/AutocompleteDB";
-import { getExecutive } from "../controllers/executive.controller";
-import { masterFormPropsT, optionsDataT, selectKeyValueT } from "../models/models";
+import AutocompleteDB from "../../Widgets/AutocompleteDB";
+import { getExecutive } from "../../controllers/executive.controller";
+import { masterFormPropsT, optionsDataT, selectKeyValueT } from "../../models/models";
 import { useState } from "react";
-import Seperator from "../Widgets/seperator";
+import Seperator from "../../Widgets/seperator";
 import CloseIcon from "@mui/icons-material/Close";
-import { InputControl, InputType } from "../Widgets/input/InputControl";
-import { updateCallAllocation } from "../controllers/callExplorer.controller";
+import { InputControl, InputType } from "../../Widgets/input/InputControl";
+import { updateCallAllocation } from "../../controllers/callExplorer.controller";
 
 export default function AllocateCall(props: masterFormPropsT) {
     const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
@@ -29,9 +29,7 @@ export default function AllocateCall(props: masterFormPropsT) {
             : 0;
         const result = await updateCallAllocation(selectValues.executive.id, data.remark, props.data);
         if (result > 0) {
-            // const newVal = { id: result.data[0].id, name: result.data[0].name };
             setSnackOpen(true);
-            // props.setDialogValue ? props.setDialogValue(newVal) : null;
             setTimeout(() => {
                 props.setDialogOpen ? props.setDialogOpen(false) : null;
             }, 1000);

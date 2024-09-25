@@ -19,25 +19,6 @@ export async function getCallEnquiries(
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      // const result = await getCallEnquiriesDb(
-      //   session.user.dbInfo.dbName,
-      //   filterValueState,
-      //   filterType,
-      //   selectedStatus,
-      //   callFilter,
-      //   dateFilter,
-      //   page,
-      //   pageSize
-      // );
-      // const rowCount = await getCallEnquiriesCountDb(
-      //   session.user.dbInfo.dbName,
-      //   filterValueState,
-      //   filterType,
-      //   selectedStatus,
-      //   callFilter,
-      //   dateFilter
-      // );
-      // return result;
       const result = await getCallEnquiriesDb(
         session.user.dbInfo.dbName,
         filterValueState,

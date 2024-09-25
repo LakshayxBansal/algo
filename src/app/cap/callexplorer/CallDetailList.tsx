@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { getCallEnquiryDetails } from "../controllers/callExplorer.controller";
-import { StripedDataGrid } from "../utils/styledComponents";
+import { getCallEnquiryDetails } from "../../controllers/callExplorer.controller";
+import { StripedDataGrid } from "../../utils/styledComponents";
 
 export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
@@ -85,6 +85,7 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
             getRowId={(row) => row.id}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+            autoHeight
         />
     )
 }

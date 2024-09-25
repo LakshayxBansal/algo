@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getSession } from '../services/session.service';
+import { getSession } from '../../services/session.service';
 import { redirect } from 'next/navigation';
 import AutoGrid from './AutoGrid';
 

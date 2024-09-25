@@ -1,14 +1,11 @@
-
 "use client";
 import * as React from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import {
-  Button,
   Checkbox,
   Divider,
-  dividerClasses,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -23,81 +20,29 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
   ContainedButton,
   OutlinedButton,
   StripedDataGrid,
   StyledMenu,
-} from "../utils/styledComponents";
+} from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
-import { getExecutive } from "../controllers/executive.controller";
-import { optionsDataT } from "../models/models";
-import { getArea } from "../controllers/area.controller";
-import { getEnquiryCategory } from "../controllers/enquiryCategory.controller";
-import AutocompleteDB from "../Widgets/AutocompleteDB";
+import { getExecutive } from "../../controllers/executive.controller";
+import { optionsDataT } from "../../models/models";
+import { getArea } from "../../controllers/area.controller";
+import { getEnquiryCategory } from "../../controllers/enquiryCategory.controller";
+import AutocompleteDB from "../../Widgets/AutocompleteDB";
 import CallDetailList from "./CallDetailList";
-import { getEnquirySubStatus } from "../controllers/enquirySubStatus.controller";
-import { getEnquiryAction } from "../controllers/enquiryAction.controller";
-import { getCallEnquiries } from "../controllers/callExplorer.controller";
-import { AddDialog } from "../Widgets/masters/addDialog";
+import { getEnquirySubStatus } from "../../controllers/enquirySubStatus.controller";
+import { getEnquiryAction } from "../../controllers/enquiryAction.controller";
+import { getCallEnquiries } from "../../controllers/callExplorer.controller";
+import { AddDialog } from "../../Widgets/masters/addDialog";
 import AllocateCall from "./AllocateCall";
-import styles from "./AutoGrid.module.css";
-import { useTheme } from "@emotion/react";
-const row1 = [
-  {
-    id: 1,
-    callNo: "1/2024-2025",
-    contactParty: "Ramlal",
-    date: "2024-09-10",
-    time: "10:31AM",
-    age: 35,
-    callCategory: "--Others--",
-    area: "---Other",
-    executive: "Dinesh",
-    callStatus: "Open",
-    subStatus: "Demo Done",
-    nextAction: "Specify Latest",
-    actionDate: "",
-    color: "purple",
-  },
-  {
-    id: 2,
-    callNo: "2/2024-2025",
-    contactParty: "Rajesh Yadav",
-    date: "2024-09-20",
-    age: 35,
-    callCategory: "--Other--",
-    area: "---Other",
-    executive: "Coordinator",
-    callStatus: "Open",
-    subStatus: "Unallocated",
-    nextAction: "Call",
-    actionDate: "2024-05-15",
-    color: "blue",
-  },
-  {
-    id: 3,
-    callNo: "2/2024-2025",
-    contactParty: "Dinesh Verma",
-    date: "2024-09-12",
-    age: 35,
-    callCategory: "--Other--",
-    area: "Global",
-    executive: "Dinesh Verma",
-    callStatus: "Open",
-    subStatus: "Unallocated",
-    nextAction: "Call",
-    actionDate: "2024-05-15",
-    color: "blue",
-  },
-];
-
 
 export default function AutoGrid() {
   const pgSize = 10;
-  const [rows, setRows] = React.useState(row1);
   const [data, setData] = React.useState([]);
   const [dateFilter, setDateFilter] = React.useState("0");
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>("");
@@ -109,9 +54,6 @@ export default function AutoGrid() {
   const [pageModel, setPageModel] = React.useState({ page: 0, pageSize: pgSize });
   const [totalRowCount, setTotalRowCount] = React.useState(0); // State for row count
   const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
-  const [dialogValue, setDialogValue] = React.useState<optionsDataT>(
-    {} as optionsDataT
-  );
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
 
@@ -168,28 +110,6 @@ export default function AutoGrid() {
       setSelectedRow(null);
     }
   };
-  console.log(selectedRow);
-
-  const handleDateFilter = () => {
-    const filteredRows = rows.filter((row) => {
-      const rowDate = new Date(row.date).toLocaleDateString('en-CA');
-      const initial = filterValueState.date?.initial ? new Date(filterValueState.date?.initial).toLocaleDateString('en-CA') : null;
-
-      const final = filterValueState.date?.final ? new Date(filterValueState.date?.final).toLocaleDateString('en-CA') : null;
-
-      if (initial && final) {
-        return rowDate >= initial && rowDate <= final;
-      } else if (initial) {
-        return rowDate >= initial;
-      } else if (final) {
-        return rowDate <= final;
-      }
-      return true; // No filter applied
-    });
-    setRows(filteredRows);
-  };
-
-
 
   const handleSelectedStatus = (e: SelectChangeEvent) => {
     setSelectedStatus(e.target.value);
@@ -204,133 +124,12 @@ export default function AutoGrid() {
     }));
   }
 
-  // Filter rows based on Sub Status search
-  const handleFilterChangeSubStatus = () => {
-    const filteredRows = filterValueState['subStatus'] ? rows.filter((row) =>
-      row.subStatus.toLowerCase().includes(filterValueState['subStatus']?.name.toLowerCase())
-    ) : row1;
-    setRows(filteredRows); // Set filtered rows using setRows
-    handleCloseFilter('subStatus');
-  };
-
-
-
-  // Filter rows based on Call Category search
-  const handleFilterChangeCategory = () => {
-    const filteredRows = filterValueState['callCategory'] ? rows.filter((row) =>
-      row.callCategory.toLowerCase().includes(filterValueState['callCategory']?.name.toLowerCase())
-    ) : row1;
-    setRows(filteredRows); // Set filtered rows using setRows
-    handleCloseFilter('callCategory'); // Close the filter menu after applying the filter
-  };
-
-  // Filter rows based on Area search
-  const handleFilterChangeArea = () => {
-    const filteredRows = filterValueState['area'] ? rows.filter((row) =>
-      row.area.toLowerCase().includes(filterValueState['area']?.name.toLowerCase())
-    ) : row1;
-    setRows(filteredRows); // Set filtered rows using setRows
-    handleCloseFilter('area'); // Close the filter menu after applying the filter
-  };
-
-  const handleFilterChangeExec = () => {
-    let filteredRows;
-
-    if (filterType === "allocated") {
-      filteredRows = filterValueState['executive'] ? rows.filter((row) =>
-        row.executive.toLowerCase().includes(filterValueState['executive']?.name.toLowerCase())
-      ) : row1;
-    } else if (filterType === "unallocated") {
-      filteredRows = row1.filter((row) => row.executive === "");
-    } else {
-      setFilterValueState((prevState) => ({
-        ...prevState,
-        ["executive"]: null, // Set the selected value for the specific field
-      }));
-      filteredRows = row1; // Reset filter
-    }
-
-    setRows(filteredRows);
-    handleCloseFilter("executive")
-  };
-
-
-  // Handle filtering rows based on the search string
-  const handleFilterChangeNextAction = () => {
-    const filteredRows = filterValueState['nextAction'] ? rows.filter(row =>
-      row.nextAction.toLowerCase().includes(filterValueState['nextAction'].name.toLowerCase())
-    ) : row1;
-    setRows(filteredRows);
-    handleCloseFilter('nextAction');
-  };
-
   const handleColumnVisibilityChange = (field: string) => {
     setColumnVisibilityModel((prev: { [x: string]: any }) => ({
       ...prev,
       [field]: !prev[field],
     }));
   };
-
-  // Handle custom filter for call status
-  const handleFilterChangeCallStatus = () => {
-    if (selectedStatus && callFilter == "0") {
-      const filteredRows = row1.filter((row) => (
-        row.callStatus === selectedStatus)
-      );
-      setRows(filteredRows);
-    }
-    if (selectedStatus == "Open" && callFilter == "1") {
-      const filteredRows = row1.filter((row) => {
-        row.executive.length > 0 && row.callStatus === selectedStatus
-      })
-      setRows(filteredRows)
-    }
-    if (selectedStatus == "Open" && callFilter == "2") {
-      const filteredRows = row1.filter((row) => {
-        row.executive.length == 0 && row.callStatus === selectedStatus
-      })
-      setRows(filteredRows)
-    }
-    else {
-      setRows(row1); // Reset to initial if no filter is applied
-    }
-    handleCloseFilter("callStatus")
-  };
-
-  const handleFilterChangeDate = () => {
-    const today = new Date();
-    const todayDateString = today.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
-
-    const filteredRows = rows.filter((row) => {
-      // Convert row actionDate to date and compare
-      const rowDate = new Date(row.actionDate).toLocaleDateString('en-CA');
-      const initial = filterValueState.actionDate?.initial ? new Date(filterValueState.actionDate?.initial).toLocaleDateString('en-CA') : null;
-
-      const final = filterValueState.actionDate?.final ? new Date(filterValueState.actionDate?.final).toLocaleDateString('en-CA') : null;
-
-      // Check for Current Date
-      if (dateFilter === '1') {
-        return rowDate === todayDateString;
-      }
-
-      // Check for Date Range filter
-      if (dateFilter === '3') {
-        if (initial && final) {
-          return rowDate >= initial && rowDate <= final;
-        } else if (initial) {
-          return rowDate >= initial;
-        } else if (final) {
-          return rowDate <= final;
-        }
-      }
-
-      return true; // No filter applied
-    });
-
-    setRows(filteredRows);
-    handleCloseFilter("date")
-  };
-
 
   const newhandleFilterReset = (field: string) => {
     setFilterValueState((prevState) => ({
@@ -456,7 +255,7 @@ export default function AutoGrid() {
             </MenuItem>
             <MenuItem>
               <ContainedButton
-                onClick={handleFilterChangeCategory}
+                onClick={() => handleCloseFilter("callCategory")}
                 fullWidth
                 variant="contained"
               >
@@ -697,7 +496,7 @@ export default function AutoGrid() {
             <MenuItem>
               <ContainedButton
                 onClick={() => {
-                  handleFilterChangeCallStatus();
+                  () => handleCloseFilter("callStatus");
                 }}
                 fullWidth
                 variant="contained"
@@ -792,7 +591,7 @@ export default function AutoGrid() {
             </MenuItem>
             <MenuItem>
               <ContainedButton
-                onClick={handleFilterChangeSubStatus}
+                onClick={() => handleCloseFilter("subStatus")}
                 fullWidth
                 variant="contained"
               >
@@ -861,7 +660,7 @@ export default function AutoGrid() {
             </MenuItem>
             <MenuItem>
               <ContainedButton
-                onClick={handleFilterChangeNextAction}
+                onClick={() => handleCloseFilter("nextAction")}
                 fullWidth
                 variant="contained"
               >
@@ -970,7 +769,6 @@ export default function AutoGrid() {
             <MenuItem>
               <ContainedButton
                 onClick={() => {
-                  handleFilterChangeDate();
                   handleCloseFilter('actionDate');
                 }}
                 fullWidth
@@ -1076,7 +874,7 @@ export default function AutoGrid() {
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d" }}>
+    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '100vh', p: 3, Width: "100vw" }}>
 
       <Paper
         elevation={2}
@@ -1100,7 +898,7 @@ export default function AutoGrid() {
                   <TextField
                     label="Start Date"
                     type="date"
-                    value={filterValueState?.date?.initial}
+                    value={filterValueState.date?.initial}
                     // onChange={(e) => setInitialDate(e.target.value)}
                     onChange={(e) =>
                       handleFilterChange("date", {
@@ -1123,7 +921,7 @@ export default function AutoGrid() {
                   <TextField
                     label="End Date"
                     type="date"
-                    value={filterValueState?.date?.final}
+                    value={filterValueState.date?.final}
                     onChange={(e) =>
                       handleFilterChange("date", {
                         ...filterValueState?.date,
@@ -1143,7 +941,7 @@ export default function AutoGrid() {
                 <Grid item xs={6} sm={6} md={3}>
                   <ContainedButton
                     variant="contained"
-                    onClick={handleDateFilter}
+                    onClick={() => { }}
                     sx={{ flexGrow: { xs: 1, sm: 1, md: 0 } }}
                     fullWidth
 
@@ -1186,23 +984,32 @@ export default function AutoGrid() {
 
         </Box>
       </Paper>
-      <StripedDataGrid
-        // rows={rows}
-        rows={data ? data : []}
-        columns={column1}
-        columnVisibilityModel={columnVisibilityModel}
-        onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
-        onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
-        // rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
-        rowSelectionModel={rowSelectionModel}
-        paginationMode="server"
-        pageSizeOptions={[5, 10, 20]}
-        paginationModel={pageModel}
-        onPaginationModelChange={setPageModel}
-        rowCount={totalRowCount}
-        checkboxSelection
-        sx={{ mt: "1%" }}
-      />
+      <Paper elevation={1}
+      // sx={{ height: "40vh" }}
+      >
+        <StripedDataGrid
+          // rows={rows}
+          rows={data ? data : []}
+          columns={column1}
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+          onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
+          // rowSelectionModel={selectedRow?.id ? [selectedRow.id] : []}
+          rowSelectionModel={rowSelectionModel}
+          paginationMode="server"
+          pageSizeOptions={[5, 10, 20]}
+          paginationModel={pageModel}
+          onPaginationModelChange={setPageModel}
+          rowCount={totalRowCount}
+          checkboxSelection
+          sx={{
+            mt: "1%",
+            //  height: '100%',
+            overflow: "hidden"
+          }}
+          autoHeight
+        />
+      </Paper>
       <Box style={{ padding: "20px 0" }}>
         <ContainedButton
           variant="contained"
@@ -1220,7 +1027,6 @@ export default function AutoGrid() {
         <ContainedButton
           variant="contained"
           size="small"
-        // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
         >
           Feed Report
         </ContainedButton>
@@ -1235,29 +1041,11 @@ export default function AutoGrid() {
           columnGap: 3,
         }}
       >
-        {/* <Grid container sx={{ display: "flex", alignItems: "center" }}>
-          <Grid item xs={12} sm={12} md={4} lg={4}>
-            <ContainedButton
-              variant="contained"
-              size="small"
-              // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
-              sx={{ margin: "0 1vw" }}
-            >
-              Hide Details
-            </ContainedButton>
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Show Remarks"
-              sx={{ marginLeft: "0vw" }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={8} md={8} lg={8}> */}
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <ContainedButton
               variant="contained"
               size="small"
-              // sx={{ bgcolor: "#dedfe0", color: "black", boxShadow: "3" }}
               sx={{ margin: "0 1vw" }}
             >
               Hide Details
@@ -1271,11 +1059,6 @@ export default function AutoGrid() {
 
           <Grid item xs={12} md={8}>
             <Box
-              // sx={{
-              //   display: "flex",
-              //   justifyContent: "space-between",
-              //   width: "100%",
-              // }}
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -1387,7 +1170,7 @@ export default function AutoGrid() {
         dialogOpen && <AddDialog title={"Allocate Executive"}
           open={dialogOpen}
           setDialogOpen={setDialogOpen}>
-          <AllocateCall setDialogOpen={setDialogOpen} setDialogValue={setDialogValue} data={rowSelectionModel} />
+          <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} />
         </AddDialog>
       }
     </Box>
