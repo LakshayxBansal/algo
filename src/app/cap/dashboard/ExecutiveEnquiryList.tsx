@@ -5,6 +5,7 @@ import { Paper, Typography } from "@mui/material";
 import { getExecutiveEnquiriesOverview } from "@/app/controllers/dashboard.controller";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import dayjs from "dayjs";
+import { logger } from "@/app/utils/logger.utils";
 
 const pgSize = 5;
 const groupByName = (enquiries: any, data: any) => {
@@ -24,7 +25,6 @@ const groupByName = (enquiries: any, data: any) => {
     result[ele["name"]][ind] = Number(ele["count"]);
   });
 
-  console.log(result);
   return result;
 };
 
@@ -53,7 +53,7 @@ export default async function ExecutiveEnquiryList() {
     const groupedData = groupByName(result[1], result[0]);
     data = createTableData(groupedData);
   } catch (e) {
-    console.log(e);
+    logger.info(e);
   }
 
   const columns: GridColDef[] = [

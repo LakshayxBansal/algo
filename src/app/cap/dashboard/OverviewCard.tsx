@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { getOverviewGraphData } from "@/app/controllers/dashboard.controller";
 import ChartContainer from "./ChartContainer";
+import { logger } from "@/app/utils/logger.utils";
 
 const getBarData = (data: any, currMonth: number) => {
   let result: Array<Number> = new Array(6).fill(0);
@@ -69,7 +70,7 @@ export default async function OverviewCard() {
     openEnquiries = data[1];
     closedEnquiries = data[2];
   } catch (e) {
-    console.log(e);
+    logger.info(e);
   }
 
   const currMonth = new Date().getMonth() + 1;
