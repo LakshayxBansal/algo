@@ -206,7 +206,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   };
 
   return (
-    <>
+    <Box>
       <Box
         sx={{
           position: "sticky",
@@ -621,6 +621,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </>
+    </Box>
   );
 }

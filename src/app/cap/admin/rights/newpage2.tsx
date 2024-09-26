@@ -1,27 +1,14 @@
 "use client"
 import * as React from 'react';
-import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, Grid, Divider,Button } from '@mui/material';
 import Switch from '@mui/material/Switch';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Paper from '@mui/material/Paper';
 import Grow from '@mui/material/Grow';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { VisuallyHiddenInput } from '@/app/utils/styledComponents';
 
-// const child = (
-//     <Paper sx={{ m: 1, width: 100, height: 100 }} elevation={4}>
-//         <svg>
-//             <Box
-//                 component="polygon"
-//                 points="0,100 50,00, 100,100"
-//                 sx={(theme) => ({
-//                     fill: theme.palette.common.white,
-//                     stroke: theme.palette.divider,
-//                     strokeWidth: 1,
-//                 })}
-//             />
-//         </svg>
-//     </Paper>
-// );
 
 function Child({ object, handleChange, checked }: { object: any, handleChange: any, checked: any }) {
 
@@ -29,32 +16,39 @@ function Child({ object, handleChange, checked }: { object: any, handleChange: a
         <Box>
             {object.map((obj: any) => {
                 return (
-                    <Box sx={{ display: "flex" }}>
-                        <Typography>
-                            {obj.name}
-                        </Typography>
-                        <Box>
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                        </Box>
+                    <Box>
+                        <Grid container sx={{ alignItems: "center" }}>
+                            <Grid item xs={4}>
+                                <Typography sx={{ marginLeft: "5%" }}>
+                                    {obj.name}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+                                    <Checkbox
+                                        checked={checked}
+                                        onChange={handleChange}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    />
+                                    <Checkbox
+                                        checked={checked}
+                                        onChange={handleChange}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    />
+                                    <Checkbox
+                                        checked={checked}
+                                        onChange={handleChange}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    />
+                                    <Checkbox
+                                        checked={checked}
+                                        onChange={handleChange}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    />
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Divider variant='middle' />
                     </Box>
                 )
             })}
@@ -90,122 +84,183 @@ export default function NewPage2({ masterObjects, transactionObjects, reportObje
 
     return (
         <Box>
-            <Box sx={{ display: "flex" }}>
-                <FormControl sx={{ width: "20%", margin: "auto", marginTop: "10px" }}>
-                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={role}
-                        label="Role"
-                        onChange={handleSelectChange}
-                    >
-                        <MenuItem value={2}>Manager</MenuItem>
-                        <MenuItem value={3}>Executive</MenuItem>
-                    </Select>
-                </FormControl>
+            <Paper sx={{ width: "90%", margin: "auto" ,marginTop: "6%" }} elevation={3}>
+                <Box sx={{ display: "flex", alignItems : "center" }}>
+                <Typography variant="h6" sx={{alignItems : "center", marginLeft : "2%"}}>Manage Rights for Selected Role</Typography>
+                    <FormControl sx={{ width: "20%", margin: "auto"}}>
+                        <InputLabel id="demo-simple-select-label">Select Role</InputLabel>
+                        <Select
+                            sx={{height : "40px", marginBottom : "3%"}}
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={role}
+                            label="Select Role"
+                            onChange={handleSelectChange}
+                        >
+                            <MenuItem value={2}>Manager</MenuItem>
+                            <MenuItem value={3}>Executive</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button sx={{margin : "1% 5% 1% 5%", height : "40px"}} variant="contained">
+                        Submit
+                    </Button>
+                </Box>
+            </Paper>
+            <Paper elevation={3} sx={{width : "90%",height: "70vh", margin : "auto",marginTop: "1%", overflow : "scroll"}}>
+            <Box sx={{ marginTop: "1%" }}>
+                <Grid container sx={{ alignItems: "center", padding: "0 2%" }}>
+                    <Grid item xs={4}>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Box sx={{display : "flex", justifyContent : "space-evenly"}}>
+                            <Typography>
+                                Create
+                            </Typography>
+                            <Typography>
+                                View
+                            </Typography>
+                            <Typography>
+                                Update
+                            </Typography>
+                            <Typography>
+                                Delete
+                            </Typography>
+                        </Box>
+                    </Grid>
+                </Grid>
             </Box>
             <Box>
-                <Box sx={{ display: "flex" }}>
-                    <Box onClick={handleMasterChange}>
-                        <Typography>
-                            Master Object
-                        </Typography>
-                    </Box>
-                    {!openMaster && (
-                        <Box>
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
+                <Grid container sx={{ alignItems: "center", padding: "0 2%" }}>
+                    <Grid item xs={4}>
+                        <Box onClick={handleMasterChange}>
+                            <Typography>
+                                Master Object
+                                {openMaster === true ? <ExpandLessIcon sx={{marginLeft : "10px"}}/> : <ExpandMoreIcon sx={{marginLeft : "10px"}}/>}
+                            </Typography>
                         </Box>
+                    </Grid>
+                    {!openMaster && (
+                        <Grid item xs={4}>
+                            <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            </Box>
+                        </Grid>
 
                     )}
-                </Box>
-                {openMaster && <Child object={masterObjects} handleChange={handleChange} checked={checked} />}
-            </Box>
-            <Box sx={{ display: "flex" }}>
-                <Box onClick={handleTransactionChange}>
-                    <Typography>
-                        Transaction Object
-                    </Typography>
-                </Box>
-                {!openTransaction && (
-                    <Box>
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                    </Box>
 
-                )}
-            </Box>
-            {openTransaction && <Child object={transactionObjects} handleChange={handleChange} checked={checked} />}
-            <Box sx={{ display: "flex" }}>
-            <Box onClick={handleReportChange}>
-                    <Typography>
-                        Report Object
-                    </Typography>
-                </Box>
-                {!openReport && (
-                    <Box>
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                        <Checkbox
-                            checked={checked}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
-                    </Box>
+                    {openMaster && (<Grid item xs={12}><Child object={masterObjects} handleChange={handleChange} checked={checked} /></Grid>)}
 
-                )}
+
+                </Grid>
+                <Divider variant='middle' />
             </Box>
-            {openReport && <Child object={reportObjects} handleChange={handleChange} checked={checked} />}
+            <Box>
+                <Grid container sx={{ alignItems: "center", padding: "0 2%" }}>
+                    <Grid item xs={4}>
+                        <Box onClick={handleTransactionChange}>
+                            <Typography>
+                                Transaction Object
+                                {openTransaction === true ? <ExpandLessIcon sx={{marginLeft : "10px"}}/> : <ExpandMoreIcon sx={{marginLeft : "10px"}}/>}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    {!openTransaction && (
+                        <Grid item xs={4}>
+                            <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            </Box>
+                        </Grid>
+
+                    )}
+
+                    {openTransaction && (<Grid item xs={12}><Child object={transactionObjects} handleChange={handleChange} checked={checked} /></Grid>)}
+
+
+                </Grid>
+                <Divider variant='middle' />
+            </Box><Box>
+                <Grid container sx={{ alignItems: "center", padding: "0 2%" }}>
+                    <Grid item xs={4}>
+                        <Box onClick={handleReportChange}>
+                            <Typography>
+                                Report Object
+                                {openReport === true ? <ExpandLessIcon sx={{marginLeft : "10px"}}/> : <ExpandMoreIcon sx={{marginLeft : "10px"}}/>}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    {!openReport && (
+                        <Grid item xs={4}>
+                            <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handleChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            </Box>
+                        </Grid>
+
+                    )}
+
+                    {openReport && (<Grid item xs={12}><Child object={reportObjects} handleChange={handleChange} checked={checked} /></Grid>)}
+
+
+                </Grid>
+                <Divider variant='middle' />
+            </Box>
+            </Paper>
         </Box>
     );
 }
