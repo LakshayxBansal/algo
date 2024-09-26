@@ -23,7 +23,7 @@ function ObjectName() {
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
             {objects.map((i) => (
-                <Typography variant="h6" component="h6">
+                <Typography variant="h6" component="h6" key={i}>
                     {i}
                 </Typography>
 

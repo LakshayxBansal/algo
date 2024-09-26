@@ -460,3 +460,17 @@ export async function checkStateIfUsed(crmDb: string, id: number) {
     console.log(e);
   }
 }
+
+export async function checkCountryIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(DISTINCT cm.id) as count FROM country_master cm LEFT JOIN executive_master em ON em.country_id = cm.id LEFT JOIN contact_master nm ON nm.country_id = cm.id LEFT JOIN organisation_master om ON om.country_id = cm.id LEFT JOIN state_master sm ON sm.country_id=cm.id WHERE (em.country_id IS NOT NULL OR nm.country_id IS NOT NULL OR om.country_id IS NOT NULL OR sm.country_id IS NOT NULL) AND cm.id=?",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

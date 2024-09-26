@@ -28,6 +28,19 @@ export async function getEnquiryActionList(
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "SELECT COUNT(DISTINCT em.id) as count FROM enquiry_action_master em INNER JOIN enquiry_action_tran et ON et.enquiry_action_id = em.id where em.id=?;",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delActionDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({

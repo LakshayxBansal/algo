@@ -12,13 +12,13 @@ export async function manageRights(data : any) {
         const session = await getSession();
         if(session){
             const objects = await getObjectsDb(session.user.dbInfo.dbName);
-            let objectMap: Map<string, number> | null = new Map();
+            let objectMap: Map<string, number> = new Map();
             objects.map((obj : any)=>{
                 const objectNameWithOutSpace = obj["object_name"].replace(/\s+/g, '');
                 const objectName = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
                 objectMap.set(objectName,obj.right_id);
             })
-            let dataMap: Map<number,any[]> | null = new Map();
+            let dataMap: Map<number,any[]> = new Map();
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                     const objectName = key.split("_")[0];
