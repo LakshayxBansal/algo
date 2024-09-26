@@ -36,14 +36,16 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
 import { StyledMenu } from "../../utils/styledComponents";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
-import { any } from "zod";
-import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
+import UploadFileForm from "./UploadFileForm";
 
-type ModifyT = {
+type EntityListPropsT = {
   title: string;
   renderForm?: RenderFormFunctionT;
+  fileUploadFeatureReqd: boolean;
+  // fnFileUpad: () => {}
+  fnFileUpad: any; // update with type -- Ayushi
+  sampleFileName: String;
   fetchDataFn: (
     page: number,
     searchText: string,
@@ -61,11 +63,13 @@ enum dialogMode {
   Add,
   Modify,
   Delete,
+  FileUpload,
 }
 
-export default function EntityList(props: ModifyT) {
+export default function EntityList(props: EntityListPropsT) {
+  // const [uploadDialogOpen, setUploadDialogOpen] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [dialogOpenDelete, setDialogOpenDelete] = useState<boolean>(false);
+  // const [dialogOpenDelete, setDialogOpenDelete] = useState<boolean>(false);
   const [data, setData] = useState([]);
   const [NRows, setNRows] = useState<number>(0);
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
@@ -79,7 +83,7 @@ export default function EntityList(props: ModifyT) {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLDivElement>(null);
-  const [deleteMsg,setDeleteMsg] = useState<string>();
+  const [deleteMsg, setDeleteMsg] = useState<string>();
 
   let searchText;
   useEffect(() => {
@@ -100,7 +104,7 @@ export default function EntityList(props: ModifyT) {
     searchText,
     search,
     dialogOpen,
-    dialogOpenDelete,
+    // dialogOpenDelete,
   ]);
 
   const handleClick1 = (event: React.MouseEvent<HTMLElement>) => {
@@ -120,18 +124,24 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
-  async function onDeleteDialog(modId: number) {
+  function handleDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
-      const data = await props.fnDeleteDataByID(modId);
-        setDeleteMsg(data);
-      
-      setTimeout(() => {
-        dialogOpenDelete ? setDialogOpenDelete(false) : null;
-      }, 1000);
+      console.log("delete");
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Delete);
     }
   }
 
+  async function onDeleteDialog(modId: number) {
+    if (props.fnDeleteDataByID && modId) {
+      const data = await props.fnDeleteDataByID(modId);
+      // setDialogOpen(false);
 
+      setTimeout(() => {
+        dialogOpen ? setDialogOpen(false) : null;
+      }, 1000);
+    }
+  }
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -170,48 +180,55 @@ export default function EntityList(props: ModifyT) {
   const columns3: GridColDef[] = columns1.concat(props.customCols);
   const [columns4, setColumns4] = useState(columns3);
 
-
   type colu = {
     field: keyof GridColDef;
-    headerName:  keyof GridColDef;
-    editable:  keyof GridColDef;
-    minWidth:  keyof GridColDef;
-  }
+    headerName: keyof GridColDef;
+    editable: keyof GridColDef;
+    minWidth: keyof GridColDef;
+  };
 
   const handleColumnVisibilityChange = (col: GridColDef) => {
     setColumnVisibilityModel((prev: any) => {
-        const newVisibilityModel = {
-            ...prev,
-            [col.field]: !prev[col.field] 
-        };
-        setColumns4((prevColumns) => {
-            const isColumnVisible = newVisibilityModel[col.field];
-            if (isColumnVisible) {
-                if (!prevColumns.some(item => item.field === col.field)) {
-                    return [...prevColumns, col];
-                }
-            } else {
-                return prevColumns.filter(item => item.field !== col.field);
-            }
-            return prevColumns;
-        });
+      const newVisibilityModel = {
+        ...prev,
+        [col.field]: !prev[col.field],
+      };
+      setColumns4((prevColumns) => {
+        const isColumnVisible = newVisibilityModel[col.field];
+        if (isColumnVisible) {
+          if (!prevColumns.some((item) => item.field === col.field)) {
+            return [...prevColumns, col];
+          }
+        } else {
+          return prevColumns.filter((item) => item.field !== col.field);
+        }
+        return prevColumns;
+      });
 
-        return newVisibilityModel;
+      return newVisibilityModel;
     });
-};
+  };
 
-  function ColumnVisibilityToggle(props: { columns1: GridColDef[]; columns2: GridColDef[]; handleColumnVisibilityChange:any }) {
+  function ColumnVisibilityToggle(props: {
+    columns1: GridColDef[];
+    columns2: GridColDef[];
+    handleColumnVisibilityChange: any;
+  }) {
     const [columns1, setColumns1] = useState(props.columns1);
-    const column1Fields = new Set(columns1.map(col => col.field));
+    const column1Fields = new Set(columns1.map((col) => col.field));
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
         {props.columns2.map((col) => (
           <FormControlLabel
             key={col.field}
-            control={<Checkbox
-              checked={column1Fields.has(col.field)} // Check if field exists in columns1
-              onChange={() => props.handleColumnVisibilityChange(col)} />}
-            label={col.headerName} />
+            control={
+              <Checkbox
+                checked={column1Fields.has(col.field)} // Check if field exists in columns1
+                onChange={() => props.handleColumnVisibilityChange(col)}
+              />
+            }
+            label={col.headerName}
+          />
         ))}
       </div>
     );
@@ -219,6 +236,49 @@ export default function EntityList(props: ModifyT) {
 
   type iconT = {
     id: number;
+  };
+
+  const DeleteComponent = () => {
+    return (
+      <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
+        <form>
+          <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
+            Are you sure you want to delete?
+          </Typography>
+          <Box
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+            m={1}
+          >
+            <Button
+              style={{ paddingRight: "20px" }}
+              onClick={() => {
+                setDialogOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                onDeleteDialog(ids);
+                setSnackOpen(true);
+              }}
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </Box>
+        </form>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message={deleteMsg}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Box>
+    );
   };
 
   function IconComponent(props: iconT) {
@@ -260,8 +320,8 @@ export default function EntityList(props: ModifyT) {
             {" "}
             <IconButton
               onClick={() => {
-                setDialogOpenDelete(true);
-                setIds(props.id);
+                handleDeleteDialog(props.id);
+                // setIds(props.id);
               }}
             >
               <DeleteIcon />
@@ -273,13 +333,10 @@ export default function EntityList(props: ModifyT) {
     );
   }
 
- 
-  
   function isSnakeCase(str: string): boolean {
     const snakeCaseRegex = /^[a-z]+(_[a-z]+)*$/;
     return snakeCaseRegex.test(str);
   }
-
 
   const columns2: GridColDef[] = [];
   let columnHeading = {
@@ -288,7 +345,6 @@ export default function EntityList(props: ModifyT) {
     editable: true,
     minWidth: 200,
   };
-
 
   type dataObj1 = { [key: string]: any };
 
@@ -356,16 +412,14 @@ export default function EntityList(props: ModifyT) {
             (obj) => obj["field"] === columnHeading["field"]
           );
           if (!exists) {
-               columns.push(columnHeading);
+            columns.push(columnHeading);
           }
-
         }
       }
     }
   }
 
-  pushColumns(data[0])
-
+  pushColumns(data[0]);
   return (
     <Container
       maxWidth="lg"
@@ -456,9 +510,22 @@ export default function EntityList(props: ModifyT) {
                     }}
                   >
                     <Paper>
-                      <ClickAwayListener onClickAway={handleCloseButtonMenu}>
-                        <Tooltip title="Upload File">
-                          <Button
+                      <Button
+                        onClick={() => {
+                          setDialogOpen(true);
+                          setDlgMode(dialogMode.FileUpload);
+                        }}
+                      >
+                        <AddIcon
+                          fontSize="small"
+                          style={{ marginRight: "5px" }}
+                        />
+                        Upload File
+                      </Button>
+
+                      {/* <ClickAwayListener onClickAway={handleCloseButtonMenu}>
+                      <Tooltip title="Upload File">
+                      <Button
                             key={"Upload File"}
                             onClick={handleMenuItemClick}
                             component="label"
@@ -479,8 +546,8 @@ export default function EntityList(props: ModifyT) {
                             />
                             Upload File
                           </Button>
-                        </Tooltip>
-                      </ClickAwayListener>
+                      </Tooltip>
+                      </ClickAwayListener> */}
                     </Paper>
                   </Grow>
                 )}
@@ -505,66 +572,61 @@ export default function EntityList(props: ModifyT) {
               open={Boolean(anchorEl2)}
               onClose={handleClose1}
             >
-                <ColumnVisibilityToggle columns1={columns4} columns2={columns} handleColumnVisibilityChange={handleColumnVisibilityChange}/>
+              <ColumnVisibilityToggle
+                columns1={columns4}
+                columns2={columns}
+                handleColumnVisibilityChange={handleColumnVisibilityChange}
+              />
             </StyledMenu>
           </Box>
         </Grid>
       </Grid>
+      {/* {dialogOpen && (
+        <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+          {
+            props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
+              <UploadFileForm
+                setDialogOpen={setDialogOpen}
+                fnFileUpad={props.fnFileUpad}
+                sampleFileName={props.sampleFileName}
+              />
+            ) : props.renderForm ? (
+              dlgMode === dialogMode.Add ? (
+                props.renderForm(setDialogOpen, (arg) => {})
+              ) : (
+                props.renderForm(setDialogOpen, (arg) => {}, modData)
+              )
+            ) : dlgMode === dialogMode.Delete ? (
+              <DeleteComponent />
+            ) : null // Fallback if none of the conditions are met
+          }
+        </AddDialog>
+      )} */}
+
       {dialogOpen && (
-        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-          {props.renderForm
-            ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, (arg) => {})
-              : props.renderForm(setDialogOpen, (arg) => {}, modData)
-            : 1}
-        </AddDialog>
-      )}
-      {dialogOpenDelete && (
-        <AddDialog
-          title={""}
-          open={dialogOpenDelete}
-          setDialogOpen={setDialogOpenDelete}
-        >
-          <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
-            <form>
-              <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
-                Are you sure you want to delete?
-              </Typography>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button
-                  style={{ paddingRight: "20px" }}
-                  onClick={() => {
-                    setDialogOpenDelete(false);
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    onDeleteDialog(ids);
-                    setSnackOpen(true);
-                  }}
-                  variant="contained"
-                >
-                  Delete
-                </Button>
-              </Box>
-            </form>
-            <Snackbar
-              open={snackOpen}
-              autoHideDuration={1000}
-              onClose={() => setSnackOpen(false)}
-              message={deleteMsg}
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+          {props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
+            <UploadFileForm
+              setDialogOpen={setDialogOpen}
+              fnFileUpad={props.fnFileUpad}
+              sampleFileName={props.sampleFileName}
             />
-          </Box>
+          ) : props.renderForm ? (
+            dlgMode === dialogMode.Add ? (
+              props.renderForm(setDialogOpen, (arg) => {})
+            ) : (
+              props.renderForm(setDialogOpen, (arg) => {}, modData)
+            )
+          ) : dlgMode === dialogMode.Delete ? (
+            <DeleteComponent />
+          ) : null}
         </AddDialog>
       )}
+      {/* {dialogOpen && (
+        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
+          <DeleteComponent />
+        </AddDialog>
+      )} */}
       <StripedDataGrid
         rows={data ? data : []}
         columns={columns4}

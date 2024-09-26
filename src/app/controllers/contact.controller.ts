@@ -17,7 +17,35 @@ import {
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import { modifyPhone } from "../utils/phoneUtils";
-import * as mdl from "../models/models";
+
+export async function createContactsBatch(data: contactSchemaT[]) {
+  // const results = [];
+  try {
+    console.log("entering in controller");
+    console.log(data);
+    const errorMap = new Map(); 
+    for (let i = 0; i < data.length; i++) {
+      const contact = data[i];
+      const result = await createContact(contact);
+
+      if (!result.status) {
+        const errorDetails = result.data.map((error: { path: any; message: any }) => ({
+          path: error.path,
+          message: error.message,
+        }));
+
+        errorMap.set(`contact_${i}`, errorDetails);
+      } 
+    }
+
+    return {
+      status: (errorMap.size===0?false:true), 
+      data: errorMap,
+    };
+  } catch (e) {
+    console.log("Error in batch processing:", e);
+  }
+}
 
 export async function createContact(data: contactSchemaT) {
   let result;
