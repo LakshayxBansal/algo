@@ -195,20 +195,25 @@ export async function getCompaniesDb(
     if (filter) {
       vals.unshift(filter);
     }
-
+    // const dbNames = await excuteQuery({
+    //   host: "userDb",
+    //   query: "select uc.company_id as companyId, c.dbinfo_id as dbId from userCompany uc,company c where c.id = uc.company_id and uc.user_id = ?;",
+    //   values : [userId]
+    // })
+    // console.log(dbNames);
     const result = await excuteQuery({
       host: "userDb",
       query:
         "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
-          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID\
+          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID \
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
           c.created_by createdBy, c.created_on createdOn,\
           h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \
           dbInfo d, dbHost h,\
-          company c WHERE\
+          company c WHERE \
           u.id = uc.user_id and \
           uc.isAccepted = 1 and \
           uc.company_id = c.id and \
@@ -216,9 +221,9 @@ export async function getCompaniesDb(
           d.host_id = h.id AND" +
         (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") +
         " u.id=? \
-          order by c.name) AS NumberedRows\
-          WHERE RowNum > ?*?\
-          ORDER BY RowNum\
+          order by c.name) AS NumberedRows \
+          WHERE RowNum > ?*? \
+          ORDER BY RowNum \
           LIMIT ?;",
       values: vals,
     });

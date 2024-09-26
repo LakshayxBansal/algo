@@ -40,7 +40,49 @@ export async function getObjectsDb(crmDb : string) {
     try{
         const result = await excuteQuery({
             host: crmDb,
-            query: "select rm.id as right_id, om.name as object_name from rights_master rm, object_master om where rm.object_id = om.id",
+            query: "select rm.id as right_id, om.name as object_name, om.id as object_id, om.type as object_type from rights_master rm, object_master om where rm.object_id = om.id",
+            values : []
+        })
+        return result;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export async function getMasterObjectsDb(crmDb : string) {
+
+    try{
+        const result = await excuteQuery({
+            host: crmDb,
+            query: "select om.name as name, om.id as id from object_master om where om.type = 1;",
+            values : []
+        })
+        return result;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export async function getTransactionObjectsDb(crmDb : string) {
+
+    try{
+        const result = await excuteQuery({
+            host: crmDb,
+            query: "select om.name as name, om.id as id from object_master om where om.type = 2;",
+            values : []
+        })
+        return result;
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export async function getReportObjectsDb(crmDb : string) {
+
+    try{
+        const result = await excuteQuery({
+            host: crmDb,
+            query: "select om.name as name, om.id as id from object_master om where om.type = 3;",
             values : []
         })
         return result;

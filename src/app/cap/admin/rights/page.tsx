@@ -1,8 +1,14 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { logger } from "@/app/utils/logger.utils";
 import { getSession } from "@/app/services/session.service";
-import { getRightsData } from "@/app/controllers/rights.controller";
+import { getMasterObjects, getObjects, getRightsData, getTransactionObjects,getReportObjects } from "@/app/controllers/rights.controller";
 import { CheckBoxGrid, SubmitButton } from "./CheckBoxGrid";
+import { AutocompleteDB } from "@/app/Widgets/AutocompleteDB";
+import { optionsDataT } from "@/app/models/models";
+import NewPage from "./newpage";
+import NewPage2 from "./newpage2";
+
+import { transformSync } from "next/dist/build/swc";
 
 
 type DataState = {
@@ -10,7 +16,7 @@ type DataState = {
 };
 
 const objects = ["Action", "Allocation Type", "Area", "Category", "Contact", "Contact Group", "Country", "Currency", "Department", "Executive Dept", "Executive", "Executive Group", "Executive Role", "Invite User", "Company User", "Item", "Item Group", "Notification", "Organisation", "Source", "State", "State List", "Sub Status", "Sub Status List", "Unit"];
-const roles = ["admin", "manager", "executive"];
+const roles = ["manager", "executive"];
 const rights = ["create", "read", "update", "delete"];
 
 function ObjectName() {
@@ -31,41 +37,17 @@ export default async function Rights() {
     try {
         const session = await getSession();
         if (session) {
-            const rightsData : DataState | undefined = await getRightsData();
+            const rightsData: DataState | undefined = await getRightsData();
+            const objectData = await getObjects();
+            const masterObjects = await getMasterObjects();
+            const transactionObjects = await getTransactionObjects();
+            const reportObjects = await getReportObjects();
+
             return (
                 <>
-                    <Box>
-                        <Box>
-                            <Grid container spacing={1}>
-                                <Grid md={2} item spacing={1}>
-                                    {/* <SubmitButton /> */}
-                                </Grid>
-                                {roles.map((role) => (
-                                    <Grid md={3} item spacing={2}>
-                                        <Typography variant="h6" component="h6">
-                                            {role.charAt(0).toUpperCase() + role.slice(1)}
-                                        </Typography>
-                                    </Grid>
-                                ))}
-
-                                <Grid md={1} item spacing={1}>
-                                    <SubmitButton />
-                                </Grid>
-
-                            </Grid>
-                        </Box>
-                        <Box>
-                            <Grid container spacing={1}>
-                                <Grid md={2} item spacing={1}>
-                                    <Typography variant="h6" component="h6">
-                                        Object Name
-                                    </Typography>
-                                    <ObjectName />
-                                </Grid>
-                                <CheckBoxGrid rightsData={rightsData} objects={objects} roles={roles} rights={rights} />
-                            </Grid>
-                        </Box>
-                    </Box>
+                    <NewPage2 masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects}/>
+                    {/* <NewPage masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects}/> */}
+                    {/* <NewPage2/> */}
                 </>
 
             )

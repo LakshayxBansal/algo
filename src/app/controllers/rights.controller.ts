@@ -1,7 +1,7 @@
 "use server"
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils"
-import { getRightsDb, manageRightsDb,getObjectsDb } from "../services/rights.service";
+import { getRightsDb, manageRightsDb,getObjectsDb, getMasterObjectsDb, getTransactionObjectsDb, getReportObjectsDb } from "../services/rights.service";
 
 type DataState = {
     [key: string] : boolean;
@@ -66,6 +66,52 @@ export async function getRightsData() {
                 }
             }
             return resultObject;
+        }
+    }catch(error){
+        logger.error(error);
+    }
+}
+
+export async function getObjects() {
+    try{
+        const session = await getSession();
+        if(session){
+            const objects = await getObjectsDb(session.user.dbInfo.dbName);
+            return objects;
+        }
+    }catch(error){
+        logger.error(error);
+    }
+}
+
+export async function getMasterObjects() {
+    try{
+        const session = await getSession();
+        if(session){
+            const objects = await getMasterObjectsDb(session.user.dbInfo.dbName);
+            return objects;
+        }
+    }catch(error){
+        logger.error(error);
+    }
+}
+export async function getTransactionObjects() {
+    try{
+        const session = await getSession();
+        if(session){
+            const objects = await getTransactionObjectsDb(session.user.dbInfo.dbName);
+            return objects;
+        }
+    }catch(error){
+        logger.error(error);
+    }
+}
+export async function getReportObjects() {
+    try{
+        const session = await getSession();
+        if(session){
+            const objects = await getReportObjectsDb(session.user.dbInfo.dbName);
+            return objects;
         }
     }catch(error){
         logger.error(error);
