@@ -25,6 +25,10 @@ import {
   Typography,
   TextField,
   styled,
+  AppBar,
+  Toolbar,
+  Breadcrumbs,
+  Link,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -40,6 +44,9 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import { any } from "zod";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
+import HomeIcon from "@mui/icons-material/Home";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 type ModifyT = {
   title: string;
@@ -72,7 +79,7 @@ export default function EntityList(props: ModifyT) {
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
   const [modData, setModData] = useState({});
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
   const [ids, setIds] = useState<number>(0);
@@ -130,8 +137,6 @@ export default function EntityList(props: ModifyT) {
     }
   }
 
-
-
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -157,7 +162,7 @@ export default function EntityList(props: ModifyT) {
     {
       field: "Icon menu",
       headerName: "Options",
-      minWidth: 200,
+      minWidth: 50,
       renderCell: (params) => {
         return <IconComponent id={params.row.id} />;
       },
@@ -169,48 +174,55 @@ export default function EntityList(props: ModifyT) {
   const columns3: GridColDef[] = columns1.concat(props.customCols);
   const [columns4, setColumns4] = useState(columns3);
 
-
   type colu = {
     field: keyof GridColDef;
-    headerName:  keyof GridColDef;
-    editable:  keyof GridColDef;
-    minWidth:  keyof GridColDef;
-  }
+    headerName: keyof GridColDef;
+    editable: keyof GridColDef;
+    minWidth: keyof GridColDef;
+  };
 
   const handleColumnVisibilityChange = (col: GridColDef) => {
     setColumnVisibilityModel((prev: any) => {
-        const newVisibilityModel = {
-            ...prev,
-            [col.field]: !prev[col.field] 
-        };
-        setColumns4((prevColumns) => {
-            const isColumnVisible = newVisibilityModel[col.field];
-            if (isColumnVisible) {
-                if (!prevColumns.some(item => item.field === col.field)) {
-                    return [...prevColumns, col];
-                }
-            } else {
-                return prevColumns.filter(item => item.field !== col.field);
-            }
-            return prevColumns;
-        });
+      const newVisibilityModel = {
+        ...prev,
+        [col.field]: !prev[col.field],
+      };
+      setColumns4((prevColumns) => {
+        const isColumnVisible = newVisibilityModel[col.field];
+        if (isColumnVisible) {
+          if (!prevColumns.some((item) => item.field === col.field)) {
+            return [...prevColumns, col];
+          }
+        } else {
+          return prevColumns.filter((item) => item.field !== col.field);
+        }
+        return prevColumns;
+      });
 
-        return newVisibilityModel;
+      return newVisibilityModel;
     });
-};
+  };
 
-  function ColumnVisibilityToggle(props: { columns1: GridColDef[]; columns2: GridColDef[]; handleColumnVisibilityChange:any }) {
+  function ColumnVisibilityToggle(props: {
+    columns1: GridColDef[];
+    columns2: GridColDef[];
+    handleColumnVisibilityChange: any;
+  }) {
     const [columns1, setColumns1] = useState(props.columns1);
-    const column1Fields = new Set(columns1.map(col => col.field));
+    const column1Fields = new Set(columns1.map((col) => col.field));
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
         {props.columns2.map((col) => (
           <FormControlLabel
             key={col.field}
-            control={<Checkbox
-              checked={column1Fields.has(col.field)} // Check if field exists in columns1
-              onChange={() => props.handleColumnVisibilityChange(col)} />}
-            label={col.headerName} />
+            control={
+              <Checkbox
+                checked={column1Fields.has(col.field)} // Check if field exists in columns1
+                onChange={() => props.handleColumnVisibilityChange(col)}
+              />
+            }
+            label={col.headerName}
+          />
         ))}
       </div>
     );
@@ -272,8 +284,6 @@ export default function EntityList(props: ModifyT) {
     );
   }
 
- 
-  
   function isSnakeCase(str: string): boolean {
     const snakeCaseRegex = /^[a-z]+(_[a-z]+)*$/;
     return snakeCaseRegex.test(str);
@@ -286,7 +296,6 @@ export default function EntityList(props: ModifyT) {
     editable: true,
     minWidth: 200,
   };
-
 
   type dataObj1 = { [key: string]: any };
 
@@ -354,252 +363,438 @@ export default function EntityList(props: ModifyT) {
             (obj) => obj["field"] === columnHeading["field"]
           );
           if (!exists) {
-               columns.push(columnHeading);
+            columns.push(columnHeading);
           }
-
         }
       }
     }
   }
 
+  pushColumns(data[0]);
+
   return (
-    <Container
-      maxWidth="lg"
-      style={{ height: "700px", width: "100%", padding: "25px" }}
-    >
-      <Typography variant="h4">{props.title}</Typography>
-      <Divider />
-      <Grid container spacing={2} style={{ verticalAlign: "center" }}>
-        <Grid item xs={8}>
-          <Box sx={{ width: "75%" }}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-                style: {
-                  backgroundColor: "#f5f5f5",
-                },
-              }}
-              InputLabelProps={{
-                style: {
-                  backgroundColor: "#f5f5f5",
-                },
-              }}
-            />
-          </Box>
-        </Grid>
-        <Grid
-          item
-          xs={3}
-          sx={{ textAlign: "right", marginTop: "1.1rem", paddingRight: "45px" }}
-        >
-          {props.AddAllowed && (
-            <Box>
-              <ButtonGroup
-                variant="contained"
-                ref={anchorRef}
-                aria-label="Button group with a nested menu"
+    <Box style={{ backgroundColor: "#fceff3", height: "100vh" }}>
+      <SecondNavbar title={props.title}/>
+      {/* </Toolbar> */}
+      <Box style={{margin:"0 20px"}}>
+        {/* <Grid container spacing={2} style={{ verticalAlign: "center" }}>
+          <Grid item xs={8}>
+            <Box sx={{ width: "75%" }}>
+              <TextField
+                variant="outlined"
+                fullWidth
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                  style: {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+              />
+            </Box>
+          </Grid>
+          <Grid
+            item
+            xs={3}
+            sx={{
+              textAlign: "right",
+              marginTop: "1.1rem",
+              paddingRight: "45px",
+            }}
+          >
+            {props.AddAllowed && (
+              <Box>
+                <ButtonGroup
+                  variant="contained"
+                  ref={anchorRef}
+                  aria-label="Button group with a nested menu"
+                >
+                  <Tooltip title="Add New">
+                    <Button
+                      onClick={() => {
+                        setDialogOpen(true);
+                        setDlgMode(dialogMode.Add);
+                      }}
+                    >
+                      <AddIcon
+                        fontSize="small"
+                        style={{ marginRight: "5px" }}
+                      />
+                      Add New
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="More Options">
+                    <Button
+                      size="small"
+                      aria-controls={open ? "split-button-menu" : undefined}
+                      aria-expanded={open ? "true" : undefined}
+                      aria-label="select merge strategy"
+                      aria-haspopup="menu"
+                      onClick={handleToggle}
+                    >
+                      <ArrowDropDownIcon />
+                    </Button>
+                  </Tooltip>
+                </ButtonGroup>
+                <Popper
+                  sx={{ zIndex: 1 }}
+                  open={open}
+                  anchorEl={anchorRef.current}
+                  role={undefined}
+                  transition
+                  disablePortal
+                >
+                  {({ TransitionProps, placement }) => (
+                    <Grow
+                      {...TransitionProps}
+                      style={{
+                        transformOrigin:
+                          placement === "bottom"
+                            ? "center top"
+                            : "center bottom",
+                      }}
+                    >
+                      <Paper>
+                        <ClickAwayListener onClickAway={handleCloseButtonMenu}>
+                          <Tooltip title="Upload File">
+                            <Button
+                              key={"Upload File"}
+                              onClick={handleMenuItemClick}
+                              component="label"
+                              role={undefined}
+                              variant="outlined"
+                              tabIndex={-1}
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              <VisuallyHiddenInput
+                                type="file"
+                                onChange={(event: {
+                                  target: { files: any };
+                                }) => {
+                                  const file = event.target.files[0];
+                                  if (file) {
+                                    console.log("Selected file:", file.name);
+                                    // Add your file upload logic here
+                                  }
+                                }}
+                                multiple
+                              />
+                              Upload File
+                            </Button>
+                          </Tooltip>
+                        </ClickAwayListener>
+                      </Paper>
+                    </Grow>
+                  )}
+                </Popper>
+              </Box>
+            )}
+          </Grid>
+          <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
+            <Tooltip title="Manage Columns">
+              <IconButton
+                aria-controls="tune-menu"
+                aria-haspopup="true"
+                onClick={handleClick1}
               >
-                <Tooltip title="Add New">
+                <TuneIcon fontSize="large" />
+              </IconButton>
+            </Tooltip>
+            <Box>
+              <StyledMenu
+                id="tune-menu"
+                anchorEl={anchorEl2}
+                open={Boolean(anchorEl2)}
+                onClose={handleClose1}
+              >
+                <ColumnVisibilityToggle
+                  columns1={columns4}
+                  columns2={columns}
+                  handleColumnVisibilityChange={handleColumnVisibilityChange}
+                />
+              </StyledMenu>
+            </Box>
+          </Grid>
+        </Grid> */}
+        {dialogOpen && (
+          <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
+            {props.renderForm
+              ? dlgMode === dialogMode.Add
+                ? props.renderForm(setDialogOpen, (arg) => {})
+                : props.renderForm(setDialogOpen, (arg) => {}, modData)
+              : 1}
+          </AddDialog>
+        )}
+        {dialogOpenDelete && (
+          <AddDialog
+            title={""}
+            open={dialogOpenDelete}
+            setDialogOpen={setDialogOpenDelete}
+          >
+            <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
+              <form>
+                <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
+                  Are you sure you want to delete?
+                </Typography>
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                  m={1}
+                >
+                  <Button
+                    style={{ paddingRight: "20px" }}
+                    onClick={() => {
+                      setDialogOpenDelete(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     onClick={() => {
-                      setDialogOpen(true);
-                      setDlgMode(dialogMode.Add);
+                      onDeleteDialog(ids);
+                      setSnackOpen(true);
                     }}
+                    variant="contained"
                   >
-                    <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
-                    Add New
+                    Delete
                   </Button>
-                </Tooltip>
-                <Tooltip title="More Options">
-                  <Button
-                    size="small"
-                    aria-controls={open ? "split-button-menu" : undefined}
-                    aria-expanded={open ? "true" : undefined}
-                    aria-label="select merge strategy"
-                    aria-haspopup="menu"
-                    onClick={handleToggle}
-                  >
-                    <ArrowDropDownIcon />
-                  </Button>
-                </Tooltip>
-              </ButtonGroup>
-              <Popper
-                sx={{ zIndex: 1 }}
-                open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === "bottom" ? "center top" : "center bottom",
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={handleCloseButtonMenu}>
-                        <Tooltip title="Upload File">
-                          <Button
-                            key={"Upload File"}
-                            onClick={handleMenuItemClick}
-                            component="label"
-                            role={undefined}
-                            variant="outlined"
-                            tabIndex={-1}
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            <VisuallyHiddenInput
-                              type="file"
-                              onChange={(event: { target: { files: any } }) => {
-                                const file = event.target.files[0];
-                                if (file) {
-                                  console.log("Selected file:", file.name);
-                                  // Add your file upload logic here
-                                }
-                              }}
-                              multiple
-                            />
-                            Upload File
-                          </Button>
-                        </Tooltip>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
+                </Box>
+              </form>
+              <Snackbar
+                open={snackOpen}
+                autoHideDuration={1000}
+                onClose={() => setSnackOpen(false)}
+                message="Record Deleted!"
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+              />
             </Box>
-          )}
-        </Grid>
-        <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
-          <Tooltip title="Manage Columns">
-            <IconButton
-              aria-controls="tune-menu"
-              aria-haspopup="true"
-              onClick={handleClick1}
-            >
-              <TuneIcon fontSize="large" />
-            </IconButton>
-          </Tooltip>
-          <Box>
-            <StyledMenu
-              id="tune-menu"
-              anchorEl={anchorEl2}
-              open={Boolean(anchorEl2)}
-              onClose={handleClose1}
-            >
-              {/* <div style={{ display: "flex", flexDirection: "column" }}> */}
-                {/* {columns2.map((col) => 
-             {   return(
-                  <FormControlLabel
-                    key={col.field}
-                    control={
-                      <Checkbox
-                        checked={columnVisibilityModel[col.field] !== false}
-                        onChange={() => {
-                          // handleColumnVisibilityChange(col.field);
-                          handleColumnVisibilityChange(col.field);
-                        }}
-                      />
-                    }
-                    label={col.headerName}
-                  />
-                )})} */}
-              {/* </div> */}
-              {pushColumns(data[0])}
-                <ColumnVisibilityToggle columns1={columns4} columns2={columns} handleColumnVisibilityChange={handleColumnVisibilityChange}/>
-            </StyledMenu>
-          </Box>
-        </Grid>
-      </Grid>
-      {dialogOpen && (
-        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-          {props.renderForm
-            ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, (arg) => {})
-              : props.renderForm(setDialogOpen, (arg) => {}, modData)
-            : 1}
-        </AddDialog>
-      )}
-      {dialogOpenDelete && (
-        <AddDialog
-          title={""}
-          open={dialogOpenDelete}
-          setDialogOpen={setDialogOpenDelete}
+          </AddDialog>
+        )}
+        <Paper
+          elevation={3}
+          sx={{
+            // height: 400,
+            width: "100%",
+            border: "1px solid rgba(0, 0, 0, 0.12)",
+            borderRadius: 2,
+            overflow: "hidden",
+          }}
         >
-          <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
-            <form>
-              <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
-                Are you sure you want to delete?
-              </Typography>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button
-                  style={{ paddingRight: "20px" }}
-                  onClick={() => {
-                    setDialogOpenDelete(false);
+          <Grid container spacing={2} style={{ verticalAlign: "center" }}>
+            <Grid item xs={8}>
+              <Box sx={{ width: "50%" }}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
                   }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    onDeleteDialog(ids);
-                    setSnackOpen(true);
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                    style: {
+                      backgroundColor: "#f5f5f5",
+                      marginLeft: "1.1em",
+                    },
                   }}
-                  variant="contained"
-                >
-                  Delete
-                </Button>
+                  InputLabelProps={{
+                    style: {
+                      backgroundColor: "#f5f5f5",
+                    },
+                  }}
+                />
               </Box>
-            </form>
-            <Snackbar
-              open={snackOpen}
-              autoHideDuration={1000}
-              onClose={() => setSnackOpen(false)}
-              message="Record Deleted!"
-              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            />
-          </Box>
-        </AddDialog>
-      )}
-      <StripedDataGrid
-        rows={data ? data : []}
-        columns={columns4}
-        rowCount={NRows}
-        getRowId={(row) => row.id}
-        pagination={true}
-        pageSizeOptions={[pgSize]}
-        paginationMode="server"
-        paginationModel={PageModel}
-        onPaginationModelChange={setPageModel}
-        filterMode="server"
-        onFilterModelChange={setFilterModel}
-        loading={!data}
-        columnVisibilityModel={columnVisibilityModel}
-        onColumnVisibilityModelChange={(newModel) =>
-          setColumnVisibilityModel(newModel)
-        }
-        disableRowSelectionOnClick
-      />
-    </Container>
+            </Grid>
+            <Grid
+              item
+              xs={3}
+              sx={{
+                textAlign: "right",
+                marginTop: "1.1rem",
+                paddingRight: "45px",
+              }}
+            >
+              {props.AddAllowed && (
+                <Box>
+                  <ButtonGroup
+                    variant="contained"
+                    ref={anchorRef}
+                    aria-label="Button group with a nested menu"
+                    sx={{
+                      '& .MuiButtonGroup-grouped': {
+                        borderColor: '#fff', // Change the separator color
+                      },
+                      '& .MuiButtonGroup-grouped:not(:last-of-type)': {
+                        borderRightColor: '#fff', // Change the color of the separator
+                      }
+                    }}
+                  >
+                    <Tooltip title="Add New">
+                      <Button
+                        onClick={() => {
+                          setDialogOpen(true);
+                          setDlgMode(dialogMode.Add);
+                        }}
+                        style={{ backgroundColor: "#e05a5a" }}
+                      >
+                        <AddIcon
+                          fontSize="small"
+                          style={{ marginRight: "5px" }}
+                        />
+                        Add New
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title="More Options">
+                      <Button
+                        size="small"
+                        aria-controls={open ? "split-button-menu" : undefined}
+                        aria-expanded={open ? "true" : undefined}
+                        aria-label="select merge strategy"
+                        aria-haspopup="menu"
+                        onClick={handleToggle}
+                        style={{ backgroundColor: "#e05a5a" }}
+                      >
+                        <ArrowDropDownIcon />
+                      </Button>
+                    </Tooltip>
+                  </ButtonGroup>
+                  <Popper
+                    sx={{ zIndex: 1 }}
+                    open={open}
+                    anchorEl={anchorRef.current}
+                    role={undefined}
+                    transition
+                    disablePortal
+                  >
+                    {({ TransitionProps, placement }) => (
+                      <Grow
+                        {...TransitionProps}
+                        style={{
+                          transformOrigin:
+                            placement === "bottom"
+                              ? "center top"
+                              : "center bottom",
+                        }}
+                      >
+                        <Paper>
+                          <ClickAwayListener
+                            onClickAway={handleCloseButtonMenu}
+                          >
+                            <Tooltip title="Upload File">
+                              <Button
+                                key={"Upload File"}
+                                onClick={handleMenuItemClick}
+                                component="label"
+                                role={undefined}
+                                variant="outlined"
+                                tabIndex={-1}
+                                startIcon={<CloudUploadIcon />}
+                                sx={{bordercolor:"#e05a5a", color:"#e05a5a"}}
+                              >
+                                <VisuallyHiddenInput
+                                  type="file"
+                                  onChange={(event: {
+                                    target: { files: any };
+                                  }) => {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                      console.log("Selected file:", file.name);
+                                      // Add your file upload logic here
+                                    }
+                                  }}
+                                  multiple
+                                />
+                                Upload File
+                              </Button>
+                            </Tooltip>
+                          </ClickAwayListener>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
+                </Box>
+              )}
+            </Grid>
+            <Grid
+              item
+              xs={1}
+              sx={{
+                verticalAlign: "center",
+                marginTop: "10px",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "flex-end",
+              }}
+            >
+              <Tooltip title="Manage Columns">
+                <IconButton
+                  aria-controls="tune-menu"
+                  aria-haspopup="true"
+                  onClick={handleClick1}
+                >
+                  <TuneIcon fontSize="large" />
+                </IconButton>
+              </Tooltip>
+              <Box>
+                <StyledMenu
+                  id="tune-menu"
+                  anchorEl={anchorEl2}
+                  open={Boolean(anchorEl2)}
+                  onClose={handleClose1}
+                >
+                  <ColumnVisibilityToggle
+                    columns1={columns4}
+                    columns2={columns}
+                    handleColumnVisibilityChange={handleColumnVisibilityChange}
+                  />
+                </StyledMenu>
+              </Box>
+            </Grid>
+          </Grid>
+          <StripedDataGrid
+            rows={data ? data : []}
+            columns={columns4}
+            rowCount={NRows}
+            getRowId={(row) => row.id}
+            pagination={true}
+            pageSizeOptions={[pgSize]}
+            paginationMode="server"
+            paginationModel={PageModel}
+            onPaginationModelChange={setPageModel}
+            filterMode="server"
+            onFilterModelChange={setFilterModel}
+            loading={!data}
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={(newModel) =>
+              setColumnVisibilityModel(newModel)
+            }
+            disableRowSelectionOnClick
+            checkboxSelection
+            autoHeight
+          />
+        </Paper>
+      </Box>
+    </Box>
   );
 }
