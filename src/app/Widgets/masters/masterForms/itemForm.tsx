@@ -168,9 +168,9 @@ export default function ItemForm(props: masterFormPropsT) {
             <SelectMasterWrapper
               name={"itemGroup"}
               id={"itemGroup"}
-              label={"Item Name"}
+              label={"Item Group Name"}
               width={210}
-              dialogTitle={"Add Item"}
+              dialogTitle={"Add Item Group"}
               fetchDataFn={getItemGroup}
               defaultValue={
                 {

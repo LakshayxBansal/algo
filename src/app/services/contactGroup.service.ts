@@ -97,6 +97,19 @@ export async function getContactGroupDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checksIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "SELECT COUNT(*) as count FROM contact_group_master cg INNER JOIN contact_master cm ON cm.group_id = cg.id where cg.id=?;",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delContactDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({

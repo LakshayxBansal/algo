@@ -1,35 +1,33 @@
-'use client'
+"use client";
 
 import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
+  spacing: 8,
   components: {
     MuiTextField: {
       styleOverrides: {
         root: {
           "& .MuiInputBase-root, & .MuiInputLabel-root": {
-            fontSize: "0.9rem"
+            fontSize: "0.9rem",
           },
           "& .MuiInputLabel-root.MuiInputLabel-shrink": {
             // With the smaller font size, the shrink effect
             // shouldn't go quite as high ("-6px" instead of "-9px")
             // in order for it to look correct.
-            transform: "translate(13px, -6px) scale(0.75)"
+            transform: "translate(13px, -6px) scale(0.75)",
           },
-          background: "#F8FAFB"
-        }
+          background: "#F8FAFB",
+        },
       },
       defaultProps: {
         variant: "outlined",
-        size: 'small',
-        margin: "dense"
-      }
+        size: "small",
+        margin: "dense",
+      },
     },
-
   },
-  
 });
-
 
 /*
     MuiTab: {

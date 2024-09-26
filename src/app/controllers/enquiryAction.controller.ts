@@ -9,6 +9,7 @@ import {
   updateEnquiryActionDb,
   getEnquiryActionByPageDb,
   delActionDetailsById,
+  checkIfUsed,
 } from "../services/enquiryAction.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -44,16 +45,22 @@ export async function delActionById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await delActionDetailsById(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
+      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
+      if(check[0].count>0){
+        return ("Can't Be DELETED!");
       }
+      else{
+        const result = await delActionDetailsById(session.user.dbInfo.dbName, id);
+        return ("Record Deleted");
+      }
+      // if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result .affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Not Found",
+      //   };
+      // }
     }
   } catch (error:any) {
     throw error;
@@ -217,6 +224,64 @@ export async function updateEnquiryAction(data: nameMasterDataT) {
         status: false,
         data: [{ path: ["name"], message: "Error: Value already exist" }],
       };
+      return result;
+    }
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function uploadCsvData(data: string) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      
+      const csvData = data; 
+
+      const parsed = zs.nameMasterData.safeParse(csvData); 
+
+      if (parsed.success) {
+        const dbResult = await createEnquiryActionDb(session, parsed.data); 
+        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          result = {
+            status: false,
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
+          };
+        }
+      } else {
+        result = { status: false, data: parsed.error.issues };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e) {
+    if (e instanceof SqlError) {
+      if (e.code === "ER_DUP_ENTRY") {
+        result = {
+          status: false,
+          data: [{ path: ["name"], message: "Error: Value already exists" }],
+        };
+      } else {
+        result = {
+          status: false,
+          data: [{ path: ["form"], message: "Error: Database Error" }],
+        };
+      }
       return result;
     }
   }

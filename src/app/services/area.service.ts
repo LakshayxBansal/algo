@@ -59,6 +59,20 @@ export async function fetchAreaById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+      "SELECT COUNT(DISTINCT am.id) as count FROM area_master am LEFT JOIN contact_master cm ON cm.area_id = am.id LEFT JOIN executive_master em ON em.area_id= am.id WHERE (cm.area_id IS NOT NULL OR em.area_id IS NOT NULL) AND am.id=?;",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delAreaDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
