@@ -55,6 +55,21 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const ODD_OPACITY = 0.2;
 
 export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  backgroundColor:"#fff",
+  height:650,
+  border: 'none',
+  '& .MuiDataGrid-cell': {
+    borderBottom: 'none',
+  },
+  '& .MuiDataGrid-columnHeaders': {
+    borderBottom: 'none',
+  },
+  '& .MuiDataGrid-columnSeparator': {
+    display: 'none',
+  },
+  '& .MuiDataGrid-cell:hover': {
+    color: 'primary.main',
+  },
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.grey[200],
     '&:hover': {
@@ -85,6 +100,9 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       },
     },
   },
+  // "&. MuiDataGrid-withBorderColor":{
+  //   border:"none"
+  // }
 }));
 
 export const StyledMenu = styled(Menu)(({ theme }) => ({

@@ -52,6 +52,7 @@ export async function getMenuOptions(crmDb: string) {
 
     // create top level menu
     const tree = createTree(result, 0);
+    // console.log(tree);
     return tree;
   } catch(e) {
     console.log(e);
@@ -60,7 +61,7 @@ export async function getMenuOptions(crmDb: string) {
 }
 
 
-function createTree(flatArray: zm.menuTreeT[], parentId = 0): zm.menuTreeT[] {
+function createTree(flatArray: zm.menuTreeT[], parentId=0): zm.menuTreeT[] {
   return flatArray
     .filter(item => item.parent_id === parentId)
     .map(item => ({

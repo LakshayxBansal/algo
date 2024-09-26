@@ -22,7 +22,8 @@ export default function Department() {
   ];
 
   return (
-    <div style={{ height: 800, width: "100%" }}>
+    <div>
+       {/* style={{ height: 800, width: "100%" }} */}
       <AppBar position="static" color="default"></AppBar>
       <EntityList
         title="Department Master"
