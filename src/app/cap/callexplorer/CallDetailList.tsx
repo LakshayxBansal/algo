@@ -48,7 +48,7 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
             },
         },
         {
-            field: "time", headerName: "Time", width: 130,
+            field: "time", headerName: "Time", width: 100,
             renderCell: (params) => {
                 return params.row.date.toLocaleString('en-IN', options);
             },
@@ -56,9 +56,9 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
         {
             field: "executive",
             headerName: "Executive",
-            width: 200,
+            width: 150,
         },
-        { field: "subStatus", headerName: "Sub Status", width: 130 },
+        { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "actionTaken", headerName: "Action Taken", width: 130 },
         { field: "nextAction", headerName: "Next Action", width: 130 },
         {
@@ -81,6 +81,8 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
 
     return (
         <StripedDataGrid rows={data ? data : []}
+            rowHeight={30}
+            columnHeaderHeight={30}
             columns={column2}
             getRowId={(row) => row.id}
             columnVisibilityModel={columnVisibilityModel}
