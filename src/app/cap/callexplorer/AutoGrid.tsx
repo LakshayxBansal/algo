@@ -884,13 +884,13 @@ export default function AutoGrid() {
           <Box>
             <Grid container>
               <Grid item xs={12} md={8} lg={8}>
-                <Typography variant="body1" style={{ padding: "0 2%" }}>Date Range</Typography>
+                <Typography variant="caption" style={{ padding: "0 2%" }}>Date Range</Typography>
                 <Divider variant="middle" />
                 <Grid
                   container
                   spacing={2}
                   direction={{ xs: "column", md: "row", sm: "row", lg: "row" }}
-                  style={{ padding: "2% 2%" }}
+                  style={{ padding: "0 2%" }}
                   alignItems="center"
                 >
                   <Grid item xs={12} sm={6} md={3} >
@@ -987,14 +987,14 @@ export default function AutoGrid() {
               // display={{ xs: 'none', sm: 'block' }}
               // order={{ xs: -1, sm: 0}}
               >
-                <Paper elevation={3} style={{ borderRadius: "18em" }}>
+                <Paper elevation={3} style={{ borderRadius: "18em", marginTop: "2%", marginRight: '2%' }}>
                   <Box style={{ display: "flex" }} justifyContent="center"
                   // {{xs:"flex-start", md:"flex-end"}}
                   >
-                    <Typography variant="subtitle1" style={{ marginRight: "1%" }}>
+                    <Typography variant="caption" style={{ marginRight: "1%" }}>
                       Today's Date:
                     </Typography>
-                    <Typography variant="subtitle1">
+                    <Typography variant="caption">
                       {status_date.toDateString()}
                     </Typography>
                   </Box>
