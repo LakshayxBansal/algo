@@ -29,8 +29,3 @@ export default function CellDbName(props : {row:dbInfoT, userId: number }) {
       </Link>
   );
 }
-
-export function refreshPage(url: string) {
-  const router = useRouter();
-  router.refresh();
-}

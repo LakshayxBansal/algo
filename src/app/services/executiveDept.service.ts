@@ -80,6 +80,34 @@ export async function getDeptDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(DISTINCT edm.id) as count FROM executive_dept_master edm LEFT JOIN executive_master em ON em.dept_id = edm.id LEFT JOIN executive_role_master erm ON erm.department_id= edm.id WHERE (em.dept_id IS NOT NULL OR erm.department_id IS NOT NULL) AND edm.id=?",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delExecutiveDeptByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from executive_dept_master where id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveDeptByPageDb(
   crmDb: string,
   page: number,
@@ -124,20 +152,6 @@ export async function getExecutiveDeptCount(
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-export async function delExecutiveDeptByIdDB(crmDb: string, id: number) {
-  try {
-    const result = await excuteQuery({
-      host: crmDb,
-      query: "delete from executive_dept_master where id=?;",
-      values: [id],
-    });
-
-    return result;
   } catch (e) {
     console.log(e);
   }

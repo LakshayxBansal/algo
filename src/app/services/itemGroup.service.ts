@@ -39,12 +39,13 @@ export async function createItemGroupDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createItemGroup(?,?,?,?)",
+      query: "call createItemGroup(?,?,?,?,?)",
       values: [
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        sourceData.is_parent,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -67,7 +68,7 @@ export async function updateItemGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -85,7 +86,7 @@ export async function updateItemGroupDb(
 //       query:
 //         "insert into item_group_master (name, created_by, created_on) \
 //        values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
-//       values: [sourceData.name, session.user.email],
+//       values: [sourceData.name, session.user.userId],
 //     });
 //   } catch (e) {
 //     console.log(e);
@@ -94,23 +95,36 @@ export async function updateItemGroupDb(
 // }
 
 /**
- * 
+ *
  * @param crmDb database to search in
  * @param id id to search in item_master
- * @returns 
+ * @returns
  */
-export async function getItemGroupDetailsById(crmDb: string, id: number){
-  
+export async function getItemGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: 'SELECT c1.*, c2.name parent FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id \
-        where c1.id=?;', 
+      query:
+        "SELECT c1.*, c2.name parent FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id \
+        where c1.id=?;",
       values: [id],
     });
 
     return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+     "SELECT COUNT(*) as count FROM item_group_master ig INNER JOIN item_master im ON im.group_id = ig.id where ig.id=?;",      
+     values: [id],
+    });
+    return result;
   } catch (e) {
     console.log(e);
   }
@@ -146,18 +160,23 @@ export async function getItemGroupByPageDb(
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id " + (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") + "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+        "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
     });
     console.log(result);
-    
+
     return result;
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function getItemGroupCount(crmDb: string, value: string | undefined) {
+export async function getItemGroupCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

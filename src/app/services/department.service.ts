@@ -40,6 +40,20 @@ export async function getDepartmentDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(DISTINCT dm.id) as count FROM department_master dm LEFT JOIN contact_master nm ON nm.department_id = dm.id WHERE (nm.department_id IS NOT NULL) AND dm.id=?",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delDepartmentDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
@@ -68,7 +82,7 @@ export async function createDepartmentDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createDepartment(?, ?)",
-      values: [sourceData.name, session.user.email],
+      values: [sourceData.name, session.user.userId],
     });
   } catch (e) {
     logger.error(e);
@@ -84,7 +98,7 @@ export async function updateDepartmentDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateDepartment(?, ?, ?)",
-      values: [sourceData.id, sourceData.name, session.user.email],
+      values: [sourceData.id, sourceData.name, session.user.userId],
     });
   } catch (e) {
     logger.error(e);

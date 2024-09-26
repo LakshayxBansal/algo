@@ -25,7 +25,7 @@ export async function createOrganisationDB(
         data.state_id,
         data.pincode,
         data.country_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -57,7 +57,7 @@ export async function updateOrganisationDB(
         data.state_id,
         data.pincode,
         data.country_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -110,15 +110,15 @@ export async function getOrgsList(
     return excuteQuery({
       host: crmDb,
       query:
-        'SELECT name,alias,RowNum as RowID, id,print_name,stamp \
+        "SELECT name,alias,RowNum as RowID, id,print_name,stamp \
      FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
-        FROM organisation_master ' +
-        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : '') +
-        'order by name\
+        FROM organisation_master " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name\
     ) AS NumberedRows\
     WHERE RowNum > ?*?\
     ORDER BY RowNum\
-    LIMIT ?;',
+    LIMIT ?;",
       values: vals,
     });
   } catch (e) {
@@ -131,15 +131,14 @@ export async function getOrgsCount(crmDb: string, value: string | undefined) {
     return excuteQuery({
       host: crmDb,
       query:
-        'SELECT count(*) as rowCount from organisation_master ' +
-        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ''),
+        "SELECT count(*) as rowCount from organisation_master " +
+        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
   } catch (e) {
     console.log(e);
   }
 }
-
 
 export async function getOrganisationDetailsById(crmDb: string, id: number) {
   try {
@@ -206,6 +205,20 @@ export async function getOrganisationCount(
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(*) as count FROM organisation_master om INNER JOIN contact_master cm ON cm.organisation_id = om.id where om.id=?;",
+      values: [id],
+    });
+    return result;
   } catch (e) {
     console.log(e);
   }

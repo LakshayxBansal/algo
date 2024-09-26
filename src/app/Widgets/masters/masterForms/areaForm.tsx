@@ -18,7 +18,7 @@ export default function AreaForm(props: masterFormPropsT) {
   >({});
   const entityData: areaSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
-  console.log(entityData)
+  console.log(entityData);
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
@@ -73,7 +73,24 @@ export default function AreaForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>{props.data ? "Modify Area" : "Add Area"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Modify Area" : "Add Area"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -113,32 +130,21 @@ export default function AreaForm(props: masterFormPropsT) {
             helperText={formError?.name?.msg}
           />
         </Box>
-        <Grid container xs={12} md={12}>
-          <Grid item xs={6} md={6}>
-            <Box margin={1} sx={{ display: "flex" }}>
-              <Box
-                display="flex"
-                justifyContent="flex-start"
-                alignItems="flex-start"
-                m={1}
-              >
-                <Button onClick={handleCancel}>Cancel</Button>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Box
-              display="flex"
-              justifyContent="flex-end"
-              alignItems="flex-end"
-              m={1}
-            >
-              <Button type="submit" variant="contained">
-                Submit
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ width: "15%", marginLeft: "5%" }}
+          >
+            Submit
+          </Button>
+        </Box>
       </form>
     </>
   );

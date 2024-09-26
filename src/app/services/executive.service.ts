@@ -41,7 +41,7 @@ export async function createExecutiveDB(
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
     return result;
@@ -56,7 +56,7 @@ export async function updateExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    // console.log("email", session.user.email);
+    // console.log("email", session.user.userId);
     // const placeholderDate = new Date("1900-01-01");
     // data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
 
@@ -160,6 +160,20 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
   }
 }
 
+export async function checkIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT COUNT(*) as count FROM executive_master em INNER JOIN enquiry_allocation ea ON ea.executive_id = em.id where em.id=?;",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function delExecutiveDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
@@ -200,7 +214,7 @@ export async function getExecutiveByPageDb(
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id " +
-            (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
         "order by em.name\
               ) AS NumberedRows \
             WHERE RowNum > ?*? \
@@ -230,53 +244,61 @@ export async function getExecutiveCount(
   }
 }
 
-export async function getExecutiveIdFromEmailList(crmDb: string, email: string){
-  
+export async function getExecutiveIdFromEmailList(
+  crmDb: string,
+  email: string
+) {
   try {
-    let query = 'select id as id from executive_master where email = ?';
+    let query = "select id as id from executive_master where email = ?";
     let values: any[] = [email];
 
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function getExecutiveProfileImageByCrmUserIdList(crmDb : string,crmUserId : number){
-  try{
-    let query = 'select profile_img as profileImg from executive_master where crm_user_id = ?';
+export async function getExecutiveProfileImageByCrmUserIdList(
+  crmDb: string,
+  crmUserId: number
+) {
+  try {
+    let query =
+      "select profile_img as profileImg from executive_master where crm_user_id = ?";
     let values: any[] = [crmUserId];
 
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
 }
 
-export async function insertUserIdInExecutiveDb(crmDb:string,executiveId:number,userId:number) {
-  try{
-
+export async function insertUserIdInExecutiveDb(
+  crmDb: string,
+  executiveId: number,
+  userId: number
+) {
+  try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "update executive_master set crm_user_id =  ? where id = ?;", 
-      values: [userId,executiveId],
+      query: "update executive_master set crm_user_id =  ? where id = ?;",
+      values: [userId, executiveId],
     });
 
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
 }

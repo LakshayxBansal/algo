@@ -153,6 +153,18 @@ export async function getUserDetailsByIdList(userId:number) {
   return false;
 }
 
+export async function mapUser(userId : number,companyId : number) {
+  try{
+    await excuteQuery({
+      host: "userDb",
+      query: "update userCompany set isMapped = 1 where user_id = ? and company_id = ?;",
+      values: [ userId,companyId]
+    })
+  }catch(error){
+    console.log(error);
+  }
+}
+
 export async function deRegisterFromCompanyDB(id : number | null, userId : number | null, companyId : number | null) {
   try {
     let query;

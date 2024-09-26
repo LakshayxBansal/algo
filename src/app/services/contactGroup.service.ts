@@ -43,7 +43,7 @@ export async function createContactGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -66,7 +66,7 @@ export async function updateContactGroupDb(
         sourceData.name,
         sourceData.alias,
         sourceData.parent_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -91,6 +91,19 @@ export async function getContactGroupDetailsById(crmDb: string, id: number) {
       values: [id],
     });
 
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function checksIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "SELECT COUNT(*) as count FROM contact_group_master cg INNER JOIN contact_master cm ON cm.group_id = cg.id where cg.id=?;",
+      values: [id],
+    });
     return result;
   } catch (e) {
     console.log(e);
@@ -127,18 +140,23 @@ export async function getContactGroupByPageDb(
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM contact_group_master c1 left outer join contact_group_master c2 on c1.parent_id = c2.id " + (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") + "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
+        "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM contact_group_master c1 left outer join contact_group_master c2 on c1.parent_id = c2.id " +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
     });
     console.log(result);
-    
+
     return result;
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function getContactGroupCount(crmDb: string, value: string | undefined) {
+export async function getContactGroupCount(
+  crmDb: string,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: crmDb,

@@ -8,7 +8,9 @@ import {
   getDeptDetailsById,
   updateExecutiveDeptDb,
   getExecutiveDeptCount,
-  getExecutiveDeptByPageDb,delExecutiveDeptByIdDB
+  getExecutiveDeptByPageDb,
+  delExecutiveDeptByIdDB,
+  checkIfUsed,
 } from "../services/executiveDept.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -154,6 +156,35 @@ export async function getDeptById(id: number) {
   }
 }
 
+export async function delExecutiveDeptById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
+      if(check[0].count>0){
+        return ("Can't Be DELETED!");
+      }
+      else{
+        const result = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
+        return ("Record Deleted");
+      }
+      // if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result .affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Not Found",
+      //   };
+      // }
+    }
+  } catch (error: any) {
+    throw error;
+    errorResult = { status: false, error: error };
+  }
+  return errorResult;
+}
+
 export async function getExecutiveDeptByPage(
   page: number,
   filter: string | undefined,
@@ -187,7 +218,6 @@ export async function getExecutiveDeptByPage(
       };
     }
   } catch (e: any) {
-
     let err = "ExecutiveDept Admin, E-Code:369";
 
     getExecutiveDept = {
@@ -198,27 +228,4 @@ export async function getExecutiveDeptByPage(
     };
   }
   return getExecutiveDept;
-}
-
-export async function delExecutiveDeptById(id: number) {
-  let errorResult = { status: false, error: {} };
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      const result = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
-      }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
-  }
-  return errorResult;
 }
