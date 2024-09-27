@@ -9,6 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+
 import {menuTreeT} from '../../models/models';
 import {nameIconArr} from '../../utils/iconmap.utils';
 import { Popper, Grow, Popover } from '@mui/material';
@@ -32,6 +33,13 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
 
 
   const [listButton, setListButton] = useState(false);
+
+
+  const [isPopperHovered, setIsPopperHovered] = useState(false);
+
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+
+
 
   const anchorRef = React.useRef()
 
@@ -129,9 +137,10 @@ const leaveButton = () => {
   }
 
 
+  const idToOpenPop: Map<number, boolean> = new Map(openPop);
   function handleSubMenuHover( event: React.MouseEvent<HTMLElement>, id: number) {
-    const idToOpenPop: Map<number, boolean> = new Map(openPop);
 
+    
     if(idToOpenPop.get(id) == true){
       idToOpenPop.set(id, true);
     }else{
@@ -140,8 +149,9 @@ const leaveButton = () => {
       // props.setOpenDrawer(true);
       setOpenPop(idToOpenPop);
       setHoverOpen(true)
-      console.log("to open", idToOpenPop);
-      // setAnchorEl(event.currentTarget);
+      console.log("enter", idToOpenPop);
+      setHoverOpen(true);
+      setAnchorEl(event.currentTarget);
 
       // setSelectedId(id);
       // console.log("maooings",idToOpenMap,id)
@@ -157,34 +167,45 @@ const leaveButton = () => {
   //   setAnchorEl(event.currentTarget); // Set anchor for the popper
   // }
 
-  // const handleMouseLeave = (event :any,id:number) => {
+  const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,id:number) => {
+    // const idToOpenPop: Map<number, boolean> = new Map(openPop);
+
+    // setTimeout(() => {
+      // if(idToOpenPop.get(id) == true){
+        idToOpenPop.set(id, false);     
+      // }
+      setOpenPop(idToOpenPop);
+      console.log("leave ", idToOpenPop);
+      setAnchorEl(null);
+    // }, 10000);
+
+  };
+
+  // function handleMouseLeave(event: React.MouseEvent<HTMLElement>, id: number) {
   //   const idToOpenPop: Map<number, boolean> = new Map(openPop);
 
-  //   if(idToOpenPop.get(id) == true){
-  //     idToOpenPop.set(id, false);
-  //   // }else{
-  //   //   idToOpenPop.set(id, !idToOpenPop.get(id));
-  //   // }
-  //     // props.setOpenDrawer(true);
-  //     setOpenPop(idToOpenPop);
-  //     console.log("to open", idToOpenPop);
-  //     setAnchorEl(event.currentTarget);
-  //   }
-  // };
-
-  function handleMouseLeave(event: React.MouseEvent<HTMLElement>, id: number) {
-    const idToOpenPop: Map<number, boolean> = new Map(openPop);
-
-    setTimeout(() => {
+  //   setTimeout(() => {
     
-      if (idToOpenPop.has(id)) {
-        idToOpenPop.set(id, !idToOpenPop.get(id)); // Collapse the submenu on mouse leave
-      }
+  //     if (idToOpenPop.has(id)) {
+  //       idToOpenPop.set(id, !idToOpenPop.get(id)); // Collapse the submenu on mouse leave
+  //     }
       
-      setOpenPop(idToOpenPop);
-      setAnchorEl(null); // Optionally reset the anchor element
-    }, 100000);
+  //     setOpenPop(idToOpenPop);
+  //     setAnchorEl(null); // Optionally reset the anchor element
+  //   }, 100000);
  
+  // }
+
+
+  const handleIconMenu = (e:any)=>{
+    console.log('popper');
+    setTimeout(() => {
+      // setHoverOpen(true);
+     // !hoverOpen?handleSubMenuHover(e,page.id):null
+     !hoverOpen && setAnchorEl(e.currentTarget)
+    },1000000);
+  
+                
   }
 
 
@@ -234,9 +255,6 @@ const leaveButton = () => {
             {page.parent_id === level && 
             <>
               <Tooltip title={page.name} placement="right">
-                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href!=="#" ? page.href : generateHref(page.name)}>
-                  <ListItemIcon style={{minWidth: '30px'}}>
-                    {SelectIcon({Page: page})}
                 <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}
@@ -248,7 +266,7 @@ const leaveButton = () => {
               <Collapse in={handleCollapse(page.id)} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   {ShowMenu({pages: page.children, level:page.id, menuLevel: indent+2})}
-                  {level}
+                  {/* {level} */}
                 </List>
               </Collapse>
 
@@ -276,23 +294,28 @@ const leaveButton = () => {
       <div>
         {pages.map((page, index) => (
           <div key={index}>
-            {page.parent_id === level && 
+            {page.parent_id === level && level ===0 &&
             <>
-              <Tooltip title={page.name} placement="right">
+              <Tooltip title={page.name} placement="top-end">
                 <ListItemButton sx={{ pl: indent }} 
-                        // ref={anchorRef.current}
                              onMouseEnter={ (e) => {
-                              console.log('list hover',level)
-                              setHoverId(page.id)
-                              setHoverOpen(true);
+                              // console.log('list hover',level)
+                              // setHoverId(page.id)
+                              // setHoverOpen(true);
+                              page.children.length  > 0 &&
+                              handleSubMenuHover(e, page.id)
+                              console.log("data",page)
+                              // setIsPopperHovered(true)
+                              // setIsButtonHovered(true);
+                              // setAnchorEl(e.currentTarget);
 
                               // (e) => {!openPop?.get(page.id)?
                               // handleSubMenuHover(e,page.id):null}
 
-                              page.children.length > 0 &&  setAnchorEl(e.currentTarget)              
+                              // page.children.length > 0 &&  setAnchorEl(e.currentTarget)              
                             }
                             }
-                            //  onMouseLeave={(e) => handleMouseLeave(e,page.id)}                // onClick={(e) => handleSubMenuClick(page.id)} 
+                             onMouseLeave={(e) => handleMouseLeave(e,page.id)}                // onClick={(e) => handleSubMenuClick(page.id)} 
                  component="a" href={page.href} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}
@@ -301,18 +324,23 @@ const leaveButton = () => {
                   {page.children.length ? openPop?.get(page.id) ? <ChevronRightIcon/> : <ExpandMore /> : <></>}
                 </ListItemButton>
               </Tooltip>
-              {
-              <Popper open={Boolean(anchorEl) && page.id === hoverId} anchorEl={anchorEl}   transition 
+              { page.parent_id == 0  &&
+              <Popper   open={Boolean(anchorEl) && page.children.length >0}
+              anchorEl={anchorEl}   transition 
               // onMouseLeave={(e) => handleMouseLeave(e,page.id)}
-               onMouseEnter={(e) => {console.log('popper');
-                // setHoverOpen(true);
-                // !hoverOpen?handleSubMenuHover(e,page.id):null
-                !hoverOpen && setAnchorEl(e.currentTarget)
-                }}>
+              //  onMouseEnter={(e) => {handleIconMenu}}
+               onMouseEnter={(e) =>{
+                console.log("popper")
+                // setIsPopperHovered(true)
+                // handleSubMenuHover(e, page.id)
+
+                }}
+               
+               >
                   {({ TransitionProps }) => (
                 <Grow {...TransitionProps}>
                    <List component="div"  disablePadding >
-                          {ShowPopper({pages: page.children, level:page.id, menuLevel: indent+10})}
+                          { ShowPopper({pages: page.children, level:page.id, menuLevel: indent+10})}
                   </List>
                 </Grow>
               )}
