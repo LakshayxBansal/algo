@@ -64,19 +64,16 @@ export default async function ExecutiveEnquiryList() {
       field: "since1w",
       headerName: "Since 1 week",
       width: 150,
-      description: "Number of open enquiries since 1 week",
     },
     {
       field: "since2w",
       headerName: "Since 2 week",
       width: 150,
-      description: "Number of open enquiries since 2 week",
     },
     {
       field: "since3w",
       headerName: "Since 3 week",
       width: 150,
-      description: "Number of open enquiries since 3 week",
     },
   ];
 
@@ -98,6 +95,7 @@ export default async function ExecutiveEnquiryList() {
           }}
           pageSizeOptions={[pgSize, 10, 20]}
           disableRowSelectionOnClick
+          autoHeight
         />
       </Paper>
     </>
