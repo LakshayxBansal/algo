@@ -98,7 +98,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             disable={props.disable}
           />
           {!props.disable && (
-            <IconButton size="small">
+            <IconButton tabIndex={-1} size="small">
               <span
                 style={{
                   display: "flex",

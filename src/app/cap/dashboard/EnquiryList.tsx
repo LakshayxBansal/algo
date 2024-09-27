@@ -12,7 +12,6 @@ export default async function EnquiryList() {
   }
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 50 },
     {
       field: "contactName",
       headerName: "Contact",
