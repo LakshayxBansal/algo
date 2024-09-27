@@ -5,30 +5,6 @@ import { dbMap } from './SingletonMap';
 import { getHostDetailsService } from '@/app/services/company.service';
 
 //const dbMap = SingletonMap<string, mariadb.Pool>;
-<<<<<<< HEAD
-// console.log("this is the console data",dbMap)
-
-
-// below code
-// map is created as we have more than one databases in our system
-function getPool(host: string) {
-  const pool = dbMap.get(host);
-  // console.log("mariaDb",pool);
-  if (pool) {
-    return pool;
-  } else {
-    dbMap.set(host, mariadb.createPool({
-        host: process.env.MYSQL_HOST,
-        port: 3306,
-        database: host,
-        user: process.env.USERDB_USER,
-        password: process.env.USERDB_PASSWORD,
-        connectionLimit: 5
-      }
-    ));
-    // console.log(dbMap.get(host));
-    return dbMap.get(host) ?? null;
-=======
 async function getPool(host: string) {
   try {
     let pool = dbMap.get(host);
@@ -59,7 +35,6 @@ async function getPool(host: string) {
   } catch (e) {
     console.log(e);
     return null;
->>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
   }
 
 }

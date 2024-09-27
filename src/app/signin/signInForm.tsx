@@ -14,6 +14,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
+import styles from "../signup/SignUpForm.module.css";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -67,15 +68,15 @@ export default function AuthPage(props: authPagePropsType) {
     .catch((error) => {
       console.log(error);
     });
+
   return (
     <Box
       sx={{
+        backgroundColor: "#AEC4F1",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#8FA8D7",
-        padding: "5% 5%",
-        height: "100%",
+        height: "100vh",
       }}
     >
       <Box
@@ -83,7 +84,7 @@ export default function AuthPage(props: authPagePropsType) {
           backgroundColor: "#ffff",
           borderRadius: "3rem",
           width: "78%",
-          height: "60%",
+          // height: "60%",
         }}
       >
         <Grid
@@ -101,12 +102,13 @@ export default function AuthPage(props: authPagePropsType) {
             md={4.75}
             sx={{
               // margin: "5%",
-              display: { xs: "none", sm: "flex" },
-              justifyContent: "center",
-              alignItems: "center",
+              // display: { xs: "none", sm: "flex" },
+              // justifyContent: "center",
+              // alignItems: "center",
             }}
           >
             <Box
+              className={styles.image1}
               component="img"
               sx={{
                 height: "100%",
@@ -352,7 +354,7 @@ export default function AuthPage(props: authPagePropsType) {
                 xs={12}
                 sm={12}
                 md={12}
-                sx={{ display: "flex", justifyContent: "center", mt: 2 }}
+                sx={{ display: "flex", justifyContent: "center", mt: "5%" }}
               >
                 <Link href="/signup" variant="body2">
                   {"Don't have an account? Sign Up"}

@@ -99,7 +99,24 @@ export default function ItemForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>{entityData.id ? "Update Item" : "Add Item"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Item" : "Add Item"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -151,9 +168,9 @@ export default function ItemForm(props: masterFormPropsT) {
             <SelectMasterWrapper
               name={"itemGroup"}
               id={"itemGroup"}
-              label={"Item Name"}
+              label={"Item Group Name"}
               width={210}
-              dialogTitle={"Add Item"}
+              dialogTitle={"Add Item Group"}
               fetchDataFn={getItemGroup}
               defaultValue={
                 {
@@ -217,16 +234,16 @@ export default function ItemForm(props: masterFormPropsT) {
 
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
-            <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

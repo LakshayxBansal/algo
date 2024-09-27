@@ -9,6 +9,8 @@ import {
   getExecutiveGroupByIDList,
   getExecutiveGroupCount,
   getExecutiveGroupByPageDb,
+  delExecutiveGroupDetailsById,
+  checkIfUsed,
 } from "../services/executiveGroup.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -35,6 +37,35 @@ export async function getExecutiveGroupById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function delExecutiveGroupById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
+      if(check[0].count>0){
+        return ("Can't Be DELETED!");
+      }
+      else{
+        const result = await delExecutiveGroupDetailsById(session.user.dbInfo.dbName, id);
+        return ("Record Deleted");
+      }
+      // if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result .affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Not Found",
+      //   };
+      // }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }
 
 export async function createExecutiveGroup(data: executiveGroupSchemaT) {

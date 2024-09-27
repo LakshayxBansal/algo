@@ -1,41 +1,40 @@
-'use client'
-import * as React from 'react';
+"use client";
+import * as React from "react";
+import { GridColDef } from "@mui/x-data-grid";
+import EntityList from "@/app/Widgets/masters/EntityList";
+import {
+  delSubStatusById,
+  getEnquirySubSatusById,
+  getEnquirySubStatusByPage,
+} from "@/app/controllers/enquirySubStatus.controller";
+import SubStatusListForm from "@/app/Widgets/masters/masterForms/subStatusListForm";
 
-import { GridColDef } from '@mui/x-data-grid';
-import EntityList from '@/app/Widgets/masters/EntityList';
-import AppBar from '@mui/material/AppBar';
-import SubStatusForm from '@/app/Widgets/masters/masterForms/subStatusForm';
-import { getEnquirySubSatusById, getEnquirySubStatusByPage } from '@/app/controllers/enquirySubStatus.controller';
-
-
-export default function subStatus() {
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'name',
-    headerName: 'Name',
-    width: 150,
+    field: "name",
+    headerName: "Name",
     editable: true,
   },
 ];
-  
+
+export default function subStatus() {
   return (
-    <div style={{ height: 800, width: '100%' }}>
-      <AppBar position="static" color="default">
-      </AppBar>
+    <>
       <EntityList
+        title="Sub Status List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-              <SubStatusForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-              data={data}
-            />
-          )}
+          <SubStatusListForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
         fetchDataFn={getEnquirySubStatusByPage}
         fnFetchDataByID={getEnquirySubSatusById}
+        fnDeleteDataByID={delSubStatusById}
         customCols={columns}
-        AddAllowed={true}>
-      </EntityList>
-    </div>
+        AddAllowed={true}
+      ></EntityList>
+    </>
   );
 }

@@ -46,7 +46,7 @@ export async function delCategoryDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from department_master where id=?;",
+      query: "delete from enquiry_category_master where id=?;",
       values: [id],
     });
 
@@ -70,7 +70,7 @@ export async function createEnquiryCategoryDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createCategory(?, ?)",
-      values: [categoryData.name, session.user.email],
+      values: [categoryData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -86,7 +86,7 @@ export async function updateEnquiryCategoryDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateCategory(?, ?, ?);",
-      values: [categoryData.id, categoryData.name, session.user.email],
+      values: [categoryData.id, categoryData.name, session.user.userId],
     });
   } catch (e) {
     console.log(e);

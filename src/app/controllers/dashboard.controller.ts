@@ -1,12 +1,14 @@
 "use server"
-import { getClosedEnquiriesDb, getOpenEnquiriesDb } from "../services/dashboard.service";
+import { getAverageAgeDb, getClosedEnquiriesCountDb, getExecutiveEnquiriesOverviewDb, getOpenEnquiriesCountDb, getOpenEnquiriesDb, getOverviewGraphDataDb, getUnassignedEnquiriesDb } from "../services/dashboard.service";
 import { getSession } from "../services/session.service";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function getOpenEnquiries() {
     try {
       const session = await getSession();
       if (session?.user.dbInfo) {
-        const result = await getOpenEnquiriesDb(session.user.dbInfo.dbName);
+        const data = await getOpenEnquiriesDb(session.user.dbInfo.dbName);
+        const result = data.map(bigIntToNum);
         return result;
       }
     } catch (error) {
@@ -14,11 +16,73 @@ export async function getOpenEnquiries() {
     }
 }
 
-export async function getClosedEnquiries() {
+export async function getOpenEnquiriesCount() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const data = await getOpenEnquiriesCountDb(session.user.dbInfo.dbName);
+      const result = data?.map(bigIntToNum);
+      return result[0];
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getUnassignedEnquiries() {
     try {
       const session = await getSession();
       if (session?.user.dbInfo) {
-        const result = await getClosedEnquiriesDb(session.user.dbInfo.dbName);
+        const result = await getUnassignedEnquiriesDb(session.user.dbInfo.dbName);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+}
+
+export async function getClosedEnquiriesCount() {
+    try {
+      const session = await getSession();
+      if (session?.user.dbInfo) {
+        const data = await getClosedEnquiriesCountDb(session.user.dbInfo.dbName);
+        const result = data.map(bigIntToNum);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+}
+
+export async function getExecutiveEnquiriesOverview() {
+    try {
+      const session = await getSession();
+      if (session?.user.dbInfo) {
+        const result = await getExecutiveEnquiriesOverviewDb(session.user.dbInfo.dbName);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+}
+
+export async function getOverviewGraphData() {
+    try {
+      const session = await getSession();
+      if (session?.user.dbInfo) {
+        const result = await getOverviewGraphDataDb(session.user.dbInfo.dbName);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+}
+
+export async function getAverageAge() {
+    try {
+      const session = await getSession();
+      if (session?.user.dbInfo) {
+        const result = await getAverageAgeDb(session.user.dbInfo.dbName);
         return result;
       }
     } catch (error) {

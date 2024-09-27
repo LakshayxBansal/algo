@@ -9,7 +9,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-
 import {menuTreeT} from '../../models/models';
 import {nameIconArr} from '../../utils/iconmap.utils';
 import { Popper, Grow, Popover } from '@mui/material';
@@ -235,6 +234,9 @@ const leaveButton = () => {
             {page.parent_id === level && 
             <>
               <Tooltip title={page.name} placement="right">
+                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href!=="#" ? page.href : generateHref(page.name)}>
+                  <ListItemIcon style={{minWidth: '30px'}}>
+                    {SelectIcon({Page: page})}
                 <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}

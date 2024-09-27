@@ -36,7 +36,7 @@ export async function createContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -77,7 +77,7 @@ export async function updateContactDB(
         data.doa,
         data.department_id,
         data.organisation_id,
-        session.user.email,
+        session.user.userId,
       ],
     });
   } catch (e) {
@@ -198,13 +198,27 @@ export async function DeleteContactList(crmDb: string, id: number) {
     let query = "Delete from contact_master where id=?";
     let values: any[] = [id];
 
-    await excuteQuery({
+    const result = await excuteQuery({
       host: crmDb,
       query: query,
       values: values,
     });
 
-    return;
+    return result
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delContactByIdDB(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from contact_master where id=?;",
+      values: [id],
+    });
+
+    return result;
   } catch (e) {
     console.log(e);
   }

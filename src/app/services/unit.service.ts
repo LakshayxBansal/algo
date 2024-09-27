@@ -9,7 +9,7 @@ export async function createUnitDB(session: Session, data: zm.unitSchemaT) {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createUnit(?,?,?);",
-      values: [data.name, data.uqc, session.user.email],
+      values: [data.name, data.uqc, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -22,7 +22,7 @@ export async function updateUnitDB(session: Session, data: zm.unitSchemaT) {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call updateUnit(?,?,?,?);",
-      values: [data.id, data.name, data.uqc, session.user.email],
+      values: [data.id, data.name, data.uqc, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -130,6 +130,33 @@ export async function fetchUnitById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query: "select * from unit_master where id=?",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function checksIfUsed(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "SELECT COUNT(*) as count FROM unit_master um INNER JOIN item_master im ON im.unit_id = um.id where um.id=?;",
+      values: [id],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delUnitDetailsById(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "delete from unit_master where id=?;",
       values: [id],
     });
 

@@ -1,11 +1,15 @@
 "use client";
-
 import React, { useState, ChangeEvent } from "react";
 import { Box, Divider, Paper, TextField, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-import { registerUser } from "@/app/controllers/user.controller";
+import {
+  registerUser,
+  checkInActiveUser,
+  makeUserActive,
+  deleteUser,
+} from "@/app/controllers/user.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { useRouter } from "next/navigation";
 import { CountryData } from "react-phone-input-material-ui";
@@ -14,15 +18,24 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { userSchemaT } from "../models/models";
 import Image from "next/image";
 import GoogleSignUpButton from "./customButton";
+import { AddDialog } from "../Widgets/masters/addDialog";
+import Confirmation from "./Confirmation";
+import { logger } from "../utils/logger.utils";
+import styles from "./SignUpForm.module.css";
 
 export default function SignupForm1(props: any) {
+  const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [inActiveUserId, setInActiveUserId] = useState<number | undefined>();
+  const [signUpData, setSignUpData] = useState<userSchemaT>();
   const [emailElement, setEmailElement] = useState(true);
   const [contact, setContact] = useState("phone");
   const [showPassword, setShowPassword] = useState(false);
+  const [showRePassword, setShowRePassword] = useState(false);
 
   const contactHandler = () => {
     if (contact === "phone") {
@@ -33,14 +46,29 @@ export default function SignupForm1(props: any) {
       setContact("phone");
     }
   };
-  const router = useRouter();
 
-  const formSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    for (const [key, value] of formData.entries()) {
-      data[key] = value;
+  async function makeUserActiveAgain(userId: number | undefined) {
+    try {
+      await makeUserActive(userId);
+      router.push("/congrats");
+    } catch (error) {
+      logger.info(error);
+    } finally {
+      setDialogOpen(false);
     }
+  }
+  async function deleteUserPrevDetail(userId: number | undefined) {
+    try {
+      await deleteUser(userId);
+      await handleRegister(signUpData as userSchemaT);
+    } catch (error) {
+      logger.info(error);
+    } finally {
+      setDialogOpen(false);
+    }
+  }
+
+  async function handleRegister(data: userSchemaT) {
     const result = await registerUser(data as userSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -63,6 +91,24 @@ export default function SignupForm1(props: any) {
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
+  }
+
+  const formSubmit = async (formData: FormData) => {
+    let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+    const inActiveUser = await checkInActiveUser(
+      data.email || (data.phone as string)
+    );
+    if (inActiveUser) {
+      setSignUpData(data as userSchemaT);
+      setInActiveUserId(inActiveUser.id);
+      setDialogOpen(true);
+    } else {
+      await handleRegister(data as userSchemaT);
+    }
   };
 
   function onPhoneChange(
@@ -75,34 +121,27 @@ export default function SignupForm1(props: any) {
   }
 
   return (
-    // <Paper
-    //   sx={{
-    //     display: "flex",
-    //     flexDirection: "column",
-    //     alignItems: "center",
-    //     alignContent: "center",
-    //     borderRadius: "52px",
-    //     overflow: "hidden",
-    //     border: "1px solid black",
-    //     elevation: 3,
-    //     padding: 2,
-    //   }}
-    // >
     <Box
       sx={{
+        backgroundColor: "#AEC4F1",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#8FA8D7",
-        padding: "5% 5%",
+        height: "100vh",
       }}
+      // sx={{
+      //   display: "flex",
+      //   justifyContent: "center",
+      //   // backgroundColor: "#AEC4F1",
+      //   // padding: "5% 5%",
+      // }}
     >
       <Box
         style={{
           backgroundColor: "#ffff",
           borderRadius: "3rem",
           width: "78%",
-          height: "60%",
+          // height: "60%",
         }}
       >
         <Grid
@@ -118,14 +157,17 @@ export default function SignupForm1(props: any) {
             xs={0}
             sm={4.75}
             md={4.75}
-            style={{
-              // margin: "5%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+            style={
+              {
+                // margin: "5%",
+                // display: "flex",
+                // justifyContent: "center",
+                // alignItems: "center",
+              }
+            }
           >
             <Box
+              className={styles.image1}
               component="img"
               sx={{
                 height: "100%",
@@ -136,6 +178,24 @@ export default function SignupForm1(props: any) {
               src="/signup.png"
             />
           </Grid>
+          {dialogOpen && (
+            <AddDialog
+              title={""}
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
+              {/* <Confirmation setDialogOpen={setDialogOpen} userId={inActiveUserId}/> */}
+              <Box>
+                <h2>Do you want continue with previous credentials ? </h2>
+                <Button onClick={() => makeUserActiveAgain(inActiveUserId)}>
+                  Yes
+                </Button>
+                <Button onClick={() => deleteUserPrevDetail(inActiveUserId)}>
+                  No
+                </Button>
+              </Box>
+            </AddDialog>
+          )}
           <Grid item xs={12} sm={6} md={6} style={{ margin: "5%" }}>
             <Box style={{ display: "flex", flexDirection: "row" }}>
               <Image
@@ -330,7 +390,7 @@ export default function SignupForm1(props: any) {
                       fullWidth
                       name="repassword"
                       label="Re-enter Password"
-                      type="password"
+                      type={!showRePassword ? "password" : "text"}
                       id="repassword"
                       sx={{
                         "& .MuiInputBase-input": {
@@ -348,17 +408,6 @@ export default function SignupForm1(props: any) {
                         mt: 1,
                       }}
                     />
-                    <Button
-                      type="button"
-                      sx={{ marginLeft: "-65px", marginTop: "12px" }}
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
-                    </Button>
                   </Grid>
                 </Grid>
               </Grid>
@@ -408,7 +457,7 @@ export default function SignupForm1(props: any) {
                 xs={12}
                 sm={12}
                 md={12}
-                sx={{ display: "flex", justifyContent: "center", mt: 2 }}
+                sx={{ display: "flex", justifyContent: "center", mt: "5%" }}
               >
                 <Link href="\signin" variant="body2">
                   Already have an account? Sign in
@@ -435,7 +484,5 @@ export default function SignupForm1(props: any) {
         </Grid>
       </Box>
     </Box>
-
-    //  </Paper>
   );
 }

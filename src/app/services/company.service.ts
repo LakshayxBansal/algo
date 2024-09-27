@@ -1,12 +1,12 @@
-'use server'
-import excuteQuery, {createDbConn}  from '../utils/db/db';
+"use server";
+import excuteQuery, { createDbConn } from "../utils/db/db";
 import * as zm from "../models/models";
-import { dbTableAndProScript } from '../utils/tableScript';
+import { dbTableAndProScript } from "../utils/tableScript";
 
 export async function getCompanyDetailsById(id: number) {
   try {
     const result = await excuteQuery({
-      host: 'userDb',
+      host: "userDb",
       query:
         "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, \
         s.name state, co.name country from company c\
@@ -22,55 +22,73 @@ export async function getCompanyDetailsById(id: number) {
   }
 }
 
+export async function getCompanyDbByIdList(id: number) {
+  try {
+    const result = await excuteQuery({
+      host: "userDb",
+      query: "select c.dbinfo_id from company c where c.id=?;",
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getHostId() {
-  let result
+  let result;
   try {
     const data = await excuteQuery({
-      host: 'userDb',
-      query: 'select * from dbHost d where d.useForNextDb = 1;', 
+      host: "userDb",
+      query: "select * from dbHost d where d.useForNextDb = 1;",
       values: [],
     });
     result = {
       status: true,
-      data: data[0]
-    }
+      data: data[0],
+    };
   } catch (e) {
     result = {
       status: false,
       data: [{ path: ["form"], message: "Error: Server Error" }],
-    }
+    };
   }
   return result;
 }
 
-export async function createCompanyDB(dbName: string, host: string, port: number) {
-  let result
+export async function createCompanyDB(
+  dbName: string,
+  host: string,
+  port: number
+) {
+  let result;
   try {
     const data = await createDbConn({
       hostIp: host,
       hostPort: port,
-      query: 'create database ' + dbName,
+      query: "create database " + dbName,
     });
     result = {
       status: true,
-      data: data[0]
-    }
+      data: data[0],
+    };
   } catch (e) {
     result = {
       status: false,
       data: [{ path: ["form"], message: "Error: Server Error" }],
-    }
+    };
   }
   return result;
 }
 
 export async function createTablesAndProc(dbName: string) {
-  let result
+  let result;
   try {
-    const scripts : string[] = dbTableAndProScript.split('~')  
-    let data
-    for(let idx in scripts){
-      let query = scripts[idx]
+    const scripts: string[] = dbTableAndProScript.split("~");
+    let data;
+    for (let idx in scripts) {
+      let query = scripts[idx];
       data += await excuteQuery({
         host: dbName,
         query: query,
@@ -79,62 +97,84 @@ export async function createTablesAndProc(dbName: string) {
     }
     result = {
       status: true,
-      data: data
-    }
+      data: data,
+    };
   } catch (e) {
     result = {
       status: false,
       data: [{ path: ["form"], message: "Error: Server Error" }],
-    }
+    };
   }
   return result;
 }
 
-export async function createCompanyAndInfoDb(hostId: number, dbName: string, company: zm.companySchemaT, userId: number) {
-  try {    
-    const result = await excuteQuery({
-      host: 'userDb',
-      query: 'call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-      values: [dbName, hostId, company.name, company.alias, company.add1, company.add2, company.country_id, company.state_id, company.city, company.pincode, userId] 
-    });
-    
-    return result;
-  } catch(e) {
-    console.log(e);
-  }
-}
-
-export async function dropDatabase(dbName: string){
+export async function createCompanyAndInfoDb(
+  hostId: number,
+  dbName: string,
+  company: zm.companySchemaT,
+  userId: number
+) {
   try {
     const result = await excuteQuery({
-      host: dbName,
-      query: 'DROP DATABASE ' + dbName,
-      values:[]
-    }); 
+      host: "userDb",
+      query: "call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      values: [
+        dbName,
+        hostId,
+        company.name,
+        company.alias,
+        company.add1,
+        company.add2,
+        company.country_id,
+        company.state_id,
+        company.city,
+        company.pincode,
+        userId,
+      ],
+    });
+    console.log("result", result);
+
     return result;
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function deleteCompanyAndDbInfo(companyId: number, dbInfoId: number, userCompanyId: number){
+export async function dropDatabase(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query: "DROP DATABASE " + dbName,
+      values: [],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function deleteCompanyAndDbInfo(
+  companyId: number,
+  dbInfoId: number,
+  userCompanyId: number
+) {
   try {
     let result = await excuteQuery({
-      host: 'userDb',
-      query: 'DELETE FROM company WHERE id = ?',
-      values:[companyId]
-    }); 
-
-    result += await excuteQuery({
-      host: 'userDb',
-      query: 'DELETE FROM dbInfo WHERE id = ?',
-      values:[dbInfoId]
+      host: "userDb",
+      query: "DELETE FROM company WHERE id = ?",
+      values: [companyId],
     });
 
     result += await excuteQuery({
-      host: 'userDb',
-      query: 'DELETE FROM userCompany WHERE id = ?',
-      values:[userCompanyId]
+      host: "userDb",
+      query: "DELETE FROM dbInfo WHERE id = ?",
+      values: [dbInfoId],
+    });
+
+    result += await excuteQuery({
+      host: "userDb",
+      query: "DELETE FROM userCompany WHERE id = ?",
+      values: [userCompanyId],
     });
 
     return result;
@@ -158,7 +198,8 @@ export async function getCompaniesDb(
 
     const result = await excuteQuery({
       host: "userDb",
-      query: "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
+      query:
+        "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
           CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID\
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
@@ -169,34 +210,41 @@ export async function getCompaniesDb(
           dbInfo d, dbHost h,\
           company c WHERE\
           u.id = uc.user_id and \
+          uc.isAccepted = 1 and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
-          d.host_id = h.id AND" + (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") + " u.id=? \
+          d.host_id = h.id AND" +
+        (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") +
+        " u.id=? \
           order by c.name) AS NumberedRows\
           WHERE RowNum > ?*?\
           ORDER BY RowNum\
           LIMIT ?;",
-          values: vals,
-        });
-        return result
+      values: vals,
+    });
+    return result;
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function getCompanyCount(userId: number, value: string | undefined) {
+export async function getCompanyCount(
+  userId: number,
+  value: string | undefined
+) {
   try {
     return excuteQuery({
       host: "userDb",
       query:
-        'Select count(*) as rowCount from \
+        "Select count(*) as rowCount from \
           company as c, \
           userCompany as uc, \
           user as u\
           where \
           u.id=? and \
           u.id = uc.user_id and \
-          uc.company_id = c.id' + (value ? " and c.name LIKE CONCAT('%',?,'%')" : ''),
+          uc.company_id = c.id" +
+        (value ? " and c.name LIKE CONCAT('%',?,'%')" : ""),
       values: [userId, value],
     });
   } catch (e) {
@@ -204,17 +252,13 @@ export async function getCompanyCount(userId: number, value: string | undefined)
   }
 }
 
-
-export async function updateCompanyDB(
-  data: zm.companySchemaT,
-) {
+export async function updateCompanyDB(data: zm.companySchemaT) {
   try {
     return excuteQuery({
       host: "userDb",
-      query:
-        "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query: "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        data.id, 
+        data.id,
         data.name,
         data.alias,
         data.add1,
@@ -235,13 +279,14 @@ export async function getHostDetailsService(dbName: string) {
   try {
     const result = await excuteQuery({
       host: "userDb",
-      query: 'select dh.host as hostIp, dh.port as hostPort from dbHost dh left join dbInfo d on d.host_id=dh.id where concat(d.name, d.id)=?;',
+      query:
+        "select dh.host as hostIp, dh.port as hostPort from dbHost dh left join dbInfo d on d.host_id=dh.id where concat(d.name, d.id)=?;",
       values: [dbName],
     });
 
     return result[0];
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
-  return null
+  return null;
 }

@@ -1,41 +1,40 @@
-'use client'
-import * as React from 'react';
+"use client";
+import * as React from "react";
+import { GridColDef } from "@mui/x-data-grid";
+import EntityList from "@/app/Widgets/masters/EntityList";
+import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
+import {
+  delEnquirySourceById,
+  getEnquirySourceById,
+  getEnquirySourceByPage,
+} from "@/app/controllers/enquirySource.controller";
 
-import { GridColDef } from '@mui/x-data-grid';
-import EntityList from '@/app/Widgets/masters/EntityList';
-import AppBar from '@mui/material/AppBar';
-import SourceForm from '@/app/Widgets/masters/masterForms/sourceForm';
-import { getEnquirySourceById, getEnquirySourceByPage } from '@/app/controllers/enquirySource.controller';
-
+const columns: GridColDef[] = [
+  {
+    field: "name",
+    headerName: "Name",
+    editable: true,
+  },
+];
 
 export default function enquirySource() {
-  const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-      field: 'name',
-      headerName: 'Name',
-      width: 150,
-      editable: true,
-    }
-  ];
-  
   return (
-    <div style={{ height: 800, width: '100%' }}>
-      <AppBar position="static" color="default">
-      </AppBar>
+    <>
       <EntityList
+        title="Source List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-              <SourceForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-              data={data}
-            />
-          )}
+          <SourceForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
         fetchDataFn={getEnquirySourceByPage}
         fnFetchDataByID={getEnquirySourceById}
+        fnDeleteDataByID={delEnquirySourceById}
         customCols={columns}
-        AddAllowed={true}>
-      </EntityList>
-    </div>
+        AddAllowed={true}
+      ></EntityList>
+    </>
   );
 }

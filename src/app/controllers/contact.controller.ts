@@ -7,7 +7,7 @@ import {
   DeleteContactList,
   getContactByPageDb,
   getContCount,
-  updateContactDB,
+  updateContactDB,delContactByIdDB
 } from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
@@ -167,15 +167,27 @@ export async function getContactById(id: number) {
 
 // For Deleting Contact
 export async function DeleteContact(id: number) {
+  let errorResult = { status: false, error: {} };
   try {
     const session = await getSession();
 
     if (session?.user.dbInfo) {
-      return DeleteContactList(session.user.dbInfo.dbName, id);
+      const result = await DeleteContactList(session.user.dbInfo.dbName, id);
+      
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result.affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
     }
-  } catch (error) {
+  } catch (error:any) {
     throw error;
+    errorResult= { status: false, error: error };
   }
+  return errorResult;
 }
 
 export async function getContactByPage(
@@ -223,4 +235,27 @@ export async function getContactByPage(
     };
   }
   return getContactByPage;
+}
+
+export async function delContactById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await delContactByIdDB(session.user.dbInfo.dbName, id);
+
+      if ((result.affectedRows = 1)) {
+        errorResult = { status: true, error: {} };
+      } else if ((result .affectedRows = 0)) {
+        errorResult = {
+          ...errorResult,
+          error: "Record Not Found",
+        };
+      }
+    }
+  } catch (error:any) {
+    throw error;
+    errorResult= { status: false, error: error };
+  }
+  return errorResult;
 }

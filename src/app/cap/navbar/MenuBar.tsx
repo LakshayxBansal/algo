@@ -207,7 +207,7 @@ export default function MenuBar(props: propsType) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <ProfileModal img={props.profileImg} name={props.username} />
+            <ProfileModal img={props.profileImg} name={props.username} userId={0} companyId={0} companyName={""} />
           </Toolbar>
         </AppBar>
         <Box sx={{ display: "flex" }}>
@@ -229,7 +229,7 @@ export default function MenuBar(props: propsType) {
               pages={pages}
               openDrawer={open}
               setOpenDrawer={setOpenDrawer}
-            ></LeftMenuTree>
+            />
           </Drawer>
           <Box style={{ width: "100%" }}>{children}</Box>
         </Box>
