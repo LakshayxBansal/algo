@@ -5,7 +5,7 @@ import excuteQuery from "../utils/db/db";
 import { logger } from "../utils/logger.utils";
 
 export async function searchMainDataDB(crmDb:string, data:string){
-    let result
+    let result;
     try{
         result =  await excuteQuery({
             host:"crmapp1",
@@ -18,7 +18,6 @@ export async function searchMainDataDB(crmDb:string, data:string){
         // logger.error(e);
         console.log(e);
     }
-    console.log(result)
+    // console.log("this is the result", result)
     return result;
 }
-// console.log("this is logged",searchMainDataDB("crmapp1","d" ))

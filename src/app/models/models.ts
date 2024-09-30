@@ -20,7 +20,7 @@ export type areaSchemaT = z.infer<typeof zs.areaSchema>;
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
 export type optionsDataT = {
-  id: number;
+  id?: number;
   name: string;
   detail?: string;
 };
@@ -101,6 +101,8 @@ export type nameMasterDataT = z.infer<typeof zs.nameMasterData>; // for simple n
 export type nameAliasDataT = z.infer<typeof zs.nameAliasData>; // for name and alias masters
 
 export type menuOptionT = z.infer<typeof zs.menuOption>;
+
+export type searchDataT = z.infer<typeof zs.searchData>;
 
 export type menuTreeT = {
   id: number;
