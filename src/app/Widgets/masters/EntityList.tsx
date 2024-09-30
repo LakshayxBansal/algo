@@ -126,7 +126,7 @@ export default function EntityList(props: EntityListPropsT) {
 
   function handleDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
-      console.log("delete");
+      setIds(modId);
       setDialogOpen(true);
       setDlgMode(dialogMode.Delete);
     }
@@ -135,11 +135,13 @@ export default function EntityList(props: EntityListPropsT) {
   async function onDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
       const data = await props.fnDeleteDataByID(modId);
-      // setDialogOpen(false);
+      setSnackOpen(true);
 
       setTimeout(() => {
         dialogOpen ? setDialogOpen(false) : null;
+        setSnackOpen(false);
       }, 1000);
+      // setIds(0);
     }
   }
 
@@ -262,7 +264,6 @@ export default function EntityList(props: EntityListPropsT) {
             <Button
               onClick={() => {
                 onDeleteDialog(ids);
-                setSnackOpen(true);
               }}
               variant="contained"
             >
@@ -274,7 +275,7 @@ export default function EntityList(props: EntityListPropsT) {
           open={snackOpen}
           autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
-          message={deleteMsg}
+          message={"Record Deleted Successfully"}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
@@ -611,6 +612,21 @@ export default function EntityList(props: EntityListPropsT) {
               fnFileUpad={props.fnFileUpad}
               sampleFileName={props.sampleFileName}
             />
+          ) : props.renderForm && dlgMode === dialogMode.Add ? (
+            props.renderForm(setDialogOpen, (arg) => {})
+          ) : props.renderForm && dlgMode === dialogMode.Modify ? (
+            props.renderForm(setDialogOpen, (arg) => {}, modData)
+          ) : dlgMode === dialogMode.Delete ? (
+            <DeleteComponent />
+          ) : null}
+        </AddDialog>
+      )}
+      {/* {props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
+            <UploadFileForm
+              setDialogOpen={setDialogOpen}
+              fnFileUpad={props.fnFileUpad}
+              sampleFileName={props.sampleFileName}
+            />
           ) : props.renderForm ? (
             dlgMode === dialogMode.Add ? (
               props.renderForm(setDialogOpen, (arg) => {})
@@ -619,9 +635,7 @@ export default function EntityList(props: EntityListPropsT) {
             )
           ) : dlgMode === dialogMode.Delete ? (
             <DeleteComponent />
-          ) : null}
-        </AddDialog>
-      )}
+          ) : null} */}
       {/* {dialogOpen && (
         <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
           <DeleteComponent />

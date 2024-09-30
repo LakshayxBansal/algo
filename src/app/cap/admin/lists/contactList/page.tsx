@@ -3,6 +3,7 @@ import * as React from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
 import {
+  createContactsBatch,
   DeleteContact,
   getContactById,
   getContactByPage,
@@ -40,6 +41,9 @@ export default function ManageContacts() {
             data={data}
           />
         )}
+        fileUploadFeatureReqd={true} 
+        fnFileUpad={createContactsBatch} 
+        sampleFileName=""
         fetchDataFn={getContactByPage}
         fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
