@@ -3,15 +3,16 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { Box, Paper } from "@mui/material";
 import { getClosedEnquiriesCount } from "@/app/controllers/dashboard.controller";
+import { logger } from "@/app/utils/logger.utils";
 
-export default async function ClosedCard() {    
-    let result, sinceDate;
-    try {
-        result = (await getClosedEnquiriesCount())[0];
-        sinceDate = (new Date(result.since)).toDateString();
-    } catch (e) {
-        console.log(e);
-    }
+export default async function ClosedCard() {
+  let result, sinceDate;
+  try {
+    result = (await getClosedEnquiriesCount())[0];
+    sinceDate = new Date(result.since).toDateString();
+  } catch (e) {
+    logger.info(e);
+  }
   return (
     <Paper
       sx={{
@@ -32,11 +33,15 @@ export default async function ClosedCard() {
         }}
       >
         <Box>
-            <Typography component="h2" variant="h6" gutterBottom>Closed Enquiries</Typography>
-            <Typography component="p" variant="h4">{result.count}</Typography>
-            <Typography color="text.secondary" sx={{ flex: 1 }}>
-                since {sinceDate}
-            </Typography>
+          <Typography component="h2" variant="h6" gutterBottom>
+            Closed Enquiries
+          </Typography>
+          <Typography component="p" variant="h4">
+            {result?.count}
+          </Typography>
+          <Typography color="text.secondary" sx={{ flex: 1 }}>
+            since {sinceDate}
+          </Typography>
         </Box>
         <Box>
           <Link color="primary" href="#">
