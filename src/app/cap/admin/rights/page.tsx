@@ -1,14 +1,12 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { logger } from "@/app/utils/logger.utils";
 import { getSession } from "@/app/services/session.service";
-import { getMasterObjects, getObjects, getRightsData, getTransactionObjects,getReportObjects } from "@/app/controllers/rights.controller";
+import { getMasterObjects, getObjects, getRightsData, getTransactionObjects, getReportObjects } from "@/app/controllers/rights.controller";
 import { CheckBoxGrid, SubmitButton } from "./CheckBoxGrid";
 import { AutocompleteDB } from "@/app/Widgets/AutocompleteDB";
 import { optionsDataT } from "@/app/models/models";
 import NewPage from "./newpage";
 import NewPage2 from "./newpage2";
-
-import { transformSync } from "next/dist/build/swc";
 
 
 type DataState = {
@@ -32,22 +30,99 @@ function ObjectName() {
     )
 }
 
+function camelCaseToNormal(camelCaseStr: string) {
+    return camelCaseStr
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/([A-Z])/g, ' $1')
+        .trim()
+        .toLowerCase()
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function getParentCountDefaultValue(rightsData: any, masterObjects: any, transactionObjects: any, reportObjects: any) {
+    let countData: any = {};
+    for (const key in rightsData) {
+        if (rightsData.hasOwnProperty(key)) {
+            let objectName = key.split("_")[0];
+            const role = key.split("_")[1];
+            const right = key.split("_")[2];
+            objectName = camelCaseToNormal(objectName);
+            if (masterObjects.some((obj: any) => obj.name === objectName)) {
+                if (rightsData[key] == true) {
+                    if (countData.hasOwnProperty(`master_${role}_${right}`)) {
+                        countData[`master_${role}_${right}`] += 1;
+                    } else {
+                        countData[`master_${role}_${right}`] = 1;
+                    }
+                }else{
+                    if (!countData.hasOwnProperty(`master_${role}_${right}`)) {
+                        countData[`master_${role}_${right}`] = 0;
+                    }
+                }
+            }
+            else if (transactionObjects.some((obj: any) => obj.name === objectName)) {
+                if (rightsData[key] == true) {
+                    if (countData.hasOwnProperty(`transaction_${role}_${right}`)) {
+                        countData[`transaction_${role}_${right}`] += 1;
+                    } else {
+                        countData[`transaction_${role}_${right}`] = 1;
+                    }
+                }else{
+                    if (!countData.hasOwnProperty(`transaction_${role}_${right}`)) {
+                        countData[`transaction_${role}_${right}`] = 0;
+                    }
+                }
+            }
+            else if (reportObjects.some((obj: any) => obj.name === objectName)) {
+                if (rightsData[key] == true) {
+                    if (countData.hasOwnProperty(`report_${role}_${right}`)) {
+                        countData[`report_${role}_${right}`] += 1;
+                    } else {
+                        countData[`report_${role}_${right}`] = 1;
+                    }
+                }else{
+                    if (!countData.hasOwnProperty(`report_${role}_${right}`)) {
+                        countData[`report_${role}_${right}`] = 0;
+                    }
+                }
+            }
+        }
+    }
+    return countData;
+}
+
+function getParentDataDefaultValue(countData: any) {
+    let defaultParentData: any = {};
+    ["master", "transaction", "report"].map((parentObj: any) => {
+        roles.map((role: any) => {
+            rights.map((right: any) => {
+                if(countData[`${parentObj}_${role}_${right}`] === 0){
+                    defaultParentData[`${parentObj}_${role}_${right}`] = false;
+                }else{
+                    defaultParentData[`${parentObj}_${role}_${right}`] = true;
+                }
+                // countData[`${parentObj}_${role}_${right}`] === 0 ? defaultParentData[`${parentObj}_${role}_${right}`] = false : defaultParentData[`${parentObj}_${role}_${right}`] = true;
+            })
+        })
+    })
+    return defaultParentData;
+}
+
 
 export default async function Rights() {
     try {
         const session = await getSession();
         if (session) {
             const rightsData: DataState | undefined = await getRightsData();
-            const objectData = await getObjects();
             const masterObjects = await getMasterObjects();
             const transactionObjects = await getTransactionObjects();
             const reportObjects = await getReportObjects();
+            const parentCountDefaultValue = getParentCountDefaultValue(rightsData, masterObjects, transactionObjects, reportObjects);
+            const parentDataDefaultValue = getParentDataDefaultValue(parentCountDefaultValue);
 
             return (
                 <>
-                    <NewPage2 masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects}/>
-                    {/* <NewPage masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects}/> */}
-                    {/* <NewPage2/> */}
+                    <NewPage2 rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
                 </>
 
             )

@@ -15,7 +15,7 @@ export default async function Companies() {
       <Box>
         <CompanyEntityList/>
       </Box>
-      <Box sx={{mt: 12}}>
+      <Box>
         <InviteEntityList/>
       </Box>
       </>

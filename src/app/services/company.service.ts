@@ -195,12 +195,20 @@ export async function getCompaniesDb(
     if (filter) {
       vals.unshift(filter);
     }
-    // const dbNames = await excuteQuery({
-    //   host: "userDb",
-    //   query: "select uc.company_id as companyId, c.dbinfo_id as dbId from userCompany uc,company c where c.id = uc.company_id and uc.user_id = ?;",
-    //   values : [userId]
-    // })
-    // console.log(dbNames);
+    const dbNames = await excuteQuery({
+      host: "userDb",
+      query: "select uc.company_id as companyId, c.dbinfo_id as dbId from userCompany uc,company c where uc.user_id = ? and uc.company_id = c.id;",
+      values : [userId]
+    })
+    const userRoles = dbNames.map(async(comp : any)=>{
+      const role = await excuteQuery({
+        host: `crmapp${comp.dbId}`,
+        query: "select em.role_id as roleId from executive_master em where em.crm_user_id = ?;",
+        values : [userId]
+      })
+      console.log(role);
+    })
+    console.log(userRoles);
     const result = await excuteQuery({
       host: "userDb",
       query:
