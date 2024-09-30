@@ -1,11 +1,6 @@
-import { Box, Grid, Typography } from "@mui/material";
 import { logger } from "@/app/utils/logger.utils";
 import { getSession } from "@/app/services/session.service";
-import { getMasterObjects, getObjects, getRightsData, getTransactionObjects, getReportObjects } from "@/app/controllers/rights.controller";
-import { CheckBoxGrid, SubmitButton } from "./CheckBoxGrid";
-import { AutocompleteDB } from "@/app/Widgets/AutocompleteDB";
-import { optionsDataT } from "@/app/models/models";
-import NewPage from "./newpage";
+import { getMasterObjects, getRightsData, getTransactionObjects, getReportObjects } from "@/app/controllers/rights.controller";
 import NewPage2 from "./newpage2";
 
 
@@ -17,26 +12,13 @@ const objects = ["Action", "Allocation Type", "Area", "Category", "Contact", "Co
 const roles = ["manager", "executive"];
 const rights = ["create", "read", "update", "delete"];
 
-function ObjectName() {
-    return (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {objects.map((i) => (
-                <Typography variant="h6" component="h6" key={i}>
-                    {i}
-                </Typography>
-
-            ))}
-        </Box>
-    )
-}
-
 function camelCaseToNormal(camelCaseStr: string) {
     return camelCaseStr
-        .replace(/([a-z])([A-Z])/g, '$1 $2')
-        .replace(/([A-Z])/g, ' $1')
+        .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle cases like "HTMLParser"
         .trim()
         .toLowerCase()
-        .replace(/\b\w/g, char => char.toUpperCase());
+        .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
 }
 
 function getParentCountDefaultValue(rightsData: any, masterObjects: any, transactionObjects: any, reportObjects: any) {
@@ -119,7 +101,7 @@ export default async function Rights() {
             const reportObjects = await getReportObjects();
             const parentCountDefaultValue = getParentCountDefaultValue(rightsData, masterObjects, transactionObjects, reportObjects);
             const parentDataDefaultValue = getParentDataDefaultValue(parentCountDefaultValue);
-
+        
             return (
                 <>
                     <NewPage2 rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />

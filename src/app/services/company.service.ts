@@ -200,16 +200,18 @@ export async function getCompaniesDb(
       query: "select uc.company_id as companyId, c.dbinfo_id as dbId from userCompany uc,company c where uc.user_id = ? and uc.company_id = c.id;",
       values : [userId]
     })
-    const userRoles = dbNames.map(async(comp : any)=>{
-      const role = await excuteQuery({
+    
+    let userRoles : any = [];
+    for(let comp of dbNames){
+        const role = await excuteQuery({
         host: `crmapp${comp.dbId}`,
         query: "select em.role_id as roleId from executive_master em where em.crm_user_id = ?;",
         values : [userId]
       })
-      console.log(role);
-    })
-    console.log(userRoles);
-    const result = await excuteQuery({
+      userRoles.push({roleId : role[0].roleId,companyId : comp.companyId})
+    }
+    
+    const results = await excuteQuery({
       host: "userDb",
       query:
         "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
@@ -235,7 +237,12 @@ export async function getCompaniesDb(
           LIMIT ?;",
       values: vals,
     });
-    return result;
+   
+    const newResult = results.map((res : any )=> {
+      const found = userRoles.find((ur : any) => res.id === ur.companyId);
+      return { ...res, roleId: found ? found.roleId : null };
+    });
+    return newResult;
   } catch (e) {
     console.log(e);
   }

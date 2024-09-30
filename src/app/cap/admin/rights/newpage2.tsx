@@ -17,7 +17,7 @@ function nameFormat(name: string) {
     return name = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
 }
 
-function Child({ object, handleChange, data, role, parentName }: { object: any, handleChange: any, data: any, role: any, parentName: string}) {
+function Child({ object, handleChange, data, role, parentName }: { object: any, handleChange: any, data: any, role: any, parentName: string }) {
 
     return (
         <Box>
@@ -66,14 +66,14 @@ function Child({ object, handleChange, data, role, parentName }: { object: any, 
 
 export default function NewPage2({ rightsData, masterObjects, transactionObjects, reportObjects, parentCountDefaultValue, parentDataDefaultValue }: { rightsData: any, masterObjects: any, transactionObjects: any, reportObjects: any, parentCountDefaultValue: any, parentDataDefaultValue: any }) {
     const [data, setData] = React.useState(rightsData);
-    const [parentDataCount, setParentDataCount] = React.useState<any>(parentCountDefaultValue);
     const [parentData, setParentData] = React.useState<any>(parentDataDefaultValue);
+    const [parentDataCount, setParentDataCount] = React.useState<any>(parentCountDefaultValue);
     const [role, setRole] = React.useState("manager");
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [openMaster, setOpenMaster] = React.useState(false);
     const [openTransaction, setOpenTransaction] = React.useState(false);
     const [openReport, setOpenReport] = React.useState(false);
-
+    
     const handleMasterChange = () => {
         setOpenMaster((prev) => !prev);
         setOpenTransaction(false);
@@ -92,14 +92,14 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
     const handleSelectChange = (event: any) => {
         setRole(event.target.value)
     };
-    const handleChange = (column: string, parentName: string, parentSize : number) => (event: any) => {
+    const handleChange = (column: string, parentName: string,parentSize : number) => (event: any) => {
         setData({
             ...data,
             [column]: event.target.checked,
         });
         const parentColumn = `${parentName}_${column.split("_")[1]}_${column.split("_")[2]}`;
-        if(event.target.checked===false){
-            if(parentDataCount[parentColumn] === 1){
+        if (event.target.checked === false) {
+            if (parentDataCount[parentColumn] === 1) {
                 setParentData({
                     ...parentData,
                     [parentColumn] : false
@@ -109,29 +109,20 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                 ...parentDataCount,
                 [parentColumn]: parentDataCount[parentColumn] - 1
             })
-        }else{
+        } else {
+            if (parentDataCount[parentColumn] === parentSize-1) {
                 setParentData({
                     ...parentData,
                     [parentColumn] : true
                 })
-            setParentDataCount({
-                ...parentDataCount,
-                [parentColumn]: parentDataCount[parentColumn] + 1
-            })
+            }
+            setParentDataCount((prevState: any) => ({
+                ...prevState,
+                [parentColumn]: prevState[parentColumn] + 1
+            }))
         }
     };
-    const handleParentChange = (column: string) => (event: any) => {
-        const parentObjectName = column.split("_")[0];
-        const parentRole = column.split("_")[1];
-        const parentRight = column.split("_")[2];
-        let object;
-        if (parentObjectName === "master") {
-            object = masterObjects;
-        } else if (parentObjectName === "transaction") {
-            object = transactionObjects;
-        } else if (parentObjectName === "report") {
-            object = reportObjects;
-        }
+    const handleParentChange = (column: string,object : any) => (event: any) => {
         setParentData({
             ...parentData,
             [column]: event.target.checked,
@@ -146,7 +137,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
         object.map((obj: any) => {
             setData((prevState: any) => ({
                 ...prevState,
-                [`${nameFormat(obj.name)}_${parentRole}_${parentRight}`]: event.target.checked
+                [`${nameFormat(obj.name)}_${column.split("_")[1]}_${column.split("_")[2]}`]: event.target.checked
             }));
         });
     };
@@ -227,28 +218,28 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                 <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                     <Checkbox
                                         checked={parentData[`master_${role}_create`]}
-                                        onChange={handleParentChange(`master_${role}_create`)}
+                                        onChange={handleParentChange(`master_${role}_create`,masterObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_create`] !== masterObjects.length && parentDataCount[`master_${role}_create`] !== 0}
                                         color={(parentDataCount[`master_${role}_create`] === masterObjects.length || parentDataCount[`master_${role}_create`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`master_${role}_read`]}
-                                        onChange={handleParentChange(`master_${role}_read`)}
+                                        onChange={handleParentChange(`master_${role}_read`,masterObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
-                                        indeterminate={parentDataCount[`master_${role}_read`] !== masterObjects.length && parentDataCount[`master_${role}_create`] !== 0}
-                                        color={(parentDataCount[`master_${role}_read`] === masterObjects.length || parentDataCount[`master_${role}_create`] === 0) ? "primary" : "default"}
+                                        indeterminate={parentDataCount[`master_${role}_read`] !== masterObjects.length && parentDataCount[`master_${role}_read`] !== 0}
+                                        color={(parentDataCount[`master_${role}_read`] === masterObjects.length || parentDataCount[`master_${role}_read`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`master_${role}_update`]}
-                                        onChange={handleParentChange(`master_${role}_update`)}
+                                        onChange={handleParentChange(`master_${role}_update`,masterObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_update`] !== masterObjects.length && parentDataCount[`master_${role}_update`] !== 0}
                                         color={(parentDataCount[`master_${role}_update`] === masterObjects.length || parentDataCount[`master_${role}_update`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`master_${role}_delete`]}
-                                        onChange={handleParentChange(`master_${role}_delete`)}
+                                        onChange={handleParentChange(`master_${role}_delete`,masterObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_delete`] !== masterObjects.length && parentDataCount[`master_${role}_delete`] !== 0}
                                         color={(parentDataCount[`master_${role}_delete`] === masterObjects.length || parentDataCount[`master_${role}_delete`] === 0) ? "primary" : "default"}
@@ -258,7 +249,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
 
                         )}
 
-                        {openMaster && (<Grid item xs={12}><Child object={masterObjects} handleChange={handleChange} data={data} role={role} parentName="master"/></Grid>)}
+                        {openMaster && (<Grid item xs={12}><Child object={masterObjects} handleChange={handleChange} data={data} role={role} parentName="master" /></Grid>)}
                     </Grid>
                     <Divider variant='middle' />
                 </Box>
@@ -277,28 +268,28 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                 <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_create`]}
-                                        onChange={handleParentChange(`transaction_${role}_create`)}
+                                        onChange={handleParentChange(`transaction_${role}_create`,transactionObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_create`] !== transactionObjects.length && parentDataCount[`transaction_${role}_create`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_create`] === transactionObjects.length || parentDataCount[`transaction_${role}_create`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_read`]}
-                                        onChange={handleParentChange(`transaction_${role}_read`)}
+                                        onChange={handleParentChange(`transaction_${role}_read`,transactionObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_read`] !== transactionObjects.length && parentDataCount[`transaction_${role}_read`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_read`] === transactionObjects.length || parentDataCount[`transaction_${role}_read`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_update`]}
-                                        onChange={handleParentChange(`transaction_${role}_update`)}
+                                        onChange={handleParentChange(`transaction_${role}_update`,transactionObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_update`] !== transactionObjects.length && parentDataCount[`transaction_${role}_update`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_update`] === transactionObjects.length || parentDataCount[`transaction_${role}_update`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_delete`]}
-                                        onChange={handleParentChange(`transaction_${role}_delete`)}
+                                        onChange={handleParentChange(`transaction_${role}_delete`,transactionObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_delete`] !== transactionObjects.length && parentDataCount[`transaction_${role}_delete`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_delete`] === transactionObjects.length || parentDataCount[`transaction_${role}_delete`] === 0) ? "primary" : "default"}
@@ -308,7 +299,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
 
                         )}
 
-                        {openTransaction && (<Grid item xs={12}><Child object={transactionObjects} handleChange={handleChange} data={data} role={role} parentName="transaction"/></Grid>)}
+                        {openTransaction && (<Grid item xs={12}><Child object={transactionObjects} handleChange={handleChange} data={data} role={role} parentName="transaction" /></Grid>)}
 
 
                     </Grid>
@@ -328,28 +319,28 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                 <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                     <Checkbox
                                         checked={parentData[`report_${role}_create`]}
-                                        onChange={handleParentChange(`report_${role}_create`)}
+                                        onChange={handleParentChange(`report_${role}_create`,reportObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_create`] !== reportObjects.length && parentDataCount[`report_${role}_create`] !== 0}
                                         color={(parentDataCount[`report_${role}_create`] === reportObjects.length || parentDataCount[`report_${role}_create`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`report_${role}_read`]}
-                                        onChange={handleParentChange(`report_${role}_read`)}
+                                        onChange={handleParentChange(`report_${role}_read`,reportObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_read`] !== reportObjects.length && parentDataCount[`report_${role}_read`] !== 0}
                                         color={(parentDataCount[`report_${role}_read`] === reportObjects.length || parentDataCount[`report_${role}_read`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`report_${role}_update`]}
-                                        onChange={handleParentChange(`report_${role}_update`)}
+                                        onChange={handleParentChange(`report_${role}_update`,reportObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_update`] !== reportObjects.length && parentDataCount[`report_${role}_update`] !== 0}
                                         color={(parentDataCount[`report_${role}_update`] === reportObjects.length || parentDataCount[`report_${role}_update`] === 0) ? "primary" : "default"}
                                     />
                                     <Checkbox
                                         checked={parentData[`report_${role}_delete`]}
-                                        onChange={handleParentChange(`report_${role}_delete`)}
+                                        onChange={handleParentChange(`report_${role}_delete`,reportObjects)}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_delete`] !== reportObjects.length && parentDataCount[`report_${role}_delete`] !== 0}
                                         color={(parentDataCount[`report_${role}_delete`] === reportObjects.length || parentDataCount[`report_${role}_delete`] === 0) ? "primary" : "default"}
@@ -359,7 +350,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
 
                         )}
 
-                        {openReport && (<Grid item xs={12}><Child object={reportObjects} handleChange={handleChange} data={data} role={role} parentName="report"/></Grid>)}
+                        {openReport && (<Grid item xs={12}><Child object={reportObjects} handleChange={handleChange} data={data} role={role} parentName="report" /></Grid>)}
 
 
                     </Grid>
