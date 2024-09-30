@@ -2367,4 +2367,43 @@ BEGIN\
 	commit;\
     select * from temp_error_log;\
     select * from state_master sm where sm.id = id;\
-END ;";
+END ;~\
+\
+CREATE PROCEDURE `getExecutiveEnquiriesData`()\
+BEGIN\
+	SELECT count(*) total, em.name FROM enquiry_ledger_tran lt\
+		left join executive_master em on em.id=lt.allocated_to\
+		WHERE lt.enquiry_id NOT IN (SELECT et.enquiry_id FROM enquiry_ledger_tran et \
+		LEFT JOIN enquiry_status_master sm ON sm.id = et.status_id\
+		WHERE sm.name = 'Closed')\
+		AND lt.date = (SELECT MAX(inner_lt.date) \
+        FROM enquiry_ledger_tran inner_lt \
+        WHERE inner_lt.enquiry_id = lt.enquiry_id)\
+        AND lt.allocated_to IS NOT NULL group by em.name;\
+	SELECT lt.date AS date, Week(lt.date) AS week, em.name as name, COUNT(*) AS count\
+		FROM enquiry_ledger_tran lt \
+		left join executive_master em on lt.allocated_to=em.id\
+		WHERE (WEEK(lt.date)) >= WEEK(CURDATE()) - 2\
+		AND lt.enquiry_id not in (select et.enquiry_id from enquiry_ledger_tran et \
+		left join enquiry_status_master sm on sm.id=et.status_id where sm.name='Closed') AND\
+		lt.date = (SELECT MAX(inner_lt.date) \
+        FROM enquiry_ledger_tran inner_lt \
+        WHERE inner_lt.enquiry_id = lt.enquiry_id)\
+        AND lt.allocated_to IS NOT NULL\
+		GROUP BY name, Week(lt.date) ORDER BY name, WEEK(lt.date);\
+END;~\
+\
+CREATE PROCEDURE `getOverviewGraphData`()\
+BEGIN\
+	SELECT COUNT(distinct(enquiry_id)) totalOpen from enquiry_ledger_tran lt\
+	LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
+	WHERE sm.name = 'Open';\
+    SELECT COUNT(*) as count, MONTH(date) as month from (select lt.date as date from enquiry_ledger_tran lt\
+    LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
+	WHERE sm.name = 'Open' AND lt.date = (select MIN(et.date) from enquiry_ledger_tran et where et.enquiry_id=lt.enquiry_id)\
+	AND lt.date >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY lt.enquiry_id) as res\
+    group by month(date);\
+    SELECT COUNT(*) as count, MONTH(lt.date) as month from enquiry_ledger_tran lt left join enquiry_status_master sm \
+	ON sm.id = lt.status_id\
+	WHERE sm.name='Closed' AND lt.date > DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY month(lt.date);\
+END;";
