@@ -175,6 +175,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       // autoHighlight
       autoComplete
       includeInputInList
+      disableClearable={inputValue?inputValue.length===0:!Boolean(props.diaglogVal.id)}
     />
   );
 }
