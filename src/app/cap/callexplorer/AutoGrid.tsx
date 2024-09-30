@@ -44,6 +44,8 @@ import AllocateCall from "./AllocateCall";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Link from "next/link";
+import RefreshIcon from '@mui/icons-material/Refresh';
+
 
 export default function AutoGrid() {
   const pgSize = 10;
@@ -59,7 +61,13 @@ export default function AutoGrid() {
   const [totalRowCount, setTotalRowCount] = React.useState(0); // State for row count
   const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [refresh, setRefresh] = React.useState<boolean>(true);
+  const [refreshInterval, setRefreshInterval] = React.useState<number>(5); // Default to 5 minutes
 
+  const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 1 minute
+  };
 
   type DlgState = {
     [key: string]: HTMLElement | null;
@@ -99,8 +107,19 @@ export default function AutoGrid() {
       setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen])
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh])
 
+  const handleRefresh = () => {
+    setRefresh(!refresh)
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleRefresh();
+    }, refreshInterval * 60000);
+
+    return () => clearInterval(timer);
+  }, [refreshInterval]);
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     setRowSelectionModel(selectionModel);
@@ -153,7 +172,6 @@ export default function AutoGrid() {
   type customCol = { row: any; };
 
   const CustomColor = (props: customCol) => {
-    // console.log("these are the params",props.id)
     let color;
     if (props.row.callStatus === "Open") {
       if (props.row.executive === null) { color = "blue" }
@@ -290,8 +308,6 @@ export default function AutoGrid() {
       headerName: "Time",
       width: 100,
       renderCell: (params) => {
-        console.log(params.row.date);
-
         return params.row.date.toLocaleString('en-IN', options);
       },
     },
@@ -998,6 +1014,7 @@ export default function AutoGrid() {
                     {column1
                       .filter(col => col.field !== 'columnConfig')
                       .map((col) => (
+                        (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
                         <FormControlLabel
                           key={col.field}
                           control={
@@ -1089,37 +1106,63 @@ export default function AutoGrid() {
             alignItems: "center", // Aligns buttons in the center of the column
           },
         }}>
-
-          {<Tooltip title={rowSelectionModel.length > 0 ? "" : "Please select a row first"} placement="top">
+          <span>
+            {<Tooltip title={rowSelectionModel.length > 0 ? "" : "Please select a row first"} placement="top">
+              <span>
+                <ContainedButton
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    // bgcolor: "#dedfe0",
+                    // color: "black",
+                    // boxShadow: "3",
+                    margin: "0 1vw",
+                    textTransform: "none"
+                  }}
+                  onClick={() => setDialogOpen(true)}
+                  disabled={rowSelectionModel.length === 0}
+                >
+                  Allocate Call
+                </ContainedButton>
+              </span>
+            </Tooltip>}
             <span>
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{
-                  // bgcolor: "#dedfe0",
-                  // color: "black",
-                  // boxShadow: "3",
-                  margin: "0 1vw",
-                  textTransform: "none"
-                }}
-                onClick={() => setDialogOpen(true)}
-                disabled={rowSelectionModel.length === 0}
+                sx={{ textTransform: "none" }}
               >
-                Allocate Call
+                Feed Report
               </ContainedButton>
+              <IconButton
+                aria-label="refresh"
+                onClick={handleRefresh}
+              >
+                <RefreshIcon />
+              </IconButton>
+              <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                Auto refreshing in
+              </Typography>
+
+              <TextField
+                value={refreshInterval}
+                onChange={handleIntervalChange}
+                variant="standard"
+                size="small"
+                type="number"
+                inputProps={{ min: 1, style: { width: '40px', textAlign: 'center' } }}
+                sx={{ mx: 1 }}
+              />
+
+              <Typography variant="body2" component="span">
+                minutes.
+              </Typography>
             </span>
-          </Tooltip>}
-          <ContainedButton
-            variant="contained"
-            size="small"
-            sx={{ textTransform: "none" }}
-          >
-            Feed Report
-          </ContainedButton>
+          </span>
         </Box>
         {selectedRow && (<Box> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
         <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
-          <CallDetailList selectedRow={selectedRow} />
+          <CallDetailList selectedRow={selectedRow} refresh={refresh} />
         </Paper>
         <Box
           sx={{

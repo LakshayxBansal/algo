@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getCallEnquiryDetails } from "../../controllers/callExplorer.controller";
 import { StripedDataGrid } from "../../utils/styledComponents";
 
-export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
+export default function CallDetailList({ selectedRow, refresh }: { selectedRow: any, refresh: any }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
     const [data, setData] = useState([]);
     const options = {
@@ -15,14 +15,13 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
 
 
     useEffect(() => {
-        console.log("row", selectedRow);
 
         async function getEnquiries() {
             const result = await getCallEnquiryDetails(selectedRow?.id);
             setData(result);
         }
         getEnquiries();
-    }, [selectedRow])
+    }, [selectedRow, refresh])
 
 
     const column2: GridColDef[] = [
