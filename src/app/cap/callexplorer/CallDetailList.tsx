@@ -19,26 +19,11 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
 
         async function getEnquiries() {
             const result = await getCallEnquiryDetails(selectedRow?.id);
-            console.log(result);
             setData(result);
-            // setTotalRowCount(Number(result?.count));
         }
         getEnquiries();
     }, [selectedRow])
 
-    const row2 = [
-        {
-            id: 1,
-            type: "ClRc",
-            date: "11-05-2024",
-            time: "3:04PM",
-            executive: "coordinator",
-            subStatus: "Unallocated",
-            actionTaken: "None",
-            nextAction: "To Be Alllocated",
-            actionDate: "11-05-2024",
-        },
-    ];
 
     const column2: GridColDef[] = [
         { field: "type", headerName: "Type", width: 70 },
@@ -56,7 +41,7 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
         {
             field: "executive",
             headerName: "Executive",
-            width: 150,
+            width: 100,
         },
         { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "actionTaken", headerName: "Action Taken", width: 130 },
@@ -65,11 +50,6 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
             field: "actionDate",
             headerName: "Action Date",
             width: 130,
-        },
-        {
-            field: "id",
-            headerName: "ID",
-            width: 30,
         },
         {
             field: "actionTime", headerName: "Time", width: 130,

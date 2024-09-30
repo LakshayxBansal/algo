@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, Paper, Snackbar } from "@mui/material";
+import { Alert, Box, Button, Collapse, IconButton, Paper, Snackbar, Tooltip } from "@mui/material";
 import AutocompleteDB from "../../Widgets/AutocompleteDB";
 import { getExecutive } from "../../controllers/executive.controller";
 import { masterFormPropsT, optionsDataT, selectKeyValueT } from "../../models/models";
@@ -14,8 +14,8 @@ export default function AllocateCall(props: masterFormPropsT) {
         Record<string, { msg: string; error: boolean }>
     >({});
     const [snackOpen, setSnackOpen] = useState(false);
+    const [remark, setRemark] = useState("");
 
-    console.log(props.data);
 
     const handleSubmit = async (formData: FormData) => {
         let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -95,8 +95,6 @@ export default function AllocateCall(props: masterFormPropsT) {
         <Box id="sourceForm" sx={{ p: 3 }}>
             <form action={handleSubmit}>
                 <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
-
-
                     <Box sx={{
                         display: "grid",
                         columnGap: 2,
@@ -129,6 +127,8 @@ export default function AllocateCall(props: masterFormPropsT) {
                             id="remark"
                             label="Remark"
                             fullWidth
+                            value={remark}
+                            onChange={(e: any) => setRemark(e.target.value)}
                         />
                     </Box>
                     <Box
@@ -138,9 +138,16 @@ export default function AllocateCall(props: masterFormPropsT) {
                         }}
                     >
                         <Button onClick={handleCancel}>Cancel</Button>
-                        <Button type="submit" variant="contained" sx={{ width: "15%", marginLeft: "5%" }}>
-                            Submit
-                        </Button>
+                        {<Tooltip title={selectValues.executive && remark ? "" : "Please fill both fields"} placement="top">
+                            <span>
+                                <Button type="submit"
+                                    variant="contained"
+                                    sx={{ width: "15%", marginLeft: "5%" }}
+                                    disabled={!selectValues.executive || !remark}>
+                                    Submit
+                                </Button>
+                            </span>
+                        </Tooltip>}
                     </Box>
                 </Paper>
             </form>

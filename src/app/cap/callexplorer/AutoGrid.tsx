@@ -21,7 +21,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { gridClasses, GridColDef, GridFooter, GridFooterContainer, GridPagination, GridRowSelectionModel, GridRowSpacingParams } from "@mui/x-data-grid";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
   ContainedButton,
@@ -41,6 +41,9 @@ import { getEnquiryAction } from "../../controllers/enquiryAction.controller";
 import { getCallEnquiries } from "../../controllers/callExplorer.controller";
 import { AddDialog } from "../../Widgets/masters/addDialog";
 import AllocateCall from "./AllocateCall";
+import Seperator from "@/app/Widgets/seperator";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import Link from "next/link";
 
 export default function AutoGrid() {
   const pgSize = 10;
@@ -92,7 +95,6 @@ export default function AutoGrid() {
   useEffect(() => {
     async function getEnquiries() {
       const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
-      console.log(result);
       setData(result?.result);
       setTotalRowCount(Number(result?.count));
     }
@@ -182,7 +184,7 @@ export default function AutoGrid() {
   const column1: GridColDef[] = [
     {
       field: "Type",
-      headerName: "",
+      headerName: "Status",
       width: 50,
       renderCell: (params) => {
         return <CustomColor row={params.row} />;
@@ -195,6 +197,93 @@ export default function AutoGrid() {
       renderCell: (params) => {
         return params.row.date.toDateString();
       },
+      renderHeader: () => (
+        <Box>
+          <OutlinedButton
+            sx={{ color: filterValueState.date ? "blue" : "black", textTransform: "none" }}
+            startIcon={
+              <Tooltip title="Filter by Date" arrow>
+                <FilterListIcon />
+              </Tooltip>
+            }
+            onClick={handleClickFilter('date')}
+          >
+            Date
+          </OutlinedButton>
+          <Menu
+            anchorEl={dlgState['date']}
+            open={Boolean(dlgState['date'])}
+            onClose={() => handleCloseFilter('date')}
+          >
+            <MenuItem>
+              {/* <TextField
+                label="Initial Date"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={filterValueState?.date?.initial}
+                // onChange={(e) => setInitialDate(e.target.value)}
+                onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "initial": e.target.value })}
+                type="date"
+                fullWidth
+              /> */}
+              <InputControl
+                inputType={InputType.DATEINPUT}
+                id="initial"
+                label="Initial Date"
+                name="initial"
+                defaultValue={filterValueState.date ? filterValueState.date.initial : null}
+                value={filterValueState?.date?.initial}
+                onChange={(val: any) => handleFilterChange("date", { ...filterValueState?.date, "initial": val })}
+              />
+            </MenuItem>
+
+            <MenuItem>
+              <InputControl
+                inputType={InputType.DATEINPUT}
+                id="final"
+                label="Final Date"
+                name="final"
+                defaultValue={filterValueState.date ? filterValueState.date.final : null}
+                value={filterValueState?.date?.final}
+                onChange={(val: any) => handleFilterChange("date", { ...filterValueState?.date, "final": val })}
+              />
+              {/* <TextField
+                label="Final Date"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={filterValueState?.date?.final}
+                onChange={(e) => handleFilterChange("date", { ...filterValueState?.date, "final": e.target.value })}
+                type="date"
+                fullWidth
+              /> */}
+            </MenuItem>
+            <MenuItem>
+              <ContainedButton
+                onClick={() => handleCloseFilter("date")}
+                fullWidth
+                variant="contained"
+              >
+                Apply Filter
+              </ContainedButton>
+              <MenuItem>
+                <ContainedButton
+                  onClick={() => newhandleFilterReset("date")}
+                  fullWidth
+                  variant="contained"
+                >
+                  Reset Filter
+                </ContainedButton>
+              </MenuItem>
+            </MenuItem>
+          </Menu>
+        </Box>
+      ),
     },
     {
       field: "time",
@@ -496,9 +585,8 @@ export default function AutoGrid() {
             </MenuItem>
             <MenuItem>
               <ContainedButton
-                onClick={() => {
-                  () => handleCloseFilter("callStatus");
-                }}
+                onClick={() => handleCloseFilter("callStatus")}
+
                 fullWidth
                 variant="contained"
               >
@@ -735,7 +823,7 @@ export default function AutoGrid() {
             {dateFilter === "3" && (
               <>
                 <MenuItem>
-                  <TextField
+                  {/* <TextField
                     label="Initial Date"
                     variant="outlined"
                     size="small"
@@ -743,26 +831,33 @@ export default function AutoGrid() {
                       shrink: true,
                     }}
                     value={filterValueState?.actionDate?.initial}
-                    // onChange={(e) => setInitialDate(e.target.value)}
                     onChange={(e) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "initial": e.target.value })}
                     type="date"
                     fullWidth
+                  /> */}
+                  <InputControl
+                    inputType={InputType.DATEINPUT}
+                    variant="outlined"
+                    id="initial_action_date"
+                    label="Initial Date"
+                    name="initialActionDate"
+                    size="small"
+                    defaultValue={filterValueState.actionDate ? filterValueState.actionDate.initial : null}
+                    value={filterValueState?.actionDate?.initial}
+                    onChange={(val: any) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "initial": val })}
                   />
                 </MenuItem>
 
                 <MenuItem>
-                  <TextField
+
+                  <InputControl
+                    inputType={InputType.DATEINPUT}
+                    id="final_action_date"
                     label="Final Date"
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    name="finalActionDate"
+                    defaultValue={filterValueState.actionDate ? filterValueState.actionDate.final : null}
                     value={filterValueState?.actionDate?.final}
-                    // onChange={(e) => setFinalDate(e.target.value)}
-                    onChange={(e) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "final": e.target.value })}
-                    type="date"
-                    fullWidth
+                    onChange={(val: any) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "final": val })}
                   />
                 </MenuItem>
               </>
@@ -802,45 +897,45 @@ export default function AutoGrid() {
         return params.row.actionDate.toLocaleString('en-IN', options);
       },
     },
-    {
-      field: "columnConfig", headerName: "Column Config",
-      renderHeader: () => (
-        <Box>
-          <IconButton
-            aria-controls="tune-menu"
-            aria-haspopup="true"
-            onClick={handleClickFilter('columnConfig')}
-          >
-            <TuneIcon fontSize="small" />
-          </IconButton>
-          <Box>
-            <StyledMenu
-              id="tune-menu"
-              anchorEl={dlgState['columnConfig']}
-              open={Boolean(dlgState['columnConfig'])}
-              onClose={() => handleCloseFilter('columnConfig')}
-            >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {column1
-                  .filter(col => col.field !== 'columnConfig')
-                  .map((col) => (
-                    <FormControlLabel
-                      key={col.field}
-                      control={
-                        <Checkbox
-                          checked={columnVisibilityModel[col.field] !== false}
-                          onChange={() => handleColumnVisibilityChange(col.field)}
-                        />
-                      }
-                      label={col.headerName}
-                    />
-                  ))}
-              </div>
-            </StyledMenu>
-          </Box>
-        </Box>
-      )
-    },
+    // {
+    //   field: "columnConfig", headerName: "Column Config",
+    //   renderHeader: () => (
+    //     <Box>
+    //       <IconButton
+    //         aria-controls="tune-menu"
+    //         aria-haspopup="true"
+    //         onClick={handleClickFilter('columnConfig')}
+    //       >
+    //         <TuneIcon fontSize="small" />
+    //       </IconButton>
+    //       <Box>
+    //         <StyledMenu
+    //           id="tune-menu"
+    //           anchorEl={dlgState['columnConfig']}
+    //           open={Boolean(dlgState['columnConfig'])}
+    //           onClose={() => handleCloseFilter('columnConfig')}
+    //         >
+    //           <div style={{ display: "flex", flexDirection: "column" }}>
+    //             {column1
+    //               .filter(col => col.field !== 'columnConfig')
+    //               .map((col) => (
+    //                 <FormControlLabel
+    //                   key={col.field}
+    //                   control={
+    //                     <Checkbox
+    //                       checked={columnVisibilityModel[col.field] !== false}
+    //                       onChange={() => handleColumnVisibilityChange(col.field)}
+    //                     />
+    //                   }
+    //                   label={col.headerName}
+    //                 />
+    //               ))}
+    //           </div>
+    //         </StyledMenu>
+    //       </Box>
+    //     </Box>
+    //   )
+    // },
   ]
 
   const handleDateFilterChange = (event: SelectChangeEvent) => {
@@ -853,9 +948,6 @@ export default function AutoGrid() {
   };
 
 
-  const status_date = new Date();
-
-
   const CallType = (props: { text: string, color: string }) => {
     return (
       <Box
@@ -863,13 +955,13 @@ export default function AutoGrid() {
       >
         <Box
           sx={{
-            width: "10px",
-            height: "10px",
+            width: "7px",
+            height: "7px",
             bgcolor: props.color,
             marginRight: "5px",
           }}
         ></Box>
-        <Typography>{props.text}</Typography>
+        <Typography fontSize={14}>{props.text}</Typography>
       </Box>
     )
   }
@@ -877,139 +969,58 @@ export default function AutoGrid() {
   return (
     <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '100vh', p: 3, maxWidth: "100%" }}>
       <Box sx={{ maxWidth: "90vw" }}>
-        <Paper
-          elevation={2}
-          style={{ borderRadius: "1em" }}
-        >
-          <Box>
-            <Grid container>
-              <Grid item xs={12} md={8} lg={8}>
-                <Typography variant="caption" style={{ padding: "0 2%" }}>Date Range</Typography>
-                <Divider variant="middle" />
-                <Grid
-                  container
-                  spacing={2}
-                  direction={{ xs: "column", md: "row", sm: "row", lg: "row" }}
-                  style={{ padding: "0 2%" }}
-                  alignItems="center"
-                >
-                  <Grid item xs={12} sm={6} md={3} >
-                    <TextField
-                      label="Start Date"
-                      type="date"
-                      value={filterValueState.date?.initial}
-                      // onChange={(e) => setInitialDate(e.target.value)}
-                      onChange={(e) =>
-                        handleFilterChange("date", {
-                          ...filterValueState?.date,
-                          initial: e.target.value,
-                        })
-                      }
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      // sx={{ mr: 2 }}
-                      size="small"
-                      fullWidth
-                      sx={{
-                        flexGrow: { xs: 1, sm: 1, md: 0 }, minWidth: "100px", minHeight: "45px"
-                      }}
-
-                    />
-                  </Grid>
-                  {/* <Divider orientation="vertical" flexItem /> */}
-                  <Grid item xs={12} sm={6} md={3}>
-                    <TextField
-                      label="End Date"
-                      type="date"
-                      value={filterValueState.date?.final}
-                      onChange={(e) =>
-                        handleFilterChange("date", {
-                          ...filterValueState?.date,
-                          final: e.target.value,
-                        })
-                      }
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      size="small"
-                      fullWidth
-                      sx={{
-                        flexGrow: { xs: 1, sm: 1, md: 0 }, minWidth: "100px", minHeight: "45px"
-                      }}
-
-                    />
-                  </Grid>
-                  <Grid item xs={6} sm={6} md={3}>
-                    <ContainedButton
-                      variant="contained"
-                      onClick={() => { }}
-                      sx={{
-                        flexGrow: { xs: 1, sm: 1, md: 0 },
-                        minWidth: "120px", // Ensures minimum button width
-                        "@media (min-width: 898px)": {
-                          width: "100%", // Ensures consistent width
-                        },
-                        "@media (max-width: 1028px)": {
-                          width: "100%", // Consistent width behavior
-                        },
-                      }}
-                      fullWidth
-                      size="small"
-                    >
-                      Apply Filter
-                    </ContainedButton>
-                  </Grid>
-                  <Grid item xs={6} sm={6} md={3}>
-                    <ContainedButton
-                      onClick={() => newhandleFilterReset("date")}
-                      variant="contained"
-                      // sx={{ height: "2.3rem", fontSize: '10px' }}
-                      sx={{
-                        flexGrow: { xs: 1, sm: 1, md: 0 },
-                        minWidth: "120px", // Ensures minimum button width
-                        "@media (min-width: 898px)": {
-                          width: "100%", // Ensures consistent width
-                        },
-                        "@media (max-width: 1028px)": {
-                          width: "100%", // Consistent width behavior 
-                        },
-                      }}
-                      fullWidth
-                      size="small"
-                    >
-                      Reset Filter
-                    </ContainedButton>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12} md={4} lg={4} alignItems="flex-start"
-              // display={{ xs: 'none', sm: 'block' }}
-              // order={{ xs: -1, sm: 0}}
+        <Seperator>
+          <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            <Box sx={{ ml: 2 }}>
+              Call Explorer
+            </Box>
+            <Box>
+              <IconButton
+                aria-controls="tune-menu"
+                aria-haspopup="true"
+                onClick={(event) => {
+                  setDlgState((prevState) => ({
+                    ...prevState,
+                    columnConfig: event.currentTarget,  // Set the clicked button as the anchorEl directly here
+                  }));
+                }}
               >
-                <Paper elevation={3} style={{ borderRadius: "18em", marginTop: "2%", marginRight: '2%' }}>
-                  <Box style={{ display: "flex" }} justifyContent="center"
-                  // {{xs:"flex-start", md:"flex-end"}}
-                  >
-                    <Typography variant="caption" style={{ marginRight: "1%" }}>
-                      Today's Date:
-                    </Typography>
-                    <Typography variant="caption">
-                      {status_date.toDateString()}
-                    </Typography>
-                  </Box>
-                </Paper>
+                <TuneIcon fontSize="small" />
+              </IconButton>
+              <Box>
+                <StyledMenu
+                  id="tune-menu"
+                  anchorEl={dlgState['columnConfig']}
+                  open={Boolean(dlgState['columnConfig'])}
+                  onClose={() => handleCloseFilter('columnConfig')}
+                >
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    {column1
+                      .filter(col => col.field !== 'columnConfig')
+                      .map((col) => (
+                        <FormControlLabel
+                          key={col.field}
+                          control={
+                            <Checkbox
+                              checked={columnVisibilityModel[col.field] !== false}
+                              onChange={() => handleColumnVisibilityChange(col.field)}
+                            />
+                          }
+                          label={col.headerName}
+                        />
+                      ))}
+                  </div>
+                </StyledMenu>
+              </Box>
+            </Box>
+          </Grid>
+        </Seperator>
 
-              </Grid>
-            </Grid>
-
-          </Box>
-        </Paper>
         <Paper elevation={1}
         // sx={{ height: "40vh" }}
         >
           <StripedDataGrid
-            // rows={rows}
+            disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
             rows={data ? data : []}
@@ -1027,7 +1038,6 @@ export default function AutoGrid() {
             checkboxSelection
             sx={{
               mt: "1%",
-
               height: {
                 xs: "auto",
                 sm: "auto",
@@ -1079,22 +1089,30 @@ export default function AutoGrid() {
             alignItems: "center", // Aligns buttons in the center of the column
           },
         }}>
+
+          {<Tooltip title={rowSelectionModel.length > 0 ? "" : "Please select a row first"} placement="top">
+            <span>
+              <ContainedButton
+                variant="contained"
+                size="small"
+                sx={{
+                  // bgcolor: "#dedfe0",
+                  // color: "black",
+                  // boxShadow: "3",
+                  margin: "0 1vw",
+                  textTransform: "none"
+                }}
+                onClick={() => setDialogOpen(true)}
+                disabled={rowSelectionModel.length === 0}
+              >
+                Allocate Call
+              </ContainedButton>
+            </span>
+          </Tooltip>}
           <ContainedButton
             variant="contained"
             size="small"
-            sx={{
-              // bgcolor: "#dedfe0",
-              // color: "black",
-              // boxShadow: "3",
-              margin: "0 1vw",
-            }}
-            onClick={() => setDialogOpen(true)}
-          >
-            Allocate Call
-          </ContainedButton>
-          <ContainedButton
-            variant="contained"
-            size="small"
+            sx={{ textTransform: "none" }}
           >
             Feed Report
           </ContainedButton>
@@ -1114,13 +1132,13 @@ export default function AutoGrid() {
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{ margin: "0 1vw" }}
+                sx={{ margin: "0 1vw", textTransform: "none" }}
               >
                 Hide Details
               </ContainedButton>
               <FormControlLabel
-                control={<Checkbox />}
-                label="Show Remarks"
+                control={<Checkbox size="small" />}
+                label={<Typography fontSize={14}>Show Remarks</Typography>}
                 sx={{ marginLeft: { xs: "0vw", sm: "1vw" }, marginTop: { xs: 1, md: 0 } }}
               />
             </Grid>
@@ -1160,13 +1178,13 @@ export default function AutoGrid() {
                 width: { xs: '100%', sm: 'auto' }, // Ensures full width on extra small screens
               }}
             >
-              <ContainedButton variant="contained" size="small">
+              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
                 New Call Receipt
               </ContainedButton>
-              <ContainedButton variant="contained" size="small">
+              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
                 New Call Allocation
               </ContainedButton>
-              <ContainedButton variant="contained" size="small">
+              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
                 New Call Report
               </ContainedButton>
             </Box>
@@ -1178,9 +1196,15 @@ export default function AutoGrid() {
                 marginLeft: { xs: 0, sm: 'auto' }, // Aligns right from small screens (600px) and up
                 marginTop: { xs: 2, sm: 0 }, // Adds margin on small screens for spacing
                 width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
+                textTransform: "none"
               }}
             >
-              Quit
+              <Link href="/cap" style={{
+                textDecoration: "none",
+              }}>
+                Quit
+              </Link>
+
             </ContainedButton>
           </Box>
 
@@ -1194,6 +1218,6 @@ export default function AutoGrid() {
           </AddDialog>
         }
       </Box>
-    </Box>
+    </Box >
   );
 }
