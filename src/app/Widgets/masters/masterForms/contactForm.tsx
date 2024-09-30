@@ -120,13 +120,7 @@ export default function ContactForm(props: masterFormPropsT) {
       : 0;
 
     return data;
-<<<<<<< HEAD
-  // const handleCancel = ()=> {
-  //   props.setDialogOpen(false); 
-  }
-=======
   };
->>>>>>> 339f2a559516912d0ee65abd701d7085d235f7df
 
   async function persistEntity(data: contactSchemaT) {
     let result;

@@ -21,9 +21,12 @@ import { menuTreeT } from "../../models/models";
 import ProfileModal from "@/app/miscellaneous/ProfileModal";
 import mainLogo from "../../../../public/logo.png";
 import Image from "next/image";
-import { ClickAwayListener, InputAdornment, TextField } from "@mui/material";
+import { Autocomplete, ClickAwayListener, darken, debounce, InputAdornment, lighten, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { options } from "@/app/api/auth/[...nextauth]/options";
+import { useEffect } from "react";
+import { searchMainData } from "@/app/controllers/navbar.controller";
 
 const drawerWidth: number = 240;
 
@@ -79,6 +82,21 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+const GroupHeader = styled('div')(({ theme }) => ({
+  position: 'sticky',
+  top: '-8px',
+  padding: '4px 10px',
+  color: theme.palette.primary.main,
+  backgroundColor: lighten(theme.palette.primary.light, 0.85),
+  ...theme.applyStyles('dark', {
+    backgroundColor: darken(theme.palette.primary.main, 0.8),
+  }),
+}));
+
+const GroupItems = styled('ul')({
+  padding: 0,
+});
+
 // TODO remove, this demo shouldn't need to reset the theme.
 //const defaultTheme = createTheme();
 interface propsType {
@@ -96,6 +114,37 @@ export default function MenuBar(props: propsType) {
   const [searchIcon, setSearchIcon]= React.useState<boolean>(false);
   const children = props.children;
   // const [closeSub, setCloseSub] = React.useState(false);
+
+  useEffect(()=>{
+    const maindata = async(searchText:string)=>{
+      const data:any = await searchMainData(searchText)
+     console.log("maindata",data);
+      // return data;
+    }
+    maindata("dash")
+    // maindata(search);
+  },[]);
+
+// console.log(
+//   searchMainData("d"))
+
+  const top100Films = [
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+    { title: 'The Godfather: Part II', year: 1974 },
+    { title: 'The Dark Knight', year: 2008 },
+    { title: '12 Angry Men', year: 1957 },
+    { title: "Schindler's List", year: 1993 },
+    { title: 'Pulp Fiction', year: 1994 }]  
+
+
+  const options = top100Films.map((option) => {
+    const firstLetter = option.title[0].toUpperCase();
+    return {
+      firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+      ...option,
+    };
+  });
   
   const toggleDrawer = () => {
     setOpen(!open);
@@ -160,34 +209,22 @@ export default function MenuBar(props: propsType) {
             >
               <Box>
                 <ClickAwayListener onClickAway={()=>setSearchIcon(false)}>
-                {searchIcon ? ( <TextField
-                  variant="outlined"
-                  fullWidth
-                  placeholder="Search..." 
-                  value={""}
-                  // onChange={}
-                  // margin="normal"
-                  // style={{"& .MuiInputBase-input-MuiOutlinedInput-input":{
+                {searchIcon ? ( 
 
-                  // }}}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                    style: {
-                      backgroundColor: "#f5f5f5",
-                      height: "2.5em",
-                      marginTop: 8,
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
-                  />) :( 
+                <Autocomplete
+                options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                groupBy={(option) => option.firstLetter}
+                getOptionLabel={(option) => option.title}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Search..." />}
+                renderGroup={(params) => (
+                  <li key={params.key}>
+                    <GroupHeader>{params.group}</GroupHeader>
+                    <GroupItems>{params.children}</GroupItems>
+                  </li>
+                )}
+                />
+                ) :( 
                     <IconButton onClick={()=>setSearchIcon(true)}>
                   <SearchIcon fontSize="medium" style={{color:"#fff"}} />
                   </IconButton> ) }

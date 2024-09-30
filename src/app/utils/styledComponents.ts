@@ -246,72 +246,72 @@ export const entityDataGrid = styled(DataGrid)(({ theme }) => ({
   // }
 }));
 
-export const StyledMenu = styled(Menu)(({ theme }) => ({
-  '& .MuiPaper-root': {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    // minWidth: 180,   
-    color: 'rgb(55, 65, 81)',
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-    '& .MuiMenu-list': {
-      padding: '4px 20px',
-    },
-    '& .MuiMenuItem-root': {
-      '& .MuiSvgIcon-root': {
-        fontSize: 22,
-        color: theme.palette.text.secondary,  
-        marginRight: theme.spacing(1.5),
-      },
-      '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity,
-        ),
-      },
-    },
-    ...theme.applyStyles('dark', {
-      color: theme.palette.grey[300],
-    }),
-  },
-}));
+// export const StyledMenu = styled(Menu)(({ theme }) => ({
+//   '& .MuiPaper-root': {
+//     borderRadius: 6,
+//     marginTop: theme.spacing(1),
+//     // minWidth: 180,   
+//     color: 'rgb(55, 65, 81)',
+//     boxShadow:
+//       'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+//     '& .MuiMenu-list': {
+//       padding: '4px 20px',
+//     },
+//     '& .MuiMenuItem-root': {
+//       '& .MuiSvgIcon-root': {
+//         fontSize: 22,
+//         color: theme.palette.text.secondary,  
+//         marginRight: theme.spacing(1.5),
+//       },
+//       '&:active': {
+//         backgroundColor: alpha(
+//           theme.palette.primary.main,
+//           theme.palette.action.selectedOpacity,
+//         ),
+//       },
+//     },
+//     ...theme.applyStyles('dark', {
+//       color: theme.palette.grey[300],
+//     }),
+//   },
+// }));
 
-export const CombinedButton = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: 0,
-  minWidth: 0,
-  height: "40px", // Adjust the height as needed
-  borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.divider}`,
-  backgroundColor: theme.palette.primary.main,
-  "& .separator": {
-    height: "30px", // Adjust the height as needed
-    width: "1px",
-    backgroundColor: "#fff",
-    margin: "0 4px", // Adjust spacing between icons and separator
-  },
-  "& .MuiBox-root":{
-    padding:0,
-    margin:0,
-    minWidth: 0,
-  },
-  "& .MuiButtonBase-root":{
-    color:"#fff",
-    fontSize:20,
-    fontWeight:500,
-    minWidth:0,
+// export const CombinedButton = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   alignItems: "center",
+//   justifyContent: "center",
+//   padding: 0,
+//   minWidth: 0,
+//   height: "40px", // Adjust the height as needed
+//   borderRadius: theme.shape.borderRadius,
+//   border: `1px solid ${theme.palette.divider}`,
+//   backgroundColor: theme.palette.primary.main,
+//   "& .separator": {
+//     height: "30px", // Adjust the height as needed
+//     width: "1px",
+//     backgroundColor: "#fff",
+//     margin: "0 4px", // Adjust spacing between icons and separator
+//   },
+//   "& .MuiBox-root":{
+//     padding:0,
+//     margin:0,
+//     minWidth: 0,
+//   },
+//   "& .MuiButtonBase-root":{
+//     color:"#fff",
+//     fontSize:20,
+//     fontWeight:500,
+//     minWidth:0,
     
-    "& .MuiSvgIcon-root":{
-      color:"#fff",
-      fontSize:25,
-    },
-  },
+//     "& .MuiSvgIcon-root":{
+//       color:"#fff",
+//       fontSize:25,
+//     },
+//   },
   
 
   
-}));
+// }));
 
 
 export const VisuallyHiddenInput = styled("input")({

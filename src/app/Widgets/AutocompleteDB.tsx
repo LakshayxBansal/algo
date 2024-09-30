@@ -46,7 +46,7 @@ type autocompleteDBT = {
 };
 
 export function AutocompleteDB(props: autocompleteDBT) {
-  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
   const [options, setOptions] = useState<optionsDataT[]>([]);
   const width = props.width ? props.width : 300;
   const [valueChange, setvalueChange] = useState(true);
@@ -175,6 +175,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       // autoHighlight
       autoComplete
       includeInputInList
+      disableClearable={inputValue?inputValue.length===0:!Boolean(props.diaglogVal.id)}
     />
   );
 }

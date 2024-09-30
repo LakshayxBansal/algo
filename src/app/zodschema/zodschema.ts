@@ -474,6 +474,11 @@ export const nameMasterData = z.object({
   name: z.string().min(1).max(45),
 });
 
+export const searchData  = z.object({
+  tableNme: z.string().min(1).max(45),
+  name: z.string().min(1).max(45),
+});
+
 // export const nameMasterData = z.object({
 //   id: z.number().optional(),
 //   name: z.string().min(1).max(45),

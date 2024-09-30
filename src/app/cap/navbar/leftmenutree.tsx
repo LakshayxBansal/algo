@@ -21,7 +21,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
 
   const [openPop, setOpenPop] = React.useState<Map<number, boolean>>();
   const [hoverOpen, setHoverOpen] = React.useState< boolean>(false);
-  const [hoverId, setHoverId] = React.useState< number>();
+  const [hoverId, setHoverId] = React.useState< number[]>([]);
 
   const [openAdmin, setOpenAdmin] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<number | null>(null); // Track selected item
@@ -138,17 +138,23 @@ const leaveButton = () => {
 
 
   const idToOpenPop: Map<number, boolean> = new Map(openPop);
-  function handleSubMenuHover( event: React.MouseEvent<HTMLElement>, id: number) {
+  function handleSubMenuHover( event: React.MouseEvent<HTMLElement>, page: menuTreeT) {
 
     
-    if(idToOpenPop.get(id) == true){
-      idToOpenPop.set(id, true);
+    if(idToOpenPop.get(page.id) == true){
+      idToOpenPop.set(page.id, true);
     }else{
-      idToOpenPop.set(id, !idToOpenPop.get(id));
+      idToOpenPop.set(page.id, !idToOpenPop.get(page.id));
     }
       // props.setOpenDrawer(true);
       setOpenPop(idToOpenPop);
-      setHoverOpen(true)
+
+      page.parent_id===0?setHoverId([]):null
+      
+      if(page.children.length>0) 
+      {
+        hoverId.push(page.id)
+        setHoverId(hoverId)}
       console.log("enter", idToOpenPop);
       setHoverOpen(true);
       setAnchorEl(event.currentTarget);
@@ -167,18 +173,24 @@ const leaveButton = () => {
   //   setAnchorEl(event.currentTarget); // Set anchor for the popper
   // }
 
-  const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,id:number) => {
+  const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT) => {
     // const idToOpenPop: Map<number, boolean> = new Map(openPop);
 
     // setTimeout(() => {
       // if(idToOpenPop.get(id) == true){
-        idToOpenPop.set(id, false);     
-      // }
-      setOpenPop(idToOpenPop);
-      console.log("leave ", idToOpenPop);
-      setAnchorEl(null);
+      //   idToOpenPop.set(id, false);     
+      // // }
+      // setOpenPop(idToOpenPop);
+      // console.log("leave ", idToOpenPop);
+      // setAnchorEl(null);
     // }, 10000);
-
+    if(page.parent_id === 0 && hoverId.length >0 )
+   {setTimeout(() => {
+    {
+      setHoverId([]);
+    }
+   }, 500);
+  }
   };
 
   // function handleMouseLeave(event: React.MouseEvent<HTMLElement>, id: number) {
@@ -294,17 +306,17 @@ const leaveButton = () => {
       <div>
         {pages.map((page, index) => (
           <div key={index}>
-            {page.parent_id === level && level ===0 &&
+            {page.parent_id === level &&
             <>
-              <Tooltip title={page.name} placement="top-end">
+              <Tooltip title={page.name} placement="left">
                 <ListItemButton sx={{ pl: indent }} 
                              onMouseEnter={ (e) => {
                               // console.log('list hover',level)
                               // setHoverId(page.id)
                               // setHoverOpen(true);
                               page.children.length  > 0 &&
-                              handleSubMenuHover(e, page.id)
-                              console.log("data",page)
+                              handleSubMenuHover(e, page)
+                              // console.log("data",page)
                               // setIsPopperHovered(true)
                               // setIsButtonHovered(true);
                               // setAnchorEl(e.currentTarget);
@@ -315,7 +327,7 @@ const leaveButton = () => {
                               // page.children.length > 0 &&  setAnchorEl(e.currentTarget)              
                             }
                             }
-                             onMouseLeave={(e) => handleMouseLeave(e,page.id)}                // onClick={(e) => handleSubMenuClick(page.id)} 
+                             onMouseLeave={(e) => handleMouseLeave(e,page)}                // onClick={(e) => handleSubMenuClick(page.id)} 
                  component="a" href={page.href} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}
@@ -324,8 +336,8 @@ const leaveButton = () => {
                   {page.children.length ? openPop?.get(page.id) ? <ChevronRightIcon/> : <ExpandMore /> : <></>}
                 </ListItemButton>
               </Tooltip>
-              { page.parent_id == 0  &&
-              <Popper   open={Boolean(anchorEl) && page.children.length >0}
+              {
+              <Popper   open={hoverId.includes(page.id)}
               anchorEl={anchorEl}   transition 
               // onMouseLeave={(e) => handleMouseLeave(e,page.id)}
               //  onMouseEnter={(e) => {handleIconMenu}}
