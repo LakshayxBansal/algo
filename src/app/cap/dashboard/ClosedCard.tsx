@@ -37,7 +37,7 @@ export default async function ClosedCard() {
             Closed Enquiries
           </Typography>
           <Typography component="p" variant="h4">
-            {result.count}
+            {result?.count}
           </Typography>
           <Typography color="text.secondary" sx={{ flex: 1 }}>
             since {sinceDate}
