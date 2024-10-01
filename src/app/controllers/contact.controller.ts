@@ -21,109 +21,109 @@ import { modifyPhone } from "../utils/phoneUtils";
 
 function validateAndAdjustData(schema: any, data: any) {
   const result = schema.safeParse(data);
+
   if (!result.success) {
     const adjustedData = { ...data };
+    const errors = result.error;
+    let check = false;
 
-    for (const issue of result.error.issues) {
-      const key = issue.path[0];
-      const expectedType = issue.expected;
+    const extractedErrors = errors.issues.map((error: any) => {
+      if (
+        error.received === "undefined" &&
+        error.message.includes("Required")
+      ) {
+        check = true;
+        return {
+          path: error.path,
+          message: error.message,
+        };
+      }
+    });
 
-      switch (expectedType) {
-        case "string":
-          if (typeof adjustedData[key] !== "string") {
-            adjustedData[key] = String(adjustedData[key]) || "";
-          }
-          break;
+    if (check) {
+      return { status: 0, extractedErrors: extractedErrors };
+    } else {
+      for (const issue of result.error.issues) {
+        const key = issue.path[0];
+        const expectedType = issue.expected;
 
-        case "number":
-          if (typeof adjustedData[key] === "string") {
-            adjustedData[key] = parseFloat(adjustedData[key] as string) || 0;
-          } else {
-            adjustedData[key] = Number(adjustedData[key]) || 0;
-          }
-          break;
+        switch (expectedType) {
+          case "string":
+            if (typeof adjustedData[key] !== "string") {
+              adjustedData[key] = String(adjustedData[key]) || "";
+            }
+            break;
 
-        case "date":
-          if (typeof adjustedData[key] === "string") {
-            adjustedData[key] =
-              new Date(adjustedData[key] as string) || new Date();
-          } else if (!(adjustedData[key] instanceof Date)) {
-            adjustedData[key] = new Date();
-          }
-          break;
+          case "number":
+            if (typeof adjustedData[key] === "string") {
+              adjustedData[key] = parseFloat(adjustedData[key] as string) || 0;
+            } else {
+              adjustedData[key] = Number(adjustedData[key]) || 0;
+            }
+            break;
 
-        case "boolean":
-          if (typeof adjustedData[key] !== "boolean") {
-            adjustedData[key] = Boolean(adjustedData[key]);
-          }
-          break;
+          case "date":
+            if (typeof adjustedData[key] === "string") {
+              adjustedData[key] =
+                new Date(adjustedData[key] as string) || new Date();
+            } else if (!(adjustedData[key] instanceof Date)) {
+              adjustedData[key] = new Date();
+            }
+            break;
 
-        case "undefined":
-          if (typeof adjustedData[key] !== "undefined") {
-            adjustedData[key] = undefined;
-          }
-          break;
+          case "boolean":
+            if (typeof adjustedData[key] !== "boolean") {
+              adjustedData[key] = Boolean(adjustedData[key]);
+            }
+            break;
 
-        case "symbol":
-          if (typeof adjustedData[key] !== "symbol") {
-            adjustedData[key] = Symbol();
-          }
-          break;
+          case "undefined":
+            if (typeof adjustedData[key] !== "undefined") {
+              adjustedData[key] = undefined;
+            }
+            break;
 
-        case "object":
-          if (
-            typeof adjustedData[key] !== "object" ||
-            adjustedData[key] === null
-          ) {
-            adjustedData[key] = {};
-          }
-          break;
+          case "symbol":
+            if (typeof adjustedData[key] !== "symbol") {
+              adjustedData[key] = Symbol();
+            }
+            break;
 
-        case "function":
-          if (typeof adjustedData[key] !== "function") {
-            adjustedData[key] = function () {};
-          }
-          break;
+          case "object":
+            if (
+              typeof adjustedData[key] !== "object" ||
+              adjustedData[key] === null
+            ) {
+              adjustedData[key] = {};
+            }
+            break;
 
-        case "bigint":
-          if (typeof adjustedData[key] === "string") {
-            adjustedData[key] = BigInt(adjustedData[key]);
-          } else {
-            adjustedData[key] = BigInt(0);
-          }
-          break;
+          case "function":
+            if (typeof adjustedData[key] !== "function") {
+              adjustedData[key] = function () {};
+            }
+            break;
+
+          case "bigint":
+            if (typeof adjustedData[key] === "string") {
+              adjustedData[key] = BigInt(adjustedData[key]);
+            } else {
+              adjustedData[key] = BigInt(0);
+            }
+            break;
+        }
       }
     }
 
-    const reparseResult = schema.safeParse(adjustedData);
-
-    if (!reparseResult.success) {
-      const errors = reparseResult.error;
-
-      const extractedErrors = errors.issues.map((error: any) => {
-        if (error.unionErrors.length > 1) {
-          const secondIssue = error.unionErrors[1].issues[0];
-
-          return {
-            received: secondIssue.received,
-            message: secondIssue.message,
-          };
-        } else return null;
-      });
-
-      for (const { received, message } of extractedErrors) {
-        if (received === "undefined" && message.includes("Required")) {
-          return { status: 0, extractedErrors };
-          // return { extractedErrors: extractedErrors, error: "Error in uploaded Schema" };
-        }
-      }
-    } else return reparseResult.data;
+    return { status: 1, adjustedData };
   }
-  return result.data;
+
+  return { status: 1, data: result.data };
 }
 
 export async function createContactsBatch(data: contactSchemaT[]) {
   const errorMap = new Map<string, { path: string; message: string }[]>();
+
   try {
     if (!Array.isArray(data) || data.length === 0) {
       return {
@@ -145,38 +145,34 @@ export async function createContactsBatch(data: contactSchemaT[]) {
           contact
         );
 
-        if (
-          adjustedContact.received === "undefined" &&
-          adjustedContact.message.includes("Required")
-        )
-          if (adjustedContact.status === 0) {
-            const errorDetails = adjustedContact.data.map(
+        if (adjustedContact.status === 0) {
+          const errorDetails = adjustedContact.extractedErrors.map(
+            (error: any) => {
+              if (error !== undefined) {
+                const err = error.path.map((p: string) => {
+                  return { path: p, message: error.message };
+                });
+                return err;
+              }
+            }
+          );
+
+          errorMap.set(`contact_${i}`, errorDetails);
+        } else {
+          const result = await createContact(adjustedContact.adjustedData);
+
+          if (!result.status) {
+            const errorDetails = result.data.map(
               (error: { path: string; message: string }) => ({
-                path: "",
-                message: "Error in uploaded Schema",
+                path: error.path,
+                message: error.message,
               })
             );
 
-            errorMap.set(`contact_${i}`, errorDetails);
-
-            return {
-              status: false,
-              data: errorMap,
-            };
-          } else {
-            const result = await createContact(adjustedContact);
-
-            if (!result.status) {
-              const errorDetails = result.data.map(
-                (error: { path: string; message: string }) => ({
-                  path: error.path,
-                  message: error.message,
-                })
-              );
-
-              errorMap.set(`contact_${i}`, errorDetails);
-            }
+            // errorMap.set(`contact_${i}`, errorDetails);
+            errorMap.set("contact", errorDetails);
           }
+        }
       }
     }
 

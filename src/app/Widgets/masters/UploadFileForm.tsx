@@ -9,11 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import Seperator from "../seperator";
-import { GridCloseIcon, GridColDef } from "@mui/x-data-grid";
+import { GridCloseIcon } from "@mui/x-data-grid";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Papa from "papaparse";
-import { blue } from "@mui/material/colors";
 
 // to get only 2 values
 // 1. name of the sample file
@@ -27,9 +26,9 @@ export default function UploadFileForm({
   fnFileUpad: any;
   sampleFileName: any;
 }) {
-  // console.log(fnFileUpad);
   const [snackOpen, setSnackOpen] = useState(false);
   const [data, setData] = useState();
+  const [isError, setIsError] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [snackMessage, setSnackMessage] = useState(
     "File Uploaded Successfully!"
@@ -42,34 +41,36 @@ export default function UploadFileForm({
 
   const handleSubmit = async () => {
     const batchResult = await fnFileUpad(data as any);
-   
-    console.log("batchresult : ",batchResult);
+
+    console.log("batchresult : ", batchResult);
 
     if (!batchResult.status) {
+      const errorFileName = "errorFile.csv";
+      setSelectedFileName(errorFileName);
       setErrorMessages(
-        Array.from(batchResult.data.values)
+        Array.from(batchResult.data.values())
           .flat()
           .map((error: any) => `${error.path}: ${error.message}`)
       );
       setSnackMessage("Error in Upload File!");
       setSnackOpen(true);
+      setIsError(true);
     } else {
       setSnackMessage("File Uploaded Successfully!");
       setSnackOpen(true);
+      setIsError(false);
     }
 
     setTimeout(() => {
       setDialogOpen(false);
       setTimeout(() => {
         setSnackOpen(false);
-      }, 3000);
-    }, 3000);
+      }, 20000);
+    }, 20000);
   };
 
   const handleFileChange = (event: any) => {
     const file = event.target.files[0];
-    // const file = event.target.files ? event.target.files[0] : null;
-    // console.log("Type of File", typeof file);
     if (file) {
       setSelectedFileName(file.name);
       Papa.parse(file, {
@@ -81,6 +82,25 @@ export default function UploadFileForm({
         },
       });
     }
+  };
+
+  const downloadErrorFile = () => {
+    const csvData = errorMessages.map((msg) => ({
+      path: msg.split(": ")[0],
+      message: msg.split(": ")[1],
+    }));
+
+    const csv = Papa.unparse(csvData);
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = selectedFileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -103,18 +123,28 @@ export default function UploadFileForm({
           </Box>
         </Seperator>
       </Box>
-      <Button
-        component="label"
-        role={undefined}
-        variant="contained"
-        tabIndex={-1}
-        startIcon={<CloudUploadIcon />}
-        sx={{ margin: "1rem" }}
-      >
-        Upload files
-        <VisuallyHiddenInput type="file" onChange={handleFileChange} multiple />
-      </Button>
-      {selectedFileName && ( // Display selected file name if it exists
+      {isError ? (
+        <Button sx={{ margin: "1rem" }} onClick={downloadErrorFile}>
+          Download Error File
+        </Button>
+      ) : (
+        <Button
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+          startIcon={<CloudUploadIcon />}
+          sx={{ margin: "1rem" }}
+        >
+          Upload files
+          <VisuallyHiddenInput
+            type="file"
+            onChange={handleFileChange}
+            multiple
+          />
+        </Button>
+      )}
+      {selectedFileName && (
         <Typography
           variant="subtitle1"
           sx={{
@@ -147,13 +177,6 @@ export default function UploadFileForm({
           Submit
         </Button>
       </Box>
-      {/* <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message={snackMessage}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      /> */}
       <Snackbar
         open={snackOpen}
         autoHideDuration={2000}
@@ -169,16 +192,6 @@ export default function UploadFileForm({
       </Snackbar>
       {errorMessages.length > 0 && (
         <Box sx={{ mt: 2 }}>
-          {/* <Alert severity="error" sx={{ mb: 2 }}>
-            {errorMessages.map((error, index) => (
-              <div key={index}>{error}</div>
-            ))}
-          </Alert> */}
-          {/* {errorMessages.map((error, index) => (
-            <Alert key={index} severity="error" sx={{ mb: 1 }}>
-              {error}
-            </Alert>
-          ))} */}
           {errorMessages.map((error, index) => (
             <Typography key={index} color="error">
               {error}
