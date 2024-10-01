@@ -2,6 +2,7 @@ import { logger } from "@/app/utils/logger.utils";
 import { getSession } from "@/app/services/session.service";
 import { getMasterObjects, getRightsData, getTransactionObjects, getReportObjects } from "@/app/controllers/rights.controller";
 import NewPage2 from "./newpage2";
+import { Typography } from "@mui/material";
 
 
 type DataState = {
@@ -95,18 +96,26 @@ export default async function Rights() {
     try {
         const session = await getSession();
         if (session) {
+            console.log("right page : ",session);
             const rightsData: DataState | undefined = await getRightsData();
             const masterObjects = await getMasterObjects();
             const transactionObjects = await getTransactionObjects();
             const reportObjects = await getReportObjects();
             const parentCountDefaultValue = getParentCountDefaultValue(rightsData, masterObjects, transactionObjects, reportObjects);
             const parentDataDefaultValue = getParentDataDefaultValue(parentCountDefaultValue);
+
+            if(session.user.dbInfo.roleId===3){
+                return (
+                    <>
+                        <Typography>This Page is not Accessible</Typography>
+                    </>
+                )
+            }
         
             return (
                 <>
-                    <NewPage2 rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
+                    <NewPage2 userRoleId={session.user.dbInfo.roleId} rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
                 </>
-
             )
         }
     } catch (error) {

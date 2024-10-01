@@ -17,7 +17,7 @@ function nameFormat(name: string) {
     return name = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
 }
 
-function Child({ object, handleChange, data, role, parentName }: { object: any, handleChange: any, data: any, role: any, parentName: string }) {
+function Child({ object, handleChange, data, role, parentName, userRoleId }: { object: any, handleChange: any, data: any, role: any, parentName: string, userRoleId : number }) {
 
     return (
         <Box>
@@ -36,21 +36,28 @@ function Child({ object, handleChange, data, role, parentName }: { object: any, 
                                         checked={data[`${nameFormat(obj.name)}_${role}_create`]}
                                         onChange={handleChange(`${nameFormat(obj.name)}_${role}_create`, parentName,object.length)}
                                         inputProps={{ 'aria-label': 'controlled' }}
+                                        disabled={userRoleId === 2 ? (data[`${nameFormat(obj.name)}_manager_create`] === false ? true : false):(false)}
+
                                     />
                                     <Checkbox
                                         checked={data[`${nameFormat(obj.name)}_${role}_read`]}
                                         onChange={handleChange(`${nameFormat(obj.name)}_${role}_read`, parentName,object.length)}
                                         inputProps={{ 'aria-label': 'controlled' }}
+                                        disabled={userRoleId === 2 ? (data[`${nameFormat(obj.name)}_manager_read`] === false ? true : false):(false)}
+
                                     />
                                     <Checkbox
                                         checked={data[`${nameFormat(obj.name)}_${role}_update`]}
                                         onChange={handleChange(`${nameFormat(obj.name)}_${role}_update`, parentName,object.length)}
                                         inputProps={{ 'aria-label': 'controlled' }}
+                                        disabled={userRoleId === 2 ? (data[`${nameFormat(obj.name)}_manager_update`] === false ? true : false):(false)}
+
                                     />
                                     <Checkbox
                                         checked={data[`${nameFormat(obj.name)}_${role}_delete`]}
                                         onChange={handleChange(`${nameFormat(obj.name)}_${role}_delete`, parentName,object.length)}
                                         inputProps={{ 'aria-label': 'controlled' }}
+                                        disabled={userRoleId === 2 ? (data[`${nameFormat(obj.name)}_manager_delete`] === false ? true : false):(false)}
                                     />
                                 </Box>
                             </Grid>
@@ -64,11 +71,11 @@ function Child({ object, handleChange, data, role, parentName }: { object: any, 
 }
 
 
-export default function NewPage2({ rightsData, masterObjects, transactionObjects, reportObjects, parentCountDefaultValue, parentDataDefaultValue }: { rightsData: any, masterObjects: any, transactionObjects: any, reportObjects: any, parentCountDefaultValue: any, parentDataDefaultValue: any }) {
+export default function NewPage2({ userRoleId,rightsData, masterObjects, transactionObjects, reportObjects, parentCountDefaultValue, parentDataDefaultValue }: { userRoleId: number, rightsData: any, masterObjects: any, transactionObjects: any, reportObjects: any, parentCountDefaultValue: any, parentDataDefaultValue: any }) {
     const [data, setData] = React.useState(rightsData);
     const [parentData, setParentData] = React.useState<any>(parentDataDefaultValue);
     const [parentDataCount, setParentDataCount] = React.useState<any>(parentCountDefaultValue);
-    const [role, setRole] = React.useState("manager");
+    const [role, setRole] = React.useState(userRoleId===1 ? "manager" : "executive");
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [openMaster, setOpenMaster] = React.useState(false);
     const [openTransaction, setOpenTransaction] = React.useState(false);
@@ -135,10 +142,17 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
             [column]: 0
         }));
         object.map((obj: any) => {
-            setData((prevState: any) => ({
-                ...prevState,
-                [`${nameFormat(obj.name)}_${column.split("_")[1]}_${column.split("_")[2]}`]: event.target.checked
-            }));
+            if(userRoleId==2 && data[`${nameFormat(obj.name)}_manager_${column.split("_")[2]}`]==false){
+                setData((prevState: any) => ({
+                    ...prevState,
+                    [`${nameFormat(obj.name)}_${column.split("_")[1]}_${column.split("_")[2]}`]: prevState[`${nameFormat(obj.name)}_${column.split("_")[1]}_${column.split("_")[2]}`]
+                }));
+            }else{
+                setData((prevState: any) => ({
+                    ...prevState,
+                    [`${nameFormat(obj.name)}_${column.split("_")[1]}_${column.split("_")[2]}`]: event.target.checked
+                }));
+            }
         });
     };
 
@@ -157,9 +171,10 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Grid container>
                         <Grid item xs={4}>
-                            <Typography variant="h6" sx={{ alignItems: "center", marginLeft: "2%", marginTop: "3%" }}>Select Role to Manage Right</Typography>
+                            <Typography variant="h6" sx={{ alignItems: "center", marginLeft: "2%", marginTop: "3%" }}>Select Role to Manage Rights</Typography>
                         </Grid>
                         <Grid item xs={4}>
+                            {userRoleId === 1 ? (
                             <FormControl sx={{ width: "80%", marginLeft: "8%", marginTop: "2%" }}>
                                 <InputLabel id="demo-simple-select-label">Select Role</InputLabel>
                                 <Select
@@ -174,6 +189,9 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                     <MenuItem value={"executive"}>Executive</MenuItem>
                                 </Select>
                             </FormControl>
+                            ):(
+                                <Typography variant="h6" sx={{ alignItems: "center", marginLeft: "35%", marginTop: "3%", marginBottom: "3%" }}>Executive</Typography>
+                            )}
 
                         </Grid>
 
@@ -222,6 +240,8 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_create`] !== masterObjects.length && parentDataCount[`master_${role}_create`] !== 0}
                                         color={(parentDataCount[`master_${role}_create`] === masterObjects.length || parentDataCount[`master_${role}_create`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`master_manager_create`] === false ? true : false):(false)}
+
                                     />
                                     <Checkbox
                                         checked={parentData[`master_${role}_read`]}
@@ -229,6 +249,8 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_read`] !== masterObjects.length && parentDataCount[`master_${role}_read`] !== 0}
                                         color={(parentDataCount[`master_${role}_read`] === masterObjects.length || parentDataCount[`master_${role}_read`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`master_manager_read`] === false ? true : false):(false)}
+
                                     />
                                     <Checkbox
                                         checked={parentData[`master_${role}_update`]}
@@ -236,6 +258,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_update`] !== masterObjects.length && parentDataCount[`master_${role}_update`] !== 0}
                                         color={(parentDataCount[`master_${role}_update`] === masterObjects.length || parentDataCount[`master_${role}_update`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`master_manager_update`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`master_${role}_delete`]}
@@ -243,13 +266,14 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`master_${role}_delete`] !== masterObjects.length && parentDataCount[`master_${role}_delete`] !== 0}
                                         color={(parentDataCount[`master_${role}_delete`] === masterObjects.length || parentDataCount[`master_${role}_delete`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`master_manager_delete`] === false ? true : false):(false)}
                                     />
                                 </Box>
                             </Grid>
 
                         )}
 
-                        {openMaster && (<Grid item xs={12}><Child object={masterObjects} handleChange={handleChange} data={data} role={role} parentName="master" /></Grid>)}
+                        {openMaster && (<Grid item xs={12}><Child object={masterObjects} handleChange={handleChange} data={data} role={role} parentName="master" userRoleId={userRoleId}/></Grid>)}
                     </Grid>
                     <Divider variant='middle' />
                 </Box>
@@ -272,6 +296,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_create`] !== transactionObjects.length && parentDataCount[`transaction_${role}_create`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_create`] === transactionObjects.length || parentDataCount[`transaction_${role}_create`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`transaction_manager_create`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_read`]}
@@ -279,6 +304,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_read`] !== transactionObjects.length && parentDataCount[`transaction_${role}_read`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_read`] === transactionObjects.length || parentDataCount[`transaction_${role}_read`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`transaction_manager_read`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_update`]}
@@ -286,6 +312,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_update`] !== transactionObjects.length && parentDataCount[`transaction_${role}_update`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_update`] === transactionObjects.length || parentDataCount[`transaction_${role}_update`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`transaction_manager_update`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`transaction_${role}_delete`]}
@@ -293,13 +320,14 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`transaction_${role}_delete`] !== transactionObjects.length && parentDataCount[`transaction_${role}_delete`] !== 0}
                                         color={(parentDataCount[`transaction_${role}_delete`] === transactionObjects.length || parentDataCount[`transaction_${role}_delete`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`transaction_manager_delete`] === false ? true : false):(false)}
                                     />
                                 </Box>
                             </Grid>
 
                         )}
 
-                        {openTransaction && (<Grid item xs={12}><Child object={transactionObjects} handleChange={handleChange} data={data} role={role} parentName="transaction" /></Grid>)}
+                        {openTransaction && (<Grid item xs={12}><Child object={transactionObjects} handleChange={handleChange} data={data} role={role} parentName="transaction" userRoleId={userRoleId}/></Grid>)}
 
 
                     </Grid>
@@ -323,6 +351,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_create`] !== reportObjects.length && parentDataCount[`report_${role}_create`] !== 0}
                                         color={(parentDataCount[`report_${role}_create`] === reportObjects.length || parentDataCount[`report_${role}_create`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`report_manager_create`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`report_${role}_read`]}
@@ -330,6 +359,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_read`] !== reportObjects.length && parentDataCount[`report_${role}_read`] !== 0}
                                         color={(parentDataCount[`report_${role}_read`] === reportObjects.length || parentDataCount[`report_${role}_read`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`report_manager_read`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`report_${role}_update`]}
@@ -337,6 +367,7 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_update`] !== reportObjects.length && parentDataCount[`report_${role}_update`] !== 0}
                                         color={(parentDataCount[`report_${role}_update`] === reportObjects.length || parentDataCount[`report_${role}_update`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`report_manager_update`] === false ? true : false):(false)}
                                     />
                                     <Checkbox
                                         checked={parentData[`report_${role}_delete`]}
@@ -344,13 +375,14 @@ export default function NewPage2({ rightsData, masterObjects, transactionObjects
                                         inputProps={{ 'aria-label': 'controlled' }}
                                         indeterminate={parentDataCount[`report_${role}_delete`] !== reportObjects.length && parentDataCount[`report_${role}_delete`] !== 0}
                                         color={(parentDataCount[`report_${role}_delete`] === reportObjects.length || parentDataCount[`report_${role}_delete`] === 0) ? "primary" : "default"}
+                                        disabled={userRoleId === 2 ? (parentData[`report_manager_delete`] === false ? true : false):(false)}
                                     />
                                 </Box>
                             </Grid>
 
                         )}
 
-                        {openReport && (<Grid item xs={12}><Child object={reportObjects} handleChange={handleChange} data={data} role={role} parentName="report" /></Grid>)}
+                        {openReport && (<Grid item xs={12}><Child object={reportObjects} handleChange={handleChange} data={data} role={role} parentName="report" userRoleId={userRoleId}/></Grid>)}
 
 
                     </Grid>

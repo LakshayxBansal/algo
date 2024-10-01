@@ -111,6 +111,7 @@ export type dbInfoT = {
   host: string;
   port: string;
   dbName: string;
+  roleId: number;
 };
 
 export type getOrgansT = [
