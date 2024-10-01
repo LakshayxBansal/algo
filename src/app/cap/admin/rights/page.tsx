@@ -1,7 +1,7 @@
 import { logger } from "@/app/utils/logger.utils";
 import { getSession } from "@/app/services/session.service";
 import { getMasterObjects, getRightsData, getTransactionObjects, getReportObjects } from "@/app/controllers/rights.controller";
-import NewPage2 from "./newpage2";
+import RightPage from "./RightPage";
 import { Typography } from "@mui/material";
 
 
@@ -96,7 +96,6 @@ export default async function Rights() {
     try {
         const session = await getSession();
         if (session) {
-            console.log("right page : ",session);
             const rightsData: DataState | undefined = await getRightsData();
             const masterObjects = await getMasterObjects();
             const transactionObjects = await getTransactionObjects();
@@ -114,7 +113,7 @@ export default async function Rights() {
         
             return (
                 <>
-                    <NewPage2 userRoleId={session.user.dbInfo.roleId} rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
+                    <RightPage userRoleId={session.user.dbInfo.roleId} rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
                 </>
             )
         }
