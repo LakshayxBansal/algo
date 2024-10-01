@@ -1,0 +1,11 @@
+{"level":"INFO","time":"2024-09-13T11:03:36.446Z","pid":24718,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:03:44.862Z","pid":24718,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:39:01.649Z","pid":4335,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:39:04.752Z","pid":4335,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":30,"time":"2024-09-13T11:41:28.229Z","pid":4335,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":30,"time":"2024-09-13T11:41:32.814Z","pid":4335,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:42:11.375Z","pid":4335,"hostname":"dinesh-dell-linux","name":"mynextapp","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:46:14.512Z","pid":4335,"hostname":"dinesh-dell-linux","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:46:19.122Z","pid":4335,"hostname":"dinesh-dell-linux","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:47:07.424Z","pid":6751,"hostname":"dinesh-dell-linux","msg":"Inside profile"}
+{"level":"INFO","time":"2024-09-13T11:47:10.133Z","pid":6751,"hostname":"dinesh-dell-linux","msg":"Inside profile"}

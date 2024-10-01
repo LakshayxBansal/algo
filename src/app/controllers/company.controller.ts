@@ -21,7 +21,7 @@ import { SqlError } from "mariadb";
 export async function getCompanyById(id: number) {
   try {
     const session = await getSession();
-    if (session?.user.dbInfo) {
+    if (session?.user) {
       return getCompanyDetailsById(id);
     }
   } catch (error) {
