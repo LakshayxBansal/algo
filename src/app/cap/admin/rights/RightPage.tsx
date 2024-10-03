@@ -23,7 +23,7 @@ function Child({ object, handleChange, data, role, parentName, userRoleId }: { o
         <Box>
             {object.map((obj: any) => {
                 return (
-                    <Box>
+                    <Box key={obj.id}>
                         <Grid container sx={{ alignItems: "center" }}>
                             <Grid item xs={4}>
                                 <Typography sx={{ marginLeft: "5%" }}>

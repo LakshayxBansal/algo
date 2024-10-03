@@ -13,6 +13,22 @@ const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
 
+export const signInSchema = z.object({
+  email : z.string().optional(),
+  phone : z.string().optional(),
+  password : z.string().min(1,"Please enter password")
+}).refine(
+  (schema) => {
+    return !(schema.email === "");
+  },
+  { message: "Please enter email", path: ["email"] }
+).refine(
+  (schema) => {
+    return !(schema.phone === "");
+  },
+  { message: "Please enter phone", path: ["phone"] }
+)
+
 export const userSchema = z
   .object({
     // email: z.union([z.string().optional(), z.string().email()]),

@@ -13,10 +13,10 @@ export default async function Companies() {
     return (
       <>
         <Box sx={{ height: "100vh" }}>
-          <Box sx={{ height: "40vh" }}>
+          <Box sx={{ height: "50vh", overflow: "scroll" }}>
             <CompanyEntityList />
           </Box>
-          <Box sx={{ height: "40vh" }}>
+          <Box sx={{ height: "50vh", overflow: "scroll"  }}>
             <InviteEntityList />
           </Box>
         </Box>
