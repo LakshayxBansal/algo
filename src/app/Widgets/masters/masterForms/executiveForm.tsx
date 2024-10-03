@@ -6,7 +6,8 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
-import { getArea,getAreaById } from "@/app/controllers/area.controller";
+import { getArea, getAreaById } from "@/app/controllers/area.controller";
+import { getInviteDetailByContact } from "@/app/controllers/inviteUser.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -16,10 +17,12 @@ import {
   getExecutiveGroupById,
 } from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
+import { insertExecutiveIdToInviteUser } from "@/app/controllers/inviteUser.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import ExecutiveRoleForm from "./executiveRoleForm";
 import ExecutiveGroupForm from "./executiveGroupForm";
+import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
@@ -42,6 +45,7 @@ import dayjs from "dayjs";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { getSession } from "@/app/services/session.service";
 
 export default function ExecutiveForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -50,13 +54,12 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
-
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
-    dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
-    if (dbResult.length > 0) {
-      return dbResult;
-    }
+    // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
+    // if (dbResult.length > 0) {
+    return dbResult;
+    // }
   }
 
   // function onDepartmentChange(event: React.SyntheticEvent, value: any) {
@@ -64,43 +67,58 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   // }
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    try {
+      const session = await getSession();
+      let data: { [key: string]: any } = {}; // Initialize an empty object
 
-    formData.append("call_type", "Enquiry");
+      formData.append("call_type", "Enquiry");
 
-    for (const [key, value] of formData.entries()) {
-      data[key] = value;
-    }
-
-    formData = updateFormData(data);
-    data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
-    data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
-    data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
-    // if (parsed.success) {
-    const result = await persistEntity(data as executiveSchemaT);
-
-    if (result.status) {
-      const newVal = {
-        id: result.data[0].id,
-        name: result.data[0].name,
-      };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setFormError({});
-      setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
-    } else {
-      const issues = result.data;
-      // show error on screen
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      for (const issue of issues) {
-        for (const path of issue.path) {
-          errorState[path] = { msg: issue.message, error: true };
-        }
+      for (const [key, value] of formData.entries()) {
+        data[key] = value;
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
-      setFormError(errorState);
+      console.log(selectValues);
+
+      formData = updateFormData(data);
+      data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
+      data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
+      data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
+      // if (parsed.success) {
+      // const inviteUser = data.crm_user;
+      // let inviteId;
+      // if( session && inviteUser ){
+      //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
+      //   inviteId = invite.id;
+      // }
+      const result = await persistEntity(data as executiveSchemaT);
+
+      if (result.status) {
+        const newVal = {
+          id: result.data[0].id,
+          name: result.data[0].name,
+        };
+        // if(inviteId){
+        //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
+        // }
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
+        setFormError({});
+        setSnackOpen(true);
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        const issues = result.data;
+        // show error on screen
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        for (const issue of issues) {
+          for (const path of issue.path) {
+            errorState[path] = { msg: issue.message, error: true };
+          }
+        }
+        errorState["form"] = { msg: "Error encountered", error: true };
+        setFormError(errorState);
+      }
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -108,38 +126,38 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-        ? entityData.executive_group_id
-        : 0;
+      ? entityData.executive_group_id
+      : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-        ? entityData.role_id
-        : 0;
+      ? entityData.role_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-        ? entityData.crm_user_id
-        : 0;
+      ? entityData.crm_user_id
+      : 0;
     data.executive_dept_id = selectValues.executive_dept
       ? selectValues.executive_dept.id
       : entityData.executive_dept_id
-        ? entityData.executive_dept_id
-        : 0;
+      ? entityData.executive_dept_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -169,21 +187,8 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     setSelectValues(values);
   }
 
-  async function getRolesforDepartment(stateStr: string) {
-    let roles;
-    if (selectValues.department)
-      roles = await getExecutiveRole(stateStr, selectValues.department.id);
-    if (roles?.length > 0) {
-      return roles;
-    }
-  }
-  useEffect(() => {
-    getRolesforDepartment("");
-  }, [selectValues.department]);
-
   async function persistEntity(data: executiveSchemaT) {
     let result;
-    let flag;
     if (props.data) {
       data["id"] = entityData.id;
       result = await updateExecutive(data);
@@ -202,7 +207,24 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Seperator>{entityData ? "Update Executive":"Add Executive"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData ? "Add Executive" : "Update Executive"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -222,9 +244,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
+        {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
+        )} */}
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
@@ -269,7 +291,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
               fetchDataFn={getArea}
               fnFetchDataByID={getAreaById}
-              renderForm={(fnDialogOpen, fnDialogValue,data) => (
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <AreaForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
@@ -306,7 +328,9 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"Role"}
               width={210}
               dialogTitle={"Add Role"}
-              fetchDataFn={getRolesforDepartment}
+              fetchDataFn={(roleStr: string) =>
+                getExecutiveRole(roleStr, selectValues.department?.id)
+              }
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
@@ -339,7 +363,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   name: entityData.executive_group,
                 } as optionsDataT
               }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "group")}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "executive_group")}
               fetchDataFn={getExecutiveGroup}
               fnFetchDataByID={getExecutiveGroupById}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => (
@@ -383,10 +407,12 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
               fetchDataFn={getApplicationUser}
               formError={formError.crm_user}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ExecutiveGroupForm
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <InviteUserForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  // isExecutive={true}
                 />
               )}
             />
@@ -571,33 +597,21 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               helperText={formError?.pincode?.msg}
             />
           </Box>
-
-          <Grid container>
-            <Grid item xs={6} md={6}>
-              <Box margin={1} sx={{ display: "flex" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-start"
-                  alignItems="flex-start"
-                  m={1}
-                >
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                m={1}
-              >
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Box>
         </form>
         <Snackbar
           open={snackOpen}

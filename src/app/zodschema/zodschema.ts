@@ -16,41 +16,42 @@ const passwordRegex = new RegExp(
 export const userSchema = z
   .object({
     // email: z.union([z.string().optional(), z.string().email()]),
-    email: z.string().regex(emailRegex, "Input must be in email format").optional(),
-    password: z.union([
-      z.string().optional(),
-      z
-        .string()
-        .min(8)
-        .max(50)
-        .regex(
-          passwordRegex,
-          "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
-        ),
-    ]),
-    name: z.string().min(1).max(45),
-    phone: z.string().min(10).max(15).optional(),
-    contact : z.string().optional(),
-    repassword: z.string().max(50).optional(),
+    email: z
+      .string()
+      .regex(emailRegex, "Input must be in email format")
+      .optional(),
+    password :   z
+    .string()
+    .min(8)
+    .max(50)
+    .regex(
+      passwordRegex,
+      "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+    ),
+    name: z.string().min(1,"Name must not be empty").max(45),
+    phone: z.string().min(10,"Phone number should be atleast 10 digits").max(15,"Phone number should be atmost 15 digits").optional(),
+    contact: z.string().optional(),
+    repassword: z.string().max(50),
     provider: z.string().max(15).optional(),
   })
   .refine(
     (schema) => {
       return schema.password === schema.repassword;
     },
-    { message: "passwords should match", path: ["password", "repassword"] }
+    { message: "Passwords should match", path: ["password", "repassword"] }
   )
   .refine(
     (schema) => {
       return !(schema.email === "");
     },
-    { message: "please provide email", path: ["email"] }
-  ).refine(
+    { message: "Please provide email", path: ["email"] }
+  )
+  .refine(
     (schema) => {
       return !(schema.phone === "");
     },
-    { message: "please provide phone", path: ["phone"] }
-  )
+    { message: "Please provide phone", path: ["phone"] }
+  );
 
 /*
 refine(schema => {
@@ -185,6 +186,16 @@ export const areaSchema = z.object({
   name: z.string().max(60),
 });
 
+export const stateListSchema = z.object({
+  id: z.number().optional(),
+  country: z.string().max(60).optional(),
+  state_id: z.number().optional(),
+  state: z.string().max(60).optional(),
+  name: z.string().min(1).max(60),
+  alias: z.string().min(1).max(45),
+  country_id: z.number(),
+});
+
 export const executiveSchema = z
   .object({
     id: z.number().optional(),
@@ -241,12 +252,6 @@ export const executiveSchema = z
     },
     { message: "please provide email, or phone no", path: ["mobile", "email"] }
   )
-  // .refine(
-  //   (schema) => {
-  //     return !(schema.crm_user.length == 0);
-  //   },
-  //   { message: "Please provide crm user", path: ["crm_user"] }
-  // );
 /**
  * validate enquiry header schema
  */
@@ -331,9 +336,9 @@ export const itemGroupSchema = z.object({
 
 export const currencySchema = z.object({
   id: z.number().optional(),
-  Symbol: z.string().min(1).max(60).optional(),
-  Name: z.string().min(1).max(60).optional(),
-  ShortForm: z.string().min(1).max(60).optional(),
+  symbol: z.string().min(1).max(60).optional(),
+  name: z.string().min(1).max(60).optional(),
+  shortForm: z.string().min(1).max(60).optional(),
   decimal_places: z.string().min(1).max(60).optional(),
   currency_system: z.string().min(1).max(60).optional(),
 });
@@ -465,6 +470,16 @@ export const nameMasterData = z.object({
   name: z.string().min(1).max(45),
 });
 
+// export const nameMasterData = z.object({
+//   id: z.number().optional(),
+//   name: z.string().min(1).max(45),
+//   // stamp: z.number().optional(),
+//   // created_by:z.string().optional(),
+//   // modified_by: z.string().optional(),
+//   // created_on: z.date().optional(),
+//   // modified_on: z.date().optional(),
+// });
+
 /**
  * used for storing name, alias master
  */
@@ -474,9 +489,7 @@ export const nameAliasData = z.object({
   alias: z.string().max(45),
 });
 
-
 export const enquirySupportConfig = z.object({
-
   enquiryReqd: z.boolean().optional(),
   supportReqd: z.boolean().optional(),
 
@@ -493,7 +506,6 @@ export const enquirySupportConfig = z.object({
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
   generalShowList: z.boolean().optional(),
-
 });
 
 export const companySchema = z.object({
@@ -508,5 +520,19 @@ export const companySchema = z.object({
   country: z.string().optional(),
   country_id: z.number().optional(),
   pincode: z.string().optional(),
-  stamp: z.number().optional()
+  stamp: z.number().optional(),
 });
+
+export const inviteUserSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1, "Please enter Name").max(45),
+  usercontact: z.string().min(1, "Please enter Contact").max(60),
+  companyId: z.number(),
+  executiveId: z.number().optional(),
+  inviteDate: z.date().optional()
+}).refine(
+    (schema) => {
+      return (emailRegex.test(schema.usercontact) || phoneRegex.test(schema.usercontact));
+    },
+    { message: "Invalid Input Format", path: ["usercontact"] }
+  );

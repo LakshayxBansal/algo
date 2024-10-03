@@ -5,6 +5,9 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
+import { Collapse, IconButton } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
 import {
@@ -59,15 +62,52 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     return result;
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <Paper sx={{ width: "50%", margin: "auto", marginTop: "10rem" }}>
-      <Seperator>
-        {props.data ? "Update Allocation type" : "Add Allocation Type"}
-      </Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Update Allocation type" : "Add Allocation Type"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
         <form action={handleSubmit}>
           <Box
             sx={{
@@ -91,16 +131,16 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
-            <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

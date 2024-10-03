@@ -12,7 +12,7 @@ export type itemSchemaT = z.infer<typeof zs.ItemSchema>;
 export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
-
+export type inviteUserSchemaT = z.infer<typeof zs.inviteUserSchema>;
 export type companySchemaT = z.infer<typeof zs.companySchema>;
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
@@ -31,6 +31,8 @@ export type countrySchemaT = z.infer<typeof zs.countrySchema>;
 
 export type stateSchemaT = z.infer<typeof zs.stateSchema>;
 
+export type stateListSchemaT = z.infer<typeof zs.stateListSchema>;
+
 export type formErrorT = { msg: string; error: boolean };
 
 export type RenderFormFunctionT = (
@@ -39,6 +41,7 @@ export type RenderFormFunctionT = (
   data?: any,
   parentData?: any
 ) => JSX.Element;
+
 
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
@@ -49,6 +52,10 @@ export type masterFormPropsT = {
 export type masterFormPropsWithParentT = masterFormPropsT & {
   parentData?: number;
 };
+
+export type masterFormPropsWithExecutive = masterFormPropsT & {
+  isExecutive?: boolean
+}
 
 // export type masterFormPropsWithParentT = {
 //     setDialogOpen?: (props: any) => void,
@@ -98,7 +105,7 @@ export type menuTreeT = {
 };
 
 export type dbInfoT = {
-  company_id: number;
+  id: number;
   companyName: string;
   db_id: number;
   host: string;
@@ -106,14 +113,16 @@ export type dbInfoT = {
   dbName: string;
 };
 
-export type getOrgansT = [{
-  id : string
-  name : string
-  printName : string
-  alias : string
-  rowID : number
-  stamp : string
-}]
+export type getOrgansT = [
+  {
+    id: string;
+    name: string;
+    printName: string;
+    alias: string;
+    rowID: number;
+    stamp: string;
+  }
+];
 
 export type selectKeyValueT = {
   [key: string]: any;

@@ -12,24 +12,38 @@ import {hashText, hashCompare} from '../utils/encrypt.utils';
 
 
 export async function authenticateUser(credData: any) {
-
   try {
+    let query;
+    if(credData.provider==="google"){
+      query = "select * from user where contact = ?;"
+    }else{
+      query = "select * from user where contact=? and active = 1;"
+    }
     const result = await excuteQuery({
       host:'userDb',
-      query: 'select * from user where contact=?', 
+      query: query, 
       values: [credData.contact],
     });
 
     if (result.length > 0) {
-      if (await hashCompare(credData.password, result[0].password)) {
+      if(credData.provider==="google"){
         const user = {
           id: result[0].id,
           contact: result[0].contact,
           name: result[0].name
         };
         return user;
+      }else{
+        if (await hashCompare(credData.password, result[0].password)) {
+          const user = {
+            id: result[0].id,
+            contact: result[0].contact,
+            name: result[0].name
+          };
+          return user;
+        }
       }
-    } 
+    }
   } catch (e) {
     console.log(e);
   }

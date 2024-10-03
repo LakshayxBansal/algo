@@ -1,16 +1,29 @@
 // db.js
 import mariadb from 'mariadb';
+// import { dbMap } from './SingletonMap';
 import { dbMap } from './SingletonMap';
+import { getHostDetailsService } from '@/app/services/company.service';
 
 //const dbMap = SingletonMap<string, mariadb.Pool>;
-
-function getPool(host: string) {
+async function getPool(host: string) {
   try {
     let pool = dbMap.get(host);
+    
     if (!pool) {
+      let hostIp, hostPort;
+      if(host === "userDb"){
+        hostIp = process.env.USERDB_HOST;
+        hostPort = Number(process.env.USERDB_PORT);
+      }
+      else {
+        const data = await getHostDetailsService(host);
+        hostIp = data.hostIp;
+        hostPort = data.hostPort;
+      }
+
       pool = mariadb.createPool({
-        host: process.env.USERDB_HOST,
-        port: 3306,
+        host: hostIp,
+        port: hostPort,
         database: host,
         user: process.env.USERDB_USER,
         password: process.env.USERDB_PASSWORD,
@@ -25,24 +38,6 @@ function getPool(host: string) {
   }
 
 }
-
-function getHostPool(dbName: string, host: string, port: number) {
-  const pool = dbMap.get(dbName);
-  if (pool) {
-    return pool;
-  } else {
-    dbMap.set(dbName, mariadb.createPool({
-        host: host,
-        port: port,
-        database: dbName,
-        user: process.env.USERDB_USER,
-        password: process.env.USERDB_PASSWORD,
-        connectionLimit: 5
-      }
-    ));
-    return dbMap.get(dbName) ?? null;
-  }
-}
 /**
  * 
  * @param param0 {host name, query, replacement values}
@@ -52,7 +47,7 @@ export default async function excuteQuery({host, query, values }: {host: string,
   let db;
   let results;
   try {
-    db = getPool(host);
+    db = await getPool(host);
     
     if (db) {
       results = await db.query(query, values);
@@ -65,18 +60,20 @@ export default async function excuteQuery({host, query, values }: {host: string,
 }
 
 
-export async function executeQueryPool({dbName, host, port, query, values}: {dbName: string, host: string, port: number, query: string, values: any}) {
-  let db;
-  let results;
+// To create database using provided host and port
+export async function createDbConn({hostIp, hostPort, query}: {hostIp: string, hostPort: number, query: string}){
+  let conn;
   try {
-    db = getHostPool(dbName, host, port);
-    
-    if (db) {
-      results = await db.query(query, values);
-    }
-  } catch (e) {
-    throw (e);
+    conn = await mariadb.createConnection({
+      host: hostIp,
+      port: hostPort,
+      user: process.env.USERDB_USER,
+      password: process.env.USERDB_PASSWORD,
+    })
 
-  } 
-  return results;
+    const results = await conn.query(query);
+    return results;
+  } catch (error) {
+    throw error
+  }
 }

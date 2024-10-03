@@ -3,7 +3,7 @@ import * as React from 'react';
 import MenuBar from './MenuBar';
 import Box from '@mui/material/Box';
 import {getSession} from '../../services/session.service';
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 import { getMenuOptions } from '../../controllers/masters.controller';
 import { getExecutiveProfileImageByCrmUserId } from '@/app/controllers/executive.controller';
 
@@ -28,6 +28,8 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
             pages= {menuOptions}
             username = {session.user?.name!}
             companyName = {session.user.dbInfo.companyName}
+            userId = {session.user.userId}
+            companyId = {session.user.dbInfo.id}
             profileImg = {img_src ? img_src : session.user.image}
             >
             <Box component="span" sx={{ display: 'block',  mt: 8 }}>
@@ -41,5 +43,5 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
     }
   } catch (e) {
     console.log(e);
-  } 
+  }
 }

@@ -7,11 +7,15 @@ import {
   getExecutiveByPageDb,
   getExecutiveCount,
   getExecutiveDetailsById,
-  updateExecutiveDB,getExecutiveProfileImageByCrmUserIdList
+  updateExecutiveDB,
+  getExecutiveProfileImageByCrmUserIdList,
+  insertUserIdInExecutiveDb,
+  delExecutiveDetailsById,
+  checkIfUsed,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
-import { getBizAppUserList } from "../services/user.service";
+import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 
@@ -22,13 +26,7 @@ export async function createExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      let inviteResult = true;
-      let crm_map_id = 0;
-      console.log("data:" + data);
-
       const parsed = zs.executiveSchema.safeParse(data);
-      console.log(parsed);
-      // console.log(parsed.error.issues);
 
       if (parsed.success) {
         // check if invite needs to be sent
@@ -44,15 +42,16 @@ export async function createExecutive(data: executiveSchemaT) {
         // }
         // console.log("inviteResult", inviteResult);
         // console.log("CRM", crm_map_id);
-        if (inviteResult || crm_map_id) {
           const dbResult = await createExecutiveDB(
             session,
             data as executiveSchemaT
           );
-          console.log("DbResult", dbResult);
 
-          if (dbResult.length > 0 && dbResult[0].length === 0) {
+          if (dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };
+            if(dbResult[1].crm_user_id){
+              await mapUser(dbResult[1].crm_user_id,session.user.dbInfo.id);
+            }
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =
               [];
@@ -67,12 +66,6 @@ export async function createExecutive(data: executiveSchemaT) {
               data: errorState,
             };
           }
-        } else {
-          result = {
-            status: false,
-            data: [{ path: ["form"], message: "Error: Error sending invite" }],
-          };
-        }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
         for (const issue of parsed.error.issues) {
@@ -105,53 +98,30 @@ export async function updateExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      let inviteResult = true;
-      let crm_map_id = 0;
-
       const parsed = zs.executiveSchema.safeParse(data);
-      console.log(parsed);
 
       if (parsed.success) {
-        // check if invite needs to be sent
-        // if (data.crm_user === inviteSring) {
-        //   inviteResult = inviteUser(data as executiveSchemaT);
-        //   data.crm_map_id = 0;
-        // } else {
-        //   crm_map_id = await getCrmUserId(
-        //     session.user.dbInfo.dbName,
-        //     data.crm_user
-        //   );
-        //   data.crm_map_id = crm_map_id;
-        // }
-        console.log("inviteResult", inviteResult);
-        console.log("CRM", crm_map_id);
-        if (inviteResult || crm_map_id) {
-          const dbResult = await updateExecutiveDB(
-            session,
-            data as executiveSchemaT
-          );
-          console.log("DbResult", dbResult);
+        const dbResult = await updateExecutiveDB(
+          session,
+          data as executiveSchemaT
+        );
 
-          if (dbResult.length > 0 && dbResult[0].length === 0) {
-            result = { status: true, data: dbResult[1] };
-          } else {
-            let errorState: { path: (string | number)[]; message: string }[] =
-              [];
-            dbResult[0].forEach((error: any) => {
-              errorState.push({
-                path: [error.error_path],
-                message: error.error_text,
-              });
-            });
-            result = {
-              status: false,
-              data: errorState,
-            };
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+          if(dbResult[1].crm_user_id){
+            await mapUser(dbResult[1].crm_user_id,session.user.dbInfo.id);
           }
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
           result = {
             status: false,
-            data: [{ path: ["form"], message: "Error: Error sending invite" }],
+            data: errorState,
           };
         }
       } else {
@@ -202,18 +172,21 @@ function inviteUser(data: executiveSchemaT) {
   return true;
 }
 
-async function getCrmUserId(crmDb: string, user: string) {
+async function getCrmUserId(user: string) {
   try {
-    const result = await getBizAppUserList(
-      crmDb,
-      user,
-      true,
-      true,
-      false,
-      false
-    );
-    if (result.length > 0) {
-      return result[0].id;
+    const session = await getSession();
+    if (session) {
+      const result = await getBizAppUserList(
+        session.user.dbInfo.id,
+        user,
+        true,
+        true,
+        false,
+        false
+      );
+      if (result.length > 0) {
+        return result[0].id;
+      }
     }
   } catch (e) {
     console.log(e);
@@ -230,6 +203,52 @@ export async function getExecutiveById(id: number) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function insertUserIdInExecutive(
+  crmDb: string,
+  executiveId: number,
+  userId: number
+) {
+  try {
+    const session = await getSession();
+    if (session) {
+      return insertUserIdInExecutiveDb(crmDb, executiveId, userId);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function delExecutiveById(id: number) {
+  let errorResult = { status: false, error: {} };
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
+      if (check[0].count > 0) {
+        return "Can't Be DELETED!";
+      } else {
+        const result = await delExecutiveDetailsById(
+          session.user.dbInfo.dbName,
+          id
+        );
+        return "Record Deleted";
+      }
+      // if ((result.affectedRows = 1)) {
+      //   errorResult = { status: true, error: {} };
+      // } else if ((result .affectedRows = 0)) {
+      //   errorResult = {
+      //     ...errorResult,
+      //     error: "Record Not Found",
+      //   };
+      // }
+    }
+  } catch (error: any) {
+    throw error;
+    errorResult = { status: false, error: error };
+  }
+  return errorResult;
 }
 
 export async function getExecutiveByPage(
@@ -279,14 +298,17 @@ export async function getExecutiveByPage(
   return getExecutive;
 }
 
-export async function getExecutiveProfileImageByCrmUserId(crmUserId : number){
+export async function getExecutiveProfileImageByCrmUserId(crmUserId: number) {
   try {
-      const session = await getSession();
-      if(session?.user.dbInfo){
-      const profileImg = await getExecutiveProfileImageByCrmUserIdList(session.user.dbInfo.dbName, crmUserId);
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const profileImg = await getExecutiveProfileImageByCrmUserIdList(
+        session.user.dbInfo.dbName,
+        crmUserId
+      );
       return profileImg[0]?.profileImg;
-      }
-      return null;
+    }
+    return null;
   } catch (error) {
     throw error;
   }

@@ -3,10 +3,10 @@ import Link from 'next/link';
 import selectUserCompany, {redirectToPage} from './SelectCompany';
 import {dbInfoT} from '../models/models';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function CellDbName(props : {row:dbInfoT, userId: number }) {
   const row = props.row;
-
   const {update} =  useSession();
 
   const handleClick = async (event: any) => {

@@ -3,15 +3,23 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import { createItemGroup, updateItemGroup } from "../../../controllers/itemGroup.controller";
+import {
+  createItemGroup,
+  updateItemGroup,
+} from "../../../controllers/itemGroup.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import { getItemGroup } from "@/app/controllers/itemGroup.controller";
-import { itemGroupSchemaT, masterFormPropsT, optionsDataT, selectKeyValueT } from "@/app/models/models";
+import {
+  itemGroupSchemaT,
+  masterFormPropsT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { Collapse, IconButton } from "@mui/material";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ItemGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -58,7 +66,11 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const updateFormData = (data: any) => {
     data.append(
       "itemGroup_id",
-      selectValues.parent ? selectValues.parent.id : entityData.parent_id ? entityData.parent_id : 0
+      selectValues.parent
+        ? selectValues.parent.id
+        : entityData.parent_id
+        ? entityData.parent_id
+        : 0
     );
 
     return data;
@@ -66,28 +78,45 @@ export default function ItemGroupForm(props: masterFormPropsT) {
 
   async function persistEntity(data: itemGroupSchemaT) {
     let result;
-  
-      console.log(props.data);
-  
-      if (props.data) {
-        data["id"] = entityData.id;
-        result = await updateItemGroup(data);
-      } else {
-        result = await createItemGroup(data);
-      }
-   
+
+    console.log(props.data);
+
+    if (props.data) {
+      data["id"] = entityData.id;
+      result = await updateItemGroup(data);
+    } else {
+      result = await createItemGroup(data);
+    }
+
     return result;
   }
   const clearFormError = () => {
-    setFormError(curr => {
-      const {form, ...rest} = curr;
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
       return rest;
     });
   };
 
   return (
     <>
-      <Seperator>{entityData.id ? "Update Item Group" : "Add Item Group"}</Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Item Group" : "Add Item Group"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -166,16 +195,16 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
-            <Button>Upload File</Button>
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

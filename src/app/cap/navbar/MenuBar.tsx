@@ -19,6 +19,8 @@ import { useRouter } from 'next/navigation'
 import LeftMenuTree from './leftmenutree';
 import {menuTreeT} from '../../models/models';
 import ProfileModal from '@/app/miscellaneous/ProfileModal';
+import { SessionProvider } from 'next-auth/react';
+
 
 const drawerWidth: number = 240;
 
@@ -67,6 +69,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         [theme.breakpoints.up('sm')]: {
           width: theme.spacing(4),
         },
+        [theme.breakpoints.up('xs')]: {
+          width: theme.spacing(4),
+        },
       }),
     },
   }),
@@ -78,7 +83,9 @@ interface propsType {
   pages: menuTreeT[],
   username: string,
   companyName: string,
-  profileImg?: string
+  profileImg?: string,
+  userId: number,
+  companyId : number,
   children: React.ReactNode
 }
 
@@ -131,7 +138,6 @@ export default function MenuBar(props : propsType) {
                 variant="h6"
                 color="inherit"
               >
-
                   {props.companyName}
               </Typography>    
               </Box>
@@ -143,7 +149,7 @@ export default function MenuBar(props : propsType) {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <ProfileModal img={props.profileImg} name={props.username}/>
+              <ProfileModal userId={props.userId} companyId={props.companyId} img={props.profileImg} name={props.username} companyName={props.companyName}/>
             </Toolbar>
           </AppBar>
           <Box sx={{display: 'flex'}}>

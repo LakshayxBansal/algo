@@ -73,17 +73,19 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
 }
 
 
-export async function loadEnquirySupportConfig() {
+export async function loadEnquirySupportConfig(): Promise<enquiryConfigSchemaT | null> {
   try {
     const session = await getSession();
-    if (session?.user.dbInfo) {
-      const config = await getEnquirySupportConfigDB(session.user.dbInfo.dbName);
-      return config;
-    } else {
-      throw new Error("Session or database info not available");
+
+    if (!session?.user?.dbInfo) {
+      throw new Error('Session or database info not available');
     }
+
+    const config = await getEnquirySupportConfigDB(session.user.dbInfo.dbName);
+    return config;
+
   } catch (error) {
-    console.error("Error loading enquiry support config:", error);
+    console.error('Error loading enquiry support config:', error);
     return null;
   }
 }
