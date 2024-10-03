@@ -12,11 +12,6 @@ import { SqlError } from 'mariadb';
 export async function registerUser(formData: userSchemaT) {
   let result;
   try {
-    const session = await getSession();
-    console.log(session);
-
-    if (session) {
-
       const parsed = zs.userSchema.safeParse(formData);
       if (parsed.success) {
         let contact;
@@ -26,9 +21,11 @@ export async function registerUser(formData: userSchemaT) {
         }
         else {
           contact = formData.phone;
+          contact = contact?.replace(/ +/g, '');
           delete formData?.phone;
         }
         formData.contact = contact;
+        
 
           const hashedPassword = await hashText(formData.password);
           formData.password = hashedPassword;
@@ -48,16 +45,9 @@ export async function registerUser(formData: userSchemaT) {
         result = { status: false, data: errorState };
         return result;
       }
-    } else {
-      result = { status: false, data: [{ path: ["form"], message: "Error: Server Error" }] };
-    }
     return result;
   } catch (e) {
     console.log(e);
-    if ((e instanceof SqlError) && e.code === 'ER_DUP_ENTRY') {
-      result = { status: false, data: [{ path: ["name"], message: "Error: Value already exist" }] };
-      return result;
-    }
   }
   result = { status: false, data: [{ path: ["form"], message: "Error: Unknown Error" }] };
   return result;

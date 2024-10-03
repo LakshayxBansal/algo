@@ -15,6 +15,11 @@ const columns: GridColDef[] = [
     field: 'usercontact',
     headerName: 'Contact',
     width: 150
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 150
   }
 ];
 
@@ -22,18 +27,11 @@ export default function InviteList(){
 
     return <>
         <EntityList
-        title="Add User"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <InviteUserForm
-          setDialogOpen={fnDialogOpen}
-          setDialogValue={fnDialogValue}
-          data={data}
-          />
-        )} 
+        title="Invited User"
         fetchDataFn={getInviteUserByCompany}
         fnFetchDataByID={getInviteUserById}
         customCols={columns}
-        AddAllowed={true}>
+        AddAllowed={false}>
       </EntityList>
       </>
 }

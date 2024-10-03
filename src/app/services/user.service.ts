@@ -9,7 +9,6 @@ import {userSchemaT} from '@/app/models/models';
 
 export async function addUser(data: userSchemaT) {
   try {
-
     return excuteQuery({
       host: "userDb",
       query: "call createUser(?, ?, ?, ?);",

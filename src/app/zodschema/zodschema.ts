@@ -13,6 +13,22 @@ const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
 
+export const signInSchema = z.object({
+  email : z.string().optional(),
+  phone : z.string().optional(),
+  password : z.string().min(1,"Please enter password")
+}).refine(
+  (schema) => {
+    return !(schema.email === "");
+  },
+  { message: "Please enter email", path: ["email"] }
+).refine(
+  (schema) => {
+    return !(schema.phone === "");
+  },
+  { message: "Please enter phone", path: ["phone"] }
+)
+
 export const userSchema = z
   .object({
     // email: z.union([z.string().optional(), z.string().email()]),
@@ -29,7 +45,10 @@ export const userSchema = z
       "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
     ),
     name: z.string().min(1,"Name must not be empty").max(45),
-    phone: z.string().min(10,"Phone number should be atleast 10 digits").max(15,"Phone number should be atmost 15 digits").optional(),
+    phone: z.string().refine((val) => checkPhone(val), {
+      message: "Please provide a valid Phone No",
+      path: ["phone"],
+    }).optional(),
     contact: z.string().optional(),
     repassword: z.string().max(50),
     provider: z.string().max(15).optional(),
@@ -46,12 +65,6 @@ export const userSchema = z
     },
     { message: "Please provide email", path: ["email"] }
   )
-  .refine(
-    (schema) => {
-      return !(schema.phone === "");
-    },
-    { message: "Please provide phone", path: ["phone"] }
-  );
 
 /*
 refine(schema => {

@@ -1210,7 +1210,7 @@ export default function AutoGrid() {
                                 // {{xs:"flex-start", md:"flex-end"}}
                                 >
                                     <Typography variant="subtitle1" style={{ marginRight: "1%" }}>
-                                        Today's Date:
+                                        Today&apos;s Date:
                                     </Typography>
                                     <Typography variant="subtitle1">
                                         {status_date.toDateString()}
