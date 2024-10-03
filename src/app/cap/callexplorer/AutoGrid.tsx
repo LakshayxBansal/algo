@@ -44,10 +44,12 @@ import AllocateCall from "./AllocateCall";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Link from "next/link";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
-export default function AutoGrid() {
+
+export default function AutoGrid(props: any) {
   const pgSize = 10;
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(props.result.result);
   const [dateFilter, setDateFilter] = React.useState("0");
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>("");
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({} as any);
@@ -56,10 +58,19 @@ export default function AutoGrid() {
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
   const [pageModel, setPageModel] = React.useState({ page: 0, pageSize: pgSize });
-  const [totalRowCount, setTotalRowCount] = React.useState(0); // State for row count
+  const [totalRowCount, setTotalRowCount] = React.useState(props.count); // State for row count
   const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [refresh, setRefresh] = React.useState<boolean>(true);
+  const [refreshInterval, setRefreshInterval] = React.useState<number>(5); // Default to 5 minutes
+  const [loading, setLoading] = React.useState(false)
+  const [details, setDetails] = React.useState(true);
 
+
+  const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 1 minute
+  };
 
   type DlgState = {
     [key: string]: HTMLElement | null;
@@ -88,19 +99,32 @@ export default function AutoGrid() {
   const handleFilterChange = (field: string, value: any) => {
     setFilterValueState((prevState) => ({
       ...prevState,
-      [field]: value, // Set the selected value for the specific field
+      [field]: value,
     }));
   };
 
   useEffect(() => {
+    setLoading(true)
     async function getEnquiries() {
       const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
       setData(result?.result);
       setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen])
+    setLoading(false)
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh])
 
+  const handleRefresh = () => {
+    setRefresh(!refresh)
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleRefresh();
+    }, refreshInterval * 60000);
+
+    return () => clearInterval(timer);
+  }, [refreshInterval]);
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     setRowSelectionModel(selectionModel);
@@ -153,7 +177,6 @@ export default function AutoGrid() {
   type customCol = { row: any; };
 
   const CustomColor = (props: customCol) => {
-    // console.log("these are the params",props.id)
     let color;
     if (props.row.callStatus === "Open") {
       if (props.row.executive === null) { color = "blue" }
@@ -290,8 +313,6 @@ export default function AutoGrid() {
       headerName: "Time",
       width: 100,
       renderCell: (params) => {
-        console.log(params.row.date);
-
         return params.row.date.toLocaleString('en-IN', options);
       },
     },
@@ -897,45 +918,6 @@ export default function AutoGrid() {
         return params.row.actionDate.toLocaleString('en-IN', options);
       },
     },
-    // {
-    //   field: "columnConfig", headerName: "Column Config",
-    //   renderHeader: () => (
-    //     <Box>
-    //       <IconButton
-    //         aria-controls="tune-menu"
-    //         aria-haspopup="true"
-    //         onClick={handleClickFilter('columnConfig')}
-    //       >
-    //         <TuneIcon fontSize="small" />
-    //       </IconButton>
-    //       <Box>
-    //         <StyledMenu
-    //           id="tune-menu"
-    //           anchorEl={dlgState['columnConfig']}
-    //           open={Boolean(dlgState['columnConfig'])}
-    //           onClose={() => handleCloseFilter('columnConfig')}
-    //         >
-    //           <div style={{ display: "flex", flexDirection: "column" }}>
-    //             {column1
-    //               .filter(col => col.field !== 'columnConfig')
-    //               .map((col) => (
-    //                 <FormControlLabel
-    //                   key={col.field}
-    //                   control={
-    //                     <Checkbox
-    //                       checked={columnVisibilityModel[col.field] !== false}
-    //                       onChange={() => handleColumnVisibilityChange(col.field)}
-    //                     />
-    //                   }
-    //                   label={col.headerName}
-    //                 />
-    //               ))}
-    //           </div>
-    //         </StyledMenu>
-    //       </Box>
-    //     </Box>
-    //   )
-    // },
   ]
 
   const handleDateFilterChange = (event: SelectChangeEvent) => {
@@ -967,8 +949,8 @@ export default function AutoGrid() {
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '100vh', p: 3, maxWidth: "100%" }}>
-      <Box sx={{ maxWidth: "90vw" }}>
+    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '90vh', p: 3, maxWidth: "100%" }}>
+      <Box sx={{ maxWidth: "92vw" }}>
         <Seperator>
           <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
             <Box sx={{ ml: 2 }}>
@@ -998,6 +980,7 @@ export default function AutoGrid() {
                     {column1
                       .filter(col => col.field !== 'columnConfig')
                       .map((col) => (
+                        (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
                         <FormControlLabel
                           key={col.field}
                           control={
@@ -1023,7 +1006,8 @@ export default function AutoGrid() {
             disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
-            rows={data ? data : []}
+            // rows={data ? data : []}
+            rows={data}
             columns={column1}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
@@ -1036,15 +1020,16 @@ export default function AutoGrid() {
             onPaginationModelChange={setPageModel}
             rowCount={totalRowCount}
             checkboxSelection
+            loading={loading}
             sx={{
               mt: "1%",
-              height: {
+              height: details ? {
                 xs: "auto",
                 sm: "auto",
                 '@media (min-height: 645px)': {
                   height: '50vh',
                 },
-              },
+              } : "60vh",
               '& .MuiDataGrid-virtualScroller': {
                 overflowY: 'auto',
               },
@@ -1076,10 +1061,23 @@ export default function AutoGrid() {
                 width: '15px',
                 height: '15px',
               },
+              '& .MuiDataGrid-footerContainer': {
+                height: '28px', // Force footer container to 30px
+                minHeight: '28px', // Override any minimum height constraints
+              },
+              '& .MuiTablePagination-root': {
+                height: '28px', // Ensure pagination component also respects 30px height
+                minHeight: '28px',
+                overflow: "hidden"
+              },
+              '& .MuiTablePagination-toolbar': {
+                height: '28px', // Adjust the toolbar within the pagination
+                minHeight: '28px',
+              },
             }}
           />
         </Paper>
-        <Box sx={{
+        {/* <Box sx={{
           padding: "20px 0",
           display: "flex",
           flexWrap: "wrap", // Wraps buttons to the next line
@@ -1089,87 +1087,229 @@ export default function AutoGrid() {
             alignItems: "center", // Aligns buttons in the center of the column
           },
         }}>
+          <span>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexWrap: "wrap", // Wraps items on smaller screens
+                // width: "100%",
+                flexDirection: "row"
+              }}
+            >
+              <Grid >
+                <CallType text="Open-Unallocated" color="blue" />
+              </Grid>
+              <Grid >
+                <CallType text="Open-Allocated" color="purple" />
+              </Grid>
+              <Grid >
+                <CallType text="Closed-Failure" color="red" />
+              </Grid>
+              <Grid >
+                <CallType text="Closed-Success" color="green" />
+              </Grid>
 
-          {<Tooltip title={rowSelectionModel.length > 0 ? "" : "Please select a row first"} placement="top">
+            </Box>
+            {<Tooltip title={rowSelectionModel.length > 0 ? "" : "Please select a row first"} placement="top">
+              <span>
+                <ContainedButton
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    // bgcolor: "#dedfe0",
+                    // color: "black",
+                    // boxShadow: "3",
+                    margin: "0 1vw",
+                    textTransform: "none"
+                  }}
+                  onClick={() => setDialogOpen(true)}
+                  disabled={rowSelectionModel.length === 0}
+                >
+                  Allocate Call
+                </ContainedButton>
+              </span>
+            </Tooltip>}
             <span>
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{
-                  // bgcolor: "#dedfe0",
-                  // color: "black",
-                  // boxShadow: "3",
-                  margin: "0 1vw",
-                  textTransform: "none"
-                }}
-                onClick={() => setDialogOpen(true)}
-                disabled={rowSelectionModel.length === 0}
+                sx={{ textTransform: "none" }}
               >
-                Allocate Call
+                Feed Report
               </ContainedButton>
+              <IconButton
+                aria-label="refresh"
+                onClick={handleRefresh}
+              >
+                <RefreshIcon />
+              </IconButton>
+              <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                Auto refresh in
+              </Typography>
+
+              <TextField
+                value={refreshInterval}
+                onChange={handleIntervalChange}
+                variant="standard"
+                size="small"
+                type="number"
+                inputProps={{ min: 1, style: { width: '40px', textAlign: 'center' } }}
+                sx={{ mx: 1 }}
+              />
+
+              <Typography variant="body2" component="span">
+                mins.
+              </Typography>
             </span>
-          </Tooltip>}
-          <ContainedButton
-            variant="contained"
-            size="small"
-            sx={{ textTransform: "none" }}
-          >
-            Feed Report
-          </ContainedButton>
-        </Box>
-        {selectedRow && (<Box> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
-        <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
-          <CallDetailList selectedRow={selectedRow} />
-        </Paper>
+
+          </span>
+        </Box> */}
+        <Grid container alignItems={"center"}>
+          <Grid item md={2.5} sm={6} xs={12} sx={{ margin: "auto" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center", // Center vertically on small screens
+                gap: "1vw",
+                justifyContent: { xs: "center" }
+              }}
+            >
+              <Tooltip
+                title={rowSelectionModel.length > 0 ? "" : "Please select a row first"}
+                placement="top"
+              >
+                <span>
+                  <ContainedButton
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      textTransform: "none",
+                      margin: "0 0.5vw",
+                    }}
+                    onClick={() => setDialogOpen(true)}
+                    disabled={rowSelectionModel.length === 0}
+                  >
+                    Allocate Call
+                  </ContainedButton>
+                </span>
+              </Tooltip>
+              <ContainedButton
+                variant="contained"
+                size="small"
+                sx={{ textTransform: "none" }}
+              >
+                Feed Report
+              </ContainedButton>
+            </Box>
+          </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center", // Vertically center on small screens
+                justifyContent: { xs: "center" }
+              }}
+            >
+              <IconButton
+                aria-label="refresh"
+                onClick={handleRefresh}
+              >
+                <RefreshIcon />
+              </IconButton>
+              <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                Auto refresh in
+              </Typography>
+              <TextField
+                value={refreshInterval}
+                onChange={handleIntervalChange}
+                variant="standard"
+                size="small"
+                type="number"
+                inputProps={{ min: 1, style: { width: '35px', textAlign: 'center' } }}
+                sx={{ mx: 1, width: 'auto' }} // Fixed width for TextField
+              />
+              <Typography variant="body2" component="span">
+                mins.
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item md={6.5} sm={12} xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "center", sm: "center", md: "center", lg: "flex-end" }, // Center on small and medium screens, align right on large screens
+                alignItems: "center", // Vertically center the CallTypes
+                flexWrap: "nowrap", // Prevent wrapping of call types
+              }}
+            >
+              <Grid container spacing={2} sx={{ flex: 1, justifyContent: { xs: 'center', sm: 'center', md: 'center', lg: 'flex-end' }, alignItems: "center" }}>
+                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Open-Unallocated" color="blue" />
+                </Grid>
+                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Open-Allocated" color="purple" />
+                </Grid>
+                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Closed-Failure" color="red" />
+                </Grid>
+                <Grid item xs="auto" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Closed-Success" color="green" />
+                </Grid>
+              </Grid>
+            </Box>
+          </Grid>
+        </Grid>
+
+        {selectedRow && details && (<Box> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
+        {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
+          <CallDetailList selectedRow={selectedRow} refresh={refresh} />
+        </Paper>}
         <Box
           sx={{
             rowGap: 1,
             columnGap: 3,
           }}
         >
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
+          <Grid container alignItems="center" justifyContent="space-between" marginTop={2}>
+            <Grid item xs={12} sm={10} md={4}>
               <ContainedButton
                 variant="contained"
                 size="small"
                 sx={{ margin: "0 1vw", textTransform: "none" }}
+                onClick={() => setDetails(!details)}
               >
-                Hide Details
+                {details ? "Hide Details" : "Show Details"}
               </ContainedButton>
-              <FormControlLabel
-                control={<Checkbox size="small" />}
-                label={<Typography fontSize={14}>Show Remarks</Typography>}
-                sx={{ marginLeft: { xs: "0vw", sm: "1vw" }, marginTop: { xs: 1, md: 0 } }}
-              />
+              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
+                <Link href="/cap/enquiry" style={{
+                  textDecoration: "none",
+                }}>
+                  New Call Receipt
+                </Link>
+              </ContainedButton>
             </Grid>
-
-            <Grid item xs={12} md={8}>
-              <Box
+            <Grid item xs={10} sm={10} md={1}>
+              <ContainedButton
+                variant="contained"
+                size="small"
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap", // Wraps items on smaller screens
-                  width: "100%",
-                  flexDirection: "row"
+                  marginLeft: { xs: 0, sm: 'auto' }, // Aligns right from small screens (600px) and up
+                  marginTop: { xs: 2, sm: 0 }, // Adds margin on small screens for spacing
+                  width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
+                  textTransform: "none"
                 }}
               >
-                <Grid >
-                  <CallType text="Open-Unallocated" color="blue" />
-                </Grid>
-                <Grid >
-                  <CallType text="Open-Allocated" color="purple" />
-                </Grid>
-                <Grid >
-                  <CallType text="Closed-Failure" color="red" />
-                </Grid>
-                <Grid >
-                  <CallType text="Closed-Success" color="green" />
-                </Grid>
+                <Link href="/cap" style={{
+                  textDecoration: "none",
+                }}>
+                  Quit
+                </Link>
 
-              </Box>
+              </ContainedButton>
             </Grid>
           </Grid>
-          <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "1vh" }}>
+          {/* <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "1vh" }}>
             <Box
               sx={{
                 display: "flex",
@@ -1181,6 +1321,7 @@ export default function AutoGrid() {
               <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
                 New Call Receipt
               </ContainedButton>
+
               <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
                 New Call Allocation
               </ContainedButton>
@@ -1206,7 +1347,7 @@ export default function AutoGrid() {
               </Link>
 
             </ContainedButton>
-          </Box>
+          </Box> */}
 
 
         </Box>
@@ -1214,7 +1355,7 @@ export default function AutoGrid() {
           dialogOpen && <AddDialog title={"Allocate Executive"}
             open={dialogOpen}
             setDialogOpen={setDialogOpen}>
-            <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} />
+            <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} setRefresh={setRefresh} />
           </AddDialog>
         }
       </Box>
