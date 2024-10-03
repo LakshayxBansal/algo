@@ -5,8 +5,8 @@ import {
   Box,
   Button,
   IconButton,
+  Link,
   Snackbar,
-  Typography,
 } from "@mui/material";
 import Seperator from "../seperator";
 import { GridCloseIcon } from "@mui/x-data-grid";
@@ -14,9 +14,6 @@ import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Papa from "papaparse";
 
-// to get only 2 values
-// 1. name of the sample file
-// 2. funtion to uplad the data
 export default function UploadFileForm({
   setDialogOpen,
   fnFileUpad,
@@ -29,7 +26,9 @@ export default function UploadFileForm({
   const [snackOpen, setSnackOpen] = useState(false);
   const [data, setData] = useState();
   const [isError, setIsError] = useState(false);
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [errorMessages, setErrorMessages] = useState<
+    { key: string; message: string }[]
+  >([]);
   const [snackMessage, setSnackMessage] = useState(
     "File Uploaded Successfully!"
   );
@@ -41,17 +40,27 @@ export default function UploadFileForm({
 
   const handleSubmit = async () => {
     const batchResult = await fnFileUpad(data as any);
-
     console.log("batchresult : ", batchResult);
 
     if (!batchResult.status) {
       const errorFileName = "errorFile.csv";
       setSelectedFileName(errorFileName);
-      setErrorMessages(
-        Array.from(batchResult.data.values())
-          .flat()
-          .map((error: any) => `${error.path}: ${error.message}`)
-      );
+
+      const errorMap = new Map();
+      for (const [key, messages] of batchResult.data.entries()) {
+        const keyString = JSON.stringify(key);
+        const aggregatedMessages = messages
+          .map((error: any) => error.message)
+          .join(", ");
+        errorMap.set(keyString, aggregatedMessages);
+      }
+
+      const errors = Array.from(errorMap.entries()).map(([key, message]) => ({
+        key,
+        message,
+      }));
+
+      setErrorMessages(errors);
       setSnackMessage("Error in Upload File!");
       setSnackOpen(true);
       setIsError(true);
@@ -85,13 +94,12 @@ export default function UploadFileForm({
   };
 
   const downloadErrorFile = () => {
-    const csvData = errorMessages.map((msg) => ({
-      path: msg.split(": ")[0],
-      message: msg.split(": ")[1],
+    const csvData = errorMessages.map((error) => ({
+      data: error.key,
+      message: error.message,
     }));
 
     const csv = Papa.unparse(csvData);
-
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -123,42 +131,50 @@ export default function UploadFileForm({
           </Box>
         </Seperator>
       </Box>
+      <Button
+        component="label"
+        role={undefined}
+        variant="contained"
+        tabIndex={-1}
+        startIcon={<CloudUploadIcon />}
+        sx={{ margin: "1rem" }}
+      >
+        Upload files
+        <VisuallyHiddenInput type="file" onChange={handleFileChange} multiple />
+      </Button>
       {isError ? (
-        <Button sx={{ margin: "1rem" }} onClick={downloadErrorFile}>
-          Download Error File
-        </Button>
-      ) : (
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-          sx={{ margin: "1rem" }}
-        >
-          Upload files
-          <VisuallyHiddenInput
-            type="file"
-            onChange={handleFileChange}
-            multiple
-          />
-        </Button>
-      )}
-      {selectedFileName && (
-        <Typography
-          variant="subtitle1"
+        <Link
           sx={{
+            margin: "1rem",
+            display: "flex",
+            flexDirection: "column",
             textAlign: "center",
-            fontFamily: ["Roboto", "Helvetica", "Arial"].join(", "),
-            color: "blue",
+            fontFamily: ["Roboto", "Helvetica", "Arial"],
+            color: "red",
             textDecoration: "underline",
-            textDecorationColor: "#1976D2",
+            cursor: "pointer",
           }}
+          onClick={downloadErrorFile}
         >
-          File: {selectedFileName}
-        </Typography>
+          Download Error File
+        </Link>
+      ) : (
+        selectedFileName && (
+          <Link
+            variant="subtitle1"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              textAlign: "center",
+              fontFamily: ["Roboto", "Helvetica", "Arial"],
+              textDecoration: "underline",
+              textDecorationColor: "#1976D2",
+            }}
+          >
+            File: {selectedFileName}
+          </Link>
+        )
       )}
-      {/* <Button onClick={handleCreate}>Sample File</Button> */}
       <Box
         sx={{
           display: "flex",
@@ -190,15 +206,6 @@ export default function UploadFileForm({
           {snackMessage}
         </Alert>
       </Snackbar>
-      {errorMessages.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          {errorMessages.map((error, index) => (
-            <Typography key={index} color="error">
-              {error}
-            </Typography>
-          ))}
-        </Box>
-      )}
     </>
   );
 }

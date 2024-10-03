@@ -18,111 +18,10 @@ import {
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import { modifyPhone } from "../utils/phoneUtils";
-
-function validateAndAdjustData(schema: any, data: any) {
-  const result = schema.safeParse(data);
-
-  if (!result.success) {
-    const adjustedData = { ...data };
-    const errors = result.error;
-    let check = false;
-
-    const extractedErrors = errors.issues.map((error: any) => {
-      if (
-        error.received === "undefined" &&
-        error.message.includes("Required")
-      ) {
-        check = true;
-        return {
-          path: error.path,
-          message: error.message,
-        };
-      }
-    });
-
-    if (check) {
-      return { status: 0, extractedErrors: extractedErrors };
-    } else {
-      for (const issue of result.error.issues) {
-        const key = issue.path[0];
-        const expectedType = issue.expected;
-
-        switch (expectedType) {
-          case "string":
-            if (typeof adjustedData[key] !== "string") {
-              adjustedData[key] = String(adjustedData[key]) || "";
-            }
-            break;
-
-          case "number":
-            if (typeof adjustedData[key] === "string") {
-              adjustedData[key] = parseFloat(adjustedData[key] as string) || 0;
-            } else {
-              adjustedData[key] = Number(adjustedData[key]) || 0;
-            }
-            break;
-
-          case "date":
-            if (typeof adjustedData[key] === "string") {
-              adjustedData[key] =
-                new Date(adjustedData[key] as string) || new Date();
-            } else if (!(adjustedData[key] instanceof Date)) {
-              adjustedData[key] = new Date();
-            }
-            break;
-
-          case "boolean":
-            if (typeof adjustedData[key] !== "boolean") {
-              adjustedData[key] = Boolean(adjustedData[key]);
-            }
-            break;
-
-          case "undefined":
-            if (typeof adjustedData[key] !== "undefined") {
-              adjustedData[key] = undefined;
-            }
-            break;
-
-          case "symbol":
-            if (typeof adjustedData[key] !== "symbol") {
-              adjustedData[key] = Symbol();
-            }
-            break;
-
-          case "object":
-            if (
-              typeof adjustedData[key] !== "object" ||
-              adjustedData[key] === null
-            ) {
-              adjustedData[key] = {};
-            }
-            break;
-
-          case "function":
-            if (typeof adjustedData[key] !== "function") {
-              adjustedData[key] = function () {};
-            }
-            break;
-
-          case "bigint":
-            if (typeof adjustedData[key] === "string") {
-              adjustedData[key] = BigInt(adjustedData[key]);
-            } else {
-              adjustedData[key] = BigInt(0);
-            }
-            break;
-        }
-      }
-    }
-
-    return { status: 1, adjustedData };
-  }
-
-  return { status: 1, data: result.data };
-}
+import { validateAndAdjustData } from "../utils/validateType.utils";
 
 export async function createContactsBatch(data: contactSchemaT[]) {
-  const errorMap = new Map<string, { path: string; message: string }[]>();
+  const errorMap = new Map();
 
   try {
     if (!Array.isArray(data) || data.length === 0) {
@@ -134,30 +33,40 @@ export async function createContactsBatch(data: contactSchemaT[]) {
 
     for (let i = 0; i < data.length; i++) {
       const contact = data[i];
-
       if (contact === null || contact === undefined) {
-        errorMap.set(`contact_${i}`, [
-          { path: "contact", message: "Contact data is null or undefined." },
-        ]);
+        errorMap.set(contact, {
+          message: "Contact data is null or undefined.",
+        });
       } else {
         const adjustedContact = await validateAndAdjustData(
           contactSchema,
           contact
         );
 
-        if (adjustedContact.status === 0) {
+        if (
+          adjustedContact.status === 0 &&
+          adjustedContact.validateErrors?.validateErrorStatus != 0
+        ) {
           const errorDetails = adjustedContact.extractedErrors.map(
             (error: any) => {
               if (error !== undefined) {
-                const err = error.path.map((p: string) => {
-                  return { path: p, message: error.message };
-                });
-                return err;
+                return {
+                  path: error.path[0],
+                  message: error.path[0] + " field is missing!",
+                };
               }
             }
           );
 
-          errorMap.set(`contact_${i}`, errorDetails);
+          errorMap.set(contact, errorDetails);
+        } else if (adjustedContact.validateErrors?.validateErrorStatus == 0) {
+          const errorDetails = adjustedContact.validateErrors.errors.map(
+            (err) => {
+              const result = { message: err };
+              return result;
+            }
+          );
+          errorMap.set(contact, errorDetails);
         } else {
           const result = await createContact(adjustedContact.adjustedData);
 
@@ -169,8 +78,7 @@ export async function createContactsBatch(data: contactSchemaT[]) {
               })
             );
 
-            // errorMap.set(`contact_${i}`, errorDetails);
-            errorMap.set("contact", errorDetails);
+            errorMap.set(contact, errorDetails);
           }
         }
       }
