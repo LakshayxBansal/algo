@@ -6,6 +6,7 @@ import { logger } from '@/app/utils/logger.utils';
 import { getExecutiveById } from "@/app/controllers/executive.controller";
 import { executiveSchemaT } from "@/app/models/models";
 import SnackModal from "@/app/miscellaneous/SnackModal";
+import { Box, Paper } from "@mui/material";
 
 export default async function Profile() {
     try {
@@ -14,9 +15,13 @@ export default async function Profile() {
             const executiveData = await getExecutiveById(session.user.userId);
             if (executiveData) {
                 return (
-                    <ExecutiveForm
-                        data={executiveData[0]}
-                    />
+                    <Box sx={{maxWidth : "100%"}}>
+                        <Box sx={{ display: "flex", justifyContent: "center", width: "100vw" }}>
+                            <ExecutiveForm
+                                data={executiveData[0]}
+                            />
+                        </Box>
+                    </Box>
                 );
             } else {
                 return (
