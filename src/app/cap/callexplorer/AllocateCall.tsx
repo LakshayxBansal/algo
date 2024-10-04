@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, Paper, Snackbar } from "@mui/material";
+import { Alert, Box, Button, Collapse, IconButton, Paper, Snackbar, TextField, Tooltip } from "@mui/material";
 import AutocompleteDB from "../../Widgets/AutocompleteDB";
 import { getExecutive } from "../../controllers/executive.controller";
 import { masterFormPropsT, optionsDataT, selectKeyValueT } from "../../models/models";
@@ -8,14 +8,18 @@ import CloseIcon from "@mui/icons-material/Close";
 import { InputControl, InputType } from "../../Widgets/input/InputControl";
 import { updateCallAllocation } from "../../controllers/callExplorer.controller";
 
-export default function AllocateCall(props: masterFormPropsT) {
+interface customprop extends masterFormPropsT {
+    setRefresh: (props: any) => void;
+}
+
+export default function AllocateCall(props: customprop) {
     const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
     const [snackOpen, setSnackOpen] = useState(false);
+    const [remark, setRemark] = useState("");
 
-    console.log(props.data);
 
     const handleSubmit = async (formData: FormData) => {
         let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -34,6 +38,7 @@ export default function AllocateCall(props: masterFormPropsT) {
                 props.setDialogOpen ? props.setDialogOpen(false) : null;
             }, 1000);
             setFormError({});
+            props.setRefresh((prev: boolean) => { !prev })
         } else {
             const issues = result.data;
             // show error on screen
@@ -95,8 +100,6 @@ export default function AllocateCall(props: masterFormPropsT) {
         <Box id="sourceForm" sx={{ p: 3 }}>
             <form action={handleSubmit}>
                 <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
-
-
                     <Box sx={{
                         display: "grid",
                         columnGap: 2,
@@ -123,12 +126,23 @@ export default function AllocateCall(props: masterFormPropsT) {
                             fnSetModifyMode={function (id: string): void {
                             }}
                         />
-                        <InputControl
+                        {/* <InputControl
                             inputType={InputType.TEXT}
                             name="remark"
                             id="remark"
                             label="Remark"
                             fullWidth
+                            value={remark}
+                            onChange={(e: any) => setRemark(e.target.value)}
+                        /> */}
+                        <TextField
+                            name="remark"
+                            id="remark"
+                            label="Remark"
+                            fullWidth
+                            value={remark}
+                            onChange={(e: any) => setRemark(e.target.value)}
+                            multiline={true}
                         />
                     </Box>
                     <Box
@@ -138,9 +152,16 @@ export default function AllocateCall(props: masterFormPropsT) {
                         }}
                     >
                         <Button onClick={handleCancel}>Cancel</Button>
-                        <Button type="submit" variant="contained" sx={{ width: "15%", marginLeft: "5%" }}>
-                            Submit
-                        </Button>
+                        {<Tooltip title={selectValues.executive && remark ? "" : "Please fill both fields"} placement="top">
+                            <span>
+                                <Button type="submit"
+                                    variant="contained"
+                                    sx={{ width: "15%", marginLeft: "5%" }}
+                                    disabled={!selectValues.executive || !remark}>
+                                    Submit
+                                </Button>
+                            </span>
+                        </Tooltip>}
                     </Box>
                 </Paper>
             </form>
