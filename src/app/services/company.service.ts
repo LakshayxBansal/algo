@@ -208,7 +208,7 @@ export async function getCompaniesDb(
         query: "select em.role_id as roleId from executive_master em where em.crm_user_id = ?;",
         values : [userId]
       })
-      userRoles.push({roleId : role[0].roleId,companyId : comp.companyId})
+      userRoles.push({roleId : role.length > 0 ? role[0].roleId : null,companyId : comp.companyId})
     }
     
     const results = await excuteQuery({
