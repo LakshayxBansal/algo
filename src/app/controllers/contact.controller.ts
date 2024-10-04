@@ -18,9 +18,9 @@ import {
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import { modifyPhone } from "../utils/phoneUtils";
-import { validateAndAdjustData } from "../utils/validateType.utils";
+import { convertData } from "../utils/validateType.utils";
 
-export async function createContactsBatch(data: contactSchemaT[]) {
+export async function createContactsBatch(data: any) {
   const errorMap = new Map();
 
   try {
@@ -38,7 +38,7 @@ export async function createContactsBatch(data: contactSchemaT[]) {
           message: "Contact data is null or undefined.",
         });
       } else {
-        const adjustedContact = await validateAndAdjustData(
+        const adjustedContact = await convertData(
           contactSchema,
           contact
         );

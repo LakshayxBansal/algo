@@ -1,18 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  IconButton,
-  Link,
-  Snackbar,
-} from "@mui/material";
+import { Alert, Box, Button, IconButton, Link, Snackbar } from "@mui/material";
 import Seperator from "../seperator";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Papa from "papaparse";
+import { contactSchema } from "@/app/zodschema/zodschema";
 
 export default function UploadFileForm({
   setDialogOpen,
@@ -111,6 +105,36 @@ export default function UploadFileForm({
     URL.revokeObjectURL(url);
   };
 
+  const downloadSampleFile = (schema: any, fileName: string) => {
+    const sampleData: { key: string; type: string; isOptional: string }[] = [];
+
+    for (const [key, value] of Object.entries(schema.shape)) {
+      const zodValue = value as any;
+      console.log("ZodValue", zodValue);
+      const type = zodValue.constructor.name;
+      // console.log("Type", type);
+      const isOptional = zodValue.isOptional() ? "Optional" : "Mandatory";
+      // console.log("isOptional", isOptional);
+
+      sampleData.push({
+        key,
+        type: type.replace("Zod", ""),
+        isOptional,
+      });
+    }
+
+    const csv = Papa.unparse(sampleData);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <Box
@@ -161,7 +185,6 @@ export default function UploadFileForm({
       ) : (
         selectedFileName && (
           <Link
-            variant="subtitle1"
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -175,6 +198,20 @@ export default function UploadFileForm({
           </Link>
         )
       )}
+      <Link
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          textAlign: "center",
+          fontFamily: ["Roboto", "Helvetica", "Arial"],
+          textDecoration: "underline",
+          textDecorationColor: "#1976D2",
+          cursor: "pointer",
+        }}
+        onClick={() => downloadSampleFile(contactSchema, "Sample_file.csv")}
+      >
+        Sample File
+      </Link>
       <Box
         sx={{
           display: "flex",
