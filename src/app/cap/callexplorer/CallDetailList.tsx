@@ -1,11 +1,19 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCallEnquiryDetails } from "../../controllers/callExplorer.controller";
 import { StripedDataGrid } from "../../utils/styledComponents";
+import { Box, Popover, Tooltip, Typography } from "@mui/material";
 
-export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
+export default function CallDetailList({ selectedRow, refresh }: { selectedRow: any, refresh: any }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
     const [data, setData] = useState([]);
+    const [pageSize, setPageSize] = useState(10); // Default page size
+    const [page, setPage] = useState(0); // Default page number (starting from 0)
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null); // State to manage anchor element for popover
+    const [popoverContent, setPopoverContent] = useState<string>(''); // State to store full remark content
+    const [open, setOpen] = useState(false); // State to control Popover visibility
+    const popoverRef = useRef<HTMLDivElement | null>(null); // Ref for Popover
+
     const options = {
         timeZone: 'Asia/Kolkata',
         hour12: true, // Use 12-hour format with AM/PM
@@ -15,14 +23,38 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
 
 
     useEffect(() => {
-        console.log("row", selectedRow);
 
         async function getEnquiries() {
             const result = await getCallEnquiryDetails(selectedRow?.id);
             setData(result);
         }
         getEnquiries();
-    }, [selectedRow])
+    }, [selectedRow, refresh])
+
+    const truncateText = (text: string, maxLength: number) => {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength) + '...';
+        }
+        return text;
+    };
+
+    const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, content: string) => {
+        setAnchorEl(event.currentTarget);
+        setPopoverContent(content);
+        setOpen(true);
+    };
+
+    const handlePopoverClose = () => {
+        setOpen(false);
+        setAnchorEl(null);
+    };
+
+    const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
+        const relatedTarget = event.relatedTarget as Node;
+        if (popoverRef.current && !popoverRef.current.contains(relatedTarget) && anchorEl && !anchorEl.contains(relatedTarget)) {
+            handlePopoverClose();
+        }
+    };
 
 
     const column2: GridColDef[] = [
@@ -44,22 +76,40 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
             width: 100,
         },
         { field: "subStatus", headerName: "Sub Status", width: 100 },
-        { field: "actionTaken", headerName: "Action Taken", width: 130 },
-        { field: "nextAction", headerName: "Next Action", width: 130 },
+        { field: "actionTaken", headerName: "Action Taken", width: 100 },
+        { field: "nextAction", headerName: "Next Action", width: 100 },
         {
             field: "actionDate",
             headerName: "Action Date",
             width: 130,
         },
         {
-            field: "actionTime", headerName: "Time", width: 130,
+            field: "actionTime", headerName: "Time", width: 100,
             renderCell: (params) => {
                 return params.row.actionDate.toLocaleString('en-IN', options);
             },
         },
+        {
+            field: "remark", headerName: "Remark", flex: 1, // Use flex to take up remaining space
+            renderCell: (params) => {
+                const fullRemark = params.row.status_id == 1
+                    ? params.row.suggested_action_remark
+                    : params.row.closure_remark;
+
+                const truncatedRemark = truncateText(fullRemark, 120); // Limit to 120 characters
+
+                return (
+                    <Box onMouseEnter={(event) => handlePopoverOpen(event, fullRemark)}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        {truncatedRemark}
+                    </Box>
+                );
+            },
+        }
     ];
 
-    return (
+    return (<>
         <StripedDataGrid rows={data ? data : []}
             rowHeight={30}
             columnHeaderHeight={30}
@@ -68,6 +118,66 @@ export default function CallDetailList({ selectedRow }: { selectedRow: any }) {
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
             autoHeight
+            pagination // Enable pagination
+            paginationModel={{ pageSize, page }}
+            onPaginationModelChange={(newPaginationModel) => {
+                setPageSize(newPaginationModel.pageSize); // Update the pageSize state
+                setPage(newPaginationModel.page); // Update the current page state
+            }}
+            pageSizeOptions={[5, 10, 20]} // Options for rows per page
+            paginationMode="client" // Set client-side pagination
+            sx={{
+                '& .MuiDataGrid-footerContainer': {
+                    height: '28px', // Force footer container to 30px
+                    minHeight: '28px', // Override any minimum height constraints
+                },
+                '& .MuiTablePagination-root': {
+                    height: '28px', // Ensure pagination component also respects 30px height
+                    minHeight: '28px',
+                    overflow: "hidden"
+                },
+                '& .MuiTablePagination-toolbar': {
+                    height: '28px', // Adjust the toolbar within the pagination
+                    minHeight: '28px',
+                },
+            }}
         />
+        <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+            }}
+            PaperProps={{
+                onMouseEnter: () => setOpen(true), // Keep open on mouse hover
+                onMouseLeave: () => {
+                    setOpen(false);
+                    setAnchorEl(null);
+                }, // Close when mouse leaves
+            }}
+            ref={popoverRef}
+        >
+            <Box
+                sx={{
+                    p: 2,
+                    maxWidth: 600,
+                    maxHeight: 200,
+                    overflowY: 'auto', // Enable scrolling for long content
+                    backgroundColor: 'black',
+                    color: 'white',
+                }}
+            >
+                <Typography sx={{ fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
+                    {popoverContent}
+                </Typography>
+            </Box>
+        </Popover>
+    </>
     )
 }
