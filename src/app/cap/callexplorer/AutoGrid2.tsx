@@ -39,8 +39,7 @@ import CallDetailList from "./CallDetailList";
 import { getEnquirySubStatus } from "../../controllers/enquirySubStatus.controller";
 import { getEnquiryAction } from "../../controllers/enquiryAction.controller";
 import { getCallEnquiries } from "../../controllers/callExplorer.controller";
-import styles from "./AutoGrid.module.css";
-import { useTheme } from "@emotion/react";
+
 const row1 = [
     {
         id: 1,
@@ -1211,7 +1210,7 @@ export default function AutoGrid() {
                                 // {{xs:"flex-start", md:"flex-end"}}
                                 >
                                     <Typography variant="subtitle1" style={{ marginRight: "1%" }}>
-                                        Today's Date:
+                                        Today&apos;s Date:
                                     </Typography>
                                     <Typography variant="subtitle1">
                                         {status_date.toDateString()}

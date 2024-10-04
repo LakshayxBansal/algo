@@ -10,11 +10,13 @@ export default async function Companies() {
   if (session) {
     return (
       <>
-        <Box>
-          <CompanyEntityList />
-        </Box>
-        <Box sx={{ mt: 12 }}>
-          <InviteEntityList />
+        <Box sx={{ height: "100vh" }}>
+          <Box sx={{ height: "50vh", overflow: "scroll" }}>
+            <CompanyEntityList />
+          </Box>
+          <Box sx={{ height: "50vh", overflow: "scroll" }}>
+            <InviteEntityList />
+          </Box>
         </Box>
       </>
     );

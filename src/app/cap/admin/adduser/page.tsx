@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getSession }  from '../../../services/session.service';
 import { redirect } from 'next/navigation';
-import InviteList from './InviteList';
+import InviteList from '../companyuser/InviteList';
 
 export default async function AddUser() {
   const session = await getSession();
