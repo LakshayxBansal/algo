@@ -105,6 +105,7 @@ const StyledLink = styled('a')(({ theme }) => ({
   "&:hover": {
     backgroundColor: theme.palette.action.hover, // Change background on hover
     color: theme.palette.primary.main, // Change text color on hover
+    cursor: 'pointer', 
   },
 }));
 
@@ -145,6 +146,7 @@ interface propsType {
 
 export default function MenuBar(props: propsType) {
   const pages = props.pages;
+  const children = props.children;
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const [searchIcon, setSearchIcon] = useState<boolean>(false);
@@ -193,7 +195,6 @@ export default function MenuBar(props: propsType) {
   };
 
   const handleMasterSearch = (searchDataParam: string,href:any)=> {
-    // props.pages.find(page=>page.parent_id == 12)
     data.forEach(page=>{
       if(page.tableName = "Menu Master"){
         router.push(href +`?searchText=${searchDataParam}`);
@@ -344,7 +345,7 @@ export default function MenuBar(props: propsType) {
             />
           </Drawer>
           <Box style={{ width: "100%" }}>
-                  {props.children}
+                  {children}
                   {/* {React.Children.map(props.children, child => 
                 React.cloneElement(child as React.ReactElement, { searchData:holdValue.current })
               )}   */}
