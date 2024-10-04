@@ -8,23 +8,19 @@ import { logger } from "../utils/logger.utils";
 /**
  *
  * @param crmDb database to search in
- * @param data partial string to search in executive_master.name
+ * @param searchData partial string to search in executive_master.name
  * @returns
  */
-export async function searchMainDataDB(crmDb:string, data:string){
+export async function searchMainDataDB(crmDb:string, searchData:string){
     let result;
     try{
         result =  await excuteQuery({
             host:crmDb,
             query:"call mainSearchBar(?)",
-            values:data
+            values:searchData
         })
-        // console.log("this is result", result);
-        // return result;
     }catch(e){
-        // logger.error(e);
-        console.log(e);
+        logger.error(e);
     }
-    // console.log("this is the result", result)
     return result;
 }

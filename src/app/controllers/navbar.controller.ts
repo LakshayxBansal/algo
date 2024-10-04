@@ -5,24 +5,25 @@ import { logger } from "../utils/logger.utils";
 import * as zs from "../zodschema/zodschema";
 import * as mdl from "../models/models";
 
-import { getSession } from "next-auth/react";
+// import { getSession } from "next-auth/react";
+import { getSession } from "../services/session.service";
 
 /**
  *
- * @param data partial string for executive name
+ * @param searchData partial string for executive name
  * @returns
  */
 
-export async function searchMainData(data: string) {
+export async function searchMainData(searchData: string) {
   let result =  {} as mdl.searchDataT ;
 
   try {
-    // const session =  await getSession();
-    // console.log("session",session)
-    // if(session){
-    const result1 = await searchMainDataDB("crmapp1", data);
+    const session =  await getSession();
+    console.log("session",session);
+    if(session?.user.dbInfo){
+    const result1 = await searchMainDataDB(session.user.dbInfo.dbName, searchData);
     result = result1[0];
-    // }
+    }
   } catch (e) {
     logger.error(e);
   }

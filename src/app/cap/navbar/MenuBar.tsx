@@ -170,13 +170,16 @@ export default function MenuBar(props: propsType) {
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
 
-  groupedData = data.reduce((acc: any, item: any) => {
-    if (!acc[item.table_name]) {
-      acc[item.table_name] = [];
-    }
-    acc[item.table_name].push({ result: item.result, href: item.href });
-    return acc;
-  }, {});
+  if(Array.isArray(data) && data.length > 0){
+    groupedData = data.reduce((acc: any, item: any) => {
+      if (!acc[item.table_name]) {
+        acc[item.table_name] = [];
+      }
+      acc[item.table_name].push({ result: item.result, href: item.href });
+      return acc;
+    }, {});
+  }
+  
 
   const options = Object.entries(groupedData).flatMap(([tableName, results]) =>
     results.map(({ result, href }) => ({
