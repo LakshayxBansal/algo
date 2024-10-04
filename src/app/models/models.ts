@@ -25,6 +25,12 @@ export type optionsDataT = {
   detail?: string;
 };
 
+export type searchDataT = {
+  result: string;
+  tableName: string,
+  href:string,
+};
+
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
 
 export type countrySchemaT = z.infer<typeof zs.countrySchema>;
@@ -101,8 +107,6 @@ export type nameMasterDataT = z.infer<typeof zs.nameMasterData>; // for simple n
 export type nameAliasDataT = z.infer<typeof zs.nameAliasData>; // for name and alias masters
 
 export type menuOptionT = z.infer<typeof zs.menuOption>;
-
-export type searchDataT = z.infer<typeof zs.searchData>;
 
 export type menuTreeT = {
   id: number;

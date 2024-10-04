@@ -9,7 +9,7 @@ export default function CapLayout({children} : {children: React.ReactNode}) {
     <section>
       {/* Include shared UI here e.g. a header or sidebar */}
 
-        <AppMenu>
+        <AppMenu searchData='dashboard'>
           <Box id="cap_layout">
             <ThemeProvider theme={theme}>
               {/* <SecondNavbar title=""/> */}

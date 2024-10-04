@@ -47,6 +47,7 @@ import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import HomeIcon from "@mui/icons-material/Home";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { useSearchParams } from "next/navigation";
 
 type ModifyT = {
   title: string;
@@ -88,6 +89,9 @@ export default function EntityList(props: ModifyT) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const [deleteMsg,setDeleteMsg] = useState<string>();
 
+  const searchParams = useSearchParams();
+  const searchData:string | null = searchParams.get("searchText")
+
   let searchText;
   useEffect(() => {
     const fetchData = debounce(async (searchText) => {
@@ -99,8 +103,12 @@ export default function EntityList(props: ModifyT) {
       setData(rows.data);
       setNRows(rows.count as number);
     }, 400);
-
-    fetchData(search);
+      
+    if(searchData){
+      fetchData(searchData);
+    }else{
+      fetchData(search);
+    }
   }, [
     PageModel,
     filterModel,
@@ -108,6 +116,7 @@ export default function EntityList(props: ModifyT) {
     search,
     dialogOpen,
     dialogOpenDelete,
+    searchData,
   ]);
 
   const handleClick1 = (event: React.MouseEvent<HTMLElement>) => {

@@ -81,6 +81,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
     }
   }, [inputValue, autoSelect, open]);
 
+  console.log("autocompletedb",options)
+
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
       if (selectFunc) {

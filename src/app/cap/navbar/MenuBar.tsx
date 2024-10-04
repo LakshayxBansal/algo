@@ -1,16 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -18,31 +16,24 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useRouter } from "next/navigation";
 import LeftMenuTree from "./leftmenutree";
-import {
-  menuTreeT,
-  optionsDataT,
-  searchDataT,
-  selectKeyValueT,
-} from "../../models/models";
+import { menuTreeT, searchDataT } from "../../models/models";
 import ProfileModal from "@/app/miscellaneous/ProfileModal";
 import mainLogo from "../../../../public/logo.png";
 import Image from "next/image";
 import {
   Autocomplete,
+  Button,
   ClickAwayListener,
   darken,
   debounce,
   InputAdornment,
   lighten,
+  ListItemButton,
   TextField,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { options } from "@/app/api/auth/[...nextauth]/options";
-import { useEffect } from "react";
 import { searchMainData } from "@/app/controllers/navbar.controller";
-import { searchMainDataDB } from "@/app/services/navbar.service";
-import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
+import Link from "next/link";
 
 const drawerWidth: number = 240;
 
@@ -91,9 +82,6 @@ const Drawer = styled(MuiDrawer, {
       [theme.breakpoints.up("sm")]: {
         width: theme.spacing(7),
       },
-      [theme.breakpoints.up("xs")]: {
-        width: theme.spacing(7),
-      },
     }),
   },
 }));
@@ -109,64 +97,92 @@ const GroupHeader = styled("div")(({ theme }) => ({
   }),
 }));
 
+const StyledLink = styled('a')(({ theme }) => ({
+  textDecoration: 'none',
+  color: 'inherit',
+  padding: '10px',
+  display: 'block', // Make it behave like a block element
+  "&:hover": {
+    backgroundColor: theme.palette.action.hover, // Change background on hover
+    color: theme.palette.primary.main, // Change text color on hover
+  },
+}));
+
 const GroupItems = styled("ul")({
   padding: 0,
 });
 
-// TODO remove, this demo shouldn't need to reset the theme.
-//const defaultTheme = createTheme();
+const CustomTextField = styled(TextField)(({ theme }) => ({
+  backgroundColor: "white",
+  "& .MuiOutlinedInput-root": {
+    padding: "2px 8px",
+    "& fieldset": {
+      borderColor: "transparent",
+    },
+    "&:hover fieldset": {
+      borderColor: "transparent",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "transparent",
+    },
+    "& input": {
+      padding: "6px 0",
+      fontSize: "0.875rem",
+    },
+  },
+}));
+
 interface propsType {
-  pages: menuTreeT[];
-  username: string;
-  companyName: string;
-  profileImg?: string;
-  children: React.ReactNode;
+  pages: menuTreeT[],
+  username: string,
+  companyName: string,
+  profileImg?: string,
+  userId: number,
+  companyId : number,
+  children: React.ReactNode,
+  params?:{searchData:string}
 }
 
 export default function MenuBar(props: propsType) {
   const pages = props.pages;
-  const [open, setOpen] = React.useState(false);
-  const [menuOpen, setMenuOpen] = React.useState(true);
-  const [searchIcon, setSearchIcon] = React.useState<boolean>(false);
-  const [data, setData] = useState([] as any);
-  const [search, setSearch] = React.useState("");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [searchValues, setSearchValues] = useState<searchDataT>({});
+  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
+  const [searchIcon, setSearchIcon] = useState<boolean>(false);
+  const [data, setData] = useState<searchDataT[]>([]);
+  const [search, setSearch] = useState("");
+  const [searchData, setSearchData] = useState("");
+  const router = useRouter();
 
-  const children = props.children;
-  // const [closeSub, setCloseSub] = React.useState(false);
+  const holdValue=  useRef("newValue");
 
-  // useEffect(()=>{
-  //   const maindata =  debounce(async(searchText:string)=>{
-  //     const result:any = await searchMainData(searchText)
-  //   // console.log(typeof result.data);
-  //   data.push(result.data)
-  //   setData(data);
-  //   }, 400);
-  //   // maindata("d")
-  //   maindata(search);
-  // },[search]);
+  useEffect(() => {
+    const maindata = debounce(async (searchText: string) => {
+      const result: any = await searchMainData(searchText);
+      if (result) {
+        setData(result);
+      }
+    }, 100);
 
-  // console.log(
-  //   searchMainData("d"))
-  // console.log(data);
+    maindata(search);
+  }, [search]);
 
-  // if(data){
-  // const combinedData = [...data[0], ...data[1]];
-  // const groupedData: Record<string, string[]> = data[0].reduce((acc:any, item:any) => {
-  //   if (!acc[item.table_name]) {
-  //     acc[item.table_name] = [];
-  //   }
-  //   acc[item.table_name].push(item.result);
-  //   return acc;
-  // }, {} as Record<string, string[]>);
+  let groupedData: Record<string, { result: string; href: string }[]> = {};
 
-  // }else{
+  groupedData = data.reduce((acc: any, item: any) => {
+    if (!acc[item.table_name]) {
+      acc[item.table_name] = [];
+    }
+    acc[item.table_name].push({ result: item.result, href: item.href });
+    return acc;
+  }, {});
 
-  // }
-
-  // const options = Object.entries(groupedData).flatMap(([tableName, results]) => results.map((result: any) => ({ tableName, result }))
-  // );
+  const options = Object.entries(groupedData).flatMap(([tableName, results]) =>
+    results.map(({ result, href }) => ({
+      tableName,
+      result,
+      href,
+    }))
+  );
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -176,6 +192,17 @@ export default function MenuBar(props: propsType) {
     setOpen(val);
   };
 
+  const handleMasterSearch = (searchDataParam: string,href:any)=> {
+    // props.pages.find(page=>page.parent_id == 12)
+    data.forEach(page=>{
+      if(page.tableName = "Menu Master"){
+        router.push(href +`?searchText=${searchDataParam}`);
+      }else{
+        router.push(href);
+      }
+    })
+  };
+
   if (!menuOpen) {
     return <></>;
   } else {
@@ -183,20 +210,13 @@ export default function MenuBar(props: propsType) {
       <>
         <CssBaseline />
         <AppBar open={open}>
-          <Toolbar
-            sx={{
-              pr: "24px", // keep right padding when drawer closed
-            }}
-          >
+          <Toolbar sx={{ pr: "24px" }}>
             <IconButton
               edge="start"
               color="inherit"
               aria-label="open drawer"
               onClick={toggleDrawer}
-              sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
-              }}
+              sx={{ marginRight: "36px", ...(open && { display: "none" }) }}
             >
               <MenuIcon />
             </IconButton>
@@ -231,49 +251,55 @@ export default function MenuBar(props: propsType) {
               <Box>
                 <ClickAwayListener onClickAway={() => setSearchIcon(false)}>
                   {searchIcon ? (
-                      <AutocompleteDB
-                        name={"Search"}
-                        id={"Search"}
-                        label={"Search ..."}
-                        onChange={(e, val, s) =>
-                        {setSelectValues({ ...selectValues, name: val });
-                      // console.log(e.ta)
-                    }
-                        }
-                        fetchDataFn={searchMainData}
-                        defaultValue={
-                          {
-                            id: searchValues?.id,
-                            name: searchValues?.tableName,
-                            detail:searchValues?.name
-                          } as optionsDataT
-                        }
-
-                        diaglogVal={{
-                          id: searchValues?.id,
-                          name: searchValues?.tableName,
-                          detail: searchValues?.name,
-                        }}
-                        setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
-                        }}
-                        fnSetModifyMode={function (id: string): void {}}
-                      />
+                    <Autocomplete
+                      options={options}
+                      getOptionLabel={(option) => option.result}
+                      groupBy={(option) => option.tableName}
+                      sx={{ width: 300 }}
+                      renderInput={(params) => (
+                        <CustomTextField
+                          {...params}
+                          placeholder="Search Across Algofast"
+                          InputProps={{
+                            ...params.InputProps,
+                            startAdornment: <SearchIcon />,
+                          }}
+                        />
+                      )}
+                      renderGroup={(params) => (
+                        <li key={params.key}>
+                          <GroupHeader>{params.group}</GroupHeader>
+                          <GroupItems>
+                            {Array.isArray(params.children) &&
+                              params.children.map((child: any) => {
+                                const option = options.find(
+                                  (o) => o.result === child.props.children
+                                );
+                                return (
+                                  <li key={child.key}>
+                                    <StyledLink
+                                      // href={option!.href}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "inherit",                     
+                                      }}
+                                      onClick={()=>{handleMasterSearch(child.props.children,option!.href);
+                                      }}
+                                    >
+                                      {child.props.children}
+                                    </StyledLink>
+                                  </li>
+                                );
+                              })}
+                          </GroupItems>
+                        </li>
+                      )}
+                      inputValue={search}
+                      onInputChange={(event, newInputValue) => {
+                        setSearch(newInputValue);
+                      }}
+                    />
                   ) : (
-                    // <Autocomplete
-                    // options={options}
-                    // getOptionLabel={(option) => option.result}
-                    // groupBy={(option) => option.tableName}
-                    // sx={{ width: 300 }}
-                    // renderInput={(params) => <TextField {...params} label="Search..." />}
-                    // renderGroup={(params) => (
-                    //   <li key={params.key}>
-                    //     <GroupHeader>{params.group}</GroupHeader>
-                    //     <GroupItems>{params.children}</GroupItems>
-                    //   </li>
-                    // )}
-                    // // onInputChange={(e) => {
-                    // //   setSearch(e.target.value)}
-                    // />
                     <IconButton onClick={() => setSearchIcon(true)}>
                       <SearchIcon fontSize="medium" style={{ color: "#fff" }} />
                     </IconButton>
@@ -294,13 +320,7 @@ export default function MenuBar(props: propsType) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <ProfileModal
-              img={props.profileImg}
-              name={props.username}
-              userId={0}
-              companyId={0}
-              companyName={""}
-            />
+            <ProfileModal userId={props.userId} companyId={props.companyId} img={props.profileImg} name={props.username} companyName={props.companyName}/>
           </Toolbar>
         </AppBar>
         <Box sx={{ display: "flex" }}>
@@ -317,40 +337,20 @@ export default function MenuBar(props: propsType) {
                 <ChevronLeftIcon />
               </IconButton>
             </Toolbar>
-            <Divider />
             <LeftMenuTree
               pages={pages}
               openDrawer={open}
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "100%" }}>{children}</Box>
+          <Box style={{ width: "100%" }}>
+                  {props.children}
+                  {/* {React.Children.map(props.children, child => 
+                React.cloneElement(child as React.ReactElement, { searchData:holdValue.current })
+              )}   */}
+            </Box>
         </Box>
       </>
     );
   }
 }
-
-/**
- *                 {pages.map((page) => (
-                  <Button
-                    key={page.label}
-                    id={page.id}
-                    disabled={page.disabled}
-                    onClick={handleClick}
-                    sx={{ my: 2, color: 'white', display: 'block', textTransform: 'none' }}
-                  >
-                    {page.label}
-                  </Button>
-                ))}
- */
-
-/*
-              <List component="nav">
-                {mainListItems}
-                <Divider sx={{ my: 1 }} />
-                {secondaryListItems}
-              </List>
-*/
-
-// <AppBar position="absolute" open={open}></AppBar>

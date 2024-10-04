@@ -16,7 +16,7 @@ const pages = [
 ];
 
 
-export default async function AppMenu(props: {children: React.ReactNode}) {
+export default async function AppMenu(props: {children: React.ReactNode, searchData :string}) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
