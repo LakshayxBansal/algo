@@ -697,7 +697,13 @@ export default function AutoGrid(props: any) {
                 '@media (min-height: 645px)': {
                   height: '50vh',
                 },
-              } : "70vh",
+              } : {
+                xs: "60vh",
+                sm: "60vh",
+                '@media (min-height: 645px)': {
+                  height: '65vh',
+                },
+              },
               '& .MuiDataGrid-virtualScroller': {
                 overflowY: 'auto',
               },

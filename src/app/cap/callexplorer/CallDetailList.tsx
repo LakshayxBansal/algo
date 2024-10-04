@@ -126,8 +126,8 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
             pageSizeOptions={[5, 10, 20]} // Options for rows per page
             paginationMode="client" // Set client-side pagination
             sx={{
-                height: '150px',
-                minHeight: '150px',
+                height: '140px',
+                minHeight: '140px',
                 overflowY: 'auto',
                 '& .MuiDataGrid-footerContainer': {
                     height: '28px', // Force footer container to 30px
