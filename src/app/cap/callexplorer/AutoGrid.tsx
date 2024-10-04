@@ -44,14 +44,12 @@ export default function AutoGrid(props: any) {
   const [loading, setLoading] = React.useState(false)
   const [details, setDetails] = React.useState(true);
   const [dlgState, setDlgState] = React.useState<DlgState>({});
+  const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
+  type DlgState = { [key: string]: HTMLElement | null; };
 
   const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 1 minute
-  };
-
-  type DlgState = {
-    [key: string]: HTMLElement | null;
   };
 
   const handleCloseFilter = (field: string) => {
@@ -61,7 +59,6 @@ export default function AutoGrid(props: any) {
     }));
   };
 
-  const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
 
   const handleFilterChange = (field: string, value: any) => {
     setFilterValueState((prevState) => ({
@@ -667,7 +664,6 @@ export default function AutoGrid(props: any) {
             </Box>
           </Grid>
         </Seperator>
-
         <Paper elevation={1}
         >
           <StripedDataGrid
