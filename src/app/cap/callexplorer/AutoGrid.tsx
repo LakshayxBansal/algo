@@ -217,7 +217,7 @@ export default function AutoGrid(props: any) {
       },
     },
     {
-      field: "callCategory", width: 120,
+      field: "callCategory", width: 120, headerName: "Call Category",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -256,7 +256,7 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "area", width: 100,
+      field: "area", width: 100, headerName: "Area",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -295,7 +295,7 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "executive", width: 100,
+      field: "executive", width: 100, headerName: "Executive",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -415,8 +415,7 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "subStatus", width: 100,
-
+      field: "subStatus", width: 100, headerName: "Sub Status",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -475,7 +474,7 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "nextAction", width: 100,
+      field: "nextAction", width: 100, headerName: "Next Action",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -513,8 +512,7 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "actionDate",
-      width: 100,
+      field: "actionDate", width: 100, headerName: "Action Date",
       renderCell: (params) => {
         return params.row.actionDate.toDateString();
       },
