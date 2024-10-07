@@ -21,6 +21,7 @@ import { modifyPhone } from "../utils/phoneUtils";
 import { convertData } from "../utils/validateType.utils";
 
 export async function createContactsBatch(data: any) {
+  "use server";
   const errorMap = new Map();
 
   try {
@@ -38,10 +39,7 @@ export async function createContactsBatch(data: any) {
           message: "Contact data is null or undefined.",
         });
       } else {
-        const adjustedContact = await convertData(
-          contactSchema,
-          contact
-        );
+        const adjustedContact = await convertData(contactSchema, contact);
 
         if (
           adjustedContact.status === 0 &&

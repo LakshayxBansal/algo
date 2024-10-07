@@ -34,9 +34,9 @@ export default function Footer(){
                 <Typography sx={{ width: "40%" }}>
                     {`the value of first key is : ${statusObject["key1"]}`}
                 </Typography>
-                <Typography sx={{ width: "40%" }}>
+                {/* <Typography sx={{ width: "40%" }}>
                     {new Date().toLocaleString()}
-                </Typography>
+                </Typography> */}
             </Box>
         </Box>
     )

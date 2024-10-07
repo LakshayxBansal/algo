@@ -1,4 +1,5 @@
-import { z, ZodTypeAny, ZodOptional, Schema } from "zod";
+import { z, ZodTypeAny, ZodOptional, Schema, ZodSchema } from "zod";
+import { companySchemaT, contactSchemaT } from "../models/models";
 
 function validateData(schema: any, data: any) {
   const errors: string[] = [];
@@ -246,40 +247,45 @@ function adjustType(value: any, expectedType: string) {
   }
 }
 
+
+
 export async function convertData(schema: any, data: any) {
   // const adjustedData = {};
   // const adjustedData: Record<string, any> = {};
   const adjustedData: any = {};
-  //   const temp: z.infer<typeof schema> = {};
+    // const temp: z.infer<typeof schema> = {};
+    // const typ = typeof temp;
   type ContactType = z.infer<typeof schema>;
-
-  for (const key in data) {
-    if (schema.shape[key]) {
-      //   const expectedType = schema.shape[key]._def.innerType;
-      // const expectedType = schema.shape[key].constructor.name;
-      let expectedType = schema.shape[key]._def.innerType._def.typeName;
-      (expectedType = expectedType.replace("Zod", "")),
-        // const expectedType = typeof (ContactType);
-        console.log("expected Type", expectedType);
-      adjustedData[key] = adjustType(data[key], expectedType);
-    } else {
-      adjustedData[key] = data[key];
-    }
-  }
+  let object : ContactType;
+  
   // for (const key in data) {
-  //     const schemaValue = schema.shape[key];
-  //     if (schemaValue) {
-  //       let expectedType: string;
-  //       if (schemaValue instanceof ZodOptional) {
-  //         expectedType = schemaValue._def.innerType._def.typeName;
-  //       } else {
-  //         expectedType = schemaValue._def.typeName;
-  //       }
-  //       adjustedData[key] = adjustType(data[key], expectedType);
-  //     } else {
-  //       adjustedData[key] = data[key];
-  //     }
+  //   if (schema.shape[key]) {
+  //     //   const expectedType = schema.shape[key]._def.innerType;
+  //     // const expectedType = schema.shape[key].constructor.name;
+  //     let expectedType = schema.shape[key]._def.innerType._def.typeName;
+  //     (expectedType = expectedType.replace("Zod", "")),
+  //       // const expectedType = typeof (ContactType);
+  //       console.log("expected Type", expectedType);
+  //     adjustedData[key] = adjustType(data[key], expectedType);
+  //   } else {
+  //     adjustedData[key] = data[key];
   //   }
+  // }
+  for (const key in data) {
+      const schemaValue = schema.shape[key];
+      if (schemaValue) {
+        let expectedType: string;
+        if (schemaValue instanceof ZodOptional) {
+          expectedType = schemaValue._def.innerType._def.typeName;
+        } else {
+          expectedType = schemaValue._def.typeName;
+        }
+        (expectedType = expectedType.replace("Zod", ""))
+        adjustedData[key] = adjustType(data[key], expectedType);
+      } else {
+        adjustedData[key] = data[key];
+      }
+    }
 
   const result = schema.safeParse(adjustedData);
 
