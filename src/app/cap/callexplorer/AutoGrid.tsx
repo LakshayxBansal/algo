@@ -97,7 +97,7 @@ export default function AutoGrid(props: any) {
     const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
     setSelectedRow(selectedData); // Set the selected row data
 
-    if (selectionModel.length > 1) {
+    if (selectionModel?.length > 1) {
       setSelectedRow(null);
     }
   };
@@ -130,9 +130,8 @@ export default function AutoGrid(props: any) {
   };
 
 
-  type customCol = { row: any; };
 
-  const CustomColor = (props: customCol) => {
+  const CustomColor = (props: { row: any; }) => {
     let color;
     if (props.row.callStatus === "Open") {
       if (props.row.executive === null) { color = "blue" }
@@ -615,7 +614,7 @@ export default function AutoGrid(props: any) {
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '90vh', p: 3, maxWidth: "100%" }}>
+    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '90vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%" } }}>
       <Box sx={{ maxWidth: "92vw" }}>
         <Seperator>
           <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -756,7 +755,7 @@ export default function AutoGrid(props: any) {
               }}
             >
               <Tooltip
-                title={rowSelectionModel.length > 0 ? "" : "Please select a row first"}
+                title={rowSelectionModel?.length > 0 ? "" : "Please select a row first"}
                 placement="top"
               >
                 <span>
@@ -768,7 +767,7 @@ export default function AutoGrid(props: any) {
                       margin: "0 0.5vw",
                     }}
                     onClick={() => setDialogOpen(true)}
-                    disabled={rowSelectionModel.length === 0}
+                    disabled={rowSelectionModel?.length === 0}
                   >
                     Allocate Call
                   </ContainedButton>
@@ -874,8 +873,8 @@ export default function AutoGrid(props: any) {
                 variant="contained"
                 size="small"
                 sx={{
-                  marginLeft: { xs: 0, sm: 'auto' }, // Aligns right from small screens (600px) and up
-                  marginTop: { xs: 2, sm: 0 }, // Adds margin on small screens for spacing
+                  marginLeft: { xs: 0, sm: 1 }, // Aligns right from small screens (600px) and up
+                  marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
                   width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
                   textTransform: "none"
                 }}
