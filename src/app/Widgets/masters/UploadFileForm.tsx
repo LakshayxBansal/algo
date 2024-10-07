@@ -106,19 +106,16 @@ export default function UploadFileForm({
   };
 
   const downloadSampleFile = (schema: any, fileName: string) => {
-    const sampleData: { key: string; type: string; isOptional: string }[] = [];
+    const sampleData: { key: string; isOptional: string }[] = [];
 
     for (const [key, value] of Object.entries(schema.shape)) {
       const zodValue = value as any;
       console.log("ZodValue", zodValue);
-      const type = zodValue.constructor.name;
-      // console.log("Type", type);
+      // const type = zodValue.constructor.name;
       const isOptional = zodValue.isOptional() ? "Optional" : "Mandatory";
-      // console.log("isOptional", isOptional);
 
       sampleData.push({
         key,
-        type: type.replace("Zod", ""),
         isOptional,
       });
     }

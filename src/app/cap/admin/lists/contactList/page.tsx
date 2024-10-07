@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 import * as React from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
@@ -29,19 +29,19 @@ const columns: GridColDef[] = [
   },
 ];
 
-async function Batch() {
-  "use server";
-  return await createContactsBatch;
-}
-async function Batch1() {
-  "use server";
-  return await getContactByPage;
-}
-async function Batch2() {
-  "use server";
-  return await getContactById;
-}
-export default function ManageContacts() {
+// async function Batch() {
+//   "use server"
+//   return await createContactsBatch;
+// }
+// async function Batch1() {
+//   "use server";
+//   return await getContactByPage;
+// }
+// async function Batch2() {
+//   "use server";
+//   return await getContactById;
+// }
+export default async function ManageContacts() {
   return (
     <>
       <EntityList
@@ -55,12 +55,14 @@ export default function ManageContacts() {
         )}
         fileUploadFeatureReqd={true}
         sampleFileName=""
-        fnFileUpad={Batch}
-        fetchDataFn={Batch1}
-        fnFetchDataByID={Batch2}
+        fnFileUpad={createContactsBatch}
+        fetchDataFn={getContactByPage}
+        // instead of this fn we are sending rows
+        fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
         AddAllowed={true}
+        // addRow = {data}
       ></EntityList>
     </>
   );
