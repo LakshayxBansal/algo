@@ -1,5 +1,49 @@
 export const dbTableAndProScript =
-  "CREATE TABLE config_meta_data (\
+  "CREATE TABLE `object_category_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `name` varchar(45) NOT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+INSERT INTO `object_category_master` VALUES (1,'master'),(2,'transaction'),(3,'report');~\
+CREATE TABLE `object_rights_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `object_id` int(11) NOT NULL,\
+  `admin_create` int(11) NOT NULL DEFAULT 1,\
+  `admin_read` int(11) NOT NULL DEFAULT 1,\
+  `admin_update` int(11) NOT NULL DEFAULT 1,\
+  `admin_delete` int(11) NOT NULL DEFAULT 1,\
+  `manager_create` int(11) NOT NULL DEFAULT 1,\
+  `manager_read` int(11) NOT NULL DEFAULT 1,\
+  `manager_update` int(11) NOT NULL DEFAULT 1,\
+  `manager_delete` int(11) NOT NULL DEFAULT 1,\
+  `executive_create` int(11) NOT NULL DEFAULT 1,\
+  `executive_read` int(11) NOT NULL DEFAULT 1,\
+  `executive_update` int(11) NOT NULL DEFAULT 1,\
+  `executive_delete` int(11) NOT NULL DEFAULT 1,\
+  PRIMARY KEY (`id`)\
+);~\
+INSERT INTO `object_rights_master` VALUES (1,1,1,1,1,1,1,1,1,1,1,1,1,1),(2,2,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (3,3,1,1,1,1,1,1,1,1,1,1,1,1),(4,4,1,1,1,1,1,1,1,1,1,1,1,1),(5,5,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (6,6,1,1,1,1,1,1,1,1,1,1,1,1),(7,7,1,1,1,1,1,1,1,1,1,1,1,1),(8,8,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (9,9,1,1,1,1,1,1,1,1,1,1,1,1),(10,10,1,1,1,1,1,1,1,1,1,1,1,1),(11,11,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (12,12,1,1,1,1,1,1,1,1,1,1,1,1),(13,13,1,1,1,1,1,1,1,1,1,1,1,1),(14,14,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (15,15,1,1,1,1,1,1,1,1,1,1,1,1),(16,16,1,1,1,1,1,1,1,1,1,1,1,1),(17,17,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (18,18,1,1,1,1,1,1,1,1,1,1,1,1),(19,19,1,1,1,1,1,1,1,1,1,1,1,1),(20,20,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (21,21,1,1,1,1,1,1,1,1,1,1,1,1),(22,22,1,1,1,1,1,1,1,1,1,1,1,1),(23,23,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (24,24,1,1,1,1,1,1,1,1,1,1,1,1),(25,25,1,1,1,1,1,1,1,1,1,1,1,1);~\
+CREATE TABLE `object_type_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `name` varchar(45) NOT NULL,\
+  `type` int(11) NOT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(3,'Area',1),(4,'Category',1),\
+    (5,'Contact',1),(6,'Contact Group',1),(7,'Country',1),(8,'Currency',1),(9,'Department',1),\
+    (10,'Executive Dept',1),(11,'Executive',1),(12,'Executive Group',1),(13,'Executive Role',1),\
+    (14,'Invite User',2),(15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),\
+    (19,'Organisation',1),(20,'Source',1),(21,'State',1),(22,'State List',1),(23,'Sub Status',2),\
+    (24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2);~\
+CREATE TABLE config_meta_data (\
   id int NOT NULL AUTO_INCREMENT,\
   config_type varchar(100) COLLATE utf8mb4_general_ci NOT NULL,\
   PRIMARY KEY (id),\
