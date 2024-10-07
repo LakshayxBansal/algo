@@ -56,6 +56,7 @@ export default async function excuteQuery({host, query, values }: {host: string,
     throw (e);
 
   } 
+  // console.log("these are the results",results)
   return results;
 }
 

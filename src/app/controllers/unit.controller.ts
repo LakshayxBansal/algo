@@ -57,7 +57,7 @@ export async function createUnit(data: mdl.unitSchemaT) {
     }
     return result;
   } catch (e: any) {
-    console.log(e);
+    logger.error(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
       result = {
         status: false,
@@ -248,7 +248,7 @@ export async function getUnitByPage(
       };
     }
   } catch (e: any) {
-    console.log(e);
+    logger.error(e);
 
     let err = "unit Admin, E-Code:369";
 
@@ -284,7 +284,7 @@ export async function getUnitData(id: number) {
       };
     }
   } catch (e: any) {
-    console.log(e);
+    logger.error(e);
 
     let err = "unit Admin, E-Code:369";
 

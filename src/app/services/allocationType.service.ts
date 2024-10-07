@@ -3,6 +3,7 @@
 import * as zm from "../models/models";
 import { Session } from "next-auth";
 import excuteQuery from "../utils/db/db";
+import { logger } from "../utils/logger.utils";
 
 export async function getAllocationTypeList(
   crmDb: string,
@@ -24,7 +25,7 @@ export async function getAllocationTypeList(
 
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
 
@@ -45,7 +46,7 @@ export async function createAllocationTypeDb(
       values: [statusData.name, session.user.userId],
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
   return null;
 }
@@ -60,7 +61,7 @@ export async function getAllocationDetailsById(crmDb: string, id: number) {
 
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
 
@@ -74,7 +75,7 @@ export async function delAllocationDetailsById(crmDb: string, id: number) {
 
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
 
@@ -90,7 +91,7 @@ export async function updateAllocationTypeDb(
       values: [statusData.id, statusData.name, session.user.userId],
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
   return null;
 }
@@ -123,7 +124,7 @@ export async function getAllocationTypeByPageDb(
       values: vals,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
 
@@ -137,7 +138,7 @@ export async function getAllocationTypeCount(crmDb: string, value: string | unde
       values: [value],
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
 
@@ -151,6 +152,6 @@ export async function deleteAllocationTypeByIdDb(crmDb: string, id: number) {
     console.log(result);
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 }
