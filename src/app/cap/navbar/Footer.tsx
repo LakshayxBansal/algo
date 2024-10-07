@@ -9,10 +9,10 @@ export default function Footer(){
     const [statusObject, setStatusObject] = useState({key1: statusMap.get("key1"),key2: statusMap.get("key2"),key3: statusMap.get("key3"),key4: statusMap.get("key4"),key5: statusMap.get("key5")});
 
     useEffect(() => {
-        console.log("footer useeffect...")
         updateStatusObject = setStatusObject;
-        console.log("from map : ",statusMap.get("key1"));
-    })
+        // statusMap.set("key1",statusObject["key1"] as string);
+        // console.log("from map : ",statusMap.get("key1"));
+    },[statusObject,statusMap])
     return (
         <Box sx={{
             bgcolor: '#CCCCCC',
@@ -21,7 +21,7 @@ export default function Footer(){
             left: 0,
             right: 0,
             boxShadow: 1,
-            zIndex: 1,
+            zIndex: 1300,
         }}>
             <Box sx={{
                 display: 'flex',
@@ -35,8 +35,11 @@ export default function Footer(){
                     {`the value of first key is : ${statusObject["key1"]}`}
                 </Typography>
                 <Typography sx={{ width: "40%" }}>
-                    {new Date().toLocaleString()}
+                    {`the value of second key is : ${statusMap.get("key1")}`}
                 </Typography>
+                {/* <Typography sx={{ width: "40%" }}>
+                    {new Date().toLocaleString()}
+                </Typography> */}
             </Box>
         </Box>
     )

@@ -1271,7 +1271,7 @@ export default function AutoGrid() {
             <Paper
             // sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}
             >
-                <CallDetailList selectedRow={selectedRow} />
+                {/* <CallDetailList selectedRow={selectedRow} /> */}
             </Paper>
             <Box
                 sx={{

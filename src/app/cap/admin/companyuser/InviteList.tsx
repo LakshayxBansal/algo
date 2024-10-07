@@ -37,7 +37,7 @@ export default function InviteList(){
     }))
     statusMap.set("key1","message from invite list for map");
   }
-})
+},[]);
 
     return <>
         <EntityList
