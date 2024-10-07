@@ -8,7 +8,7 @@ import { getHostDetailsService } from '@/app/services/company.service';
 async function getPool(host: string) {
   try {
     let pool = dbMap.get(host);
-    
+  
     if (!pool) {
       let hostIp, hostPort;
       if(host === "userDb"){

@@ -6,6 +6,7 @@ import {getSession} from '../../services/session.service';
 import { redirect } from 'next/navigation';
 import { getMenuOptions } from '../../controllers/masters.controller';
 import { getExecutiveProfileImageByCrmUserId } from '@/app/controllers/executive.controller';
+import Footer from './Footer';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },
@@ -16,7 +17,7 @@ const pages = [
 ];
 
 
-export default async function AppMenu(props: {children: React.ReactNode, searchData :string}) {
+export default async function AppMenu(props: {children: React.ReactNode}) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -24,7 +25,7 @@ export default async function AppMenu(props: {children: React.ReactNode, searchD
       const img_src = await getExecutiveProfileImageByCrmUserId(session.user.userId);
       if (menuOptions) {
         return (
-          <MenuBar 
+          <MenuBar
             pages= {menuOptions}
             username = {session.user?.name!}
             companyName = {session.user.dbInfo.companyName}
