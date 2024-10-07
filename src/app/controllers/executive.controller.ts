@@ -49,8 +49,8 @@ export async function createExecutive(data: executiveSchemaT) {
 
           if (dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };
-            if(dbResult[1].crm_user_id){
-              await mapUser(dbResult[1].crm_user_id,session.user.dbInfo.id);
+            if(dbResult[1][0].crm_user_id){
+              await mapUser(dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
             }
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =
@@ -108,8 +108,8 @@ export async function updateExecutive(data: executiveSchemaT) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          if(dbResult[1].crm_user_id){
-            await mapUser(dbResult[1].crm_user_id,session.user.dbInfo.id);
+          if(dbResult[1][0].crm_user_id){
+            await mapUser(dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
           }
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
