@@ -195,31 +195,7 @@ export async function getCompaniesDb(
     if (filter) {
       vals.unshift(filter);
     }
-<<<<<<< HEAD
-    const dbNames = await excuteQuery({
-      host: "userDb",
-      query:
-        "select uc.company_id as companyId, c.dbinfo_id as dbId from userCompany uc,company c where uc.user_id = ? and uc.company_id = c.id;",
-      values: [userId],
-    });
 
-    let userRoles: any = [];
-    for (let comp of dbNames) {
-      const role = await excuteQuery({
-        host: `crmapp${comp.dbId}`,
-        query:
-          "select em.role_id as roleId from executive_master em where em.crm_user_id = ?;",
-        values: [userId],
-      });
-      userRoles.push({
-        roleId: role.length > 0 ? role[0].roleId : null,
-        companyId: comp.companyId,
-      });
-    }
-
-=======
-    
->>>>>>> 6742600036c648b57143092330a3201c4d8d5638
     const results = await excuteQuery({
       host: "userDb",
       query:
@@ -246,17 +222,8 @@ export async function getCompaniesDb(
           LIMIT ?;",
       values: vals,
     });
-<<<<<<< HEAD
 
-    const newResult = results.map((res: any) => {
-      const found = userRoles.find((ur: any) => res.id === ur.companyId);
-      return { ...res, roleId: found ? found.roleId : null };
-    });
-    return newResult;
-=======
-   
     return results;
->>>>>>> 6742600036c648b57143092330a3201c4d8d5638
   } catch (e) {
     console.log(e);
   }
