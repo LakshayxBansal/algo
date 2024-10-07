@@ -10,9 +10,9 @@ export default function Footer(){
 
     useEffect(() => {
         updateStatusObject = setStatusObject;
-        // statusMap.set("key1",statusObject["key1"] as string);
-        // console.log("from map : ",statusMap.get("key1"));
-    },[statusObject,statusMap])
+    })
+    // statusMap.set("key1",statusObject["key1"] as string);
+    console.log(statusMap);
     return (
         <Box sx={{
             bgcolor: '#CCCCCC',
