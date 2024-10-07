@@ -34,6 +34,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
+import SecondNavbar from "./SecondNavbar";
 
 const drawerWidth: number = 240;
 
@@ -285,9 +286,13 @@ export default function MenuBar(props: propsType) {
                                       // href={option!.href}
                                       style={{
                                         textDecoration: "none",
-                                        color: "inherit",                     
+                                        color: "inherit",
                                       }}
-                                      onClick={()=>{handleMasterSearch(child.props.children,option!.href);
+                                      onClick={() => {
+                                        handleMasterSearch(
+                                          child.props.children,
+                                          option!.href
+                                        );
                                       }}
                                     >
                                       {child.props.children}
@@ -324,8 +329,15 @@ export default function MenuBar(props: propsType) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <ProfileModal userId={props.userId} companyId={props.companyId} img={props.profileImg} name={props.username} companyName={props.companyName}/>
+            <ProfileModal
+              userId={props.userId}
+              companyId={props.companyId}
+              img={props.profileImg}
+              name={props.username}
+              companyName={props.companyName}
+            />
           </Toolbar>
+        <SecondNavbar title={"secondnav"}/>
         </AppBar>
         <Box sx={{ display: "flex" }}>
           <Drawer variant="permanent" anchor="left" open={open}>
@@ -347,12 +359,7 @@ export default function MenuBar(props: propsType) {
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "100%" }}>
-                  {children}
-                  {/* {React.Children.map(props.children, child => 
-                React.cloneElement(child as React.ReactElement, { searchData:holdValue.current })
-              )}   */}
-            </Box>
+          <Box style={{ width: "100%" }}>{children}</Box>
         </Box>
       </>
     );

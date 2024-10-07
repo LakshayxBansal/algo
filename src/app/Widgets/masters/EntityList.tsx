@@ -61,6 +61,7 @@ type ModifyT = {
   fnDeleteDataByID?: (id: number) => Promise<any>;
   customCols: GridColDef[];
   AddAllowed: boolean;
+  height?:string;
 };
 
 const pgSize = 10;
@@ -802,7 +803,8 @@ export default function EntityList(props: ModifyT) {
             }
             disableRowSelectionOnClick
             checkboxSelection
-            autoHeight
+            // autoHeight
+            sx={{maxHeight:props.height}}
           />
         </Paper>
       </Box>

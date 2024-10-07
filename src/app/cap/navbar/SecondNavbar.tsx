@@ -9,7 +9,7 @@ type secNav={
 function SecondNavbar(props:secNav) {
   return (
     <div>
-            <Paper style={{ marginBottom: 20, padding:10 }}>
+            <Paper style={{ padding:10 }}>
         {/* <Toolbar> */}
         <Grid container>
           <Grid item xs={6}>

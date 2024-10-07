@@ -19,7 +19,6 @@ export async function searchMainData(searchData: string) {
 
   try {
     const session =  await getSession();
-    console.log("session",session);
     if(session?.user.dbInfo){
     const result1 = await searchMainDataDB(session.user.dbInfo.dbName, searchData);
     result = result1[0];
