@@ -22,6 +22,8 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
   const [hoverOpen, setHoverOpen] = React.useState< boolean>(false);
   const [hoverId, setHoverId] = React.useState<number>();
   const [selectedId, setSelectedId] = React.useState<number | null>(null); // Track selected item
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [isReturning, setIsReturning] = useState(false);
 
   const anchorRef = React.useRef()
 
@@ -54,6 +56,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
         // })
       }
       // setOpenPop(idToOpenPop);
+  
     });
       
     }else{
@@ -66,7 +69,12 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
     setOpen(idToOpenMap);
     const str = ShowMenu({pages: pages, level:0, menuLevel:0});
   }
-  }, [props.openDrawer,idToOpenPop,hoverId]);
+  return () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  };
+  }, [props.openDrawer,idToOpenPop,hoverId,timeoutId]);
 
 
   function handleHeaderMenuClick(id: number) {
@@ -78,49 +86,60 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
       console.log("maooings",idToOpenMap,id)
   }
 
-  // const idToOpenPop: Map<number, boolean> = new Map(openPop);
+
   function handleSubMenuHover( event: React.MouseEvent<HTMLElement>, page: menuTreeT) { 
+    // if(timeoutId){
+      // clearTimeout(timeoutId);
+      setIsReturning(true);
       if(page.children.length>0) 
-      {
-        idToOpenPop.current.set(page.id, event.currentTarget);
-        setHoverId(page.id);
-      }
-      console.log("enter", idToOpenPop.current);
-      setHoverOpen(true);
+        {
+          idToOpenPop.current.set(page.id, event.currentTarget);
+          setHoverId(page.id);
+        }
+        console.log("enter", idToOpenPop.current);
+        setHoverOpen(true);
+     
+    // }
   }
 
   const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT) => {
-    if (hoverOpen){
+    // setHoverOpen(false);
+    setIsReturning(false);
+    console.log("returning", isReturning);
+    // if (hoverOpen){
       setHoverId(page.id);
-      setTimeout(() => {
-
-        let greatestKey = null;
-
-        for (const key of idToOpenPop.current.keys()) {
-          if (greatestKey === null || key > greatestKey) {
-            greatestKey = key;
+      // const id =  setTimeout(() => {
+          if(!isReturning){
+            let greatestKey = null;
+            for (const key of idToOpenPop.current.keys()) {
+              if (greatestKey === null || key > greatestKey) {
+                greatestKey = key;
+              }
+            }
+            if (greatestKey !== null) {
+              idToOpenPop.current.delete(greatestKey);
+            }
+            console.log("working")
           }
-        }
-    
-        if (greatestKey !== null) {
-          // idToOpenPop.current.set(greatestKey, null);
-          idToOpenPop.current.delete(greatestKey);
-        }
-      // console.log('leave', page.id)
-      // console.log('leave', idToOpenPop.current)
-    
-    // idToOpenPop.current.set(page.id,null);
-    // console.log(idToOpenPop.current)
-    // // if(page.parent_id == 0){
-
-    // //   hoverOpen?setHoverId(0):console.log('notOpen')// if(hoverId)
-    // // }
-    //   // setHoverId(undefined);
-    
-    //   setHoverOpen(false)
-   }, 1000);
-  }
+        // }, 100);
+        // console.log(id);
+        // setTimeoutId(id);
+  // }
   };
+
+  const handleOnPopperLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT)=>{
+    setHoverOpen(false);
+    let greatestKey = null;
+    for (const key of idToOpenPop.current.keys()) {
+      if (greatestKey === null || key > greatestKey) {
+        greatestKey = key;
+      }
+    }
+    if (greatestKey !== null) {
+      idToOpenPop.current.delete(greatestKey);
+    }
+    console.log("working popper")
+  }
 
   function handleCollapse(id: number): boolean {
     return props.openDrawer ? open?.get(id) ?? false : false;
@@ -209,21 +228,23 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
                   {/*Boolean(hoverId) &&  (page.parent_id===0 && hoverId===page.id)|| */}
               <Popper   open={(idToOpenPop.current.get(page.id)?true:false)}
               anchorEl={idToOpenPop.current.get(page.id)}   transition placement='right-start'
-              // onMouseLeave={(e) => handleMouseLeave(e,page.id)}
-              // onMouseLeave={(e)=>{console.log("popper")}}
-               onMouseEnter={(e) => {
+              onMouseEnter={(e) => {
                 setHoverOpen(true);
                 // setIsPopperHovered(true)
                 // handleSubMenuHover(e, page.id)
 
                 }}
+              onMouseLeave={(e)=>{
+                handleOnPopperLeave(e,page)
+              }}
+         
                
                >
                   {({ TransitionProps }) => (
                 <Grow {...TransitionProps}>
                    <List component="div"  disablePadding sx={{bgcolor:'white'}} >
-                   {/* { idToOpenPop.current.get(page.id)?ShowPopper({pages: page.children, level:page.id, menuLevel: 0}):''} */}
-                   {ShowPopper({pages: page.children, level:page.id, menuLevel: 0})}
+                   { idToOpenPop.current.get(page.id)?ShowPopper({pages: page.children, level:page.id, menuLevel: 0}):''}
+                   {/* {ShowPopper({pages: page.children, level:page.id, menuLevel: 0})} */}
 
                   </List>
                 </Grow>

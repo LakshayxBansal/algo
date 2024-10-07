@@ -337,7 +337,7 @@ export default function MenuBar(props: propsType) {
               companyName={props.companyName}
             />
           </Toolbar>
-        <SecondNavbar title={"secondnav"}/>
+        {/* <SecondNavbar title={"secondnav"}/> */}
         </AppBar>
         <Box sx={{ display: "flex" }}>
           <Drawer variant="permanent" anchor="left" open={open}>
