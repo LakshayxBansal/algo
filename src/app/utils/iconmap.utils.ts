@@ -10,6 +10,9 @@ import SendIcon from '@mui/icons-material/Send';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FolderIcon from '@mui/icons-material/Folder';
 import ContactsIcon from '@mui/icons-material/Contacts';
+import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 
 import StarBorder from '@mui/icons-material/StarBorder';
 import { Icon } from 'next/dist/lib/metadata/types/metadata-types';
@@ -20,17 +23,17 @@ type iconElementT = {
 }
 
 export const nameIconArr: iconElementT[] = [
-  { name: 'DashboardIcon', icon: DashboardIcon},
+  { name: 'SpaceDashboardOutlinedIcon', icon: SpaceDashboardOutlinedIcon },
   { name: 'AddIcCallIcon', icon: AddIcCallIcon},
   { name: 'AddCircleOutlineIcon', icon: AddCircleOutlineIcon},
-  { name: 'PeopleIcon', icon: PeopleIcon},
+  { name: 'PeopleAltOutlinedIcon', icon: PeopleAltOutlinedIcon},
   { name: 'BarChartIcon', icon: BarChartIcon},
   { name: 'LayersIcon', icon: LayersIcon},
   { name: 'AssignmentIcon', icon: AssignmentIcon},
   { name: 'InboxIcon', icon: InboxIcon},
   { name: 'DraftsIcon', icon: DraftsIcon},
   { name: 'SendIcon', icon: SendIcon},
-  { name: 'FolderIcon', icon: FolderIcon},
+  { name: 'FolderOutlinedIcon', icon: FolderOutlinedIcon},
   { name: 'ContactsIcon', icon: ContactsIcon},
   // Add more pairs here
 ];

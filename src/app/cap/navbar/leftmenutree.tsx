@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef  } from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -9,40 +9,140 @@ import Tooltip from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+
 import {menuTreeT} from '../../models/models';
 import {nameIconArr} from '../../utils/iconmap.utils';
+import { Popper, Grow, Popover, Paper } from '@mui/material';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 
-export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: any}) {
+export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boolean,setOpenDrawer?: any}) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
-  const [openAdmin, setOpenAdmin] = React.useState(false);
+  const [openPop, setOpenPop] = React.useState<Map<number, HTMLElement|null>>();
+  const [hoverOpen, setHoverOpen] = React.useState< boolean>(false);
+  const [hoverId, setHoverId] = React.useState<number>();
+  const [selectedId, setSelectedId] = React.useState<number | null>(null); // Track selected item
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [isReturning, setIsReturning] = useState(false);
+
+  const anchorRef = React.useRef()
+
+  const timeoutRef = useRef(null);
+
+  const idToOpenPop = React.useRef(new Map(openPop))
+
+  // const anchorRef = useRef<null | HTMLElement>(null);
+  // const popperRef = useRef<HTMLDivElement>(null);
+
+
   const pages = props.pages;
 
+  // const parentId = props.pages.map(page=>page.children);
+
+  // console.log(parentId);
+
   useEffect(() => {
-    const idToOpenMap: Map<number, boolean> = new Map([]);
-    pages.forEach(page => {
+    if (!props.openDrawer) {
+      const collapsedMap = new Map(open);
+      for (let key of collapsedMap.keys()) {
+        collapsedMap.set(key, false);
+      }
+      setOpen(collapsedMap);
+      // const idToOpenPop: Map<number, boolean> = new Map([]);
+      pages.forEach(page => {
+      if (page.children.length > 0) {
+        // page.children.forEach(page=>{
+          // idToOpenPop.set(page.id, false);
+        // })
+      }
+      // setOpenPop(idToOpenPop);
+  
+    });
+      
+    }else{
+      const idToOpenMap: Map<number, boolean> = new Map([]);
+      pages.forEach(page => {
       if (page.children.length > 0) {
         idToOpenMap.set(page.id, false)
       }
     });
     setOpen(idToOpenMap);
     const str = ShowMenu({pages: pages, level:0, menuLevel:0});
-  }, []);
-
-  function generateHref(optionName : string){
-    let href = "#";
-    if(optionName==="Add User"){
-      href = "/cap/admin/adduser";
-    }
-    return href;
   }
+  return () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  };
+  }, [props.openDrawer,idToOpenPop,hoverId,timeoutId]);
 
 
   function handleHeaderMenuClick(id: number) {
     const idToOpenMap: Map<number, boolean> = new Map(open);
-    idToOpenMap.set(id, !idToOpenMap.get(id));
-    props.setOpenDrawer(true);
-    setOpen(idToOpenMap);
+      idToOpenMap.set(id, !idToOpenMap.get(id));
+      props.setOpenDrawer(true);
+      setOpen(idToOpenMap);
+      setSelectedId(id);
+      console.log("maooings",idToOpenMap,id)
+  }
+
+
+  function handleSubMenuHover( event: React.MouseEvent<HTMLElement>, page: menuTreeT) { 
+    // if(timeoutId){
+      // clearTimeout(timeoutId);
+      setIsReturning(true);
+      if(page.children.length>0) 
+        {
+          idToOpenPop.current.set(page.id, event.currentTarget);
+          setHoverId(page.id);
+        }
+        console.log("enter", idToOpenPop.current);
+        setHoverOpen(true);
+     
+    // }
+  }
+
+  const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT) => {
+    // setHoverOpen(false);
+    setIsReturning(false);
+    console.log("returning", isReturning);
+    // if (hoverOpen){
+      setHoverId(page.id);
+      // const id =  setTimeout(() => {
+          if(!isReturning){
+            let greatestKey = null;
+            for (const key of idToOpenPop.current.keys()) {
+              if (greatestKey === null || key > greatestKey) {
+                greatestKey = key;
+              }
+            }
+            if (greatestKey !== null) {
+              idToOpenPop.current.delete(greatestKey);
+            }
+            console.log("working")
+          }
+        // }, 100);
+        // console.log(id);
+        // setTimeoutId(id);
+  // }
+  };
+
+  const handleOnPopperLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT)=>{
+    setHoverOpen(false);
+    let greatestKey = null;
+    for (const key of idToOpenPop.current.keys()) {
+      if (greatestKey === null || key > greatestKey) {
+        greatestKey = key;
+      }
+    }
+    if (greatestKey !== null) {
+      idToOpenPop.current.delete(greatestKey);
+    }
+    console.log("working popper")
+  }
+
+  function handleCollapse(id: number): boolean {
+    return props.openDrawer ? open?.get(id) ?? false : false;
   }
 
   function ShowMenu(levelData: {pages: menuTreeT[], level: number, menuLevel: number}) {
@@ -64,19 +164,20 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: a
             {page.parent_id === level && 
             <>
               <Tooltip title={page.name} placement="right">
-                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href!=="#" ? page.href : generateHref(page.name)}>
-                  <ListItemIcon style={{minWidth: '30px'}}>
-                    {SelectIcon({Page: page})}
+                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href} selected={selectedId === page.id} >
+                  <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
+                    {SelectIcon({Page: page, selected:selectedId === page.id})}
                   </ListItemIcon>
                   <ListItemText primary={page.name} />
                   {page.children.length ? open?.get(page.id) ? <ExpandLess/> : <ExpandMore /> : <></>}
                 </ListItemButton>
               </Tooltip>
-              <Collapse in={open?.get(page.id)} timeout="auto" unmountOnExit>
+              <Collapse in={handleCollapse(page.id)} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   {ShowMenu({pages: page.children, level:page.id, menuLevel: indent+2})}
                 </List>
               </Collapse>
+
             </>
             }
           </div>
@@ -85,27 +186,114 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], setOpenDrawer: a
     );
   }
 
+  function ShowPopper(levelData: {pages: menuTreeT[], level: number, menuLevel: number}) {
+    const level = levelData.level;
+    const pages = levelData.pages;
+    const indent =  levelData.menuLevel;
+    
+    // console.log('level', level )
+    // console.log(hoverId)
+    // console.log(idToOpenPop.current)
 
+    function ShowIcon(key: String) {
+      const icon = nameIconArr.find((obj)=> obj.name === 'DashboardIcon')?.icon;  
+
+      return ({icon});
+    }
+    
+    return (
+      <div>
+        {pages.map((page, index) => (
+          <div key={index}>
+            {page.parent_id === level &&
+            <>
+              {/* <Tooltip title={page.name} placement="left"> */}
+                <ListItemButton sx={{ pl: indent }} 
+                             onMouseEnter={ (e) => {  
+                              // page.children.length  > 0 &&
+                              handleSubMenuHover(e, page)           
+                            }
+                            }
+                             onMouseLeave={(e) => handleMouseLeave(e,page)}  
+                 component="a" href={page.href} selected={selectedId === page.id} >
+                  <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
+                    {SelectIcon({Page: page, selected:selectedId === page.id})}
+                  </ListItemIcon>
+                  <ListItemText primary={page.name} />
+                  {page.children.length ? openPop?.get(page.id) ? <ChevronRightIcon/> : <ExpandMore /> : <></>}
+                </ListItemButton>
+              {/* </Tooltip> */}
+              { (
+                <Paper>
+                  {/*Boolean(hoverId) &&  (page.parent_id===0 && hoverId===page.id)|| */}
+              <Popper   open={(idToOpenPop.current.get(page.id)?true:false)}
+              anchorEl={idToOpenPop.current.get(page.id)}   transition placement='right-start'
+              onMouseEnter={(e) => {
+                setHoverOpen(true);
+                // setIsPopperHovered(true)
+                // handleSubMenuHover(e, page.id)
+
+                }}
+              onMouseLeave={(e)=>{
+                handleOnPopperLeave(e,page)
+              }}
+         
+               
+               >
+                  {({ TransitionProps }) => (
+                <Grow {...TransitionProps}>
+                   <List component="div"  disablePadding sx={{bgcolor:'white'}} >
+                   { idToOpenPop.current.get(page.id)?ShowPopper({pages: page.children, level:page.id, menuLevel: 0}):''}
+                   {/* {ShowPopper({pages: page.children, level:page.id, menuLevel: 0})} */}
+
+                  </List>
+                </Grow>
+              )}
+            </Popper></Paper>)
+              }
+            </>
+            }
+          </div>
+        ))}
+    </div>
+    );
+  }
+
+  // this is the main component
   return (
     <List
-      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+      sx={{ width: '100%', maxWidth: 560, bgcolor: 'background.paper' }}
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      {ShowMenu({pages: props.pages, level:0, menuLevel: 0})}
+
+      {props.openDrawer ?
+      ShowMenu({pages: props.pages, level:0, menuLevel: 0})
+     :
+     ShowPopper({pages: props.pages, level:0, menuLevel: 0})
+    }
     </List>
   );
 }
 
 
-const SelectIcon: React.FC<{ Page: menuTreeT }> = ({ Page }) => {
+const SelectIcon: React.FC<{ Page: menuTreeT ,selected: boolean }> = ({ Page,selected }) => {
   // Find the corresponding icon component based on user selection
   const selectedIcon = nameIconArr.find((item) => item.name === Page.icon);
 
   return (
     <>
         {selectedIcon && (
+             <div
+             style={{
+               display: 'inline-block',
+               transition: 'color 0.3s',
+              //  color: selected ? 'primary.main' : (Page.children.length > 0 ? 'secondary' : 'info'), // Change color if selected
+               color: selected ? 'primary.main' : (Page.children.length > 0 ? 'secondary' : 'info'),
+             }}
+           >
           <selectedIcon.icon color={Page.children.length> 0 ? "secondary": "info"}/>
+          </div>
         )}
     </>
   );

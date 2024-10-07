@@ -195,6 +195,7 @@ export async function getCompaniesDb(
     if (filter) {
       vals.unshift(filter);
     }
+<<<<<<< HEAD
     const dbNames = await excuteQuery({
       host: "userDb",
       query:
@@ -216,15 +217,18 @@ export async function getCompaniesDb(
       });
     }
 
+=======
+    
+>>>>>>> 6742600036c648b57143092330a3201c4d8d5638
     const results = await excuteQuery({
       host: "userDb",
       query:
         "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
-          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID \
+          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId,roleId, RowNum as RowID \
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
           c.created_by createdBy, c.created_on createdOn,\
-          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId, ROW_NUMBER() OVER () AS RowNum \
+          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId,uc.role_id as roleId, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \
           dbInfo d, dbHost h,\
@@ -242,12 +246,17 @@ export async function getCompaniesDb(
           LIMIT ?;",
       values: vals,
     });
+<<<<<<< HEAD
 
     const newResult = results.map((res: any) => {
       const found = userRoles.find((ur: any) => res.id === ur.companyId);
       return { ...res, roleId: found ? found.roleId : null };
     });
     return newResult;
+=======
+   
+    return results;
+>>>>>>> 6742600036c648b57143092330a3201c4d8d5638
   } catch (e) {
     console.log(e);
   }

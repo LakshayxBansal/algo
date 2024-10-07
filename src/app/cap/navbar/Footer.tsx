@@ -5,13 +5,13 @@ import { statusMap } from "./StatusBar";
 
 export let updateStatusObject: Dispatch<SetStateAction<any>>;
 
-export default function Footer(){
-    const [statusObject, setStatusObject] = useState({key1: statusMap.get("key1"),key2: statusMap.get("key2"),key3: statusMap.get("key3"),key4: statusMap.get("key4"),key5: statusMap.get("key5")});
+export default function Footer() {
+    const [statusObject, setStatusObject] = useState({ key1: statusMap.get("key1"), key2: statusMap.get("key2"), key3: statusMap.get("key3"), key4: statusMap.get("key4"), key5: statusMap.get("key5") });
 
     useEffect(() => {
         console.log("footer useeffect...")
         updateStatusObject = setStatusObject;
-        console.log("from map : ",statusMap.get("key1"));
+        console.log("from map : ", statusMap.get("key1"));
     })
     return (
         <Box sx={{
@@ -34,9 +34,9 @@ export default function Footer(){
                 <Typography sx={{ width: "40%" }}>
                     {`the value of first key is : ${statusObject["key1"]}`}
                 </Typography>
-                <Typography sx={{ width: "40%" }}>
+                {/* <Typography sx={{ width: "40%" }}>
                     {new Date().toLocaleString()}
-                </Typography>
+                </Typography> */}
             </Box>
         </Box>
     )
