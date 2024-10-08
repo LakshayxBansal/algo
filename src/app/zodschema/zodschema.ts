@@ -75,7 +75,7 @@ refine(schema => {
 */
 export const organisationSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(75),
+  name: z.string().min(1,"Organisation Name must not be empty").max(75),
   alias: z.string().max(75).optional(),
   printName: z.string().max(75).optional(),
   address1: z.string().max(75).optional(),
@@ -125,7 +125,7 @@ const contactDetailsSchema = z
 
 export const ItemSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(75),
+  name: z.string().min(1,"Item Name must not be empty").max(75),
   // stamp: z.number().optional(),
   group: z.number().optional(),
   group_name: z.string().optional(),
@@ -141,7 +141,7 @@ export const ItemSchema = z.object({
 
 export const UnitSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(50),
+  name: z.string().min(1,"Unit Name must not be empty").max(50),
   uqc: z.string().max(50),
   stamp: z.number().optional(),
   group_id: z.number().optional(),
@@ -157,7 +157,7 @@ export const UnitSchema = z.object({
 export const contactSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
+  name: z.string().min(1,"Contact Name must not be empty").max(60),
   print_name: z.string().max(60).optional(),
   pan: z.union([
     z.literal(""),
@@ -196,7 +196,7 @@ export const contactSchema = z.object({
 
 export const areaSchema = z.object({
   id: z.number().optional(),
-  name: z.string().max(60),
+  name: z.string().min(1,"Area Name must not be empty").max(60),
 });
 
 export const stateListSchema = z.object({
@@ -204,8 +204,8 @@ export const stateListSchema = z.object({
   country: z.string().max(60).optional(),
   state_id: z.number().optional(),
   state: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
-  alias: z.string().min(1).max(45),
+  name: z.string().min(1,"State Name must not be empty").max(60),
+  alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
 });
 
@@ -213,7 +213,7 @@ export const executiveSchema = z
   .object({
     id: z.number().optional(),
     alias: z.string().max(60).optional(),
-    name: z.string().min(1).max(60),
+    name: z.string().min(1,"Executive Name must not be empty").max(60),
     address1: z.string().max(75).optional(),
     address2: z.string().max(75).optional(),
     address3: z.string().max(75).optional(),
@@ -321,7 +321,7 @@ export const enquiryLedgerSchema = z.object({
 export const contactGroupSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
+  name: z.string().min(1,"Contact Group Name must not be empty").max(60),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
   parent: z.string().max(60).optional(),
@@ -336,7 +336,7 @@ export const contactGroupSchema = z.object({
  */
 export const itemGroupSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(60),
+  name: z.string().min(1,"Item Group Name must not be empty").max(60),
   alias: z.string().max(60).optional(),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
@@ -350,7 +350,7 @@ export const itemGroupSchema = z.object({
 export const currencySchema = z.object({
   id: z.number().optional(),
   symbol: z.string().min(1).max(60).optional(),
-  name: z.string().min(1).max(60).optional(),
+  name: z.string().min(1,"Currency Name must not be empty").max(60),
   shortForm: z.string().min(1).max(60).optional(),
   decimal_places: z.string().min(1).max(60).optional(),
   currency_system: z.string().min(1).max(60).optional(),
@@ -361,7 +361,7 @@ export const currencySchema = z.object({
 export const executiveRoleSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
+  name: z.string().min(1,"Executive Role Name must not be empty").max(60),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
   parentRole: z.string().max(60).optional(),
@@ -378,7 +378,7 @@ export const executiveRoleSchema = z.object({
 export const executiveGroupSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
+  name: z.string().min(1,"Executive Group Name must not be empty").max(60),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
   parent: z.string().max(60).optional(),
@@ -394,7 +394,7 @@ export const executiveGroupSchema = z.object({
 export const executiveDeptSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1).max(60),
+  name: z.string().min(1,"Executive Dept Name must not be empty").max(60),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
@@ -412,14 +412,14 @@ export const optionsData = z.object({
 
 export const countrySchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(60),
-  alias: z.string().min(1).max(45),
+  name: z.string().min(1,"Country Name must not be empty").max(60),
+  alias: z.string().min(1).max(45).optional(),
 });
 
 export const stateSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(60),
-  alias: z.string().min(1).max(45),
+  name: z.string().min(1,"State Name must not be empty").max(60),
+  alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
 });
 
@@ -464,7 +464,7 @@ export const menuOption = z.object({
  */
 export const enquirySubStatusMaster = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(50),
+  name: z.string().min(1,"SubStatus Name must not be empty").max(50),
   status_id: z.number().optional(),
   status: z.string().min(1).max(30),
   created_on: z.date().optional(),
@@ -480,7 +480,7 @@ export const enquirySubStatusMaster = z.object({
 
 export const nameMasterData = z.object({
   id: z.number().optional(),
-  name: z.string().min(1).max(45),
+  name: z.string().min(1,"Name must not be empty").max(45),
 });
 
 // export const nameMasterData = z.object({
@@ -523,7 +523,7 @@ export const enquirySupportConfig = z.object({
 
 export const companySchema = z.object({
   id: z.number().optional(),
-  alias: z.string().min(1).max(60),
+  alias: z.string().min(1).max(60).optional(),
   name: z.string().min(1, "Please enter company name").max(55),
   add1: z.string().min(1, "Please enter address"),
   add2: z.string().optional(),

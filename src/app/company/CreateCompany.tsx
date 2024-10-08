@@ -5,11 +5,19 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
-import { companySchemaT, masterFormPropsT, optionsDataT, selectKeyValueT } from "@/app/models/models";
-import { createCompany, updateCompany } from "../controllers/company.controller";
+import {
+  companySchemaT,
+  masterFormPropsT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
+import {
+  createCompany,
+  updateCompany,
+} from "../controllers/company.controller";
 import Seperator from "../Widgets/seperator";
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../Widgets/masters/selectMasterWrapper";
 import { getCountries, getStates } from "../controllers/masters.controller";
 import StateForm from "../Widgets/masters/masterForms/stateForm";
@@ -21,17 +29,16 @@ export default function CreateCompany(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});  
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: companySchemaT = props.data ? props.data : {};
 
-  
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    formData = updateFormData(data);    
+    formData = updateFormData(data);
 
     const result = await persistEntity(data as companySchemaT);
     if (result.status) {
@@ -60,7 +67,7 @@ export default function CreateCompany(props: masterFormPropsT) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
-  const updateFormData = (data: any) => { 
+  const updateFormData = (data: any) => {
     data.country_id = selectValues.country ? selectValues.country.id : 0;
     data.state_id = selectValues.state ? selectValues.state.id : 0;
 
@@ -73,8 +80,7 @@ export default function CreateCompany(props: masterFormPropsT) {
       data = { ...data, id: entityData.id };
 
       result = await updateCompany(data);
-    }
-    else {
+    } else {
       result = await createCompany(data);
     }
 
@@ -82,42 +88,59 @@ export default function CreateCompany(props: masterFormPropsT) {
   }
 
   const clearFormError = () => {
-    setFormError(curr => {
+    setFormError((curr) => {
       // remove form key from object
-      const {form, ...rest} = curr;
+      const { form, ...rest } = curr;
       return rest;
     });
-    
-  }
+  };
   return (
-    <Paper>
-        <Seperator>{entityData.id ? "Update Company" : "Add Company"}</Seperator>
-        <Collapse in={formError?.form ? true : false}>
-          <Alert
-            severity="error"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={clearFormError}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            {formError?.form?.msg}
-          </Alert>
-        </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
+    <Paper elevation={3} sx={{ mt: 2, mb: 1.5, p: 2 }} square={false}>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Company" : "Add Company"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
+      <Box sx={{ p: 3 }}>
         <form action={handleSubmit}>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
+              rowGap: 1,
               gridTemplateColumns: "repeat(2, 1fr)",
-              paddingBottom: "10px"
+              paddingBottom: "10px",
             }}
           >
             <InputControl
@@ -155,7 +178,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               id="add1"
               error={formError?.add1?.error}
               helperText={formError?.add1?.msg}
-              fullWidth
+              // fullWidth
               defaultValue={entityData.add1}
             />
             <InputControl
@@ -165,7 +188,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               id="add2"
               error={formError?.add2?.error}
               helperText={formError?.add2?.msg}
-              fullWidth
+              // fullWidth
               defaultValue={entityData.add2}
             />
 
@@ -191,7 +214,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               defaultValue={
                 {
                   id: entityData.country_id,
-                  name: entityData.country
+                  name: entityData.country,
                 } as optionsDataT
               }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -214,11 +237,13 @@ export default function CreateCompany(props: masterFormPropsT) {
               fetchDataFn={(stateStr: string) =>
                 getStates(stateStr, selectValues.country?.name)
               }
-              disable={selectValues.country || entityData.country ? false : true}
+              disable={
+                selectValues.country || entityData.country ? false : true
+              }
               defaultValue={
                 {
                   id: entityData.state_id,
-                  name: entityData.state
+                  name: entityData.state,
                 } as optionsDataT
               }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -242,15 +267,12 @@ export default function CreateCompany(props: masterFormPropsT) {
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end"
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" sx={{width: "15%", marginLeft: "5%"}}>
               Submit
             </Button>
           </Box>
