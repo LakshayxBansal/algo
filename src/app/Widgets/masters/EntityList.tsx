@@ -63,7 +63,7 @@ type EntityListPropsT = {
   fnDeleteDataByID?: (id: number) => Promise<any>;
   customCols: GridColDef[];
   AddAllowed: boolean;
-  height?:string;
+  height?: string;
 };
 
 const pgSize = 10;
@@ -95,7 +95,7 @@ export default function EntityList(props: EntityListPropsT) {
   const [deleteMsg, setDeleteMsg] = useState<string>();
 
   const searchParams = useSearchParams();
-  const searchData:string | null = searchParams.get("searchText")
+  const searchData: string | null = searchParams.get("searchText");
 
   let searchText;
   useEffect(() => {
@@ -108,10 +108,10 @@ export default function EntityList(props: EntityListPropsT) {
       setData(rows.data);
       setNRows(rows.count as number);
     }, 400);
-      
-    if(searchData){
+
+    if (searchData) {
       fetchData(searchData);
-    }else{
+    } else {
       fetchData(search);
     }
   }, [
@@ -437,12 +437,12 @@ export default function EntityList(props: EntityListPropsT) {
     }
   }
 
-  pushColumns(data[0]);;
+  pushColumns(data[0]);
   return (
     <Box style={{ backgroundColor: "#fceff3", height: "100vh" }}>
-      <SecondNavbar title={props.title}/>
+      <SecondNavbar title={props.title} />
       {/* </Toolbar> */}
-      <Box style={{margin:"0 20px"}}>
+      <Box style={{ margin: "0 20px" }}>
         {/* <Grid container spacing={2} style={{ verticalAlign: "center" }}>
           <Grid item xs={8}>
             <Box sx={{ width: "75%" }}>
@@ -534,7 +534,6 @@ export default function EntityList(props: EntityListPropsT) {
                             : "center bottom",
                       }}
                     >
-                      <Paper>
                         <ClickAwayListener onClickAway={handleCloseButtonMenu}>
                           <Tooltip title="Upload File">
                             <Button
@@ -596,7 +595,7 @@ export default function EntityList(props: EntityListPropsT) {
             </Box>
           </Grid>
         </Grid> */}
-        {dialogOpen && (
+        {/* {dialogOpen && (
           <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.renderForm
               ? dlgMode === dialogMode.Add
@@ -604,8 +603,25 @@ export default function EntityList(props: EntityListPropsT) {
                 : props.renderForm(setDialogOpen, (arg) => {}, modData)
               : 1}
           </AddDialog>
-        )}
-        {dialogOpenDelete && (
+        )} */}
+        {dialogOpen && (
+          <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+            {props.fileUploadFeatureReqd &&
+            dlgMode === dialogMode.FileUpload ? (
+              <UploadFileForm
+                setDialogOpen={setDialogOpen}
+                fnFileUpad={props.fnFileUpad}
+                sampleFileName={props.sampleFileName}
+              />
+            ) : props.renderForm && dlgMode === dialogMode.Add ? (
+              props.renderForm(setDialogOpen, (arg) => {})
+            ) : props.renderForm && dlgMode === dialogMode.Modify ? (
+              props.renderForm(setDialogOpen, (arg) => {}, modData)
+            ) : dlgMode === dialogMode.Delete ? (
+              <DeleteComponent />
+            ) : null}
+
+            {/* {dialogOpenDelete && (
           <AddDialog
             title={""}
             open={dialogOpenDelete}
@@ -648,7 +664,7 @@ export default function EntityList(props: EntityListPropsT) {
                 message="Record Deleted!"
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
               />
-            </Box>
+            </Box> */}
           </AddDialog>
         )}
         <Paper
@@ -708,12 +724,12 @@ export default function EntityList(props: EntityListPropsT) {
                     ref={anchorRef}
                     aria-label="Button group with a nested menu"
                     sx={{
-                      '& .MuiButtonGroup-grouped': {
-                        borderColor: '#fff', // Change the separator color
+                      "& .MuiButtonGroup-grouped": {
+                        borderColor: "#fff", // Change the separator color
                       },
-                      '& .MuiButtonGroup-grouped:not(:last-of-type)': {
-                        borderRightColor: '#fff', // Change the color of the separator
-                      }
+                      "& .MuiButtonGroup-grouped:not(:last-of-type)": {
+                        borderRightColor: "#fff", // Change the color of the separator
+                      },
                     }}
                   >
                     <Tooltip title="Add New">
@@ -764,6 +780,20 @@ export default function EntityList(props: EntityListPropsT) {
                         }}
                       >
                         <Paper>
+                          <Button
+                            onClick={() => {
+                              setDialogOpen(true);
+                              setDlgMode(dialogMode.FileUpload);
+                            }}
+                          >
+                            <AddIcon
+                              fontSize="small"
+                              style={{ marginRight: "5px" }}
+                            />
+                            Upload File
+                          </Button>
+                        </Paper>
+                        {/* <Paper>
                           <ClickAwayListener
                             onClickAway={handleCloseButtonMenu}
                           >
@@ -795,7 +825,7 @@ export default function EntityList(props: EntityListPropsT) {
                               </Button>
                             </Tooltip>
                           </ClickAwayListener>
-                        </Paper>
+                        </Paper> */}
                       </Grow>
                     )}
                   </Popper>
@@ -858,249 +888,10 @@ export default function EntityList(props: EntityListPropsT) {
             disableRowSelectionOnClick
             checkboxSelection
             // autoHeight
-            sx={{maxHeight:props.height}}
+            sx={{ maxHeight: props.height }}
           />
         </Paper>
       </Box>
     </Box>
-    <Container
-      maxWidth="lg"
-      style={{ height: "700px", width: "100%", padding: "25px" }}
-    >
-      <Typography variant="h4">{props.title}</Typography>
-      <Divider />
-      <Grid container spacing={2} style={{ verticalAlign: "center" }}>
-        <Grid item xs={8}>
-          <Box sx={{ width: "75%" }}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-                style: {
-                  backgroundColor: "#f5f5f5",
-                },
-              }}
-              InputLabelProps={{
-                style: {
-                  backgroundColor: "#f5f5f5",
-                },
-              }}
-            />
-          </Box>
-        </Grid>
-        <Grid
-          item
-          xs={3}
-          sx={{ textAlign: "right", marginTop: "1.1rem", paddingRight: "45px" }}
-        >
-          {props.AddAllowed && (
-            <Box>
-              <ButtonGroup
-                variant="contained"
-                ref={anchorRef}
-                aria-label="Button group with a nested menu"
-              >
-                <Tooltip title="Add New">
-                  <Button
-                    onClick={() => {
-                      setDialogOpen(true);
-                      setDlgMode(dialogMode.Add);
-                    }}
-                  >
-                    <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
-                    Add New
-                  </Button>
-                </Tooltip>
-                <Tooltip title="More Options">
-                  <Button
-                    size="small"
-                    aria-controls={open ? "split-button-menu" : undefined}
-                    aria-expanded={open ? "true" : undefined}
-                    aria-label="select merge strategy"
-                    aria-haspopup="menu"
-                    onClick={handleToggle}
-                  >
-                    <ArrowDropDownIcon />
-                  </Button>
-                </Tooltip>
-              </ButtonGroup>
-              <Popper
-                sx={{ zIndex: 1 }}
-                open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === "bottom" ? "center top" : "center bottom",
-                    }}
-                  >
-                    <Paper>
-                      <Button
-                        onClick={() => {
-                          setDialogOpen(true);
-                          setDlgMode(dialogMode.FileUpload);
-                        }}
-                      >
-                        <AddIcon
-                          fontSize="small"
-                          style={{ marginRight: "5px" }}
-                        />
-                        Upload File
-                      </Button>
-
-                      {/* <ClickAwayListener onClickAway={handleCloseButtonMenu}>
-                      <Tooltip title="Upload File">
-                      <Button
-                            key={"Upload File"}
-                            onClick={handleMenuItemClick}
-                            component="label"
-                            role={undefined}
-                            variant="outlined"
-                            tabIndex={-1}
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            <VisuallyHiddenInput
-                              type="file"
-                              onChange={(event: { target: { files: any } }) => {
-                                const file = event.target.files[0];
-                                if (file) {
-                                  console.log("Selected file:", file.name);
-                                }
-                              }}
-                              multiple
-                            />
-                            Upload File
-                          </Button>
-                      </Tooltip>
-                      </ClickAwayListener> */}
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </Box>
-          )}
-        </Grid>
-        <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
-          <Tooltip title="Manage Columns">
-            <IconButton
-              aria-controls="tune-menu"
-              aria-haspopup="true"
-              onClick={handleClick1}
-            >
-              <TuneIcon fontSize="large" />
-            </IconButton>
-          </Tooltip>
-          <Box>
-            <StyledMenu
-              id="tune-menu"
-              anchorEl={anchorEl2}
-              open={Boolean(anchorEl2)}
-              onClose={handleClose1}
-            >
-              <ColumnVisibilityToggle
-                columns1={columns4}
-                columns2={columns}
-                handleColumnVisibilityChange={handleColumnVisibilityChange}
-              />
-            </StyledMenu>
-          </Box>
-        </Grid>
-      </Grid>
-      {/* {dialogOpen && (
-        <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
-          {
-            props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
-              <UploadFileForm
-                setDialogOpen={setDialogOpen}
-                fnFileUpad={props.fnFileUpad}
-                sampleFileName={props.sampleFileName}
-              />
-            ) : props.renderForm ? (
-              dlgMode === dialogMode.Add ? (
-                props.renderForm(setDialogOpen, (arg) => {})
-              ) : (
-                props.renderForm(setDialogOpen, (arg) => {}, modData)
-              )
-            ) : dlgMode === dialogMode.Delete ? (
-              <DeleteComponent />
-            ) : null // Fallback if none of the conditions are met
-          }
-        </AddDialog>
-      )} */}
-
-      {dialogOpen && (
-        <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
-          {props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
-            <UploadFileForm
-              setDialogOpen={setDialogOpen}
-              fnFileUpad={props.fnFileUpad}
-              sampleFileName={props.sampleFileName}
-            />
-          ) : props.renderForm && dlgMode === dialogMode.Add ? (
-            props.renderForm(setDialogOpen, (arg) => {})
-          ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-            props.renderForm(setDialogOpen, (arg) => {}, modData)
-          ) : dlgMode === dialogMode.Delete ? (
-            <DeleteComponent />
-          ) : null}
-        </AddDialog>
-      )}
-      {/* {props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
-            <UploadFileForm
-              setDialogOpen={setDialogOpen}
-              fnFileUpad={props.fnFileUpad}
-              sampleFileName={props.sampleFileName}
-            />
-          ) : props.renderForm ? (
-            dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => {})
-            ) : (
-              props.renderForm(setDialogOpen, (arg) => {}, modData)
-            )
-          ) : dlgMode === dialogMode.Delete ? (
-            <DeleteComponent />
-          ) : null} */}
-      {/* {dialogOpen && (
-        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-          <DeleteComponent />
-        </AddDialog>
-      )} */}
-      <StripedDataGrid
-        rows={data ? data : []}
-        columns={columns4}
-        rowCount={NRows}
-        getRowId={(row) => row.id}
-        pagination={true}
-        pageSizeOptions={[pgSize]}
-        paginationMode="server"
-        paginationModel={PageModel}
-        onPaginationModelChange={setPageModel}
-        filterMode="server"
-        onFilterModelChange={setFilterModel}
-        loading={!data}
-        columnVisibilityModel={columnVisibilityModel}
-        onColumnVisibilityModelChange={(newModel) =>
-          setColumnVisibilityModel(newModel)
-        }
-        disableRowSelectionOnClick
-      />
-    </Container>
   );
 }
