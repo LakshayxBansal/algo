@@ -67,9 +67,11 @@ export async function getExecutiveEnquiriesOverview() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await getExecutiveEnquiriesOverviewDb(
+      const data = await getExecutiveEnquiriesOverviewDb(
         session.user.dbInfo.dbName
       );
+      const result = [data[0].map(bigIntToNum), data[1].map(bigIntToNum)];
+
       return result;
     }
   } catch (error) {
