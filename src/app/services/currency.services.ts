@@ -35,6 +35,8 @@ export async function createCurrencyDb(
   session: Session,
   sourceData: zm.currencySchemaT
 ) {
+  console.log("service", sourceData);
+
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,

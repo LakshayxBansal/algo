@@ -195,31 +195,16 @@ export async function getCompaniesDb(
     if (filter) {
       vals.unshift(filter);
     }
-    const dbNames = await excuteQuery({
-      host: "userDb",
-      query: "select uc.company_id as companyId, c.dbinfo_id as dbId from userCompany uc,company c where uc.user_id = ? and uc.company_id = c.id;",
-      values : [userId]
-    })
-    
-    let userRoles : any = [];
-    for(let comp of dbNames){
-        const role = await excuteQuery({
-        host: `crmapp${comp.dbId}`,
-        query: "select em.role_id as roleId from executive_master em where em.crm_user_id = ?;",
-        values : [userId]
-      })
-      userRoles.push({roleId : role.length > 0 ? role[0].roleId : null,companyId : comp.companyId})
-    }
-    
+
     const results = await excuteQuery({
       host: "userDb",
       query:
         "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
-          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId, RowNum as RowID \
+          CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId,roleId, RowNum as RowID \
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
           c.created_by createdBy, c.created_on createdOn,\
-          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId, ROW_NUMBER() OVER () AS RowNum \
+          h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId,uc.role_id as roleId, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \
           dbInfo d, dbHost h,\
@@ -237,12 +222,8 @@ export async function getCompaniesDb(
           LIMIT ?;",
       values: vals,
     });
-   
-    const newResult = results.map((res : any )=> {
-      const found = userRoles.find((ur : any) => res.id === ur.companyId);
-      return { ...res, roleId: found ? found.roleId : null };
-    });
-    return newResult;
+
+    return results;
   } catch (e) {
     console.log(e);
   }

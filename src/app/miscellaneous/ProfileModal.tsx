@@ -79,7 +79,6 @@ export default function ProfileModal(props : profileModalT) {
                     Profile
                 </Link>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
                 <MenuItem onClick={handleDeregisterFormCompany}>De register with {props.companyName}</MenuItem>
                 <MenuItem onClick={handleDeregisterFormApp}>De register from App</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>

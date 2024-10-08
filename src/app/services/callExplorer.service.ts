@@ -271,6 +271,7 @@ export async function updateCallAllocationDb(dbName: string, data: any) {
     let query = "CALL updateCallAllocation(?, ?, ?, ?)";
 
     // Execute the query, passing in the required parameters
+    // console.log("data from sp",query);
     return excuteQuery({
       host: dbName,
       query: query,

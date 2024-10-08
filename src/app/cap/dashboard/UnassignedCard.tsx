@@ -8,8 +8,8 @@ import { logger } from "@/app/utils/logger.utils";
 export default async function UnassignedCard() {
   let result, unassignedEnquiriesCount;
   try {
-    result = (await getUnassignedEnquiries())[0];
-    unassignedEnquiriesCount = Number(result.count);
+    result = await getUnassignedEnquiries();
+    unassignedEnquiriesCount = result.count;
   } catch (e) {
     logger.info(e);
   }

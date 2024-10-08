@@ -15,7 +15,19 @@ import {
   createCompany,
   updateCompany,
 } from "../controllers/company.controller";
+import {
+  companySchemaT,
+  masterFormPropsT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
+import {
+  createCompany,
+  updateCompany,
+} from "../controllers/company.controller";
 import Seperator from "../Widgets/seperator";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../Widgets/masters/selectMasterWrapper";
@@ -89,13 +101,15 @@ export default function CreateCompany(props: masterFormPropsT) {
 
   const clearFormError = () => {
     setFormError((curr) => {
+
       // remove form key from object
       const { form, ...rest } = curr;
+
       return rest;
     });
   };
   return (
-    <Paper elevation={3} sx={{ mt: 2, mb: 1.5, p: 2 }} square={false}>
+        <Paper elevation={3} sx={{ mt: 2, mb: 1.5, p: 2 }} square={false}>
       <Box
         sx={{
           position: "sticky",
@@ -133,7 +147,7 @@ export default function CreateCompany(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box sx={{ p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -149,6 +163,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               id="name"
               label="Name"
               name="name"
+              required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
@@ -158,6 +173,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               id="alias"
               label="Alias"
               name="alias"
+              required
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
               defaultValue={entityData.alias}
@@ -176,6 +192,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="Address Line 1"
               name="add1"
               id="add1"
+              required
               error={formError?.add1?.error}
               helperText={formError?.add1?.msg}
               // fullWidth
