@@ -65,10 +65,10 @@ export default async function OverviewCard() {
     openEnquiries = [],
     closedEnquiries = [];
   try {
-    data = await getOverviewGraphData();
-    totalOpen = Number(data[0][0].totalOpen);
-    openEnquiries = data[1];
-    closedEnquiries = data[2];
+    data = (await getOverviewGraphData())!;
+    totalOpen = Number(data![0][0].totalOpen);
+    openEnquiries = data![1];
+    closedEnquiries = data![2];
   } catch (e) {
     logger.info(e);
   }
