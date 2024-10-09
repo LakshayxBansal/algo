@@ -130,7 +130,7 @@ export const StyledMenu = styled(Menu)(({ theme }) => ({
 
 export const ContainedButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#e05a5a", // Change this to your desired color
-  color: theme.palette.common.white, // Change text color if needed
+  // color: theme.palette.common.white, // Change text color if needed
   "&:hover": {
     backgroundColor: "#EA8E8E", // Hover effect
   },

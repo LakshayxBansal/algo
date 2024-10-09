@@ -9,6 +9,8 @@ export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
 export type itemSchemaT = z.infer<typeof zs.ItemSchema>;
 
+export type AddItemToListFormSchemaT = z.infer<typeof zs.AddItemToListFormSchema>
+
 export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
@@ -44,6 +46,7 @@ export type RenderFormFunctionT = (
 
 
 export type masterFormPropsT = {
+  [x: string]: any;
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;

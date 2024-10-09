@@ -61,3 +61,22 @@ export async function getEnquiryStatusList(crmDb: string, searchString: string) 
     console.log(e);
   }
 }
+
+export async function showItemGridDB(crmDb: string)
+{
+  try {
+    let query = 'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id and cm.config_type="enquiry_support"';
+    let values: any[] = [];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query, 
+      values: values,
+    });
+
+    return result;
+
+  } catch (e) {
+    console.log(e);
+  }
+}

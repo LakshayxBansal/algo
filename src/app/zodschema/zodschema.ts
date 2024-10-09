@@ -126,6 +126,20 @@ export const ItemSchema = z.object({
   // modified_on: z.date().optional(),
 });
 
+export const AddItemToListFormSchema = z.object({
+  id: z.number().optional(),
+  item: z.string().min(1).max(75),
+  item_id : z.number(),
+  quantity: z.string(),
+  unit: z.string(),
+  unit_id: z.number(),
+  remarks: z.string().max(5000).optional(),
+  // created_by: z.number().optional(),
+  // modified_by: z.number().optional(),
+  // created_on: z.date().optional(),
+  // modified_on: z.date().optional(),
+});
+
 export const UnitSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(50),
