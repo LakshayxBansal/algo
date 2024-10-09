@@ -1,18 +1,29 @@
 "use client"
 import { Box, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { statusMap } from "./StatusBar";
+import { statusMap } from "./StatusMap";
 
-export let updateStatusObject: Dispatch<SetStateAction<any>>;
+export let updateStatusBar : any;
 
 export default function Footer(){
-    const [statusObject, setStatusObject] = useState({key1: statusMap.get("key1"),key2: statusMap.get("key2"),key3: statusMap.get("key3"),key4: statusMap.get("key4"),key5: statusMap.get("key5")});
+    // const [flag, setFlag] = useState(false);
+    // const [key, setKey] = useState("");
+    // statusMap.set("key1","value1");
+    // setKey(statusMap.get(key) as string);
 
-    useEffect(() => {
-        updateStatusObject = setStatusObject;
+    // updateStatusBar = function (key: string,value : string){
+    //     statusMap.set(key,value);
+    //     // setKey(statusMap.get(key) as string);
+    //     setFlag(!flag);
+    //     console.log("status map inside useeffect : ",statusMap);
+    // }
+    // console.log("status map outside useeffect : ",statusMap);
+
+    const [statusObject,setStatusObject] = useState({key1 : "",key2 : "",key3 : "",key4 : "",key5 : ""});
+    useEffect(()=>{
+        updateStatusBar = setStatusObject;
     })
-    // statusMap.set("key1",statusObject["key1"] as string);
-    console.log(statusMap);
+
     return (
         <Box sx={{
             bgcolor: '#CCCCCC',
@@ -32,7 +43,7 @@ export default function Footer(){
                 width: '100%',
             }}>
                 <Typography sx={{ width: "40%" }}>
-                    {`the value of first key is : ${statusObject["key1"]}`}
+                    {`the value of first key is : `}
                 </Typography>
                 <Typography sx={{ width: "40%" }}>
                     {`the value of second key is : ${statusMap.get("key1")}`}

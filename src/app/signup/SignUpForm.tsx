@@ -47,6 +47,10 @@ export default function SignupForm1(props: any) {
     }
   };
 
+  const handleDefault = (event : any) => {
+    event.preventDefault();
+  };
+
   async function makeUserActiveAgain(userId: number | undefined) {
     try {
       await makeUserActive(userId);
@@ -347,6 +351,8 @@ export default function SignupForm1(props: any) {
                       inputType={InputType.TEXT}
                       required
                       fullWidth
+                      onCopy={(event : any)=>handleDefault(event)}
+                      onPaste={(event : any)=>handleDefault(event)}
                       name="password"
                       label="Password"
                       type={!showPassword ? "password" : "text"}
@@ -388,6 +394,8 @@ export default function SignupForm1(props: any) {
                       helperText={formError?.repassword?.msg}
                       required
                       fullWidth
+                      onCopy={(event : any)=>handleDefault(event)}
+                      onPaste={(event : any)=>handleDefault(event)}
                       name="repassword"
                       label="Re-enter Password"
                       type={!showRePassword ? "password" : "text"}
