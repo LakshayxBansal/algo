@@ -50,7 +50,7 @@ export default async function ExecutiveEnquiryList() {
   try {
     result = await getExecutiveEnquiriesOverview();
 
-    const groupedData = groupByName(result[1], result[0]);
+    const groupedData = groupByName(result![1], result![0]);
     data = createTableData(groupedData);
   } catch (e) {
     logger.info(e);

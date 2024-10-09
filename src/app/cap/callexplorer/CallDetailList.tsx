@@ -2,7 +2,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 import { getCallEnquiryDetails } from "../../controllers/callExplorer.controller";
 import { StripedDataGrid } from "../../utils/styledComponents";
-import { Box, Popover, Tooltip, Typography } from "@mui/material";
+import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
 
 export default function CallDetailList({ selectedRow, refresh }: { selectedRow: any, refresh: any }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
@@ -117,7 +117,6 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
             getRowId={(row) => row.id}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
-            autoHeight
             pagination // Enable pagination
             paginationModel={{ pageSize, page }}
             onPaginationModelChange={(newPaginationModel) => {
@@ -127,6 +126,9 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
             pageSizeOptions={[5, 10, 20]} // Options for rows per page
             paginationMode="client" // Set client-side pagination
             sx={{
+                height: '140px',
+                minHeight: '140px',
+                overflowY: 'auto',
                 '& .MuiDataGrid-footerContainer': {
                     height: '28px', // Force footer container to 30px
                     minHeight: '28px', // Override any minimum height constraints
@@ -154,12 +156,14 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
                 vertical: 'top',
                 horizontal: 'left',
             }}
-            PaperProps={{
-                onMouseEnter: () => setOpen(true), // Keep open on mouse hover
-                onMouseLeave: () => {
-                    setOpen(false);
-                    setAnchorEl(null);
-                }, // Close when mouse leaves
+            slotProps={{
+                paper: {
+                    onMouseEnter: () => setOpen(true), // Keep open on mouse hover
+                    onMouseLeave: () => {
+                        setOpen(false);
+                        setAnchorEl(null);
+                    }
+                }
             }}
             ref={popoverRef}
         >

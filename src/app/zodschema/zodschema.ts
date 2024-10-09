@@ -100,6 +100,10 @@ export const organisationSchema = z.object({
   modified_on: z.date().optional(),
 });
 
+export const deptSchema = z.object({
+  name: z.string().min(1).max(45)
+});
+
 const contactDetailsSchema = z
   .object({
     email: z.union([z.literal(""), z.string().email().max(100)]),
@@ -480,6 +484,8 @@ export const nameMasterData = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(45),
 });
+
+
 
 // export const nameMasterData = z.object({
 //   id: z.number().optional(),

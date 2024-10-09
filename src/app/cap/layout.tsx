@@ -11,6 +11,8 @@ export default function CapLayout({children} : {children: React.ReactNode}) {
         <AppMenu>
           <Box id="cap_layout">
             <ThemeProvider theme={theme}>
+              {/* <SecondNavbar title=""/> */}
+           
               {children}
             </ThemeProvider>
           </Box>

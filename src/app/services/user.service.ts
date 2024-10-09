@@ -152,12 +152,12 @@ export async function getUserDetailsByIdList(userId:number) {
   return false;
 }
 
-export async function mapUser(userId : number,companyId : number) {
+export async function mapUser(userId : number,roleId : number | null,companyId : number) {
   try{
     await excuteQuery({
       host: "userDb",
-      query: "update userCompany set isMapped = 1 where user_id = ? and company_id = ?;",
-      values: [ userId,companyId]
+      query: "update userCompany set isMapped = 1, role_id = ? where user_id = ? and company_id = ?;",
+      values: [ roleId,userId,companyId]
     })
   }catch(error){
     console.log(error);
