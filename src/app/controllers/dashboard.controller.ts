@@ -83,7 +83,12 @@ export async function getOverviewGraphData() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await getOverviewGraphDataDb(session.user.dbInfo.dbName);
+      const data = await getOverviewGraphDataDb(session.user.dbInfo.dbName);
+      const result = [];
+      for (let i = 0; i < data.length - 1; i++) {
+        result.push(data[i].map(bigIntToNum));
+      }
+
       return result;
     }
   } catch (error) {
