@@ -484,7 +484,7 @@ export const enquirySubStatusMaster = z.object({
 
 export const nameMasterData = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Name must not be empty").max(45),
+  name: z.string().min(1,"Name must contain at least 1 character(s)").max(45, "Name must contain at most 45 character(s)"),
 });
 
 

@@ -131,7 +131,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
 
   return (
     <Paper sx={{ margin: "auto", width: "37vw" }}>
-      <Seperator>
+      {/* <Seperator>
         {entityData.id ? "Update Currency" : "Add Currency"}
       </Seperator>
       <Collapse in={formError?.form ? true : false}>
@@ -151,8 +151,44 @@ export default function CurrencyForm(props: masterFormPropsT) {
         >
           {formError?.form?.msg}
         </Alert>
+      </Collapse> */}
+      <Box
+        sx={{
+          position: "sticky",
+          top: 2,
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Currency" : "Add Currency"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm" sx={{ mt: 2, p: 3 }}>
         <form action={handleSubmit}>
           <Box
             sx={{
@@ -175,17 +211,20 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Currency Symbol"
                 inputType={InputType.TEXT}
                 name="symbol"
+                fullWidth
                 defaultValue={entityData.symbol}
                 error={formError?.Symbol?.error}
                 helperText={formError?.Symbol?.msg}
                 onChange={onSymbolChange}
-              />
+                />
               <InputControl
                 autoFocus
                 id="Name"
                 label="Name"
                 inputType={InputType.TEXT}
                 name="name"
+                fullWidth
+                required
                 defaultValue={entityData.name}
                 error={formError?.Name?.error}
                 helperText={formError?.Name?.msg}
@@ -206,6 +245,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 label="Currency Short Form"
                 inputType={InputType.TEXT}
                 name="shortForm"
+                fullWidth
                 defaultValue={entityData.shortForm}
                 error={formError?.ShortForm?.error}
                 helperText={formError?.ShortForm?.msg}

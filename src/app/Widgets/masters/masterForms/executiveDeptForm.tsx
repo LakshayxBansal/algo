@@ -115,7 +115,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -125,20 +125,29 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           }}
         >
           <InputControl
+            inputType={InputType.TEXT}
             autoFocus
             id="name"
             label="Executive Dept Name"
-            inputType={InputType.TEXT}
             name="name"
+            fullWidth
+            required
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
             defaultValue={entityData.name}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
         </Box>
         <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            mt: 2
           }}
         >
           <Button onClick={handleCancel}>Cancel</Button>
