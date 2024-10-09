@@ -8,7 +8,7 @@ import { logger } from "@/app/utils/logger.utils";
 export default async function ClosedCard() {
   let result, sinceDate;
   try {
-    result = (await getClosedEnquiriesCount())[0];
+    result = await getClosedEnquiriesCount();
     sinceDate = new Date(result.since).toDateString();
   } catch (e) {
     logger.info(e);

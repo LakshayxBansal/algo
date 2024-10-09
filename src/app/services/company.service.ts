@@ -195,7 +195,7 @@ export async function getCompaniesDb(
     if (filter) {
       vals.unshift(filter);
     }
-    
+
     const results = await excuteQuery({
       host: "userDb",
       query:
@@ -222,7 +222,7 @@ export async function getCompaniesDb(
           LIMIT ?;",
       values: vals,
     });
-   
+
     return results;
   } catch (e) {
     console.log(e);
