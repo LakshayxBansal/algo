@@ -8,7 +8,7 @@ import { getHostDetailsService } from '@/app/services/company.service';
 async function getPool(host: string) {
   try {
     let pool = dbMap.get(host);
-    
+  
     if (!pool) {
       let hostIp, hostPort;
       if(host === "userDb"){
@@ -56,6 +56,7 @@ export default async function excuteQuery({host, query, values }: {host: string,
     throw (e);
 
   } 
+  // console.log("these are the results",results)
   return results;
 }
 

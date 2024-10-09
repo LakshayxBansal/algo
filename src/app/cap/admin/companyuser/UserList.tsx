@@ -4,7 +4,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "../../../Widgets/masters/EntityList";
 import { deRegisterFromCompany, getCompanyUser } from "@/app/controllers/user.controller";
 import { Button } from "@mui/material";
-// import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
+import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
 
 const columns: GridColDef[] = [
   { field: 'RowID', headerName: 'ID', width: 90 },
@@ -44,17 +44,17 @@ export default function UserList(){
     return <>
         <EntityList
         title="User List"
-        // renderForm={(fnDialogOpen, fnDialogValue, data) => (
-        //   <InviteUserForm
-        //   setDialogOpen={fnDialogOpen}
-        //   setDialogValue={fnDialogValue}
-        //   data={data}
-        //   />
-        // )} 
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+          <InviteUserForm
+          setDialogOpen={fnDialogOpen}
+          setDialogValue={fnDialogValue}
+          data={data}
+          />
+        )} 
         fetchDataFn={getCompanyUser}
         // fnFetchDataByID={getInviteUserById}
         customCols={columns}
-        AddAllowed={false}>
+        AddAllowed={true}>
       </EntityList>
       </>
 }

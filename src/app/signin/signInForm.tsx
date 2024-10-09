@@ -15,6 +15,7 @@ import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
 import styles from "../signup/SignUpForm.module.css";
+import * as zs from '../zodschema/zodschema';
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -42,23 +43,49 @@ export default function AuthPage(props: authPagePropsType) {
     setEmail(!email);
   };
   function actValidate(formData: FormData) {
-    console.log(formData);
-    signIn("credentials", {
-      redirect: false,
-      userContact: formData.get("usercontact"),
-      password: formData.get("password"),
-    }).then((status) => {
-      if (status?.ok) {
-        router.push(successCallBackUrl);
-      } else {
-        const errorState: Record<string, { msg: string; error: boolean }> = {};
-        errorState["form"] = { msg: "Invalid Credentials", error: true };
-        setFormError(errorState);
-        if (status?.error === "CredentialsSignin") {
-          console.log(status);
+    let data: { [key: string]: any } = {};
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+    console.log(data);
+    const parsed = zs.signInSchema.safeParse(data);
+    console.log(parsed);
+    if (parsed.success) {
+      let contact;
+        if (data.email) {
+          contact = data.email;
+          delete data.email;
         }
+        else {
+          contact = data.phone;
+          contact = contact?.replace(/ +/g, '');
+          delete data.phone;
+        }
+        data.contact = contact;
+      signIn("credentials", {
+        redirect: false,
+        userContact: data.contact,
+        password: data.password,
+      }).then((status) => {
+        if (status?.ok) {
+          router.push(successCallBackUrl);
+        } else {
+          const errorState: Record<string, { msg: string; error: boolean }> = {};
+          errorState["form"] = { msg: "Invalid Credentials", error: true };
+          setFormError(errorState);
+          if (status?.error === "CredentialsSignin") {
+            console.log(status);
+          }
+        }
+      });
+    } else {
+      const errorState: Record<string, { msg: string; error: boolean }> = {};
+      for (const issue of parsed.error.issues) {
+        console.log(issue);
+        errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
-    });
+      setFormError(errorState);
+    }
   }
 
   getCsrfToken()
@@ -156,11 +183,10 @@ export default function AuthPage(props: authPagePropsType) {
                     autoFocus
                     error={formError?.email?.error}
                     helperText={formError?.email?.msg}
-                    required
                     fullWidth
                     id="usercontact"
                     label="Email Address"
-                    name="usercontact"
+                    name="email"
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "45px",
@@ -186,9 +212,8 @@ export default function AuthPage(props: authPagePropsType) {
                     inputType={InputType.PHONE}
                     id="usercontact"
                     label="Phone No"
-                    name="usercontact"
+                    name="phone"
                     fullWidth
-                    required
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
                     country={"in"}
@@ -247,7 +272,6 @@ export default function AuthPage(props: authPagePropsType) {
                 >
                   <InputControl
                     inputType={InputType.TEXT}
-                    required
                     fullWidth
                     name="password"
                     label="Password"

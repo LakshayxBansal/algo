@@ -1,5 +1,49 @@
 export const dbTableAndProScript =
-  "CREATE TABLE config_meta_data (\
+  "CREATE TABLE `object_category_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `name` varchar(45) NOT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+INSERT INTO `object_category_master` VALUES (1,'master'),(2,'transaction'),(3,'report');~\
+CREATE TABLE `object_rights_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `object_id` int(11) NOT NULL,\
+  `admin_create` int(11) NOT NULL DEFAULT 1,\
+  `admin_read` int(11) NOT NULL DEFAULT 1,\
+  `admin_update` int(11) NOT NULL DEFAULT 1,\
+  `admin_delete` int(11) NOT NULL DEFAULT 1,\
+  `manager_create` int(11) NOT NULL DEFAULT 1,\
+  `manager_read` int(11) NOT NULL DEFAULT 1,\
+  `manager_update` int(11) NOT NULL DEFAULT 1,\
+  `manager_delete` int(11) NOT NULL DEFAULT 1,\
+  `executive_create` int(11) NOT NULL DEFAULT 1,\
+  `executive_read` int(11) NOT NULL DEFAULT 1,\
+  `executive_update` int(11) NOT NULL DEFAULT 1,\
+  `executive_delete` int(11) NOT NULL DEFAULT 1,\
+  PRIMARY KEY (`id`)\
+);~\
+INSERT INTO `object_rights_master` VALUES (1,1,1,1,1,1,1,1,1,1,1,1,1,1),(2,2,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (3,3,1,1,1,1,1,1,1,1,1,1,1,1),(4,4,1,1,1,1,1,1,1,1,1,1,1,1),(5,5,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (6,6,1,1,1,1,1,1,1,1,1,1,1,1),(7,7,1,1,1,1,1,1,1,1,1,1,1,1),(8,8,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (9,9,1,1,1,1,1,1,1,1,1,1,1,1),(10,10,1,1,1,1,1,1,1,1,1,1,1,1),(11,11,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (12,12,1,1,1,1,1,1,1,1,1,1,1,1),(13,13,1,1,1,1,1,1,1,1,1,1,1,1),(14,14,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (15,15,1,1,1,1,1,1,1,1,1,1,1,1),(16,16,1,1,1,1,1,1,1,1,1,1,1,1),(17,17,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (18,18,1,1,1,1,1,1,1,1,1,1,1,1),(19,19,1,1,1,1,1,1,1,1,1,1,1,1),(20,20,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (21,21,1,1,1,1,1,1,1,1,1,1,1,1),(22,22,1,1,1,1,1,1,1,1,1,1,1,1),(23,23,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (24,24,1,1,1,1,1,1,1,1,1,1,1,1),(25,25,1,1,1,1,1,1,1,1,1,1,1,1);~\
+CREATE TABLE `object_type_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `name` varchar(45) NOT NULL,\
+  `type` int(11) NOT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(3,'Area',1),(4,'Category',1),\
+    (5,'Contact',1),(6,'Contact Group',1),(7,'Country',1),(8,'Currency',1),(9,'Department',1),\
+    (10,'Executive Dept',1),(11,'Executive',1),(12,'Executive Group',1),(13,'Executive Role',1),\
+    (14,'Invite User',2),(15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),\
+    (19,'Organisation',1),(20,'Source',1),(21,'State',1),(22,'State List',1),(23,'Sub Status',2),\
+    (24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2);~\
+CREATE TABLE config_meta_data (\
   id int NOT NULL AUTO_INCREMENT,\
   config_type varchar(100) COLLATE utf8mb4_general_ci NOT NULL,\
   PRIMARY KEY (id),\
@@ -19,6 +63,33 @@ CREATE TABLE `menu_option_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   `menu_order` int(11) DEFAULT NULL\
 );~\
+INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashboardOutlinedIcon','/cap',0,'','',0,0,0),\
+  (2,'Enquiry','Enquiry',0,'FolderOutlinedIcon','#',0,'','',0,0,0),(3,'Campaign','Campaign',0,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
+  (4,'Reports','Reports',0,'BarChartIcon','#',0,'','',0,0,0),(5,'Admin','Admin',0,'FolderOutlinedIcon','#',0,'','',0,0,0),\
+  (6,'Add Inquiry','Add',2,'AddIcCallIcon','/cap/enquiry',0,'','',0,0,0),(7,'Allocate','Allocate',2,'InboxIcon','/cap/callexplorer',0,'','',0,0,0),\
+  (8,'Update','Update',2,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),(9,'Masters','Masters',5,'FolderOutlinedIcon','#',0,'','',0,0,0),\
+  (10,'Modify Company','Modify Company',5,'InboxIcon','#',0,'','',0,0,0),(11,'Add User','Add User',5,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
+  (12,'Enquiry Masters','Enquiry Masters',9,'FolderOutlinedIcon','#',0,'','',0,0,0),(13,'Support Masters','Support Masters',9,'DashboardIcon','#',0,'','',0,0,0),\
+  (14,'Action','Actions',12,'FolderOutlinedIcon','/cap/admin/lists/actionList',0,'','',0,0,0),(15,'Category','Category',12,'DashboardIcon','/cap/admin/lists/categoryList',0,'','',0,0,0),\
+  (28,'Source','Source',12,'FolderOutlinedIcon','/cap/admin/lists/sourceList',0,'','',0,0,0),\
+  (31,'Contact','Contacts',12,'ContactsIcon','/cap/admin/lists/contactList',0,'','',0,0,0),\
+  (34,'Enquiry Sub Status','Enquiry Sub Status',12,'FolderOutlinedIcon','/cap/admin/lists/subStatusList',0,'','',0,0,0),\
+  (35,'Allocation Type','Allocation Type',12,'FolderOutlinedIcon','/cap/admin/lists/allocationTypeList',0,'','',0,0,0),\
+  (36,'Enquiry Item','Enquiry Item',12,'FolderOutlinedIcon','/cap/admin/lists/itemList',0,'','',0,0,0),\
+  (37,'Item Group','Item Group',12,'FolderOutlinedIcon','/cap/admin/lists/itemGroupList',0,'','',0,0,0),\
+  (38,'Item Unit','Item Unit',12,'FolderOutlinedIcon','/cap/admin/lists/unitList',0,'','',0,0,0),\
+  (39,'Organisation','Organisation',12,'FolderOutlinedIcon','/cap/admin/lists/organisationList',0,'','',0,0,0),\
+  (40,'Contact Group','Contact Group',12,'FolderOutlinedIcon','/cap/admin/lists/contactGroupList',0,'','',0,0,0),\
+  (41,'Department','Department',12,'FolderOutlinedIcon','/cap/admin/lists/departmentList',0,'','',0,0,0),\
+  (42,'Country','Country',12,'FolderOutlinedIcon','/cap/admin/lists/countryList',0,'','',0,0,0),\
+  (43,'State','State',12,'FolderOutlinedIcon','/cap/admin/lists/stateList',0,'','',0,0,0),\
+  (44,'City','City',12,'FolderOutlinedIcon','#',0,'','',0,0,0),(45,'Executive','Executive',12,'FolderOutlinedIcon','/cap/admin/lists/executiveList',0,'','',0,0,0),\
+  (46,'Executive Area','Executive Area',12,'FolderOutlinedIcon','#',0,'','',0,0,0),\
+  (47,'Executive Role','Executive Role',12,'FolderOutlinedIcon','/cap/admin/lists/executiveRoleList',0,'','',0,0,0),\
+  (48,'Executive Dept','Executive Dept',12,'FolderOutlinedIcon','/cap/admin/lists/executiveDeptList',0,'','',0,0,0),\
+  (49,'Executive Group','Executive Group',12,'FolderOutlinedIcon','/cap/admin/lists/executiveGroupList',0,'','',0,0,0),\
+  (50,'Currency','Currency',12,'FolderOutlinedIcon','/cap/admin/lists/currencyList',0,'','',0,0,0),\
+  (51,'Config','Config',5,'FolderOutlinedIcon','#',0,'','',0,0,0),(52,'Enquiry Config','Enquiry Config',51,'FolderOutlinedIcon','/cap/admin/enquirySupportConfig',0,'','',0,0,0);~\
 CREATE TABLE app_config (\
   id int NOT NULL AUTO_INCREMENT,\
   config_type_id int NOT NULL,\
@@ -2367,4 +2438,88 @@ BEGIN\
 	commit;\
     select * from temp_error_log;\
     select * from state_master sm where sm.id = id;\
-END ;";
+END ;~\
+\
+CREATE PROCEDURE `getExecutiveEnquiriesData`()\
+BEGIN\
+	SELECT count(*) total, em.name FROM enquiry_ledger_tran lt\
+		left join executive_master em on em.id=lt.allocated_to\
+		WHERE lt.enquiry_id NOT IN (SELECT et.enquiry_id FROM enquiry_ledger_tran et \
+		LEFT JOIN enquiry_status_master sm ON sm.id = et.status_id\
+		WHERE sm.name = 'Closed')\
+		AND lt.date = (SELECT MAX(inner_lt.date) \
+        FROM enquiry_ledger_tran inner_lt \
+        WHERE inner_lt.enquiry_id = lt.enquiry_id)\
+        AND lt.allocated_to IS NOT NULL group by em.name;\
+	SELECT lt.date AS date, Week(lt.date) AS week, em.name as name, COUNT(*) AS count\
+		FROM enquiry_ledger_tran lt \
+		left join executive_master em on lt.allocated_to=em.id\
+		WHERE (WEEK(lt.date)) >= WEEK(CURDATE()) - 2\
+		AND lt.enquiry_id not in (select et.enquiry_id from enquiry_ledger_tran et \
+		left join enquiry_status_master sm on sm.id=et.status_id where sm.name='Closed') AND\
+		lt.date = (SELECT MAX(inner_lt.date) \
+        FROM enquiry_ledger_tran inner_lt \
+        WHERE inner_lt.enquiry_id = lt.enquiry_id)\
+        AND lt.allocated_to IS NOT NULL\
+		GROUP BY name, Week(lt.date) ORDER BY name, WEEK(lt.date);\
+END;~\
+\
+CREATE PROCEDURE `getOverviewGraphData`()\
+BEGIN\
+	SELECT COUNT(distinct(enquiry_id)) totalOpen from enquiry_ledger_tran lt\
+	LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
+	WHERE sm.name = 'Open';\
+    SELECT COUNT(*) as count, MONTH(date) as month from (select lt.date as date from enquiry_ledger_tran lt\
+    LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
+	WHERE sm.name = 'Open' AND lt.date = (select MIN(et.date) from enquiry_ledger_tran et where et.enquiry_id=lt.enquiry_id)\
+	AND lt.date >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY lt.enquiry_id) as res\
+    group by month(date);\
+    SELECT COUNT(*) as count, MONTH(lt.date) as month from enquiry_ledger_tran lt left join enquiry_status_master sm \
+	ON sm.id = lt.status_id\
+	WHERE sm.name='Closed' AND lt.date > DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY month(lt.date);\
+END;~\
+CREATE PROCEDURE `mainSearchBar`(IN search_text VARCHAR(255))\
+BEGIN\
+  WITH combined_results AS (\
+        SELECT 'Menu Master' as table_name, name as result,href as href FROM menu_option_master WHERE name LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Menu Master' as table_name, short_name AS result, href as href FROM menu_option_master WHERE short_name LIKE CONCAT('%', search_text, '%')\
+		UNION ALL\
+        SELECT 'Contact Master' as table_name, alias AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE alias LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Contact Master' as table_name, name AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE name LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Contact Master' as table_name, print_name AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE print_name LIKE CONCAT('%', search_text, '%')\
+         UNION ALL\
+        SELECT 'Contact Master' as table_name, pan AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE pan LIKE CONCAT('%', search_text, '%')\
+         UNION ALL\
+        SELECT 'Contact Master' as table_name, aadhaar AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE aadhaar LIKE CONCAT('%', search_text, '%')\
+      UNION ALL\
+        SELECT 'Organization Master' as table_name, alias AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE alias LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Organization Master' as table_name, name AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE name LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Organization Master' as table_name, print_name AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE print_name LIKE CONCAT('%', search_text, '%')\
+         UNION ALL\
+        SELECT 'Organization Master' as table_name, pan AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE pan LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Organization Master' as table_name, gstin AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE gstin LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Organization Master' as table_name, pincode  AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE pincode LIKE CONCAT('%', search_text, '%')\
+          UNION ALL\
+        SELECT 'Executive Master' as table_name, alias AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE alias LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Executive Master' as table_name, name AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE name LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+           SELECT 'Executive Master' as table_name, pincode AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE pincode LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+          SELECT 'Executive Master' as table_name, country_id AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE country_id LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Executive Master' as table_name, name AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE email LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+           SELECT 'Executive Master' as table_name, mobile AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE mobile LIKE CONCAT('%', search_text, '%')\
+        UNION ALL\
+        SELECT 'Executive Master' as table_name, whatsapp AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE whatsapp LIKE CONCAT('%', search_text, '%')\
+    )\
+        SELECT DISTINCT * FROM combined_results;\
+END";

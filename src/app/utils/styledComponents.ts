@@ -3,6 +3,8 @@ import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import { Box, Button, Menu } from "@mui/material";
+import MuiAppBar, { AppBarProps, AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -48,20 +50,20 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const ODD_OPACITY = 0.2;
 
 export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
-  backgroundColor: "#fff",
-  height: 200,
-  border: "none",
-  "& .MuiDataGrid-cell": {
-    borderBottom: "none",
+  backgroundColor:"#fff",
+  height:650,
+  border: 'none',
+  '& .MuiDataGrid-cell': {
+    borderBottom: 'none',
   },
-  "& .MuiDataGrid-columnHeaders": {
-    borderBottom: "none",
+  '& .MuiDataGrid-columnHeaders': {
+    borderBottom: 'none',
   },
-  "& .MuiDataGrid-columnSeparator": {
-    display: "none",
+  '& .MuiDataGrid-columnSeparator': {
+    display: 'none',
   },
-  "& .MuiDataGrid-cell:hover": {
-    color: "primary.main",
+  '& .MuiDataGrid-cell:hover': {
+    color: 'primary.main',
   },
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.grey[200],
@@ -93,6 +95,9 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       },
     },
   },
+  // "&. MuiDataGrid-withBorderColor":{
+  //   border:"none"
+  // }
   // "&. MuiDataGrid-withBorderColor":{
   //   border:"none"
   // }

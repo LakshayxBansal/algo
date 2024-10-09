@@ -130,7 +130,7 @@ export async function getCallEnquiriesDetailsDb(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate\
+        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate,el.status_id,el.closure_remark,el.suggested_action_remark\
     from enquiry_ledger_tran el\
     left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
     left join enquiry_action_master eam on el.action_taken_id=eam.id\
@@ -271,6 +271,7 @@ export async function updateCallAllocationDb(dbName: string, data: any) {
     let query = "CALL updateCallAllocation(?, ?, ?, ?)";
 
     // Execute the query, passing in the required parameters
+    // console.log("data from sp",query);
     return excuteQuery({
       host: dbName,
       query: query,

@@ -8,7 +8,7 @@ import { logger } from "@/app/utils/logger.utils";
 export default async function AverageAgeCard() {
   let result, averageAge, sinceDate;
   try {
-    result = (await getAverageAge())[0];
+    result = await getAverageAge();
     averageAge = result.age ? result.age : 0;
     sinceDate = new Date(result.since).toDateString();
   } catch (e) {

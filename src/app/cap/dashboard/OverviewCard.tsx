@@ -7,22 +7,22 @@ import { getOverviewGraphData } from "@/app/controllers/dashboard.controller";
 import ChartContainer from "./ChartContainer";
 import { logger } from "@/app/utils/logger.utils";
 
-const getBarData = (data: any, currMonth: number) => {
-  let result: Array<Number> = new Array(6).fill(0);
+const getBarData = (data: any[], currMonth: number) => {
+  const result: number[] = new Array(6).fill(0);
 
   data.forEach((ele: any) => {
-    let ind = -1;
-    if (currMonth < 6) {
-      const month = ele["month"];
-      ind = currMonth + (12 - month);
-    } else {
-      ind = currMonth - ele["month"];
-    }
+    const month = ele["month"];
     const count = Number(ele["count"]);
-    result[ind] = count;
+
+    const index =
+      currMonth < 6 ? (currMonth + (12 - month)) % 6 : (currMonth - month) % 6;
+
+    result[index] = count;
   });
+
   return result.reverse();
 };
+
 const getLineData = (totalOpen: any, openData: any, closedData: any) => {
   let initial =
     totalOpen -
@@ -62,8 +62,8 @@ const getXAxisData = (currMonth: number) => {
 export default async function OverviewCard() {
   let data = [],
     totalOpen,
-    openEnquiries,
-    closedEnquiries;
+    openEnquiries = [],
+    closedEnquiries = [];
   try {
     data = await getOverviewGraphData();
     totalOpen = Number(data[0][0].totalOpen);
@@ -73,19 +73,12 @@ export default async function OverviewCard() {
     logger.info(e);
   }
 
-  const currMonth = new Date().getMonth() + 1;
-  const currYear = new Date().getFullYear();
-
+  const date = new Date();
+  const currMonth = date.getMonth() + 1;
   const openData = getBarData(openEnquiries, currMonth);
   const closedData = getBarData(closedEnquiries, currMonth);
   const lineData = getLineData(totalOpen, openData, closedData);
   const xAxisData = getXAxisData(currMonth);
-  let dispYear = "";
-  if (currMonth < 6) {
-    dispYear = currYear - 1 + "-";
-  }
-  dispYear += currYear;
-
   return (
     <Box>
       <Paper sx={{ width: "100%", borderRadius: "16px" }} elevation={2}>
@@ -102,7 +95,7 @@ export default async function OverviewCard() {
             Enquiries Overview
           </Typography>
           <Typography component="h2" variant="h6" color="primary" gutterBottom>
-            {dispYear}
+            {date.toDateString()}
           </Typography>
         </Box>
         <ChartContainer
