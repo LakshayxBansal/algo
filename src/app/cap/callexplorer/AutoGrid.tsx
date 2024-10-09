@@ -601,7 +601,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "actionTime",
-      headerName: "Time",
+      headerName: "Action Time",
       renderCell: (params) => {
         return params.row.actionDate.toLocaleString('en-IN', options);
       },
@@ -706,12 +706,13 @@ export default function AutoGrid(props: any) {
             checkboxSelection
             loading={loading}
             sx={{
+              // height: "10em",
               mt: "1%",
               overflowY: 'auto',
               minHeight: "30px", // Set a minimum height of 30px
               height: details ? {
-                xs: "auto",
-                sm: "auto",
+                xs: "32vh",
+                sm: "32vh",
                 '@media (min-height: 645px)': {
                   height: '50vh',
                 },
