@@ -21,7 +21,6 @@ export async function getEnquirySubStatus(
   status: string
 ) {
   try {
-    console.log("controller", status);
     
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -49,20 +48,17 @@ export async function getEnquirySubSatusById(id: number) {
 
 export async function createEnquirySubStatus(data: enquirySubStatusMasterT) {
   let result;
-  console.log(data);
 
   try {
     const session = await getSession();
     if (session) {
       const parsed = zs.enquirySubStatusMaster.safeParse(data);
-      console.log(parsed);
 
       if (parsed.success) {
         const dbResult = await createEnquirySubStatusDb(
           session,
           data as enquirySubStatusMasterT
         );
-        console.log(result);
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
@@ -115,7 +111,6 @@ export async function updateEnquirySubStatus(data: enquirySubStatusMasterT) {
       const parsed = zs.enquirySubStatusMaster.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateEnquirySubStatusDb(session, data);
-        console.log(dbResult);
 
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };

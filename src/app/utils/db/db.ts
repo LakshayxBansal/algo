@@ -66,9 +66,11 @@ async function getPool(host: string) {
         hostPort = Number(process.env.USERDB_PORT);
       }
       else {
-        const data = await getHostDetailsService(host);
-        hostIp = data.hostIp;
-        hostPort = data.hostPort;
+        // const data = await getHostDetailsService(host);
+        // hostIp = data.hostIp;
+        // hostPort = data.hostPort;
+        hostIp = process.env.USERDB_HOST;
+        hostPort = Number(process.env.USERDB_PORT);
       }
      conn = await mariadb.createConnection({
         host: hostIp,
