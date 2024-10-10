@@ -61,6 +61,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
         errorState[issue.path] = { msg: issue.message, error: true };
       }
       errorState["form"] = { msg: "Error encountered", error: true };
+      console.log(errorState);
+
       setFormError(errorState);
     }
   };
@@ -187,8 +189,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 inputType={InputType.TEXT}
                 name="name"
                 defaultValue={entityData.name}
-                error={formError?.Name?.error}
-                helperText={formError?.Name?.msg}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
               />
             </Box>
             <Box

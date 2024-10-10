@@ -52,19 +52,12 @@ import {
   enquiryHeaderSchema,
   enquiryLedgerSchema,
 } from "@/app/zodschema/zodschema";
-import { ZodIssue } from "zod";
+import { any, ZodIssue } from "zod";
 import { selectKeyValueT } from "@/app/models/models";
 
 const strA = "custom_script.js";
 const scrA = require("./" + strA);
-//import {makeInputReadOnly} from './custom_script';
 
-/*
-const My_COMPONENTS = {
-  ComponentA: require(strA),
-  ComponentB: require('./folder/ComponentB'),
-}
-*/
 export interface IformData {
   userName: string;
 }
@@ -73,15 +66,31 @@ const formConfig = {
   showItems: false,
 };
 
-export default function InputForm(props: { baseData: IformData }) {
+export default function InputForm(props: { baseData: IformData, desc: any }) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-
+  const desc = props.desc;
   let result;
   let issues;
+
+  const fieldPropertiesById = (id: string) => {
+    const field = desc.find((item: any) => item.column_name_id === id);
+    if (field) {
+      return {
+        label: field.column_label,
+        required: field.is_mandatory === 1 // True if mandatory, otherwise false
+      };
+    }
+    return { label: '', required: false }; // Default if no match is found
+  };
+
+  const getLabelById = (id: string) => {
+    const field = desc.find((item: any) => item.column_name_id === id);
+    return field ? field.column_label : '';
+  };
 
   const handleSubmit = async (formData: FormData) => {
     let dt = new Date(formData.get("date") as string);
@@ -204,34 +213,34 @@ export default function InputForm(props: { baseData: IformData }) {
             }}
           >
             <InputControl
-              label="Enquiry Description"
               id="enq_number"
+              label={fieldPropertiesById("enq_number").label}
               inputType={InputType.TEXT}
               name="enq_number"
               fullWidth
-              required
+              required={fieldPropertiesById("enq_number").required}
               error={formError?.enq_number?.error}
               helperText={formError?.enq_number?.msg}
             />
             <InputControl
-              label="Received on "
+              label={fieldPropertiesById("date").label}
               inputType={InputType.DATETIMEINPUT}
               id="date"
               name="date"
               defaultValue={dayjs(new Date())}
-              required
+              required={fieldPropertiesById("date").required}
               error={formError?.date?.error}
               helperText={formError?.date?.msg}
             />
             <SelectMasterWrapper
               name={"contact"}
               id={"contact"}
-              label={"Contact"}
+              label={fieldPropertiesById("contact").label}
               dialogTitle={"Add Contact"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
               fetchDataFn={getContact}
               fnFetchDataByID={getContactById}
-              required
+              required={fieldPropertiesById("contact").required}
               formError={formError?.contact ?? formError.contact}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ContactForm
@@ -253,12 +262,12 @@ export default function InputForm(props: { baseData: IformData }) {
             <SelectMasterWrapper
               name={"category"}
               id={"category"}
-              label={"Category"}
+              label={fieldPropertiesById("category").label}
               dialogTitle={"Add Category"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
               fetchDataFn={getEnquiryCategory}
               fnFetchDataByID={getCategoryById}
-              required
+              required={fieldPropertiesById("category").required}
               formError={formError?.category ?? formError.category}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <CategoryForm
@@ -271,12 +280,12 @@ export default function InputForm(props: { baseData: IformData }) {
             <SelectMasterWrapper
               name={"source"}
               id={"source"}
-              label={"Source"}
+              label={fieldPropertiesById("source").label}
               dialogTitle={"Add Source"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
               fetchDataFn={getEnquirySource}
               fnFetchDataByID={getEnquirySourceById}
-              required
+              required={fieldPropertiesById("source").required}
               formError={formError?.source ?? formError.source}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <SourceForm
@@ -289,12 +298,12 @@ export default function InputForm(props: { baseData: IformData }) {
             <SelectMasterWrapper
               name={"received_by"}
               id={"received_by"}
-              label={"Received By"}
+              label={fieldPropertiesById("received_by").label}
               dialogTitle={"Add Executive"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
               fetchDataFn={getExecutive}
               fnFetchDataByID={getExecutiveById}
-              required
+              required={fieldPropertiesById("recieved_by").required}
               formError={formError?.received_by ?? formError.received_by}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveForm
@@ -310,10 +319,11 @@ export default function InputForm(props: { baseData: IformData }) {
             <Grid item xs={6} md={12}>
               <TextField
                 placeholder="Call receipt remarks"
-                label="Call receipt remarks"
+                label={fieldPropertiesById("enquiry_remark").label}
                 multiline
                 name="enquiry_remark"
                 id="enquiry_remark"
+                required={fieldPropertiesById("enquiry_remark").required}
                 rows={6}
                 fullWidth
               />
@@ -323,7 +333,8 @@ export default function InputForm(props: { baseData: IformData }) {
             <Grid item xs={6} md={12}>
               <TextField
                 placeholder="Suggested Action Remarks"
-                label="Suggested Action Remarks"
+                label={fieldPropertiesById("suggested_action_remark").label}
+                required={fieldPropertiesById("suggested_action_remark").required}
                 multiline
                 name="suggested_action_remark"
                 id="suggested_action_remark"
@@ -367,12 +378,12 @@ export default function InputForm(props: { baseData: IformData }) {
             <SelectMasterWrapper
               name={"sub_status"}
               id={"sub_status"}
-              label={"Call Sub-Status"}
+              label={fieldPropertiesById("sub_status").label}
+              required={fieldPropertiesById("sub_status").required}
               dialogTitle={"Add Sub-Status for " + status}
               onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
               fetchDataFn={getSubStatusforStatus}
               fnFetchDataByID={getEnquirySubSatusById}
-              required
               formError={formError?.sub_status ?? formError.sub_status}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <SubStatusForm
@@ -386,7 +397,8 @@ export default function InputForm(props: { baseData: IformData }) {
             <SelectMasterWrapper
               name={"action_taken"}
               id={"action_taken"}
-              label={"Action Taken"}
+              label={fieldPropertiesById("action_taken").label}
+              required={fieldPropertiesById("action_taken").required}
               dialogTitle={"Add Action"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
               fetchDataFn={getEnquiryAction}
@@ -402,11 +414,11 @@ export default function InputForm(props: { baseData: IformData }) {
             <SelectMasterWrapper
               name={"next_action"}
               id={"next_action"}
-              label={"Next Action"}
+              label={fieldPropertiesById("next_action").label}
+              required={fieldPropertiesById("next_action").required}
               dialogTitle={"Add Action"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
               fetchDataFn={getEnquiryAction}
-              required
               formError={formError?.next_action ?? formError.next_action}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ActionForm
@@ -417,7 +429,8 @@ export default function InputForm(props: { baseData: IformData }) {
               )}
             />
             <InputControl
-              label="When "
+              label={fieldPropertiesById("next_action_date").label}
+              required={fieldPropertiesById("next_action_date").required}
               inputType={InputType.DATETIMEINPUT}
               id="next_action_date"
               name="next_action_date"
@@ -427,13 +440,13 @@ export default function InputForm(props: { baseData: IformData }) {
               <Grid item xs={6} md={12}>
                 <TextField
                   placeholder="Closure remarks"
-                  label="Closure remarks"
+                  label={fieldPropertiesById("closure_remark").label}
+                  required={fieldPropertiesById("closure_remark").required && status === "2"}
                   multiline
                   name="closure_remark"
                   id="closure_remark"
                   rows={2}
                   fullWidth
-                  required={status === "2"}
                   disabled={status === "1"}
                 />
               </Grid>
