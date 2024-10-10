@@ -7,6 +7,7 @@ import { AppProps } from 'next/app';
 
 import "./globals.css";
 import Loading from './loading';
+// import Loading from './loading';
 /*
 export const metadata = {
   title: 'Next.js',
@@ -39,7 +40,13 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>{children}</body>
+      
+      <body>
+        {/* <Suspense fallback={<Loading/>}> */}
+
+        {children}
+        {/* </Suspense> */}
+        </body>
     </html>
   )
 }
