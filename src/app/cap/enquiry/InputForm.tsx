@@ -103,7 +103,7 @@ type ModifiedRowT = {
   remarks?: string;
 };
 
-const rows : any = [
+const rows: any = [
   // {
   //   id: 1,
   //   item: "Test Item",
@@ -201,6 +201,8 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       received_by: selectValues.received_by?.name,
       category: selectValues.category?.name,
       source: selectValues.source?.name,
+      call_receipt_remark: (formData.get("call_receipt_remark") ??
+        "") as string,
     };
     let ledgerData = {
       status_version: 0,
@@ -215,7 +217,6 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       next_action_id: selectValues.next_action?.id,
       next_action: selectValues.next_action?.name,
       next_action_date: nextActionDate,
-      enquiry_remark: (formData.get("enquiry_remark") ?? "") as string,
       suggested_action_remark: (formData.get("suggested_action_remark") ??
         "") as string,
       action_taken_remark: (formData.get("action_taken_remark") ??
@@ -281,7 +282,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
   const handleDeleteClick = (id: GridRowId) => () => {
     // Filter out the row with the matching id
     if (data.length > 0) {
-      const updatedRows = data.filter((row : any) => row.id !== id);
+      const updatedRows = data.filter((row: any) => row.id !== id);
 
       // Update the data state with the filtered rows
       setData(updatedRows);
@@ -290,13 +291,12 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
 
   const handleSaveClick = () => {
     //save the data from modifiedRowData state into rows of data grid
-    if(data.length > 0)
-    {
-    const updatedRows = data.map((row : any) =>
-      row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
-    );
-    setData(updatedRows);
-    setEditMode(null);
+    if (data.length > 0) {
+      const updatedRows = data.map((row: any) =>
+        row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
+      );
+      setData(updatedRows);
+      setEditMode(null);
     }
   };
 
@@ -741,8 +741,8 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                   placeholder="Call receipt remarks"
                   label="Call receipt remarks"
                   multiline
-                  name="enquiry_remark"
-                  id="enquiry_remark"
+                  name="call_receipt_remark"
+                  id="call_receipt_remark"
                   rows={6}
                   fullWidth
                 />

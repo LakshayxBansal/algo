@@ -299,6 +299,7 @@ export const enquiryHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+  call_receipt_remark: z.string().max(5000).optional(),
 });
 
 /**
@@ -318,7 +319,6 @@ export const enquiryLedgerSchema = z.object({
   next_action_id: z.number().min(1),
   next_action: z.string().min(1).max(60),
   next_action_date: z.string().min(1).max(20),
-  enquiry_remark: z.string().max(5000).optional(),
   suggested_action_remark: z.string().max(5000).optional(),
   action_taken_remark: z.string().max(5000).optional(),
   closure_remark: z.string().max(5000).optional(),

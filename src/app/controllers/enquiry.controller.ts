@@ -81,6 +81,4 @@ export async function showItemGrid() {
   }
 }
 
-export async function getEnquiryById() {
-
-}
+export async function getEnquiryById() {}
