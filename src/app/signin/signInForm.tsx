@@ -41,6 +41,7 @@ export default function AuthPage(props: authPagePropsType) {
 
   const contactHandler = () => {
     setEmail(!email);
+    setFormError({});
   };
   function actValidate(formData: FormData) {
     document.body.classList.add('cursor-wait');
@@ -180,10 +181,10 @@ export default function AuthPage(props: authPagePropsType) {
             >
               Sign In
             </Typography>
-            <form action={actValidate}>
-              {formError?.form?.error && (
+            <form action={actValidate} noValidate>
+              {/* {formError?.form?.error && (
                 <p style={{ color: "red" }}>{formError?.form.msg}</p>
-              )}
+              )} */}
               <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
               <Grid item xs={12} sm={12} md={12}>
@@ -197,6 +198,12 @@ export default function AuthPage(props: authPagePropsType) {
                     id="usercontact"
                     label="Email Address"
                     name="email"
+                    onKeyDown={()=>{
+                      setFormError((curr) => {
+                        const { email, ...rest} = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "45px",
@@ -230,6 +237,12 @@ export default function AuthPage(props: authPagePropsType) {
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
+                    onKeyDown={()=>{
+                      setFormError((curr) => {
+                        const { phone, ...rest} = curr;
+                        return rest;
+                      });
+                    }}
                     // onkeydown={onPhoneChange}
                     sx={{
                       "& .MuiInputBase-input": {
@@ -289,6 +302,12 @@ export default function AuthPage(props: authPagePropsType) {
                     id="password"
                     error={formError?.password?.error}
                     helperText={formError?.password?.msg}
+                    onKeyDown={()=>{
+                      setFormError((curr) => {
+                        const { password, ...rest} = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "45px",
@@ -307,7 +326,7 @@ export default function AuthPage(props: authPagePropsType) {
                   />
                   <Button
                     type="button"
-                    sx={{ marginLeft: "-65px", marginTop: "12px" }}
+                    sx={{ marginLeft: "-65px", marginTop: "0.5rem", mb: "0.5rem" }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}

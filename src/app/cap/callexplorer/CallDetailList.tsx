@@ -110,7 +110,8 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
     ];
 
     return (<>
-        <StripedDataGrid rows={data ? data : []}
+        <StripedDataGrid
+            rows={data ? data : []}
             rowHeight={30}
             columnHeaderHeight={30}
             columns={column2}

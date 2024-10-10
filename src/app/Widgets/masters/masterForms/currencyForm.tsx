@@ -44,7 +44,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    console.log(data);
 
     const result = await persistEntity(data as currencySchemaT);
     if (result.status) {
@@ -54,10 +53,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
       setFormError({});
       setSnackOpen(true);
     } else {
-      // console.log(result);
-
       const issues = result.data;
-      // console.log(issues);
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -178,10 +174,10 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 id="Symbol"
                 label="Currency Symbol"
                 inputType={InputType.TEXT}
-                name="Symbol"
+                name="symbol"
                 defaultValue={entityData.symbol}
-                error={formError?.Symbol?.error}
-                helperText={formError?.Symbol?.msg}
+                error={formError?.symbol?.error}
+                helperText={formError?.symbol?.msg}
                 onChange={onSymbolChange}
               />
               <InputControl
@@ -189,7 +185,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 id="Name"
                 label="Name"
                 inputType={InputType.TEXT}
-                name="Name"
+                name="name"
                 defaultValue={entityData.name}
                 error={formError?.Name?.error}
                 helperText={formError?.Name?.msg}
@@ -209,10 +205,10 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 id="shortForm"
                 label="Currency Short Form"
                 inputType={InputType.TEXT}
-                name="ShortForm"
+                name="shortForm"
                 defaultValue={entityData.shortForm}
-                error={formError?.ShortForm?.error}
-                helperText={formError?.ShortForm?.msg}
+                error={formError?.shortForm?.error}
+                helperText={formError?.shortForm?.msg}
               />
               <FormControl
                 fullWidth

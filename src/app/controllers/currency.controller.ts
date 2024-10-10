@@ -29,6 +29,8 @@ export async function getContactGroup(searchString: string) {
 
 export async function createCurrency(data: currencySchemaT) {
   let result;
+  console.log(data);
+
   try {
     const session = await getSession();
 

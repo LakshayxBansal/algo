@@ -1,13 +1,26 @@
 "use server";
 import * as zs from "../zodschema/zodschema";
 import { getSession } from "../services/session.service";
-import { getInviteUserByIdList, getInviteUserCount,updateInUsercompany, getInviteUserDb, createUserToInviteDb, insertExecutiveIdToInviteUserList, getInviteDetailByContactList, getInviteDetailByIdList,getInvitesDb,getInvitesCount,createInUsercompany,deleteInvite } from "../services/inviteUser.service";
+import {
+  getInviteUserByIdList,
+  getInviteUserCount,
+  updateInUsercompany,
+  getInviteUserDb,
+  createUserToInviteDb,
+  insertExecutiveIdToInviteUserList,
+  getInviteDetailByContactList,
+  getInviteDetailByIdList,
+  getInvitesDb,
+  getInvitesCount,
+  createInUsercompany,
+  deleteInvite,
+} from "../services/inviteUser.service";
 import { inviteUserSchemaT } from "../models/models";
-import {getCompanyDbById} from "@/app/controllers/company.controller";
-import {insertUserIdInExecutive} from "@/app/controllers/executive.controller"
+import { getCompanyDbById } from "@/app/controllers/company.controller";
+import { insertUserIdInExecutive } from "@/app/controllers/executive.controller";
 import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from "mariadb";
-import { getUserDetailsById,checkUserInCompany } from "./user.controller";
+import { getUserDetailsById, checkUserInCompany } from "./user.controller";
 import { getCompanyById } from "./company.controller";
 
 export async function createUserToInvite(data: inviteUserSchemaT) {
@@ -63,7 +76,10 @@ export async function createUserToInvite(data: inviteUserSchemaT) {
   return result;
 }
 
-export async function insertExecutiveIdToInviteUser(executiveId: number, inviteId: number) {
+export async function insertExecutiveIdToInviteUser(
+  executiveId: number,
+  inviteId: number
+) {
   try {
     const session = await getSession();
     if (session) {
@@ -74,7 +90,10 @@ export async function insertExecutiveIdToInviteUser(executiveId: number, inviteI
   }
 }
 
-export async function getInviteDetailByContact(usercontact: string, companyId: number) {
+export async function getInviteDetailByContact(
+  usercontact: string,
+  companyId: number
+) {
   try {
     const session = await getSession();
     if (session) {
@@ -91,7 +110,7 @@ export async function getInviteDetailById(inviteId: number) {
     // const session = await getSession();
     // if(session){
     const result = await getInviteDetailByIdList(inviteId);
-    console.log(result)
+    console.log(result);
     return result[0];
     // }
   } catch (error) {
@@ -99,43 +118,71 @@ export async function getInviteDetailById(inviteId: number) {
   }
 }
 
-export async function acceptInvite(inviteDetail : inviteUserSchemaT){
-  try{
+export async function acceptInvite(inviteDetail: inviteUserSchemaT) {
+  try {
     const session = await getSession();
-    if(session){
+    if (session) {
       // if(inviteDetail.executiveId){
       //   const companyDb = await getCompanyDbById(inviteDetail.companyId);
       //   await Promise.all([createInUsercompany(true,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId), insertUserIdInExecutive(companyDb as string,inviteDetail.executiveId,session.user.userId),deleteInvite(inviteDetail.id as number)]);
       // }else{
-        const user = await checkUserInCompany(session.user.userId,inviteDetail.companyId);
-        if(user.length>0){
-          await Promise.all([updateInUsercompany(null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-        }else{
-          await Promise.all([createInUsercompany(true,null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-        }
+      const user = await checkUserInCompany(
+        session.user.userId,
+        inviteDetail.companyId
+      );
+      if (user.length > 0) {
+        await Promise.all([
+          updateInUsercompany(
+            null,
+            inviteDetail.companyId,
+            inviteDetail.inviteDate,
+            session.user.userId
+          ),
+          deleteInvite(inviteDetail.id as number),
+        ]);
+      } else {
+        await Promise.all([
+          createInUsercompany(
+            true,
+            null,
+            inviteDetail.companyId,
+            inviteDetail.inviteDate,
+            session.user.userId
+          ),
+          deleteInvite(inviteDetail.id as number),
+        ]);
+      }
       // }
     }
-  }catch(error){
-    throw(error);
+  } catch (error) {
+    throw error;
   }
 }
 
-export async function rejectInvite(inviteDetail : inviteUserSchemaT){
-  try{
+export async function rejectInvite(inviteDetail: inviteUserSchemaT) {
+  try {
     const session = await getSession();
-    if(session){
+    if (session) {
       // if(inviteDetail.executiveId){
-        // const companyDb = await getCompanyDbById(inviteDetail.companyId);
-        // await Promise.all([createInUsercompany(false,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+      // const companyDb = await getCompanyDbById(inviteDetail.companyId);
+      // await Promise.all([createInUsercompany(false,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
       // }else{
-        await Promise.all([createInUsercompany(false,null,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
+      await Promise.all([
+        createInUsercompany(
+          false,
+          null,
+          inviteDetail.companyId,
+          inviteDetail.inviteDate,
+          session.user.userId
+        ),
+        deleteInvite(inviteDetail.id as number),
+      ]);
       // }
     }
-  }catch(error){
-    throw(error);
+  } catch (error) {
+    throw error;
   }
 }
-
 
 export async function getInviteUserById(id: number) {
   try {
@@ -171,10 +218,7 @@ export async function getInviteUserByCompany(
         limit as number
       );
 
-      const rowCount = await getInviteUserCount(
-        companyId,
-        filter
-      );
+      const rowCount = await getInviteUserCount(companyId, filter);
 
       getInviteUsers = {
         status: true,
@@ -184,7 +228,6 @@ export async function getInviteUserByCompany(
       };
     }
   } catch (e: any) {
-
     let err = "Contact Admin, E-Code:369";
 
     getInviteUsers = {
@@ -209,7 +252,7 @@ export async function getInviteByUserContact(
     error: {},
   };
   try {
-    const appSession = await getSession();    
+    const appSession = await getSession();
 
     if (appSession) {
       const user = await getUserDetailsById(appSession.user.userId);
@@ -221,10 +264,7 @@ export async function getInviteByUserContact(
         limit as number
       );
 
-      const rowCount = await getInvitesCount(
-        userContact,
-        filter
-      );
+      const rowCount = await getInvitesCount(userContact, filter);
       // for (const ele of invites) {
       //   if(ele.executiveId){
       //     ele.inviteType = "Executive"
@@ -240,7 +280,6 @@ export async function getInviteByUserContact(
       };
     }
   } catch (e: any) {
-
     let err = "Contact Admin, E-Code:369";
 
     getInvites = {
@@ -251,4 +290,19 @@ export async function getInviteByUserContact(
     };
   }
   return getInvites;
+}
+
+export async function getTotalInvite() {
+  try {
+    const session = await getSession();
+    if (session) {
+      const user = await getUserDetailsById(session.user.userId);
+      const userContact = user.contact;
+      const invitesCount = await getInvitesCount(userContact, "");
+      const result = invitesCount.map(bigIntToNum);
+      return result[0];
+    }
+  } catch (error) {
+    throw error;
+  }
 }

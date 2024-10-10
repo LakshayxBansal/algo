@@ -46,10 +46,12 @@ export default function AutoGrid(props: any) {
   const [dlgState, setDlgState] = React.useState<DlgState>({});
   const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
   type DlgState = { [key: string]: HTMLElement | null; };
+  const [enableAllocate, setEnableAllocate] = React.useState(false);
 
   const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value, 10);
-    setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 1 minute
+    // const value = parseInt(event.target.value, 10);
+    const value = Number(event.target.value);
+    setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
 
   const handleCloseFilter = (field: string) => {
@@ -92,13 +94,33 @@ export default function AutoGrid(props: any) {
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     setRowSelectionModel(selectionModel);
+    // Enable Allocate Call button if there are selected rows and no row has 'Closed' callStatus
+    if (selectionModel.length > 0) {
+      let isAllocatable = true;
 
-    const selectedId = selectionModel[0]; // Get the ID of the selected row
-    const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
-    setSelectedRow(selectedData); // Set the selected row data
+      for (let i = 0; i < selectionModel.length; ++i) {
+        const selectedData = data.find((row: any) => row.id === selectionModel[i]);
 
-    if (selectionModel.length > 1) {
+        if (selectedData && selectedData.callStatus === "Closed") {
+          isAllocatable = false;
+          break; // If any row has 'Closed' status, disable the button
+        }
+      }
+
+      // Set enableAllocate state based on the conditions
+      setEnableAllocate(isAllocatable);
+    } else {
+      // If no rows are selected, disable the button
+      setEnableAllocate(false);
+    }
+
+    if (selectionModel?.length > 1) {
       setSelectedRow(null);
+    }
+    else {
+      const selectedId = selectionModel[0]; // Get the ID of the selected row
+      const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
+      setSelectedRow(selectedData); // Set the selected row data
     }
   };
 
@@ -130,9 +152,8 @@ export default function AutoGrid(props: any) {
   };
 
 
-  type customCol = { row: any; };
 
-  const CustomColor = (props: customCol) => {
+  const CustomColor = (props: { row: any; }) => {
     let color;
     if (props.row.callStatus === "Open") {
       if (props.row.executive === null) { color = "blue" }
@@ -168,7 +189,7 @@ export default function AutoGrid(props: any) {
     { field: "id", headerName: "Call No.", width: 70, sortable: false },
     { field: "contactParty", headerName: "Contact/Party", width: 130 },
     {
-      field: "date", width: 130,
+      field: "date", width: 130, headerName: "Date",
       renderCell: (params) => {
         return params.row.date.toDateString();
       },
@@ -580,7 +601,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "actionTime",
-      headerName: "Time",
+      headerName: "Action Time",
       renderCell: (params) => {
         return params.row.actionDate.toLocaleString('en-IN', options);
       },
@@ -615,7 +636,7 @@ export default function AutoGrid(props: any) {
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '90vh', p: 3, maxWidth: "100%" }}>
+    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '90vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%" } }}>
       <Box sx={{ maxWidth: "92vw" }}>
         <Seperator>
           <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -646,13 +667,14 @@ export default function AutoGrid(props: any) {
                     {column1
                       .filter(col => col.field !== 'columnConfig')
                       .map((col) => (
-                        (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
+                        // (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
                         <FormControlLabel
                           key={col.field}
                           control={
                             <Checkbox
                               checked={columnVisibilityModel[col.field] !== false}
                               onChange={() => handleColumnVisibilityChange(col.field)}
+                              disabled={(col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") ? false : true}
                             />
                           }
                           label={col.headerName}
@@ -670,7 +692,7 @@ export default function AutoGrid(props: any) {
             disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
-            rows={data}
+            rows={data ? data : []}
             columns={column1}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
@@ -684,10 +706,13 @@ export default function AutoGrid(props: any) {
             checkboxSelection
             loading={loading}
             sx={{
+              // height: "10em",
               mt: "1%",
+              overflowY: 'auto',
+              minHeight: "30px", // Set a minimum height of 30px
               height: details ? {
-                xs: "auto",
-                sm: "auto",
+                xs: "32vh",
+                sm: "32vh",
                 '@media (min-height: 645px)': {
                   height: '50vh',
                 },
@@ -698,9 +723,9 @@ export default function AutoGrid(props: any) {
                   height: '65vh',
                 },
               },
-              '& .MuiDataGrid-virtualScroller': {
-                overflowY: 'auto',
-              },
+              // '& .MuiDataGrid-virtualScroller': {
+              //   overflowY: 'auto',
+              // },
               '& .MuiDataGrid-cellCheckbox': {
                 width: '30px',
                 height: '30px',
@@ -756,7 +781,7 @@ export default function AutoGrid(props: any) {
               }}
             >
               <Tooltip
-                title={rowSelectionModel.length > 0 ? "" : "Please select a row first"}
+                title={rowSelectionModel?.length == 0 ? "Please select a row first" : enableAllocate ? "" : "Deselect Closed enquiries first"}
                 placement="top"
               >
                 <span>
@@ -768,7 +793,7 @@ export default function AutoGrid(props: any) {
                       margin: "0 0.5vw",
                     }}
                     onClick={() => setDialogOpen(true)}
-                    disabled={rowSelectionModel.length === 0}
+                    disabled={!enableAllocate}
                   >
                     Allocate Call
                   </ContainedButton>
@@ -874,8 +899,8 @@ export default function AutoGrid(props: any) {
                 variant="contained"
                 size="small"
                 sx={{
-                  marginLeft: { xs: 0, sm: 'auto' }, // Aligns right from small screens (600px) and up
-                  marginTop: { xs: 2, sm: 0 }, // Adds margin on small screens for spacing
+                  marginLeft: { xs: 0, sm: 1 }, // Aligns right from small screens (600px) and up
+                  marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
                   width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
                   textTransform: "none"
                 }}

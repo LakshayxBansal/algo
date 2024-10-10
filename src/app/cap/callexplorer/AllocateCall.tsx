@@ -5,7 +5,6 @@ import { masterFormPropsT, optionsDataT, selectKeyValueT } from "../../models/mo
 import { useState } from "react";
 import Seperator from "../../Widgets/seperator";
 import CloseIcon from "@mui/icons-material/Close";
-import { InputControl, InputType } from "../../Widgets/input/InputControl";
 import { updateCallAllocation } from "../../controllers/callExplorer.controller";
 
 interface customprop extends masterFormPropsT {
