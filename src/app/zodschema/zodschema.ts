@@ -151,10 +151,6 @@ export const AddItemToListFormSchema = z.object({
   unit: z.string(),
   unit_id: z.number(),
   remarks: z.string().max(5000).optional(),
-  // created_by: z.number().optional(),
-  // modified_by: z.number().optional(),
-  // created_on: z.date().optional(),
-  // modified_on: z.date().optional(),
 });
 
 export const UnitSchema = z.object({

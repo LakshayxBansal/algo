@@ -80,3 +80,7 @@ export async function showItemGrid() {
     logger.error(e);
   }
 }
+
+export async function getEnquiryById() {
+
+}

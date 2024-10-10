@@ -7,14 +7,8 @@ import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  masterFormPropsT,
-  selectKeyValueT,
-} from "@/app/models/models";
-import {
-  getItem,
-  getItemById,
-} from "@/app/controllers/item.controller";
+import { masterFormPropsT, selectKeyValueT } from "@/app/models/models";
+import { getItem, getItemById } from "@/app/controllers/item.controller";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "../../Widgets/masters/masterForms/unitForm";
 import { Collapse, IconButton, TextField } from "@mui/material";
@@ -43,8 +37,12 @@ export default function AddItemToListForm(props: masterFormPropsT) {
     formData = updateFormData(data);
     const parsed = zs.AddItemToListFormSchema.safeParse(data);
     if (parsed.success) {
-      console.log(data);
-      props.setDialogValue ? props.setDialogValue(data) : null;
+      props.setData
+        ? props.setData((prevData: any) => [
+            ...prevData,
+            { id: prevData.length + 1, ...data },
+          ])
+        : null;
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
@@ -125,7 +123,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -210,7 +208,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
           open={snackOpen}
           autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
-          message="Record Added (See the bottom of the list)!"
+          message="Record Added (See the end of the list)!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>

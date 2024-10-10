@@ -103,52 +103,52 @@ type ModifiedRowT = {
   remarks?: string;
 };
 
-const rows = [
-  {
-    id: 1,
-    item: "Test Item",
-    item_id: 1,
-    quantity: 15,
-    unit: "Unit1",
-    unit_id: 1,
-    remarks: "For office use",
-  },
-  {
-    id: 2,
-    item: "Test Item 2",
-    item_id: 2,
-    quantity: 8,
-    unit: "Unit2",
-    unit_id: 2,
-    remarks: "For new employees",
-  },
-  {
-    id: 3,
-    item: "Test Item",
-    item_id: 1,
-    quantity: 500,
-    unit: "Unit3",
-    unit_id: 3,
-    remarks: "Office stock",
-  },
-  {
-    id: 4,
-    item: "Test Item2",
-    item_id: 2,
-    quantity: 5,
-    unit: "Unit4",
-    unit_id: 4,
-    remarks: "Office stock",
-  },
-  {
-    id: 5,
-    item: "Test Item",
-    item_id: 1,
-    quantity: 12,
-    unit: "Unit2",
-    unit_id: 2,
-    remarks: "Office stock",
-  },
+const rows : any = [
+  // {
+  //   id: 1,
+  //   item: "Test Item",
+  //   item_id: 1,
+  //   quantity: 15,
+  //   unit: "Unit1",
+  //   unit_id: 1,
+  //   remarks: "For office use",
+  // },
+  // {
+  //   id: 2,
+  //   item: "Test Item 2",
+  //   item_id: 2,
+  //   quantity: 8,
+  //   unit: "Unit2",
+  //   unit_id: 2,
+  //   remarks: "For new employees",
+  // },
+  // {
+  //   id: 3,
+  //   item: "Test Item",
+  //   item_id: 1,
+  //   quantity: 500,
+  //   unit: "Unit3",
+  //   unit_id: 3,
+  //   remarks: "Office stock",
+  // },
+  // {
+  //   id: 4,
+  //   item: "Test Item2",
+  //   item_id: 2,
+  //   quantity: 5,
+  //   unit: "Unit4",
+  //   unit_id: 4,
+  //   remarks: "Office stock",
+  // },
+  // {
+  //   id: 5,
+  //   item: "Test Item",
+  //   item_id: 1,
+  //   quantity: 12,
+  //   unit: "Unit2",
+  //   unit_id: 2,
+  //   remarks: "Office stock",
+  // },
 ];
 
 export default function InputForm(props: { baseData: IformData; config: any }) {
@@ -161,9 +161,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogValue, setDialogValue] = useState<optionsDataT>(
-    {} as optionsDataT
-  );
+  const [dialogValue, setDialogValue] = useState({});
   let result;
   let issues;
 
@@ -183,18 +181,6 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       </GridToolbarContainer>
     );
   }
-
-  useEffect(() => {
-    if (dialogValue) {
-      const newItem = {
-        id: data.length + 1, 
-        ...dialogValue, 
-      };
-
-      setData((prevData) => [...prevData, newItem]); 
-      setDialogValue(null); 
-    }
-  }, [dialogValue, data]);
 
   const handleSubmit = async (formData: FormData) => {
     let dt = new Date(formData.get("date") as string);
@@ -294,19 +280,24 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
 
   const handleDeleteClick = (id: GridRowId) => () => {
     // Filter out the row with the matching id
-    const updatedRows = data.filter((row) => row.id !== id);
+    if (data.length > 0) {
+      const updatedRows = data.filter((row : any) => row.id !== id);
 
-    // Update the data state with the filtered rows
-    setData(updatedRows);
+      // Update the data state with the filtered rows
+      setData(updatedRows);
+    }
   };
 
   const handleSaveClick = () => {
     //save the data from modifiedRowData state into rows of data grid
-    const updatedRows = data.map((row) =>
+    if(data.length > 0)
+    {
+    const updatedRows = data.map((row : any) =>
       row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
     );
     setData(updatedRows);
     setEditMode(null);
+    }
   };
 
   const handleCancelClick = () => {
@@ -721,7 +712,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 >
                   <DataGrid
                     columns={columns}
-                    rows={data}
+                    rows={data ? data : []}
                     disableRowSelectionOnClick
                     slots={{
                       noRowsOverlay: CustomNoRowsOverlay,
@@ -915,10 +906,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
         >
-          <AddItemToListForm
-            setDialogOpen={setDialogOpen}
-            setDialogValue={setDialogValue}
-          />
+          <AddItemToListForm setDialogOpen={setDialogOpen} setData={setData} />
         </AddDialog>
       )}
     </form>
