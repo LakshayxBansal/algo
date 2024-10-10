@@ -25,6 +25,7 @@ export type optionsDataT = {
   id?: number;
   name: string;
   detail?: string;
+  reloadOpts?:boolean
 };
 
 export type searchDataT = {
