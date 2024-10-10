@@ -66,7 +66,7 @@ export default function ContactForm(props: masterFormPropsT) {
 
     const result = await persistEntity(data as contactSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const newVal = { id: result.data[0].id, name: result.data[0].name, reloadOpts:true };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setTimeout(() => {

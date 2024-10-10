@@ -6,6 +6,7 @@ import {
   getAverageAge,
   getOpenEnquiries,
   getExecutiveEnquiriesOverview,
+  getOverviewGraphData,
 } from "@/app/controllers/dashboard.controller";
 
 type fnRouteT = (req: NextRequest) => Promise<NextResponse>;
@@ -39,6 +40,10 @@ const callRoute: callRouteT[] = [
   {
     key: "getExecutiveEnquiriesOverview",
     fnRoute: getExecutiveEnquiriesOverviewRoute,
+  },
+  {
+    key: "getOverviewGraphData",
+    fnRoute: getOverviewGraphDataRoute,
   },
 ];
 
@@ -112,8 +117,14 @@ async function getOpenEnquiriesRoute(req: NextRequest) {
 async function getExecutiveEnquiriesOverviewRoute(req: NextRequest) {
   try {
     const result = await getExecutiveEnquiriesOverview();
-    console.log(result);
-
+    return NextResponse.json(result);
+  } catch (error) {
+    return NextResponse.json(error);
+  }
+}
+async function getOverviewGraphDataRoute(req: NextRequest) {
+  try {
+    const result = await getOverviewGraphData();
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(error);
