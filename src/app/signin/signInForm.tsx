@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { Box, TextField, Divider, Paper, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
@@ -44,6 +44,7 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
+    document.body.classList.add('cursor-wait');
     let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -69,7 +70,10 @@ export default function AuthPage(props: authPagePropsType) {
         password: data.password,
       }).then((status) => {
         if (status?.ok) {
-          router.push(successCallBackUrl);
+          setTimeout(() => {
+            
+            router.push(successCallBackUrl);
+          }, 1000);
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> = {};
           errorState["form"] = { msg: "Invalid Credentials", error: true };
@@ -88,6 +92,12 @@ export default function AuthPage(props: authPagePropsType) {
       setFormError(errorState);
     }
   }
+
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('cursor-wait');
+    };
+}, []);
 
   getCsrfToken()
     .then((token) => {

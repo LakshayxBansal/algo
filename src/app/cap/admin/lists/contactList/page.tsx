@@ -99,7 +99,8 @@ export default function ManageContacts() {
         fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
-        AddAllowed={true}
+        AddAllowed={false}
+        height = "30em"
       ></EntityList>
     </>
   );
