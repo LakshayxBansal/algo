@@ -36,7 +36,7 @@ function HideOnScroll(props: Props) {
   );
 }
 
-function HideNavbar(props: Props) {
+function HideNavbar() {
   return (
     <div>
       <div>
