@@ -24,3 +24,35 @@ export async function searchMainDataDB(crmDb:string, searchData:string){
     }
     return result;
 }
+
+export async function getStatusDataDB(crmDb : string, userId : number) {
+    try{
+        const result =  await excuteQuery({
+            host:crmDb,
+            query:"select * from status_bar where user_id = ?;",
+            values:[userId]
+        })
+        return result;
+    }catch(e){
+        logger.error(e);
+    }
+    // return result;
+}
+
+export async function updateStatusDataDB(crmDb : string,data : string, userId : number) {
+    try{
+        const result =  await excuteQuery({
+            host:crmDb,
+            query:"update status_bar set data = ? where user_id = ?;",
+            values:[data,userId]
+        })
+        if(result.ok){
+            return data;
+        }else{
+            return null;
+        }
+    }catch(e){
+        logger.error(e);
+    }
+    // return result;
+}

@@ -172,9 +172,9 @@ export default function AuthPage(props: authPagePropsType) {
               Sign In
             </Typography>
             <form action={actValidate} noValidate>
-              {/* {formError?.form?.error && (
+              {formError?.form?.error && (
                 <p style={{ color: "red" }}>{formError?.form.msg}</p>
-              )} */}
+              )}
               <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
               <Grid item xs={12} sm={12} md={12}>
@@ -190,7 +190,7 @@ export default function AuthPage(props: authPagePropsType) {
                     name="email"
                     onKeyDown={()=>{
                       setFormError((curr) => {
-                        const { email, ...rest} = curr;
+                        const { email,form, ...rest} = curr;
                         return rest;
                       });
                     }}
@@ -229,7 +229,7 @@ export default function AuthPage(props: authPagePropsType) {
                     disableDropdown={false}
                     onKeyDown={()=>{
                       setFormError((curr) => {
-                        const { phone, ...rest} = curr;
+                        const { phone,form, ...rest} = curr;
                         return rest;
                       });
                     }}
@@ -294,7 +294,7 @@ export default function AuthPage(props: authPagePropsType) {
                     helperText={formError?.password?.msg}
                     onKeyDown={()=>{
                       setFormError((curr) => {
-                        const { password, ...rest} = curr;
+                        const { password,form, ...rest} = curr;
                         return rest;
                       });
                     }}
