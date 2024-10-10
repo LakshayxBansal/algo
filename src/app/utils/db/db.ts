@@ -2,7 +2,7 @@
 import mariadb from 'mariadb';
 import { dbMap } from './SingletonMap';
 import { getHostDetailsService } from '@/app/services/company.service';
-import {Mutex} from 'async-mutex';
+// import {Mutex} from 'async-mutex';
 
 // const dbMapcl = dbMap;
 // export async function getPool1(host: string) {

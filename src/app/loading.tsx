@@ -8,7 +8,7 @@ export default function Loading() {
     // You can add any UI inside Loading, including a Skeleton
 
     const pathname = usePathname();
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
   
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export default function Loading() {
       return () => {
         document.body.classList.remove('cursor-wait');
       };
-    }, [pathname,searchParams]);
+    }, [pathname]);
   
 
     return<body>

@@ -69,11 +69,8 @@ export default function AuthPage(props: authPagePropsType) {
         userContact: data.contact,
         password: data.password,
       }).then((status) => {
-        if (status?.ok) {
-          setTimeout(() => {
-            
+        if (status?.ok) {            
             router.push(successCallBackUrl);
-          }, 1000);
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> = {};
           errorState["form"] = { msg: "Invalid Credentials", error: true };
@@ -93,11 +90,11 @@ export default function AuthPage(props: authPagePropsType) {
     }
   }
 
-  useEffect(() => {
-    return () => {
-      document.body.classList.remove('cursor-wait');
-    };
-}, []);
+//   useEffect(() => {
+//     return () => {
+//       document.body.classList.remove('cursor-wait');
+//     };
+// }, []);
 
   getCsrfToken()
     .then((token) => {

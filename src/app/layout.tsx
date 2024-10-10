@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';// import '../styles/globals.css'; /
 import { AppProps } from 'next/app';
 
 import "./globals.css";
-import Loading from './loading';
-// import Loading from './loading';
 /*
 export const metadata = {
   title: 'Next.js',
@@ -42,10 +40,7 @@ export default function RootLayout({
     <html lang="en">
       
       <body>
-        {/* <Suspense fallback={<Loading/>}> */}
-
         {children}
-        {/* </Suspense> */}
         </body>
     </html>
   )
