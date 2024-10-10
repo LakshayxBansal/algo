@@ -176,8 +176,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 inputType={InputType.TEXT}
                 name="symbol"
                 defaultValue={entityData.symbol}
-                error={formError?.Symbol?.error}
-                helperText={formError?.Symbol?.msg}
+                error={formError?.symbol?.error}
+                helperText={formError?.symbol?.msg}
                 onChange={onSymbolChange}
               />
               <InputControl
@@ -207,8 +207,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 inputType={InputType.TEXT}
                 name="shortForm"
                 defaultValue={entityData.shortForm}
-                error={formError?.ShortForm?.error}
-                helperText={formError?.ShortForm?.msg}
+                error={formError?.shortForm?.error}
+                helperText={formError?.shortForm?.msg}
               />
               <FormControl
                 fullWidth

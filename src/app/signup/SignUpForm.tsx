@@ -41,10 +41,16 @@ export default function SignupForm1(props: any) {
     if (contact === "phone") {
       setEmailElement(false);
       setContact("email");
+      setFormError({});
     } else {
       setEmailElement(true);
       setContact("phone");
+      setFormError({});
     }
+  };
+
+  const handleDefault = (event : any) => {
+    event.preventDefault();
   };
 
   async function makeUserActiveAgain(userId: number | undefined) {
@@ -225,13 +231,19 @@ export default function SignupForm1(props: any) {
                 <InputControl
                   inputType={InputType.TEXT}
                   name="name"
-                  required
-                  fullWidth
                   id="name"
                   label="Name"
                   autoFocus
+                  fullWidth
+                  required
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
+                  onKeyDown={()=>{
+                    setFormError((curr) => {
+                      const { name, ...rest} = curr;
+                      return rest;
+                    });
+                  }}
                   sx={{
                     "& .MuiInputBase-input": {
                       height: "40px",
@@ -260,6 +272,12 @@ export default function SignupForm1(props: any) {
                     id="email"
                     label="Email Address"
                     name="email"
+                    onKeyDown={()=>{
+                      setFormError((curr) => {
+                        const { email, ...rest} = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "40px",
@@ -347,12 +365,20 @@ export default function SignupForm1(props: any) {
                       inputType={InputType.TEXT}
                       required
                       fullWidth
+                      onCopy={(event : any)=>handleDefault(event)}
+                      onPaste={(event : any)=>handleDefault(event)}
                       name="password"
                       label="Password"
                       type={!showPassword ? "password" : "text"}
                       id="password"
                       error={formError?.password?.error}
                       helperText={formError?.password?.msg}
+                      onKeyDown={()=>{
+                        setFormError((curr) => {
+                          const { password, ...rest} = curr;
+                          return rest;
+                        });
+                      }}
                       sx={{
                         "& .MuiInputBase-input": {
                           height: "40px",
@@ -388,6 +414,8 @@ export default function SignupForm1(props: any) {
                       helperText={formError?.repassword?.msg}
                       required
                       fullWidth
+                      onCopy={(event : any)=>handleDefault(event)}
+                      onPaste={(event : any)=>handleDefault(event)}
                       name="repassword"
                       label="Re-enter Password"
                       type={!showRePassword ? "password" : "text"}

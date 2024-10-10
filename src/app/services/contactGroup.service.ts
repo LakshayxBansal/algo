@@ -36,6 +36,8 @@ export async function createContactGroupDb(
   sourceData: zm.contactGroupSchemaT
 ) {
   try {
+    console.log("creation", sourceData);
+
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createContactGroup(?,?,?,?)",
@@ -101,7 +103,8 @@ export async function checksIfUsed(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "SELECT COUNT(*) as count FROM contact_group_master cg INNER JOIN contact_master cm ON cm.group_id = cg.id where cg.id=?;",
+      query:
+        "SELECT COUNT(*) as count FROM contact_group_master cg INNER JOIN contact_master cm ON cm.group_id = cg.id where cg.id=?;",
       values: [id],
     });
     return result;
@@ -145,7 +148,6 @@ export async function getContactGroupByPageDb(
         "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
     });
-    console.log(result);
 
     return result;
   } catch (e) {
