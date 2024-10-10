@@ -359,7 +359,9 @@ export default function MenuBar(props: propsType) {
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "100%" }}>{children}</Box>
+          <Box style={{ width: "100%", height:"100vh"}}>
+                        {children}
+            </Box>
         </Box>
       </>
     );

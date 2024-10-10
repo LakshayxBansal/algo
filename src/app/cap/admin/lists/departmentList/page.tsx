@@ -21,7 +21,7 @@ export default function Department() {
   return (
     <>
       <EntityList
-        title="Department Master"
+        title="Department Master" // deprecated
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <DepartmentForm
             setDialogOpen={fnDialogOpen}
@@ -34,6 +34,7 @@ export default function Department() {
         fnDeleteDataByID={delDepartmentById}
         customCols={columns}
         AddAllowed={true}
+        height = "30em"
       ></EntityList>
     </>
   );
