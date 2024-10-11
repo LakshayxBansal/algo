@@ -216,14 +216,12 @@ export async function getInviteUserByCompany(
         page as number,
         filter,
         limit as number
-      );
-
-      const rowCount = await getInviteUserCount(companyId, filter);
+      );      
 
       getInviteUsers = {
         status: true,
         data: inviteUsers.map(bigIntToNum) as inviteUserSchemaT,
-        count: Number(rowCount[0]["rowCount"]),
+        count: Number(inviteUsers[0]["total_count"]),
         error: {},
       };
     }
@@ -262,9 +260,8 @@ export async function getInviteByUserContact(
         page as number,
         filter,
         limit as number
-      );
+      );            
 
-      const rowCount = await getInvitesCount(userContact, filter);
       // for (const ele of invites) {
       //   if(ele.executiveId){
       //     ele.inviteType = "Executive"
@@ -275,7 +272,8 @@ export async function getInviteByUserContact(
       getInvites = {
         status: true,
         data: invites.map(bigIntToNum) as inviteUserSchemaT,
-        count: Number(rowCount[0]["rowCount"]),
+        count: Number(invites[0]["total_count"]),
+        // count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
     }

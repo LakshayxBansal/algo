@@ -136,7 +136,7 @@ export async function getInviteUserDb(
             host: "userDb",
             query:
                 "SELECT *, RowNum as RowID  \
-       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum, count(1) over () total_count \
           FROM inviteUser where company_id = ? " +
                 (filter ? "and name LIKE CONCAT('%',?,'%') " : "") +
                 "order by name\
@@ -191,7 +191,7 @@ export async function getInviteUserCount(
             host: "userDb",
             query:
                 "SELECT * \
-       FROM (SELECT iu.id as id,iu.executive_id as executiveId, iu.company_id as companyId,iu.inviteDate as inviteDate ,c.name as companyName,ROW_NUMBER() OVER () AS RowID \
+       FROM (SELECT iu.id as id,iu.executive_id as executiveId, iu.company_id as companyId,iu.inviteDate as inviteDate ,c.name as companyName,ROW_NUMBER() OVER () AS RowID, count(1) over () total_count \
           FROM inviteUser iu left join company c on iu.company_id = c.id where iu.usercontact = ? " +
                 (filter ? "and c.name LIKE CONCAT('%',?,'%') " : "") +
                 "order by c.name\
