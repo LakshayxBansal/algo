@@ -236,12 +236,10 @@ export async function getCompanies(
         limit as number
       );
 
-      const rowCount = await getCompanyCount(userId as number, filter);
-
       getConts = {
         status: true,
         data: conts.map(bigIntToNum) as dbInfoT,
-        count: Number(rowCount[0]["rowCount"]),
+        count: Number(conts[0]["total_count"]),
         error: {},
       };
     }
