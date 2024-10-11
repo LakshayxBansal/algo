@@ -8,40 +8,42 @@ import EntityList from "../Widgets/masters/EntityList";
 import CreateCompany from "./CreateCompany";
 import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
+import { Typography } from "@mui/material";
 
-const columns: GridColDef[] = [
-  { field: "RowID", headerName: "ID", width: 90 },
-  {
-    field: "companyName",
-    headerName: "Name",
-    width: 150,
-    renderCell: (params) => (
-      <CellDbName
-        row={params.row}
-        userId={params.row.userId as number}
-      ></CellDbName>
-    ),
-  },
-  {
-    field: "companyAlias",
-    headerName: "Alias",
-    width: 150,
-  },
-  {
-    field: "createdBy",
-    headerName: "Created By",
-    width: 150,
-  },
-  {
-    field: "createdOn",
-    headerName: "Created On",
-    width: 150,
-  },
-];
-export default function CompanyEntityList() {
-  return (
-    <AuthWrapper>
-      <EntityList
+export default function CompanyEntityList(){
+    const columns: GridColDef[] = [
+        { field: 'RowID', headerName: 'ID', width: 90 },
+        {
+          field: 'companyName',
+          headerName: 'Name',
+          width: 150,
+          renderCell: (params) => (
+            <AuthWrapper>
+              <CellDbName
+                row={params.row}
+                userId={params.row.userId as number}
+              ></CellDbName>
+            </AuthWrapper>
+          ),
+        },
+        {
+          field: 'companyAlias',
+          headerName: 'Alias',
+          width: 150,
+        },
+        {
+          field: 'createdBy',
+          headerName: 'Created By',
+          width: 150,
+        },
+        {
+          field: 'createdOn',
+          headerName: 'Created On',
+          width: 150,
+        }
+      ];
+    return <>
+        <EntityList
         title="Company List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CreateCompany
@@ -53,8 +55,7 @@ export default function CompanyEntityList() {
         fetchDataFn={getCompanies}
         fnFetchDataByID={getCompanyById}
         customCols={columns}
-        AddAllowed={true}
-      ></EntityList>
-    </AuthWrapper>
-  );
+        AddAllowed={true}>
+      </EntityList>
+      </>
 }

@@ -425,7 +425,7 @@ export default function EntityList(props: ModifyT) {
 
   return (
     // backgroundColor: "#fceff3",
-    <Box style={{ height: "100vh" }}>
+    <Box>
 
       <Box style={{margin:"0 20px"}}>
 {dialogOpen && (
