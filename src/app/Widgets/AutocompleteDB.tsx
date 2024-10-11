@@ -1,5 +1,4 @@
 import {
-  Fragment,
   useState,
   ReactNode,
   useEffect,
@@ -40,14 +39,20 @@ type autocompleteDBT = {
   required?: boolean;
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
-  fnSetModifyMode: (id: string) => void,
-  disable?: boolean
+  fnSetModifyMode: (id: string) => void;
+  disable?: boolean;
+  defaultOptions?: optionsDataT[]
   //children: React.FunctionComponentElements
 };
 
 export function AutocompleteDB(props: autocompleteDBT) {
+  const filterOpts = async (opts:optionsDataT[],input:string) => {
+    return opts.filter(item => item.name.toLowerCase().includes(input?input.toLowerCase():''));
+  }
+
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
-  const [options, setOptions] = useState<optionsDataT[]>([]);
+  const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(props.defaultOptions?props.defaultOptions:[]);
+  const [options, setOptions] = useState<optionsDataT[]>(defaultOpts);
   const width = props.width ? props.width : 300;
   const [valueChange, setvalueChange] = useState(true);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
@@ -59,7 +64,21 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
   useEffect(() => {
     const getData = debounce(async (input) => {
-      const results = (await props.fetchDataFn(input)) as optionsDataT[];
+      let results  
+      
+      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts)) {
+        results = (await props.fetchDataFn(props.defaultOptions?'':input)) as optionsDataT[] 
+        if(props.diaglogVal.reloadOpts){
+          setDefaultOpts(results)
+          props.setDialogVal({...props.diaglogVal, reloadOpts:false})
+          return
+        }
+      } 
+      else
+      {
+        results = await filterOpts(defaultOpts,input)
+      }
+      
       setOptions([] as optionsDataT[]);
       setLoading(false);
       if (results) {
@@ -70,7 +89,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
       }
     }, 400);
-    if (valueChange || autoSelect) {
+    if(valueChange || autoSelect) {
       if (selectDefault) {
         props.setDialogVal(props.defaultValue as optionsDataT)
         setSelectDefault(false)

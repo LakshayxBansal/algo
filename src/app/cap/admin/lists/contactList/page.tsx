@@ -115,7 +115,8 @@ export default async function ManageContacts(props:{searchData:string}) {
         fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
-        AddAllowed={true}
+        AddAllowed={false}
+        height = "30em"
         // addRow = {data}
       ></EntityList>
     </>

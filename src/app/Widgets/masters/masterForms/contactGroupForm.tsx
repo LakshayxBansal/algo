@@ -42,6 +42,8 @@ export default function ContactGroupForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
+    console.log("data", formData);
+
     const result = await persistEntity(data as contactGroupSchemaT);
     if (result.status) {
       const newVal = {
@@ -69,9 +71,8 @@ export default function ContactGroupForm(props: masterFormPropsT) {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
       : entityData.parent_id
-      ? entityData.parent_id
-      : 0;
-
+        ? entityData.parent_id
+        : 0;
     return data;
   };
 

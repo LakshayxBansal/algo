@@ -1,19 +1,31 @@
-import NextBreadcrumb from '@/app/utils/NextBreadcrumbs'
-import React from 'react'
-import HomeIcon from '@mui/icons-material/Home';
-import { Paper, Grid, Typography } from '@mui/material';
+"use client";
+import NextBreadcrumb from "@/app/utils/NextBreadcrumbs";
+import React from "react";
+import { Paper, Grid, Typography } from "@mui/material";
+import { usePathname } from "next/navigation";
 
-type secNav={
-    title:string;
-}
-function SecondNavbar(props:secNav) {
+function SecondNavbar() {
+  const path = usePathname();
+  const match1 = path.match(/\/([^/]+)$/);
+
+  let title: string;
+  if (match1) {
+    title = match1[1]
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/^\w/, (c) => c.toUpperCase());
+   
+  } else {
+    title = "";
+  }
+
   return (
     <div>
-            <Paper style={{ padding:10 }}>
-        {/* <Toolbar> */}
+      <Paper elevation ={3} style={{ padding: 7, margin:20, marginTop:80, alignItems:"center" }}>
         <Grid container>
           <Grid item xs={6}>
-            <Typography variant="h5" style={{verticalAlign:"baseline"}}>{props.title}</Typography>
+            <Typography variant="h6" style={{ verticalAlign: "baseline" }}>
+              {title}
+            </Typography>
           </Grid>
           <Grid
             item
@@ -22,23 +34,15 @@ function SecondNavbar(props:secNav) {
               display: "flex",
               justifyContent: "flex-end",
               alignItems: "flex-end",
-              paddingRight:10
+              paddingRight: 10,
             }}
           >
-              <NextBreadcrumb
-          homeElement={<HomeIcon style={{marginTop:5}}/>}
-          // activeClasses='text-amber-500'
-          // containerClasses='flex py-5 bg-gradient-to-r from-purple-600 to-blue-600' 
-          // listClasses='hover:underline mx-2 font-bold'
-          capitalizeLinks
-        />    
+            <NextBreadcrumb />
           </Grid>
         </Grid>
       </Paper>
-       
-      
     </div>
-  )
+  );
 }
 
-export default SecondNavbar
+export default SecondNavbar;

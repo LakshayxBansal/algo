@@ -6,24 +6,13 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumbs, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import HomeIcon from '@mui/icons-material/Home';
 
-type TBreadCrumbProps = {
-  homeElement: ReactNode;
-//   containerClasses?: string;
-//   listClasses?: string;
-//   activeClasses?: string;
-  capitalizeLinks?: boolean;
-};
-
-const NextBreadcrumb = ({
-  homeElement,
-//   containerClasses,
-//   listClasses,
-//   activeClasses,
-  capitalizeLinks,
-}: TBreadCrumbProps) => {
+const NextBreadcrumb = () => {
   const paths = usePathname();
   const pathNames = paths.split("/").filter((path) => path);
+
+  const hiddenSegments = ['cap','admin',];
 
   return (
     <div>
@@ -31,24 +20,23 @@ const NextBreadcrumb = ({
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
       >
-        <Link href={"/"}>{homeElement}</Link>
-        {pathNames.length > 0}
-        {pathNames.map((link, index) => {
-          let href = `/${pathNames.slice(0, index + 1).join("/")}`;
-        //   let itemClasses =
-        //     paths === href ? `${listClasses} ${activeClasses}` : listClasses;
-          let itemLink = capitalizeLinks
-            ? link[0].toUpperCase() + link.slice(1, link.length)
-            : link;
-          return (
-            <React.Fragment key={index}>
-                <Typography variant="subtitle1">
-              <Link href={href}>{itemLink}</Link>
-                </Typography>
-              {pathNames.length !== index + 1}
-            </React.Fragment>
-          );
-        })}
+        <Link href={"/cap"}>{<HomeIcon fontSize="small" />}</Link>
+        {pathNames.map((value, index) => {
+        if (hiddenSegments.includes(value)) {
+          return null; // Skip this segment
+        }
+        if(value == "lists"){
+          value = "Masters"
+        }
+        const routeTo = `/${pathNames.slice(0, index + 1).join('/')}`;
+        return (
+          <Link key={routeTo} href={routeTo} color="inherit">
+            <Typography variant="caption">
+            {value.charAt(0).toUpperCase() + value.slice(1)}
+            </Typography>
+          </Link>
+        );
+      })}
       </Breadcrumbs>
     </div>
   );

@@ -46,14 +46,31 @@ import HomeIcon from "@mui/icons-material/Home";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import { useSearchParams } from "next/navigation";
+import UploadFileForm from "./UploadFileForm";
 
-type EntityListPropsT = {
-  title: string;
+// type ModifyT = {
+//   title: string;
+//   renderForm?: RenderFormFunctionT;
+//   fetchDataFn: (
+//     page: number,
+//     searchText: string,
+//     pgSize: number
+//   ) => Promise<any>;
+//   fnFetchDataByID?: (id: number) => Promise<any>;
+//   fnDeleteDataByID?: (id: number) => Promise<any>;
+//   customCols: GridColDef[];
+//   AddAllowed: boolean;
+//   height?:string;
+// };
+// EntityListPropsT
+
+type ModifyT = {
+  title?: string;
   renderForm?: RenderFormFunctionT;
-  fileUploadFeatureReqd: boolean;
+  fileUploadFeatureReqd?: boolean;
   // fnFileUpad: () => {}
-  fnFileUpad: any; // update with type -- Ayushi
-  sampleFileName: String;
+  fnFileUpad?: any; // update with type -- Ayushi
+  sampleFileName?: String;
   fetchDataFn: (
     page: number,
     searchText: string,
@@ -72,13 +89,12 @@ enum dialogMode {
   Add,
   Modify,
   Delete,
-  FileUpload,
+  FileUpload
 }
 
 export default function EntityList(props: EntityListPropsT) {
   // const [uploadDialogOpen, setUploadDialogOpen] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  // const [dialogOpenDelete, setDialogOpenDelete] = useState<boolean>(false);
   const [data, setData] = useState([]);
   const [NRows, setNRows] = useState<number>(0);
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
@@ -253,6 +269,48 @@ export default function EntityList(props: EntityListPropsT) {
     );
   }
 
+  const DeleteComponent = () => {
+    return (
+      <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
+        <form>
+          <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
+            Are you sure you want to delete?
+          </Typography>
+          <Box
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+            m={1}
+          >
+            <Button
+              style={{ paddingRight: "20px" }}
+              onClick={() => {
+                setDialogOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                onDeleteDialog(ids);
+              }}
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </Box>
+        </form>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message={"Record Deleted Successfully"}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Box>
+    );
+  };
+
   type iconT = {
     id: number;
   };
@@ -338,7 +396,8 @@ export default function EntityList(props: EntityListPropsT) {
             {" "}
             <IconButton
               onClick={() => {
-                handleDeleteDialog(props.id);
+                // setDialogOpenDelete(true);
+                handleDeleteDialog(props.id)
                 // setIds(props.id);
               }}
             >
@@ -365,40 +424,6 @@ export default function EntityList(props: EntityListPropsT) {
   };
 
   type dataObj1 = { [key: string]: any };
-
-  // function getUniqueObjects(
-  //   arr1: GridColDef[],
-  //   arr2: GridColDef[],
-  //   key: keyof GridColDef
-  // ) {
-  //   // Combine both arrays
-  //   const combined = [...arr1, ...arr2];
-
-  //   // Create a Set to track unique values
-  //   const uniqueSet = new Set();
-
-  //   // Filter out unique objects based on the specified key
-  //   const uniqueObjects = combined.filter((obj) => {
-  //     // Create a unique identifier for the object based on the key
-  //     const keyValue = obj[key];
-
-  //     if (uniqueSet.has(keyValue)) {
-  //       return false; // Object is not unique
-  //     } else {
-  //       uniqueSet.add(keyValue); // Add key value to Set
-  //       return true; // Object is unique
-  //     }
-  //   });
-
-  //   // Push unique objects from arr2 to arr1
-  //   arr1.push(
-  //     ...uniqueObjects.filter(
-  //       (obj) => !arr1.some((existingObj) => existingObj[key] === obj[key])
-  //     )
-  //   );
-
-  //   return arr1;
-  // }
 
   function pushColumns(dataObj: dataObj1) {
     if (dataObj) {
@@ -439,234 +464,27 @@ export default function EntityList(props: EntityListPropsT) {
 
   pushColumns(data[0]);
   return (
-    <Box style={{ backgroundColor: "#fceff3", height: "100vh" }}>
-      <SecondNavbar title={props.title} />
-      {/* </Toolbar> */}
-      <Box style={{ margin: "0 20px" }}>
-        {/* <Grid container spacing={2} style={{ verticalAlign: "center" }}>
-          <Grid item xs={8}>
-            <Box sx={{ width: "75%" }}>
-              <TextField
-                variant="outlined"
-                fullWidth
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                }}
-                margin="normal"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                  style: {
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
-                InputLabelProps={{
-                  style: {
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
-              />
-            </Box>
-          </Grid>
-          <Grid
-            item
-            xs={3}
-            sx={{
-              textAlign: "right",
-              marginTop: "1.1rem",
-              paddingRight: "45px",
-            }}
-          >
-            {props.AddAllowed && (
-              <Box>
-                <ButtonGroup
-                  variant="contained"
-                  ref={anchorRef}
-                  aria-label="Button group with a nested menu"
-                >
-                  <Tooltip title="Add New">
-                    <Button
-                      onClick={() => {
-                        setDialogOpen(true);
-                        setDlgMode(dialogMode.Add);
-                      }}
-                    >
-                      <AddIcon
-                        fontSize="small"
-                        style={{ marginRight: "5px" }}
-                      />
-                      Add New
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title="More Options">
-                    <Button
-                      size="small"
-                      aria-controls={open ? "split-button-menu" : undefined}
-                      aria-expanded={open ? "true" : undefined}
-                      aria-label="select merge strategy"
-                      aria-haspopup="menu"
-                      onClick={handleToggle}
-                    >
-                      <ArrowDropDownIcon />
-                    </Button>
-                  </Tooltip>
-                </ButtonGroup>
-                <Popper
-                  sx={{ zIndex: 1 }}
-                  open={open}
-                  anchorEl={anchorRef.current}
-                  role={undefined}
-                  transition
-                  disablePortal
-                >
-                  {({ TransitionProps, placement }) => (
-                    <Grow
-                      {...TransitionProps}
-                      style={{
-                        transformOrigin:
-                          placement === "bottom"
-                            ? "center top"
-                            : "center bottom",
-                      }}
-                    >
-                        <ClickAwayListener onClickAway={handleCloseButtonMenu}>
-                          <Tooltip title="Upload File">
-                            <Button
-                              key={"Upload File"}
-                              onClick={handleMenuItemClick}
-                              component="label"
-                              role={undefined}
-                              variant="outlined"
-                              tabIndex={-1}
-                              startIcon={<CloudUploadIcon />}
-                            >
-                              <VisuallyHiddenInput
-                                type="file"
-                                onChange={(event: {
-                                  target: { files: any };
-                                }) => {
-                                  const file = event.target.files[0];
-                                  if (file) {
-                                    console.log("Selected file:", file.name);
-                                    // Add your file upload logic here
-                                  }
-                                }}
-                                multiple
-                              />
-                              Upload File
-                            </Button>
-                          </Tooltip>
-                        </ClickAwayListener>
-                      </Paper>
-                    </Grow>
-                  )}
-                </Popper>
-              </Box>
-            )}
-          </Grid>
-          <Grid item xs={1} sx={{ verticalAlign: "center", marginTop: "10px" }}>
-            <Tooltip title="Manage Columns">
-              <IconButton
-                aria-controls="tune-menu"
-                aria-haspopup="true"
-                onClick={handleClick1}
-              >
-                <TuneIcon fontSize="large" />
-              </IconButton>
-            </Tooltip>
-            <Box>
-              <StyledMenu
-                id="tune-menu"
-                anchorEl={anchorEl2}
-                open={Boolean(anchorEl2)}
-                onClose={handleClose1}
-              >
-                <ColumnVisibilityToggle
-                  columns1={columns4}
-                  columns2={columns}
-                  handleColumnVisibilityChange={handleColumnVisibilityChange}
-                />
-              </StyledMenu>
-            </Box>
-          </Grid>
-        </Grid> */}
-        {/* {dialogOpen && (
-          <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-            {props.renderForm
-              ? dlgMode === dialogMode.Add
-                ? props.renderForm(setDialogOpen, (arg) => {})
-                : props.renderForm(setDialogOpen, (arg) => {}, modData)
-              : 1}
-          </AddDialog>
-        )} */}
-        {dialogOpen && (
-          <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
-            {props.fileUploadFeatureReqd &&
-            dlgMode === dialogMode.FileUpload ? (
-              <UploadFileForm
-                setDialogOpen={setDialogOpen}
-                fnFileUpad={props.fnFileUpad}
-                sampleFileName={props.sampleFileName}
-              />
-            ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => {})
-            ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => {}, modData)
-            ) : dlgMode === dialogMode.Delete ? (
-              <DeleteComponent />
-            ) : null}
+    // backgroundColor: "#fceff3",
+    <Box>
 
-            {/* {dialogOpenDelete && (
-          <AddDialog
-            title={""}
-            open={dialogOpenDelete}
-            setDialogOpen={setDialogOpenDelete}
-          >
-            <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
-              <form>
-                <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
-                  Are you sure you want to delete?
-                </Typography>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  m={1}
-                >
-                  <Button
-                    style={{ paddingRight: "20px" }}
-                    onClick={() => {
-                      setDialogOpenDelete(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      onDeleteDialog(ids);
-                      setSnackOpen(true);
-                    }}
-                    variant="contained"
-                  >
-                    Delete
-                  </Button>
-                </Box>
-              </form>
-              <Snackbar
-                open={snackOpen}
-                autoHideDuration={1000}
-                onClose={() => setSnackOpen(false)}
-                message="Record Deleted!"
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-              />
-            </Box> */}
-          </AddDialog>
-        )}
+      <Box style={{margin:"0 20px"}}>
+{dialogOpen && (
+        <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+          {props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
+            <UploadFileForm
+              setDialogOpen={setDialogOpen}
+              fnFileUpad={props.fnFileUpad}
+              sampleFileName={props.sampleFileName}
+            />
+          ) : props.renderForm && dlgMode === dialogMode.Add ? (
+            props.renderForm(setDialogOpen, (arg) => {})
+          ) : props.renderForm && dlgMode === dialogMode.Modify ? (
+            props.renderForm(setDialogOpen, (arg) => {}, modData)
+          ) : dlgMode === dialogMode.Delete ? (
+            <DeleteComponent />
+          ) : null}
+        </AddDialog>
+      )}
         <Paper
           elevation={3}
           sx={{
@@ -692,7 +510,7 @@ export default function EntityList(props: EntityListPropsT) {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchIcon />
+                        <SearchIcon fontSize="small"/>
                       </InputAdornment>
                     ),
                     style: {
@@ -717,7 +535,7 @@ export default function EntityList(props: EntityListPropsT) {
                 paddingRight: "45px",
               }}
             >
-              {props.AddAllowed && (
+              {props.AddAllowed ? (
                 <Box>
                   <ButtonGroup
                     variant="contained"
@@ -830,7 +648,23 @@ export default function EntityList(props: EntityListPropsT) {
                     )}
                   </Popper>
                 </Box>
-              )}
+              ) : (  <Tooltip title="Add New">
+                <Button
+                  onClick={() => {
+                    setDialogOpen(true);
+                    setDlgMode(dialogMode.Add);
+                  }}
+                  style={{ backgroundColor: "#e05a5a", padding:"10px 15px", color:"#fff" }}
+                >
+                  <AddIcon
+                    fontSize="small"
+                    style={{ marginRight: "5px" }}
+                  />
+                  Add New
+                </Button>
+              </Tooltip>)}
+
+
             </Grid>
             <Grid
               item
@@ -849,7 +683,7 @@ export default function EntityList(props: EntityListPropsT) {
                   aria-haspopup="true"
                   onClick={handleClick1}
                 >
-                  <TuneIcon fontSize="large" />
+                  <TuneIcon fontSize="medium" />
                 </IconButton>
               </Tooltip>
               <Box>
@@ -886,7 +720,7 @@ export default function EntityList(props: EntityListPropsT) {
               setColumnVisibilityModel(newModel)
             }
             disableRowSelectionOnClick
-            checkboxSelection
+            // checkboxSelection
             // autoHeight
             sx={{ maxHeight: props.height }}
           />

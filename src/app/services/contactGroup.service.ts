@@ -36,6 +36,8 @@ export async function createContactGroupDb(
   sourceData: zm.contactGroupSchemaT
 ) {
   try {
+    console.log("creation", sourceData);
+
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createContactGroup(?,?,?,?)",
@@ -146,7 +148,6 @@ export async function getContactGroupByPageDb(
         "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
     });
-    console.log(result);
 
     return result;
   } catch (e) {

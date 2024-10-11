@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { checkPhone } from "../utils/phoneUtils";
+import { checkPhone,checkPhoneEmpty } from "../utils/phoneUtils";
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|^$/
@@ -13,24 +13,19 @@ const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
 
-export const signInSchema = z
-  .object({
-    email: z.string().optional(),
-    phone: z.string().optional(),
-    password: z.string().min(1, "Please enter password"),
-  })
-  .refine(
-    (schema) => {
-      return !(schema.email === "");
-    },
-    { message: "Please enter email", path: ["email"] }
-  )
-  .refine(
-    (schema) => {
-      return !(schema.phone === "");
-    },
-    { message: "Please enter phone", path: ["phone"] }
-  );
+export const signInSchema = z.object({
+  email : z.string().optional(),
+  phone : z.string().min(1,"Please enter phone number").refine((val) => checkPhoneEmpty(val), {
+    message: "Please enter phone number",
+    path: ["phone"],
+  }).optional(),
+  password : z.string().min(1,"Please enter password")
+}).refine(
+  (schema) => {
+    return !(schema.email === "");
+  },
+  { message: "Please enter email", path: ["email"] }
+)
 
 export const userSchema = z
   .object({
@@ -39,22 +34,19 @@ export const userSchema = z
       .string()
       .regex(emailRegex, "Input must be in email format")
       .optional(),
-    password: z
-      .string()
-      .min(8)
-      .max(50)
-      .regex(
-        passwordRegex,
-        "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
-      ),
-    name: z.string().min(1, "Name must not be empty").max(45),
-    phone: z
-      .string()
-      .refine((val) => checkPhone(val), {
-        message: "Please provide a valid Phone No",
-        path: ["phone"],
-      })
-      .optional(),
+    password :   z
+    .string()
+    .min(8)
+    .max(50)
+    .regex(
+      passwordRegex,
+      "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+    ),
+    name: z.string().min(1,"Name must not be empty").max(45),
+    phone: z.string().min(1,"Please provide phone").refine((val) => checkPhone(val), {
+      message: "Please provide a valid Phone No",
+      path: ["phone"],
+    }).optional(),
     contact: z.string().optional(),
     repassword: z.string().max(50),
     provider: z.string().max(15).optional(),
@@ -253,7 +245,7 @@ export const contactSchema = z.object({
 
 export const areaSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1, "Area Name must not be empty").max(60),
+  name: z.string().max(60 ,"Area name must contain atmost 60 character(s)").min(1,"Area name must contain atleast 1 character(s)"),
 });
 
 export const stateListSchema = z.object({
