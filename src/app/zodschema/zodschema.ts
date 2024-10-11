@@ -198,7 +198,7 @@ export const contactSchema = z.object({
 
 export const areaSchema = z.object({
   id: z.number().optional(),
-  name: z.string().max(60),
+  name: z.string().max(60 ,"Area name must contain atmost 60 character(s)").min(1,"Area name must contain atleast 1 character(s)"),
 });
 
 export const stateListSchema = z.object({
