@@ -13,21 +13,24 @@ const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
 
-export const signInSchema = z.object({
-  email : z.string().optional(),
-  phone : z.string().optional(),
-  password : z.string().min(1,"Please enter password")
-}).refine(
-  (schema) => {
-    return !(schema.email === "");
-  },
-  { message: "Please enter email", path: ["email"] }
-).refine(
-  (schema) => {
-    return !(schema.phone === "");
-  },
-  { message: "Please enter phone", path: ["phone"] }
-)
+export const signInSchema = z
+  .object({
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    password: z.string().min(1, "Please enter password"),
+  })
+  .refine(
+    (schema) => {
+      return !(schema.email === "");
+    },
+    { message: "Please enter email", path: ["email"] }
+  )
+  .refine(
+    (schema) => {
+      return !(schema.phone === "");
+    },
+    { message: "Please enter phone", path: ["phone"] }
+  );
 
 export const userSchema = z
   .object({
@@ -36,19 +39,22 @@ export const userSchema = z
       .string()
       .regex(emailRegex, "Input must be in email format")
       .optional(),
-    password :   z
-    .string()
-    .min(8)
-    .max(50)
-    .regex(
-      passwordRegex,
-      "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
-    ),
-    name: z.string().min(1,"Name must not be empty").max(45),
-    phone: z.string().refine((val) => checkPhone(val), {
-      message: "Please provide a valid Phone No",
-      path: ["phone"],
-    }).optional(),
+    password: z
+      .string()
+      .min(8)
+      .max(50)
+      .regex(
+        passwordRegex,
+        "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+      ),
+    name: z.string().min(1, "Name must not be empty").max(45),
+    phone: z
+      .string()
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
     contact: z.string().optional(),
     repassword: z.string().max(50),
     provider: z.string().max(15).optional(),
@@ -64,7 +70,7 @@ export const userSchema = z
       return !(schema.email === "");
     },
     { message: "Please provide email", path: ["email"] }
-  )
+  );
 
 /*
 refine(schema => {
@@ -75,13 +81,34 @@ refine(schema => {
 */
 export const organisationSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Organisation Name must not be empty").max(75),
-  alias: z.string().max(75).optional(),
-  printName: z.string().max(75).optional(),
-  address1: z.string().max(75).optional(),
-  address2: z.string().max(75).optional(),
-  address3: z.string().max(75).optional(),
-  city: z.string().max(75).optional(),
+  name: z
+    .string()
+    .min(1, "Organisation Name must not be empty")
+    .max(75, "Organisation Name must contain at most 75 character(s)"),
+  alias: z
+    .string()
+    .max(75, "Alias must contain at most 75 character(s)")
+    .optional(),
+  printName: z
+    .string()
+    .max(75, "Print Name must contain at most 75 character(s)")
+    .optional(),
+  address1: z
+    .string()
+    .max(75, "Address must contain at most 75 character(s)")
+    .optional(),
+  address2: z
+    .string()
+    .max(75, "Address must contain at most 75 character(s)")
+    .optional(),
+  address3: z
+    .string()
+    .max(75, "Address must contain at most 75 character(s)")
+    .optional(),
+  city: z
+    .string()
+    .max(75, "City must contain at most 75 character(s)")
+    .optional(),
   state_id: z.number().optional(),
   state: z.string().optional(),
   country_id: z.number().optional(),
@@ -94,7 +121,10 @@ export const organisationSchema = z.object({
     z.string().optional(),
     z.string().min(10).regex(panRegEx, "Invalid GSTIN number!"),
   ]),
-  pincode: z.string().max(15).optional(),
+  pincode: z
+    .string()
+    .max(15, "Pincode must contain at most 15 character(s)")
+    .optional(),
   stamp: z.number().optional(),
   created_by: z.number().optional(),
   modified_by: z.number().optional(),
@@ -103,7 +133,7 @@ export const organisationSchema = z.object({
 });
 
 export const deptSchema = z.object({
-  name: z.string().min(1).max(45)
+  name: z.string().min(1).max(45),
 });
 
 const contactDetailsSchema = z
@@ -129,24 +159,35 @@ const contactDetailsSchema = z
 
 export const ItemSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Item Name must not be empty").max(75),
-  // stamp: z.number().optional(),
+  name: z
+    .string()
+    .min(1, "Item Name must not be empty")
+    .max(75, "Item Name must contain at most 75 character(s)"),
+  stamp: z.number().optional(),
   group: z.number().optional(),
   group_name: z.string().optional(),
-  alias: z.string().max(75).optional(),
+  alias: z
+    .string()
+    .max(75, "Alias must contain at most 75 character(s)")
+    .optional(),
   unit: z.number().optional(),
   unit_name: z.string().optional(),
-  hsn_code: z.string().max(60).optional(),
-  // created_by: z.number().optional(),
-  // modified_by: z.number().optional(),
-  // created_on: z.date().optional(),
-  // modified_on: z.date().optional(),
+  hsn_code: z
+    .string()
+    .max(60, "HSN Code must contain at most 60 character(s)")
+    .optional(),
+  created_by: z.number().optional(),
+  modified_by: z.number().optional(),
+  created_on: z.date().optional(),
+  modified_on: z.date().optional(),
 });
 
 export const UnitSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Unit Name must not be empty").max(50),
-  uqc: z.string().max(50),
+  name: z
+    .string()
+    .min(1, "Unit Name must not be empty")
+    .max(50, "Unit Name must contain at most 50 character(s)"),
   stamp: z.number().optional(),
   group_id: z.number().optional(),
   created_by: z.number().optional(),
@@ -160,18 +201,30 @@ export const UnitSchema = z.object({
  */
 export const contactSchema = z.object({
   id: z.number().optional(),
-  alias: z.string().max(60).optional(),
-  name: z.string().min(1,"Contact Name must not be empty").max(60),
-  print_name: z.string().max(60).optional(),
+  alias: z
+    .string()
+    .max(60, "Alias must contain at most 60 character(s)")
+    .optional(),
+  name: z
+    .string()
+    .min(1, "Contact Name must not be empty")
+    .max(60, "Contact Name must contain at most 60 character(s)"),
+  print_name: z
+    .string()
+    .max(60, "Print Name must contain at most 60 character(s)")
+    .optional(),
   pan: z.union([
     z.literal(""),
-    z.string().min(10).regex(panRegEx, "Invalid PAN number!"),
+    z.string().max(10).regex(panRegEx, "Invalid PAN number!"),
   ]),
-  aadhaar: z.union([z.literal(""), z.string().max(20)]),
-  address1: z.string().max(75),
-  address2: z.string().max(75),
-  address3: z.string().max(75),
-  pincode: z.string().max(15),
+  aadhaar: z.union([
+    z.literal(""),
+    z.string().max(12).regex(aadhaarRegex, "Invalid Aadhaar Number!"),
+  ]),
+  address1: z.string().max(75, "Address must contain at most 75 character(s)"),
+  address2: z.string().max(75, "Address must contain at most 75 character(s)"),
+  address3: z.string().max(75, "Address must contain at most 75 character(s)"),
+  pincode: z.string().max(15, "Pincode must contain at most 15 character(s)"),
   email: z.union([z.literal(""), z.string().email().max(100)]),
   mobile: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Phone No",
@@ -200,7 +253,7 @@ export const contactSchema = z.object({
 
 export const areaSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Area Name must not be empty").max(60),
+  name: z.string().min(1, "Area Name must not be empty").max(60),
 });
 
 export const stateListSchema = z.object({
@@ -208,7 +261,7 @@ export const stateListSchema = z.object({
   country: z.string().max(60).optional(),
   state_id: z.number().optional(),
   state: z.string().max(60).optional(),
-  name: z.string().min(1,"State Name must not be empty").max(60),
+  name: z.string().min(1, "State Name must not be empty").max(60),
   alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
 });
@@ -217,7 +270,7 @@ export const executiveSchema = z
   .object({
     id: z.number().optional(),
     alias: z.string().max(60).optional(),
-    name: z.string().min(1,"Executive Name must not be empty").max(60),
+    name: z.string().min(1, "Executive Name must not be empty").max(60),
     address1: z.string().max(75).optional(),
     address2: z.string().max(75).optional(),
     address3: z.string().max(75).optional(),
@@ -268,7 +321,7 @@ export const executiveSchema = z
       return !(schema.email === "" && schema.mobile === "");
     },
     { message: "please provide email, or phone no", path: ["mobile", "email"] }
-  )
+  );
 /**
  * validate enquiry header schema
  */
@@ -324,11 +377,20 @@ export const enquiryLedgerSchema = z.object({
  */
 export const contactGroupSchema = z.object({
   id: z.number().optional(),
-  alias: z.string().max(60).optional(),
-  name: z.string().min(1,"Contact Group Name must not be empty").max(60),
+  alias: z
+    .string()
+    .max(60, "Alias must contain at most 60 character(s)")
+    .optional(),
+  name: z
+    .string()
+    .min(1, "Contact Group Name must not be empty")
+    .max(60, "Contact Group Name must contain at most 60 character(s)"),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
-  parent: z.string().max(60).optional(),
+  parent: z
+    .string()
+    .max(60, "Length must contain at most 60 character(s)")
+    .optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
@@ -340,11 +402,21 @@ export const contactGroupSchema = z.object({
  */
 export const itemGroupSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Item Group Name must not be empty").max(60),
-  alias: z.string().max(60).optional(),
+  name: z
+    .string()
+    .min(1, "Item Group Name must not be empty")
+    .max(60, "Item Group Name must contain at most 60 character(s)"),
+  alias: z
+    .string()
+    .max(60, "Alias must contain at most 60 character(s)")
+    .optional(),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
-  is_parent: z.number().max(60).optional(),
+  parent: z
+    .string()
+    .max(60, "Length must contain at most 60 character(s)")
+    .optional(),
+  is_parent: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
@@ -353,11 +425,20 @@ export const itemGroupSchema = z.object({
 
 export const currencySchema = z.object({
   id: z.number().optional(),
-  symbol: z.string().min(1).max(60).optional(),
-  name: z.string().min(1,"Currency Name must not be empty").max(60),
-  shortForm: z.string().min(1).max(60).optional(),
-  decimal_places: z.string().min(1).max(60).optional(),
-  currency_system: z.string().min(1).max(60).optional(),
+  name: z
+    .string()
+    .min(1, "Currency Name must not be empty")
+    .max(60, "Currency Name must contain at most 60 character(s)"),
+  symbol: z
+    .string()
+    .min(1, "Symbol must not be empty")
+    .max(60, "Symbol must contain at most 60 character(s)"),
+  shortForm: z
+    .string()
+    .max(60, "Short Form must contain at most 60 character(s)")
+    .optional(),
+  decimal_places: z.string().min(1).max(60),
+  currency_system: z.string().min(1).max(60),
 });
 /**
  * Executive Role
@@ -365,7 +446,10 @@ export const currencySchema = z.object({
 export const executiveRoleSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1,"Executive Role Name must not be empty").max(60),
+  name: z
+    .string()
+    .min(1, "Executive Role Name must not be empty")
+    .max(60, "Executive Role Name must contain at most of 60 character(s)"),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
   parentRole: z.string().max(60).optional(),
@@ -381,11 +465,20 @@ export const executiveRoleSchema = z.object({
  */
 export const executiveGroupSchema = z.object({
   id: z.number().optional(),
-  alias: z.string().max(60).optional(),
-  name: z.string().min(1,"Executive Group Name must not be empty").max(60),
+  alias: z
+    .string()
+    .max(60, "Alias must contain at most 60 character(s)")
+    .optional(),
+  name: z
+    .string()
+    .min(1, "Executive Group Name must not be empty")
+    .max(60, "Executive Group Name must contain at most 60 character(s)"),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
-  parent: z.string().max(60).optional(),
+  parent: z
+    .string()
+    .max(60, "Parent Name must contain at most 60 character(s)")
+    .optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
@@ -398,7 +491,10 @@ export const executiveGroupSchema = z.object({
 export const executiveDeptSchema = z.object({
   id: z.number().optional(),
   alias: z.string().max(60).optional(),
-  name: z.string().min(1,"Executive Dept Name must not be empty").max(60),
+  name: z
+    .string()
+    .min(1, "Executive Dept Name must not be empty")
+    .max(60, "Executive Dept Name must contain at most 60 character(s)"),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
@@ -416,13 +512,19 @@ export const optionsData = z.object({
 
 export const countrySchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Country Name must not be empty").max(60),
-  alias: z.string().min(1).max(45).optional(),
+  name: z
+    .string()
+    .min(1, "Country Name must not be empty")
+    .max(60, "Country Name must contain at most 60 character(s)"),
+  alias: z
+    .string()
+    .max(45, "Alias must contain at most 45 character(s)")
+    .optional(),
 });
 
 export const stateSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"State Name must not be empty").max(60),
+  name: z.string().min(1, "State Name must not be empty").max(60),
   alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
 });
@@ -468,8 +570,11 @@ export const menuOption = z.object({
  */
 export const enquirySubStatusMaster = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"SubStatus Name must not be empty").max(50),
-  status_id: z.number().optional(),
+  name: z
+    .string()
+    .min(1, "SubStatus Name must not be empty")
+    .max(50, "SubStatus Name must contain at most 50 character(s)"),
+  enquiry_status_id: z.number().optional(),
   status: z.string().min(1).max(30),
   created_on: z.date().optional(),
   modified_on: z.date().optional(),
@@ -484,10 +589,11 @@ export const enquirySubStatusMaster = z.object({
 
 export const nameMasterData = z.object({
   id: z.number().optional(),
-  name: z.string().min(1,"Name must contain at least 1 character(s)").max(45, "Name must contain at most 45 character(s)"),
+  name: z
+    .string()
+    .min(1, "Length must contain at least 1 character(s)")
+    .max(45, "Length must contain at most 45 character(s)"),
 });
-
-
 
 // export const nameMasterData = z.object({
 //   id: z.number().optional(),
@@ -529,9 +635,15 @@ export const enquirySupportConfig = z.object({
 
 export const companySchema = z.object({
   id: z.number().optional(),
-  alias: z.string().min(1).max(60).optional(),
-  name: z.string().min(1, "Please enter company name").max(55),
-  add1: z.string().min(1, "Please enter address"),
+  alias: z
+    .string()
+    .max(60, "Alias must contain at most 60 character(s)")
+    .optional(),
+  name: z
+    .string()
+    .min(1, "Please enter company name")
+    .max(55, "Company Name must contain at most 55 character(s)"),
+  add1: z.string().optional(),
   add2: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
@@ -542,16 +654,21 @@ export const companySchema = z.object({
   stamp: z.number().optional(),
 });
 
-export const inviteUserSchema = z.object({
-  id: z.number().optional(),
-  name: z.string().min(1, "Please enter Name").max(45),
-  usercontact: z.string().min(1, "Please enter Contact").max(60),
-  companyId: z.number(),
-  executiveId: z.number().optional(),
-  inviteDate: z.date().optional()
-}).refine(
+export const inviteUserSchema = z
+  .object({
+    id: z.number().optional(),
+    name: z.string().min(1, "Please enter Name").max(45),
+    usercontact: z.string().min(1, "Please enter Contact").max(60),
+    companyId: z.number(),
+    executiveId: z.number().optional(),
+    inviteDate: z.date().optional(),
+  })
+  .refine(
     (schema) => {
-      return (emailRegex.test(schema.usercontact) || phoneRegex.test(schema.usercontact));
+      return (
+        emailRegex.test(schema.usercontact) ||
+        phoneRegex.test(schema.usercontact)
+      );
     },
     { message: "Invalid Input Format", path: ["usercontact"] }
   );

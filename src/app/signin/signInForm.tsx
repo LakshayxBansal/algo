@@ -15,7 +15,7 @@ import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
 import styles from "../signup/SignUpForm.module.css";
-import * as zs from '../zodschema/zodschema';
+import * as zs from "../zodschema/zodschema";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -41,6 +41,7 @@ export default function AuthPage(props: authPagePropsType) {
 
   const contactHandler = () => {
     setEmail(!email);
+    setFormError({});
   };
   function actValidate(formData: FormData) {
     let data: { [key: string]: any } = {};
@@ -52,16 +53,15 @@ export default function AuthPage(props: authPagePropsType) {
     console.log(parsed);
     if (parsed.success) {
       let contact;
-        if (data.email) {
-          contact = data.email;
-          delete data.email;
-        }
-        else {
-          contact = data.phone;
-          contact = contact?.replace(/ +/g, '');
-          delete data.phone;
-        }
-        data.contact = contact;
+      if (data.email) {
+        contact = data.email;
+        delete data.email;
+      } else {
+        contact = data.phone;
+        contact = contact?.replace(/ +/g, "");
+        delete data.phone;
+      }
+      data.contact = contact;
       signIn("credentials", {
         redirect: false,
         userContact: data.contact,
@@ -70,7 +70,8 @@ export default function AuthPage(props: authPagePropsType) {
         if (status?.ok) {
           router.push(successCallBackUrl);
         } else {
-          const errorState: Record<string, { msg: string; error: boolean }> = {};
+          const errorState: Record<string, { msg: string; error: boolean }> =
+            {};
           errorState["form"] = { msg: "Invalid Credentials", error: true };
           setFormError(errorState);
           if (status?.error === "CredentialsSignin") {
@@ -127,12 +128,14 @@ export default function AuthPage(props: authPagePropsType) {
             xs={0}
             sm={4.75}
             md={4.75}
-            sx={{
-              // margin: "5%",
-              // display: { xs: "none", sm: "flex" },
-              // justifyContent: "center",
-              // alignItems: "center",
-            }}
+            sx={
+              {
+                // margin: "5%",
+                // display: { xs: "none", sm: "flex" },
+                // justifyContent: "center",
+                // alignItems: "center",
+              }
+            }
           >
             <Box
               className={styles.image1}
@@ -170,7 +173,7 @@ export default function AuthPage(props: authPagePropsType) {
             >
               Sign In
             </Typography>
-            <form action={actValidate}>
+            <form action={actValidate} noValidate>
               {formError?.form?.error && (
                 <p style={{ color: "red" }}>{formError?.form.msg}</p>
               )}
@@ -187,6 +190,12 @@ export default function AuthPage(props: authPagePropsType) {
                     id="usercontact"
                     label="Email Address"
                     name="email"
+                    onKeyDown={() => {
+                      setFormError((curr) => {
+                        const { email, ...rest } = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "45px",
@@ -220,6 +229,12 @@ export default function AuthPage(props: authPagePropsType) {
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
+                    onKeyDown={() => {
+                      setFormError((curr) => {
+                        const { phone, ...rest } = curr;
+                        return rest;
+                      });
+                    }}
                     // onkeydown={onPhoneChange}
                     sx={{
                       "& .MuiInputBase-input": {
@@ -279,6 +294,12 @@ export default function AuthPage(props: authPagePropsType) {
                     id="password"
                     error={formError?.password?.error}
                     helperText={formError?.password?.msg}
+                    onKeyDown={() => {
+                      setFormError((curr) => {
+                        const { password, ...rest } = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "45px",
@@ -297,7 +318,7 @@ export default function AuthPage(props: authPagePropsType) {
                   />
                   <Button
                     type="button"
-                    sx={{ marginLeft: "-65px", marginTop: "12px" }}
+                    sx={{ marginLeft: "-65px", marginTop: "0.5rem", mb: "0.5rem" }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}

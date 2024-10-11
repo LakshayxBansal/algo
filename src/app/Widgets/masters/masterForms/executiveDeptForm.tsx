@@ -7,7 +7,6 @@ import {
   createExecutiveDept,
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
-import Grid from "@mui/material/Grid";
 import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
@@ -90,7 +89,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Department" : "Add Department"}
+            {props.data ? "Update Executive Department" : "Add Executive Department"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>

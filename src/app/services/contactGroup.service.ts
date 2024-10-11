@@ -101,7 +101,8 @@ export async function checksIfUsed(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "SELECT COUNT(*) as count FROM contact_group_master cg INNER JOIN contact_master cm ON cm.group_id = cg.id where cg.id=?;",
+      query:
+        "SELECT COUNT(*) as count FROM contact_group_master cg INNER JOIN contact_master cm ON cm.group_id = cg.id where cg.id=?;",
       values: [id],
     });
     return result;

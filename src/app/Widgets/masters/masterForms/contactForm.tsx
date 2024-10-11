@@ -7,7 +7,10 @@ import {
   getOrganisation,
   getOrganisationById,
 } from "@/app/controllers/organisation.controller";
-import { getDepartment, getDepartmentById } from "@/app/controllers/department.controller";
+import {
+  getDepartment,
+  getDepartmentById,
+} from "@/app/controllers/department.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
@@ -142,41 +145,44 @@ export default function ContactForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Box sx={{
-        position: "sticky", top: "0px",
-        zIndex: 2, 
-        paddingY: "10px",
-        bgcolor: "white"
-      }}>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
         <Seperator>
-            <Box sx={{display: "flex", justifyContent: "space-between"}}>
-              {props.data ? "Update Contact" : "Add Contact"}
-              <IconButton onClick={handleCancel}>
-                <CloseIcon/>
-              </IconButton>
-            </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Update Contact" : "Add Contact"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
         </Seperator>
       </Box>
-        <Collapse in={formError?.form ? true : false}>
-          <Alert
-            severity="error"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={clearFormError}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            {formError?.form?.msg}
-          </Alert>
-        </Collapse>
-      <Box id="sourceForm" sx={{ p: 3 }}>
-        <form action={handleSubmit}>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
+      <Box id="contactForm" sx={{ p: 3 }}>
+        <form action={handleSubmit} noValidate>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
             <Seperator>Contact Details</Seperator>
             <Box
@@ -198,6 +204,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.TEXT}
@@ -207,6 +219,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
                 defaultValue={entityData.alias}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { alias, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.TEXT}
@@ -216,6 +234,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.print_name?.error}
                 helperText={formError?.print_name?.msg}
                 defaultValue={entityData.print_name}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { print_name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <SelectMasterWrapper
                 name={"organisation"}
@@ -259,6 +283,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.aadhaar?.error}
                 helperText={formError?.aadhaar?.msg}
                 defaultValue={entityData.aadhaar}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { aadhaar, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
             </Box>
           </Paper>
@@ -343,6 +373,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 onChange={(e, val, s) =>
                   setSelectValues({ ...selectValues, area: val })
                 }
+                // formError={formE}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <AreaForm
                     setDialogOpen={fnDialogOpen}
@@ -375,6 +406,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.email?.error}
                 helperText={formError?.email?.msg}
                 defaultValue={entityData.email}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { email, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.PHONE}
@@ -384,6 +421,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.mobile?.error}
                 helperText={formError?.mobile?.msg}
                 defaultValue={entityData.mobile}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { mobile, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.PHONE}
@@ -394,6 +437,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.whatsapp?.error}
                 helperText={formError?.whatsapp?.msg}
                 defaultValue={entityData.whatsapp}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { whatsapp, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
             </Box>
           </Paper>
@@ -418,6 +467,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.address1?.error}
                 helperText={formError?.address1?.msg}
                 defaultValue={entityData.address1}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { address1, ...rest } = curr;
+                    return rest;
+                  });
+                }}
                 fullWidth
               />
               <InputControl
@@ -428,6 +483,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.address2?.error}
                 helperText={formError?.address2?.msg}
                 defaultValue={entityData.address2}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { address2, ...rest } = curr;
+                    return rest;
+                  });
+                }}
                 fullWidth
               />
               <InputControl
@@ -438,6 +499,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.address3?.error}
                 helperText={formError?.address3?.msg}
                 defaultValue={entityData.address3}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { address3, ...rest } = curr;
+                    return rest;
+                  });
+                }}
                 fullWidth
               />
               <InputControl
@@ -448,6 +515,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.city?.error}
                 helperText={formError?.city?.msg}
                 defaultValue={entityData.city}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { city, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <SelectMasterWrapper
                 name={"country"}
@@ -455,8 +528,14 @@ export default function ContactForm(props: masterFormPropsT) {
                 label={"Country"}
                 width={210}
                 dialogTitle={"country"}
-                onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, country: val })
+                onChange={(e, val, s) =>{
+                  setSelectValues({
+                    ...selectValues,
+                    country: val,
+                    state: null,
+                  })
+                  console.log("selectValues : ",selectValues)
+                }
                 }
                 fetchDataFn={getCountries}
                 fnFetchDataByID={getCountryById}
@@ -510,6 +589,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.pincode?.error}
                 helperText={formError?.pincode?.msg}
                 defaultValue={entityData.pincode}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { pincode, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
             </Box>
           </Paper>
@@ -517,11 +602,15 @@ export default function ContactForm(props: masterFormPropsT) {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end"
+              justifyContent: "flex-end",
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained" sx={{width: "15%", marginLeft: "5%"}}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

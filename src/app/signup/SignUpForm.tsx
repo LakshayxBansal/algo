@@ -41,9 +41,11 @@ export default function SignupForm1(props: any) {
     if (contact === "phone") {
       setEmailElement(false);
       setContact("email");
+      setFormError({});
     } else {
       setEmailElement(true);
       setContact("phone");
+      setFormError({});
     }
   };
 
@@ -232,6 +234,12 @@ export default function SignupForm1(props: any) {
                   autoFocus
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { name, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
                   sx={{
                     "& .MuiInputBase-input": {
                       height: "40px",
@@ -260,6 +268,12 @@ export default function SignupForm1(props: any) {
                     id="email"
                     label="Email Address"
                     name="email"
+                    onKeyDown={() => {
+                      setFormError((curr) => {
+                        const { email, ...rest } = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "40px",
@@ -353,6 +367,12 @@ export default function SignupForm1(props: any) {
                       id="password"
                       error={formError?.password?.error}
                       helperText={formError?.password?.msg}
+                      onKeyDown={() => {
+                        setFormError((curr) => {
+                          const { password, ...rest } = curr;
+                          return rest;
+                        });
+                      }}
                       sx={{
                         "& .MuiInputBase-input": {
                           height: "40px",
