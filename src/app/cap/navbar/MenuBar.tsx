@@ -68,6 +68,8 @@ const Drawer = styled(MuiDrawer, {
     position: "relative",
     whiteSpace: "nowrap",
     width: open ? 240 : 72,
+    height:"97vh",
+    overflowY: 'auto',
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -359,7 +361,7 @@ export default function MenuBar(props: propsType) {
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "100%", height:"100vh"}}>
+          <Box style={{ width: "100%"}}>
                         {children}
             </Box>
         </Box>

@@ -100,7 +100,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify Executive Group" : "Add Executive Group"}
+            {props.data ? "Update Executive Group" : "Add Executive Group"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -125,7 +125,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -140,19 +140,34 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             label="Executive Group Name"
             inputType={InputType.TEXT}
             name="name"
+            fullWidth
+            required
             defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           <InputControl
             autoFocus
+            inputType={InputType.TEXT}
             id="alias"
             label="Alias"
-            inputType={InputType.TEXT}
             name="alias"
+            fullWidth
             defaultValue={entityData.alias}
             error={formError?.alias?.error}
-            helperText={formError?.name?.msg}
+            helperText={formError?.alias?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { alias, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           {/* <AutocompleteDB<optionsDataT>
           name={"parentgroup"}

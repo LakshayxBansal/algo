@@ -60,7 +60,6 @@ export async function getMenuOptions(crmDb: string) {
 
     // create top level menu
     const tree = createTree(result, 0);
-    // console.log(tree);
     return tree;
   } catch (e) {
     console.log(e);

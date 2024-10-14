@@ -50,7 +50,6 @@ export async function updateItemDB(session: Session, data: zm.itemSchemaT) {
   return null;
 }
 
-
 /**
  *
  * @param crmDb database to search in
@@ -63,11 +62,11 @@ export async function getItemList(crmDb: string, searchString: string) {
       "SELECT im.id AS id, im.name, ig.id AS group_id, im.alias, um.id AS unit_id, im.hsn_code \
         FROM item_master im \
         LEFT JOIN unit_master um ON im.unit_id = um.id \
-        LEFT JOIN item_group_master ig ON im.group_id = ig.id"
+        LEFT JOIN item_group_master ig ON im.group_id = ig.id";
     let values: any[] = [];
 
     if (searchString !== "") {
-      query = query + " where name like '%" + searchString + "%'";
+      query = query + "where im.name like '%" + searchString + "%'";
       values = [];
     }
     const result = await excuteQuery({
@@ -81,8 +80,6 @@ export async function getItemList(crmDb: string, searchString: string) {
     console.log(e);
   }
 }
-
-
 
 export async function deleteItemListDetailsById(crmDb: string, id: number) {
   try {
@@ -155,7 +152,8 @@ export async function fetchItemById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select im.*, gm.name as group_name, um.name as unit_name\
+      query:
+        "select im.*, gm.name as group_name, um.name as unit_name\
        from item_master im left join item_group_master gm on im.group_id=gm.id \
        left join unit_master um on im.unit_id=um.id where im.id=?",
       values: [id],

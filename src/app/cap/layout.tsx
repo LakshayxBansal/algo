@@ -18,10 +18,10 @@ export default function CapLayout({children} : {children: React.ReactNode}) {
             <ThemeProvider theme={theme}>
               <SecondNavbar/>
               {children}
+        <Footer/>
             </ThemeProvider>
           </Box>
         </AppMenu>
-        <Footer/>
         </>
 
     </section>

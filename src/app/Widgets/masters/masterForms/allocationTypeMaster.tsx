@@ -14,6 +14,7 @@ import {
   createAllocationType,
   updateAllocationType,
 } from "@/app/controllers/allocationType.controller";
+import { setErrorMap } from "zod";
 
 export default function AllocationTypeMasterForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -70,11 +71,11 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper sx={{ width: "50%", margin: "auto", marginTop: "10rem" }}>
+    <Paper elevation={3} sx={{ mt: 2, p: 1 }} square={false}>
       <Box
         sx={{
           position: "sticky",
-          top: "0px",
+          top: "2px",
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
@@ -107,32 +108,40 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box sx={{ mt: 2, mb: 1, p: 1 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(1, 1fr)",
             }}
           >
             <InputControl
+              inputType={InputType.TEXT}
               autoFocus
               id="name"
               label="Name"
-              inputType={InputType.TEXT}
               name="name"
-              defaultValue={props.data?.name}
+              required
               fullWidth
+              defaultValue={props.data?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>

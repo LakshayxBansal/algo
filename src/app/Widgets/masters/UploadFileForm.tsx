@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState } from "react";
 import { Alert, Box, Button, IconButton, Link, Snackbar } from "@mui/material";
@@ -80,7 +79,7 @@ export default function UploadFileForm({
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
-        complete: async (results:any) => {
+        complete: async (results) => {
           const fileData = results.data;
           setData(fileData as any);
         },
@@ -244,4 +243,3 @@ export default function UploadFileForm({
     </>
   );
 }
-

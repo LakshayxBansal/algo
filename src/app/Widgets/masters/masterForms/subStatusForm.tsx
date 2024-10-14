@@ -152,7 +152,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -163,19 +163,28 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Sub-Status Name"
-              inputType={InputType.TEXT}
               name="name"
+              required
+              fullWidth
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }} 
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt:2
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>

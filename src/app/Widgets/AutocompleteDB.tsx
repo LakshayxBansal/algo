@@ -98,7 +98,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
         getData(inputValue);
       }
     }
-  }, [inputValue, autoSelect, open,props.diaglogVal.reloadOpts]);
+  }, [inputValue, autoSelect, open]);
+
+  // console.log("autocompletedb",options)
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {

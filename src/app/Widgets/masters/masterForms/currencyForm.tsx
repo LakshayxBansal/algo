@@ -48,7 +48,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
     const result = await persistEntity(data as currencySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
@@ -131,9 +131,24 @@ export default function CurrencyForm(props: masterFormPropsT) {
 
   return (
     <Paper sx={{ margin: "auto", width: "37vw" }}>
-      <Seperator>
-        {entityData.id ? "Update Currency" : "Add Currency"}
-      </Seperator>
+      <Box
+        sx={{
+          position: "sticky",
+          top: 2,
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Currency" : "Add Currency"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -152,45 +167,61 @@ export default function CurrencyForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="currencyForm" sx={{ mt: 2, p: 2 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
+              rowGap: 0.5,
+              gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            <Box
+            {/* <Box
               sx={{
                 width: "100%",
                 display: "flex",
-                justifyContent: "space-between",
+                justifyContent: "space-around",
               }}
-            >
-              <InputControl
-                autoFocus
-                id="Symbol"
-                label="Currency Symbol"
-                inputType={InputType.TEXT}
-                name="symbol"
-                defaultValue={entityData.symbol}
-                error={formError?.symbol?.error}
-                helperText={formError?.symbol?.msg}
-                onChange={onSymbolChange}
-              />
-              <InputControl
-                autoFocus
-                id="Name"
-                label="Name"
-                inputType={InputType.TEXT}
-                name="name"
-                defaultValue={entityData.name}
-                error={formError?.Name?.error}
-                helperText={formError?.Name?.msg}
-              />
-            </Box>
+            > */}
+            <InputControl
+              autoFocus
+              inputType={InputType.TEXT}
+              id="Symbol"
+              label="Currency Symbol"
+              name="symbol"
+              fullWidth
+              required
+              defaultValue={entityData.symbol}
+              error={formError?.symbol?.error}
+              helperText={formError?.symbol?.msg}
+              onChange={onSymbolChange}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { symbol, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            <InputControl
+              autoFocus
+              inputType={InputType.TEXT}
+              id="Name"
+              label="Name"
+              name="name"
+              fullWidth
+              required
+              defaultValue={entityData.name}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            {/* </Box>
             <Box
               sx={{
                 display: "flex",
@@ -199,38 +230,48 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 width: "100%",
                 justifyContent: "space-between",
               }}
+            > */}
+            <InputControl
+              autoFocus
+              id="shortForm"
+              label="Currency Short Form"
+              inputType={InputType.TEXT}
+              name="shortForm"
+              fullWidth
+              defaultValue={entityData.shortForm}
+              error={formError?.shortForm?.error}
+              helperText={formError?.shortForm?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { shortForm, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            <FormControl
+              fullWidth
+              size="small"
+              sx={{
+                marginTop: "0.9vh",
+                //  width: "46.2%"
+              }}
             >
-              <InputControl
-                autoFocus
-                id="shortForm"
-                label="Currency Short Form"
-                inputType={InputType.TEXT}
-                name="shortForm"
-                defaultValue={entityData.shortForm}
-                error={formError?.shortForm?.error}
-                helperText={formError?.shortForm?.msg}
-              />
-              <FormControl
-                fullWidth
-                size="small"
-                sx={{ marginTop: "0.9vh", width: "46.2%" }}
+              <InputLabel id="demo-simple-select-label">
+                Currency System
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="currency_system"
+                value={currencySystem}
+                label="Currency System"
+                onChange={handleSystemChange}
               >
-                <InputLabel id="demo-simple-select-label">
-                  Currency System
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="currency_system"
-                  value={currencySystem}
-                  label="Currency System"
-                  onChange={handleSystemChange}
-                >
-                  <MenuItem value="ind">Indian</MenuItem>
-                  <MenuItem value="int">International</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+                <MenuItem value="ind">Indian</MenuItem>
+                <MenuItem value="int">International</MenuItem>
+              </Select>
+            </FormControl>
+            {/* </Box> */}
             {/* <InputControl
               autoFocus
               id="placeValueSystem"
@@ -245,7 +286,10 @@ export default function CurrencyForm(props: masterFormPropsT) {
             <FormControl
               fullWidth
               size="small"
-              sx={{ marginTop: "1.3vh", width: "46.2%" }}
+              sx={{
+                marginTop: "1.3vh",
+                // width: "46.2%"
+              }}
             >
               <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
               <Select
@@ -310,6 +354,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 1,
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>

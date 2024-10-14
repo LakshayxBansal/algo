@@ -803,6 +803,7 @@ export default function AutoGrid(props: any) {
                 variant="contained"
                 size="small"
                 sx={{ textTransform: "none" }}
+                disabled={!selectedRow}
               >
                 Feed Report
               </ContainedButton>
