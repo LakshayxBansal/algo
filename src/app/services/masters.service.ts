@@ -252,7 +252,7 @@ export async function getMenuOptionsList(crmDb: string) {
  */
 export async function createCountryDb(
   session: Session,
-  statusData: zm.nameAliasDataT
+  statusData: zm.countrySchemaT
 ) {
   try {
     return excuteQuery({
@@ -469,6 +469,53 @@ export async function checkCountryIfUsed(crmDb: string, id: number) {
         "SELECT COUNT(DISTINCT cm.id) as count FROM country_master cm LEFT JOIN executive_master em ON em.country_id = cm.id LEFT JOIN contact_master nm ON nm.country_id = cm.id LEFT JOIN organisation_master om ON om.country_id = cm.id LEFT JOIN state_master sm ON sm.country_id=cm.id WHERE (em.country_id IS NOT NULL OR nm.country_id IS NOT NULL OR om.country_id IS NOT NULL OR sm.country_id IS NOT NULL) AND cm.id=?",
       values: [id],
     });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCountryListMasterDb(searchString: string) {
+  try {
+    let query = "select id as id, name as name from country_master";
+    let values: any[] = [];
+
+    if (searchString !== "") {
+      query = query + " where name like '%" + searchString + "%'";
+      values = [];
+    }
+    const result = await excuteQuery({
+      host: "userDb",
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getStateListMasterDb(
+  searchState: string,
+  country: string
+) {
+  try {
+    let query =
+      "select s.id as id, s.name as name from state_master s, country_master c where \
+        c.name = ? and \
+        c.id = s.country_id ";
+    let values: any[] = [country];
+
+    if (searchState !== "") {
+      query = query + " and s.name like '%" + searchState + "%'";
+    }
+    const result = await excuteQuery({
+      host: "userDb",
+      query: query,
+      values: values,
+    });
+
     return result;
   } catch (e) {
     console.log(e);

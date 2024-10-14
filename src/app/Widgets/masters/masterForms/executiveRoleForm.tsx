@@ -131,7 +131,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Role" : "Add Role"}
+            {entityData.id ? "Update Executive Role" : "Add Executive Role"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -156,8 +156,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="executiveRole">
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -168,19 +168,26 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Executive Role Name"
-              inputType={InputType.TEXT}
               name="name"
+              required
+              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }} 
             />
             <SelectMasterWrapper
               name={"parentrole"}
               id={"parentrole"}
               label={"Parent Executive Role"}
-              width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
               defaultValue={
@@ -205,6 +212,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>

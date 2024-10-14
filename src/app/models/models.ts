@@ -49,8 +49,20 @@ export type RenderFormFunctionT = (
   parentData?: any
 ) => JSX.Element;
 
+export type RenderUploadFormFunctionT = (
+  fnUpload: (props: any) => void,
+  setUploadDialogOpen: (props: any) => void,
+  sampleFile?: any
+) => JSX.Element;
+
+export type masterUploadFormT = {
+  fnUpload: (props: any) => void;
+  setUploadDialogOpen: (props: any) => void;
+  sampleFile?: any;
+};
 
 export type masterFormPropsT = {
+  [x: string]: any;
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;
@@ -61,8 +73,8 @@ export type masterFormPropsWithParentT = masterFormPropsT & {
 };
 
 export type masterFormPropsWithExecutive = masterFormPropsT & {
-  isExecutive?: boolean
-}
+  isExecutive?: boolean;
+};
 
 // export type masterFormPropsWithParentT = {
 //     setDialogOpen?: (props: any) => void,
@@ -83,6 +95,8 @@ export type masterFormPropsWithDataT = {
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
+export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;

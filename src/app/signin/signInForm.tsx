@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { Box, TextField, Divider, Paper, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
@@ -15,7 +15,7 @@ import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
 import styles from "../signup/SignUpForm.module.css";
-import * as zs from '../zodschema/zodschema';
+import * as zs from "../zodschema/zodschema";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -42,8 +42,10 @@ export default function AuthPage(props: authPagePropsType) {
   const contactHandler = () => {
     setEmail(!email);
     setFormError({});
+    setFormError({});
   };
   function actValidate(formData: FormData) {
+    document.body.classList.add('cursor-wait');
     let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -53,25 +55,28 @@ export default function AuthPage(props: authPagePropsType) {
     console.log(parsed);
     if (parsed.success) {
       let contact;
-        if (data.email) {
-          contact = data.email;
-          delete data.email;
-        }
-        else {
-          contact = data.phone;
-          contact = contact?.replace(/ +/g, '');
-          delete data.phone;
-        }
-        data.contact = contact;
+      if (data.email) {
+        contact = data.email;
+        delete data.email;
+      } else {
+        contact = data.phone;
+        contact = contact?.replace(/ +/g, "");
+        delete data.phone;
+      }
+      data.contact = contact;
       signIn("credentials", {
         redirect: false,
         userContact: data.contact,
         password: data.password,
       }).then((status) => {
         if (status?.ok) {
-          router.push(successCallBackUrl);
+          setTimeout(() => {
+            
+            router.push(successCallBackUrl);
+          }, 1000);
         } else {
-          const errorState: Record<string, { msg: string; error: boolean }> = {};
+          const errorState: Record<string, { msg: string; error: boolean }> =
+            {};
           errorState["form"] = { msg: "Invalid Credentials", error: true };
           setFormError(errorState);
           if (status?.error === "CredentialsSignin") {
@@ -88,6 +93,12 @@ export default function AuthPage(props: authPagePropsType) {
       setFormError(errorState);
     }
   }
+
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('cursor-wait');
+    };
+}, []);
 
   getCsrfToken()
     .then((token) => {
@@ -128,12 +139,14 @@ export default function AuthPage(props: authPagePropsType) {
             xs={0}
             sm={4.75}
             md={4.75}
-            sx={{
-              // margin: "5%",
-              // display: { xs: "none", sm: "flex" },
-              // justifyContent: "center",
-              // alignItems: "center",
-            }}
+            sx={
+              {
+                // margin: "5%",
+                // display: { xs: "none", sm: "flex" },
+                // justifyContent: "center",
+                // alignItems: "center",
+              }
+            }
           >
             <Box
               className={styles.image1}
@@ -174,7 +187,7 @@ export default function AuthPage(props: authPagePropsType) {
             <form action={actValidate} noValidate>
               {formError?.form?.error && (
                 <p style={{ color: "red" }}>{formError?.form.msg}</p>
-              )}
+              )} 
               <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
               <Grid item xs={12} sm={12} md={12}>
@@ -188,7 +201,7 @@ export default function AuthPage(props: authPagePropsType) {
                     id="usercontact"
                     label="Email Address"
                     name="email"
-                    onKeyDown={()=>{
+                    onKeyDown={() => {
                       setFormError((curr) => {
                         const { email,form, ...rest} = curr;
                         return rest;
@@ -227,7 +240,7 @@ export default function AuthPage(props: authPagePropsType) {
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
-                    onKeyDown={()=>{
+                    onKeyDown={() => {
                       setFormError((curr) => {
                         const { phone,form, ...rest} = curr;
                         return rest;
@@ -292,7 +305,7 @@ export default function AuthPage(props: authPagePropsType) {
                     id="password"
                     error={formError?.password?.error}
                     helperText={formError?.password?.msg}
-                    onKeyDown={()=>{
+                    onKeyDown={() => {
                       setFormError((curr) => {
                         const { password,form, ...rest} = curr;
                         return rest;

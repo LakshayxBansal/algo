@@ -1,0 +1,2174 @@
+
+> mynextapp@0.1.0 build
+> next build
+
+   ▲ Next.js 14.1.0
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/Widgets/AutocompleteDB.tsx
+82:6  Warning: React Hook useEffect has missing dependencies: 'props', 'selectDefault', and 'valueChange'. Either include them or remove the dependency array. However, 'props' will change when *any* prop changes, so the preferred fix is to destructure the 'props' object outside of the useEffect call and refer to those specific props inside useEffect.  react-hooks/exhaustive-deps
+
+./src/app/Widgets/masters/EntityList.tsx
+113:6  Warning: React Hook useEffect has a missing dependency: 'props'. Either include it or remove the dependency array. However, 'props' will change when *any* prop changes, so the preferred fix is to destructure the 'props' object outside of the useEffect call and refer to those specific props inside useEffect.  react-hooks/exhaustive-deps
+
+./src/app/cap/callexplorer/AutoGrid.tsx
+79:6  Warning: React Hook useEffect has missing dependencies: 'pageModel.page' and 'pageModel.pageSize'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+91:6  Warning: React Hook useEffect has a missing dependency: 'handleRefresh'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/cap/navbar/Footer.tsx
+11:5  Warning: React Hook useEffect contains a call to 'setStatusObject'. Without a list of dependencies, this can lead to an infinite chain of updates. To fix this, pass [] as a second argument to the useEffect Hook.  react-hooks/exhaustive-deps
+
+./src/app/cap/navbar/leftmenutree.tsx
+77:6  Warning: React Hook useEffect has missing dependencies: 'ShowMenu', 'open', and 'pages'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+----------------- Map length--------:  0
+----------------- Map length--------:  0
+----------------- Map length--------:  0
+----------------- Map length--------:  0
+----------------- Map length--------:  0
+----------------- Map length--------:  0
+----------------- Map length--------:  0
+   Generating static pages (0/43) ...
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at b (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/enquirySupportConfig/page.js:1:48570)
+    at f (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/enquirySupportConfig/page.js:1:47568)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at b (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/enquirySupportConfig/page.js:1:48570)
+    at f (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/enquirySupportConfig/page.js:1:47568)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/companyuser/page.js:1:11951)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/companyuser/page.js:1:11951)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+   Generating static pages (10/43) 
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at c (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/adduser/page.js:1:7288)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at c (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/adduser/page.js:1:7288)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+   Generating static pages (21/43) 
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at b (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/callexplorer/page.js:1:62393)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at b (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/callexplorer/page.js:1:62393)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/rights/page.js:1:40542)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/rights/page.js:1:40542)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+    at listOnTimeout (node:internal/timers:540:9)
+    at process.processTimers (node:internal/timers:514:7) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/app/_not-found.js:1:3765)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at P (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/profile/page.js:1:13404)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at P (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/admin/profile/page.js:1:13404)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at p (/home/dinesh/workspace/node/mynextapp/.next/server/app/company/page.js:1:29090)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at p (/home/dinesh/workspace/node/mynextapp/.next/server/app/company/page.js:1:29090)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (32/43) 
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/enquiry/page.js:1:53646)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/app/cap/enquiry/page.js:1:53646)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at C (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5409.js:1:36950)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at C (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5409.js:1:36950)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+************************************************************signin called
+************************************************************signin called
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at C (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5409.js:1:36950)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at C (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5409.js:1:36950)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/7415.js:1:9016)
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:23818)
+    at a (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5724.js:46:19043)
+    at E (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/5681.js:1:93897)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14081)
+    at em (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:131226)
+    at /home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142926
+    at Array.toJSON (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:146504)
+    at stringify (<anonymous>)
+    at eR (/home/dinesh/workspace/node/mynextapp/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134889) {
+  description: "Page couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error: NEXT_REDIRECT
+    at u (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78484)
+    at s (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/2783.js:1:78699)
+    at y (/home/dinesh/workspace/node/mynextapp/.next/server/chunks/9866.js:1:14492) {
+  digest: 'NEXT_REDIRECT;replace;/signin;307;',
+  mutableCookies: f {
+    _parsed: Map(0) {},
+    _headers: HeadersList {
+      cookies: null,
+      [Symbol(headers map)]: Map(0) {},
+      [Symbol(headers map sorted)]: null
+    }
+  }
+}
+************************************************************signin called
+************************************************************signin called
+ ✓ Generating static pages (43/43) 
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                  Size     First Load JS
+┌ ○ /                                        191 B           314 kB
+├ ○ /_not-found                              891 B          85.3 kB
+├ λ /api/auth/[...nextauth]                  0 B                0 B
+├ λ /api/controller/company/[[...action]]    0 B                0 B
+├ λ /api/controller/dashboard/[[...action]]  0 B                0 B
+├ λ /api/controller/user/[[...action]]       0 B                0 B
+├ λ /api/notifications                       0 B                0 B
+├ λ /cap                                     904 B           336 kB
+├ λ /cap/admin/adduser                       1.46 kB         295 kB
+├ λ /cap/admin/companyuser                   3.57 kB         409 kB
+├ λ /cap/admin/custominquiry                 694 B           106 kB
+├ λ /cap/admin/enquirySupportConfig          5.6 kB          297 kB
+├ λ /cap/admin/lists/actionList              2.43 kB         408 kB
+├ λ /cap/admin/lists/allocationTypeList      2.3 kB          407 kB
+├ λ /cap/admin/lists/areaList                2.27 kB         407 kB
+├ λ /cap/admin/lists/categoryList            2.38 kB         408 kB
+├ λ /cap/admin/lists/contactGroupList        4.02 kB         409 kB
+├ λ /cap/admin/lists/contactList             1.75 kB         417 kB
+├ λ /cap/admin/lists/countryList             2.66 kB         408 kB
+├ λ /cap/admin/lists/currencyList            531 B           408 kB
+├ λ /cap/admin/lists/departmentList          2.35 kB         408 kB
+├ λ /cap/admin/lists/executiveDeptList       2.35 kB         408 kB
+├ λ /cap/admin/lists/executiveGroupList      3.87 kB         409 kB
+├ λ /cap/admin/lists/executiveList           563 B           416 kB
+├ λ /cap/admin/lists/executiveRoleList       3.97 kB         409 kB
+├ λ /cap/admin/lists/hideNav                 937 B           140 kB
+├ λ /cap/admin/lists/itemGroupList           517 B           409 kB
+├ λ /cap/admin/lists/itemList                2.81 kB         412 kB
+├ λ /cap/admin/lists/organisationList        4.16 kB         411 kB
+├ λ /cap/admin/lists/sourceList              2.36 kB         408 kB
+├ λ /cap/admin/lists/stateList               4.54 kB         410 kB
+├ λ /cap/admin/lists/subStatusList           2.47 kB         410 kB
+├ λ /cap/admin/lists/unitList                2.49 kB         408 kB
+├ λ /cap/admin/profile                       948 B           309 kB
+├ λ /cap/admin/rights                        4.12 kB         159 kB
+├ λ /cap/callexplorer                        9.98 kB         409 kB
+├ λ /cap/dashboard                           904 B           336 kB
+├ λ /cap/enquiry                             9.07 kB         338 kB
+├ λ /company                                 3.13 kB         422 kB
+├ ○ /congrats                                6.73 kB         119 kB
+├ λ /controllers                             0 B                0 B
+├ ○ /currency                                1.39 kB         287 kB
+├ ○ /signin                                  194 B           314 kB
+└ ○ /signup                                  3.34 kB         305 kB
++ First Load JS shared by all                84.4 kB
+  ├ chunks/8069-163a5e0cfc4e2461.js          29.1 kB
+  ├ chunks/fd9d1056-2e93c21b62e53d3e.js      53.4 kB
+  └ other shared chunks (total)              1.96 kB
+
+
+ƒ Middleware                                 75.2 kB
+
+○  (Static)   prerendered as static content
+λ  (Dynamic)  server-rendered on demand using Node.js
+

@@ -7,7 +7,8 @@ import {
   DeleteContactList,
   getContactByPageDb,
   getContCount,
-  updateContactDB,delContactByIdDB
+  updateContactDB,
+  delContactByIdDB,
 } from "../services/contact.service";
 import { getSession } from "../services/session.service";
 import {
@@ -17,7 +18,85 @@ import {
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import { modifyPhone } from "../utils/phoneUtils";
-import * as mdl from "../models/models";
+import { convertData } from "../utils/validateType.utils";
+
+export async function createContactsBatch(data: any) {
+  const errorMap = new Map();
+
+  try {
+    if (!Array.isArray(data) || data.length === 0) {
+      return {
+        status: false,
+        data: { error: "Input data is empty or not an array." },
+      };
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      const contact = data[i];
+      if (contact === null || contact === undefined) {
+        errorMap.set(contact, {
+          message: "Contact data is null or undefined.",
+        });
+      } else {
+        // const adjustedContact = await convertData(contactSchema<T>, contact);
+        const adjustedContact = await convertData<contactSchemaT>(
+          contactSchema,
+          contact
+        );
+
+        if (
+          adjustedContact.status === 0 &&
+          adjustedContact.validateErrors?.validateErrorStatus != 0
+        ) {
+          const errorDetails = adjustedContact.extractedErrors?.map(
+            (error: any) => {
+              if (error !== undefined) {
+                return {
+                  path: error.path[0],
+                  message: error.path[0] + " field is missing!",
+                };
+              }
+            }
+          );
+
+          errorMap.set(contact, errorDetails);
+        } else if (adjustedContact.validateErrors?.validateErrorStatus == 0) {
+          const errorDetails = adjustedContact.validateErrors.errors.map(
+            (err) => {
+              const result = { message: err };
+              return result;
+            }
+          );
+          errorMap.set(contact, errorDetails);
+        } else {
+          const result = await createContact(adjustedContact.adjustedData);
+
+          if (!result.status) {
+            const errorDetails = result.data.map(
+              (error: { path: string; message: string }) => ({
+                path: error.path,
+                message: error.message,
+              })
+            );
+
+            errorMap.set(contact, errorDetails);
+          }
+        }
+      }
+    }
+
+    return {
+      status: errorMap.size === 0 ? true : false,
+      data: errorMap,
+    };
+  } catch (e) {
+    console.log("Error in batch processing:", e);
+    return {
+      status: false,
+      data: errorMap,
+    };
+  }
+}
 
 export async function createContact(data: contactSchemaT) {
   let result;
@@ -173,7 +252,7 @@ export async function DeleteContact(id: number) {
 
     if (session?.user.dbInfo) {
       const result = await DeleteContactList(session.user.dbInfo.dbName, id);
-      
+
       if ((result.affectedRows = 1)) {
         errorResult = { status: true, error: {} };
       } else if ((result.affectedRows = 0)) {
@@ -183,9 +262,9 @@ export async function DeleteContact(id: number) {
         };
       }
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
-    errorResult= { status: false, error: error };
+    errorResult = { status: false, error: error };
   }
   return errorResult;
 }
@@ -224,7 +303,6 @@ export async function getContactByPage(
       };
     }
   } catch (e: any) {
-
     let err = "Contact Admin, E-Code:369";
 
     getContactByPage = {
@@ -246,16 +324,16 @@ export async function delContactById(id: number) {
 
       if ((result.affectedRows = 1)) {
         errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
+      } else if ((result.affectedRows = 0)) {
         errorResult = {
           ...errorResult,
           error: "Record Not Found",
         };
       }
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
-    errorResult= { status: false, error: error };
+    errorResult = { status: false, error: error };
   }
   return errorResult;
 }

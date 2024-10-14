@@ -33,11 +33,11 @@ export enum InputType {
   EMAIL,
   PHONE,
 }
-// Define the mandatory props for the base control
+// Define the additional props for the base control
 interface BaseControlProps {
   inputType: InputType;
   custLabel?: string;
-  // Add any mandatory props here
+  // Add any additional props here
 }
 
 // (TextFieldProps | CheckboxProps | DatePickerProps<Dayjs>  )
@@ -45,12 +45,12 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, custLabel="", ...props }) => {
-  const [ifEmail, setIfEmail] = useState({status: true, msg: ""});
+export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", ...props }) => {
+  const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
   const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
 
-  function onChange(event: React.ChangeEvent<HTMLInputElement>){
-    switch (inputType){
+  function onChange(event: React.ChangeEvent<HTMLInputElement>) {
+    switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
         if (inputProps.onChange) {
@@ -101,7 +101,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({inputType, cust
     }
   }
 
-  function onPhoneChange(newValue : any, details: any) {
+  function onPhoneChange(newValue: any, details: any) {
     setValue(newValue);
     if (props.onChange) {
       props.onChange(newValue);

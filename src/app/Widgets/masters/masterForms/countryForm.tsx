@@ -23,12 +23,12 @@ export default function CountryForm(props: masterFormPropsT) {
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
-      alias: formData.get("alias") as string,
+      alias: formData.get("alias"),
     };
-    const result = await persistEntity(data);
+    const result = await persistEntity(data as countrySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
     } else {
@@ -80,7 +80,7 @@ export default function CountryForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify Country" : "Add Country"}
+            {props.data ? "Update Country" : "Add Country"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -105,7 +105,7 @@ export default function CountryForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -116,28 +116,44 @@ export default function CountryForm(props: masterFormPropsT) {
         >
           <InputControl
             autoFocus
+            inputType={InputType.TEXT}
             id="name"
             label="Country Name"
-            inputType={InputType.TEXT}
-            defaultValue={entityData.name}
             name="name"
+            required
+            fullWidth
+            defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }} 
           />
           <InputControl
+            inputType={InputType.TEXT}
             id="alias"
             label="Alias"
-            inputType={InputType.TEXT}
-            defaultValue={entityData.alias}
             name="alias"
+            fullWidth
+            defaultValue={entityData.alias}
             error={formError?.alias?.error}
             helperText={formError?.alias?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { alias, ...rest } = curr;
+                return rest;
+              });
+            }} 
           />
         </Box>
         <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            mt:2
           }}
         >
           <Button onClick={handleCancel}>Cancel</Button>
