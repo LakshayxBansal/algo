@@ -37,8 +37,7 @@ export default function RootLayout({
   }, [pathname]);
 
   return (
-    <html lang="en">
-      
+    <html lang="en"> 
       <body>
         {children}
         </body>
