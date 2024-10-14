@@ -1,3 +1,5 @@
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
+
 export default function CustomField(props: {
 
     id: number,
@@ -21,6 +23,23 @@ export default function CustomField(props: {
 }) {
     return
     if (props.column_type_id == 1)
-        <>
-        </>
+        <InputControl
+            id={props.column_name_id}
+            label={props.column_label}
+            inputType={InputType.TEXT}
+            name={props.column_name}
+            fullWidth
+            required={props.is_mandatory}
+        >
+        </InputControl>
+    else if (props.column_type_id == 4)
+        <InputControl
+            id={props.column_name_id}
+            label={props.column_label}
+            inputType={InputType.DATEINPUT}
+            name={props.column_name}
+            fullWidth
+            required={props.is_mandatory}
+        >
+        </InputControl>
 }
