@@ -10,7 +10,6 @@ export default async function MyForm() {
   try {
     const session = await getSession();
     let desc = await getScreenDescription(26);
-    console.log(desc);
 
 
     if (session) {

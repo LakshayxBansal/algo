@@ -54,6 +54,7 @@ import {
 } from "@/app/zodschema/zodschema";
 import { any, ZodIssue } from "zod";
 import { selectKeyValueT } from "@/app/models/models";
+import CustomField from "./CustomFields";
 
 const strA = "custom_script.js";
 const scrA = require("./" + strA);
@@ -76,6 +77,9 @@ export default function InputForm(props: { baseData: IformData, desc: any }) {
   let result;
   let issues;
 
+  const CustomFields = props.desc.filter((item: any) => item.is_default_column === 0);
+
+
   const fieldPropertiesById = (id: string) => {
     const field = desc.find((item: any) => item.column_name_id === id);
     if (field) {
@@ -87,10 +91,7 @@ export default function InputForm(props: { baseData: IformData, desc: any }) {
     return { label: '', required: false }; // Default if no match is found
   };
 
-  const getLabelById = (id: string) => {
-    const field = desc.find((item: any) => item.column_name_id === id);
-    return field ? field.column_label : '';
-  };
+
 
   const handleSubmit = async (formData: FormData) => {
     let dt = new Date(formData.get("date") as string);
@@ -250,6 +251,13 @@ export default function InputForm(props: { baseData: IformData, desc: any }) {
                 />
               )}
             />
+
+            {CustomFields.map((field: any) => (
+              <CustomField
+                desc={field}
+              />
+            ))}
+
           </Box>
           <Box
             sx={{
