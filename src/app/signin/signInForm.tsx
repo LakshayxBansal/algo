@@ -187,7 +187,7 @@ export default function AuthPage(props: authPagePropsType) {
             <form action={actValidate} noValidate>
               {formError?.form?.error && (
                 <p style={{ color: "red" }}>{formError?.form.msg}</p>
-              )} */}
+              )} 
               <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
               <Grid item xs={12} sm={12} md={12}>

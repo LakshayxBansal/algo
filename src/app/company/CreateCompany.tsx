@@ -166,6 +166,9 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              FormHelperTextProps={{
+                sx: { backgroundColor: "white", margin: 0 },
+              }}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -340,7 +343,9 @@ export default function CreateCompany(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

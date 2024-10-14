@@ -40,8 +40,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
 import { StyledMenu } from "../../utils/styledComponents";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
-import UploadFileForm from "./UploadFileForm";
+import { any } from "zod";
+import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import HomeIcon from "@mui/icons-material/Home";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
@@ -80,7 +82,7 @@ type ModifyT = {
   fnDeleteDataByID?: (id: number) => Promise<any>;
   customCols: GridColDef[];
   AddAllowed: boolean;
-  height?: string;
+  height?:string;
 };
 
 const pgSize = 10;
@@ -92,8 +94,7 @@ enum dialogMode {
   FileUpload
 }
 
-export default function EntityList(props: EntityListPropsT) {
-  // const [uploadDialogOpen, setUploadDialogOpen] = useState<boolean>(false);
+export default function EntityList(props: ModifyT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [data, setData] = useState([]);
   const [NRows, setNRows] = useState<number>(0);
@@ -108,10 +109,10 @@ export default function EntityList(props: EntityListPropsT) {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLDivElement>(null);
-  const [deleteMsg, setDeleteMsg] = useState<string>();
+  const [deleteMsg,setDeleteMsg] = useState<string>();
 
   const searchParams = useSearchParams();
-  const searchData: string | null = searchParams.get("searchText");
+  const searchData:string | null = searchParams.get("searchText")
 
   let searchText;
   useEffect(() => {
@@ -124,10 +125,10 @@ export default function EntityList(props: EntityListPropsT) {
       setData(rows.data);
       setNRows(rows.count as number);
     }, 400);
-
-    if (searchData) {
+      
+    if(searchData){
       fetchData(searchData);
-    } else {
+    }else{
       fetchData(search);
     }
   }, [
@@ -174,7 +175,6 @@ export default function EntityList(props: EntityListPropsT) {
         dialogOpen ? setDialogOpen(false) : null;
         setSnackOpen(false);
       }, 1000);
-      // setIds(0);
     }
   }
 
@@ -315,48 +315,6 @@ export default function EntityList(props: EntityListPropsT) {
     id: number;
   };
 
-  const DeleteComponent = () => {
-    return (
-      <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
-        <form>
-          <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
-            Are you sure you want to delete?
-          </Typography>
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="flex-end"
-            m={1}
-          >
-            <Button
-              style={{ paddingRight: "20px" }}
-              onClick={() => {
-                setDialogOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                onDeleteDialog(ids);
-              }}
-              variant="contained"
-            >
-              Delete
-            </Button>
-          </Box>
-        </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message={"Record Deleted Successfully"}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
-      </Box>
-    );
-  };
-
   function IconComponent(props: iconT) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -415,6 +373,7 @@ export default function EntityList(props: EntityListPropsT) {
     return snakeCaseRegex.test(str);
   }
 
+
   const columns2: GridColDef[] = [];
   let columnHeading = {
     field: "",
@@ -441,7 +400,7 @@ export default function EntityList(props: EntityListPropsT) {
             keyToUse = key.replace(/_/g, " ");
             KeyToU = keyToUse.charAt(0).toUpperCase();
             KeyToU = KeyToU + keyToUse.slice(1);
-            KeyToU = KeyToU.toLowerCase() // Ensure the string is in lowercase before capitalizing
+            KeyToU = KeyToU.toLowerCase() 
               .replace(/\b\w/g, (char) => char.toUpperCase());
           } else {
             continue;
@@ -463,6 +422,7 @@ export default function EntityList(props: EntityListPropsT) {
   }
 
   pushColumns(data[0]);
+
   return (
     // backgroundColor: "#fceff3",
     <Box>
@@ -542,12 +502,12 @@ export default function EntityList(props: EntityListPropsT) {
                     ref={anchorRef}
                     aria-label="Button group with a nested menu"
                     sx={{
-                      "& .MuiButtonGroup-grouped": {
-                        borderColor: "#fff", // Change the separator color
+                      '& .MuiButtonGroup-grouped': {
+                        borderColor: '#fff', // Change the separator color
                       },
-                      "& .MuiButtonGroup-grouped:not(:last-of-type)": {
-                        borderRightColor: "#fff", // Change the color of the separator
-                      },
+                      '& .MuiButtonGroup-grouped:not(:last-of-type)': {
+                        borderRightColor: '#fff', // Change the color of the separator
+                      }
                     }}
                   >
                     <Tooltip title="Add New">
@@ -598,20 +558,6 @@ export default function EntityList(props: EntityListPropsT) {
                         }}
                       >
                         <Paper>
-                          <Button
-                            onClick={() => {
-                              setDialogOpen(true);
-                              setDlgMode(dialogMode.FileUpload);
-                            }}
-                          >
-                            <AddIcon
-                              fontSize="small"
-                              style={{ marginRight: "5px" }}
-                            />
-                            Upload File
-                          </Button>
-                        </Paper>
-                        {/* <Paper>
                           <ClickAwayListener
                             onClickAway={handleCloseButtonMenu}
                           >
@@ -643,7 +589,7 @@ export default function EntityList(props: EntityListPropsT) {
                               </Button>
                             </Tooltip>
                           </ClickAwayListener>
-                        </Paper> */}
+                        </Paper>
                       </Grow>
                     )}
                   </Popper>
@@ -722,7 +668,7 @@ export default function EntityList(props: EntityListPropsT) {
             disableRowSelectionOnClick
             // checkboxSelection
             // autoHeight
-            sx={{ maxHeight: props.height }}
+            sx={{maxHeight:props.height}}
           />
         </Paper>
       </Box>
