@@ -163,6 +163,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               FormHelperTextProps={{
                 sx: { backgroundColor: "white", margin: 0 },
               }}
+              sx={{ height: "fit-content" }}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -179,6 +180,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
               defaultValue={entityData.alias}
+              sx={{ height: "fit-content" }}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { alias, ...rest } = curr;
@@ -238,19 +240,19 @@ export default function CreateCompany(props: masterFormPropsT) {
               diaglogVal={
                 entityData.country
                   ? ({
-                      id: entityData.country_id,
-                      name: entityData.country,
-                    } as optionsDataT)
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT)
                   : {
-                      id: selectValues.country?.id,
-                      name: selectValues.country?.name ?? "",
-                      detail: undefined,
-                    }
+                    id: selectValues.country?.id,
+                    name: selectValues.country?.name ?? "",
+                    detail: undefined,
+                  }
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
             <AutocompleteDB
               name={"state"}
@@ -268,19 +270,19 @@ export default function CreateCompany(props: masterFormPropsT) {
               diaglogVal={
                 entityData.state
                   ? ({
-                      id: entityData.state_id,
-                      name: entityData.state,
-                    } as optionsDataT)
+                    id: entityData.state_id,
+                    name: entityData.state,
+                  } as optionsDataT)
                   : {
-                      id: selectValues.state?.id,
-                      name: selectValues.state?.name ?? "",
-                      detail: undefined,
-                    }
+                    id: selectValues.state?.id,
+                    name: selectValues.state?.name ?? "",
+                    detail: undefined,
+                  }
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
 
             <InputControl
