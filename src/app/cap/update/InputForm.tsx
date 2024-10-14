@@ -74,32 +74,17 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import AddItemToListForm from "./addItemToListForm";
+import AddItemToListForm from "../enquiry/addItemToListForm";
 
-const strA = "custom_script.js";
-const scrA = require("./" + strA);
-//import {makeInputReadOnly} from './custom_script';
-
-/*
-const My_COMPONENTS = {
-  ComponentA: require(strA),
-  ComponentB: require('./folder/ComponentB'),
-}
-*/
 export interface IformData {
   userName: string;
 }
 
-const formConfig = {
-  showItems: false,
-};
-
 type ModifiedRowT = {
   id?: number;
-  enquiry_id?: number;
   item?: string;
   item_id?: number;
-  quantity?: string;
+  quantity?: number;
   unit?: string;
   unit_id?: number;
   remarks?: string;
@@ -164,6 +149,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
+
   let result;
   let issues;
 
@@ -228,13 +214,10 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       active: 1,
     };
 
-    let itemData = {};
-
     const headerParsed = enquiryHeaderSchema.safeParse(headerData);
     const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
-      //const itemData = data.map(({ item, unit , ...rest }) => rest);
       result = await createEnquiry({
         head: headerData,
         ledger: ledgerData,
@@ -266,13 +249,6 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       }
       setFormError(errorState);
     }
-  };
-
-  const handleButtonClick = async () => {
-    scrA.makeInputReadOnly("ticket_description");
-
-    // Append the script element to the head
-    //document.head.appendChild(script);
   };
 
   async function getSubStatusforStatus(stateStr: string) {
@@ -582,7 +558,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       <form action={handleSubmit} style={{ padding: "1em" }}>
         <Grid container>
           <Grid item xs={12}>
-            <Seperator>Enquiry Details</Seperator>
+            <Seperator>Enquiry Details Update</Seperator>
           </Grid>
           <Grid item xs={12}>
             <Box
@@ -717,7 +693,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
                   <Box
                     sx={{
-                      height: 300,
+                      height: 350,
                     }}
                   >
                     <DataGrid
@@ -744,27 +720,42 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 item
                 xs={12}
                 md={enquiryMaintainItems ? 6 : 12}
-                sx={{ display: "flex", flexDirection: "column" }}
+                sx={{
+                  display: "flex",
+                  flexDirection: enquiryMaintainItems ? "column" : "row",
+                  columnGap: 3,
+                }}
               >
-                <Grid item xs={12} md={12}>
+                <Grid item xs={12} md={enquiryMaintainItems ? 12 : 6}>
+                  <TextField
+                    placeholder="Action Taken Remarks"
+                    label="Action Taken Remarks"
+                    multiline
+                    name="action_taken_remark"
+                    id="action_taken_remark"
+                    rows={enquiryMaintainItems ? 4 : 6}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} md={enquiryMaintainItems ? 12 : 6}>
                   <TextField
                     placeholder="Call receipt remarks"
                     label="Call receipt remarks"
                     multiline
                     name="call_receipt_remark"
                     id="call_receipt_remark"
-                    rows={6}
+                    rows={enquiryMaintainItems ? 4 : 6}
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={12} md={enquiryMaintainItems ? 12 : 6}>
                   <TextField
                     placeholder="Suggested Action Remarks"
                     label="Suggested Action Remarks"
                     multiline
                     name="suggested_action_remark"
                     id="suggested_action_remark"
-                    rows={6}
+                    rows={enquiryMaintainItems ? 4 : 6}
                     fullWidth
                   />
                 </Grid>
@@ -869,25 +860,23 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 name="next_action_date"
                 defaultValue={dayjs(new Date())}
               />
-              <Grid item xs={12} md={12}>
-                <Grid item xs={6} md={12}>
-                  <TextField
-                    placeholder="Closure remarks"
-                    label="Closure remarks"
-                    multiline
-                    name="closure_remark"
-                    id="closure_remark"
-                    rows={2}
-                    fullWidth
-                    disabled={status === "1"}
-                  />
-                </Grid>
-              </Grid>
+
+              <TextField
+                placeholder="Closure remarks"
+                label="Closure remarks"
+                multiline
+                name="closure_remark"
+                id="closure_remark"
+                rows={2}
+                fullWidth
+                disabled={status === "1"}
+              />
             </Box>
           </Grid>
           <Grid item xs={12}>
             <Seperator></Seperator>
           </Grid>
+
           <Grid container>
             <Grid item xs={12} md={12}>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

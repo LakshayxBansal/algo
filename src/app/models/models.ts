@@ -51,6 +51,7 @@ export type RenderFormFunctionT = (
 
 
 export type masterFormPropsT = {
+  [x: string]: any;
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;
@@ -83,6 +84,8 @@ export type masterFormPropsWithDataT = {
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
+export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
