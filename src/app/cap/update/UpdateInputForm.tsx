@@ -138,7 +138,7 @@ const rows: any = [
   // },
 ];
 
-export default function InputForm(props: { baseData: IformData; config: any }) {
+export default function UpdateInputForm(props: { baseData: IformData; config: any }) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [formError, setFormError] = useState<
@@ -462,6 +462,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
         if (editMode === params.row.id) {
           return [
             <GridActionsCellItem
+              key={params.row.id}
               icon={<SaveIcon />}
               label="Save"
               sx={{
@@ -470,6 +471,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
               onClick={handleSaveClick}
             />,
             <GridActionsCellItem
+              key={params.row.id}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
@@ -481,6 +483,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
 
         return [
           <GridActionsCellItem
+            key={params.row.id}
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
@@ -488,6 +491,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
             color="inherit"
           />,
           <GridActionsCellItem
+            key={params.row.id}
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(params.row.id)}
@@ -578,6 +582,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 required
                 error={formError?.enq_number?.error}
                 helperText={formError?.enq_number?.msg}
+                disabled
               />
               <InputControl
                 label="Received on "
@@ -588,6 +593,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 required
                 error={formError?.date?.error}
                 helperText={formError?.date?.msg}
+                disabled
               />
               <SelectMasterWrapper
                 name={"contact"}
@@ -606,6 +612,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                     data={data}
                   />
                 )}
+                disable
               />
             </Box>
             <Box
@@ -639,6 +646,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       data={data}
                     />
                   )}
+                  disable
                 />
                 <SelectMasterWrapper
                   name={"source"}
@@ -657,6 +665,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       data={data}
                     />
                   )}
+                  disable
                 />
               </Box>
               <Box
@@ -684,11 +693,12 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       data={data}
                     />
                   )}
+                  disable
                 />
               </Box>
             </Box>
 
-            <Grid container spacing={2}>
+            <Grid container spacing={2}> 
               {enquiryMaintainItems && (
                 <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
                   <Box
@@ -746,6 +756,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                     id="call_receipt_remark"
                     rows={enquiryMaintainItems ? 4 : 6}
                     fullWidth
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} md={enquiryMaintainItems ? 12 : 6}>
@@ -757,6 +768,14 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                     id="suggested_action_remark"
                     rows={enquiryMaintainItems ? 4 : 6}
                     fullWidth
+                    disabled
+                    InputProps={{
+                      style: { 
+                        overflow: 'auto',
+                        pointerEvents: 'auto' // Allows scrolling
+                      },
+                      readOnly: true // Makes the field read-only instead of fully disabled
+                    }}
                   />
                 </Grid>
               </Grid>

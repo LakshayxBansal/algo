@@ -63,7 +63,7 @@ export async function createEnquirySubStatusDb(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query: "call createEnquirySubStatusDb(?,?,?)",
-      values: [sourceData.name, sourceData.status_id, session.user.userId],
+      values: [sourceData.name, sourceData.enquiry_status_id, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -81,6 +81,23 @@ export async function updateEnquirySubStatusDb(
       query: "call UpdateEnquirySubStatus(?,?,?);",
 
       values: [statusData.id, statusData.name, session.user.userId],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateEnquirySubStatusListDb(
+  session: Session,
+  statusData: zm.enquirySubStatusMasterT
+) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call UpdateEnquirySubStatusList(?,?,?,?);",
+
+      values: [statusData.id, statusData.name, statusData.enquiry_status_id, session.user.userId],
     });
   } catch (e) {
     console.log(e);

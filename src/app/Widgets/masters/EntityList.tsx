@@ -393,7 +393,7 @@ export default function EntityList(props: ModifyT) {
             keyToUse = key.replace(/_/g, " ");
             KeyToU = keyToUse.charAt(0).toUpperCase();
             KeyToU = KeyToU + keyToUse.slice(1);
-            KeyToU = KeyToU.toLowerCase() // Ensure the string is in lowercase before capitalizing
+            KeyToU = KeyToU.toLowerCase() 
               .replace(/\b\w/g, (char) => char.toUpperCase());
           } else {
             continue;

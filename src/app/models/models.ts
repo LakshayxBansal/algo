@@ -49,6 +49,17 @@ export type RenderFormFunctionT = (
   parentData?: any
 ) => JSX.Element;
 
+export type RenderUploadFormFunctionT = (
+  fnUpload: (props: any) => void,
+  setUploadDialogOpen: (props: any) => void,
+  sampleFile?: any
+) => JSX.Element;
+
+export type masterUploadFormT = {
+  fnUpload: (props: any) => void;
+  setUploadDialogOpen: (props: any) => void;
+  sampleFile?: any;
+};
 
 export type masterFormPropsT = {
   [x: string]: any;
@@ -62,8 +73,8 @@ export type masterFormPropsWithParentT = masterFormPropsT & {
 };
 
 export type masterFormPropsWithExecutive = masterFormPropsT & {
-  isExecutive?: boolean
-}
+  isExecutive?: boolean;
+};
 
 // export type masterFormPropsWithParentT = {
 //     setDialogOpen?: (props: any) => void,

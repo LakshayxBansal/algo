@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
@@ -19,10 +19,15 @@ import Seperator from "../Widgets/seperator";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../Widgets/masters/selectMasterWrapper";
-import { getCountries, getStates } from "../controllers/masters.controller";
+import {
+  getCountriesMaster,
+  getStates,
+  getStatesMaster,
+} from "../controllers/masters.controller";
 import StateForm from "../Widgets/masters/masterForms/stateForm";
 import CountryForm from "../Widgets/masters/masterForms/countryForm";
 import { Collapse, IconButton } from "@mui/material";
+import AutocompleteDB from "../Widgets/AutocompleteDB";
 
 export default function CreateCompany(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -91,12 +96,30 @@ export default function CreateCompany(props: masterFormPropsT) {
     setFormError((curr) => {
       // remove form key from object
       const { form, ...rest } = curr;
+
       return rest;
     });
   };
   return (
-    <Paper>
-      <Seperator>{entityData.id ? "Update Company" : "Add Company"}</Seperator>
+    <Paper elevation={3} sx={{ mt: 2, mb: 1.5, p: 2 }} square={false}>
+      <Box
+        sx={{
+          position: "sticky",
+          top: "0px",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {entityData.id ? "Update Company" : "Add Company"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -115,12 +138,13 @@ export default function CreateCompany(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
+      <Box sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
+              rowGap: 1,
               gridTemplateColumns: "repeat(2, 1fr)",
               paddingBottom: "10px",
             }}
@@ -132,21 +156,35 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="Name"
               name="name"
               required
+              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
-              size="small"
+              FormHelperTextProps={{
+                sx: { backgroundColor: "white", margin: 0 },
+              }}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               id="alias"
               label="Alias"
               name="alias"
-              required
+              fullWidth
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
               defaultValue={entityData.alias}
-              size="small"
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { alias, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
@@ -162,23 +200,87 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="Address Line 1"
               name="add1"
               id="add1"
-              required
+              fullWidth
               error={formError?.add1?.error}
               helperText={formError?.add1?.msg}
-              fullWidth
               defaultValue={entityData.add1}
-              size="small"
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { add1, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               label="Address Line 2"
               name="add2"
               id="add2"
+              fullWidth
               error={formError?.add2?.error}
               helperText={formError?.add2?.msg}
-              fullWidth
               defaultValue={entityData.add2}
-              size="small"
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { add2, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            <AutocompleteDB
+              name={"country"}
+              id={"country"}
+              label={"Country"}
+              onChange={(e, val, s) => {
+                setSelectValues({ country: val, state: null });
+              }}
+              fetchDataFn={getCountriesMaster}
+              diaglogVal={
+                entityData.country
+                  ? ({
+                      id: entityData.country_id,
+                      name: entityData.country,
+                    } as optionsDataT)
+                  : {
+                      id: selectValues.country?.id,
+                      name: selectValues.country?.name ?? "",
+                      detail: undefined,
+                    }
+              }
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
+            />
+            <AutocompleteDB
+              name={"state"}
+              id={"state"}
+              label={"State"}
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, state: val })
+              }
+              fetchDataFn={(stateStr: string) =>
+                getStatesMaster(stateStr, selectValues.country?.name)
+              }
+              disable={
+                selectValues.country || entityData.country ? false : true
+              }
+              diaglogVal={
+                entityData.state
+                  ? ({
+                      id: entityData.state_id,
+                      name: entityData.state,
+                    } as optionsDataT)
+                  : {
+                      id: selectValues.state?.id,
+                      name: selectValues.state?.name ?? "",
+                      detail: undefined,
+                    }
+              }
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
 
             <InputControl
@@ -186,87 +288,49 @@ export default function CreateCompany(props: masterFormPropsT) {
               name="city"
               id="city"
               label="City"
+              fullWidth
               error={formError?.city?.error}
               helperText={formError?.city?.msg}
               defaultValue={entityData.city}
-              size="small"
-            />
-            <SelectMasterWrapper
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              width={210}
-              dialogTitle={"country"}
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, country: val })
-              }
-              fetchDataFn={getCountries}
-              defaultValue={
-                {
-                  id: entityData.country_id,
-                  name: entityData.country,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <CountryForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-            <SelectMasterWrapper
-              name={"state"}
-              id={"state"}
-              label={"State"}
-              width={210}
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, state: val })
-              }
-              dialogTitle={"State"}
-              fetchDataFn={(stateStr: string) =>
-                getStates(stateStr, selectValues.country?.name)
-              }
-              disable={
-                selectValues.country || entityData.country ? false : true
-              }
-              defaultValue={
-                {
-                  id: entityData.state_id,
-                  name: entityData.state,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <StateForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                  parentData={selectValues.country?.id}
-                />
-              )}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { city, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               name="pincode"
               id="pincode"
               label="Pin Code"
+              fullWidth
               error={formError?.pincode?.error}
               helperText={formError?.pincode?.msg}
               defaultValue={entityData.pincode}
-              size="small"
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { pincode, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained">
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
               Submit
             </Button>
           </Box>

@@ -62,7 +62,8 @@ export async function getExecutiveGroupByIDList(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select id as id, name as name, alias as alias, parent_id as parent from executive_group_master egm where egm.id=?;",
+      "SELECT e1.*, e2.name parent FROM executive_group_master e1 left outer join executive_group_master e2 on e1.parent_id = e2.id \
+        where e1.id=?;",
       values: [id],
     });
 

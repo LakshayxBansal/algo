@@ -33,7 +33,7 @@ export default function StateForm(props: masterFormPropsWithParentT) {
 
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
     } else {
