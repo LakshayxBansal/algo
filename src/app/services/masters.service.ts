@@ -474,3 +474,50 @@ export async function checkCountryIfUsed(crmDb: string, id: number) {
     console.log(e);
   }
 }
+
+export async function getCountryListMasterDb(searchString: string) {
+  try {
+    let query = "select id as id, name as name from country_master";
+    let values: any[] = [];
+
+    if (searchString !== "") {
+      query = query + " where name like '%" + searchString + "%'";
+      values = [];
+    }
+    const result = await excuteQuery({
+      host: "userDb",
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getStateListMasterDb(
+  searchState: string,
+  country: string
+) {
+  try {
+    let query =
+      "select s.id as id, s.name as name from state_master s, country_master c where \
+        c.name = ? and \
+        c.id = s.country_id ";
+    let values: any[] = [country];
+
+    if (searchState !== "") {
+      query = query + " and s.name like '%" + searchState + "%'";
+    }
+    const result = await excuteQuery({
+      host: "userDb",
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
