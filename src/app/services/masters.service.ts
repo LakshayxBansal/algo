@@ -252,7 +252,7 @@ export async function getMenuOptionsList(crmDb: string) {
  */
 export async function createCountryDb(
   session: Session,
-  statusData: zm.nameAliasDataT
+  statusData: zm.countrySchemaT
 ) {
   try {
     return excuteQuery({

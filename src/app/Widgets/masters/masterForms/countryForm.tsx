@@ -23,9 +23,9 @@ export default function CountryForm(props: masterFormPropsT) {
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
-      alias: formData.get("alias") as string,
+      alias: formData.get("alias"),
     };
-    const result = await persistEntity(data);
+    const result = await persistEntity(data as countrySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
