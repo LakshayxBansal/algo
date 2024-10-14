@@ -94,33 +94,33 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-      ? entityData.contactGroup_id
-      : 0;
+        ? entityData.contactGroup_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-      ? entityData.organisation_id
-      : 0;
+        ? entityData.organisation_id
+        : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-      ? entityData.department_id
-      : 0;
+        ? entityData.department_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.contactGroup_id
-      : 0;
+        ? entityData.contactGroup_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -155,6 +155,12 @@ export default function ContactForm(props: masterFormPropsT) {
         }}
       >
         <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Update Contact" : "Add Contact"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Contact" : "Add Contact"}
             <IconButton onClick={handleCancel}>
@@ -534,7 +540,6 @@ export default function ContactForm(props: masterFormPropsT) {
                     country: val,
                     state: null,
                   })
-                  console.log("selectValues : ",selectValues)
                 }
                 }
                 fetchDataFn={getCountries}
@@ -558,9 +563,9 @@ export default function ContactForm(props: masterFormPropsT) {
                 id={"state"}
                 label={"State"}
                 width={210}
-                onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, state: val })
-                }
+                onChange={(e, val, s) => {
+                  setSelectValues({ ...selectValues, state: val });
+                }}
                 dialogTitle={"State"}
                 fetchDataFn={(stateStr: string) =>
                   getStates(stateStr, selectValues.country?.name)
