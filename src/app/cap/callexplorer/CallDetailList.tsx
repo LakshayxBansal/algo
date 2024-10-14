@@ -84,7 +84,7 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
             width: 130,
         },
         {
-            field: "actionTime", headerName: "Time", width: 100,
+            field: "actionTime", headerName: "Action Time", width: 100,
             renderCell: (params) => {
                 return params.row.actionDate.toLocaleString('en-IN', options);
             },
