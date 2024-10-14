@@ -1,5 +1,5 @@
 import React from "react";
-import InputForm from "./InputForm";
+import UpdateInputForm from "./UpdateInputForm";
 import { getSession } from "../../services/session.service";
 import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
@@ -21,7 +21,7 @@ export default async function MyForm() {
       } else {
         console.log("Config Data is not present->", config);
       }
-      return <InputForm baseData={masterData} config={config}></InputForm>;
+      return <UpdateInputForm baseData={masterData} config={config}></UpdateInputForm>;
     }
   } catch (e) {
     // show error page
