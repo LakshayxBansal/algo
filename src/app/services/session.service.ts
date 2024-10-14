@@ -148,22 +148,3 @@ export async function getAppSession(): Promise<Session | null> {
   }
 }*/
 // use get session instead of this
-export async function getAppSession(): Promise<{session: Session , dbSession: dbSesstionT|null} | null> {
-  try {
-    const session = await getServerSession(options);
-    if (session) {
-      const dbSession = await getDbSession(session.user?.email!);
-      if (dbSession) {
-        const appSession = {
-          session: session,
-          dbSession: dbSession
-        }
-        return appSession;
-      }
-    }
-    throw new Error("Session not found");
-  } catch(e) {
-    console.log(e);
-    throw e;
-  }
-}
