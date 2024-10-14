@@ -91,33 +91,33 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-      ? entityData.contactGroup_id
-      : 0;
+        ? entityData.contactGroup_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-      ? entityData.organisation_id
-      : 0;
+        ? entityData.organisation_id
+        : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-      ? entityData.department_id
-      : 0;
+        ? entityData.department_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.contactGroup_id
-      : 0;
+        ? entityData.contactGroup_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -144,37 +144,37 @@ export default function ContactForm(props: masterFormPropsT) {
     <>
       <Box sx={{
         position: "sticky", top: "0px",
-        zIndex: 2, 
+        zIndex: 2,
         paddingY: "10px",
         bgcolor: "white"
       }}>
         <Seperator>
-            <Box sx={{display: "flex", justifyContent: "space-between"}}>
-              {props.data ? "Update Contact" : "Add Contact"}
-              <IconButton onClick={handleCancel}>
-                <CloseIcon/>
-              </IconButton>
-            </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Update Contact" : "Add Contact"}
+            <IconButton onClick={handleCancel}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
         </Seperator>
       </Box>
-        <Collapse in={formError?.form ? true : false}>
-          <Alert
-            severity="error"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={clearFormError}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            {formError?.form?.msg}
-          </Alert>
-        </Collapse>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <Box id="sourceForm" sx={{ p: 3 }}>
         <form action={handleSubmit}>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
@@ -455,9 +455,9 @@ export default function ContactForm(props: masterFormPropsT) {
                 label={"Country"}
                 width={210}
                 dialogTitle={"country"}
-                onChange={(e, val, s) =>
+                onChange={(e, val, s) => {
                   setSelectValues({ ...selectValues, country: val })
-                }
+                }}
                 fetchDataFn={getCountries}
                 fnFetchDataByID={getCountryById}
                 defaultValue={
@@ -479,9 +479,9 @@ export default function ContactForm(props: masterFormPropsT) {
                 id={"state"}
                 label={"State"}
                 width={210}
-                onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, state: val })
-                }
+                onChange={(e, val, s) => {
+                  setSelectValues({ ...selectValues, state: val });
+                }}
                 dialogTitle={"State"}
                 fetchDataFn={(stateStr: string) =>
                   getStates(stateStr, selectValues.country?.name)
@@ -521,7 +521,7 @@ export default function ContactForm(props: masterFormPropsT) {
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="submit" variant="contained" sx={{width: "15%", marginLeft: "5%"}}>
+            <Button type="submit" variant="contained" sx={{ width: "15%", marginLeft: "5%" }}>
               Submit
             </Button>
           </Box>

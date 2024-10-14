@@ -135,6 +135,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              size="small"
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -145,6 +146,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
               defaultValue={entityData.alias}
+              size="small"
             />
           </Box>
           <Box
@@ -165,6 +167,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               helperText={formError?.add1?.msg}
               fullWidth
               defaultValue={entityData.add1}
+              size="small"
             />
             <InputControl
               inputType={InputType.TEXT}
@@ -175,6 +178,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               helperText={formError?.add2?.msg}
               fullWidth
               defaultValue={entityData.add2}
+              size="small"
             />
 
             <InputControl
@@ -185,6 +189,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.city?.error}
               helperText={formError?.city?.msg}
               defaultValue={entityData.city}
+              size="small"
             />
             <SelectMasterWrapper
               name={"country"}
@@ -248,6 +253,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.pincode?.error}
               helperText={formError?.pincode?.msg}
               defaultValue={entityData.pincode}
+              size="small"
             />
           </Box>
           <Box
