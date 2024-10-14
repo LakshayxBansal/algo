@@ -35,7 +35,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
-    const parsed = zs.AddItemToListFormSchema.safeParse(data);
+    const parsed = zs.itemToListFormSchema.safeParse(data);
     if (parsed.success) {
       props.setData
         ? props.setData((prevData: any) => [
@@ -208,7 +208,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
           open={snackOpen}
           autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
-          message="Record Added (See the end of the list)!"
+          message="Item Added (See the end of the list)!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>

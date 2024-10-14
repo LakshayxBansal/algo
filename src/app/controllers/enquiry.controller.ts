@@ -3,27 +3,50 @@ import { createEnquiryDB, showItemGridDB } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
   enquiryHeaderSchemaT,
+  enquiryItemSchemaT,
   enquiryLedgerSchemaT,
 } from "@/app/models/models";
 import {
   enquiryHeaderSchema,
   enquiryLedgerSchema,
+  itemToListFormArraySchema,
+  itemToListFormSchema,
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
 import { Session } from "next-auth";
 
+type enqData={
+  head: enquiryHeaderSchemaT;
+  ledger: enquiryLedgerSchemaT;
+  item : enquiryItemSchemaT[]
+}
+
 export async function createEnquiry(enqData: {
   head: enquiryHeaderSchemaT;
   ledger: enquiryLedgerSchemaT;
+  item : enquiryItemSchemaT[]
 }) {
   let result;
+
+  const transformEnqData = (enqData: enqData) => {
+    const updatedItems = enqData.item.map(({ item, unit, ...rest }) => rest);
+            return {
+      ...enqData,
+      item: JSON.stringify(updatedItems) 
+    };
+  };
+
   try {
     const session = await getSession();
     if (session) {
       const headParsed = enquiryHeaderSchema.safeParse(enqData.head);
       const ledgerParsed = enquiryLedgerSchema.safeParse(enqData.ledger);
-      if (headParsed.success && ledgerParsed.success) {
-        const dbResult = await createEnquiryDB(session, enqData);
+      const itemParsed = itemToListFormArraySchema.safeParse(enqData.item)
+      if (headParsed.success && ledgerParsed.success && itemParsed.success) {
+        
+        const updatedEnqData = transformEnqData(enqData);
+        
+        const dbResult = await createEnquiryDB(session,updatedEnqData );
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {

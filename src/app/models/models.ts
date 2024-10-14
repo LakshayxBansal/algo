@@ -9,8 +9,6 @@ export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
 export type itemSchemaT = z.infer<typeof zs.ItemSchema>;
 
-export type AddItemToListFormSchemaT = z.infer<typeof zs.AddItemToListFormSchema>
-
 export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
@@ -86,6 +84,8 @@ export type masterFormPropsWithDataT = {
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
+export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;

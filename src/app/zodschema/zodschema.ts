@@ -141,8 +141,9 @@ export const ItemSchema = z.object({
   // modified_on: z.date().optional(),
 });
 
-export const AddItemToListFormSchema = z.object({
+export const itemToListFormSchema = z.object({
   id: z.number().optional(),
+  enquiry_id:z.number().optional(),
   item: z.string().min(1).max(75),
   item_id : z.number(),
   quantity: z.string(),
@@ -150,6 +151,7 @@ export const AddItemToListFormSchema = z.object({
   unit_id: z.number(),
   remarks: z.string().max(5000).optional(),
 });
+export const itemToListFormArraySchema= z.array(itemToListFormSchema)
 
 export const UnitSchema = z.object({
   id: z.number().optional(),

@@ -3,13 +3,14 @@
 import excuteQuery from "../utils/db/db";
 import {
   enquiryHeaderSchemaT,
+  enquiryItemSchemaT,
   enquiryLedgerSchemaT,
 } from "@/app/models/models";
 import { Session } from "next-auth";
 
 export async function createEnquiryDB(
   session: Session,
-  enqData: { head: enquiryHeaderSchemaT; ledger: enquiryLedgerSchemaT }
+  enqData: { head: enquiryHeaderSchemaT; ledger: enquiryLedgerSchemaT ; item: any }
 ) {
   try {
     return excuteQuery({
@@ -36,6 +37,7 @@ export async function createEnquiryDB(
         enqData.ledger.enquiry_tran_type,
         enqData.ledger.active,
         session.user.userId,
+        enqData.item
       ],
     });
   } catch (e) {
