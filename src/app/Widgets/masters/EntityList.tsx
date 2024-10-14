@@ -340,28 +340,21 @@ export default function EntityList(props: ModifyT) {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem>
-            <IconButton
-              onClick={() => {
+          <MenuItem   
+            onClick={() => {
                 onModifyDialog(props.id);
-              }}
-            >
+                setAnchorEl(null);
+              }}>
               <EditIcon fontSize="large" />
               <Typography variant="h6">Edit</Typography>
-            </IconButton>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
+          <MenuItem     onClick={() => {
+                handleDeleteDialog(props.id);
+                setAnchorEl(null);
+              }}>
             {" "}
-            <IconButton
-              onClick={() => {
-                // setDialogOpenDelete(true);
-                handleDeleteDialog(props.id)
-                // setIds(props.id);
-              }}
-            >
               <DeleteIcon />
               <Typography variant="h6">Delete</Typography>
-            </IconButton>
           </MenuItem>
         </StyledMenu>
       </Box>
