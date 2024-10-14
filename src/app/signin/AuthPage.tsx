@@ -23,32 +23,7 @@ interface authPagePropsType {
 
 export default function AuthPage(props: authPagePropsType) {
   const [formError, setFormError] = useState<
-    Record<export async function createContactsBatch(data: contactSchemaT[]) {
-      // const results = [];
-      const errorMap = new Map(); 
-      try {
-        for (let i = 0; i < data.length; i++) {
-          const contact = data[i];
-          const result = await createContact(contact);
-    
-          if (!result.status) {
-            const errorDetails = result.data.map((error: { path: any; message: any }) => ({
-              path: error.path,
-              message: error.message,
-            }));
-    
-            errorMap.set(`contact_${i}`, errorDetails);
-          } 
-        }
-    
-        return {
-          status: (errorMap.size===0?true:false), 
-          data: errorMap,
-        };
-      } catch (e) {
-        console.log("Error in batch processing:", e);
-      }
-    }, { msg: string; error: boolean }>
+    Record<string, { msg: string; error: boolean }>
   >({});
 
   const [email, setEmail] = useState(true);
