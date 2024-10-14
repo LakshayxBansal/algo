@@ -3,7 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { getInviteUserByCompany, getInviteUserById } from "@/app/controllers/inviteUser.controller";
 import EntityList from "../../../Widgets/masters/EntityList";
 import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
-import { updateStatusBar } from "../../navbar/Footer";
+import { updateStatusBar } from "../../navbar/StatusBar";
 import { useEffect } from "react";
 import { statusMap } from "../../navbar/StatusMap";
 
@@ -30,7 +30,7 @@ export default function InviteList() {
 
   useEffect(() => {
     if (updateStatusBar) {
-      updateStatusBar("key1","message from invite list");
+      updateStatusBar("key3","value3")
     }
   },[]);
 
@@ -40,7 +40,8 @@ export default function InviteList() {
       fetchDataFn={getInviteUserByCompany}
       fnFetchDataByID={getInviteUserById}
       customCols={columns}
-      AddAllowed={false}>
+      AddAllowed={false}
+      height="20em">
     </EntityList>
   </>
 }

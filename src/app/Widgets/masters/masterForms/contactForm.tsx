@@ -176,7 +176,7 @@ export default function ContactForm(props: masterFormPropsT) {
           </Alert>
         </Collapse>
       <Box id="sourceForm" sx={{ p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
             <Seperator>Contact Details</Seperator>
             <Box

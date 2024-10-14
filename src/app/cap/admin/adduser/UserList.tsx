@@ -54,7 +54,10 @@ export default function UserList(){
         fetchDataFn={getCompanyUser}
         // fnFetchDataByID={getInviteUserById}
         customCols={columns}
-        AddAllowed={true}>
+        AddAllowed={true}
+        height="50vh"
+        >
+        
       </EntityList>
       </>
 }

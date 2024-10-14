@@ -32,18 +32,20 @@ export async function getStatusDataDB(crmDb : string, userId : number) {
             query:"select * from status_bar where user_id = ?;",
             values:[userId]
         })
-        return result;
+        if(result[0]){
+            return {id : result[0].id,data : result[0].data};
+        }
+        // return result;
     }catch(e){
         logger.error(e);
     }
-    // return result;
 }
 
 export async function updateStatusDataDB(crmDb : string,data : string, userId : number) {
     try{
         const result =  await excuteQuery({
             host:crmDb,
-            query:"update status_bar set data = ? where user_id = ?;",
+            query:"update status_bar set data = ? where id = ?;",
             values:[data,userId]
         })
         if(result.ok){
@@ -54,5 +56,4 @@ export async function updateStatusDataDB(crmDb : string,data : string, userId : 
     }catch(e){
         logger.error(e);
     }
-    // return result;
 }

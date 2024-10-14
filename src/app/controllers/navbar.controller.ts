@@ -41,11 +41,11 @@ export async function getStatusData(userId : number) {
   }
 }
 
-export async function updateStatusData(data : string, userId : number) {
+export async function updateStatusData(data : string, id : number) {
   try{
     const session = await getSession();
     if(session){
-      const result = await updateStatusDataDB(session.user.dbInfo.dbName,data,userId);
+      const result = await updateStatusDataDB(session.user.dbInfo.dbName,data,id);
       return result;
     }
   }catch(error){

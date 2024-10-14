@@ -38,6 +38,7 @@ import {
 import {
   executiveSchemaT,
   masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -47,7 +48,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 
-export default function ExecutiveForm(props: masterFormPropsT) {
+export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -218,7 +219,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props?.data ? "Update Executive" : "Add Executive"}
+            {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -311,6 +312,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   name: entityData.executive_dept,
                 } as optionsDataT
               }
+              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
               onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn={getExecutiveDept}
               fnFetchDataByID={getDeptById}
@@ -340,7 +342,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               }
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disable={selectValues.department ? false : true}
+              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : selectValues.department ? false : true}
               formError={formError?.executiveRole ?? formError.executiveRole}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
@@ -357,6 +359,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"Executive Group"}
               width={210}
               dialogTitle={"Add Executive Group"}
+              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
               defaultValue={
                 {
                   id: entityData.executive_group_id,

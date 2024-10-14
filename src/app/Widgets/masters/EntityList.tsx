@@ -385,7 +385,7 @@ export default function EntityList(props: ModifyT) {
   pushColumns(data[0]);
 
   return (
-    <Box style={{ backgroundColor: "#fceff3", height: "100vh" }}>
+    <Box style={{ backgroundColor: "#fceff3" }}>
       <SecondNavbar title={props.title}/>
       {/* </Toolbar> */}
       <Box style={{margin:"0 20px"}}>
