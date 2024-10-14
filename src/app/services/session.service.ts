@@ -127,24 +127,3 @@ export async function getSession() {
   }
   return null;
 }
-
-/**
- * server function to return the session object at the server
-
-export async function getAppSession(): Promise<Session | null> {
-  try {
-    const session = await getServerSession(options);
-    if (session) {
-      const dbSession = await getDbSession(session.user?.email!);
-      if (dbSession) {
-        session.user.dbInfo = dbSession;
-      }
-      return session;
-    }
-    throw new Error("Session not found");
-  } catch(e) {
-    console.log(e);
-    throw e;
-  }
-}*/
-// use get session instead of this

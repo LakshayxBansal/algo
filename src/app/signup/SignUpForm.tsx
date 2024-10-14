@@ -42,9 +42,11 @@ export default function SignupForm1(props: any) {
       setEmailElement(false);
       setContact("email");
       setFormError({});
+      setFormError({});
     } else {
       setEmailElement(true);
       setContact("phone");
+      setFormError({});
       setFormError({});
     }
   };
@@ -238,9 +240,9 @@ export default function SignupForm1(props: any) {
                   required
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
-                  onKeyDown={()=>{
+                  onKeyDown={() => {
                     setFormError((curr) => {
-                      const { name, ...rest} = curr;
+                      const { name, ...rest } = curr;
                       return rest;
                     });
                   }}
@@ -272,9 +274,9 @@ export default function SignupForm1(props: any) {
                     id="email"
                     label="Email Address"
                     name="email"
-                    onKeyDown={()=>{
+                    onKeyDown={() => {
                       setFormError((curr) => {
-                        const { email, ...rest} = curr;
+                        const { email, ...rest } = curr;
                         return rest;
                       });
                     }}
@@ -373,9 +375,9 @@ export default function SignupForm1(props: any) {
                       id="password"
                       error={formError?.password?.error}
                       helperText={formError?.password?.msg}
-                      onKeyDown={()=>{
+                      onKeyDown={() => {
                         setFormError((curr) => {
-                          const { password, ...rest} = curr;
+                          const { password, ...rest } = curr;
                           return rest;
                         });
                       }}

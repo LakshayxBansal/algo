@@ -199,11 +199,11 @@ export async function getCompaniesDb(
     const results = await excuteQuery({
       host: "userDb",
       query:
-        "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
+        "SELECT company_id id, companyName, companyAlias, dbinfo_id, total_count,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
           CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId,roleId, RowNum as RowID \
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
-          c.created_by createdBy, c.created_on createdOn,\
+          c.created_by createdBy, c.created_on createdOn, count(1) over () total_count,\
           h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId,uc.role_id as roleId, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \

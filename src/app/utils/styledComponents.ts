@@ -59,9 +59,9 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   '& .MuiDataGrid-columnHeaders': {
     borderBottom: 'none',
   },
-  '& .MuiDataGrid-columnSeparator': {
-    display: 'none',
-  },
+  // '& .MuiDataGrid-columnSeparator': {
+  //   display: 'none',
+  // },
   '& .MuiDataGrid-cell:hover': {
     color: 'primary.main',
   },

@@ -1,10 +1,14 @@
-"use client"
+"use client";
 import { GridColDef } from "@mui/x-data-grid";
-import { getCompanies, getCompanyById } from "../controllers/company.controller"
-import EntityList from "../Widgets/masters/EntityList"
-import CreateCompany from "./CreateCompany"
+import {
+  getCompanies,
+  getCompanyById,
+} from "../controllers/company.controller";
+import EntityList from "../Widgets/masters/EntityList";
+import CreateCompany from "./CreateCompany";
 import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
+import { Typography } from "@mui/material";
 
 export default function CompanyEntityList(){
     const columns: GridColDef[] = [
@@ -43,11 +47,11 @@ export default function CompanyEntityList(){
         title="Company List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CreateCompany
-          setDialogOpen={fnDialogOpen}
-          setDialogValue={fnDialogValue}
-          data={data}
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
           />
-        )} 
+        )}
         fetchDataFn={getCompanies}
         fnFetchDataByID={getCompanyById}
         customCols={columns}
