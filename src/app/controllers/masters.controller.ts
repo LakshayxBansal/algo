@@ -20,11 +20,14 @@ import {
   delStateDetailsById,
   delCountryByIdDB,
   checkStateIfUsed,
-  checkCountryIfUsed} from '../services/masters.service';
-import { getSession } from '../services/session.service';
-import * as zs from '../zodschema/zodschema';
-import * as zm from '../models/models';
-import { SqlError } from 'mariadb';
+  checkCountryIfUsed,
+  getCountryListMasterDb,
+  getStateListMasterDb,
+} from "../services/masters.service";
+import { getSession } from "../services/session.service";
+import * as zs from "../zodschema/zodschema";
+import * as zm from "../models/models";
+import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 
@@ -494,12 +497,11 @@ export async function delCountryById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const check = await checkCountryIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
-      }
-      else{
+      if (check[0].count > 0) {
+        return "Can't Be DELETED!";
+      } else {
         const result = await delCountryByIdDB(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
+        return "Record Deleted";
       }
       //   if ((result.affectedRows = 1)) {
       //   errorResult = { status: true, error: {} };
@@ -548,4 +550,31 @@ export async function delStateById(id: number) {
     errorResult = { status: false, error: error };
   }
   return errorResult;
+}
+
+export async function getCountriesMaster(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user) {
+      return getCountryListMasterDb(searchString);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * @param searchState : partial state string to search for
+ * @param country : country for which the states need to be searched
+ * @returns
+ */
+export async function getStatesMaster(searchState: string, country: string) {
+  try {
+    const session = await getSession();
+    if (session?.user) {
+      return getStateListMasterDb(searchState, country);
+    }
+  } catch (error) {
+    throw error;
+  }
 }
