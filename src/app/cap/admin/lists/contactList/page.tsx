@@ -79,7 +79,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-export default function ManageContacts(props:{searchData:string}) {
+export default function ManageContacts() {
   // const searchParams = useSearchParams();
   // const searchData = searchParams.get("searchText")
 
@@ -99,7 +99,8 @@ export default function ManageContacts(props:{searchData:string}) {
         fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
-        AddAllowed={true}
+        AddAllowed={false}
+        height = "30em"
       ></EntityList>
     </>
   );

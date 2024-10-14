@@ -141,6 +141,18 @@ export const ItemSchema = z.object({
   // modified_on: z.date().optional(),
 });
 
+export const itemToListFormSchema = z.object({
+  id: z.number().optional(),
+  enquiry_id:z.number().optional(),
+  item: z.string().min(1).max(75),
+  item_id : z.number(),
+  quantity: z.string(),
+  unit: z.string(),
+  unit_id: z.number(),
+  remarks: z.string().max(5000).optional(),
+});
+export const itemToListFormArraySchema= z.array(itemToListFormSchema)
+
 export const UnitSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1).max(50),
@@ -198,7 +210,7 @@ export const contactSchema = z.object({
 
 export const areaSchema = z.object({
   id: z.number().optional(),
-  name: z.string().max(60),
+  name: z.string().max(60 ,"Area name must contain atmost 60 character(s)").min(1,"Area name must contain atleast 1 character(s)"),
 });
 
 export const stateListSchema = z.object({
@@ -289,6 +301,7 @@ export const enquiryHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+  call_receipt_remark: z.string().max(5000).optional(),
 });
 
 /**
@@ -308,7 +321,6 @@ export const enquiryLedgerSchema = z.object({
   next_action_id: z.number().min(1),
   next_action: z.string().min(1).max(60),
   next_action_date: z.string().min(1).max(20),
-  enquiry_remark: z.string().max(5000).optional(),
   suggested_action_remark: z.string().max(5000).optional(),
   action_taken_remark: z.string().max(5000).optional(),
   closure_remark: z.string().max(5000).optional(),

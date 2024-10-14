@@ -1,3 +1,9 @@
+"use client"
+
+import { Suspense, useEffect,useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';// import '../styles/globals.css'; // Adjust the path if your styles are in a different directory
+import { AppProps } from 'next/app';
 
 import "./globals.css";
 /*
@@ -12,9 +18,30 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname();
+  
+
+  useEffect(() => {
+    document.body.classList.add('cursor-wait');
+
+    const handleComplete = () => {
+      document.body.classList.remove('cursor-wait');
+    };
+
+    const timeout = setTimeout(handleComplete, 1000); // Adjust the timeout as necessary
+
+    return () => {
+      clearTimeout(timeout);
+      document.body.classList.remove('cursor-wait');
+    };
+  }, [pathname]);
+
   return (
     <html lang="en">
-      <body>{children}</body>
+      
+      <body>
+        {children}
+        </body>
     </html>
   )
 }
