@@ -43,11 +43,11 @@ INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(
     (14,'Invite User',2),(15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),\
     (19,'Organisation',1),(20,'Source',1),(21,'State',1),(22,'State List',1),(23,'Sub Status',2),\
     (24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2);~\
-CREATE TABLE config_meta_data (\
-  id int NOT NULL AUTO_INCREMENT,\
-  config_type varchar(100) COLLATE utf8mb4_general_ci NOT NULL,\
-  PRIMARY KEY (id),\
-  UNIQUE KEY config_type_UNIQUE (config_type)\
+CREATE TABLE `config_meta_data` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `config_type` varchar(100) NOT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `config_type_UNIQUE` (`config_type`)\
 );~\
 CREATE TABLE `menu_option_master` (\
   `id` int(11) DEFAULT NULL,\
@@ -90,14 +90,14 @@ INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashb
   (49,'Executive Group','Executive Group',12,'FolderOutlinedIcon','/cap/admin/lists/executiveGroupList',0,'','',0,0,0),\
   (50,'Currency','Currency',12,'FolderOutlinedIcon','/cap/admin/lists/currencyList',0,'','',0,0,0),\
   (51,'Config','Config',5,'FolderOutlinedIcon','#',0,'','',0,0,0),(52,'Enquiry Config','Enquiry Config',51,'FolderOutlinedIcon','/cap/admin/enquirySupportConfig',0,'','',0,0,0);~\
-CREATE TABLE app_config (\
-  id int NOT NULL AUTO_INCREMENT,\
-  config_type_id int NOT NULL,\
-  config longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\
-  PRIMARY KEY (id),\
-  UNIQUE KEY config_type_id_UNIQUE (config_type_id),\
-  CONSTRAINT app_config_ibfk_1 FOREIGN KEY (config_type_id) REFERENCES config_meta_data (id) ON DELETE CASCADE ON UPDATE CASCADE,\
-  CONSTRAINT app_config_chk_1 CHECK (json_valid(config))\
+CREATE TABLE `app_config` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `config_type_id` int(11) NOT NULL,\
+  `config` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `config_type_id_UNIQUE` (`config_type_id`),\
+  CONSTRAINT `app_config_ibfk_1` FOREIGN KEY (`config_type_id`) REFERENCES `config_meta_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\
+  CONSTRAINT `app_config_chk_1` CHECK (json_valid(`config`))\
 );~\
 CREATE TABLE `allocation_type_master` (\
   `id` int(11) DEFAULT NULL,\
@@ -240,6 +240,7 @@ CREATE TABLE `enquiry_header_tran` (\
   `modified_on` datetime DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
+  `call_receipt_remark` text DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
@@ -263,13 +264,13 @@ CREATE TABLE `enquiry_ledger_tran` (\
   `action_taken_id` int(11) DEFAULT NULL,\
   `next_action_id` int(11) DEFAULT NULL,\
   `next_action_date` datetime DEFAULT NULL,\
-  `enquiry_remark` text DEFAULT NULL,\
   `suggested_action_remark` text DEFAULT NULL,\
   `action_taken_remark` text DEFAULT NULL,\
   `closure_remark` text DEFAULT NULL,\
   `enquiry_tran_type_id` int(11) DEFAULT NULL,\
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
   `active` int(11) NOT NULL DEFAULT 1,\
+  `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
