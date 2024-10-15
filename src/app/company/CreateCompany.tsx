@@ -163,6 +163,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               FormHelperTextProps={{
                 sx: { backgroundColor: "white", margin: 0 },
               }}
+              sx={{ height: "fit-content" }}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -179,6 +180,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
               defaultValue={entityData.alias}
+              sx={{ height: "fit-content" }}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { alias, ...rest } = curr;
