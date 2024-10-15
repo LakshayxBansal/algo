@@ -9,9 +9,12 @@ export async function getCompanyDetailsById(id: number) {
       host: "userDb",
       query:
         "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, \
-        s.name state, co.name country from company c\
-        left outer join crmapp.state_master s on c.state_id = s.id \
-        left outer join crmapp.country_master co on c.country_id = co.id \
+		    dh.host, dh.port, dbInfo.id dbInfoId, s.name state, co.name country, uc.role_id from company c\
+        left join state_master s on c.state_id = s.id \
+        left join country_master co on c.country_id = co.id \
+        left join userCompany uc on uc.company_id = c.id\
+        left join dbInfo on dbInfo.id = c.dbinfo_id\
+        left join dbHost dh on dh.id = dbInfo.host_id\
         where c.id=?;",
       values: [id],
     });
@@ -140,6 +143,30 @@ export async function createCompanyAndInfoDb(
   }
 }
 
+export async function dropCompanyDatabase(
+  dbName: string,
+  host: string,
+  port: number
+) {
+  let result;
+  try {
+    const data = await createDbConn({
+      hostIp: host,
+      hostPort: port,
+      query: "drop database " + dbName,
+    });
+    result = {
+      status: true,
+    };
+  } catch (e) {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
+  }
+  return result;
+}
+
 export async function dropDatabase(dbName: string) {
   try {
     const result = await excuteQuery({
@@ -155,8 +182,7 @@ export async function dropDatabase(dbName: string) {
 
 export async function deleteCompanyAndDbInfo(
   companyId: number,
-  dbInfoId: number,
-  userCompanyId: number
+  dbInfoId: number
 ) {
   try {
     let result = await excuteQuery({
@@ -173,13 +199,14 @@ export async function deleteCompanyAndDbInfo(
 
     result += await excuteQuery({
       host: "userDb",
-      query: "DELETE FROM userCompany WHERE id = ?",
-      values: [userCompanyId],
+      query: "DELETE FROM userCompany WHERE company_id = ?",
+      values: [companyId],
     });
 
-    return result;
+    return {status: true};
   } catch (e) {
     console.log(e);
+    return {status: false, message: 'Something went wrong.'};
   }
 }
 
@@ -255,6 +282,8 @@ export async function getCompanyCount(
 
 export async function updateCompanyDB(data: zm.companySchemaT) {
   try {
+    console.log(data);
+    
     return excuteQuery({
       host: "userDb",
       query: "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?);",
