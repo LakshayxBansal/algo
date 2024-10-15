@@ -3,10 +3,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import {
-  createEnquirySubStatus,
-  updateEnquirySubStatus,
-} from "@/app/controllers/enquirySubStatus.controller";
+import { createEnquirySubStatus } from "@/app/controllers/enquirySubStatus.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
@@ -25,6 +22,7 @@ import {
   masterFormPropsWithDataT,
   selectKeyValueT,
 } from "@/app/models/models";
+import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
 
 export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
@@ -33,6 +31,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [status_id, setStatus] = useState<number>(1);
   const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
+  console.log("entityData : ",entityData)
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -63,14 +62,14 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   };
 
   function onStatusChange(event: React.SyntheticEvent) {
-    setStatus(Number((event.target as HTMLInputElement).value));
+    setStatus(Number((event.target as HTMLInputElement).value));;
   }
 
   async function persistEntity(data: enquirySubStatusMasterT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-      result = await updateEnquirySubStatus(data);
+      result = await updateEnquirySubStatusList(data);
     } else result = await createEnquirySubStatus(data);
     return result;
   }
@@ -124,8 +123,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="subStatusForm" sx={{ m: 2 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -139,7 +138,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                 row
                 name="status"
                 id="status"
-                defaultValue={1}
+                defaultValue={entityData.enquiry_status_id}
                 onChange={onStatusChange}
               >
                 <FormControlLabel
@@ -157,19 +156,28 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
             </FormControl>
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Sub-Status Name"
-              inputType={InputType.TEXT}
               name="name"
+              fullWidth
+              required
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>

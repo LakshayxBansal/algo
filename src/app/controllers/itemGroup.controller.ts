@@ -40,7 +40,7 @@ export async function createItemGroup(data: itemGroupSchemaT) {
           session,
           data as itemGroupSchemaT
         );
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
+        if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -169,12 +169,14 @@ export async function delItemGroupById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
-      }
-      else{
-        const result = await delItemGroupDetailsById(session.user.dbInfo.dbName,id);        
-        return ("Record Deleted");
+      if (check[0].count > 0) {
+        return "Can't Be DELETED!";
+      } else {
+        const result = await delItemGroupDetailsById(
+          session.user.dbInfo.dbName,
+          id
+        );
+        return "Record Deleted";
       }
       // if ((result.affectedRows = 1)) {
       //   errorResult = { status: true, error: {} };
