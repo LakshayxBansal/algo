@@ -288,20 +288,14 @@ export const executiveSchema = z
       z.literal(""),
       z.string().regex(emailRegex, "Invalid Email Format!")
     ]).optional(),
-    mobile: z.union([
-      z.literal(""),
-      z.string().regex(phoneRegex, "Invalid Number!"),
-    ]).refine((val) => checkPhone(val), {
+    mobile: z.string().refine((val) => checkPhone(val), {
       message: "Please provide a valid Phone No",
-      path: ["phone"],
-    }).optional(),
-    whatsapp: z.union([
-      z.literal(""),
-      z.string().regex(phoneRegex, "Invalid Number!"),
-    ]).refine((val) => checkPhone(val), {
-      message: "Please provide a valid Phone No",
-      path: ["phone"],
-    }).optional(),
+      path: ["mobile"],
+    }),
+    whatsapp: z.string().refine((val) => checkPhone(val), {
+      message: "Please provide a valid Whatsapp No",
+      path: ["whatsapp"],
+    }),
     created_by: z.number().optional(),
     created_on: z.union([z.literal(""), z.date().optional()]),
     modified_by: z.number().optional(),
@@ -331,12 +325,12 @@ export const executiveSchema = z
       z.literal(""), 
       z.string().max(20)]),
   })
-  .refine(
-    (schema) => {
-      return !(schema.email === "" && schema.mobile === "");
-    },
-    { message: "please provide email, or phone no", path: ["mobile", "email"] }
-  );
+  // .refine(
+  //   (schema) => {
+  //     return !(schema.email === "" && schema.mobile === "");
+  //   },
+  //   { message: "please provide email, or phone no", path: ["mobile", "email"] }
+  // );
 /**
  * validate enquiry header schema
  */
