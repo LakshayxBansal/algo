@@ -1,18 +1,6 @@
 "use server";
 import { companySchemaT, dbInfoT } from "../models/models";
-import {
-  createCompanyDB,
-  getHostId,
-  createCompanyAndInfoDb,
-  getCompanyDbByIdList,
-  deleteCompanyAndDbInfo,
-  dropDatabase,
-  createTablesAndProc,
-  getCompanyDetailsById,
-  getCompaniesDb,
-  getCompanyCount,
-  updateCompanyDB,
-} from "../services/company.service";
+import { createCompanyDB, getHostId, createCompanyAndInfoDb, getCompanyDbByIdList, deleteCompanyAndDbInfo, dropDatabase, createTablesAndProc, getCompanyDetailsById, getCompaniesDb, updateCompanyDB, dropCompanyDatabase} from "../services/company.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
@@ -41,31 +29,16 @@ export async function getCompanyDbById(id: number) {
   }
 }
 
-async function createCompanyDbAndTableProc(
-  dbName: string,
-  host: string,
-  port: number,
-  companyId: number,
-  dbInfoId: number,
-  userCompanyId: number
-) {
+async function createCompanyDbAndTableProc(dbName: string, host: string, port: number, companyId: number, dbInfoId: number) {
   const dbRes = await createCompanyDB(dbName, host, port);
   if (!dbRes.status) {
-    const delComp = await deleteCompanyAndDbInfo(
-      companyId,
-      dbInfoId,
-      userCompanyId
-    );
+    const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId);
     return dbRes;
   }
 
   const tableAndProcRes = await createTablesAndProc(dbName);
   if (!tableAndProcRes.status) {
-    const delComp = await deleteCompanyAndDbInfo(
-      companyId,
-      dbInfoId,
-      userCompanyId
-    );
+    const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId);
     const dropDb = await dropDatabase(dbName);
     return tableAndProcRes;
   }
@@ -91,22 +64,11 @@ export async function createCompany(data: companySchemaT) {
         }
         const userId = session.user.userId;
 
-        const companyData = await createCompanyAndInfoDb(
-          hostDetails.id,
-          dbName,
-          data,
-          userId as number
-        );
+        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userId as number);
 
         if (companyData[0].length === 0) {
           dbName += companyData[2][0].id;
-          result = await createCompanyDbAndTableProc(
-            dbName,
-            hostDetails.host,
-            hostDetails.port,
-            companyData[1][0].id,
-            companyData[2][0].id,
-            companyData[3][0].id
+          result = await createCompanyDbAndTableProc(dbName, hostDetails.host, hostDetails.port, companyData[1][0].id, companyData[2][0].id
           );
           if (!result.status) {
             return result;
@@ -163,7 +125,7 @@ export async function updateCompany(data: companySchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user) {
       const parsed = companySchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateCompanyDB(data as companySchemaT);
@@ -177,10 +139,7 @@ export async function updateCompany(data: companySchemaT) {
               message: error.error_text,
             });
           });
-          result = {
-            status: false,
-            data: errorState,
-          };
+          result = {status: false, data: errorState};
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -213,28 +172,14 @@ export async function updateCompany(data: companySchemaT) {
   return result;
 }
 
-export async function getCompanies(
-  page: number,
-  filter: string | undefined,
-  limit: number
-) {
-  let getConts = {
-    status: false,
-    data: {} as dbInfoT,
-    count: 0,
-    error: {},
-  };
+export async function getCompanies(page: number, filter: string | undefined, limit: number) {
+  let getConts = {status: false, data: {} as dbInfoT, count: 0, error: {}};
   try {
     const appSession = await getSession();
 
     if (appSession) {
       const userId = appSession.user.userId;
-      const conts = await getCompaniesDb(
-        userId as number,
-        page as number,
-        filter,
-        limit as number
-      );
+      const conts = await getCompaniesDb(userId as number, page as number, filter, limit as number);
 
       getConts = {
         status: true,
@@ -254,4 +199,31 @@ export async function getCompanies(
     };
   }
   return getConts;
+}
+
+export async function deleteCompanyById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user) {
+      const companyDetails = (await getCompanyDetailsById(id))[0];
+
+      if(companyDetails.role_id !== 1){
+        return {status: false, error: "No rights for deletion"};
+      }
+
+      const dbName = "crmapp" + companyDetails.dbInfoId;
+      const dbRes = await dropCompanyDatabase(dbName, companyDetails.host, companyDetails.port);      
+
+      if (dbRes.status) {
+        const delCompanyAndDbInfoRes = await deleteCompanyAndDbInfo(id, companyDetails.dbinfo_id);
+        if(delCompanyAndDbInfoRes.status){
+          return {status: true};
+        }
+      }
+
+      return { error: "Something went wrong", status: false };
+    }
+  } catch (error) {
+    throw error;
+  }
 }
