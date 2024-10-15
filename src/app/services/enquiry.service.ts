@@ -88,47 +88,6 @@ export async function showItemGridDB(crmDb: string) {
   }
 }
 
-// export async function getHeaderLedgerAction(session :Session, id:number){
-//   try {
-//     const result = await excuteQuery({
-//       host: session.user.dbInfo.dbName,
-//       query:
-//         "WITH header AS ( \
-//           SELECT id, enq_number, date AS header_date, call_receipt_remark, contact_id, received_by_id, category_id, source_id \
-//           FROM enquiry_header_tran \
-//           WHERE id = ? \
-//         ) \
-//         SELECT h.* \
-//         cm.name AS contact, \
-//          em.name AS executive, \
-//          ecm.name AS category, \
-//         esm.name AS source, \
-//         l.*\
-//         st.name AS status_name, \
-//         sub_st.name AS sub_status_name, \
-//          eam.name AS action_taken, \
-//          next_action.name AS next_action_name, \
-//         em3.name AS created_by_name \
-//         FROM header h \
-//         JOIN enquiry_ledger_tran l ON h.id = l.enquiry_id \
-//         JOIN contact_master cm ON cm.id = h.contact_id \
-//         JOIN executive_master em ON em.id = h.received_by_id \
-//         JOIN enquiry_category_master ecm ON ecm.id = h.category_id \
-//         JOIN enquiry_source_master esm ON esm.id = h.source_id \
-//         JOIN enquiry_status_master st ON st.id = l.status_id \
-//         JOIN enquiry_sub_status_master sub_st ON sub_st.id = l.sub_status_id \
-//         LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id \
-//         LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id \
-//         LEFT JOIN executive_master em2 ON em2.id = l.modified_by \
-//         JOIN executive_master em3 ON em3.id = l.created_by;",
-//       values: [id],
-//     });
-    
-//     return result;
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
 export async function getHeaderDataAction(session:Session , id:number){
   try {
     const result = await excuteQuery({

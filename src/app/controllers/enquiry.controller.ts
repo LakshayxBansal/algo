@@ -110,11 +110,10 @@ export async function getEnquiryById(id:number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      // const headerLedgerData = await getHeaderLedgerAction(session, 7);
       const headerData =await getHeaderDataAction(session , 7);
       const ledgerData= await getLedgerDataAction(session,7);
       const itemData= await getItemDataAction(session , 7);
-      
+
       return {headerData,ledgerData,itemData};
     }
   } catch (error) {
