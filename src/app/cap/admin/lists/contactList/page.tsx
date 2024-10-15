@@ -78,23 +78,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-// async function Batch() {
-//   "use server"
-//   return await createContactsBatch;
-// }
-// async function Batch1() {
-//   "use server";
-//   return await getContactByPage;
-// }
-// async function Batch2() {
-//   "use server";
-//   return await getContactById;
-// }
-export default async function ManageContacts() {
-  // const searchParams = useSearchParams();
-  // const searchData = searchParams.get("searchText")
-
-  // console.log("search Data",searchParams.get("searchText"));
+export default function ManageContacts() {
   return (
     <>
       <EntityList

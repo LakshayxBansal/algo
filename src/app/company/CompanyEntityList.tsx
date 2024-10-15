@@ -55,7 +55,8 @@ export default function CompanyEntityList(){
         fetchDataFn={getCompanies}
         fnFetchDataByID={getCompanyById}
         customCols={columns}
-        AddAllowed={true}>
+        AddAllowed={true}
+        height="20em">
       </EntityList>
       </>
 }

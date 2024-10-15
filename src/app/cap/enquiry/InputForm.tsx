@@ -105,53 +105,7 @@ type ModifiedRowT = {
   remarks?: string;
 };
 
-const rows: any = [
-  // {
-  //   id: 1,
-  //   item: "Test Item",
-  //   item_id: 1,
-  //   quantity: 15,
-  //   unit: "Unit1",
-  //   unit_id: 1,
-  //   remarks: "For office use",
-  // },
-  // {
-  //   id: 2,
-  //   item: "Test Item 2",
-  //   item_id: 2,
-  //   quantity: 8,
-  //   unit: "Unit2",
-  //   unit_id: 2,
-  //   remarks: "For new employees",
-  // },
-  // {
-  //   id: 3,
-  //   item: "Test Item",
-  //   item_id: 1,
-  //   quantity: 500,
-  //   unit: "Unit3",
-  //   unit_id: 3,
-  //   remarks: "Office stock",
-  // },
-  // {
-  //   id: 4,
-  //   item: "Test Item2",
-  //   item_id: 2,
-  //   quantity: 5,
-  //   unit: "Unit4",
-  //   unit_id: 4,
-  //   remarks: "Office stock",
-  // },
-  // {
-  //   id: 5,
-  //   item: "Test Item",
-  //   item_id: 1,
-  //   quantity: 12,
-  //   unit: "Unit2",
-  //   unit_id: 2,
-  //   remarks: "Office stock",
-  // },
-];
+const rows: any = [];
 
 export default function InputForm(props: { baseData: IformData; config: any }) {
   const [status, setStatus] = useState("1");
@@ -486,6 +440,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
         if (editMode === params.row.id) {
           return [
             <GridActionsCellItem
+              key={params.row.id}
               icon={<SaveIcon />}
               label="Save"
               sx={{
@@ -494,6 +449,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
               onClick={handleSaveClick}
             />,
             <GridActionsCellItem
+              key={params.row.id}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
@@ -505,6 +461,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
 
         return [
           <GridActionsCellItem
+            key={params.row.id}
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
@@ -512,6 +469,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
             color="inherit"
           />,
           <GridActionsCellItem
+            key={params.row.id}
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(params.row.id)}
