@@ -188,6 +188,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
     const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
+      console.log(ledgerData);
       //const itemData = data.map(({ item, unit , ...rest }) => rest);
       result = await createEnquiry({
         head: headerData,
@@ -774,7 +775,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getEnquirySubSatusById}
-                required={status === "1"}
+                required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SubStatusForm
@@ -784,7 +785,6 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                     data={data}
                   />
                 )}
-                disable={status === "2"}
               />
               <SelectMasterWrapper
                 name={"action_taken"}
