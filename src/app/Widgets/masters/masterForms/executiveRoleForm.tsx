@@ -7,8 +7,8 @@ import {
   getExecutiveRole,
   createExecutiveRole,
   updateExecutiveRole,
+  getExecutiveRoleById,
 } from "@/app/controllers/executiveRole.controller";
-import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
@@ -182,7 +182,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                   const { name, ...rest } = curr;
                   return rest;
                 });
-              }} 
+              }}
             />
             <SelectMasterWrapper
               name={"parentrole"}
@@ -190,6 +190,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               label={"Parent Executive Role"}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
+              fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
                   id: entityData.parent_id,
@@ -212,7 +213,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2
+              mt: 2,
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>

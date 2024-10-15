@@ -54,6 +54,38 @@ export default function ContactForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data ? props.data : {};
+  const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
+    id: entityData.state_id,
+    name: entityData.state,
+  } as optionsDataT);
+  const [stateKey, setStateKey] = useState(0);
+
+  async function getStatesforCountry(stateStr: string) {
+    const country = selectValues.country?.name;
+
+    const states = await getStates(stateStr, country);
+    if (states.length > 0) {
+      return states;
+    }
+  }
+
+  const onSelectChange = async (
+    event: React.SyntheticEvent,
+    val: any,
+    setDialogValue: any,
+    name: string
+  ) => {
+    let values = { ...selectValues };
+    values[name] = val;
+
+    if (name === "country") {
+      values["states"] = {};
+      setDefaultState(undefined);
+      setStateKey((prev) => 1 - prev);
+      values.state = null;
+    }
+    setSelectValues(values);
+  };
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -155,12 +187,6 @@ export default function ContactForm(props: masterFormPropsT) {
         }}
       >
         <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Contact" : "Add Contact"}
-            <IconButton onClick={handleCancel}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Contact" : "Add Contact"}
             <IconButton onClick={handleCancel}>
@@ -513,6 +539,47 @@ export default function ContactForm(props: masterFormPropsT) {
                 }}
                 fullWidth
               />
+              <SelectMasterWrapper
+              name={"country"}
+              id={"country"}
+              label={"Country"}
+              dialogTitle={"Add country"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+              fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
+              defaultValue={
+                {
+                  id: entityData.country_id,
+                  name: entityData.country,
+                } as optionsDataT
+              }
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <CountryForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+            <SelectMasterWrapper
+              key={stateKey}
+              name={"state"}
+              id={"state"}
+              label={"State"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+              disable={selectValues.country ? false : true}
+              dialogTitle={"Add State"}
+              fetchDataFn={getStatesforCountry}
+              defaultValue={defaultState}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <StateForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.country?.id}
+                />
+              )}
+            />
               <InputControl
                 inputType={InputType.TEXT}
                 name="city"
@@ -528,7 +595,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   });
                 }}
               />
-              <SelectMasterWrapper
+              {/* <SelectMasterWrapper
                 name={"country"}
                 id={"country"}
                 label={"Country"}
@@ -563,9 +630,10 @@ export default function ContactForm(props: masterFormPropsT) {
                 id={"state"}
                 label={"State"}
                 width={210}
-                onChange={(e, val, s) => {
-                  setSelectValues({ ...selectValues, state: val });
-                }}
+                onChange={(e,v,s)=> onSelectChange(e,v,s, "state")}
+                // onChange={(e, val, s) => {
+                //   setSelectValues({ ...selectValues, state: val });
+                // }}
                 dialogTitle={"State"}
                 fetchDataFn={(stateStr: string) =>
                   getStates(stateStr, selectValues.country?.name)
@@ -585,7 +653,7 @@ export default function ContactForm(props: masterFormPropsT) {
                     parentData={selectValues.country?.id}
                   />
                 )}
-              />
+              /> */}
               <InputControl
                 inputType={InputType.TEXT}
                 name="pincode"
