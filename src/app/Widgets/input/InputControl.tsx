@@ -23,6 +23,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 // import "react-phone-input-2/lib/style.css";
 import { MuiTelInput, MuiTelInputInfo } from "mui-tel-input";
 import { AnyARecord } from "dns";
+import { CustomTextField } from "@/app/utils/styledComponents";
 
 export enum InputType {
   TEXT,
@@ -33,11 +34,11 @@ export enum InputType {
   EMAIL,
   PHONE,
 }
-// Define the additional props for the base control
+// Define the mandatory props for the base control
 interface BaseControlProps {
   inputType: InputType;
   custLabel?: string;
-  // Add any additional props here
+  // Add any mandatory props here
 }
 
 // (TextFieldProps | CheckboxProps | DatePickerProps<Dayjs>  )
@@ -45,9 +46,15 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", ...props }) => {
+export const InputControl: React.FC<CustomControlProps<any>> = ({
+  inputType,
+  custLabel = "",
+  ...props
+}) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
-  const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
+  const [value, setValue] = React.useState(
+    props.defaultValue ? props.defaultValue : ""
+  );
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     switch (inputType) {
@@ -73,8 +80,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
-    console.log('datechange')
-    console.log(value)
+    console.log("datechange");
+    console.log(value);
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -120,7 +127,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <TextField {...textFieldProps} onChange={onChange} />;
+      return <CustomTextField {...textFieldProps} onChange={onChange} />;
       break;
     }
     case InputType.CHECKBOX: {
