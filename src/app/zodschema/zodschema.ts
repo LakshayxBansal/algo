@@ -8,7 +8,7 @@ const panRegEx = new RegExp(/^[a-zA-Z0-9]{5}[0-9]{4}[a-zA-Z0-9]$/);
 const emailRegex = new RegExp(
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 );
-const aadhaarRegex = new RegExp(/^(d{12})$/);
+const aadhaarRegex = new RegExp(/^\d{12}$/); //AADHAR REGEX CHANGED
 const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
@@ -274,7 +274,7 @@ export const executiveSchema = z
   .object({
     id: z.number().optional(),
     alias: z.string().max(60).optional(),
-    name: z.string().min(1, "Executive Name must not be empty").max(60),
+    name: z.string().min(1,"Executive Name must conatin atleast 1 character").max(60,"Executive Name must contain atmost 60 character(s)"),
     address1: z.string().max(75).optional(),
     address2: z.string().max(75).optional(),
     address3: z.string().max(75).optional(),
@@ -284,15 +284,24 @@ export const executiveSchema = z
     pincode: z.string().max(15).optional(),
     country_id: z.number().optional(),
     country: z.string().max(60).optional(),
-    email: z.string().max(100).optional(),
+    email: z.union([
+      z.literal(""),
+      z.string().regex(emailRegex, "Invalid Email Format!")
+    ]).optional(),
     mobile: z.union([
       z.literal(""),
       z.string().regex(phoneRegex, "Invalid Number!"),
-    ]),
+    ]).refine((val) => checkPhone(val), {
+      message: "Please provide a valid Phone No",
+      path: ["phone"],
+    }).optional(),
     whatsapp: z.union([
       z.literal(""),
       z.string().regex(phoneRegex, "Invalid Number!"),
-    ]),
+    ]).refine((val) => checkPhone(val), {
+      message: "Please provide a valid Phone No",
+      path: ["phone"],
+    }).optional(),
     created_by: z.number().optional(),
     created_on: z.union([z.literal(""), z.date().optional()]),
     modified_by: z.number().optional(),
@@ -309,16 +318,18 @@ export const executiveSchema = z
     crm_user_id: z.number().optional(),
     crm_map_id: z.number().optional(),
     role_id: z.number().optional(),
-    role: z.string().min(1, "Select role").max(45).optional(),
+    role: z.string().min(1, "Select role").max(45), //Remove it from optional
     executive_dept_id: z.number().optional(),
     executive_dept: z.string().max(75).optional(),
     executive_group_id: z.number().optional(),
     executive_group: z.string().max(75).optional(),
     pan: z.union([
       z.literal(""),
-      z.string().min(10).regex(panRegEx, "Invalid PAN number!"),
+      z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
     ]),
-    aadhaar: z.union([z.literal(""), z.string().max(20)]),
+    aadhaar: z.union([
+      z.literal(""), 
+      z.string().max(20)]),
   })
   .refine(
     (schema) => {

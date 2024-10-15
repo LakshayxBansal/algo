@@ -57,7 +57,8 @@ export default function CompanyEntityList(){
         fnFetchDataByID={getCompanyById}
         fnDeleteDataByID={deleteCompanyById}
         customCols={columns}
-        AddAllowed={true}>
+        AddAllowed={true}
+        height="20em">
       </EntityList>
       </>
 }

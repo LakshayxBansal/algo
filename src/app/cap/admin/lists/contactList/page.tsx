@@ -80,10 +80,6 @@ const columns: GridColDef[] = [
 ];
 
 export default function ManageContacts() {
-  // const searchParams = useSearchParams();
-  // const searchData = searchParams.get("searchText")
-
-  // console.log("search Data",searchParams.get("searchText"));
   return (
     <>
       <EntityList
