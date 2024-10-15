@@ -267,7 +267,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               }}
               fetchDataFn={(stateStr: string) => {
                 const country =
-                  entityData.country ?? selectValues.country?.name;
+                  selectValues.country?.name ?? entityData.country;
                 return getStatesMaster(stateStr, country);
               }}
               disable={
