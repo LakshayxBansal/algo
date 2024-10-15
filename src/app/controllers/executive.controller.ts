@@ -18,6 +18,7 @@ import { getExecutiveList } from "@/app/services/executive.service";
 import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { modifyPhone } from "../utils/phoneUtils";
 
 const inviteSring = "Send Invite...";
 
@@ -26,6 +27,8 @@ export async function createExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile);
+      data.whatsapp = modifyPhone(data.whatsapp);
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
@@ -98,6 +101,8 @@ export async function updateExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile);
+      data.whatsapp = modifyPhone(data.whatsapp);
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {

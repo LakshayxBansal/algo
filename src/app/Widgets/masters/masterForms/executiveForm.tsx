@@ -439,23 +439,36 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               defaultValue={entityData.email}
             />
             <InputControl
-              inputType={InputType.PHONE}
-              id="mobile"
-              label="Phone No"
-              name="mobile"
-              error={formError?.mobile?.error}
-              helperText={formError?.mobile?.msg}
-              defaultValue={entityData.mobile}
-            />
-            <InputControl
-              inputType={InputType.PHONE}
-              id="whatsapp"
-              label="Whatsapp No"
-              name="whatsapp"
-              error={formError?.whatsapp?.error}
-              helperText={formError?.whatsapp?.msg}
-              defaultValue={entityData.whatsapp}
-            />
+                inputType={InputType.PHONE}
+                id="mobile"
+                label="Phone No"
+                name="mobile"
+                error={formError?.mobile?.error}
+                helperText={formError?.mobile?.msg}
+                defaultValue={entityData.mobile}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { mobile, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+           <InputControl
+                inputType={InputType.PHONE}
+                id="whatsapp"
+                label="Whatsapp No"
+                name="whatsapp"
+                // defaultCountry="FR"
+                error={formError?.whatsapp?.error}
+                helperText={formError?.whatsapp?.msg}
+                defaultValue={entityData.whatsapp}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { whatsapp, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
 
             <InputControl
               inputType={InputType.DATEINPUT}

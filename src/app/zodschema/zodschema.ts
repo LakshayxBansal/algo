@@ -283,76 +283,69 @@ export const stateListSchema = z.object({
   country_id: z.number(),
 });
 
-export const executiveSchema = z
-  .object({
-    id: z.number().optional(),
-    alias: z.string().max(60).optional(),
-    name: z
-      .string()
-      .min(1, "Executive Name must conatin atleast 1 character")
-      .max(60, "Executive Name must contain atmost 60 character(s)"),
-    address1: z.string().max(75).optional(),
-    address2: z.string().max(75).optional(),
-    address3: z.string().max(75).optional(),
-    city: z.string().max(75).optional(),
-    state_id: z.number().optional(),
-    state: z.string().max(60).optional(),
-    pincode: z.string().max(15).optional(),
-    country_id: z.number().optional(),
-    country: z.string().max(60).optional(),
-    email: z
-      .union([
-        z.literal(""),
-        z.string().regex(emailRegex, "Invalid Email Format!"),
-      ])
-      .optional(),
-    mobile: z
-      .union([z.literal(""), z.string().regex(phoneRegex, "Invalid Number!")])
-      .refine((val) => checkPhone(val), {
-        message: "Please provide a valid Phone No",
-        path: ["phone"],
-      })
-      .optional(),
-    whatsapp: z
-      .union([z.literal(""), z.string().regex(phoneRegex, "Invalid Number!")])
-      .refine((val) => checkPhone(val), {
-        message: "Please provide a valid Phone No",
-        path: ["phone"],
-      })
-      .optional(),
-    created_by: z.number().optional(),
-    created_on: z.union([z.literal(""), z.date().optional()]),
-    modified_by: z.number().optional(),
-    modified_on: z.union([z.literal(""), z.date().optional()]),
-    stamp: z.number().optional(),
-    dob: z.union([z.literal(""), z.date().optional()]),
-    doa: z.union([z.literal(""), z.date().optional()]),
-    doj: z.union([z.literal(""), z.date().optional()]),
-    area_id: z.number().optional(),
-    area: z.string().max(60).optional(),
-    call_type_id: z.number().optional(),
-    call_type: z.string().min(1).max(45),
-    crm_user: z.string().max(60).optional(),
-    crm_user_id: z.number().optional(),
-    crm_map_id: z.number().optional(),
-    role_id: z.number().optional(),
-    role: z.string().min(1, "Select role").max(45), //Remove it from optional
-    executive_dept_id: z.number().optional(),
-    executive_dept: z.string().max(75).optional(),
-    executive_group_id: z.number().optional(),
-    executive_group: z.string().max(75).optional(),
-    pan: z.union([
+export const executiveSchema = z.object({
+  id: z.number().optional(),
+  alias: z.string().max(60).optional(),
+  name: z
+    .string()
+    .min(1, "Executive Name must conatin atleast 1 character")
+    .max(60, "Executive Name must contain atmost 60 character(s)"),
+  address1: z.string().max(75).optional(),
+  address2: z.string().max(75).optional(),
+  address3: z.string().max(75).optional(),
+  city: z.string().max(75).optional(),
+  state_id: z.number().optional(),
+  state: z.string().max(60).optional(),
+  pincode: z.string().max(15).optional(),
+  country_id: z.number().optional(),
+  country: z.string().max(60).optional(),
+  email: z
+    .union([
       z.literal(""),
-      z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
-    ]),
-    aadhaar: z.union([z.literal(""), z.string().max(20)]),
-  })
-  .refine(
-    (schema) => {
-      return !(schema.email === "" && schema.mobile === "");
-    },
-    { message: "please provide email, or phone no", path: ["mobile", "email"] }
-  );
+      z.string().regex(emailRegex, "Invalid Email Format!"),
+    ])
+    .optional(),
+  mobile: z.string().refine((val) => checkPhone(val), {
+    message: "Please provide a valid Phone No",
+    path: ["mobile"],
+  }),
+  whatsapp: z.string().refine((val) => checkPhone(val), {
+    message: "Please provide a valid Whatsapp No",
+    path: ["whatsapp"],
+  }),
+  created_by: z.number().optional(),
+  created_on: z.union([z.literal(""), z.date().optional()]),
+  modified_by: z.number().optional(),
+  modified_on: z.union([z.literal(""), z.date().optional()]),
+  stamp: z.number().optional(),
+  dob: z.union([z.literal(""), z.date().optional()]),
+  doa: z.union([z.literal(""), z.date().optional()]),
+  doj: z.union([z.literal(""), z.date().optional()]),
+  area_id: z.number().optional(),
+  area: z.string().max(60).optional(),
+  call_type_id: z.number().optional(),
+  call_type: z.string().min(1).max(45),
+  crm_user: z.string().max(60).optional(),
+  crm_user_id: z.number().optional(),
+  crm_map_id: z.number().optional(),
+  role_id: z.number().optional(),
+  role: z.string().min(1, "Select role").max(45), //Remove it from optional
+  executive_dept_id: z.number().optional(),
+  executive_dept: z.string().max(75).optional(),
+  executive_group_id: z.number().optional(),
+  executive_group: z.string().max(75).optional(),
+  pan: z.union([
+    z.literal(""),
+    z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
+  ]),
+  aadhaar: z.union([z.literal(""), z.string().max(20)]),
+});
+// .refine(
+//   (schema) => {
+//     return !(schema.email === "" && schema.mobile === "");
+//   },
+//   { message: "please provide email, or phone no", path: ["mobile", "email"] }
+// );
 /**
  * validate enquiry header schema
  */
