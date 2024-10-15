@@ -22,7 +22,22 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 // import PhoneInput from 'react-phone-input-2';
 // import "react-phone-input-2/lib/style.css";
 import { MuiTelInput, MuiTelInputInfo } from "mui-tel-input";
-import { AnyARecord } from "dns";
+import {
+  Unstable_NumberInput as BaseNumberInput,
+  NumberInputProps,
+  numberInputClasses,
+} from '@mui/base/Unstable_NumberInput';
+
+
+// for number 
+  // inputtype = TEXT
+  // type="number"
+  // decPlaces=2 // for 2 decimal places
+  // inputProps: {
+  //   min: 0,
+  //   max: 10,
+  //   style: { textAlign: "right" },
+  // },
 
 export enum InputType {
   TEXT,
@@ -37,6 +52,7 @@ export enum InputType {
 interface BaseControlProps {
   inputType: InputType;
   custLabel?: string;
+  decPlaces?: number,
   // Add any additional props here
 }
 
@@ -45,7 +61,7 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", ...props }) => {
+export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", decPlaces, ...props }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
   const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
 
@@ -53,6 +69,18 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
+        if (props.type === "number") {
+          const value = event.target.value;
+          if (value.includes(".") && decPlaces > 0) {
+            const [integerPart, decimalPart] = value.split(".");
+            if (decimalPart.length > decPlaces) {
+              event.target.value = `${integerPart}.${decimalPart.slice(
+                0,
+                decPlaces
+              )}`;
+            }
+          }
+        }
         if (inputProps.onChange) {
           inputProps.onChange(event);
         }

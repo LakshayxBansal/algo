@@ -57,8 +57,7 @@ import {
 } from "@/app/controllers/contact.controller";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from 'next/navigation'
-
+import { useSearchParams } from "next/navigation";
 
 const columns: GridColDef[] = [
   {
@@ -100,7 +99,7 @@ export default function ManageContacts() {
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
         AddAllowed={false}
-        height = "30em"
+        height="30em"
         // addRow = {data}
       ></EntityList>
     </>
