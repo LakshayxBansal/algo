@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { checkPhone,checkPhoneEmpty } from "../utils/phoneUtils";
+import { checkPhone, checkPhoneEmpty } from "../utils/phoneUtils";
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|^$/
@@ -13,19 +13,25 @@ const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
 
-export const signInSchema = z.object({
-  email : z.string().optional(),
-  phone : z.string().min(1,"Please enter phone number").refine((val) => checkPhoneEmpty(val), {
-    message: "Please enter phone number",
-    path: ["phone"],
-  }).optional(),
-  password : z.string().min(1,"Please enter password")
-}).refine(
-  (schema) => {
-    return !(schema.email === "");
-  },
-  { message: "Please enter email", path: ["email"] }
-)
+export const signInSchema = z
+  .object({
+    email: z.string().optional(),
+    phone: z
+      .string()
+      .min(1, "Please enter phone number")
+      .refine((val) => checkPhoneEmpty(val), {
+        message: "Please enter phone number",
+        path: ["phone"],
+      })
+      .optional(),
+    password: z.string().min(1, "Please enter password"),
+  })
+  .refine(
+    (schema) => {
+      return !(schema.email === "");
+    },
+    { message: "Please enter email", path: ["email"] }
+  );
 
 export const userSchema = z
   .object({
@@ -34,19 +40,23 @@ export const userSchema = z
       .string()
       .regex(emailRegex, "Input must be in email format")
       .optional(),
-    password :   z
-    .string()
-    .min(8)
-    .max(50)
-    .regex(
-      passwordRegex,
-      "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
-    ),
-    name: z.string().min(1,"Name must not be empty").max(45),
-    phone: z.string().min(1,"Please provide phone").refine((val) => checkPhone(val), {
-      message: "Please provide a valid Phone No",
-      path: ["phone"],
-    }).optional(),
+    password: z
+      .string()
+      .min(8)
+      .max(50)
+      .regex(
+        passwordRegex,
+        "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+      ),
+    name: z.string().min(1, "Name must not be empty").max(45),
+    phone: z
+      .string()
+      .min(1, "Please provide phone")
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
     contact: z.string().optional(),
     repassword: z.string().max(50),
     provider: z.string().max(15).optional(),
@@ -176,15 +186,15 @@ export const ItemSchema = z.object({
 
 export const itemToListFormSchema = z.object({
   id: z.number().optional(),
-  enquiry_id:z.number().optional(),
+  enquiry_id: z.number().optional(),
   item: z.string().min(1).max(75),
-  item_id : z.number(),
+  item_id: z.number(),
   quantity: z.string(),
   unit: z.string(),
   unit_id: z.number(),
   remarks: z.string().max(5000).optional(),
 });
-export const itemToListFormArraySchema= z.array(itemToListFormSchema)
+export const itemToListFormArraySchema = z.array(itemToListFormSchema);
 
 export const UnitSchema = z.object({
   id: z.number().optional(),
@@ -257,7 +267,10 @@ export const contactSchema = z.object({
 
 export const areaSchema = z.object({
   id: z.number().optional(),
-  name: z.string().max(60 ,"Area name must contain atmost 60 character(s)").min(1,"Area name must contain atleast 1 character(s)"),
+  name: z
+    .string()
+    .max(60, "Area name must contain atmost 60 character(s)")
+    .min(1, "Area name must contain atleast 1 character(s)"),
 });
 
 export const stateListSchema = z.object({
@@ -274,7 +287,10 @@ export const executiveSchema = z
   .object({
     id: z.number().optional(),
     alias: z.string().max(60).optional(),
-    name: z.string().min(1,"Executive Name must conatin atleast 1 character").max(60,"Executive Name must contain atmost 60 character(s)"),
+    name: z
+      .string()
+      .min(1, "Executive Name must conatin atleast 1 character")
+      .max(60, "Executive Name must contain atmost 60 character(s)"),
     address1: z.string().max(75).optional(),
     address2: z.string().max(75).optional(),
     address3: z.string().max(75).optional(),
@@ -284,24 +300,26 @@ export const executiveSchema = z
     pincode: z.string().max(15).optional(),
     country_id: z.number().optional(),
     country: z.string().max(60).optional(),
-    email: z.union([
-      z.literal(""),
-      z.string().regex(emailRegex, "Invalid Email Format!")
-    ]).optional(),
-    mobile: z.union([
-      z.literal(""),
-      z.string().regex(phoneRegex, "Invalid Number!"),
-    ]).refine((val) => checkPhone(val), {
-      message: "Please provide a valid Phone No",
-      path: ["phone"],
-    }).optional(),
-    whatsapp: z.union([
-      z.literal(""),
-      z.string().regex(phoneRegex, "Invalid Number!"),
-    ]).refine((val) => checkPhone(val), {
-      message: "Please provide a valid Phone No",
-      path: ["phone"],
-    }).optional(),
+    email: z
+      .union([
+        z.literal(""),
+        z.string().regex(emailRegex, "Invalid Email Format!"),
+      ])
+      .optional(),
+    mobile: z
+      .union([z.literal(""), z.string().regex(phoneRegex, "Invalid Number!")])
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
+    whatsapp: z
+      .union([z.literal(""), z.string().regex(phoneRegex, "Invalid Number!")])
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
     created_by: z.number().optional(),
     created_on: z.union([z.literal(""), z.date().optional()]),
     modified_by: z.number().optional(),
@@ -327,9 +345,7 @@ export const executiveSchema = z
       z.literal(""),
       z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
     ]),
-    aadhaar: z.union([
-      z.literal(""), 
-      z.string().max(20)]),
+    aadhaar: z.union([z.literal(""), z.string().max(20)]),
   })
   .refine(
     (schema) => {
@@ -652,20 +668,32 @@ export const companySchema = z.object({
   id: z.number().optional(),
   alias: z
     .string()
-    .max(60, "Alias must contain at most 60 character(s)")
+    .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
   name: z
     .string()
     .min(1, "Please enter company name")
     .max(55, "Company Name must contain at most 55 character(s)"),
-  add1: z.string().optional(),
-  add2: z.string().optional(),
-  city: z.string().optional(),
+  add1: z
+    .string()
+    .max(45, "Address 1 must contain at most 45 character(s)")
+    .optional(),
+  add2: z
+    .string()
+    .max(45, "Address 2 must contain at most 45 character(s)")
+    .optional(),
+  city: z
+    .string()
+    .max(45, "City must contain at most 45 character(s)")
+    .optional(),
   state: z.string().optional(),
   state_id: z.number().optional(),
   country: z.string().optional(),
   country_id: z.number().optional(),
-  pincode: z.string().optional(),
+  pincode: z
+    .string()
+    .max(45, "Pincode must contain at most 45 character(s)")
+    .optional(),
   stamp: z.number().optional(),
 });
 
