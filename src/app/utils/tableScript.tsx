@@ -271,6 +271,8 @@ CREATE TABLE `enquiry_ledger_tran` (\
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
   `active` int(11) NOT NULL DEFAULT 1,\
   `modified_on` datetime DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `created_by` int(11) NOT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
