@@ -1,11 +1,15 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import {
   createOrganisation,
   updateOrganisation,
 } from "../../../controllers/organisation.controller";
-import { getCountries } from "../../../controllers/masters.controller";
+import {
+  getCountries,
+  getCountryById,
+  getStateById,
+} from "../../../controllers/masters.controller";
 import { getStates } from "@/app/controllers/masters.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
@@ -29,6 +33,11 @@ export default function OrganisationForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
 
   const entityData: organisationSchemaT = props.data ? props.data : {};
+  const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
+    id: entityData.state_id,
+    name: entityData.state,
+  } as optionsDataT);
+  const [stateKey, setStateKey] = useState(0);
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -91,16 +100,23 @@ export default function OrganisationForm(props: masterFormPropsT) {
     }
   }
 
-  function onSelectChange(
+  const onSelectChange = async (
     event: React.SyntheticEvent,
     val: any,
     setDialogValue: any,
     name: string
-  ) {
+  ) => {
     let values = { ...selectValues };
     values[name] = val;
+
+    if (name === "country") {
+      values["states"] = {};
+      setDefaultState(undefined);
+      setStateKey((prev) => 1 - prev);
+      values.state = null;
+    }
     setSelectValues(values);
-  }
+  };
 
   const clearFormError = () => {
     setFormError((curr) => {
@@ -315,37 +331,44 @@ export default function OrganisationForm(props: masterFormPropsT) {
               dialogTitle={"Add country"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
               fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
               defaultValue={
                 {
                   id: entityData.country_id,
                   name: entityData.country,
                 } as optionsDataT
               }
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <CountryForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
             />
             <SelectMasterWrapper
+              key={stateKey}
               name={"state"}
               id={"state"}
               label={"State"}
               // width={210}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+              disable={selectValues.country ? false : true}
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
-              defaultValue={
-                {
-                  id: entityData.state_id,
-                  name: entityData.state,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              defaultValue={defaultState}
+              // defaultValue={
+              //   {
+              //     id: entityData.state_id,
+              //     name: entityData.state,
+              //   } as optionsDataT
+              // }
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.country?.id}
                 />
               )}
             />
