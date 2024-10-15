@@ -36,7 +36,7 @@ import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
 import SecondNavbar from "./SecondNavbar";
 
-const drawerWidth: number = 240;
+const drawerWidth: number = 290;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -67,7 +67,7 @@ const Drawer = styled(MuiDrawer, {
   "& .MuiDrawer-paper": {
     position: "relative",
     whiteSpace: "nowrap",
-    width: open ? 240 : 72,
+    width: open ? 290 : 72,
     height:"97vh",
     overflowY: 'auto',
     transition: theme.transitions.create("width", {

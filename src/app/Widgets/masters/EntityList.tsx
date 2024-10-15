@@ -82,7 +82,7 @@ type ModifyT = {
   fnDeleteDataByID?: (id: number) => Promise<any>;
   customCols: GridColDef[];
   AddAllowed: boolean;
-  height?:string;
+  height?: string;
 };
 
 const pgSize = 10;
@@ -91,7 +91,7 @@ enum dialogMode {
   Add,
   Modify,
   Delete,
-  FileUpload
+  FileUpload,
 }
 
 export default function EntityList(props: ModifyT) {
@@ -109,10 +109,10 @@ export default function EntityList(props: ModifyT) {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLDivElement>(null);
-  const [deleteMsg,setDeleteMsg] = useState<string>();
+  const [deleteMsg, setDeleteMsg] = useState<string>();
 
   const searchParams = useSearchParams();
-  const searchData:string | null = searchParams.get("searchText")
+  const searchData: string | null = searchParams.get("searchText");
 
   let searchText;
   useEffect(() => {
@@ -125,10 +125,10 @@ export default function EntityList(props: ModifyT) {
       setData(rows.data);
       setNRows(rows.count as number);
     }, 400);
-      
-    if(searchData){
+
+    if (searchData) {
       fetchData(searchData);
-    }else{
+    } else {
       fetchData(search);
     }
   }, [
@@ -228,6 +228,8 @@ export default function EntityList(props: ModifyT) {
         ...prev,
         [col.field]: !prev[col.field],
       };
+      // console.log("clicked");
+      // console.log(columns4);
       setColumns4((prevColumns) => {
         const isColumnVisible = newVisibilityModel[col.field];
         if (isColumnVisible) {
@@ -247,7 +249,7 @@ export default function EntityList(props: ModifyT) {
   function ColumnVisibilityToggle(props: {
     columns1: GridColDef[];
     columns2: GridColDef[];
-    handleColumnVisibilityChange: any;
+    // handleColumnVisibilityChange: any;
   }) {
     const [columns1, setColumns1] = useState(props.columns1);
     const column1Fields = new Set(columns1.map((col) => col.field));
@@ -259,7 +261,9 @@ export default function EntityList(props: ModifyT) {
             control={
               <Checkbox
                 checked={column1Fields.has(col.field)} // Check if field exists in columns1
-                onChange={() => props.handleColumnVisibilityChange(col)}
+                onChange={() =>{ handleColumnVisibilityChange(col);
+                  
+                }}
               />
             }
             label={col.headerName}
@@ -340,21 +344,24 @@ export default function EntityList(props: ModifyT) {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem   
+          <MenuItem
             onClick={() => {
-                onModifyDialog(props.id);
-                setAnchorEl(null);
-              }}>
-              <EditIcon fontSize="large" />
-              <Typography variant="h6">Edit</Typography>
+              onModifyDialog(props.id);
+              setAnchorEl(null);
+            }}
+          >
+            <EditIcon fontSize="large" />
+            <Typography variant="h6">Edit</Typography>
           </MenuItem>
-          <MenuItem     onClick={() => {
-                handleDeleteDialog(props.id);
-                setAnchorEl(null);
-              }}>
+          <MenuItem
+            onClick={() => {
+              handleDeleteDialog(props.id);
+              setAnchorEl(null);
+            }}
+          >
             {" "}
-              <DeleteIcon />
-              <Typography variant="h6">Delete</Typography>
+            <DeleteIcon />
+            <Typography variant="h6">Delete</Typography>
           </MenuItem>
         </StyledMenu>
       </Box>
@@ -365,7 +372,6 @@ export default function EntityList(props: ModifyT) {
     const snakeCaseRegex = /^[a-z]+(_[a-z]+)*$/;
     return snakeCaseRegex.test(str);
   }
-
 
   const columns2: GridColDef[] = [];
   let columnHeading = {
@@ -393,7 +399,7 @@ export default function EntityList(props: ModifyT) {
             keyToUse = key.replace(/_/g, " ");
             KeyToU = keyToUse.charAt(0).toUpperCase();
             KeyToU = KeyToU + keyToUse.slice(1);
-            KeyToU = KeyToU.toLowerCase() 
+            KeyToU = KeyToU.toLowerCase() // Ensure the string is in lowercase before capitalizing
               .replace(/\b\w/g, (char) => char.toUpperCase());
           } else {
             continue;
@@ -419,25 +425,25 @@ export default function EntityList(props: ModifyT) {
   return (
     // backgroundColor: "#fceff3",
     <Box>
-
-      <Box style={{margin:"0 20px"}}>
-{dialogOpen && (
-        <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
-          {props.fileUploadFeatureReqd && dlgMode === dialogMode.FileUpload ? (
-            <UploadFileForm
-              setDialogOpen={setDialogOpen}
-              fnFileUpad={props.fnFileUpad}
-              sampleFileName={props.sampleFileName}
-            />
-          ) : props.renderForm && dlgMode === dialogMode.Add ? (
-            props.renderForm(setDialogOpen, (arg) => {})
-          ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-            props.renderForm(setDialogOpen, (arg) => {}, modData)
-          ) : dlgMode === dialogMode.Delete ? (
-            <DeleteComponent />
-          ) : null}
-        </AddDialog>
-      )}
+      <Box style={{ margin: "0 20px" }}>
+        {dialogOpen && (
+          <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+            {props.fileUploadFeatureReqd &&
+            dlgMode === dialogMode.FileUpload ? (
+              <UploadFileForm
+                setDialogOpen={setDialogOpen}
+                fnFileUpad={props.fnFileUpad}
+                sampleFileName={props.sampleFileName}
+              />
+            ) : props.renderForm && dlgMode === dialogMode.Add ? (
+              props.renderForm(setDialogOpen, (arg) => {})
+            ) : props.renderForm && dlgMode === dialogMode.Modify ? (
+              props.renderForm(setDialogOpen, (arg) => {}, modData)
+            ) : dlgMode === dialogMode.Delete ? (
+              <DeleteComponent />
+            ) : null}
+          </AddDialog>
+        )}
         <Paper
           elevation={3}
           sx={{
@@ -463,7 +469,7 @@ export default function EntityList(props: ModifyT) {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchIcon fontSize="small"/>
+                        <SearchIcon fontSize="small" />
                       </InputAdornment>
                     ),
                     style: {
@@ -495,12 +501,12 @@ export default function EntityList(props: ModifyT) {
                     ref={anchorRef}
                     aria-label="Button group with a nested menu"
                     sx={{
-                      '& .MuiButtonGroup-grouped': {
-                        borderColor: '#fff', // Change the separator color
+                      "& .MuiButtonGroup-grouped": {
+                        borderColor: "#fff", // Change the separator color
                       },
-                      '& .MuiButtonGroup-grouped:not(:last-of-type)': {
-                        borderRightColor: '#fff', // Change the color of the separator
-                      }
+                      "& .MuiButtonGroup-grouped:not(:last-of-type)": {
+                        borderRightColor: "#fff", // Change the color of the separator
+                      },
                     }}
                   >
                     <Tooltip title="Add New">
@@ -563,7 +569,10 @@ export default function EntityList(props: ModifyT) {
                                 variant="outlined"
                                 tabIndex={-1}
                                 startIcon={<CloudUploadIcon />}
-                                sx={{bordercolor:"#e05a5a", color:"#e05a5a"}}
+                                sx={{
+                                  bordercolor: "#e05a5a",
+                                  color: "#e05a5a",
+                                }}
                               >
                                 <VisuallyHiddenInput
                                   type="file"
@@ -587,23 +596,24 @@ export default function EntityList(props: ModifyT) {
                     )}
                   </Popper>
                 </Box>
-              ) : (  <Tooltip title="Add New">
-                <Button
-                  onClick={() => {
-                    setDialogOpen(true);
-                    setDlgMode(dialogMode.Add);
-                  }}
-                  style={{ backgroundColor: "#e05a5a", padding:"10px 15px", color:"#fff" }}
-                >
-                  <AddIcon
-                    fontSize="small"
-                    style={{ marginRight: "5px" }}
-                  />
-                  Add New
-                </Button>
-              </Tooltip>)}
-
-
+              ) : (
+                <Tooltip title="Add New">
+                  <Button
+                    onClick={() => {
+                      setDialogOpen(true);
+                      setDlgMode(dialogMode.Add);
+                    }}
+                    style={{
+                      backgroundColor: "#e05a5a",
+                      padding: "10px 15px",
+                      color: "#fff",
+                    }}
+                  >
+                    <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
+                    Add New
+                  </Button>
+                </Tooltip>
+              )}
             </Grid>
             <Grid
               item
@@ -632,11 +642,13 @@ export default function EntityList(props: ModifyT) {
                   open={Boolean(anchorEl2)}
                   onClose={handleClose1}
                 >
+                  <MenuItem>
                   <ColumnVisibilityToggle
                     columns1={columns4}
                     columns2={columns}
-                    handleColumnVisibilityChange={handleColumnVisibilityChange}
-                  />
+                    // handleColumnVisibilityChange={handleColumnVisibilityChange}
+                    />
+                    </MenuItem>
                 </StyledMenu>
               </Box>
             </Grid>
@@ -661,7 +673,7 @@ export default function EntityList(props: ModifyT) {
             disableRowSelectionOnClick
             // checkboxSelection
             // autoHeight
-            sx={{maxHeight:props.height}}
+            sx={{ maxHeight: props.height }}
           />
         </Paper>
       </Box>

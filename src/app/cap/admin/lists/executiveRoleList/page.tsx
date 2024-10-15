@@ -34,6 +34,7 @@ export default function executiveRole() {
         fnDeleteDataByID={delExecutiveRoleById}
         customCols={columns}
         AddAllowed={true}
+        height = "30em"
       ></EntityList>
     </>
   );
