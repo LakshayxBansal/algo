@@ -11,40 +11,39 @@ import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
 import { Typography } from "@mui/material";
 
-export default function CompanyEntityList(){
-    const columns: GridColDef[] = [
-        { field: 'RowID', headerName: 'ID', width: 90 },
-        {
-          field: 'companyName',
-          headerName: 'Name',
-          width: 150,
-          renderCell: (params) => (
-            <AuthWrapper>
-              <CellDbName
-                row={params.row}
-                userId={params.row.userId as number}
-              ></CellDbName>
-            </AuthWrapper>
-          ),
-        },
-        {
-          field: 'companyAlias',
-          headerName: 'Alias',
-          width: 150,
-        },
-        {
-          field: 'createdBy',
-          headerName: 'Created By',
-          width: 150,
-        },
-        {
-          field: 'createdOn',
-          headerName: 'Created On',
-          width: 150,
-        }
-      ];
-    return <>
-        <EntityList
+export default function CompanyEntityList() {
+  const columns: GridColDef[] = [
+    { field: "RowID", headerName: "ID", width: 90 },
+    {
+      field: "companyName",
+      headerName: "Name",
+      width: 150,
+      renderCell: (params) => (
+        <CellDbName
+          row={params.row}
+          userId={params.row.userId as number}
+        ></CellDbName>
+      ),
+    },
+    {
+      field: "companyAlias",
+      headerName: "Alias",
+      width: 150,
+    },
+    {
+      field: "createdBy",
+      headerName: "Created By",
+      width: 150,
+    },
+    {
+      field: "createdOn",
+      headerName: "Created On",
+      width: 150,
+    },
+  ];
+  return (
+    <AuthWrapper>
+      <EntityList
         title="Company List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CreateCompany
@@ -58,7 +57,8 @@ export default function CompanyEntityList(){
         fnDeleteDataByID={deleteCompanyById}
         customCols={columns}
         AddAllowed={true}
-        height="20em">
-      </EntityList>
-      </>
+        height="20em"
+      ></EntityList>
+    </AuthWrapper>
+  );
 }
