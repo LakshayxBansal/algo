@@ -235,54 +235,62 @@ export default function CreateCompany(props: masterFormPropsT) {
               label={"Country"}
               onChange={(e, val, s) => {
                 setSelectValues({ country: val, state: null });
+                entityData.country_id = undefined;
+                entityData.country = "";
+                entityData.state_id = undefined;
+                entityData.state = "";
               }}
               fetchDataFn={getCountriesMaster}
               diaglogVal={
-                entityData.country
-                  ? ({
-                    id: entityData.country_id,
-                    name: entityData.country,
-                  } as optionsDataT)
-                  : {
-                    id: selectValues.country?.id,
-                    name: selectValues.country?.name ?? "",
-                    detail: undefined,
-                  }
+                selectValues.country
+                  ? {
+                      id: selectValues.country?.id,
+                      name: selectValues.country?.name ?? "",
+                      detail: undefined,
+                    }
+                  : ({
+                      id: entityData.country_id,
+                      name: entityData.country,
+                    } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
             <AutocompleteDB
               name={"state"}
               id={"state"}
               label={"State"}
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, state: val })
-              }
-              fetchDataFn={(stateStr: string) =>
-                getStatesMaster(stateStr, selectValues.country?.name)
-              }
+              onChange={(e, val, s) => {
+                setSelectValues({ ...selectValues, state: val });
+                entityData.state_id = undefined;
+                entityData.state = "";
+              }}
+              fetchDataFn={(stateStr: string) => {
+                const country =
+                  selectValues.country?.name ?? entityData.country;
+                return getStatesMaster(stateStr, country);
+              }}
               disable={
                 selectValues.country || entityData.country ? false : true
               }
               diaglogVal={
-                entityData.state
-                  ? ({
-                    id: entityData.state_id,
-                    name: entityData.state,
-                  } as optionsDataT)
-                  : {
-                    id: selectValues.state?.id,
-                    name: selectValues.state?.name ?? "",
-                    detail: undefined,
-                  }
+                selectValues.state
+                  ? {
+                      id: selectValues.state?.id,
+                      name: selectValues.state?.name ?? "",
+                      detail: undefined,
+                    }
+                  : ({
+                      id: entityData.state_id,
+                      name: entityData.state,
+                    } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
 
             <InputControl
