@@ -769,13 +769,7 @@ export default function UpdateInputForm(props: { baseData: IformData; config: an
                     rows={enquiryMaintainItems ? 4 : 6}
                     fullWidth
                     disabled
-                    InputProps={{
-                      style: { 
-                        overflow: 'auto',
-                        pointerEvents: 'auto' // Allows scrolling
-                      },
-                      readOnly: true // Makes the field read-only instead of fully disabled
-                    }}
+                    defaultValue={""}
                   />
                 </Grid>
               </Grid>
@@ -826,7 +820,7 @@ export default function UpdateInputForm(props: { baseData: IformData; config: an
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getEnquirySubSatusById}
-                required={status === "1"}
+                required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SubStatusForm
@@ -836,7 +830,6 @@ export default function UpdateInputForm(props: { baseData: IformData; config: an
                     data={data}
                   />
                 )}
-                disable={status === "2"}
               />
               <SelectMasterWrapper
                 name={"action_taken"}
@@ -861,7 +854,6 @@ export default function UpdateInputForm(props: { baseData: IformData; config: an
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getEnquiryAction}
-                required={status === "1"}
                 formError={formError?.next_action ?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm
