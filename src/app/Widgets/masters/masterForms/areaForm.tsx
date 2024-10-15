@@ -109,7 +109,7 @@ export default function AreaForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
