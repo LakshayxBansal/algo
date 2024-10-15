@@ -1,5 +1,6 @@
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
-import { Autocomplete, TextField } from "@mui/material"
+import { Autocomplete, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
+import { useState } from "react";
 
 type CustomFieldT = {
     key: number,
@@ -22,14 +23,14 @@ type CustomFieldT = {
     column_order: number
 }
 
-export default function CustomField(props: {
-
-    desc: CustomFieldT
-
-}) {
+export default function CustomField(props: { desc: CustomFieldT }) {
     console.log(props.desc);
+    const [status, setStatus] = useState(0);
 
-    const options = props.desc.column_format ? props.desc.column_format.split(",") : [];
+    function onStatusChange(event: React.SyntheticEvent, value: any) {
+        setStatus(value);
+    }
+
     const renderField = () => {
         switch (props.desc.column_type_id) {
             case 1:
@@ -43,7 +44,7 @@ export default function CustomField(props: {
                         required={!!props.desc.is_mandatory}
                     />
                 );
-            case 4: // Date input
+            case 4:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -54,11 +55,11 @@ export default function CustomField(props: {
                         required={props.desc.is_mandatory}
                     />
                 )
-            case 5: // Autocomplete
-                const options = props.desc.column_format?.split(",") || [];
+            case 5:
+                const list_item = props.desc.column_format?.split(",") || [];
                 return (
                     <Autocomplete
-                        options={options}
+                        options={list_item}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -69,6 +70,32 @@ export default function CustomField(props: {
                             />
                         )}
                     />
+                )
+            case 2:
+                const option = props.desc.column_format?.split(",") || [];
+                return (
+                    <FormControl>
+                        <RadioGroup
+                            row
+                            name="option"
+                            id="option"
+                            onChange={onStatusChange}
+                        >
+                            <FormControlLabel
+                                value={0}
+                                control={<label />}
+                                label={props.desc.column_label + " :"}
+                            />
+                            {option.map((option, index) => (
+                                <FormControlLabel
+                                    key={index}
+                                    value={index + 1}
+                                    control={<Radio />}
+                                    label={option}
+                                />
+                            ))}
+                        </RadioGroup>
+                    </FormControl>
                 )
         }
     }
