@@ -10,6 +10,7 @@ import { deRegisterFromAllCompany, deRegisterFromApp,deRegisterFromCompany } fro
 import { redirectToPage } from '../company/SelectCompany';
 import { signOut } from "next-auth/react";
 import { setDialogOpenClose,setModalTitle,setModalfnController } from './DialogModal';
+import { useRouter } from 'next/navigation';
 
 type profileModalT = { 
     img? : string,
@@ -25,6 +26,7 @@ type profileModalT = {
 
 
 export default function ProfileModal(props : profileModalT) {
+    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -79,11 +81,10 @@ export default function ProfileModal(props : profileModalT) {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem onClick={handleClose}>
-                <Link href="/cap/admin/profile" style={{textDecoration: "none",
-  color :"black"}}>
+                <MenuItem onClick={()=>{
+                    router.push('/cap/admin/profile')
+                    handleClose()}}>
                     Profile
-                </Link>
                 </MenuItem>
                 <MenuItem onClick={()=>{
                     setDialogOpenClose(true)

@@ -14,7 +14,7 @@ import Seperator from "@/app/Widgets/seperator";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { Collapse, IconButton } from "@mui/material";
-import { createUserToInvite } from "@/app/controllers/inviteUser.controller";
+import { createUserToInvite } from "@/app/controllers/user.controller";
 import axios from "axios";
 import { getSession } from "@/app/services/session.service";
 

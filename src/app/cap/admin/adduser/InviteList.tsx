@@ -1,11 +1,17 @@
 "use client"
 import { GridColDef } from "@mui/x-data-grid";
-import { getInviteUserByCompany, getInviteUserById } from "@/app/controllers/inviteUser.controller";
+import { Button } from "@mui/material";
+import { getInviteUserByCompany, getInviteUserById } from "@/app/controllers/user.controller";
 import EntityList from "../../../Widgets/masters/EntityList";
 import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
 import { updateStatusBar } from "../../navbar/StatusBar";
 import { useEffect } from "react";
 import { statusMap } from "../../navbar/StatusMap";
+import { createUserToInviteDb, deleteInvite } from "@/app/services/user.service";
+import { inviteUserSchemaT } from "@/app/models/models";
+import { getCompanyDbByIdList, getCompanyDetailsById } from "@/app/services/company.service";
+
+let companyID : number;
 
 const columns: GridColDef[] = [
   { field: 'RowID', headerName: 'ID', width: 90 },
@@ -15,7 +21,7 @@ const columns: GridColDef[] = [
     width: 150
   },
   {
-    field: 'usercontact',
+    field: 'contact',
     headerName: 'Contact',
     width: 150
   },
@@ -23,20 +29,54 @@ const columns: GridColDef[] = [
     field: 'status',
     headerName: 'Status',
     width: 150
+  },
+  {
+    field: 'action',
+    headerName: 'Action',
+    width: 150,
+    renderCell: (params) =>(
+      params.row.status === "pending" ? (
+        <Button onClick={() => handleDelete(params)}>Delete</Button>
+      ) : (
+      <Button onClick={() => handleReInvite(params)}>Re Invite</Button>
+    ))
   }
 ];
 
-export default function InviteList() {
+async function handleDelete(params:any) {
+  try {
+    const company = await getCompanyDbByIdList(3);
+    console.log("company : ",company);
+  } catch (error) {
+    throw (error);
+  }
+  // }finally{
+  //   window.location.reload();
+  // }
+}
+async function handleReInvite(params:any) {
+  try {
+    const inviteData : inviteUserSchemaT = {name : params.row.name, usercontact : params.row.contact, companyId : companyID};
+    await createUserToInviteDb(inviteData);
+  } catch (error) {
+    throw (error);
+  }
+  // }finally{
+  //   window.location.reload();
+  // }
+}
 
-  useEffect(() => {
-    if (updateStatusBar) {
-      updateStatusBar("key3","value3")
-    }
-  },[]);
+export default function InviteList({companyId}:{companyId : number}) {
+  companyID = companyId;
+  // useEffect(() => {
+  //   if (updateStatusBar) {
+  //     updateStatusBar("key3","value3")
+  //   }
+  // },[]);
 
   return <>
     <EntityList
-      title="Invited User"
+    title="Invited User"
       fetchDataFn={getInviteUserByCompany}
       fnFetchDataByID={getInviteUserById}
       customCols={columns}
