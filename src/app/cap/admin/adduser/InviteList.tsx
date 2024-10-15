@@ -30,41 +30,41 @@ const columns: GridColDef[] = [
     headerName: 'Status',
     width: 150
   },
-  {
-    field: 'action',
-    headerName: 'Action',
-    width: 150,
-    renderCell: (params) =>(
-      params.row.status === "pending" ? (
-        <Button onClick={() => handleDelete(params)}>Delete</Button>
-      ) : (
-      <Button onClick={() => handleReInvite(params)}>Re Invite</Button>
-    ))
-  }
+  // {
+  //   field: 'action',
+  //   headerName: 'Action',
+  //   width: 150,
+  //   renderCell: (params) =>(
+  //     params.row.status === "pending" ? (
+  //       <Button onClick={() => handleDelete(params)}>Delete</Button>
+  //     ) : (
+  //     <Button onClick={() => handleReInvite(params)}>Re Invite</Button>
+  //   ))
+  // }
 ];
 
-async function handleDelete(params:any) {
-  try {
-    const company = await getCompanyDbByIdList(3);
-    console.log("company : ",company);
-  } catch (error) {
-    throw (error);
-  }
+// async function handleDelete(params:any) {
+//   try {
+//     const company = await getCompanyDbByIdList(3);
+//     console.log("company : ",company);
+//   } catch (error) {
+//     throw (error);
+//   }
   // }finally{
   //   window.location.reload();
   // }
-}
-async function handleReInvite(params:any) {
-  try {
-    const inviteData : inviteUserSchemaT = {name : params.row.name, usercontact : params.row.contact, companyId : companyID};
-    await createUserToInviteDb(inviteData);
-  } catch (error) {
-    throw (error);
-  }
+// }
+// async function handleReInvite(params:any) {
+//   try {
+//     const inviteData : inviteUserSchemaT = {name : params.row.name, usercontact : params.row.contact, companyId : companyID};
+//     await createUserToInviteDb(inviteData);
+//   } catch (error) {
+//     throw (error);
+//   }
   // }finally{
   //   window.location.reload();
   // }
-}
+// }
 
 export default function InviteList({companyId}:{companyId : number}) {
   companyID = companyId;

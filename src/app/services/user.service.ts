@@ -492,7 +492,6 @@ export async function getInviteUserDb(
       LIMIT ?;",
       values: vals,
     });
-    console.log("invite list : ",result)
     return result
   } catch (e) {
     console.log(e);
