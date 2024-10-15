@@ -2,9 +2,11 @@
 import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
-import { Box, Button, Menu } from "@mui/material";
-import MuiAppBar, { AppBarProps, AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-
+import { Box, Button, Menu, TextField } from "@mui/material";
+import MuiAppBar, {
+  AppBarProps,
+  AppBarProps as MuiAppBarProps,
+} from "@mui/material/AppBar";
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -50,20 +52,20 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const ODD_OPACITY = 0.2;
 
 export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
-  backgroundColor:"#fff",
-  height:650,
-  border: 'none',
-  '& .MuiDataGrid-cell': {
-    borderBottom: 'none',
+  backgroundColor: "#fff",
+  height: 650,
+  border: "none",
+  "& .MuiDataGrid-cell": {
+    borderBottom: "none",
   },
-  '& .MuiDataGrid-columnHeaders': {
-    borderBottom: 'none',
+  "& .MuiDataGrid-columnHeaders": {
+    borderBottom: "none",
   },
   // '& .MuiDataGrid-columnSeparator': {
   //   display: 'none',
   // },
-  '& .MuiDataGrid-cell:hover': {
-    color: 'primary.main',
+  "& .MuiDataGrid-cell:hover": {
+    color: "primary.main",
   },
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.grey[200],
@@ -112,7 +114,7 @@ export const StyledMenu = styled(Menu)(({ theme }) => ({
     boxShadow:
       "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
     "& .MuiMenu-list": {
-      padding: "4px 20px",
+      padding: "0 0",
     },
     "& .MuiMenuItem-root": {
       "& .MuiSvgIcon-root": {
@@ -135,7 +137,7 @@ export const StyledMenu = styled(Menu)(({ theme }) => ({
 
 export const ContainedButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#e05a5a", // Change this to your desired color
-  // color: theme.palette.common.white, // Change text color if needed
+  color: theme.palette.common.white, // Change text color if needed
   "&:hover": {
     backgroundColor: "#EA8E8E", // Hover effect
   },
@@ -334,3 +336,31 @@ export const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
+
+export const CustomTextField = styled(TextField)(({ theme }) => ({
+  // "& .MuiOutlinedInput-root": {
+  //   "& fieldset": {
+  //     borderColor: theme.palette.primary.main, // Border color
+  //   },
+  //   "&:hover fieldset": {
+  //     borderColor: theme.palette.secondary.main, // Hover border color
+  //   },
+  //   "&.Mui-focused fieldset": {
+  //     borderColor: theme.palette.success.main, // Focused border color
+  //   },
+  // },
+  // "& .MuiInputLabel-root": {
+  //   color: theme.palette.text.secondary, // Label color
+  // },
+  // "& .MuiInputLabel-root.Mui-focused": {
+  //   color: theme.palette.primary.main, // Focused label color
+  // },
+  height: "fit-content",
+  "& .MuiFormHelperText-root": {
+    backgroundColor: "white", // Background color for helper text
+    margin: 0,
+    // lineHeight: 0,
+    // paddingTop: 10,
+    // fontSize: "0.75rem", // Font size for helper text
+  },
+}));

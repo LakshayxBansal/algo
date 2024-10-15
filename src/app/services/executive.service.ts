@@ -3,12 +3,14 @@
 import excuteQuery from "../utils/db/db";
 import { executiveSchemaT } from "../models/models";
 import { Session } from "next-auth";
+import { logger } from "../utils/logger.utils";
 
 export async function createExecutiveDB(
   session: Session,
   data: executiveSchemaT
 ) {
   try {
+    console.log("DATA in services\n: ", data, "\n");
     // const placeholderDate = new Date("1900-01-01");
     // data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
 
@@ -18,7 +20,7 @@ export async function createExecutiveDB(
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -35,6 +37,8 @@ export async function createExecutiveDB(
         data.dob,
         data.doa,
         data.doj,
+        data.pan,
+        data.aadhaar,
         data.area_id,
         data.call_type,
         data.crm_map_id,
@@ -46,7 +50,7 @@ export async function createExecutiveDB(
     });
     return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
   return null;
 }
@@ -66,7 +70,7 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -84,9 +88,11 @@ export async function updateExecutiveDB(
         data.dob,
         data.doa,
         data.doj,
+        data.pan,
+        data.aadhaar,
         data.area_id,
         data.call_type,
-        data.crm_user_id,
+        data.crm_map_id,
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,

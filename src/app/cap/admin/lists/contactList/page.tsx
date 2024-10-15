@@ -57,8 +57,7 @@ import {
 } from "@/app/controllers/contact.controller";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from 'next/navigation'
-
+import { useSearchParams } from "next/navigation";
 
 const columns: GridColDef[] = [
   {
@@ -79,23 +78,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-// async function Batch() {
-//   "use server"
-//   return await createContactsBatch;
-// }
-// async function Batch1() {
-//   "use server";
-//   return await getContactByPage;
-// }
-// async function Batch2() {
-//   "use server";
-//   return await getContactById;
-// }
-export default async function ManageContacts(props:{searchData:string}) {
-  // const searchParams = useSearchParams();
-  // const searchData = searchParams.get("searchText")
-
-  // console.log("search Data",searchParams.get("searchText"));
+export default function ManageContacts() {
   return (
     <>
       <EntityList
@@ -116,7 +99,7 @@ export default async function ManageContacts(props:{searchData:string}) {
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
         AddAllowed={false}
-        height = "30em"
+        height="30em"
         // addRow = {data}
       ></EntityList>
     </>

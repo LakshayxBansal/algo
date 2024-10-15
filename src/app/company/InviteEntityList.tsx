@@ -63,7 +63,8 @@ export default function InviteEntityList() {
       title="Invite List" 
       fetchDataFn={getInviteByUserContact}
       customCols={columns}
-      AddAllowed={false}>
+      AddAllowed={false}
+      height="20em">
     </EntityList>
   </>
 }

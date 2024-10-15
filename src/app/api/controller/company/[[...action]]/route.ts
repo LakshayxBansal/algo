@@ -1,10 +1,4 @@
-import {
-  getCompanyById,
-  getCompanyDbById,
-  createCompany,
-  updateCompany,
-  getCompanies,
-} from "@/app/controllers/company.controller";
+import { getCompanies } from "@/app/controllers/company.controller";
 import { NextRequest, NextResponse } from "next/server";
 
 type fnRouteT = (req: NextRequest) => Promise<NextResponse>;

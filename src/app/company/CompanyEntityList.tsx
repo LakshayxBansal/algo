@@ -1,6 +1,7 @@
 "use client";
 import { GridColDef } from "@mui/x-data-grid";
 import {
+  deleteCompanyById,
   getCompanies,
   getCompanyById,
 } from "../controllers/company.controller";
@@ -54,8 +55,10 @@ export default function CompanyEntityList(){
         )}
         fetchDataFn={getCompanies}
         fnFetchDataByID={getCompanyById}
+        fnDeleteDataByID={deleteCompanyById}
         customCols={columns}
-        AddAllowed={true}>
+        AddAllowed={true}
+        height="20em">
       </EntityList>
       </>
 }

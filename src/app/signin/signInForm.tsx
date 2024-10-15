@@ -70,8 +70,7 @@ export default function AuthPage(props: authPagePropsType) {
         password: data.password,
       }).then((status) => {
         if (status?.ok) {
-          setTimeout(() => {
-            
+          setTimeout(() => { 
             router.push(successCallBackUrl);
           }, 1000);
         } else {

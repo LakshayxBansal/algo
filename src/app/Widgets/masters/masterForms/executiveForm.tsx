@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
-import { getInviteDetailByContact } from "@/app/controllers/inviteUser.controller";
+import { getInviteDetailByContact } from "@/app/controllers/user.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -17,7 +17,7 @@ import {
   getExecutiveGroupById,
 } from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
-import { insertExecutiveIdToInviteUser } from "@/app/controllers/inviteUser.controller";
+import { insertExecutiveIdToInviteUser } from "@/app/controllers/user.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import ExecutiveRoleForm from "./executiveRoleForm";
@@ -26,7 +26,7 @@ import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
-import { getCountries, getStates } from "@/app/controllers/masters.controller";
+import { getCountries, getCountryById, getStates } from "@/app/controllers/masters.controller";
 import {
   getDeptById,
   getExecutiveDept,
@@ -55,6 +55,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
+  const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
+    id: entityData.state_id,
+    name: entityData.state,
+  } as optionsDataT);
+  const [stateKey, setStateKey] = useState(0);
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
     // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
@@ -67,6 +72,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   //   setExecutiveDepartment(value);
   // }
 
+  // useEffect(()=>{setDefaultState({id: 0, name: ""} as optionsDataT)},[selectValues.country])
+
   const handleSubmit = async (formData: FormData) => {
     try {
       const session = await getSession();
@@ -77,7 +84,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
-      console.log(selectValues);
 
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
@@ -91,7 +97,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   inviteId = invite.id;
       // }
       const result = await persistEntity(data as executiveSchemaT);
-
       if (result.status) {
         const newVal = {
           id: result.data[0].id,
@@ -184,7 +189,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   ) {
     let values = { ...selectValues };
     values[name] = val;
-
+    if (name === "country") {
+      values["state"] = {};
+      setDefaultState(undefined);
+      setStateKey(prev => 1-prev);
+    }
     setSelectValues(values);
   }
 
@@ -205,6 +214,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       return rest;
     });
   };
+
+
 
   return (
     <Box>
@@ -263,7 +274,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               id="name"
               label="Name"
               name="name"
-              // required
+              required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
@@ -340,10 +351,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   name: entityData.role,
                 } as optionsDataT
               }
+              
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
               disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : selectValues.department ? false : true}
-              formError={formError?.executiveRole ?? formError.executiveRole}
+              formError={formError?.role ?? formError.role}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
                   setDialogOpen={fnDialogOpen}
@@ -528,14 +540,28 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               helperText={formError?.address3?.msg}
               fullWidth
             />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="city"
-              id="city"
-              label="City"
-              defaultValue={entityData.city}
-              error={formError?.city?.error}
-              helperText={formError?.city?.msg}
+            <SelectMasterWrapper
+              name={"country"}
+              id={"country"}
+              label={"Country"}
+              width={350}
+              dialogTitle={"Add country"}
+              defaultValue={
+                {
+                  id: entityData.country_id,
+                  name: entityData.country,
+                } as optionsDataT
+              }
+              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+              fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <CountryForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
             />
           </Box>
           <Box
@@ -546,46 +572,33 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               gridTemplateColumns: "repeat(3, 1fr)",
             }}
           >
-            <SelectMasterWrapper
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              width={210}
-              dialogTitle={"Add country"}
-              defaultValue={
-                {
-                  id: entityData.country_id,
-                  name: entityData.country,
-                } as optionsDataT
-              }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-              fetchDataFn={getCountries}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <CountryForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                />
-              )}
+            
+            <InputControl
+              inputType={InputType.TEXT}
+              name="city"
+              id="city"
+              label="City"
+              defaultValue={entityData.city}
+              error={formError?.city?.error}
+              helperText={formError?.city?.msg}
             />
             <SelectMasterWrapper
+              key={stateKey}
               name={"state"}
               id={"state"}
               label={"State"}
               width={210}
               dialogTitle={"Add State"}
               disable={selectValues.country ? false : true}
-              defaultValue={
-                {
-                  id: entityData.state_id,
-                  name: entityData.state,
-                } as optionsDataT
-              }
+              defaultValue={defaultState}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
               fetchDataFn={getStatesforCountry}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.country?.id}
                 />
               )}
             />
