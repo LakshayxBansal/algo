@@ -282,6 +282,7 @@ export const stateListSchema = z.object({
   alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
 });
+
 export const executiveSchema = z
   .object({
     id: z.number().optional(),
