@@ -622,7 +622,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                           )}
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={12} md={6}>
                         <SelectMasterWrapper
                           name={"source"}
                           id={"source"}
