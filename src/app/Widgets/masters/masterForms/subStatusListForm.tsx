@@ -40,15 +40,17 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
       data[key] = value;
     }
 
-    data["status_id"] = status_id;
+    data["enquiry_status_id"] = status_id;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};

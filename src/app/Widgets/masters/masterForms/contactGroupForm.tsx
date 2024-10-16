@@ -51,8 +51,11 @@ export default function ContactGroupForm(props: masterFormPropsT) {
         name: result.data[0].name,
       };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      setFormError({});
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      },1000);
     } else {
       const issues = result.data;
       // show error on screen

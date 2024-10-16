@@ -22,7 +22,7 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -31,6 +31,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
 
   const entityData: organisationSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
@@ -55,10 +56,11 @@ export default function OrganisationForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      setFormError({});
+      setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -74,8 +76,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country ? selectValues.country.id : undefined;
+    data.state_id = selectValues.state ? selectValues.state.id : undefined;
 
     return data;
   };
@@ -92,7 +94,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
   }
 
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues.country?.name || entityData.country;
 
     const states = await getStates(stateStr, country);
     if (states.length > 0) {
@@ -326,8 +328,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
               name={"country"}
               id={"country"}
               label={"Country"}
-              // fullWidth
-              // width={210}
               dialogTitle={"Add country"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
               fetchDataFn={getCountries}
@@ -351,24 +351,17 @@ export default function OrganisationForm(props: masterFormPropsT) {
               name={"state"}
               id={"state"}
               label={"State"}
-              // width={210}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={selectValues.country ? false : true}
+              disable={selectValues.country || entityData.country_id ? false : true}
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
               defaultValue={defaultState}
-              // defaultValue={
-              //   {
-              //     id: entityData.state_id,
-              //     name: entityData.state,
-              //   } as optionsDataT
-              // }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  parentData={selectValues.country?.id}
+                  parentData={selectValues.country?.id || entityData.country_id}
                 />
               )}
             />
@@ -422,6 +415,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
       </Box>
     </>
   );
