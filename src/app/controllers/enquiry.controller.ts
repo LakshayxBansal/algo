@@ -1,5 +1,5 @@
 "use server";
-import { createEnquiryDB, showItemGridDB } from "../services/enquiry.service";
+import { createEnquiryDB, getHeaderDataAction, getItemDataAction, getLedgerDataAction, showItemGridDB } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
   enquiryHeaderSchemaT,
@@ -40,6 +40,7 @@ export async function createEnquiry(enqData: {
     const session = await getSession();
     if (session) {
       const headParsed = enquiryHeaderSchema.safeParse(enqData.head);
+
       const ledgerParsed = enquiryLedgerSchema.safeParse(enqData.ledger);
       const itemParsed = itemToListFormArraySchema.safeParse(enqData.item)
       if (headParsed.success && ledgerParsed.success && itemParsed.success) {
@@ -104,4 +105,19 @@ export async function showItemGrid() {
   }
 }
 
-export async function getEnquiryById() {}
+
+export async function getEnquiryById(id:number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const headerData =await getHeaderDataAction(session , 7);
+      const ledgerData= await getLedgerDataAction(session,7);
+      const itemData= await getItemDataAction(session , 7);
+
+      return {headerData,ledgerData,itemData};
+    }
+  } catch (error) {
+    throw error;
+  }
+
+}
