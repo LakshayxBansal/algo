@@ -132,7 +132,7 @@ export default function ContactForm(props: masterFormPropsT) {
       ? selectValues.area.id
       : entityData.area_id
         ? entityData.area_id
-        : 0;
+        : 1;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id

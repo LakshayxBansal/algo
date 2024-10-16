@@ -39,12 +39,21 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      // for (const issue of issues) {
+      //   for (const path of issue.path) {
+      //     errorState[path] = { msg: issue.message, error: true };
+      //   }
+      // }
       for (const issue of issues) {
-        for (const path of issue.path) {
-          errorState[path] = { msg: issue.message, error: true };
-        }
+        errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
+      console.log(issues);
+      if(issues[0].path==="refresh"){
+        errorState["form"] = { msg: issues[0].message, error: true };
+      }
+      else {
+        errorState["form"] = { msg: "Error encountered", error: true };
+      }
       setFormError(errorState);
     }
   };
@@ -57,7 +66,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-
+      data["stamp"]=entityData.stamp;
       result = await updateAllocationType(data);
     } else result = await createAllocationType(data);
     return result;
