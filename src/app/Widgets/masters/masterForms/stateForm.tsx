@@ -85,7 +85,7 @@ export default function StateForm(props: masterFormPropsWithParentT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify State" : "Add State"}
+            {props.data ? "Update State" : "Add State"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
