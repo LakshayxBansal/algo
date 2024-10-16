@@ -76,11 +76,18 @@ export default function InviteList({companyId}:{companyId : number}) {
 
   return <>
     <EntityList
-    title="Invited User"
+    title="Invite User"
+    renderForm={(fnDialogOpen, fnDialogValue, data) => (
+      <InviteUserForm
+      setDialogOpen={fnDialogOpen}
+      setDialogValue={fnDialogValue}
+      data={data}
+      />
+    )} 
       fetchDataFn={getInviteUserByCompany}
       fnFetchDataByID={getInviteUserById}
       customCols={columns}
-      AddAllowed={false}
+      AddAllowed={true}
       height="20em">
     </EntityList>
   </>

@@ -15,7 +15,7 @@ export default async function AddUser(){
           <UserList />
         </Box>
         <Box sx={{ height: "50vh",marginTop : "1rem", overflow: "scroll" }}>
-        <Accordion>
+        <Accordion sx={{bgcolor : "#F1F1EF"}}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1-content"
