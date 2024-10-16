@@ -76,8 +76,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : undefined;
-    data.state_id = selectValues.state ? selectValues.state.id : undefined;
+    data.country_id = selectValues.country ? selectValues.country.id : 0;
+    data.state_id = selectValues.state ? selectValues.state.id : 0;
 
     return data;
   };

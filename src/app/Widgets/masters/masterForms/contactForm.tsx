@@ -127,32 +127,32 @@ export default function ContactForm(props: masterFormPropsT) {
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
         ? entityData.contactGroup_id
-        : undefined;
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
         ? entityData.area_id
-        : undefined;
+        : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
         ? entityData.organisation_id
-        : undefined;
+        : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
         ? entityData.department_id
-        : undefined;
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
         ? entityData.contactGroup_id
-        : undefined;
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
         ? entityData.state_id
-        : undefined;
+        : 0;
 
     return data;
   };
