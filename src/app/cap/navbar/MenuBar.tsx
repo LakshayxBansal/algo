@@ -170,7 +170,10 @@ export default function MenuBar(props: propsType) {
       }
     }, 100);
 
-    maindata(search);
+    if (search.length > 0) {
+      maindata(search);
+
+    }
   }, [search]);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
