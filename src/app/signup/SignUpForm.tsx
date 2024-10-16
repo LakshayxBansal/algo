@@ -28,7 +28,6 @@ export default function SignupForm1(props: any) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inActiveUserId, setInActiveUserId] = useState<number | undefined>();
   const [signUpData, setSignUpData] = useState<userSchemaT>();
@@ -118,15 +117,6 @@ export default function SignupForm1(props: any) {
       await handleRegister(data as userSchemaT);
     }
   };
-
-  function onPhoneChange(
-    value: string,
-    data: {} | CountryData,
-    event: ChangeEvent<HTMLInputElement>,
-    formattedValue: string
-  ) {
-    setPhoneNumber(value);
-  }
 
   return (
     <Box
@@ -313,7 +303,12 @@ export default function SignupForm1(props: any) {
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
-                    onkeydown={onPhoneChange}
+                    onKeyDown={()=>{
+                      setFormError((curr) => {
+                        const { phone, ...rest} = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "40px",

@@ -22,8 +22,22 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 // import PhoneInput from 'react-phone-input-2';
 // import "react-phone-input-2/lib/style.css";
 import { MuiTelInput, MuiTelInputInfo } from "mui-tel-input";
-import { AnyARecord } from "dns";
-import { CustomTextField } from "@/app/utils/styledComponents";
+import {
+  Unstable_NumberInput as BaseNumberInput,
+  NumberInputProps,
+  numberInputClasses,
+} from '@mui/base/Unstable_NumberInput';
+
+
+// for number 
+  // inputtype = TEXT
+  // type="number"
+  // decPlaces=2 // for 2 decimal places
+  // inputProps: {
+  //   min: 0,
+  //   max: 10,
+  //   style: { textAlign: "right" },
+  // },
 
 export enum InputType {
   TEXT,
@@ -34,11 +48,12 @@ export enum InputType {
   EMAIL,
   PHONE,
 }
-// Define the mandatory props for the base control
+// Define the additional props for the base control
 interface BaseControlProps {
   inputType: InputType;
   custLabel?: string;
-  // Add any mandatory props here
+  decPlaces?: number,
+  // Add any additional props here
 }
 
 // (TextFieldProps | CheckboxProps | DatePickerProps<Dayjs>  )
@@ -46,20 +61,26 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({
-  inputType,
-  custLabel = "",
-  ...props
-}) => {
+export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", decPlaces, ...props }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
-  const [value, setValue] = React.useState(
-    props.defaultValue ? props.defaultValue : ""
-  );
+  const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
+        if (props.type === "number") {
+          const value = event.target.value;
+          if (value.includes(".") && decPlaces > 0) {
+            const [integerPart, decimalPart] = value.split(".");
+            if (decimalPart.length > decPlaces) {
+              event.target.value = `${integerPart}.${decimalPart.slice(
+                0,
+                decPlaces
+              )}`;
+            }
+          }
+        }
         if (inputProps.onChange) {
           inputProps.onChange(event);
         }
@@ -80,8 +101,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
-    console.log("datechange");
-    console.log(value);
+    console.log('datechange')
+    console.log(value)
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -127,7 +148,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <CustomTextField {...textFieldProps} onChange={onChange} />;
+      return <TextField {...textFieldProps} onChange={onChange} />;
       break;
     }
     case InputType.CHECKBOX: {

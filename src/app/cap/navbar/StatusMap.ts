@@ -10,7 +10,7 @@ const statusMap = function () {
         set(key: string, value: string): void {
             map.set(key,value);
             // keyMap.push({key, value});
-            console.log("map length in set : ",map.size);
+            // console.log("map length in set : ",map.size);
             //console.log("Push host ---", key, ", connections ---", value.totalConnections());
         },
     
@@ -21,7 +21,7 @@ const statusMap = function () {
         // },
 
         get(key: string): string | undefined {
-            console.log("map length in get : ",map.size);
+            // console.log("map length in get : ",map.size);
             return map.get(key);
             // console.log("keyMap length in get : ",keyMap.length);
             // const keyObj = keyMap.find((val) => val.key === key);
