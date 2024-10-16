@@ -48,17 +48,10 @@ export default function UserList(){
     return <>
         <EntityList
         title="User List"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <InviteUserForm
-          setDialogOpen={fnDialogOpen}
-          setDialogValue={fnDialogValue}
-          data={data}
-          />
-        )} 
         fetchDataFn={getCompanyUser}
         // fnFetchDataByID={getInviteUserById}
         customCols={columns}
-        AddAllowed={true}
+        AddAllowed={false}
         height="50vh"
         >
         
