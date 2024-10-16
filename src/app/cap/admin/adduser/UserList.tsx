@@ -34,9 +34,13 @@ const columns: GridColDef[] = [
 ];
 
 const handleRemove = async(params : any)=>{
-  console.log(params.row)
-  const id = params.row.id;
-  await deRegisterFromCompany(id,null,null);
+  try{
+    await deRegisterFromCompany(params.row.id,null,null);
+  }catch(error){
+    throw(error);
+  }finally{
+    window.location.reload();
+  }
 }
 
 export default function UserList(){

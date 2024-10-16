@@ -314,7 +314,7 @@ export async function createUserToInviteDb(data: inviteUserSchemaT) {
     return excuteQuery({
       host: "userDb",
       query: "call createInviteUser(?,?,?);",
-      values: [data.name, data.usercontact, data.companyId],
+      values: [data.name, data.contact, data.companyId],
     });
   } catch (e) {
     console.log(e);
@@ -430,7 +430,7 @@ export async function reInvite(data : inviteUserSchemaT) {
     return excuteQuery({
       host: "userDb",
       query: "call createInviteUser(?,?,?);",
-      values: [data.name, data.usercontact, data.companyId],
+      values: [data.name, data.contact, data.companyId],
     });
   } catch (e) {
     console.log(e);

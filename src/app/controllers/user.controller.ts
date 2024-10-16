@@ -235,6 +235,17 @@ export async function createUserToInvite(data: inviteUserSchemaT) {
       Object.assign(data, { companyId: session.user.dbInfo.id });
       const parsed = zs.inviteUserSchema.safeParse(data);
       if (parsed.success) {
+        let contact;
+        if (data.email) {
+          contact = data.email;
+          delete data.email;
+        }
+        else {
+          contact = data.phone;
+          contact = contact?.replace(/ +/g, '');
+          delete data?.phone;
+        }
+        data.contact = contact;
         const dbResult = await createUserToInviteDb(data);
         if (dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
