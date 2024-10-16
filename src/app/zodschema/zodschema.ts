@@ -121,7 +121,7 @@ export const organisationSchema = z.object({
   ]),
   gstin: z.union([
     z.string().optional(),
-    z.string().min(10).regex(panRegEx, "Invalid GSTIN number!"),
+    z.string().min(10),
   ]),
   pincode: z
     .string()
@@ -647,6 +647,7 @@ export const nameMasterData = z.object({
     .string()
     .min(1, "Length must contain at least 1 character(s)")
     .max(45, "Length must contain at most 45 character(s)"),
+  stamp: z.number().optional()
 });
 
 // export const nameMasterData = z.object({
