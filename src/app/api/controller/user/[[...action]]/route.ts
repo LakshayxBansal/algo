@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getInviteByUserContact,
   getTotalInvite,
-} from "@/app/controllers/inviteUser.controller";
+} from "@/app/controllers/user.controller";
 
 type fnRouteT = (req: NextRequest) => Promise<NextResponse>;
 

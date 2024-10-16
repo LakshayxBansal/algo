@@ -188,6 +188,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
     const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
     let issues: ZodIssue[] = [];
     if (headerParsed.success && ledgerParsed.success) {
+      console.log(ledgerData);
       //const itemData = data.map(({ item, unit , ...rest }) => rest);
       result = await createEnquiry({
         head: headerData,
@@ -543,132 +544,136 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
             <Seperator>Enquiry Details</Seperator>
           </Grid>
           <Grid item xs={12}>
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "2fr 1fr 1fr",
-              }}
-            >
-              <InputControl
-                label="Enquiry Description"
-                id="enq_number"
-                inputType={InputType.TEXT}
-                name="enq_number"
-                fullWidth
-                required
-                error={formError?.enq_number?.error}
-                helperText={formError?.enq_number?.msg}
-              />
-              <InputControl
-                label="Received on "
-                inputType={InputType.DATETIMEINPUT}
-                id="date"
-                name="date"
-                defaultValue={dayjs(new Date())}
-                required
-                error={formError?.date?.error}
-                helperText={formError?.date?.msg}
-              />
-              <SelectMasterWrapper
-                name={"contact"}
-                id={"contact"}
-                label={"Contact"}
-                dialogTitle={"Add Contact"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
-                fetchDataFn={getContact}
-                fnFetchDataByID={getContactById}
-                required
-                formError={formError?.contact ?? formError.contact}
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <ContactForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                gridTemplateColumns: "repeat(2, 1fr)",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "grid",
-                  columnGap: 5,
-                  gridTemplateColumns: "repeat(2, 1fr)",
-                }}
-              >
-                <SelectMasterWrapper
-                  name={"category"}
-                  id={"category"}
-                  label={"Category"}
-                  dialogTitle={"Add Category"}
-                  onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
-                  fetchDataFn={getEnquiryCategory}
-                  fnFetchDataByID={getCategoryById}
-                  required
-                  formError={formError?.category ?? formError.category}
-                  renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                    <CategoryForm
-                      setDialogOpen={fnDialogOpen}
-                      setDialogValue={fnDialogValue}
-                      data={data}
+            <Grid container>
+              
+              <Grid item xs={12} md={12}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6} md={6}>
+                    <InputControl
+                      label="Enquiry Description"
+                      id="enq_number"
+                      inputType={InputType.TEXT}
+                      name="enq_number"
+                      fullWidth
+                      required
+                      error={formError?.enq_number?.error}
+                      helperText={formError?.enq_number?.msg}
                     />
-                  )}
-                />
-                <SelectMasterWrapper
-                  name={"source"}
-                  id={"source"}
-                  label={"Source"}
-                  dialogTitle={"Add Source"}
-                  onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
-                  fetchDataFn={getEnquirySource}
-                  fnFetchDataByID={getEnquirySourceById}
-                  required
-                  formError={formError?.source ?? formError.source}
-                  renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                    <SourceForm
-                      setDialogOpen={fnDialogOpen}
-                      setDialogValue={fnDialogValue}
-                      data={data}
+                  </Grid>
+                  <Grid item xs={12} sm={3} md={3}>  
+                    <InputControl
+                      label="Received on "
+                      inputType={InputType.DATETIMEINPUT}
+                      id="date"
+                      name="date"
+                      defaultValue={dayjs(new Date())}
+                      required
+                      error={formError?.date?.error}
+                      helperText={formError?.date?.msg}
+                      sx={{display:"flex",flexGrow:1}}
                     />
-                  )}
-                />
-              </Box>
-              <Box
-                sx={{
-                  gridColumn: "2/3", // Explicitly places this box in the second column
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  width: "100%",
-                }}
-              >
-                <SelectMasterWrapper
-                  name={"received_by"}
-                  id={"received_by"}
-                  label={"Received By"}
-                  dialogTitle={"Add Executive"}
-                  onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
-                  fetchDataFn={getExecutive}
-                  fnFetchDataByID={getExecutiveById}
-                  required
-                  formError={formError?.received_by ?? formError.received_by}
-                  renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                    <ExecutiveForm
-                      setDialogOpen={fnDialogOpen}
-                      setDialogValue={fnDialogValue}
-                      data={data}
+                  </Grid>
+                  <Grid item xs={12} sm={3} md={3}>
+                    <SelectMasterWrapper
+                      name={"contact"}
+                      id={"contact"}
+                      label={"Contact"}
+                      dialogTitle={"Add Contact"}
+                      onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
+                      fetchDataFn={getContact}
+                      fnFetchDataByID={getContactById}
+                      required
+                      formError={formError?.contact ?? formError.contact}
+                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                        <ContactForm
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
+                          data={data}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </Box>
-            </Box>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12} md={12}>
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
+                    <Grid container spacing={5}>
+                      <Grid item xs={12} md={6}>
+                        <SelectMasterWrapper
+                          name={"category"}
+                          id={"category"}
+                          label={"Category"}
+                          dialogTitle={"Add Category"}
+                          onChange={(e, v, s) =>
+                            onSelectChange(e, v, s, "category")
+                          }
+                          fetchDataFn={getEnquiryCategory}
+                          fnFetchDataByID={getCategoryById}
+                          required
+                          formError={formError?.category ?? formError.category}
+                          renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                            <CategoryForm
+                              setDialogOpen={fnDialogOpen}
+                              setDialogValue={fnDialogValue}
+                              data={data}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <SelectMasterWrapper
+                          name={"source"}
+                          id={"source"}
+                          label={"Source"}
+                          dialogTitle={"Add Source"}
+                          onChange={(e, v, s) =>
+                            onSelectChange(e, v, s, "source")
+                          }
+                          fetchDataFn={getEnquirySource}
+                          fnFetchDataByID={getEnquirySourceById}
+                          required
+                          formError={formError?.source ?? formError.source}
+                          renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                            <SourceForm
+                              setDialogOpen={fnDialogOpen}
+                              setDialogValue={fnDialogValue}
+                              data={data}
+                            />
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <SelectMasterWrapper
+                      name={"received_by"}
+                      id={"received_by"}
+                      label={"Received By"}
+                      dialogTitle={"Add Executive"}
+                      onChange={(e, v, s) =>
+                        onSelectChange(e, v, s, "received_by")
+                      }
+                      fetchDataFn={getExecutive}
+                      fnFetchDataByID={getExecutiveById}
+                      required
+                      formError={
+                        formError?.received_by ?? formError.received_by
+                      }
+                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                        <ExecutiveForm
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
+                          data={data}
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+
+            </Grid>
 
             <Grid container spacing={2}>
               {enquiryMaintainItems && (
@@ -774,7 +779,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getEnquirySubSatusById}
-                required={status === "1"}
+                required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SubStatusForm
@@ -784,7 +789,6 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                     data={data}
                   />
                 )}
-                disable={status === "2"}
               />
               <SelectMasterWrapper
                 name={"action_taken"}
@@ -809,7 +813,6 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getEnquiryAction}
-                required={status === "1"}
                 formError={formError?.next_action ?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm

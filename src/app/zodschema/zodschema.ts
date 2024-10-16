@@ -121,7 +121,7 @@ export const organisationSchema = z.object({
   ]),
   gstin: z.union([
     z.string().optional(),
-    z.string().min(10).regex(panRegEx, "Invalid GSTIN number!"),
+    z.string().min(10),
   ]),
   pincode: z
     .string()
@@ -283,69 +283,76 @@ export const stateListSchema = z.object({
   country_id: z.number(),
 });
 
-export const executiveSchema = z.object({
-  id: z.number().optional(),
-  alias: z.string().max(60).optional(),
-  name: z
-    .string()
-    .min(1, "Executive Name must conatin atleast 1 character")
-    .max(60, "Executive Name must contain atmost 60 character(s)"),
-  address1: z.string().max(75).optional(),
-  address2: z.string().max(75).optional(),
-  address3: z.string().max(75).optional(),
-  city: z.string().max(75).optional(),
-  state_id: z.number().optional(),
-  state: z.string().max(60).optional(),
-  pincode: z.string().max(15).optional(),
-  country_id: z.number().optional(),
-  country: z.string().max(60).optional(),
-  email: z
-    .union([
+export const executiveSchema = z
+  .object({
+    id: z.number().optional(),
+    alias: z.string().max(60).optional(),
+    name: z
+      .string()
+      .min(1, "Executive Name must conatin atleast 1 character")
+      .max(60, "Executive Name must contain atmost 60 character(s)"),
+    address1: z.string().max(75).optional(),
+    address2: z.string().max(75).optional(),
+    address3: z.string().max(75).optional(),
+    city: z.string().max(75).optional(),
+    state_id: z.number().optional(),
+    state: z.string().max(60).optional(),
+    pincode: z.string().max(15).optional(),
+    country_id: z.number().optional(),
+    country: z.string().max(60).optional(),
+    email: z
+      .union([
+        z.literal(""),
+        z.string().regex(emailRegex, "Invalid Email Format!"),
+      ])
+      .optional(),
+    mobile: z
+      .union([z.literal(""), z.string().regex(phoneRegex, "Invalid Number!")])
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
+    whatsapp: z
+      .union([z.literal(""), z.string().regex(phoneRegex, "Invalid Number!")])
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
+    created_by: z.number().optional(),
+    created_on: z.union([z.literal(""), z.date().optional()]),
+    modified_by: z.number().optional(),
+    modified_on: z.union([z.literal(""), z.date().optional()]),
+    stamp: z.number().optional(),
+    dob: z.union([z.literal(""), z.date().optional()]),
+    doa: z.union([z.literal(""), z.date().optional()]),
+    doj: z.union([z.literal(""), z.date().optional()]),
+    area_id: z.number().optional(),
+    area: z.string().max(60).optional(),
+    call_type_id: z.number().optional(),
+    call_type: z.string().min(1).max(45),
+    crm_user: z.string().max(60).optional(),
+    crm_user_id: z.number().optional(),
+    crm_map_id: z.number().optional(),
+    role_id: z.number().optional(),
+    role: z.string().min(1, "Select role").max(45), //Remove it from optional
+    executive_dept_id: z.number().optional(),
+    executive_dept: z.string().max(75).optional(),
+    executive_group_id: z.number().optional(),
+    executive_group: z.string().max(75).optional(),
+    pan: z.union([
       z.literal(""),
-      z.string().regex(emailRegex, "Invalid Email Format!"),
-    ])
-    .optional(),
-  mobile: z.string().refine((val) => checkPhone(val), {
-    message: "Please provide a valid Phone No",
-    path: ["mobile"],
-  }),
-  whatsapp: z.string().refine((val) => checkPhone(val), {
-    message: "Please provide a valid Whatsapp No",
-    path: ["whatsapp"],
-  }),
-  created_by: z.number().optional(),
-  created_on: z.union([z.literal(""), z.date().optional()]),
-  modified_by: z.number().optional(),
-  modified_on: z.union([z.literal(""), z.date().optional()]),
-  stamp: z.number().optional(),
-  dob: z.union([z.literal(""), z.date().optional()]),
-  doa: z.union([z.literal(""), z.date().optional()]),
-  doj: z.union([z.literal(""), z.date().optional()]),
-  area_id: z.number().optional(),
-  area: z.string().max(60).optional(),
-  call_type_id: z.number().optional(),
-  call_type: z.string().min(1).max(45),
-  crm_user: z.string().max(60).optional(),
-  crm_user_id: z.number().optional(),
-  crm_map_id: z.number().optional(),
-  role_id: z.number().optional(),
-  role: z.string().min(1, "Select role").max(45), //Remove it from optional
-  executive_dept_id: z.number().optional(),
-  executive_dept: z.string().max(75).optional(),
-  executive_group_id: z.number().optional(),
-  executive_group: z.string().max(75).optional(),
-  pan: z.union([
-    z.literal(""),
-    z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
-  ]),
-  aadhaar: z.union([z.literal(""), z.string().max(20)]),
-});
-// .refine(
-//   (schema) => {
-//     return !(schema.email === "" && schema.mobile === "");
-//   },
-//   { message: "please provide email, or phone no", path: ["mobile", "email"] }
-// );
+      z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
+    ]),
+    aadhaar: z.union([z.literal(""), z.string().max(20)]),
+  })
+  .refine(
+    (schema) => {
+      return !(schema.email === "" && schema.mobile === "");
+    },
+    { message: "please provide email, or phone no", path: ["mobile", "email"] }
+  );
 /**
  * validate enquiry header schema
  */
@@ -385,8 +392,8 @@ export const enquiryLedgerSchema = z.object({
   sub_status_id: z.number().min(1),
   action_taken_id: z.number().min(1),
   action_taken: z.string().min(1).max(60),
-  next_action_id: z.number().min(1),
-  next_action: z.string().min(1).max(60),
+  next_action_id: z.number().min(1).optional(),
+  next_action: z.string().min(1).max(60).optional(),
   next_action_date: z.string().min(1).max(20),
   suggested_action_remark: z.string().max(5000).optional(),
   action_taken_remark: z.string().max(5000).optional(),
@@ -548,9 +555,32 @@ export const countrySchema = z.object({
 
 export const stateSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1, "State Name must not be empty").max(60),
-  alias: z.string().min(1).max(45).optional(),
-  country_id: z.number(),
+  name: z
+    .string()
+    .min(1, "State Name must not be empty")
+    .max(60, "State Name must contain at most 60 character(s)"),
+  alias: z
+    .string()
+    .min(1, "Alias must not be empty")
+    .max(45, "Alias must contain at most 45 character(s)")
+    .optional(),
+  country_id: z.number().refine((val)=> val !== 0 ,{
+        message: "Country name must not be empty", 
+        path: ["country"], 
+      } )
+  
+    // .number({
+    //   required_error: "Age is required",
+    //   invalid_type_error: "Country can not be empty",
+    // })
+    // .refine(
+    //   (val) => {
+    //     return isNaN(val) || val !== undefined;
+    //   },
+    //   {
+    //     message: "Country name must not be empty", 
+    //     path: ["country"], 
+    // ),
 });
 
 /**
@@ -617,6 +647,7 @@ export const nameMasterData = z.object({
     .string()
     .min(1, "Length must contain at least 1 character(s)")
     .max(45, "Length must contain at most 45 character(s)"),
+  stamp: z.number().optional()
 });
 
 // export const nameMasterData = z.object({
@@ -694,17 +725,25 @@ export const inviteUserSchema = z
   .object({
     id: z.number().optional(),
     name: z.string().min(1, "Please enter Name").max(45),
-    usercontact: z.string().min(1, "Please enter Contact").max(60),
+    email: z
+      .string()
+      .regex(emailRegex, "Input must be in email format")
+      .optional(),
+    phone: z
+      .string()
+      .min(1, "Please provide phone")
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
+    contact: z.string().optional(),
     companyId: z.number(),
     executiveId: z.number().optional(),
     inviteDate: z.date().optional(),
-  })
-  .refine(
+  }).refine(
     (schema) => {
-      return (
-        emailRegex.test(schema.usercontact) ||
-        phoneRegex.test(schema.usercontact)
-      );
+      return !(schema.email === "");
     },
-    { message: "Invalid Input Format", path: ["usercontact"] }
+    { message: "Please provide email", path: ["email"] }
   );

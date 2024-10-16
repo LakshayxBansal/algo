@@ -202,7 +202,7 @@ export default function AuthPage(props: authPagePropsType) {
                     name="email"
                     onKeyDown={() => {
                       setFormError((curr) => {
-                        const { email, ...rest } = curr;
+                        const { email,form, ...rest} = curr;
                         return rest;
                       });
                     }}
@@ -241,7 +241,7 @@ export default function AuthPage(props: authPagePropsType) {
                     disableDropdown={false}
                     onKeyDown={() => {
                       setFormError((curr) => {
-                        const { phone, ...rest } = curr;
+                        const { phone,form, ...rest} = curr;
                         return rest;
                       });
                     }}
@@ -306,7 +306,7 @@ export default function AuthPage(props: authPagePropsType) {
                     helperText={formError?.password?.msg}
                     onKeyDown={() => {
                       setFormError((curr) => {
-                        const { password, ...rest } = curr;
+                        const { password,form, ...rest} = curr;
                         return rest;
                       });
                     }}
