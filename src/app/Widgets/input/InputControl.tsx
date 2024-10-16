@@ -27,6 +27,7 @@ import {
   NumberInputProps,
   numberInputClasses,
 } from '@mui/base/Unstable_NumberInput';
+import { CustomTextField } from "@/app/utils/styledComponents";
 
 
 // for number 
@@ -148,7 +149,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <TextField {...textFieldProps} onChange={onChange} />;
+      return <CustomTextField {...textFieldProps} onChange={onChange} />;
       break;
     }
     case InputType.CHECKBOX: {

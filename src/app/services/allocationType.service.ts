@@ -51,17 +51,31 @@ export async function createAllocationTypeDb(
   return null;
 }
 
-export async function getAllocationDetailsById(crmDb: string, id: number) {
+// export async function getAllocationDetailsById(crmDb: string, id: number) {
+//   try {
+//     const result = await excuteQuery({
+//       host: crmDb,
+//       query: "select * from allocation_type_master a where a.id=?;",
+//       values: [id],
+//     });
+
+//     return result;
+//   } catch (e) {
+//     logger.error(e);
+//   }
+// }
+
+export async function getAllocationDetailsById(crmDb: string, id: number | undefined) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select * from allocation_type_master a where a.id=?;",
+      query: "SELECT * FROM allocation_type_master WHERE id=?;",
       values: [id],
     });
-
     return result;
   } catch (e) {
     logger.error(e);
+    return [];
   }
 }
 
