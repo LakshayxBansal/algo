@@ -1,5 +1,5 @@
 // import { getEnquiryDetails } from "@/app/services/enquiry.service";
-import { getInviteDetailById } from "@/app/controllers/inviteUser.controller";
+import { getInviteDetailById } from "@/app/controllers/user.controller";
 import { populateData } from "@/app/utils/notification";
 
 

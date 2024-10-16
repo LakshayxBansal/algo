@@ -694,17 +694,25 @@ export const inviteUserSchema = z
   .object({
     id: z.number().optional(),
     name: z.string().min(1, "Please enter Name").max(45),
-    usercontact: z.string().min(1, "Please enter Contact").max(60),
+    email: z
+      .string()
+      .regex(emailRegex, "Input must be in email format")
+      .optional(),
+    phone: z
+      .string()
+      .min(1, "Please provide phone")
+      .refine((val) => checkPhone(val), {
+        message: "Please provide a valid Phone No",
+        path: ["phone"],
+      })
+      .optional(),
+    contact: z.string().optional(),
     companyId: z.number(),
     executiveId: z.number().optional(),
     inviteDate: z.date().optional(),
-  })
-  .refine(
+  }).refine(
     (schema) => {
-      return (
-        emailRegex.test(schema.usercontact) ||
-        phoneRegex.test(schema.usercontact)
-      );
+      return !(schema.email === "");
     },
-    { message: "Invalid Input Format", path: ["usercontact"] }
+    { message: "Please provide email", path: ["email"] }
   );

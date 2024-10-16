@@ -19,6 +19,7 @@ export default async function Profile() {
                         <Box sx={{ display: "flex", justifyContent: "center", width: "100vw" }}>
                             <ExecutiveForm
                                 data={executiveData[0]}
+                                parentData="profile"
                             />
                         </Box>
                     </Box>
