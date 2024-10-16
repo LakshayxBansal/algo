@@ -1,95 +1,21 @@
 export const dbTableAndProScript =
-  "CREATE TABLE `object_category_master` (\
+  "CREATE TABLE `allocation_type_master` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
-  `name` varchar(45) NOT NULL,\
-  PRIMARY KEY (`id`)\
+  `name` varchar(50) DEFAULT NULL,\
+  `stamp` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-INSERT INTO `object_category_master` VALUES (1,'master'),(2,'transaction'),(3,'report');~\
-CREATE TABLE `object_rights_master` (\
-  `id` int(11) NOT NULL AUTO_INCREMENT,\
-  `object_id` int(11) NOT NULL,\
-  `admin_create` int(11) NOT NULL DEFAULT 1,\
-  `admin_read` int(11) NOT NULL DEFAULT 1,\
-  `admin_update` int(11) NOT NULL DEFAULT 1,\
-  `admin_delete` int(11) NOT NULL DEFAULT 1,\
-  `manager_create` int(11) NOT NULL DEFAULT 1,\
-  `manager_read` int(11) NOT NULL DEFAULT 1,\
-  `manager_update` int(11) NOT NULL DEFAULT 1,\
-  `manager_delete` int(11) NOT NULL DEFAULT 1,\
-  `executive_create` int(11) NOT NULL DEFAULT 1,\
-  `executive_read` int(11) NOT NULL DEFAULT 1,\
-  `executive_update` int(11) NOT NULL DEFAULT 1,\
-  `executive_delete` int(11) NOT NULL DEFAULT 1,\
-  PRIMARY KEY (`id`)\
-);~\
-INSERT INTO `object_rights_master` VALUES (1,1,1,1,1,1,1,1,1,1,1,1,1,1),(2,2,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (3,3,1,1,1,1,1,1,1,1,1,1,1,1),(4,4,1,1,1,1,1,1,1,1,1,1,1,1),(5,5,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (6,6,1,1,1,1,1,1,1,1,1,1,1,1),(7,7,1,1,1,1,1,1,1,1,1,1,1,1),(8,8,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (9,9,1,1,1,1,1,1,1,1,1,1,1,1),(10,10,1,1,1,1,1,1,1,1,1,1,1,1),(11,11,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (12,12,1,1,1,1,1,1,1,1,1,1,1,1),(13,13,1,1,1,1,1,1,1,1,1,1,1,1),(14,14,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (15,15,1,1,1,1,1,1,1,1,1,1,1,1),(16,16,1,1,1,1,1,1,1,1,1,1,1,1),(17,17,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (18,18,1,1,1,1,1,1,1,1,1,1,1,1),(19,19,1,1,1,1,1,1,1,1,1,1,1,1),(20,20,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (21,21,1,1,1,1,1,1,1,1,1,1,1,1),(22,22,1,1,1,1,1,1,1,1,1,1,1,1),(23,23,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (24,24,1,1,1,1,1,1,1,1,1,1,1,1),(25,25,1,1,1,1,1,1,1,1,1,1,1,1);~\
-CREATE TABLE `object_type_master` (\
-  `id` int(11) NOT NULL AUTO_INCREMENT,\
-  `name` varchar(45) NOT NULL,\
-  `type` int(11) NOT NULL,\
-  PRIMARY KEY (`id`)\
-);~\
-INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(3,'Area',1),(4,'Category',1),\
-    (5,'Contact',1),(6,'Contact Group',1),(7,'Country',1),(8,'Currency',1),(9,'Department',1),\
-    (10,'Executive Dept',1),(11,'Executive',1),(12,'Executive Group',1),(13,'Executive Role',1),\
-    (14,'Invite User',2),(15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),\
-    (19,'Organisation',1),(20,'Source',1),(21,'State',1),(22,'State List',1),(23,'Sub Status',2),\
-    (24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2);~\
 CREATE TABLE `config_meta_data` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `config_type` varchar(100) NOT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `config_type_UNIQUE` (`config_type`)\
 );~\
-CREATE TABLE `menu_option_master` (\
-  `id` int(11) DEFAULT NULL,\
-  `name` text DEFAULT NULL,\
-  `short_name` text DEFAULT NULL,\
-  `parent_id` int(11) DEFAULT NULL,\
-  `icon` text DEFAULT NULL,\
-  `href` text DEFAULT NULL,\
-  `default_open` int(11) DEFAULT NULL,\
-  `created_on` text DEFAULT NULL,\
-  `modified_on` text DEFAULT NULL,\
-  `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL,\
-  `menu_order` int(11) DEFAULT NULL\
-);~\
-INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashboardOutlinedIcon','/cap',0,'','',0,0,0),\
-  (2,'Enquiry','Enquiry',0,'FolderOutlinedIcon','#',0,'','',0,0,0),(3,'Campaign','Campaign',0,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
-  (4,'Reports','Reports',0,'BarChartIcon','#',0,'','',0,0,0),(5,'Admin','Admin',0,'FolderOutlinedIcon','#',0,'','',0,0,0),\
-  (6,'Add Inquiry','Add',2,'AddIcCallIcon','/cap/enquiry',0,'','',0,0,0),(7,'Allocate','Allocate',2,'InboxIcon','/cap/callexplorer',0,'','',0,0,0),\
-  (8,'Update','Update',2,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),(9,'Masters','Masters',5,'FolderOutlinedIcon','#',0,'','',0,0,0),\
-  (10,'Modify Company','Modify Company',5,'InboxIcon','#',0,'','',0,0,0),(11,'Add User','Add User',5,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
-  (12,'Enquiry Masters','Enquiry Masters',9,'FolderOutlinedIcon','#',0,'','',0,0,0),(13,'Support Masters','Support Masters',9,'DashboardIcon','#',0,'','',0,0,0),\
-  (14,'Action','Actions',12,'FolderOutlinedIcon','/cap/admin/lists/actionList',0,'','',0,0,0),(15,'Category','Category',12,'DashboardIcon','/cap/admin/lists/categoryList',0,'','',0,0,0),\
-  (28,'Source','Source',12,'FolderOutlinedIcon','/cap/admin/lists/sourceList',0,'','',0,0,0),\
-  (31,'Contact','Contacts',12,'ContactsIcon','/cap/admin/lists/contactList',0,'','',0,0,0),\
-  (34,'Enquiry Sub Status','Enquiry Sub Status',12,'FolderOutlinedIcon','/cap/admin/lists/subStatusList',0,'','',0,0,0),\
-  (35,'Allocation Type','Allocation Type',12,'FolderOutlinedIcon','/cap/admin/lists/allocationTypeList',0,'','',0,0,0),\
-  (36,'Enquiry Item','Enquiry Item',12,'FolderOutlinedIcon','/cap/admin/lists/itemList',0,'','',0,0,0),\
-  (37,'Item Group','Item Group',12,'FolderOutlinedIcon','/cap/admin/lists/itemGroupList',0,'','',0,0,0),\
-  (38,'Item Unit','Item Unit',12,'FolderOutlinedIcon','/cap/admin/lists/unitList',0,'','',0,0,0),\
-  (39,'Organisation','Organisation',12,'FolderOutlinedIcon','/cap/admin/lists/organisationList',0,'','',0,0,0),\
-  (40,'Contact Group','Contact Group',12,'FolderOutlinedIcon','/cap/admin/lists/contactGroupList',0,'','',0,0,0),\
-  (41,'Department','Department',12,'FolderOutlinedIcon','/cap/admin/lists/departmentList',0,'','',0,0,0),\
-  (42,'Country','Country',12,'FolderOutlinedIcon','/cap/admin/lists/countryList',0,'','',0,0,0),\
-  (43,'State','State',12,'FolderOutlinedIcon','/cap/admin/lists/stateList',0,'','',0,0,0),\
-  (44,'City','City',12,'FolderOutlinedIcon','#',0,'','',0,0,0),(45,'Executive','Executive',12,'FolderOutlinedIcon','/cap/admin/lists/executiveList',0,'','',0,0,0),\
-  (46,'Executive Area','Executive Area',12,'FolderOutlinedIcon','#',0,'','',0,0,0),\
-  (47,'Executive Role','Executive Role',12,'FolderOutlinedIcon','/cap/admin/lists/executiveRoleList',0,'','',0,0,0),\
-  (48,'Executive Dept','Executive Dept',12,'FolderOutlinedIcon','/cap/admin/lists/executiveDeptList',0,'','',0,0,0),\
-  (49,'Executive Group','Executive Group',12,'FolderOutlinedIcon','/cap/admin/lists/executiveGroupList',0,'','',0,0,0),\
-  (50,'Currency','Currency',12,'FolderOutlinedIcon','/cap/admin/lists/currencyList',0,'','',0,0,0),\
-  (51,'Config','Config',5,'FolderOutlinedIcon','#',0,'','',0,0,0),(52,'Enquiry Config','Enquiry Config',51,'FolderOutlinedIcon','/cap/admin/enquirySupportConfig',0,'','',0,0,0);~\
 CREATE TABLE `app_config` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `config_type_id` int(11) NOT NULL,\
@@ -98,15 +24,6 @@ CREATE TABLE `app_config` (\
   UNIQUE KEY `config_type_id_UNIQUE` (`config_type_id`),\
   CONSTRAINT `app_config_ibfk_1` FOREIGN KEY (`config_type_id`) REFERENCES `config_meta_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\
   CONSTRAINT `app_config_chk_1` CHECK (json_valid(`config`))\
-);~\
-CREATE TABLE `allocation_type_master` (\
-  `id` int(11) DEFAULT NULL,\
-  `name` varchar(50) DEFAULT NULL,\
-  `stamp` int(11) DEFAULT NULL,\
-  `created_on` datetime DEFAULT NULL,\
-  `modified_on` datetime DEFAULT NULL,\
-  `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL\
 );~\
 CREATE TABLE `area_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -119,72 +36,170 @@ CREATE TABLE `area_master` (\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-CREATE TABLE `business_profile` ( `id` int(11) NOT NULL, `name` varchar(60) DEFAULT NULL,\
-  `address1` varchar(75) DEFAULT NULL, `address2` varchar(75) DEFAULT NULL, `address3` varchar(75) DEFAULT NULL,\
-  `city` varchar(75) DEFAULT NULL, `state_id` int(11) DEFAULT NULL, `country_id` int(11) DEFAULT NULL,\
-  `pincode` varchar(20) DEFAULT NULL, `mobile` varchar(20) DEFAULT NULL, `pan` varchar(20) DEFAULT NULL,\
-  `gstin` varchar(20) DEFAULT NULL, `email` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`)\
+CREATE TABLE `business_profile` (\
+  `id` int(11) NOT NULL,\
+  `name` varchar(60) DEFAULT NULL,\
+  `address1` varchar(75) DEFAULT NULL,\
+  `address2` varchar(75) DEFAULT NULL,\
+  `address3` varchar(75) DEFAULT NULL,\
+  `city` varchar(75) DEFAULT NULL,\
+  `state_id` int(11) DEFAULT NULL,\
+  `country_id` int(11) DEFAULT NULL,\
+  `pincode` varchar(20) DEFAULT NULL,\
+  `mobile` varchar(20) DEFAULT NULL,\
+  `pan` varchar(20) DEFAULT NULL,\
+  `gstin` varchar(20) DEFAULT NULL,\
+  `email` varchar(100) DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
-CREATE TABLE `call_allocation` ( `call_id` int(11) DEFAULT NULL, `allocated_to` int(11) DEFAULT NULL,\
-  `allocated_on` datetime DEFAULT NULL, `allocated_by` int(11) DEFAULT NULL,\
-  `next_action_id` int(11) DEFAULT NULL, `next_action_datetime` datetime DEFAULT NULL\
+CREATE TABLE `call_allocation` (\
+  `call_id` int(11) DEFAULT NULL,\
+  `allocated_to` int(11) DEFAULT NULL,\
+  `allocated_on` datetime DEFAULT NULL,\
+  `allocated_by` int(11) DEFAULT NULL,\
+  `next_action_id` int(11) DEFAULT NULL,\
+  `next_action_datetime` datetime DEFAULT NULL\
 );~\
-CREATE TABLE `call_receipt` ( `id` int(11) DEFAULT NULL, `received_datetime` datetime DEFAULT NULL,\
-  `call_no` varchar(40) DEFAULT NULL, `contact_id` int(11) DEFAULT NULL, `received_by` int(11) DEFAULT NULL,\
-  `call_status` int(11) DEFAULT NULL, `call_sub_status` int(11) DEFAULT NULL, `next_action_id` int(11) DEFAULT NULL,\
-  `next_action_datetime` datetime DEFAULT NULL, `allocated_to` int(11) DEFAULT NULL,\
-  `call_remark` text DEFAULT NULL, `call_suggested_remark` text DEFAULT NULL\
+CREATE TABLE `call_receipt` (\
+  `id` int(11) DEFAULT NULL,\
+  `received_datetime` datetime DEFAULT NULL,\
+  `call_no` varchar(40) DEFAULT NULL,\
+  `contact_id` int(11) DEFAULT NULL,\
+  `received_by` int(11) DEFAULT NULL,\
+  `call_status` int(11) DEFAULT NULL,\
+  `call_sub_status` int(11) DEFAULT NULL,\
+  `next_action_id` int(11) DEFAULT NULL,\
+  `next_action_datetime` datetime DEFAULT NULL,\
+  `allocated_to` int(11) DEFAULT NULL,\
+  `call_remark` text DEFAULT NULL,\
+  `call_suggested_remark` text DEFAULT NULL\
 );~\
-CREATE TABLE `call_type_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(60) DEFAULT '',\
-  `stamp` smallint(6) DEFAULT NULL, `created_by` int(11) DEFAULT NULL, `modified_by` int(11) DEFAULT NULL,\
-  `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL, PRIMARY KEY (`id`) USING BTREE,\
+CREATE TABLE `call_type_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `name` varchar(60) DEFAULT '',\
+  `stamp` smallint(6) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-CREATE TABLE `company` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(45) DEFAULT NULL,\
-  `add1` varchar(45) DEFAULT NULL, `add2` varchar(45) DEFAULT NULL, `city` varchar(45) DEFAULT NULL,\
-  `pincode` varchar(45) DEFAULT NULL, `dbinfo_id` int(11) DEFAULT NULL, `stateId` int(11) DEFAULT NULL,\
-  `cfield1` varchar(50) DEFAULT NULL, `cfield2` varchar(50) DEFAULT NULL, `cfield3` varchar(50) DEFAULT NULL,\
-  `cfield4` varchar(50) DEFAULT NULL, `cfield5` varchar(50) DEFAULT NULL, `cfield6` varchar(50) DEFAULT NULL,\
-  `cfield7` varchar(50) DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `companyId_UNIQUE` (`id`)\
+CREATE TABLE `contact_group_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `alias` varchar(60) DEFAULT '',\
+  `name` varchar(60) NOT NULL DEFAULT '',\
+  `stamp` smallint(6) DEFAULT 0,\
+  `parent_id` int(11) DEFAULT 0,\
+  `created_by` int(11) DEFAULT 0,\
+  `modified_by` int(11) DEFAULT 0,\
+  `created_on` datetime DEFAULT '0000-00-00 00:00:00',\
+  `modified_on` datetime DEFAULT '0000-00-00 00:00:00',\
+  `is_parent` tinyint(4) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`),\
+  UNIQUE KEY `name_UNIQUE` (`name`)\
 );~\
-CREATE TABLE `contact_group_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `alias` varchar(60) DEFAULT '',\
-  `name` varchar(60) NOT NULL DEFAULT '', `stamp` smallint(6) DEFAULT 0, `parent_id` int(11) DEFAULT 0,\
-  `created_by` int(11) DEFAULT 0, `modified_by` int(11) DEFAULT 0, `created_on` datetime DEFAULT '0000-00-00 00:00:00',\
-  `modified_on` datetime DEFAULT '0000-00-00 00:00:00', `is_parent` tinyint(4) DEFAULT NULL,\
-  PRIMARY KEY (`id`), UNIQUE KEY `id_UNIQUE` (`id`), UNIQUE KEY `name_UNIQUE` (`name`)\
+CREATE TABLE `contact_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `alias` varchar(60) DEFAULT NULL,\
+  `name` varchar(60) DEFAULT NULL,\
+  `print_name` varchar(60) DEFAULT NULL,\
+  `group_id` int(11) DEFAULT NULL,\
+  `pan` varchar(20) DEFAULT NULL,\
+  `aadhaar` varchar(20) DEFAULT NULL,\
+  `address1` varchar(75) DEFAULT NULL,\
+  `address2` varchar(75) DEFAULT NULL,\
+  `address3` varchar(75) DEFAULT NULL,\
+  `city` varchar(75) DEFAULT NULL,\
+  `state_id` int(11) DEFAULT NULL,\
+  `area_id` int(11) DEFAULT NULL,\
+  `pincode` varchar(15) DEFAULT NULL,\
+  `country_id` int(11) DEFAULT NULL,\
+  `email` varchar(100) DEFAULT NULL,\
+  `mobile` varchar(20) DEFAULT NULL,\
+  `whatsapp` varchar(20) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  `stamp` int(11) DEFAULT NULL,\
+  `dob` datetime DEFAULT NULL,\
+  `doa` datetime DEFAULT NULL,\
+  `department_id` int(11) DEFAULT NULL,\
+  `organisation_id` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
-CREATE TABLE `contact_master` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, `alias` varchar(60) DEFAULT NULL,\
-  `name` varchar(60) DEFAULT NULL, `print_name` varchar(60) DEFAULT NULL, `group_id` int(11) DEFAULT NULL,\
-  `pan` varchar(20) DEFAULT NULL, `aadhaar` varchar(20) DEFAULT NULL, `address1` varchar(75) DEFAULT NULL,\
-  `address2` varchar(75) DEFAULT NULL, `address3` varchar(75) DEFAULT NULL, `city` varchar(75) DEFAULT NULL,\
-  `state_id` int(11) DEFAULT NULL, `area_id` int(11) DEFAULT NULL, `pincode` varchar(15) DEFAULT NULL,\
-  `country_id` int(11) DEFAULT NULL, `email` varchar(100) DEFAULT NULL, `mobile` varchar(20) DEFAULT NULL,\
-  `whatsapp` varchar(20) DEFAULT NULL, `created_by` int(11) DEFAULT NULL, `created_on` datetime DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL, `modified_on` datetime DEFAULT NULL, `stamp` int(11) DEFAULT NULL,\
-  `dob` datetime DEFAULT NULL, `doa` datetime DEFAULT NULL, `department_id` int(11) DEFAULT NULL,\
-  `organisation_id` int(11) DEFAULT NULL, PRIMARY KEY (`id`)\
+CREATE TABLE `country_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `alias` varchar(60) DEFAULT NULL,\
+  `name` varchar(60) DEFAULT '',\
+  `stamp` smallint(6) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-CREATE TABLE `country_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `alias` varchar(60) DEFAULT NULL,\
-  `name` varchar(60) DEFAULT '', `stamp` smallint(6) DEFAULT NULL, `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL, `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL,\
-  PRIMARY KEY (`id`), UNIQUE KEY `id_UNIQUE` (`id`)\
+CREATE TABLE `currency_data` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `symbol` varchar(5) NOT NULL,\
+  `name` varchar(60) NOT NULL,\
+  `shortForm` varchar(20) DEFAULT NULL,\
+  `decimal_places` varchar(5) NOT NULL,\
+  `currency_system` varchar(5) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `symbol` (`symbol`),\
+  UNIQUE KEY `name` (`name`)\
 );~\
-CREATE TABLE `dbHost` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `host` varchar(45) DEFAULT NULL, \
-  `port` varchar(45) DEFAULT NULL, `useForNextDb` int(11) DEFAULT NULL, PRIMARY KEY (`id`)\
+CREATE TABLE `custom_column_type_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `column_type` varchar(45) NOT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
-CREATE TABLE `dbInfo` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `host_id` int(11) DEFAULT NULL,\
-  `name` varchar(45) DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `dbId_UNIQUE` (`id`)\
+CREATE TABLE `custom_fields_master` (\
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
+  `object_type_id` int(11) NOT NULL,\
+  `column_name_id` varchar(45) NOT NULL,\
+  `column_label` varchar(45) DEFAULT NULL,\
+  `column_name` varchar(45) DEFAULT NULL,\
+  `column_id` varchar(45) DEFAULT NULL,\
+  `column_type_id` int(11) DEFAULT NULL,\
+  `column_format` varchar(1000) DEFAULT NULL,\
+  `form_section` varchar(45) DEFAULT NULL,\
+  `is_mandatory` int(11) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `modified_on` varchar(45) DEFAULT NULL,\
+  `is_default_column` int(11) DEFAULT NULL,\
+  `is_default_mandatory` int(11) DEFAULT NULL,\
+  `column_order` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
-CREATE TABLE `department_master` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
-  `name` varchar(60) NOT NULL DEFAULT '', `stamp` smallint(6) DEFAULT 0, `created_by` int(11) DEFAULT 0,\
-  `modified_by` int(11) DEFAULT 0, `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL,\
-  PRIMARY KEY (`id`) USING BTREE, UNIQUE KEY `name_UNIQUE` (`name`), UNIQUE KEY `id_UNIQUE` (`id`)\
+CREATE TABLE `department_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `name` varchar(60) NOT NULL DEFAULT '',\
+  `stamp` smallint(6) DEFAULT 0,\
+  `created_by` int(11) DEFAULT 0,\
+  `modified_by` int(11) DEFAULT 0,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`) USING BTREE,\
+  UNIQUE KEY `name_UNIQUE` (`name`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `enquiry_action_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
-  `name` varchar(60) DEFAULT '', `stamp` smallint(6) DEFAULT NULL, `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL, `created_on` datetime DEFAULT NULL, `modified_on` datetime DEFAULT NULL,\
-  PRIMARY KEY (`id`) USING BTREE, UNIQUE KEY `id_UNIQUE` (`id`)\
+  `name` varchar(60) DEFAULT '',\
+  `stamp` smallint(6) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`) USING BTREE,\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `enquiry_action_tran` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -363,7 +378,6 @@ CREATE TABLE `executive_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT NULL,\
   `name` varchar(60) DEFAULT NULL,\
-  `profile_img` varchar(100),\
   `address1` varchar(75) DEFAULT NULL,\
   `address2` varchar(75) DEFAULT NULL,\
   `address3` varchar(75) DEFAULT NULL,\
@@ -388,8 +402,12 @@ CREATE TABLE `executive_master` (\
   `role_id` int(11) DEFAULT NULL,\
   `dept_id` int(11) DEFAULT NULL,\
   `group_id` int(11) DEFAULT NULL,\
+  `profile_img` varchar(100) DEFAULT NULL,\
+  `pan` varchar(45) DEFAULT NULL,\
+  `aadhaar` varchar(45) DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
-  UNIQUE KEY `id_UNIQUE` (`id`)\
+  UNIQUE KEY `id_UNIQUE` (`id`),\
+  UNIQUE KEY `pan_UNIQUE` (`pan`)\
 );~\
 CREATE TABLE `executive_role_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -405,7 +423,7 @@ CREATE TABLE `executive_role_master` (\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `item_group_master` (\
-  `id` int(11) DEFAULT NULL,\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT NULL,\
   `alias` varchar(60) DEFAULT NULL,\
   `stamp` smallint(6) DEFAULT NULL,\
@@ -414,10 +432,11 @@ CREATE TABLE `item_group_master` (\
   `modified_on` datetime DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
-  `is_parent` tinyint(4) DEFAULT NULL\
+  `is_parent` tinyint(4) DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `item_master` (\
-  `id` int(11) DEFAULT NULL,\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT NULL,\
   `stamp` smallint(6) DEFAULT NULL,\
   `group_id` int(11) DEFAULT NULL,\
@@ -427,7 +446,8 @@ CREATE TABLE `item_master` (\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
-  `modified_on` datetime DEFAULT NULL\
+  `modified_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `master_tran_types` (\
   `id` int(11) NOT NULL,\
@@ -435,6 +455,50 @@ CREATE TABLE `master_tran_types` (\
   `full_name` varchar(60) DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `short_name` (`short_name`) USING BTREE\
+);~\
+CREATE TABLE `menu_option_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `name` text DEFAULT NULL,\
+  `short_name` text DEFAULT NULL,\
+  `parent_id` int(11) DEFAULT NULL,\
+  `icon` text DEFAULT NULL,\
+  `href` text DEFAULT NULL,\
+  `default_open` int(11) DEFAULT NULL,\
+  `created_on` text DEFAULT NULL,\
+  `modified_on` text DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `menu_order` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `object_category_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `name` varchar(45) NOT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+CREATE TABLE `object_rights_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `object_id` int(11) NOT NULL,\
+  `admin_create` int(11) NOT NULL DEFAULT 1,\
+  `admin_read` int(11) NOT NULL DEFAULT 1,\
+  `admin_update` int(11) NOT NULL DEFAULT 1,\
+  `admin_delete` int(11) NOT NULL DEFAULT 1,\
+  `manager_create` int(11) NOT NULL DEFAULT 1,\
+  `manager_read` int(11) NOT NULL DEFAULT 1,\
+  `manager_update` int(11) NOT NULL DEFAULT 1,\
+  `manager_delete` int(11) NOT NULL DEFAULT 1,\
+  `executive_create` int(11) NOT NULL DEFAULT 1,\
+  `executive_read` int(11) NOT NULL DEFAULT 1,\
+  `executive_update` int(11) NOT NULL DEFAULT 1,\
+  `executive_delete` int(11) NOT NULL DEFAULT 1,\
+  PRIMARY KEY (`id`)\
+);~\
+CREATE TABLE `object_type_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `name` varchar(45) NOT NULL,\
+  `type` int(11) NOT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `organisation_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -458,15 +522,6 @@ CREATE TABLE `organisation_master` (\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-CREATE TABLE `session` (\
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
-  `data` varchar(5000) DEFAULT NULL,\
-  `last_access` datetime DEFAULT NULL,\
-  `email` varchar(45) DEFAULT NULL,\
-  PRIMARY KEY (`id`),\
-  UNIQUE KEY `sessionId_UNIQUE` (`id`),\
-  UNIQUE KEY `userId_UNIQUE` (`email`)\
-);~\
 CREATE TABLE `state_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT '',\
@@ -479,6 +534,13 @@ CREATE TABLE `state_master` (\
   `country_id` int(11) NOT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `status_bar` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `user_id` int(11) NOT NULL,\
+  `data` varchar(5000) DEFAULT \"{'key3':'','key4':'','key5':''}\",\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `user_id_UNIQUE` (`user_id`)\
 );~\
 CREATE TABLE `system_task` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
@@ -591,9 +653,8 @@ CREATE TABLE `trans_types_masters` (\
   UNIQUE KEY `short_name` (`short_name`) USING BTREE\
 );~\
 CREATE TABLE `unit_master` (\
-  `id` int(11) NOT NULL,\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
   `name` varchar(50) DEFAULT NULL,\
-  `uqc` varchar(50) DEFAULT NULL,\
   `stamp` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
@@ -601,36 +662,49 @@ CREATE TABLE `unit_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`)\
 );~\
-CREATE TABLE `user` (\
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\
-  `name` varchar(60) DEFAULT NULL,\
-  `email` varchar(100) DEFAULT NULL,\
-  `password` varchar(100) DEFAULT NULL,\
-  `datetime` varchar(20) DEFAULT NULL,\
-  `provider` varchar(15) DEFAULT NULL,\
-  `verified` int(11) DEFAULT NULL,\
-  `cfield1` varchar(50) DEFAULT NULL,\
-  `cfield2` varchar(50) DEFAULT NULL,\
-  `cfield3` varchar(50) DEFAULT NULL,\
-  `cfield4` varchar(50) DEFAULT NULL,\
-  `cfield5` varchar(50) DEFAULT NULL,\
-  `cfield6` varchar(50) DEFAULT NULL,\
-  `cfield7` varchar(50) DEFAULT NULL,\
-  `phone` varchar(15) DEFAULT NULL,\
-  PRIMARY KEY (`id`),\
-  UNIQUE KEY `id_UNIQUE` (`id`)\
-);~\
-CREATE TABLE `userCompany` (\
-  `user_id` int(11) NOT NULL,\
-  `company_id` int(11) NOT NULL,\
-  `isAdmin` int(11) NOT NULL,\
-  `isInvited` int(11) DEFAULT NULL,\
-  `isAccepted` int(11) DEFAULT NULL,\
-  `isMapped` int(11) DEFAULT NULL,\
-  `invitedDate` date DEFAULT NULL,\
-  `acceptedDate` date DEFAULT NULL,\
-  `mappedDate` date DEFAULT NULL\
-);~\
+INSERT INTO `object_category_master` VALUES (1,'master'),(2,'transaction'),(3,'report');~\
+INSERT INTO `object_rights_master` VALUES (1,1,1,1,1,1,1,1,1,1,1,1,1,1),(2,2,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (3,3,1,1,1,1,1,1,1,1,1,1,1,1),(4,4,1,1,1,1,1,1,1,1,1,1,1,1),(5,5,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (6,6,1,1,1,1,1,1,1,1,1,1,1,1),(7,7,1,1,1,1,1,1,1,1,1,1,1,1),(8,8,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (9,9,1,1,1,1,1,1,1,1,1,1,1,1),(10,10,1,1,1,1,1,1,1,1,1,1,1,1),(11,11,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (12,12,1,1,1,1,1,1,1,1,1,1,1,1),(13,13,1,1,1,1,1,1,1,1,1,1,1,1),(14,14,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (15,15,1,1,1,1,1,1,1,1,1,1,1,1),(16,16,1,1,1,1,1,1,1,1,1,1,1,1),(17,17,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (18,18,1,1,1,1,1,1,1,1,1,1,1,1),(19,19,1,1,1,1,1,1,1,1,1,1,1,1),(20,20,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (21,21,1,1,1,1,1,1,1,1,1,1,1,1),(22,22,1,1,1,1,1,1,1,1,1,1,1,1),(23,23,1,1,1,1,1,1,1,1,1,1,1,1),\
+    (24,24,1,1,1,1,1,1,1,1,1,1,1,1),(25,25,1,1,1,1,1,1,1,1,1,1,1,1);~\
+INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(3,'Area',1),(4,'Category',1),\
+    (5,'Contact',1),(6,'Contact Group',1),(7,'Country',1),(8,'Currency',1),(9,'Department',1),\
+    (10,'Executive Dept',1),(11,'Executive',1),(12,'Executive Group',1),(13,'Executive Role',1),\
+    (14,'Invite User',2),(15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),\
+    (19,'Organisation',1),(20,'Source',1),(21,'State',1),(22,'State List',1),(23,'Sub Status',2),\
+    (24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2);~\
+INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashboardOutlinedIcon','/cap',0,'','',0,0,0),\
+  (2,'Enquiry','Enquiry',0,'FolderOutlinedIcon','#',0,'','',0,0,0),(3,'Campaign','Campaign',0,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
+  (4,'Reports','Reports',0,'BarChartIcon','#',0,'','',0,0,0),(5,'Admin','Admin',0,'FolderOutlinedIcon','#',0,'','',0,0,0),\
+  (6,'Add Inquiry','Add',2,'AddIcCallIcon','/cap/enquiry',0,'','',0,0,0),(7,'Allocate','Allocate',2,'InboxIcon','/cap/callexplorer',0,'','',0,0,0),\
+  (8,'Update','Update',2,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),(9,'Masters','Masters',5,'FolderOutlinedIcon','#',0,'','',0,0,0),\
+  (10,'Modify Company','Modify Company',5,'InboxIcon','#',0,'','',0,0,0),(11,'Add User','Add User',5,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
+  (12,'Enquiry Masters','Enquiry Masters',9,'FolderOutlinedIcon','#',0,'','',0,0,0),(13,'Support Masters','Support Masters',9,'DashboardIcon','#',0,'','',0,0,0),\
+  (14,'Action','Actions',12,'FolderOutlinedIcon','/cap/admin/lists/actionList',0,'','',0,0,0),(15,'Category','Category',12,'DashboardIcon','/cap/admin/lists/categoryList',0,'','',0,0,0),\
+  (28,'Source','Source',12,'FolderOutlinedIcon','/cap/admin/lists/sourceList',0,'','',0,0,0),\
+  (31,'Contact','Contacts',12,'ContactsIcon','/cap/admin/lists/contactList',0,'','',0,0,0),\
+  (34,'Enquiry Sub Status','Enquiry Sub Status',12,'FolderOutlinedIcon','/cap/admin/lists/subStatusList',0,'','',0,0,0),\
+  (35,'Allocation Type','Allocation Type',12,'FolderOutlinedIcon','/cap/admin/lists/allocationTypeList',0,'','',0,0,0),\
+  (36,'Enquiry Item','Enquiry Item',12,'FolderOutlinedIcon','/cap/admin/lists/itemList',0,'','',0,0,0),\
+  (37,'Item Group','Item Group',12,'FolderOutlinedIcon','/cap/admin/lists/itemGroupList',0,'','',0,0,0),\
+  (38,'Item Unit','Item Unit',12,'FolderOutlinedIcon','/cap/admin/lists/unitList',0,'','',0,0,0),\
+  (39,'Organisation','Organisation',12,'FolderOutlinedIcon','/cap/admin/lists/organisationList',0,'','',0,0,0),\
+  (40,'Contact Group','Contact Group',12,'FolderOutlinedIcon','/cap/admin/lists/contactGroupList',0,'','',0,0,0),\
+  (41,'Department','Department',12,'FolderOutlinedIcon','/cap/admin/lists/departmentList',0,'','',0,0,0),\
+  (42,'Country','Country',12,'FolderOutlinedIcon','/cap/admin/lists/countryList',0,'','',0,0,0),\
+  (43,'State','State',12,'FolderOutlinedIcon','/cap/admin/lists/stateList',0,'','',0,0,0),\
+  (44,'City','City',12,'FolderOutlinedIcon','#',0,'','',0,0,0),(45,'Executive','Executive',12,'FolderOutlinedIcon','/cap/admin/lists/executiveList',0,'','',0,0,0),\
+  (46,'Executive Area','Executive Area',12,'FolderOutlinedIcon','#',0,'','',0,0,0),\
+  (47,'Executive Role','Executive Role',12,'FolderOutlinedIcon','/cap/admin/lists/executiveRoleList',0,'','',0,0,0),\
+  (48,'Executive Dept','Executive Dept',12,'FolderOutlinedIcon','/cap/admin/lists/executiveDeptList',0,'','',0,0,0),\
+  (49,'Executive Group','Executive Group',12,'FolderOutlinedIcon','/cap/admin/lists/executiveGroupList',0,'','',0,0,0),\
+  (50,'Currency','Currency',12,'FolderOutlinedIcon','/cap/admin/lists/currencyList',0,'','',0,0,0),\
+  (51,'Config','Config',5,'FolderOutlinedIcon','#',0,'','',0,0,0),(52,'Enquiry Config','Enquiry Config',51,'FolderOutlinedIcon','/cap/admin/enquirySupportConfig',0,'','',0,0,0);~\
 \
 CREATE PROCEDURE `createAction`(\
     IN name varchar(75),\
