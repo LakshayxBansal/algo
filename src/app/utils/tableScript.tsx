@@ -538,7 +538,7 @@ CREATE TABLE `state_master` (\
 CREATE TABLE `status_bar` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `user_id` int(11) NOT NULL,\
-  `data` varchar(5000) DEFAULT \"{'key3':'','key4':'','key5':''}\",\
+  `data` varchar(5000) DEFAULT '{\"key3\" : \"\", \"key4\": \"\", \"key5\": \"\"}',\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `user_id_UNIQUE` (`user_id`)\
 );~\
