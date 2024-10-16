@@ -66,7 +66,7 @@ export async function getItemList(crmDb: string, searchString: string) {
     let values: any[] = [];
 
     if (searchString !== "") {
-      query = query + "where im.name like '%" + searchString + "%'";
+      query = query + " where im.name like '%" + searchString + "%'";
       values = [];
     }
     const result = await excuteQuery({
