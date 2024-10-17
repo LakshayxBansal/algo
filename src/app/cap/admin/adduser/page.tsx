@@ -9,6 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 export default async function AddUser() {
   const session = await getSession();
   if (session) {
+    if(session.user.dbInfo.roleId){
     return (
       <>
         <Box >
@@ -31,6 +32,9 @@ export default async function AddUser() {
         </Box>
       </>
     );
+    }else{
+      redirect("/company");
+    }
   } else {
     redirect("/signin");
   }

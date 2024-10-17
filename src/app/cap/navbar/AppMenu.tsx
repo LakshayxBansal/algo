@@ -18,6 +18,7 @@ const pages = [
 
 
 export default async function AppMenu(props: {children: React.ReactNode}) {
+  let path = "";
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -40,9 +41,15 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
         );
       } 
     } else {
-      redirect("/signin");
+      // redirect("/signin");
+      path = "/signin";
     }
   } catch (e) {
+    // redirect("/signin");
     console.log(e);
+  }finally{
+    if(path){
+      redirect(path)
+    }
   }
 }
