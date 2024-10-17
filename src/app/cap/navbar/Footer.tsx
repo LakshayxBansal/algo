@@ -2,6 +2,7 @@ import { getSession } from "@/app/services/session.service";
 import StatusBar from "./StatusBar";
 import { getStatusData } from "@/app/controllers/navbar.controller";
 import { logger } from "@/app/utils/logger.utils";
+import { redirect } from "next/navigation";
 
 
 
@@ -18,4 +19,5 @@ export default async function Footer() {
     } catch (error) {
         logger.error(error)
     }
+    redirect("/signin");
 }
