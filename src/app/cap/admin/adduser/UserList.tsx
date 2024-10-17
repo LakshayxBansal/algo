@@ -54,7 +54,7 @@ export default function UserList(){
         // fnFetchDataByID={getInviteUserById}
         customCols={columns}
         AddAllowed={false}
-        height="50vh"
+        height="20em"
         >
         
       </EntityList>

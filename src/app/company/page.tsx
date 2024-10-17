@@ -3,7 +3,8 @@ import { getSession } from "../services/session.service";
 import { redirect } from "next/navigation";
 import CompanyEntityList from "./CompanyEntityList";
 import InviteEntityList from "./InviteEntityList";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography,Accordion,AccordionSummary,AccordionDetails } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export default async function Companies() {
   const session = await getSession();
@@ -11,18 +12,27 @@ export default async function Companies() {
     return (
       <>
         <Box >
-          {/* <Box sx={{ height: "40vh", overflow: "scroll" }}> */}
-          <Typography variant="h6">
-          Company List
+          <Typography variant="h6" marginLeft="2%" marginTop="1rem">
+            Company List
           </Typography>
-            <CompanyEntityList />
-          {/* </Box> */}
-          {/* <Box sx={{ height: "40vh", overflow: "scroll" }}> */}
-          <Typography variant="h6">
-          Invite List
+          <Box sx={{marginTop: "1rem"}}>
+          <CompanyEntityList />
+          </Box>
+          <Accordion>
+            <AccordionSummary
+              sx={{ bgcolor: "white", width: "97%", margin: "auto", marginTop: "1rem" }}
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              <Typography variant="h6">
+            Invite from Companies
           </Typography>
-            <InviteEntityList />
-          {/* </Box> */}
+            </AccordionSummary>
+            <AccordionDetails sx={{ bgcolor: "white" }}>
+              <InviteEntityList/>
+            </AccordionDetails>
+          </Accordion>
         </Box>
       </>
     );
