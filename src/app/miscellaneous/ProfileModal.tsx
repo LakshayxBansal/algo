@@ -9,6 +9,8 @@ import { deleteSession } from '../services/session.service';
 import { deRegisterFromAllCompany, deRegisterFromApp,deRegisterFromCompany } from '../controllers/user.controller';
 import { redirectToPage } from '../company/SelectCompany';
 import { signOut } from "next-auth/react";
+import { setDialogOpenClose,setModalTitle,setModalfnController } from './DialogModal';
+import { useRouter } from 'next/navigation';
 
 type profileModalT = { 
     img? : string,
@@ -18,32 +20,38 @@ type profileModalT = {
     companyName : string
 }
 
+// export let handleLogout : any;
+// export let handleDeregisterFormCompany : any;
+// export let handleDeregisterFormApp  : any;
+
+
 export default function ProfileModal(props : profileModalT) {
+    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    const handleLogout = async() => {
+    const handleLogout = async function(){
         await deleteSession(props.userId);
         // signOut({ callbackUrl: 'http://localhost:3000/signin' });
         signOut();
         handleClose();
         redirectToPage("/signin");
     }
-    const handleDeregisterFormCompany = async()=>{
+    const handleDeregisterFormCompany =  async function(){
         await Promise.all([deRegisterFromCompany(null,props.userId,props.companyId),deleteSession(props.userId)]);
         handleClose();
         redirectToPage("/company");
     }
-    const handleDeregisterFormApp = async()=>{
+    const handleDeregisterFormApp = async function(){
         await Promise.all([deRegisterFromApp(props.userId),deRegisterFromAllCompany(props.userId),deleteSession(props.userId)]);
         handleClose();
         redirectToPage("/signin");
     }
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     return (
         <div>
             <Button
@@ -73,15 +81,26 @@ export default function ProfileModal(props : profileModalT) {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem onClick={handleClose}>
-                <Link href="/cap/admin/profile" style={{textDecoration: "none",
-  color :"black"}}>
+                <MenuItem onClick={()=>{
+                    router.push('/cap/admin/profile')
+                    handleClose()}}>
                     Profile
-                </Link>
                 </MenuItem>
-                <MenuItem onClick={handleDeregisterFormCompany}>De register with {props.companyName}</MenuItem>
-                <MenuItem onClick={handleDeregisterFormApp}>De register from App</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={()=>{
+                    setDialogOpenClose(true)
+                    setModalTitle(`Do you want De Register from ${props.companyName} ?`)
+                    setModalfnController(()=>handleDeregisterFormCompany)
+                    }}>De register with {props.companyName}</MenuItem>
+                <MenuItem onClick={()=>{
+                    setDialogOpenClose(true)
+                    setModalTitle(`Do you want De Register from App ?`)
+                    setModalfnController(()=>handleDeregisterFormApp)
+                    }}>De register from App</MenuItem>
+                <MenuItem onClick={()=>{
+                    setDialogOpenClose(true)
+                    setModalTitle(`Do you want to Logout ?`)
+                    setModalfnController(()=>handleLogout)
+                    }}>Logout</MenuItem>
             </Menu>
         </div>
     );

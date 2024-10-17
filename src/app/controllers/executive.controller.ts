@@ -12,12 +12,14 @@ import {
   insertUserIdInExecutiveDb,
   delExecutiveDetailsById,
   checkIfUsed,
+  getProfileDetailsById,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
 import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { modifyPhone } from "../utils/phoneUtils";
 
 const inviteSring = "Send Invite...";
 
@@ -26,6 +28,8 @@ export async function createExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
@@ -98,6 +102,8 @@ export async function updateExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
@@ -199,6 +205,17 @@ export async function getExecutiveById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getProfileById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getProfileDetailsById(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;

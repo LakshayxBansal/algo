@@ -59,9 +59,14 @@ export default function ContactForm(props: masterFormPropsT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+  const [printNameFn, setPrintNameFn ] = useState(entityData.print_name);
+
+  const handlePrintNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPrintNameFn(event.target.value);
+  };
 
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues.country?.name || entityData.country;
 
     const states = await getStates(stateStr, country);
     if (states.length > 0) {
@@ -236,6 +241,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
+                onChange={handlePrintNameChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -265,7 +271,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name="print_name"
                 error={formError?.print_name?.error}
                 helperText={formError?.print_name?.msg}
-                defaultValue={entityData.print_name}
+                defaultValue={printNameFn}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { print_name, ...rest } = curr;
@@ -303,6 +309,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="pan"
                 label="PAN"
                 name="pan"
+                required
                 error={formError?.pan?.error}
                 helperText={formError?.pan?.msg}
                 defaultValue={entityData.pan}
@@ -567,7 +574,7 @@ export default function ContactForm(props: masterFormPropsT) {
               id={"state"}
               label={"State"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={selectValues.country ? false : true}
+              disable={selectValues.country || entityData.country_id ? false : true}
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
               defaultValue={defaultState}
@@ -576,7 +583,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  parentData={selectValues.country?.id}
+                  parentData={selectValues.country?.id || entityData.country_id}
                 />
               )}
             />
@@ -595,65 +602,6 @@ export default function ContactForm(props: masterFormPropsT) {
                   });
                 }}
               />
-              {/* <SelectMasterWrapper
-                name={"country"}
-                id={"country"}
-                label={"Country"}
-                width={210}
-                dialogTitle={"country"}
-                onChange={(e, val, s) =>{
-                  setSelectValues({
-                    ...selectValues,
-                    country: val,
-                    state: null,
-                  })
-                }
-                }
-                fetchDataFn={getCountries}
-                fnFetchDataByID={getCountryById}
-                defaultValue={
-                  {
-                    id: entityData.country_id,
-                    name: entityData.country,
-                  } as optionsDataT
-                }
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <CountryForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-              <SelectMasterWrapper
-                name={"state"}
-                id={"state"}
-                label={"State"}
-                width={210}
-                onChange={(e,v,s)=> onSelectChange(e,v,s, "state")}
-                // onChange={(e, val, s) => {
-                //   setSelectValues({ ...selectValues, state: val });
-                // }}
-                dialogTitle={"State"}
-                fetchDataFn={(stateStr: string) =>
-                  getStates(stateStr, selectValues.country?.name)
-                }
-                fnFetchDataByID={getStateById}
-                defaultValue={
-                  {
-                    id: entityData.state_id,
-                    name: entityData.state,
-                  } as optionsDataT
-                }
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <StateForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                    parentData={selectValues.country?.id}
-                  />
-                )}
-              /> */}
               <InputControl
                 inputType={InputType.TEXT}
                 name="pincode"

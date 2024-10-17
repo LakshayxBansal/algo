@@ -35,6 +35,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
 import SecondNavbar from "./SecondNavbar";
+import { AddDialog } from "@/app/Widgets/masters/addDialog";
+import DialogModal from "@/app/miscellaneous/DialogModal";
 
 const drawerWidth: number = 290;
 
@@ -168,7 +170,10 @@ export default function MenuBar(props: propsType) {
       }
     }, 100);
 
-    maindata(search);
+    if (search.length > 0) {
+      maindata(search);
+
+    }
   }, [search]);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
@@ -365,6 +370,7 @@ export default function MenuBar(props: propsType) {
                         {children}
             </Box>
         </Box>
+        <DialogModal/>
       </>
     );
   }

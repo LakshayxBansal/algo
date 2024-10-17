@@ -12,14 +12,14 @@ export function checkPhone(mobile: string): boolean {
     }
 
     // Array of country codes having 10-digit phone numbers
-    const countrycodeHaving10DigitNumbers = ["+91","+92","+93","+86","+977","+975","+95","+880","+94","+960",]; // Add other country codes as needed
+    const countrycodeHaving10DigitNumbers = ["+91","+92","+93","+86","+977","+975","+95","+880","+94","+960"]; // Add other country codes as needed
 
     // Check if the Number is not empty and if the CountryCode is in the array
     if (countrycodeHaving10DigitNumbers.includes(CountryCode)) {
       // Check if the Number is 10 digits long
       return number.length === 10;
     }else{
-      return (number.length > 7 && number.length < 15) ? true : false;
+      return (number.length >= 7 && number.length <= 15) ? true : false;
     }
   }
 

@@ -49,11 +49,11 @@ export default function ItemForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
+      setFormError({});
+      setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
-      setSnackOpen(true);
     } else {
       const issues = result.data;
       // show error on screen

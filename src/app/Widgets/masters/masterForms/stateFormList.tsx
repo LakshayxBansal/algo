@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
@@ -15,7 +15,7 @@ import {
   stateListSchemaT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../selectMasterWrapper";
@@ -26,7 +26,14 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const entityData: stateListSchemaT = props.data ? props.data : {};
+  const [snackOpen, setSnackOpen] = React.useState(false);
+  let entityData: stateListSchemaT = props.data ? props.data : {};
+
+  useEffect(()=>{
+    setSelectValues(entityData);
+    console.log("entity data", entityData);
+    
+  },[])
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -34,8 +41,13 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    formData = updateFormData(data);
-
+    
+    data.country_id = selectValues.country 
+    ? selectValues.country.id 
+    : selectValues.country_id 
+        ? selectValues.country_id 
+        : 0;    
+    
     const result = await persistEntity(data as stateListSchemaT);
 
     if (result.status) {
@@ -43,6 +55,10 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -57,22 +73,13 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
     }
   };
 
-  const updateFormData = (data: any) => {
-    data.country_id = selectValues.country
-      ? selectValues.country.id
-      : entityData.country_id
-      ? entityData.country_id
-      : 0;
-
-    return data;
-  };
 
   async function persistEntity(data: stateListSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: entityData.id });
+      Object.assign(data, { id: entityData.id });   
       result = await updateState(data);
-    } else {
+    } else {     
       result = await createState(data);
     }
     return result;
@@ -102,7 +109,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify State" : "Add State"}
+            {props.data ? "Update State" : "Add State"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -140,10 +147,15 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             name={"country"}
             id={"country"}
             label={"Country"}
+            formError={formError.country}
             dialogTitle={"country"}
-            onChange={(e, val, s) =>
-              setSelectValues({ ...selectValues, country: val })
-            }
+            onChange={(e, val, s) => {
+              setSelectValues((prevSelectValues) => ({
+                ...prevSelectValues,
+                country: val,
+                country_id:val
+              }));
+            }}
             fetchDataFn={getCountries}
             fnFetchDataByID={getCountryById}
             defaultValue={
@@ -196,6 +208,13 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

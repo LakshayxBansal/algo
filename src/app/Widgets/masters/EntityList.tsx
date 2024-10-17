@@ -150,6 +150,7 @@ export default function EntityList(props: ModifyT) {
   async function onModifyDialog(modId: number) {
     if (props.fnFetchDataByID && modId) {
       const data = await props.fnFetchDataByID(modId);
+      console.log(data);
       setModData(data[0]);
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);

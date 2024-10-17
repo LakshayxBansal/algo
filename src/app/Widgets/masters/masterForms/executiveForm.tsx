@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
-import { getInviteDetailByContact } from "@/app/controllers/inviteUser.controller";
+import { getInviteDetailByContact } from "@/app/controllers/user.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -17,7 +17,7 @@ import {
   getExecutiveGroupById,
 } from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
-import { insertExecutiveIdToInviteUser } from "@/app/controllers/inviteUser.controller";
+import { insertExecutiveIdToInviteUser } from "@/app/controllers/user.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import ExecutiveRoleForm from "./executiveRoleForm";
@@ -38,6 +38,7 @@ import {
 import {
   executiveSchemaT,
   masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -47,7 +48,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 
-export default function ExecutiveForm(props: masterFormPropsT) {
+export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -229,7 +230,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props?.data ? "Update Executive" : "Add Executive"}
+            {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -322,6 +323,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   name: entityData.executive_dept,
                 } as optionsDataT
               }
+              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
               onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn={getExecutiveDept}
               fnFetchDataByID={getDeptById}
@@ -352,7 +354,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disable={selectValues.department ? false : true}
+              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : selectValues.department ? false : true}
               formError={formError?.role ?? formError.role}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
@@ -369,6 +371,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               label={"Executive Group"}
               width={210}
               dialogTitle={"Add Executive Group"}
+              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
               defaultValue={
                 {
                   id: entityData.executive_group_id,
@@ -439,23 +442,36 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               defaultValue={entityData.email}
             />
             <InputControl
-              inputType={InputType.PHONE}
-              id="mobile"
-              label="Phone No"
-              name="mobile"
-              error={formError?.mobile?.error}
-              helperText={formError?.mobile?.msg}
-              defaultValue={entityData.mobile}
-            />
-            <InputControl
-              inputType={InputType.PHONE}
-              id="whatsapp"
-              label="Whatsapp No"
-              name="whatsapp"
-              error={formError?.whatsapp?.error}
-              helperText={formError?.whatsapp?.msg}
-              defaultValue={entityData.whatsapp}
-            />
+                inputType={InputType.PHONE}
+                id="mobile"
+                label="Phone No"
+                name="mobile"
+                error={formError?.mobile?.error}
+                helperText={formError?.mobile?.msg}
+                defaultValue={entityData.mobile}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { mobile, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+           <InputControl
+                inputType={InputType.PHONE}
+                id="whatsapp"
+                label="Whatsapp No"
+                name="whatsapp"
+                // defaultCountry="FR"
+                error={formError?.whatsapp?.error}
+                helperText={formError?.whatsapp?.msg}
+                defaultValue={entityData.whatsapp}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { whatsapp, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
 
             <InputControl
               inputType={InputType.DATEINPUT}
@@ -569,16 +585,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(3, 1fr)",
             }}
           >
-            
-            <InputControl
-              inputType={InputType.TEXT}
-              name="city"
-              id="city"
-              label="City"
-              defaultValue={entityData.city}
-              error={formError?.city?.error}
-              helperText={formError?.city?.msg}
-            />
             <SelectMasterWrapper
               key={stateKey}
               name={"state"}
@@ -598,6 +604,16 @@ export default function ExecutiveForm(props: masterFormPropsT) {
                   parentData={selectValues.country?.id}
                 />
               )}
+            />
+            
+            <InputControl
+              inputType={InputType.TEXT}
+              name="city"
+              id="city"
+              label="City"
+              defaultValue={entityData.city}
+              error={formError?.city?.error}
+              helperText={formError?.city?.msg}
             />
 
             <InputControl

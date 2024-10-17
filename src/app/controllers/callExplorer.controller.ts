@@ -62,6 +62,7 @@ export async function updateCallAllocation(
       const data = { executiveId, remark, id };
       const result = await updateCallAllocationDb(
         session.user.dbInfo.dbName,
+        session.user.userId,
         data
       );
       return result.affectedRows;
