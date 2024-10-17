@@ -561,7 +561,6 @@ export const stateSchema = z.object({
     .max(60, "State Name must contain at most 60 character(s)"),
   alias: z
     .string()
-    .min(1, "Alias must not be empty")
     .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
   country_id: z.number().refine((val)=> val !== 0 ,{
