@@ -6,6 +6,10 @@ button.MuiButton-containedPrimary {
   @apply bg-blue-500;
 }
 
+button.MuiButton-containedError {
+  @apply bg-red-500;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

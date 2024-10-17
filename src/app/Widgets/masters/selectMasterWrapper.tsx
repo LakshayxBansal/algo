@@ -64,6 +64,15 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     }
   }
 
+  // this is a wrapper function to enable a call the the parent controls onchange
+  function changeDialogValue(val: optionsDataT) {
+    setDialogValue(val);
+    if (props.onChange) {
+      props.onChange(null, val, setDialogValue);
+    }
+  }
+
+
   async function onModifyDialog() {
     if (allowModify) {
       if (props.fnFetchDataByID && dialogValue.id) {
@@ -152,8 +161,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
         >
           {props.renderForm
             ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, setDialogValue)
-              : props.renderForm(setDialogOpen, setDialogValue, modData)
+              ? props.renderForm(setDialogOpen, changeDialogValue)
+              : props.renderForm(setDialogOpen, changeDialogValue, modData)
             : 1}
         </AddDialog>
       )}

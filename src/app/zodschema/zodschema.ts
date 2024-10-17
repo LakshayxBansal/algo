@@ -561,7 +561,6 @@ export const stateSchema = z.object({
     .max(60, "State Name must contain at most 60 character(s)"),
   alias: z
     .string()
-    .min(1, "Alias must not be empty")
     .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
   country_id: z.number().refine((val)=> val !== 0 ,{
@@ -682,6 +681,7 @@ export const enquirySupportConfig = z.object({
   supportMaintainItems: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
+  supportMaintainContract: z.boolean().optional(),
 
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
@@ -724,7 +724,7 @@ export const companySchema = z.object({
 export const inviteUserSchema = z
   .object({
     id: z.number().optional(),
-    name: z.string().min(1, "Please enter Name").max(45),
+    name: z.string().min(1, "Please enter Name").max(45,"Name is too long"),
     email: z
       .string()
       .regex(emailRegex, "Input must be in email format")
