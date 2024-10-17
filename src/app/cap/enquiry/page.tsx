@@ -6,26 +6,33 @@ import { logger } from "@/app/utils/logger.utils";
 import { showItemGrid } from "@/app/controllers/enquiry.controller";
 
 export default async function MyForm() {
+  let path = "";
   try {
     const session = await getSession();
 
     if (session) {
-      const masterData = {
-        userName: session.user?.name as string,
-      };
+      if (session.user.dbInfo.roleId) {
+        const masterData = {
+          userName: session.user?.name as string,
+        };
 
-      const config_data = await showItemGrid();
-      const config = JSON.parse(config_data?.config);
-      if (config_data?.status) {
-        console.log("Config Data is present->", config);
+        const config_data = await showItemGrid();
+        const config = JSON.parse(config_data?.config);
+        if (config_data?.status) {
+          console.log("Config Data is present->", config);
+        } else {
+          console.log("Config Data is not present->", config);
+        }
+        return <InputForm baseData={masterData} config={config}></InputForm>;
       } else {
-        console.log("Config Data is not present->", config);
+        path = "/company";
       }
-      return <InputForm baseData={masterData} config={config}></InputForm>;
+    }else{
+      path = "/signin";
     }
   } catch (e) {
     // show error page
     logger.error(e);
   }
-  redirect("/signin");
+  redirect(path);
 }
