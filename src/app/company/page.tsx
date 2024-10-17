@@ -28,7 +28,7 @@ export default async function Companies() {
               id="panel1-header"
             >
               <Typography variant="h6">
-            Total Invite : {totalInvites.rowCount}
+            Total Invites : {totalInvites.rowCount}
           </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ bgcolor: "white" }}>
