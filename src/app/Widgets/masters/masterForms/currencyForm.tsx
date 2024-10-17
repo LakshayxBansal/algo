@@ -49,9 +49,11 @@ export default function CurrencyForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
 
@@ -204,7 +206,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               }}
             />
             <InputControl
-              autoFocus
               inputType={InputType.TEXT}
               id="Name"
               label="Name"
@@ -232,7 +233,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               }}
             > */}
             <InputControl
-              autoFocus
               id="shortForm"
               label="Currency Short Form"
               inputType={InputType.TEXT}
@@ -330,7 +330,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               {sample}
             </Box> */}
             <InputControl
-              autoFocus
               id="Sample"
               // label="Sample"
               inputType={InputType.TEXT}

@@ -22,7 +22,7 @@ import {
 import { SelectMasterWrapper } from "../../masters/selectMasterWrapper";
 import Seperator from "../../seperator";
 import StateForm from "./stateForm";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -30,6 +30,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveGroupSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
@@ -44,8 +45,11 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -153,7 +157,6 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             }}
           />
           <InputControl
-            autoFocus
             inputType={InputType.TEXT}
             id="alias"
             label="Alias"
@@ -222,6 +225,13 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

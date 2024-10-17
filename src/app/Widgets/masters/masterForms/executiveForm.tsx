@@ -585,16 +585,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               gridTemplateColumns: "repeat(3, 1fr)",
             }}
           >
-            
-            <InputControl
-              inputType={InputType.TEXT}
-              name="city"
-              id="city"
-              label="City"
-              defaultValue={entityData.city}
-              error={formError?.city?.error}
-              helperText={formError?.city?.msg}
-            />
             <SelectMasterWrapper
               key={stateKey}
               name={"state"}
@@ -614,6 +604,16 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   parentData={selectValues.country?.id}
                 />
               )}
+            />
+            
+            <InputControl
+              inputType={InputType.TEXT}
+              name="city"
+              id="city"
+              label="City"
+              defaultValue={entityData.city}
+              error={formError?.city?.error}
+              helperText={formError?.city?.msg}
             />
 
             <InputControl
