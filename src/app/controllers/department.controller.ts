@@ -9,7 +9,8 @@ import {
   getDepartmentCount,
   getDepartmentByPageDb,
   delDepartmentDetailsById,
-  checkIfUsed
+  checkIfUsed,
+  getDepartmentColumnsDb
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -215,6 +216,20 @@ export async function getDepartmentByPage(
       error: err,
     };
   }
-  // console.log("this is the return",getDepartment);
   return getDepartment;
+}
+
+
+export async function getDepartmentColumns(){
+  try{
+    const session = await getSession();
+    console.log("session", session);
+    if(session){
+      const result = await getDepartmentColumnsDb(session.user.dbInfo.dbName as string);
+      console.log(result);
+      return result[0];
+    }
+  }catch(e){
+    console.log(e);
+  }
 }
