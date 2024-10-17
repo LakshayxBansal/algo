@@ -313,10 +313,12 @@ export default function InputForm(props: { baseData: IformData, desc: any }) {
               fnFetchDataByID={getExecutiveById}
               required={fieldPropertiesById("recieved_by").required}
               formError={formError?.received_by ?? formError.received_by}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              objectTypeID={11}
+              renderForm={(fnDialogOpen, fnDialogValue, desc, data) => (
                 <ExecutiveForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  desc={desc}
                   data={data}
                 />
               )}

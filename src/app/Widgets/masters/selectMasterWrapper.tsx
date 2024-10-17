@@ -10,6 +10,7 @@ import { formErrorT } from "../../models/models";
 import EditIcon from "@mui/icons-material/Edit";
 import { optionsDataT } from "@/app/models/models";
 import { RenderFormFunctionT } from "@/app/models/models";
+import { getScreenDescription } from "@/app/controllers/object.controller";
 
 type OnChangeFunction = (
   event: any,
@@ -39,6 +40,7 @@ type selectMasterWrapperT = {
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
   disable?: boolean;
+  objectTypeID?: number
 };
 
 enum dialogMode {
@@ -52,15 +54,29 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [dialogValue, setDialogValue] = useState<optionsDataT>(
     {} as optionsDataT
   );
+  const [desc, setDesc] = useState();
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
 
-  function openDialog() {
+
+  async function getFormData() {
+    const desc = props.objectTypeID ? await getScreenDescription(props.objectTypeID) : [];
+    setDesc(desc);
+
+  }
+
+
+  async function openDialog() {
     if (allowNewAdd) {
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        setDesc(data);
+      }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
     }
+    // getDescriptionData();
   }
 
   async function onModifyDialog() {
@@ -68,10 +84,12 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       if (props.fnFetchDataByID && dialogValue.id) {
         const data = await props.fnFetchDataByID(dialogValue.id);
         setModData(data[0]);
+        setDesc(data[1])
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
     }
+    // getDescriptionData();
   }
 
   return (
@@ -150,8 +168,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
         >
           {props.renderForm
             ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, setDialogValue)
-              : props.renderForm(setDialogOpen, setDialogValue, modData)
+              ? props.renderForm(setDialogOpen, setDialogValue, desc)
+              : props.renderForm(setDialogOpen, setDialogValue, desc, modData)
             : 1}
         </AddDialog>
       )}

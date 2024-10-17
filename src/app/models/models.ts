@@ -27,8 +27,8 @@ export type optionsDataT = {
 
 export type searchDataT = {
   result: string;
-  tableName: string,
-  href:string,
+  tableName: string;
+  href: string;
 };
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
@@ -48,11 +48,11 @@ export type RenderFormFunctionT = (
   parentData?: any
 ) => JSX.Element;
 
-
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;
+  desc?: any;
 };
 
 export type masterFormPropsWithParentT = masterFormPropsT & {
@@ -60,8 +60,8 @@ export type masterFormPropsWithParentT = masterFormPropsT & {
 };
 
 export type masterFormPropsWithExecutive = masterFormPropsT & {
-  isExecutive?: boolean
-}
+  isExecutive?: boolean;
+};
 
 // export type masterFormPropsWithParentT = {
 //     setDialogOpen?: (props: any) => void,
@@ -85,17 +85,23 @@ export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
-export type getDeptsT = [{
+export type getDeptsT = [
+  {
     id: number;
     name: string;
     rowID: number;
-    stamp: number }]
-    //jp mail files
-    export type getDeptT = [{
-        id: number;
-        name: string;
-        stamp: number }]
-    //jp_dev
+    stamp: number;
+  }
+];
+//jp mail files
+export type getDeptT = [
+  {
+    id: number;
+    name: string;
+    stamp: number;
+  }
+];
+//jp_dev
 
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;

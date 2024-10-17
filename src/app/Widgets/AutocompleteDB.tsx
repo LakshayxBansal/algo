@@ -67,7 +67,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
           props.setDialogVal(results[0]);
         }
         setOptions(results);
-
       }
     }, 400);
     if (valueChange || autoSelect) {
@@ -81,7 +80,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
     }
   }, [inputValue, autoSelect, open]);
 
-  console.log("autocompletedb",options)
+  console.log("autocompletedb", options)
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
@@ -177,7 +176,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       // autoHighlight
       autoComplete
       includeInputInList
-      disableClearable={inputValue?inputValue.length===0:!Boolean(props.diaglogVal.id)}
+      disableClearable={inputValue ? inputValue.length === 0 : !Boolean(props.diaglogVal.id)}
     />
   );
 }

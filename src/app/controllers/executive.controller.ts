@@ -18,6 +18,7 @@ import { getExecutiveList } from "@/app/services/executive.service";
 import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { getScreenDescription } from "./object.controller";
 
 const inviteSring = "Send Invite...";
 
@@ -198,7 +199,17 @@ export async function getExecutiveById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+      const desc = await getScreenDescription(11);
+      if(id){
+        let data = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+        return[
+          data[0],
+          desc
+        ]
+      }
+      return[
+        desc
+      ]
     }
   } catch (error) {
     throw error;
