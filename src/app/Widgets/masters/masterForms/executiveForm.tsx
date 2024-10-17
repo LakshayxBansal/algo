@@ -66,7 +66,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
 
-  console.log("form error : ", formError);
 
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
