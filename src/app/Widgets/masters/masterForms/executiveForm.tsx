@@ -362,7 +362,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disable={(selectValues.department) || (entityData.executive_dept_id) ? false : true}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (selectValues.department || entityData.executive_dept_id) ? false : true}
               formError={formError?.role ?? formError.role}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
