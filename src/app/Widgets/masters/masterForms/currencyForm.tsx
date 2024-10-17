@@ -206,7 +206,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               }}
             />
             <InputControl
-              autoFocus
               inputType={InputType.TEXT}
               id="Name"
               label="Name"
@@ -234,7 +233,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               }}
             > */}
             <InputControl
-              autoFocus
               id="shortForm"
               label="Currency Short Form"
               inputType={InputType.TEXT}
@@ -332,7 +330,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               {sample}
             </Box> */}
             <InputControl
-              autoFocus
               id="Sample"
               // label="Sample"
               inputType={InputType.TEXT}
