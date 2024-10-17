@@ -5,6 +5,7 @@ import EntityList from "../../../Widgets/masters/EntityList";
 import { deRegisterFromCompany, getCompanyUser } from "@/app/controllers/user.controller";
 import { Button } from "@mui/material";
 import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
+import { deleteSession } from "@/app/services/session.service";
 
 const columns: GridColDef[] = [
   { field: 'RowID', headerName: 'ID', width: 90 },
@@ -36,6 +37,7 @@ const columns: GridColDef[] = [
 const handleRemove = async(params : any)=>{
   try{
     await deRegisterFromCompany(params.row.id,null,null);
+    await deleteSession(params.row.userId);
   }catch(error){
     throw(error);
   }finally{
@@ -52,7 +54,7 @@ export default function UserList(){
         // fnFetchDataByID={getInviteUserById}
         customCols={columns}
         AddAllowed={false}
-        height="50vh"
+        height="20em"
         >
         
       </EntityList>

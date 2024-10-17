@@ -1,5 +1,5 @@
 "use server";
-import { companySchemaT, dbInfoT } from "../models/models";
+import { companySchemaT, dbInfoT, userSchemaT } from "../models/models";
 import {
   createCompanyDB,
   getHostId,
@@ -46,15 +46,32 @@ async function createCompanyDbAndTableProc(
   host: string,
   port: number,
   companyId: number,
-  dbInfoId: number
+  dbInfoId: number,
+  userData: any
 ) {
   const dbRes = await createCompanyDB(dbName, host, port);
   if (!dbRes.status) {
     const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId);
     return dbRes;
   }
+  const emailRegex = new RegExp(
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  );
+  let email = "",
+    mobile = "";
+  if (emailRegex.test(userData.contact)) {
+    email = userData.contact;
+  } else {
+    mobile = userData.contact;
+  }
 
-  const tableAndProcRes = await createTablesAndProc(dbName);
+  const tableAndProcRes = await createTablesAndProc(
+    dbName,
+    userData.id,
+    userData.name,
+    email,
+    mobile
+  );
   if (!tableAndProcRes.status) {
     const delComp = await deleteCompanyAndDbInfo(companyId, dbInfoId);
     const dropDb = await dropDatabase(dbName);
@@ -96,7 +113,8 @@ export async function createCompany(data: companySchemaT) {
             hostDetails.host,
             hostDetails.port,
             companyData[1][0].id,
-            companyData[2][0].id
+            companyData[2][0].id,
+            companyData[4][0]
           );
           if (!result.status) {
             return result;

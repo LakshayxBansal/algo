@@ -157,7 +157,6 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             }}
           />
           <InputControl
-            autoFocus
             inputType={InputType.TEXT}
             id="alias"
             label="Alias"

@@ -262,7 +262,7 @@ export const contactSchema = z.object({
   state_id: z.number().optional(),
   country_id: z.number().optional(),
   country: z.string().optional(),
-  city: z.string().optional(),
+  city: z.string().max(75, "City must contain at most 75 character(s)").optional()
 });
 
 export const areaSchema = z.object({
@@ -725,7 +725,7 @@ export const companySchema = z.object({
 export const inviteUserSchema = z
   .object({
     id: z.number().optional(),
-    name: z.string().min(1, "Please enter Name").max(45),
+    name: z.string().min(1, "Please enter Name").max(45,"Name is too long"),
     email: z
       .string()
       .regex(emailRegex, "Input must be in email format")

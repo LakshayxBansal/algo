@@ -59,6 +59,11 @@ export default function ContactForm(props: masterFormPropsT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+  const [printNameFn, setPrintNameFn ] = useState(entityData.print_name);
+
+  const handlePrintNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPrintNameFn(event.target.value);
+  };
 
   async function getStatesforCountry(stateStr: string) {
     const country = selectValues.country?.name || entityData.country;
@@ -236,6 +241,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
+                onChange={handlePrintNameChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -265,7 +271,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name="print_name"
                 error={formError?.print_name?.error}
                 helperText={formError?.print_name?.msg}
-                defaultValue={entityData.print_name}
+                defaultValue={printNameFn}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { print_name, ...rest } = curr;

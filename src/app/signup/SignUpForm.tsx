@@ -57,7 +57,7 @@ export default function SignupForm1(props: any) {
   async function makeUserActiveAgain(userId: number | undefined) {
     try {
       await makeUserActive(userId);
-      router.push("/congrats");
+      router.push("/signin");
     } catch (error) {
       logger.info(error);
     } finally {
@@ -80,7 +80,7 @@ export default function SignupForm1(props: any) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setFormError({});
-      router.push("/congrats");
+      router.push("/signin");
     } else {
       // show error on screen
       const issues = result.data;

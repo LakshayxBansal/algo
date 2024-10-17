@@ -76,7 +76,10 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         for (const issue of issues) {
-          for (const path of issue.path) {
+          for (let path of issue.path) {
+            if (path === "usercontact") {
+              emailElement ? (path = "email") : (path = "phone");
+            }
             errorState[path] = { msg: issue.message, error: true };
           }
         }

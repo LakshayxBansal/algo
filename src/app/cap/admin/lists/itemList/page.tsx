@@ -33,6 +33,7 @@ export default function Items() {
         fnDeleteDataByID={delItemById}
         customCols={columns}
         AddAllowed={true}
+        height = "30em"
       ></EntityList>
     </>
   );
