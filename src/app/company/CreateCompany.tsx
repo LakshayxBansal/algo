@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
@@ -18,14 +18,11 @@ import {
 import Seperator from "../Widgets/seperator";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import { SelectMasterWrapper } from "../Widgets/masters/selectMasterWrapper";
 import {
   getCountriesMaster,
   getStates,
   getStatesMaster,
 } from "../controllers/masters.controller";
-import StateForm from "../Widgets/masters/masterForms/stateForm";
-import CountryForm from "../Widgets/masters/masterForms/countryForm";
 import { Collapse, IconButton } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
@@ -73,8 +70,16 @@ export default function CreateCompany(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country
+      ? entityData.country_id
+      : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -101,7 +106,11 @@ export default function CreateCompany(props: masterFormPropsT) {
     });
   };
   return (
-    <Paper elevation={3} sx={{ mt: 2, mb: 1.5, p: 2 }} square={false}>
+    <Paper
+      elevation={3}
+      sx={{ mt: 2, mb: 1.5, p: 2, minWidth: "50vw" }}
+      square={false}
+    >
       <Box
         sx={{
           position: "sticky",
@@ -218,7 +227,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="Address Line 2"
               name="add2"
               id="add2"
-              fullWidth
+              // fullWidth
               error={formError?.add2?.error}
               helperText={formError?.add2?.msg}
               defaultValue={entityData.add2}
@@ -240,6 +249,7 @@ export default function CreateCompany(props: masterFormPropsT) {
                 entityData.state_id = undefined;
                 entityData.state = "";
               }}
+              width={340}
               fetchDataFn={getCountriesMaster}
               diaglogVal={
                 selectValues.country
@@ -262,6 +272,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               name={"state"}
               id={"state"}
               label={"State"}
+              width={340}
               onChange={(e, val, s) => {
                 setSelectValues({ ...selectValues, state: val });
                 entityData.state_id = undefined;
