@@ -74,6 +74,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   // useEffect(()=>{setDefaultState({id: 0, name: ""} as optionsDataT)},[selectValues.country])
 
+  
+
   const handleSubmit = async (formData: FormData) => {
     try {
       const session = await getSession();
@@ -151,8 +153,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       : 0;
     data.dept_id = selectValues.department
       ? selectValues.department.id
-      : entityData.dept_id
-      ? entityData.dept_id
+      : entityData.executive_dept_id
+      ? entityData.executive_dept_id
       : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
@@ -319,7 +321,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               dialogTitle={"Add Department"}
               defaultValue={
                 {
-                  id: entityData.dept_id,
+                  id: entityData.executive_dept_id,
                   name: entityData.executive_dept,
                 } as optionsDataT
               }
@@ -354,7 +356,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disable={(selectValues.department) || (entityData.dept_id) ? false : true}
+              disable={(selectValues.department) || (entityData.executive_dept_id) ? false : true}
               formError={formError?.role ?? formError.role}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
