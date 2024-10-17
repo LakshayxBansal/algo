@@ -73,7 +73,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
   const updateFormData = (data: any) => {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
-      : entityData.parent_id
+      : entityData.parent
         ? entityData.parent_id
         : 0;
     return data;

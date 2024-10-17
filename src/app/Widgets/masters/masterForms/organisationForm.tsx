@@ -14,7 +14,6 @@ import { getStates } from "@/app/controllers/masters.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import CountryForm from "./countryForm";
-import StateForm from "./countryForm";
 import {
   masterFormPropsT,
   optionsDataT,
@@ -25,6 +24,7 @@ import Seperator from "../../seperator";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import StateForm from "./stateForm";
 
 export default function OrganisationForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -76,8 +76,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country ? selectValues.country.id : entityData.country? entityData.country_id :0;
+    data.state_id = selectValues.state ? selectValues.state.id : entityData.state? entityData.state_id :0;
 
     return data;
   };

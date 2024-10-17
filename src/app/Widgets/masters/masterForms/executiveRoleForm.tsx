@@ -92,7 +92,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parentRole ? selectValues.parentRole.id : 0;
+    data.parent_id = selectValues.parentRole ? selectValues.parentRole.id : entityData.parentRole? entityData.parent_id : 0;
     return data;
   };
 
@@ -193,7 +193,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
-                  id: entityData.parent_id,
+                  id: entityData.id,
                   name: entityData.parentRole,
                 } as optionsDataT
               }
@@ -201,10 +201,13 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                 setSelectValues({ ...selectValues, parentRole: val })
               }
               allowNewAdd={false}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              allowModify={false}
+              renderForm={(fnDialogOpen, fnDialogValue, data, parentData) => (
                 <ExecutiveRoleForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.parent?.parent_id}
                 />
               )}
             />

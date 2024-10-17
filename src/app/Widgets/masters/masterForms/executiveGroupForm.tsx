@@ -34,6 +34,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveGroupSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
+  console.log(selectValues);
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -65,7 +66,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent ? selectValues.parent.id : 0;
+    data.parent_id = selectValues.parent ? selectValues.parent.id : entityData.parent? entityData.parent_id: 0;
     return data;
   };
 

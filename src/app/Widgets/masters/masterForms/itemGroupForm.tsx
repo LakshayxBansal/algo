@@ -29,6 +29,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: itemGroupSchemaT = props.data ? props.data : {};
+  console.log("value in form", selectValues);
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -69,7 +70,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const updateFormData = (data: any) => {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
-      : entityData.parent_id
+      : entityData.parent
       ? entityData.parent_id
       : 0;
     // data.append(
@@ -203,8 +204,10 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               //     name: entityData.name,
               //   } as optionsDataT
               // }
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val })
+              onChange={(e, val, s) =>{
+                setSelectValues({ ...selectValues, parent: val})
+                console.log("Value in onChange", val);
+              }
               }
               fetchDataFn={getItemGroup}
               fnFetchDataByID={getItemGroupById}
