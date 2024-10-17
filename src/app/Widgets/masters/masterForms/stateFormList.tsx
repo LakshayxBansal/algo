@@ -15,7 +15,7 @@ import {
   stateListSchemaT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../selectMasterWrapper";
@@ -26,6 +26,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
   let entityData: stateListSchemaT = props.data ? props.data : {};
 
   useEffect(()=>{
@@ -54,6 +55,10 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -203,6 +208,13 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

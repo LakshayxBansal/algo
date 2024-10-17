@@ -74,6 +74,8 @@ export async function delDepartmentDetailsById(crmDb: string, id: number) {
  * @param sourceData : data for saving
  * @returns result from DB (returning *)
  */
+
+//need to check this 17-oct-2024
 export async function createDepartmentDb(
   session: Session,
   sourceData: zm.nameMasterDataT
@@ -151,6 +153,18 @@ export async function getDepartmentCount(
       values: [value],
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
+  }
+}
+
+export async function getDepartmentColumnsDb(crmDb:string){
+  try{
+    return excuteQuery({
+      host:crmDb,
+      query:"select * from custom_fields_master where object_type_id =9",
+      values:""
+    });
+  }catch(e){
+    logger.error(e);
   }
 }

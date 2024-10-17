@@ -51,11 +51,11 @@ export default function ContactGroupForm(props: masterFormPropsT) {
         name: result.data[0].name,
       };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setFormError({});
       setSnackOpen(true);
       setTimeout(()=>{
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       },1000);
+      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -166,7 +166,6 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               }}
             />
             <InputControl
-              autoFocus
               inputType={InputType.TEXT}
               id="alias"
               label="Alias"

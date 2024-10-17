@@ -152,7 +152,7 @@ export async function getEnquiryActionCount(
       host: crmDb,
       query:
         "SELECT count(*) as rowCount from enquiry_action_master" +
-        (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
+        (value ? " WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
   } catch (e) {
