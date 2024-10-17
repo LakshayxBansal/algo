@@ -682,6 +682,7 @@ export const enquirySupportConfig = z.object({
   supportMaintainItems: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
+  supportMaintainContract: z.boolean().optional(),
 
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
