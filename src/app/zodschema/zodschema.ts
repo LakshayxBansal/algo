@@ -227,13 +227,13 @@ export const contactSchema = z.object({
     .string()
     .max(60, "Print Name must contain at most 60 character(s)")
     .optional(),
-  pan: z.union([
-    z.literal(""),
-    z.string().max(10).regex(panRegEx, "Invalid PAN number!"),
-  ]),
+    pan: z.union([
+      z.literal(""),
+      z.string().max(10).regex(panRegEx, "Invalid PAN number!"),
+    ]),
   aadhaar: z.union([
     z.literal(""),
-    z.string().max(12).regex(aadhaarRegex, "Invalid Aadhaar Number!"),
+    z.string(),
   ]),
   address1: z.string().max(75, "Address must contain at most 75 character(s)"),
   address2: z.string().max(75, "Address must contain at most 75 character(s)"),

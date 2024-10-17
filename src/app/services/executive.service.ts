@@ -41,7 +41,7 @@ export async function createExecutiveDB(
         data.aadhaar,
         data.area_id,
         data.call_type,
-        data.crm_map_id,
+        data.crm_user_id,
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
@@ -92,7 +92,7 @@ export async function updateExecutiveDB(
         data.aadhaar,
         data.area_id,
         data.call_type,
-        data.crm_map_id,
+        data.crm_user_id,
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
@@ -136,16 +136,16 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        `select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+        "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
          s.name state, co.name country, us.name as crm_user\
          from executive_master em left join area_master am on am.id=em.area_id\
-         left outer join department_master d on d.id=em.dept_id\
+         left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id\
-         where em.id=?`,
+         where em.id=?",
       values: [id],
     });
 
@@ -162,7 +162,7 @@ export async function getProfileDetailsById(crmDb: string, id: number) {
         `select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
          s.name state, co.name country, us.name as crm_user\
          from executive_master em left join area_master am on am.id=em.area_id\
-         left outer join department_master d on d.id=em.dept_id\
+         left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
@@ -177,6 +177,8 @@ export async function getProfileDetailsById(crmDb: string, id: number) {
     console.log(e);
   }
 }
+
+
 
 export async function checkIfUsed(crmDb: string, id: number) {
   try {
