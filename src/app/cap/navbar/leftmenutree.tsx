@@ -194,7 +194,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
                               handleSubMenuHover(e, page)           
                             }
                             }
-                             onMouseLeave={(e) => handleMouseLeave(e,page)}  
+                             onMouseLeave={(e) =>{page.children.length  > 0 && handleMouseLeave(e,page)}}  
                  component="a" href={page.href} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}

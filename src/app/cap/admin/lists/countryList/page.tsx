@@ -34,6 +34,7 @@ export default function Country() {
         fnDeleteDataByID={delCountryById}
         customCols={columns}
         AddAllowed={true}
+        height = "30em"
       ></EntityList>
     </>
   );
