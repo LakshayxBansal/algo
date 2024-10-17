@@ -60,6 +60,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+
+
+  entityData.executive_dept_id = props.data?.dept_id;
+  entityData.executive_group = props.data?.group_name;
+  entityData.executive_group_id = props.data?.group_id;
+
+  console.log("form error : ", formError);
+
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
     // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
@@ -74,7 +82,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   // useEffect(()=>{setDefaultState({id: 0, name: ""} as optionsDataT)},[selectValues.country])
 
-  
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -151,7 +158,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       : entityData.crm_user_id
       ? entityData.crm_user_id
       : 0;
-    data.dept_id = selectValues.department
+    data.executive_dept_id = selectValues.department
       ? selectValues.department.id
       : entityData.executive_dept_id
       ? entityData.executive_dept_id
