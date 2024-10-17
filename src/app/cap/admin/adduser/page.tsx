@@ -5,37 +5,44 @@ import InviteList from './InviteList';
 import UserList from './UserList';
 import { getSession } from '../../../services/session.service';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { logger } from '@/app/utils/logger.utils';
 
 export default async function AddUser() {
-  const session = await getSession();
-  if (session) {
-    if(session.user.dbInfo.roleId){
-    return (
-      <>
-        <Box >
-          <UserList />
-          <Accordion>
-            <AccordionSummary
-              sx={{ bgcolor: "white", width: "97%", margin: "auto", marginTop: "1rem" }}
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
-            >
-              <Typography variant="h6">
-              Invited User
-          </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ bgcolor: "white" }}>
-              <InviteList companyId={session.user.dbInfo.id} />
-            </AccordionDetails>
-          </Accordion>
-        </Box>
-      </>
-    );
-    }else{
-      redirect("/company");
+  let path = "";
+  try {
+    const session = await getSession();
+    if (session) {
+      if (session.user.dbInfo.roleId) {
+        return (
+          <>
+            <Box >
+              <UserList />
+              <Accordion>
+                <AccordionSummary
+                  sx={{ bgcolor: "white", width: "97%", margin: "auto", marginTop: "1rem" }}
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <Typography variant="h6">
+                    Invited User
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ bgcolor: "white" }}>
+                  <InviteList companyId={session.user.dbInfo.id} />
+                </AccordionDetails>
+              </Accordion>
+            </Box>
+          </>
+        );
+      } else {
+        path = "/company"
+      }
+    } else {
+      path = "/signin";
     }
-  } else {
-    redirect("/signin");
+  } catch (error) {
+    logger.error(error);
   }
+  redirect(path);
 }
