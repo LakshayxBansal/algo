@@ -41,8 +41,8 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    
-    data.country_id = selectValues.country 
+      
+    data.country_id = selectValues.country?.id
     ? selectValues.country.id 
     : selectValues.country_id 
         ? selectValues.country_id 
@@ -134,7 +134,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -171,6 +171,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
                 data={data}
               />
             )}
+            required
           />
           <InputControl
             autoFocus
@@ -181,6 +182,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             name="name"
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            required
           />
           <InputControl
             id="alias"
