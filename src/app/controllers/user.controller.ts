@@ -220,8 +220,7 @@ export async function checkUserInCompany(userId: number, companyId: number) {
 export async function createUserInStatusBar(userId: number, companyId: number) {
   try {
     const company = await getCompanyDbByIdList(companyId);
-    const user = await createUserInStatusBarDB(userId, `crmapp${company[0].dbinfo_id}`);
-    return user;
+    await createUserInStatusBarDB(userId, `crmapp${company[0].dbinfo_id}`);
   } catch (error) {
     throw (error);
   }
@@ -349,6 +348,7 @@ export async function acceptInvite(inviteDetail: inviteUserSchemaT) {
       if (user.length > 0) {
         await Promise.all([
           updateInUsercompany(
+            true,
             null,
             inviteDetail.companyId,
             inviteDetail.inviteDate,
@@ -383,17 +383,33 @@ export async function rejectInvite(inviteDetail: inviteUserSchemaT) {
       // const companyDb = await getCompanyDbById(inviteDetail.companyId);
       // await Promise.all([createInUsercompany(false,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
       // }else{
-      await Promise.all([
-        createInUsercompany(
-          false,
-          null,
-          inviteDetail.companyId,
-          inviteDetail.inviteDate,
-          session.user.userId
-        ),
-        deleteInvite(inviteDetail.id as number),
-      ]);
-      // }
+        const user = await checkUserInCompany(
+          session.user.userId,
+          inviteDetail.companyId
+        );
+        if (user.length > 0) {
+          await Promise.all([
+            updateInUsercompany(
+              false,
+              null,
+              inviteDetail.companyId,
+              inviteDetail.inviteDate,
+              session.user.userId
+            ),
+            deleteInvite(inviteDetail.id as number),
+          ]);
+        } else {
+          await Promise.all([
+            createInUsercompany(
+              false,
+              null,
+              inviteDetail.companyId,
+              inviteDetail.inviteDate,
+              session.user.userId
+            ),
+            deleteInvite(inviteDetail.id as number),
+          ]);
+      }
     }
   } catch (error) {
     throw error;

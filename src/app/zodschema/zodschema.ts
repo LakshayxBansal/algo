@@ -723,7 +723,7 @@ export const companySchema = z.object({
 export const inviteUserSchema = z
   .object({
     id: z.number().optional(),
-    name: z.string().min(1, "Please enter Name").max(45),
+    name: z.string().min(1, "Please enter Name").max(45,"Name is too long"),
     email: z
       .string()
       .regex(emailRegex, "Input must be in email format")

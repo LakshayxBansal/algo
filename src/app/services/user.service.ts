@@ -293,16 +293,11 @@ export async function checkUserInCompanyDB(userId : number, companyId : number) 
 
 export async function createUserInStatusBarDB(userId: number,crmDb : string) {
   try{
-    const user =  excuteQuery({
+    await excuteQuery({
       host : crmDb,
-      query : "INSERT INTO status_bar (user_id) VALUES (?);",
+      query : "call createStatusBar(?);",
       values : [userId]
     })
-    if(user){
-      return user;
-    }else{
-      return null;
-    }
 
   }catch(error){
     console.log(error);
@@ -387,22 +382,14 @@ export async function createInUsercompany(accept: boolean, executiveId: number |
   }
 }
 
-export async function updateInUsercompany(executiveId: number | null, companyId: number, inviteDate: Date | undefined, userId: number) {
+export async function updateInUsercompany(accept: boolean,executiveId: number | null, companyId: number, inviteDate: Date | undefined, userId: number) {
   try {
     let query;
-    // if(accept){
-    // if(executiveId){
-    //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate,mappedDate) values (?,?,0,1,1,1,?,now(),now());"
-    // }else{
-    query = "update userCompany set isAccepted = 1, invitedDate = ? where user_id = ? and company_id = ?;"
-    // }
-    // }else{
-    // if(executiveId){
-    //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
-    // }else{
-    // query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
-    // }
-    // }
+    if(accept){
+      query = "update userCompany set isAccepted = 1, invitedDate = ? where user_id = ? and company_id = ?;"
+    }else{
+      query = "update userCompany set isAccepted = -1, invitedDate = ? where user_id = ? and company_id = ?;"
+    }
     return excuteQuery({
       host: "userDb",
       query: query,
@@ -455,41 +442,51 @@ export async function getInviteUserDb(
     const result = await excuteQuery({
       host: "userDb",
       query:
-        "SELECT *\
-        FROM (\
-        SELECT \
-        id, \
-        contact, \
-        name, \
-        status, \
-        ROW_NUMBER() OVER (ORDER BY priority) AS RowID,\
-        COUNT(*) OVER () AS total_count\
-        FROM (\
-        SELECT \
-            iu.id, \
-            iu.usercontact AS contact, \
-            iu.name, \
-            'pending' AS status,\
-            1 AS priority\
-        FROM inviteUser iu\
-        WHERE iu.company_id = ? \
-        UNION ALL \
-        SELECT \
-            uc.id, \
-            u.contact, \
-            u.name, \
-            'reject' AS status, \
-            2 AS priority \
-        FROM userCompany uc \
-        JOIN user u ON u.id = uc.user_id \
-        WHERE uc.company_id = ? AND uc.isAccepted = -1 \
-        ) AS CombinedRows " +
-        (filter ? "where name LIKE CONCAT('%',?,'%') " : "") +
-        "GROUP BY contact \
-      ) AS FinalRows \
-      WHERE RowID > ? * ? \
-      ORDER BY RowID \
+                "SELECT id as id, name as name, usercontact as contact,'pending' AS status, RowNum as RowID  \
+       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum, count(1) over () total_count \
+          FROM inviteUser where company_id = ? " +
+                (filter ? "and name LIKE CONCAT('%',?,'%') " : "") +
+                "order by name\
+      ) AS NumberedRows\
+      WHERE RowNum > ?*?\
+      ORDER BY RowNum\
       LIMIT ?;",
+      // query:
+      //   "SELECT *\
+      //   FROM (\
+      //   SELECT \
+      //   id, \
+      //   contact, \
+      //   name, \
+      //   status, \
+      //   ROW_NUMBER() OVER (ORDER BY priority) AS RowID,\
+      //   COUNT(*) OVER () AS total_count\
+      //   FROM (\
+      //   SELECT \
+      //       uc.id, \
+      //       u.contact, \
+      //       u.name, \
+      //       'reject' AS status, \
+      //       2 AS priority \
+      //   FROM userCompany uc \
+      //   JOIN user u ON u.id = uc.user_id \
+      //   WHERE uc.company_id = ? AND uc.isAccepted = -1 \
+      //   UNION ALL \
+      //   SELECT \
+      //       iu.id, \
+      //       iu.usercontact AS contact, \
+      //       iu.name, \
+      //       'pending' AS status,\
+      //       1 AS priority\
+      //   FROM inviteUser iu\
+      //   WHERE iu.company_id = ? \
+      //   ) AS CombinedRows " +
+      //   (filter ? "where name LIKE CONCAT('%',?,'%') " : "") +
+      //   "GROUP BY contact \
+      // ) AS FinalRows \
+      // WHERE RowID > ? * ? \
+      // ORDER BY RowID \
+      // LIMIT ?;",
       values: vals,
     });
     return result
