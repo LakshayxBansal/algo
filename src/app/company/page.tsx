@@ -5,9 +5,11 @@ import CompanyEntityList from "./CompanyEntityList";
 import InviteEntityList from "./InviteEntityList";
 import { Box, Paper, Typography,Accordion,AccordionSummary,AccordionDetails } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { getTotalInvite } from "../controllers/user.controller";
 
 export default async function Companies() {
   const session = await getSession();
+  const totalInvites = await getTotalInvite();
   if (session) {
     return (
       <>
@@ -26,7 +28,7 @@ export default async function Companies() {
               id="panel1-header"
             >
               <Typography variant="h6">
-            Invite from Companies
+            Total Invite : {totalInvites.rowCount}
           </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ bgcolor: "white" }}>
