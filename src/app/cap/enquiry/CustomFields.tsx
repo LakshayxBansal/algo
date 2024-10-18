@@ -61,7 +61,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                     <Autocomplete
                         options={list_item}
                         renderInput={(params) => (
-                            <TextField
+                            <InputControl
                                 {...params}
                                 label={props.desc.column_label}
                                 name={props.desc.column_name}
