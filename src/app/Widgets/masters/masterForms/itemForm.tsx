@@ -33,12 +33,14 @@ export default function ItemForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: itemSchemaT = props.data ? props.data : {};
 
+  entityData.group = props.data.group_id;
+  entityData.unit = props.data.unit_id;
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {}; 
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -114,7 +116,7 @@ export default function ItemForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Item" : "Add Item"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>

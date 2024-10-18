@@ -151,7 +151,7 @@ export default function ContactForm(props: masterFormPropsT) {
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.contactGroup_id
+        ? entityData.country_id
         : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
@@ -194,7 +194,7 @@ export default function ContactForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Contact" : "Add Contact"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -309,10 +309,15 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="pan"
                 label="PAN"
                 name="pan"
-                required
                 error={formError?.pan?.error}
                 helperText={formError?.pan?.msg}
                 defaultValue={entityData.pan}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { pan, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.TEXT}
@@ -466,7 +471,6 @@ export default function ContactForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
-                flagProps={{ tabIndex: -1 }}
               />
               <InputControl
                 inputType={InputType.PHONE}
@@ -578,6 +582,7 @@ export default function ContactForm(props: masterFormPropsT) {
               disable={selectValues.country || entityData.country_id ? false : true}
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
               defaultValue={defaultState}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm

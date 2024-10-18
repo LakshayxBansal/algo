@@ -101,7 +101,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Sub-Status" : "Add Sub-Status"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>

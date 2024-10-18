@@ -136,7 +136,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Executive Role" : "Add Executive Role"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
