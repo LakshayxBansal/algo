@@ -26,7 +26,7 @@ import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
-import { getCountries, getCountryById, getStates } from "@/app/controllers/masters.controller";
+import { getCountries, getCountryById, getStateById, getStates } from "@/app/controllers/masters.controller";
 import {
   getDeptById,
   getExecutiveDept,
@@ -605,6 +605,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               defaultValue={defaultState}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
               fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
