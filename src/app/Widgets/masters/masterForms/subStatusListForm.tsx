@@ -29,7 +29,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [status_id, setStatus] = useState<number>(1);
+  const [status_id, setStatus] = useState<number>();
   const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
   console.log("entityData : ",entityData)
 
@@ -40,7 +40,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
       data[key] = value;
     }
 
-    data["enquiry_status_id"] = status_id;
+    data["enquiry_status_id"] = status_id? status_id: entityData.enquiry_status_id? entityData.enquiry_status_id: 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
@@ -101,7 +101,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Sub-Status" : "Add Sub-Status"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -182,7 +182,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
