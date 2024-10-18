@@ -140,7 +140,7 @@ export default function AreaForm(props: masterFormPropsT) {
             justifyContent: "flex-end",
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"
