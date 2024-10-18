@@ -13,11 +13,9 @@ import OverviewCard from "./OverviewCard";
 import { logger } from "@/app/utils/logger.utils";
 
 export default async function Dashboard() {
-  let path = "";
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      if (session.user.dbInfo.roleId) {
         return (
           <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>
             <Box sx={{ py: 3, maxWidth: "90vw", margin: "auto" }}>
@@ -69,14 +67,9 @@ export default async function Dashboard() {
             </Box>
           </Box>
         );
-      } else {
-        path = "/company"
-      }
-    } else {
-      path = "/signin"
     }
   } catch (error) {
     logger.error(error);
   }
-  redirect(path);
+  redirect("/signin");
 }

@@ -334,6 +334,7 @@ export const executiveSchema = z
     call_type: z.string().min(1).max(45),
     crm_user: z.string().max(60).optional(),
     crm_user_id: z.number().optional(),
+    prev_crm_user_id: z.number().optional(),
     crm_map_id: z.number().optional(),
     role_id: z.number().optional(),
     role: z.string().min(1, "Select role").max(45), //Remove it from optional

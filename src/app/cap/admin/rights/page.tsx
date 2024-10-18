@@ -94,11 +94,9 @@ function getParentDataDefaultValue(countData: any) {
 
 
 export default async function Rights() {
-    let path = "";
     try {
         const session = await getSession();
         if (session) {
-            if (session.user.dbInfo.roleId) {
                 const rightsData: DataState | undefined = await getRightsData();
                 const masterObjects = await getMasterObjects();
                 const transactionObjects = await getTransactionObjects();
@@ -119,15 +117,10 @@ export default async function Rights() {
                         <RightPage userRoleId={session.user.dbInfo.roleId} rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
                     </>
                 )
-            } else {
-                path = "/company";
-            }
 
-        }else{
-            path = "/signin";
         }
     } catch (error) {
         logger.error(error);
     }
-    redirect(path)
+    redirect("/signin")
 }
