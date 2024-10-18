@@ -73,7 +73,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
   const updateFormData = (data: any) => {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
-      : entityData.parent
+      : entityData.parent_id
         ? entityData.parent_id
         : 0;
     return data;
@@ -192,7 +192,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val })
+                setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
               }
               dialogTitle={"Add Parent Group"}
               fetchDataFn={getContactGroup}

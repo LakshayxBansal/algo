@@ -37,12 +37,11 @@ export default function ItemGroupForm(props: masterFormPropsT) {
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
-    
+
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
     formData = updateFormData(data);
-
 
     const result = await persistEntity(data as itemGroupSchemaT);
     if (result.status) {
@@ -50,7 +49,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     } else {
@@ -70,18 +69,9 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const updateFormData = (data: any) => {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
-      : entityData.parent
+      : entityData.parent_id
       ? entityData.parent_id
       : 0;
-    // data.append(
-    //   "itemGroup_id",
-    //   selectValues.parent
-    //     ? selectValues.parent.id
-    //     : entityData.parent_id
-    //     ? entityData.parent_id
-    //     : 0
-    // );
-
     return data;
   };
 
@@ -204,11 +194,12 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               //     name: entityData.name,
               //   } as optionsDataT
               // }
-              onChange={(e, val, s) =>{
-                setSelectValues({ ...selectValues, parent: val})
-                console.log("Value in onChange", val);
-              }
-              }
+              onChange={(e, val, s) => {
+                setSelectValues({
+                  ...selectValues,
+                  parent: val ? val : { id: 0, name: "" },
+                });
+              }}
               fetchDataFn={getItemGroup}
               fnFetchDataByID={getItemGroupById}
               allowNewAdd={false}

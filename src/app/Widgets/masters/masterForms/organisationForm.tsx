@@ -55,7 +55,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     const result = await persistEntity(data as organisationSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
@@ -76,8 +76,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : entityData.country? entityData.country_id :0;
-    data.state_id = selectValues.state ? selectValues.state.id : entityData.state? entityData.state_id :0;
+    data.country_id = selectValues.country ? selectValues.country.id : entityData.country_id? entityData.country_id :0;
+    data.state_id = selectValues.state ? selectValues.state.id : entityData.state_id? entityData.state_id :0;
 
     return data;
   };
@@ -109,7 +109,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val;
+    values[name] = val ? val : {id: 0, name: ""};
 
     if (name === "country") {
       values["states"] = {};
