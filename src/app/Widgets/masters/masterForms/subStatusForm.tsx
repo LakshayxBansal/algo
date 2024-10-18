@@ -129,7 +129,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
             {(props.data ? "Update " : "Add ") +
               "Sub-Status for " +
               (props.parentData === 1 ? "Open" : "Closed")}{" "}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>

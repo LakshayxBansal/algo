@@ -249,7 +249,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
