@@ -81,7 +81,7 @@ export default function ContactForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val;
+    values[name] = val? val : { id: 0, name: ""}
 
     if (name === "country") {
       values["states"] = {};
@@ -285,7 +285,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 label={"Organisation"}
                 width={210}
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, organisation: val })
+                  setSelectValues({ ...selectValues, organisation: val ? val : { id: 0, name: "" }})
                 }
                 dialogTitle={"Organisation"}
                 fetchDataFn={getOrganisation}
@@ -358,7 +358,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, contactGroup: val })
+                  setSelectValues({ ...selectValues, contactGroup: val ? val : { id: 0, name: "" } })
                 }
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <ContactGroupForm
@@ -382,7 +382,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, department: val })
+                  setSelectValues({ ...selectValues, department: val ? val : { id: 0, name: "" } })
                 }
                 fetchDataFn={getDepartment}
                 fnFetchDataByID={getDepartmentById}
@@ -410,7 +410,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, area: val })
+                  setSelectValues({ ...selectValues, area: val ? val : { id: 0, name: "" } })
                 }
                 // formError={formE}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
@@ -466,6 +466,7 @@ export default function ContactForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
+                flagProps={{ tabIndex: -1 }}
               />
               <InputControl
                 inputType={InputType.PHONE}
@@ -626,7 +627,7 @@ export default function ContactForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

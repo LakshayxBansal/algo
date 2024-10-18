@@ -192,7 +192,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val })
+                setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
               }
               dialogTitle={"Add Parent Group"}
               fetchDataFn={getContactGroup}
@@ -215,7 +215,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               mt: 2
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
