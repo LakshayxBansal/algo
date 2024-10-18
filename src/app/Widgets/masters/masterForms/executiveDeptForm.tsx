@@ -150,7 +150,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
             mt: 2
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"

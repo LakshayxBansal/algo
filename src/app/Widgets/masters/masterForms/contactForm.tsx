@@ -466,6 +466,7 @@ export default function ContactForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
+                flagProps={{ tabIndex: -1 }}
               />
               <InputControl
                 inputType={InputType.PHONE}
@@ -626,7 +627,7 @@ export default function ContactForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

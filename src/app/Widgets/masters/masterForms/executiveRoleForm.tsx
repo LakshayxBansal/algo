@@ -92,7 +92,11 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parentRole ? selectValues.parentRole.id : entityData.parent_id? entityData.parent_id : 0;
+    data.parent_id = selectValues.parentRole
+      ? selectValues.parentRole.id
+      : entityData.parent_id
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -198,7 +202,10 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parentRole: val ? val : { id: 0, name: "" } })
+                setSelectValues({
+                  ...selectValues,
+                  parentRole: val ? val : { id: 0, name: "" },
+                })
               }
               allowNewAdd={false}
               allowModify={false}
@@ -219,7 +226,9 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
