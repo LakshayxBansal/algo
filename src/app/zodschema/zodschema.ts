@@ -187,13 +187,20 @@ export const ItemSchema = z.object({
 export const itemToListFormSchema = z.object({
   id: z.number().optional(),
   enquiry_id: z.number().optional(),
-  item: z.string().min(1).max(75),
+  item: z.string().min(1, {
+    message: "Item Name must not be empty",
+  }),
   item_id: z.number(),
-  quantity: z.string(),
-  unit: z.string(),
+  quantity: z
+    .number()
+    .min(1, { message: "Quantity must not be empty" }),
+  unit: z.string().min(1, {
+    message: "Unit Name must not be empty",
+  }),
   unit_id: z.number(),
   remarks: z.string().max(5000).optional(),
 });
+
 export const itemToListFormArraySchema = z.array(itemToListFormSchema);
 
 export const UnitSchema = z.object({
@@ -564,23 +571,23 @@ export const stateSchema = z.object({
     .min(1, "Alias must not be empty")
     .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
-  country_id: z.number().refine((val)=> val !== 0 ,{
-        message: "Country name must not be empty", 
-        path: ["country"], 
-      } )
-  
-    // .number({
-    //   required_error: "Age is required",
-    //   invalid_type_error: "Country can not be empty",
-    // })
-    // .refine(
-    //   (val) => {
-    //     return isNaN(val) || val !== undefined;
-    //   },
-    //   {
-    //     message: "Country name must not be empty", 
-    //     path: ["country"], 
-    // ),
+  country_id: z.number().refine((val) => val !== 0, {
+    message: "Country name must not be empty",
+    path: ["country"],
+  }),
+
+  // .number({
+  //   required_error: "Age is required",
+  //   invalid_type_error: "Country can not be empty",
+  // })
+  // .refine(
+  //   (val) => {
+  //     return isNaN(val) || val !== undefined;
+  //   },
+  //   {
+  //     message: "Country name must not be empty",
+  //     path: ["country"],
+  // ),
 });
 
 /**
@@ -740,7 +747,8 @@ export const inviteUserSchema = z
     companyId: z.number(),
     executiveId: z.number().optional(),
     inviteDate: z.date().optional(),
-  }).refine(
+  })
+  .refine(
     (schema) => {
       return !(schema.email === "");
     },

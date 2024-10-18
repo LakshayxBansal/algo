@@ -586,7 +586,7 @@ export default function UpdateInputForm(props: {
                   </Grid>
                   <Grid item xs={12} sm={3} md={3}>
                     <InputControl
-                      label="Received on "
+                      label="Received on"
                       inputType={InputType.DATETIMEINPUT}
                       id="date"
                       name="date"
