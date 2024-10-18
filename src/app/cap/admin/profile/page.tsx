@@ -7,13 +7,13 @@ import { getExecutiveById, getProfileById } from "@/app/controllers/executive.co
 import { executiveSchemaT } from "@/app/models/models";
 import SnackModal from "@/app/miscellaneous/SnackModal";
 import { Box, Paper } from "@mui/material";
+// import { snackbarActive } from "@/app/company/CompanyEntityList";
+// import { showSnackbar } from "@/app/company/page";
 
 export default async function Profile() {
-    let path = "";
     try {
         const session = await getSession();
         if (session) {
-            if (session.user.dbInfo.roleId) {
                 const executiveData = await getProfileById(session.user.userId);
                 if (executiveData) {
                     return (
@@ -31,15 +31,10 @@ export default async function Profile() {
                         <SnackModal open={true} msg={"Profile not Found"} />
                     )
                 }
-            } else {
-                path = "/company";
-            }
-        }else{
-            path = "/signin";
         }
     } catch (e) {
         // show error page
         logger.error(e)
     }
-    redirect(path);
+    redirect("/signin");
 };

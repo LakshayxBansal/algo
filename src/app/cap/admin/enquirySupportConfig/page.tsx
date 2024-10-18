@@ -6,7 +6,6 @@ import { redirect } from 'next/navigation';
 const EnquiryConfigPage = async () => {
     const session = await getSession();
     if (session) {
-        if (session.user.dbInfo.roleId) {
             const enquiryConfig = await loadEnquirySupportConfig();
 
             if (!enquiryConfig) {
@@ -14,9 +13,6 @@ const EnquiryConfigPage = async () => {
             }
 
             return <EnquiryConfigForm {...enquiryConfig} />;
-        } else {
-            redirect("/company")
-        }
     }else{
         redirect("/signin");
     }
