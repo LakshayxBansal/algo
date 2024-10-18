@@ -883,7 +883,7 @@ export default function AutoGrid(props: any) {
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{ margin: "0 1vw", textTransform: "none" }}
+                sx={{ margin: "0 0.5vw", textTransform: "none" }}
                 onClick={() => setDetails(!details)}
               >
                 {details ? "Hide Details" : "Show Details"}
