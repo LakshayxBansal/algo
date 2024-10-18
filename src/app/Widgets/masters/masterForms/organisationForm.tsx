@@ -112,10 +112,10 @@ export default function OrganisationForm(props: masterFormPropsT) {
     values[name] = val ? val : {id: 0, name: ""};
 
     if (name === "country") {
-      values["states"] = {};
+      values["state"] = {};
       setDefaultState(undefined);
       setStateKey((prev) => 1 - prev);
-      values.state = null;
+      // values.state = null;
     }
     setSelectValues(values);
   };
