@@ -152,11 +152,17 @@ export async function getUserDetailsByIdList(userId:number) {
   return false;
 }
 
-export async function mapUser(userId : number,roleId : number | null,companyId : number) {
+export async function mapUser(map : boolean, userId : number,roleId : number | null,companyId : number) {
+  let query = "";
+  if(map){
+    query = "update userCompany set isMapped = 1, role_id = ? where user_id = ? and company_id = ?;"
+  }else{
+    query = "update userCompany set isMapped = 0, role_id = ? where user_id = ? and company_id = ?;"
+  }
   try{
     await excuteQuery({
       host: "userDb",
-      query: "update userCompany set isMapped = 1, role_id = ? where user_id = ? and company_id = ?;",
+      query: query,
       values: [ roleId,userId,companyId]
     })
   }catch(error){
