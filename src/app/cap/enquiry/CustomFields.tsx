@@ -63,6 +63,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                         renderInput={(params) => (
                             <InputControl
                                 {...params}
+                                inputType={InputType.TEXT}
                                 label={props.desc.column_label}
                                 name={props.desc.column_name}
                                 fullWidth
