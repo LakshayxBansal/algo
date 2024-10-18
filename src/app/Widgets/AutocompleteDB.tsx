@@ -66,7 +66,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
     const getData = debounce(async (input) => {
       let results  
       
-      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts)) {
+      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
         results = (await props.fetchDataFn(props.defaultOptions?'':input)) as optionsDataT[] 
         if(props.diaglogVal.reloadOpts){
           setDefaultOpts(results)

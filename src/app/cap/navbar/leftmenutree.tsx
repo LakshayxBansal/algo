@@ -121,6 +121,14 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
     return props.openDrawer ? open?.get(id) ?? false : false;
   }
 
+  function generateHref(optionName : string){
+    let href = "#";
+    if(optionName==="Add User"){
+      href = "/cap/admin/adduser";
+    }
+    return href;
+  }
+
   function ShowMenu(levelData: {pages: menuTreeT[], level: number, menuLevel: number}) {
     const level = levelData.level;
     const pages = levelData.pages;
@@ -140,7 +148,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
             {page.parent_id === level && 
             <>
               <Tooltip title={page.name} placement="right">
-                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href} selected={selectedId === page.id} >
+                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href!=="#" ? page.href : generateHref(page.name)} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}
                   </ListItemIcon>
@@ -186,7 +194,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
                               handleSubMenuHover(e, page)           
                             }
                             }
-                             onMouseLeave={(e) => handleMouseLeave(e,page)}  
+                             onMouseLeave={(e) =>{page.children.length  > 0 && handleMouseLeave(e,page)}}  
                  component="a" href={page.href} selected={selectedId === page.id} >
                   <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
                     {SelectIcon({Page: page, selected:selectedId === page.id})}

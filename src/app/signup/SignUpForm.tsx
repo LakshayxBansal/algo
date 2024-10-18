@@ -28,7 +28,6 @@ export default function SignupForm1(props: any) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inActiveUserId, setInActiveUserId] = useState<number | undefined>();
   const [signUpData, setSignUpData] = useState<userSchemaT>();
@@ -58,7 +57,7 @@ export default function SignupForm1(props: any) {
   async function makeUserActiveAgain(userId: number | undefined) {
     try {
       await makeUserActive(userId);
-      router.push("/congrats");
+      router.push("/signin");
     } catch (error) {
       logger.info(error);
     } finally {
@@ -81,7 +80,7 @@ export default function SignupForm1(props: any) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setFormError({});
-      router.push("/congrats");
+      router.push("/signin");
     } else {
       // show error on screen
       const issues = result.data;
@@ -118,15 +117,6 @@ export default function SignupForm1(props: any) {
       await handleRegister(data as userSchemaT);
     }
   };
-
-  function onPhoneChange(
-    value: string,
-    data: {} | CountryData,
-    event: ChangeEvent<HTMLInputElement>,
-    formattedValue: string
-  ) {
-    setPhoneNumber(value);
-  }
 
   return (
     <Box
@@ -313,7 +303,12 @@ export default function SignupForm1(props: any) {
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
-                    onkeydown={onPhoneChange}
+                    onKeyDown={()=>{
+                      setFormError((curr) => {
+                        const { phone, ...rest} = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "40px",

@@ -85,10 +85,17 @@ export async function createCompanyDB(
   return result;
 }
 
-export async function createTablesAndProc(dbName: string) {
+export async function createTablesAndProc(
+  dbName: string,
+  userId: number,
+  userName: string,
+  userEmail: string,
+  userMobile: string
+) {
   let result;
   try {
-    const scripts: string[] = dbTableAndProScript.split("~");
+    let scripts: string[] = dbTableAndProScript.split("~");
+    scripts.push(`INSERT INTO status_bar (user_id) VALUES (${userId});`);
     let data;
     for (let idx in scripts) {
       let query = scripts[idx];
@@ -98,6 +105,13 @@ export async function createTablesAndProc(dbName: string) {
         values: [],
       });
     }
+    data += await excuteQuery({
+      host: dbName,
+      query:
+        "INSERT INTO executive_master (name, email, mobile, created_by, created_on, crm_user_id, role_id) values\
+                (?, ?, ?, ?, now(), ?, 1);",
+      values: [userName, userEmail, userMobile, userId, userId],
+    });
     result = {
       status: true,
       data: data,
@@ -135,8 +149,6 @@ export async function createCompanyAndInfoDb(
         userId,
       ],
     });
-    console.log("result", result);
-
     return result;
   } catch (e) {
     console.log(e);
@@ -203,10 +215,10 @@ export async function deleteCompanyAndDbInfo(
       values: [companyId],
     });
 
-    return {status: true};
+    return { status: true };
   } catch (e) {
     console.log(e);
-    return {status: false, message: 'Something went wrong.'};
+    return { status: false, message: "Something went wrong." };
   }
 }
 
@@ -240,7 +252,7 @@ export async function getCompaniesDb(
           uc.isAccepted = 1 and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
-          d.host_id = h.id AND" +
+          d.host_id = h.id AND " +
         (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") +
         " u.id=? \
           order by c.name) AS NumberedRows \
@@ -282,8 +294,6 @@ export async function getCompanyCount(
 
 export async function updateCompanyDB(data: zm.companySchemaT) {
   try {
-    console.log(data);
-    
     return excuteQuery({
       host: "userDb",
       query: "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?);",

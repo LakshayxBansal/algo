@@ -5,6 +5,7 @@ import EntityList from "../../../Widgets/masters/EntityList";
 import { deRegisterFromCompany, getCompanyUser } from "@/app/controllers/user.controller";
 import { Button } from "@mui/material";
 import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
+import { deleteSession } from "@/app/services/session.service";
 
 const columns: GridColDef[] = [
   { field: 'RowID', headerName: 'ID', width: 90 },
@@ -34,9 +35,14 @@ const columns: GridColDef[] = [
 ];
 
 const handleRemove = async(params : any)=>{
-  console.log(params.row)
-  const id = params.row.id;
-  await deRegisterFromCompany(id,null,null);
+  try{
+    await deRegisterFromCompany(params.row.id,null,null);
+    await deleteSession(params.row.userId);
+  }catch(error){
+    throw(error);
+  }finally{
+    window.location.reload();
+  }
 }
 
 export default function UserList(){
@@ -44,17 +50,13 @@ export default function UserList(){
     return <>
         <EntityList
         title="User List"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <InviteUserForm
-          setDialogOpen={fnDialogOpen}
-          setDialogValue={fnDialogValue}
-          data={data}
-          />
-        )} 
         fetchDataFn={getCompanyUser}
         // fnFetchDataByID={getInviteUserById}
         customCols={columns}
-        AddAllowed={true}>
+        AddAllowed={false}
+        height="20em"
+        >
+        
       </EntityList>
       </>
 }

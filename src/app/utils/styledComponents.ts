@@ -338,29 +338,9 @@ export const VisuallyHiddenInput = styled("input")({
 });
 
 export const CustomTextField = styled(TextField)(({ theme }) => ({
-  // "& .MuiOutlinedInput-root": {
-  //   "& fieldset": {
-  //     borderColor: theme.palette.primary.main, // Border color
-  //   },
-  //   "&:hover fieldset": {
-  //     borderColor: theme.palette.secondary.main, // Hover border color
-  //   },
-  //   "&.Mui-focused fieldset": {
-  //     borderColor: theme.palette.success.main, // Focused border color
-  //   },
-  // },
-  // "& .MuiInputLabel-root": {
-  //   color: theme.palette.text.secondary, // Label color
-  // },
-  // "& .MuiInputLabel-root.Mui-focused": {
-  //   color: theme.palette.primary.main, // Focused label color
-  // },
   height: "fit-content",
   "& .MuiFormHelperText-root": {
-    backgroundColor: "white", // Background color for helper text
+    backgroundColor: "white",
     margin: 0,
-    // lineHeight: 0,
-    // paddingTop: 10,
-    // fontSize: "0.75rem", // Font size for helper text
   },
 }));
