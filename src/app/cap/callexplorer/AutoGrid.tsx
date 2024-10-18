@@ -82,6 +82,7 @@ export default function AutoGrid(props: any) {
 
   const handleRefresh = () => {
     setRefresh(!refresh)
+    setRowSelectionModel([]);
   };
 
   useEffect(() => {
