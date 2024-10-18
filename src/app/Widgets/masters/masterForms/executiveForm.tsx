@@ -26,7 +26,7 @@ import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
-import { getCountries, getCountryById, getStates } from "@/app/controllers/masters.controller";
+import { getCountries, getCountryById, getStateById, getStates } from "@/app/controllers/masters.controller";
 import {
   getDeptById,
   getExecutiveDept,
@@ -60,6 +60,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+
+
+  entityData.executive_dept_id = props.data?.dept_id;
+  entityData.executive_group = props.data?.group_name;
+  entityData.executive_group_id = props.data?.group_id;
+
+
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
     // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
@@ -73,6 +80,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   // }
 
   // useEffect(()=>{setDefaultState({id: 0, name: ""} as optionsDataT)},[selectValues.country])
+
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -149,8 +157,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       : entityData.crm_user_id
       ? entityData.crm_user_id
       : 0;
-    data.executive_dept_id = selectValues.executive_dept
-      ? selectValues.executive_dept.id
+    data.executive_dept_id = selectValues.department
+      ? selectValues.department.id
       : entityData.executive_dept_id
       ? entityData.executive_dept_id
       : 0;
@@ -169,7 +177,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   };
 
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues.country?.name || entityData.country;
 
     const states = await getStates(stateStr, country);
     if (states.length > 0) {
@@ -216,7 +224,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   };
 
 
-
+  
   return (
     <Box>
       <Box
@@ -354,7 +362,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : selectValues.department ? false : true}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (selectValues.department || entityData.executive_dept_id) ? false : true}
               formError={formError?.role ?? formError.role}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
@@ -394,6 +402,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               id="pan"
               label="PAN"
               name="pan"
+              required
               error={formError?.pan?.error}
               helperText={formError?.pan?.msg}
               defaultValue={entityData.pan}
@@ -592,16 +601,17 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               label={"State"}
               width={210}
               dialogTitle={"Add State"}
-              disable={selectValues.country ? false : true}
+              disable={selectValues.country || entityData.country_id ? false : true}
               defaultValue={defaultState}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
               fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  parentData={selectValues.country?.id}
+                  parentData={selectValues.country?.id || entityData.country_id}
                 />
               )}
             />

@@ -227,10 +227,10 @@ export const contactSchema = z.object({
     .string()
     .max(60, "Field must contain at most 60 character(s)")
     .optional(),
-  pan: z.union([
-    z.literal(""),
-    z.string().max(10).regex(panRegEx, "Invalid PAN number!"),
-  ]),
+    pan: z.union([
+      z.literal(""),
+      z.string().max(10).regex(panRegEx, "Invalid PAN number!"),
+    ]),
   aadhaar: z.union([
     z.literal(""),
     z.string(),
