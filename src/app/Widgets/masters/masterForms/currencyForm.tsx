@@ -28,11 +28,16 @@ export default function CurrencyForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
-  const [currencySystem, setCurrencySystem] = useState("ind");
-  const [decimalPlaces, setDecimalPlaces] = useState("2");
+  const [currencySystem, setCurrencySystem] = useState(props.data ? props.data.currency_system : "ind");
+  const [decimalPlaces, setDecimalPlaces] = useState(props.data ? props.data.decimal_places : "2");
   const [symbol, setSymbol] = useState("");
   const [sample, setSample] = useState("");
   const entityData: currencySchemaT = props.data ? props.data : {};
+
+  // if (props.data) {
+  //   setCurrencySystem(entityData.currency_system);
+  //   setDecimalPlaces(entityData.decimal_places);
+  // }
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -51,13 +56,12 @@ export default function CurrencyForm(props: masterFormPropsT) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     } else {
       const issues = result.data;
 
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
@@ -179,13 +183,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            {/* <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-around",
-              }}
-            > */}
             <InputControl
               autoFocus
               inputType={InputType.TEXT}
@@ -222,16 +219,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 });
               }}
             />
-            {/* </Box>
-            <Box
-              sx={{
-                display: "flex",
-                // border: "1px solid black",
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-between",
-              }}
-            > */}
             <InputControl
               id="shortForm"
               label="Currency Short Form"
@@ -253,7 +240,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               size="small"
               sx={{
                 marginTop: "0.9vh",
-                //  width: "46.2%"
               }}
             >
               <InputLabel id="demo-simple-select-label">
@@ -271,24 +257,11 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 <MenuItem value="int">International</MenuItem>
               </Select>
             </FormControl>
-            {/* </Box> */}
-            {/* <InputControl
-              autoFocus
-              id="placeValueSystem"
-              label="Currency Place Value System"
-              inputType={InputType.TEXT}
-              name="placeValueSystem"
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-            /> */}
-
             <FormControl
               fullWidth
               size="small"
               sx={{
                 marginTop: "1.3vh",
-                // width: "46.2%"
               }}
             >
               <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
@@ -316,19 +289,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            {/* <Box
-              sx={{
-                mt: 1,
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(2, 1fr)",
-                border: "1px solid blue",
-                padding: "10px",
-              }}
-            >
-              {sample}
-            </Box> */}
             <InputControl
               id="Sample"
               // label="Sample"
