@@ -117,7 +117,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             Add Invite User
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
