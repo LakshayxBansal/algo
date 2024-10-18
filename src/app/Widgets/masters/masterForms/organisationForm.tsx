@@ -112,10 +112,10 @@ export default function OrganisationForm(props: masterFormPropsT) {
     values[name] = val ? val : {id: 0, name: ""};
 
     if (name === "country") {
-      values["states"] = {};
+      values["state"] = {};
       setDefaultState(undefined);
       setStateKey((prev) => 1 - prev);
-      values.state = null;
+      // values.state = null;
     }
     setSelectValues(values);
   };
@@ -141,7 +141,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Organisation" : "Add Organisation"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
