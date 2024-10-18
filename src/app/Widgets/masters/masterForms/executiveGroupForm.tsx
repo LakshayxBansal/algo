@@ -44,7 +44,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
     const result = await persistEntity(data as executiveGroupSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
