@@ -83,7 +83,7 @@ export default function ContactForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val ? val : { id: 0, name: "" };
+    values[name] = val ? val : { id: 0, name: " " };
 
     if (name === "country") {
       values["state"] = {};
@@ -598,12 +598,13 @@ export default function ContactForm(props: masterFormPropsT) {
                 label={"State"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
                 disable={
-                  selectValues.country || entityData.country_id ? false : true
+                  selectValues.country ? false : entityData.country_id ? false : true
                 }
                 dialogTitle={"Add State"}
                 fetchDataFn={getStatesforCountry}
                 fnFetchDataByID={getStateById}
                 defaultValue={defaultState}
+                allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <StateForm
                     setDialogOpen={fnDialogOpen}
