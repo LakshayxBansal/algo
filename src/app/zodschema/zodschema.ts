@@ -410,6 +410,8 @@ export const enquiryLedgerSchema = z.object({
   active: z.number().optional(),
 });
 
+
+export const enquiryDataSchema = enquiryHeaderSchema.merge(enquiryLedgerSchema);
 /**
  * contact group
  */

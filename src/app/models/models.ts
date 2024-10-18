@@ -96,6 +96,7 @@ export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
 
 //jp_dev
