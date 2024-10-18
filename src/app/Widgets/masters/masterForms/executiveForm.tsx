@@ -216,7 +216,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
     console.log("id", id);
 
 
-    const field = props.desc[0].find((item: any) => item.column_name_id === id);
+    const field = props.desc.find((item: any) => item.column_name_id === id);
     console.log("field", field);
 
     if (field) {
@@ -633,7 +633,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   console.log("props", props.desc);
 
 
-  const CustomFields = props.desc[0].filter((row: any) => row.is_default_column == 0);
+  const CustomFields = props.desc.filter((row: any) => row.is_default_column == 0);
 
   const CustomComponentMap = new Map<string, React.ReactNode>(
     CustomFields.map((field: any) => [
@@ -644,7 +644,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
 
   console.log("customComponentMap", CustomComponentMap);
 
-  props.desc[0].map((field: any) => {
+  props.desc.map((field: any) => {
     if (field.is_default_column) {
       fieldArr.push(defaultComponentMap.get(field.column_name_id) as React.ReactNode)
     }
@@ -1051,7 +1051,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               helperText={formError?.pincode?.msg}
             />
           </Box>
-          <h1>BACKEND RENDERED COMPONENTS</h1>
+          <h1>BACKEND RENDERED FIELDS</h1>
           <Box
             sx={{
               display: "grid",

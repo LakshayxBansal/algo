@@ -71,7 +71,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     if (allowNewAdd) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-        setDesc(data);
+        setDesc(data[0]);
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
@@ -84,7 +84,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       if (props.fnFetchDataByID && dialogValue.id) {
         const data = await props.fnFetchDataByID(dialogValue.id);
         setModData(data[0]);
-        setDesc(data[1])
+        setDesc(data[1]);
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
