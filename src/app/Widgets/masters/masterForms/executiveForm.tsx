@@ -59,7 +59,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     id: entityData.state_id,
     name: entityData.state,
   } as optionsDataT);
+  const [defaultRole, setDefaultRole] = useState<optionsDataT | undefined>({
+    id: entityData.role_id,
+    name: entityData.role,
+  } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+  const [roleKey, setRoleKey] = useState(0);
 
 
   entityData.executive_dept_id = props.data?.dept_id;
@@ -196,11 +201,16 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     name: string
   ) {
     let values = { ...selectValues };
-    values[name] = val;
+    values[name] = val? val : { id: 0, name: ""};
     if (name === "country") {
       values["state"] = {};
       setDefaultState(undefined);
       setStateKey(prev => 1-prev);
+    }
+    if(name === "department") {
+      values["role"] = {};
+      setDefaultRole(undefined);
+      setRoleKey(prev => 1-prev);
     }
     setSelectValues(values);
   }
@@ -308,7 +318,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   name: entityData.area,
                 } as optionsDataT
               }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, area: val ? val : { id: 0, name: "" } })
+              }
               fetchDataFn={getArea}
               fnFetchDataByID={getAreaById}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -324,6 +336,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               id={"department"}
               label={"Department"}
               width={210}
+              required
               dialogTitle={"Add Department"}
               defaultValue={
                 {
@@ -344,6 +357,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               )}
             />
             <SelectMasterWrapper
+              key={roleKey}
               name={"role"}
               id={"role"}
               label={"Role"}
@@ -353,12 +367,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 getExecutiveRole(roleStr, selectValues.department?.id)
               }
               fnFetchDataByID={getExecutiveRoleById}
-              defaultValue={
-                {
-                  id: entityData.role_id,
-                  name: entityData.role,
-                } as optionsDataT
-              }
+              defaultValue={defaultRole}
               
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
@@ -386,7 +395,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   name: entityData.executive_group,
                 } as optionsDataT
               }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "executive_group")}
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, executive_group: val ? val : { id: 0, name: "" } })
+              }
               fetchDataFn={getExecutiveGroup}
               fnFetchDataByID={getExecutiveGroupById}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => (
@@ -402,7 +413,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               id="pan"
               label="PAN"
               name="pan"
-              required
               error={formError?.pan?.error}
               helperText={formError?.pan?.msg}
               defaultValue={entityData.pan}
@@ -428,7 +438,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   name: entityData.crm_user,
                 } as optionsDataT
               }
-              onChange={(e, v, s) => onSelectChange(e, v, s, "crm_user")}
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
+              }
               fetchDataFn={getApplicationUser}
               formError={formError.crm_user}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
