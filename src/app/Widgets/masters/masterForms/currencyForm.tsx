@@ -356,7 +356,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
               mt: 1,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
