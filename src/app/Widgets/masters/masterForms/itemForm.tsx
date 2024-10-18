@@ -189,6 +189,7 @@ export default function ItemForm(props: masterFormPropsT) {
               dialogTitle={"Add Item Group"}
               fetchDataFn={getItemGroup}
               fnFetchDataByID={getItemGroupById}
+              allowModify={true}
               defaultValue={
                 {
                   id: entityData.group,
@@ -196,8 +197,9 @@ export default function ItemForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, itemGroup: val })
+                setSelectValues({ ...selectValues, itemGroup: val ? val : { id: 0, name: "" } })
               }
+              formError={formError?.itemGroup}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                 <ItemGroupForm
                   setDialogOpen={fnDialogOpen}
@@ -212,6 +214,7 @@ export default function ItemForm(props: masterFormPropsT) {
               label={"Unit Name"}
               // width={210}
               dialogTitle={"Add Unit"}
+              allowModify={true}
               defaultValue={
                 {
                   id: entityData.unit,
@@ -219,7 +222,7 @@ export default function ItemForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, unit: val })
+                setSelectValues({ ...selectValues, unit: val ? val : { id: 0, name: "" } })
               }
               fetchDataFn={getUnit}
               fnFetchDataByID={getUnitById}
@@ -264,7 +267,7 @@ export default function ItemForm(props: masterFormPropsT) {
               mt: 1,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
