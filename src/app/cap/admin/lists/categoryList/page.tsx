@@ -34,7 +34,7 @@ export default function Category() {
         fnDeleteDataByID={delCategoryById}
         customCols={columns}
         AddAllowed={true}
-        height = "30em"
+        height = "60vh"
       ></EntityList>
     </>
   );

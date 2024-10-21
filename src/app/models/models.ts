@@ -218,7 +218,8 @@ export type  entitiyCompT = {
   fnDeleteDataByID?: (id: number) => Promise<any>;
   fnFetchColumns?: () => Promise<any>;
   customCols: GridColDef[];
-  AddAllowed: boolean;
+  AddAllowed?: boolean;
+  uploadAllowed?:boolean;
   height?: string;
 };
 
@@ -226,9 +227,10 @@ export type iconCompT = {
   id: number;
   fnFetchDataByID?: (id: number) => Promise<any>;
   fnDeleteDataByID?: (id: number) => Promise<any>;
-  setModData?:(props: any) => void;
-  setDlgMode?:(props: any) => void;
-  setDialogOpen?:(props: any) => void;
-  setIds?:(props: any) => void;
-
+  setModData:(props: any) => void;
+  setDlgMode:(props: any) => void;
+  setDialogOpen:(props: any) => void;
+  setIds:(props: any) => void;
+  delete:any;
+  modify:any;
 };
