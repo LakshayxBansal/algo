@@ -1,7 +1,7 @@
 "use client"
 import * as React from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import { AddDialog } from '../Widgets/masters/addDialog';
+import { AddDialog } from '@/app/Widgets/masters/addDialog';
 
 type AsyncFunction = () => Promise<void>;
 

@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { logger } from '@/app/utils/logger.utils';
 import { getExecutiveById, getProfileById } from "@/app/controllers/executive.controller";
 import { executiveSchemaT } from "@/app/models/models";
-import SnackModal from "@/app/miscellaneous/SnackModal";
+import SnackModal from "@/app/utils/SnackModalUtils";
 import { Box, Paper } from "@mui/material";
 // import { snackbarActive } from "@/app/company/CompanyEntityList";
 // import { showSnackbar } from "@/app/company/page";

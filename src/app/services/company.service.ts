@@ -269,23 +269,19 @@ export async function getCompaniesDb(
 }
 
 export async function getCompanyCount(
-  userId: number,
-  value: string | undefined
+  userContact: string
 ) {
   try {
     return excuteQuery({
       host: "userDb",
       query:
         "Select count(*) as rowCount from \
-          company as c, \
           userCompany as uc, \
           user as u\
           where \
-          u.id=? and \
-          u.id = uc.user_id and \
-          uc.company_id = c.id" +
-        (value ? " and c.name LIKE CONCAT('%',?,'%')" : ""),
-      values: [userId, value],
+          u.contact = ? and \
+          u.id = uc.user_id",
+      values: [userContact],
     });
   } catch (e) {
     console.log(e);
