@@ -272,9 +272,10 @@ export async function updateCountryDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateCountry(?,?,?,?);",
+      query: "call updateCountry(?,?,?,?,?);",
       values: [
         sourceData.name,
+        sourceData.stamp,
         sourceData.id,
         sourceData.alias,
         session.user.userId,

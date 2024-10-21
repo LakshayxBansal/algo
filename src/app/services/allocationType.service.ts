@@ -100,9 +100,9 @@ export async function updateAllocationTypeDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateAllocationType(?,?,?);",
+      query: "call updateAllocationType(?,?,?,?);",
 
-      values: [statusData.id, statusData.name, session.user.userId],
+      values: [statusData.id, statusData.name, statusData.stamp, session.user.userId],
     });
   } catch (e) {
     logger.error(e);

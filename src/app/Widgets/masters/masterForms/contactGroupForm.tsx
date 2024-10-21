@@ -60,12 +60,15 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -85,6 +88,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
 
     if (props.data) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateContactGroup(data);
     } else {
       result = await createContactGroup(data);
