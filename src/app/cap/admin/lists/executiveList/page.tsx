@@ -51,7 +51,7 @@ export default function executive() {
         fetchDataFn={getExecutiveByPage}
         fnFetchDataByID={getExecutiveById}
         fnDeleteDataByID={delExecutiveById}
-        fnFetchColumns={getExecutiveColumns}
+        // fnFetchColumns={getExecutiveColumns}
         customCols={columns}
         AddAllowed={true}
         height = "60vh"

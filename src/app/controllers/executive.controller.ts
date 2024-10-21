@@ -251,6 +251,10 @@ export async function delExecutiveById(id: number) {
       if (check[0].count > 0) {
         return "Can't Be DELETED!";
       } else {
+        const mappedUser = await getExecutiveById(id);
+        if(mappedUser[0].crm_user_id){
+          await mapUser(false,mappedUser[0].crm_user_id,0,session.user.dbInfo.id);
+        }
         const result = await delExecutiveDetailsById(
           session.user.dbInfo.dbName,
           id

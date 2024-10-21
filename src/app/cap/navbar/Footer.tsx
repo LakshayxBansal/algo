@@ -11,10 +11,17 @@ export default async function Footer() {
         const session = await getSession();
         if (session) {
             let statusData = await getStatusData(session.user.userId);
-            statusData = { id: statusData?.id, data: JSON.parse(statusData?.data) };
-            return (
-                <StatusBar statusData={statusData} />
-            )
+            const jsonStr = statusData?.data;
+            if(jsonStr){
+                statusData = { id: statusData?.id, data: JSON.parse(jsonStr) };
+                return (
+                    <StatusBar statusData={statusData} />
+                )
+            }else{
+                return (
+                    <></>
+                )
+            }
         }
     } catch (error) {
         logger.error(error)
