@@ -41,6 +41,9 @@ export default function CompanyEntityList() {
       width: 150,
     },
   ];
+
+  // const companyDefaultColumns=["companyName","companyAlias","createdBy","createdOn"];
+
   return (
     <AuthWrapper>
       <EntityList
@@ -57,7 +60,7 @@ export default function CompanyEntityList() {
         fnDeleteDataByID={deleteCompanyById}
         customCols={columns}
         AddAllowed={true}
-        height="20em"
+        height="60vh"
       ></EntityList>
     </AuthWrapper>
   );

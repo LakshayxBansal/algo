@@ -13,6 +13,7 @@ import {
   delExecutiveDetailsById,
   checkIfUsed,
   getProfileDetailsById,
+  getExecutiveColumnsDb,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -20,6 +21,7 @@ import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 import { modifyPhone } from "../utils/phoneUtils";
+import { logger } from "../utils/logger.utils";
 
 const inviteSring = "Send Invite...";
 
@@ -328,5 +330,18 @@ export async function getExecutiveProfileImageByCrmUserId(crmUserId: number) {
     return null;
   } catch (error) {
     throw error;
+  }
+}
+
+export async function getExecutiveColumns(){
+  try{
+    const session = await getSession();
+    console.log("session", session);
+    if(session){
+      const result = await getExecutiveColumnsDb(session.user.dbInfo.dbName as string);
+      return result;
+    }
+  }catch(e){
+    logger.error(e);
   }
 }

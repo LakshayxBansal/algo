@@ -218,7 +218,6 @@ export async function getExecutiveByPageDb(
     if (filter) {
       vals.unshift(filter);
     }
-
     return excuteQuery({
       host: crmDb,
       query:
@@ -232,7 +231,7 @@ export async function getExecutiveByPageDb(
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id " +
-        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') " : "") +
         "order by em.name\
               ) AS NumberedRows \
             WHERE RowNum > ?*? \
@@ -320,3 +319,16 @@ export async function insertUserIdInExecutiveDb(
     console.log(error);
   }
 }
+
+export async function getExecutiveColumnsDb(crmDb:string){
+  try{
+    return excuteQuery({
+      host:crmDb,
+      query:"select * from custom_fields_master where object_type_id =11",
+      values:""
+    });
+  }catch(e){
+    logger.error(e);
+  }
+}
+

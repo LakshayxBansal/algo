@@ -18,6 +18,8 @@ const columns: GridColDef[] = [
   },
 ];
 
+// const reqcols = ["name"]
+
 export default function Department() {
   return (
     <>
@@ -36,7 +38,7 @@ export default function Department() {
         fnFetchColumns={getDepartmentColumns}
         customCols={columns}
         AddAllowed={true}
-        height = "30em"
+        height = "60vh"
       ></EntityList>
     </>
   );
