@@ -292,8 +292,6 @@ export default function EntityList(props: entitiyCompT) {
   //   );
   // }
 
-  console.log("changed",dialogOpen);
-
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
