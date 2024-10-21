@@ -39,7 +39,7 @@ export default function State() {
         fnDeleteDataByID={delStateById}
         customCols={columns}
         AddAllowed={true}
-        height = "30em"
+        height = "60vh"
       ></EntityList>
     </>
   );

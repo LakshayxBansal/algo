@@ -37,7 +37,8 @@ export default function Department() {
         fnDeleteDataByID={delDepartmentById}
         fnFetchColumns={getDepartmentColumns}
         customCols={columns}
-        AddAllowed={true}
+        AddAllowed={false}
+        uploadAllowed={true}
         height = "60vh"
       ></EntityList>
     </>

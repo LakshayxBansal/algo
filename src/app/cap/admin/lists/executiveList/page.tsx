@@ -34,8 +34,6 @@ const columns: GridColDef[] = [
 ];
 
 
-// const reqcols = ["name","alias","email","mobile"];
-
 export default function executive() {
   return (
     <>
