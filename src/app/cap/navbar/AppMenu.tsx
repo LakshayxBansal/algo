@@ -18,7 +18,6 @@ const pages = [
 
 
 export default async function AppMenu(props: {children: React.ReactNode}) {
-  let path = "";
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

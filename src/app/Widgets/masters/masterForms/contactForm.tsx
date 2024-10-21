@@ -59,9 +59,11 @@ export default function ContactForm(props: masterFormPropsT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
-  const [printNameFn, setPrintNameFn ] = useState(entityData.print_name);
+  const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
 
-  const handlePrintNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePrintNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setPrintNameFn(event.target.value);
   };
 
@@ -81,13 +83,13 @@ export default function ContactForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val? val : { id: 0, name: ""}
+    values[name] = val ? val : { id: 0, name: " " };
 
     if (name === "country") {
-      values["states"] = {};
+      values["state"] = {};
       setDefaultState(undefined);
       setStateKey((prev) => 1 - prev);
-      values.state = null;
+      // values.state = null;
     }
     setSelectValues(values);
   };
@@ -106,7 +108,11 @@ export default function ContactForm(props: masterFormPropsT) {
 
     const result = await persistEntity(data as contactSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, reloadOpts:true };
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        reloadOpts: true,
+      };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setTimeout(() => {
@@ -131,33 +137,33 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-        ? entityData.contactGroup_id
-        : 0;
+      ? entityData.contactGroup_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-        ? entityData.organisation_id
-        : 0;
+      ? entityData.organisation_id
+      : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-        ? entityData.department_id
-        : 0;
+      ? entityData.department_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -285,7 +291,10 @@ export default function ContactForm(props: masterFormPropsT) {
                 label={"Organisation"}
                 width={210}
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, organisation: val ? val : { id: 0, name: "" }})
+                  setSelectValues({
+                    ...selectValues,
+                    organisation: val ? val : { id: 0, name: "" },
+                  })
                 }
                 dialogTitle={"Organisation"}
                 fetchDataFn={getOrganisation}
@@ -363,7 +372,10 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, contactGroup: val ? val : { id: 0, name: "" } })
+                  setSelectValues({
+                    ...selectValues,
+                    contactGroup: val ? val : { id: 0, name: "" },
+                  })
                 }
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <ContactGroupForm
@@ -387,7 +399,10 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, department: val ? val : { id: 0, name: "" } })
+                  setSelectValues({
+                    ...selectValues,
+                    department: val ? val : { id: 0, name: "" },
+                  })
                 }
                 fetchDataFn={getDepartment}
                 fnFetchDataByID={getDepartmentById}
@@ -415,7 +430,10 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, area: val ? val : { id: 0, name: "" } })
+                  setSelectValues({
+                    ...selectValues,
+                    area: val ? val : { id: 0, name: "" },
+                  })
                 }
                 // formError={formE}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
@@ -552,47 +570,52 @@ export default function ContactForm(props: masterFormPropsT) {
                 fullWidth
               />
               <SelectMasterWrapper
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              dialogTitle={"Add country"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-              fetchDataFn={getCountries}
-              fnFetchDataByID={getCountryById}
-              defaultValue={
-                {
-                  id: entityData.country_id,
-                  name: entityData.country,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <CountryForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-            <SelectMasterWrapper
-              key={stateKey}
-              name={"state"}
-              id={"state"}
-              label={"State"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={selectValues.country || entityData.country_id ? false : true}
-              dialogTitle={"Add State"}
-              fetchDataFn={getStatesforCountry}
-              fnFetchDataByID={getStateById}
-              defaultValue={defaultState}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <StateForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                  parentData={selectValues.country?.id || entityData.country_id}
-                />
-              )}
-            />
+                name={"country"}
+                id={"country"}
+                label={"Country"}
+                dialogTitle={"Add country"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+                fetchDataFn={getCountries}
+                fnFetchDataByID={getCountryById}
+                defaultValue={
+                  {
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT
+                }
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <CountryForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                  />
+                )}
+              />
+              <SelectMasterWrapper
+                key={stateKey}
+                name={"state"}
+                id={"state"}
+                label={"State"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+                disable={
+                  selectValues.country ? false : entityData.country_id ? false : true
+                }
+                dialogTitle={"Add State"}
+                fetchDataFn={getStatesforCountry}
+                fnFetchDataByID={getStateById}
+                defaultValue={defaultState}
+                allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <StateForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                    parentData={
+                      selectValues.country?.id || entityData.country_id
+                    }
+                  />
+                )}
+              />
               <InputControl
                 inputType={InputType.TEXT}
                 name="city"
@@ -632,7 +655,9 @@ export default function ContactForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

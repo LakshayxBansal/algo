@@ -152,11 +152,17 @@ export async function getUserDetailsByIdList(userId:number) {
   return false;
 }
 
-export async function mapUser(userId : number,roleId : number | null,companyId : number) {
+export async function mapUser(map : boolean, userId : number,roleId : number | null,companyId : number) {
+  let query = "";
+  if(map){
+    query = "update userCompany set isMapped = 1, role_id = ? where user_id = ? and company_id = ?;"
+  }else{
+    query = "update userCompany set isMapped = 0, role_id = ? where user_id = ? and company_id = ?;"
+  }
   try{
     await excuteQuery({
       host: "userDb",
-      query: "update userCompany set isMapped = 1, role_id = ? where user_id = ? and company_id = ?;",
+      query: query,
       values: [ roleId,userId,companyId]
     })
   }catch(error){
@@ -438,55 +444,18 @@ export async function getInviteUserDb(
       vals.unshift(filter);
     }
     vals.unshift(companyId);
-    vals.unshift(companyId);
     const result = await excuteQuery({
       host: "userDb",
       query:
-                "SELECT id as id, name as name, usercontact as contact,'pending' AS status, RowNum as RowID  \
-       FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum, count(1) over () total_count \
-          FROM inviteUser where company_id = ? " +
-                (filter ? "and name LIKE CONCAT('%',?,'%') " : "") +
-                "order by name\
+        "SELECT * \
+       FROM (SELECT iu.id as id,iu.name as name, iu.usercontact as contact, iu.company_id as companyId,iu.inviteDate as inviteDate ,'pending' AS status, ROW_NUMBER() OVER () AS RowID, count(1) over () total_count \
+          FROM inviteUser iu where iu.company_id = ? " +
+        (filter ? "and iu.name LIKE CONCAT('%',?,'%') " : "") +
+        "order by iu.name\
       ) AS NumberedRows\
-      WHERE RowNum > ?*?\
-      ORDER BY RowNum\
+      WHERE RowID > ?*?\
+      ORDER BY RowID\
       LIMIT ?;",
-      // query:
-      //   "SELECT *\
-      //   FROM (\
-      //   SELECT \
-      //   id, \
-      //   contact, \
-      //   name, \
-      //   status, \
-      //   ROW_NUMBER() OVER (ORDER BY priority) AS RowID,\
-      //   COUNT(*) OVER () AS total_count\
-      //   FROM (\
-      //   SELECT \
-      //       uc.id, \
-      //       u.contact, \
-      //       u.name, \
-      //       'reject' AS status, \
-      //       2 AS priority \
-      //   FROM userCompany uc \
-      //   JOIN user u ON u.id = uc.user_id \
-      //   WHERE uc.company_id = ? AND uc.isAccepted = -1 \
-      //   UNION ALL \
-      //   SELECT \
-      //       iu.id, \
-      //       iu.usercontact AS contact, \
-      //       iu.name, \
-      //       'pending' AS status,\
-      //       1 AS priority\
-      //   FROM inviteUser iu\
-      //   WHERE iu.company_id = ? \
-      //   ) AS CombinedRows " +
-      //   (filter ? "where name LIKE CONCAT('%',?,'%') " : "") +
-      //   "GROUP BY contact \
-      // ) AS FinalRows \
-      // WHERE RowID > ? * ? \
-      // ORDER BY RowID \
-      // LIMIT ?;",
       values: vals,
     });
     return result
