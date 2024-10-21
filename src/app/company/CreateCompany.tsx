@@ -123,7 +123,7 @@ export default function CreateCompany(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Company" : "Add Company"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
