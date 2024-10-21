@@ -98,43 +98,59 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     };
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, name: keyof enquiryConfigSchemaT) => {
-        setFormState((prevState) => ({
-            ...prevState,
-            [name]: event.target.checked,
-        }));
-    };
 
-    const handleGroupChange = (event: React.ChangeEvent<HTMLInputElement>, group: 'enquiryReqd' | 'supportReqd') => {
-        const checked = event.target.checked;
+        if (name === 'enquiryReqd' || name === 'supportReqd'){
+            const checked = event.target.checked;
 
-        setFormState((prevState) => {
-            let updatedState = { ...prevState, [group]: checked };
-
-            if (!checked) {
-                if (group === 'enquiryReqd') {
-                    updatedState = {
-                        ...updatedState,
-                        enquiryCloseCall: false,
-                        enquiryMaintainItems: false,
-                        enquirySaveFAQ: false,
-                        enquiryMaintainAction: false,
-                    };
-                } else if (group === 'supportReqd') {
-                    updatedState = {
-                        ...updatedState,
-                        supportCloseCall: false,
-                        supportMaintainItems: false,
-                        supportSaveFAQ: false,
-                        supportMaintainAction: false,
-                    };
+            setFormState((prevState) => {
+                let updatedState = { ...prevState, [name]: checked };
+    
+                if (!checked) {
+                    if (name === 'enquiryReqd') {
+                        updatedState = {
+                            ...updatedState,
+                            enquiryCloseCall: false,
+                            enquiryMaintainItems: false,
+                            enquirySaveFAQ: false,
+                            enquiryMaintainAction: false,
+                        };
+                    } else if (name === 'supportReqd') {
+                        updatedState = {
+                            ...updatedState,
+                            supportCloseCall: false,
+                            supportMaintainItems: false,
+                            supportSaveFAQ: false,
+                            supportMaintainAction: false,
+                        };
+                    }
                 }
-            }
+    
+                return updatedState;
+            });
+        } else {
+            setFormState((prevState) => ({
+                ...prevState,
+                [name]: event.target.checked,
+            }));
+        }
 
-            return updatedState;
-        });
     };
 
-
+    function createCheckBox(id: string, name: string, custLabel: string, checked: boolean, group: keyof enquiryConfigSchemaT, disable: boolean | null) {
+        return (
+            <InputControl
+            inputType = {InputType.CHECKBOX}
+            id = {id}
+            name = {name}
+            custLabel = {custLabel}
+            checked = {checked}
+            onChange = {(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, group)}
+            disabled = {disable}
+            // error={formError?.enquiryMaintainItems?.error}
+            // helperText={formError?.enquiryMaintainItems?.msg}
+        />
+        )
+    }
 
     return (
 
@@ -152,22 +168,8 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                 >
 
                     <Box sx={{ mt: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 3 }}>
-                        <InputControl
-                            inputType={InputType.CHECKBOX}
-                            id="enquiryReqd"
-                            name="enquiryReqd"
-                            custLabel="Enquiry Management (Pre Sales)"
-                            checked={formState.enquiryReqd}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => handleGroupChange(e, 'enquiryReqd')}
-                        />
-                        <InputControl
-                            inputType={InputType.CHECKBOX}
-                            id="supportReqd"
-                            name="supportReqd"
-                            custLabel="Support Management (Post Sales)"
-                            checked={formState.supportReqd}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => handleGroupChange(e, 'supportReqd')}
-                        />
+                        {createCheckBox("enquiryReqd", "enquiryReqd", "Enquiry Management (Pre Sales)", formState.enquiryReqd as boolean, 'enquiryReqd', false)}
+                        {createCheckBox("supportReqd", "supportReqd", "Support Management (Post Sales)", formState.supportReqd as boolean, 'supportReqd', false)}
                     </Box>
 
 
@@ -175,44 +177,10 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                         <Box component={'fieldset'} sx={{ border: '1px solid grey', borderRadius: '4px', p: 2 }}>
                             <legend>Enquiry Management Options</legend>
                             <FormGroup>
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="enquiryCloseCall"
-                                    name="enquiryCloseCall"
-                                    custLabel="Can Close Call at the time of Call Receipt"
-                                    checked={formState.enquiryCloseCall}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'enquiryCloseCall')}
-                                    disabled={!formState.enquiryReqd}
-                                />
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="enquiryMaintainItems"
-                                    name="enquiryMaintainItems"
-                                    custLabel="Maintain Items in Call Receipt"
-                                    error={formError?.enquiryMaintainItems?.error}
-                                    helperText={formError?.enquiryMaintainItems?.msg}
-                                    checked={formState.enquiryMaintainItems}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'enquiryMaintainItems')}
-                                    disabled={!formState.enquiryReqd}
-                                />
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="enquirySaveFAQ"
-                                    name="enquirySaveFAQ"
-                                    custLabel="Ask to Save FAQ on Call Receipt and Report Saving"
-                                    checked={formState.enquirySaveFAQ}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'enquirySaveFAQ')}
-                                    disabled={!formState.enquiryReqd}
-                                />
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="enquiryMaintainAction"
-                                    name="enquiryMaintainAction"
-                                    custLabel="Maintain Action Taken for Call Receipt"
-                                    checked={formState.enquiryMaintainAction}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'enquiryMaintainAction')}
-                                    disabled={!formState.enquiryReqd}
-                                />
+                                {createCheckBox("enquiryCloseCall", "enquiryCloseCall", "Can Close Call at the time of Call Receipt", formState.enquiryCloseCall as boolean, 'enquiryCloseCall', !formState.enquiryReqd)}
+                                {createCheckBox("enquiryMaintainItems", "enquiryMaintainItems", "Maintain Items in Call Receipt", formState.enquiryMaintainItems as boolean, 'enquiryMaintainItems', !formState.enquiryReqd)}
+                                {createCheckBox("enquirySaveFAQ", "enquirySaveFAQ", "Ask to Save FAQ on Call Receipt and Report Saving", formState.enquirySaveFAQ as boolean, 'enquirySaveFAQ', !formState.enquiryReqd)}
+                                {createCheckBox("enquiryMaintainAction", "enquiryMaintainAction", "Maintain Action Taken for Call Receipt", formState.enquiryMaintainAction as boolean, 'enquiryMaintainAction', !formState.enquiryReqd)}
                             </FormGroup>
                         </Box>
 
@@ -220,42 +188,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                         <Box component={'fieldset'} sx={{ border: '1px solid grey', borderRadius: '4px', p: 2 }}>
                             <legend>Support Management Options</legend>
                             <FormGroup>
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="supportCloseCall"
-                                    name="supportCloseCall"
-                                    custLabel="Can Close Call at the time of Call Receipt"
-                                    checked={formState.supportCloseCall}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'supportCloseCall')}
-                                    disabled={!formState.supportReqd}
-                                />
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="supportMaintainItems"
-                                    name="supportMaintainItems"
-                                    custLabel="Maintain Items in Call Receipt"
-                                    checked={formState.supportMaintainItems}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'supportMaintainItems')}
-                                    disabled={!formState.supportReqd}
-                                />
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="supportSaveFAQ"
-                                    name="supportSaveFAQ"
-                                    custLabel="Ask to Save FAQ on Call Receipt and Report Saving"
-                                    checked={formState.supportSaveFAQ}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'supportSaveFAQ')}
-                                    disabled={!formState.supportReqd}
-                                />
-                                <InputControl
-                                    inputType={InputType.CHECKBOX}
-                                    id="supportMaintainAction"
-                                    name="supportMaintainAction"
-                                    custLabel="Maintain Action Taken for Call Receipt"
-                                    checked={formState.supportMaintainAction}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'supportMaintainAction')}
-                                    disabled={!formState.supportReqd}
-                                />
+                                {createCheckBox("supportCloseCall", "supportCloseCall", "Can Close Call at the time of Call Receipt", formState.supportCloseCall as boolean, 'supportCloseCall', !formState.supportReqd)}
+                                {createCheckBox("supportMaintainItems", "supportMaintainItems", "Maintain Items in Call Receipt", formState.supportMaintainItems as boolean, 'supportMaintainItems', !formState.supportReqd)}
+                                {createCheckBox("supportSaveFAQ", "supportSaveFAQ", "Can Close Call at the time of Call Receipt", formState.supportSaveFAQ as boolean, 'supportSaveFAQ', !formState.supportReqd)}
+                                {createCheckBox("supportMaintainAction", "supportMaintainAction", "Maintain Action Taken for Call Receipt", formState.supportMaintainAction as boolean, 'supportMaintainAction', !formState.supportReqd)}
+                                {createCheckBox("supportMaintainContract", "supportMaintainContract", "Maintain Contracts for Support", formState.supportMaintainContract as boolean, 'supportMaintainContract', !formState.supportReqd)}
+
                             </FormGroup>
                         </Box>
 
@@ -267,41 +205,22 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     <Box component={'fieldset'} sx={{ mt: 2, border: '1px solid grey', borderRadius: '4px', p: 2 }}>
                         <legend>General Configuration Options</legend>
                         <FormGroup sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 3 }}>
-                            <InputControl
-                                inputType={InputType.CHECKBOX}
-                                id="generalMaintainArea"
-                                name="generalMaintainArea"
-                                custLabel="Maintain Area / Region in Call Receipt"
-                                checked={formState.generalMaintainArea}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'generalMaintainArea')}
-                            />
-                            <InputControl
-                                inputType={InputType.CHECKBOX}
-                                id="generalMaintainImage"
-                                name="generalMaintainImage"
-                                custLabel="Maintain Image Information"
-                                checked={formState.generalMaintainImage}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'generalMaintainImage')}
-                            />
-                            <InputControl
-                                inputType={InputType.CHECKBOX}
-                                id="generalShowList"
-                                name="generalShowList"
-                                custLabel="Show List in Call Allocation"
-                                checked={formState.generalShowList}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e, 'generalShowList')}
-                            />
+                            {createCheckBox("generalMaintainArea", "generalMaintainArea", "Maintain Area / Region in Call Receipt", formState.generalMaintainArea as boolean, 'generalMaintainArea', false)}
+                            {createCheckBox("generalMaintainImage", "generalMaintainImage", "Maintain Image Information", formState.generalMaintainImage as boolean, 'generalMaintainImage', false)}
+                            {createCheckBox("generalShowList", "generalShowList", "Show List in Call Allocation", formState.generalShowList as boolean, 'generalShowList', false)}
+
                         </FormGroup>
                     </Box>
 
 
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, columnGap: 2 }}>
-                        <Button variant="contained" color="primary" type="submit">
-                            Save
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                            Cancel
-                        </Button>
+
+                      <Button onClick={handleCancel}>Cancel</Button>
+
+                      <Button variant="contained" color="primary" type="submit">
+                        Save
+                      </Button>
+
                     </Box>
 
 

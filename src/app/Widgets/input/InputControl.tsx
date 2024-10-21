@@ -4,6 +4,7 @@ import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Checkbox, { CheckboxProps } from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Dayjs } from "dayjs";
+import 'dayjs/locale/en';
 import {
   DatePickerProps,
   DateTimePicker,
@@ -28,6 +29,7 @@ import {
   numberInputClasses,
 } from '@mui/base/Unstable_NumberInput';
 import { CustomTextField } from "@/app/utils/styledComponents";
+import capitalizeFirstChar from "@/app/utils/titleCase.utils";
 
 
 // for number 
@@ -62,7 +64,7 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", decPlaces, ...props }) => {
+export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", decPlaces,titleCase= false, ...props }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
   const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
 
@@ -70,6 +72,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
+        if(titleCase && props.type!== "number"){
+         event.target.value = capitalizeFirstChar(event.target.value);
+        }
         if (props.type === "number") {
           const value = event.target.value;
           if (value.includes(".") && decPlaces > 0) {

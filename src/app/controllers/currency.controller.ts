@@ -102,9 +102,6 @@ export async function updateCurrency(data: currencySchemaT) {
           session,
           data as currencySchemaT
         );
-        // console.log(dbResult);
-
-        // if (dbResult.length > 0 && dbResult[0][0].error === 0) {
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
         } else {

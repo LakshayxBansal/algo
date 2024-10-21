@@ -39,4 +39,5 @@ export default async function AddUser() {
   } else {
     redirect("/signin");
   }
+  redirect("/signin");
 }

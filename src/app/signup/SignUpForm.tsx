@@ -50,7 +50,7 @@ export default function SignupForm1(props: any) {
     }
   };
 
-  const handleDefault = (event : any) => {
+  const handleDefault = (event: any) => {
     event.preventDefault();
   };
 
@@ -228,6 +228,8 @@ export default function SignupForm1(props: any) {
                   autoFocus
                   fullWidth
                   required
+                  titleCase = {true}
+                  autoComplete="off"
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
                   onKeyDown={() => {
@@ -264,6 +266,7 @@ export default function SignupForm1(props: any) {
                     id="email"
                     label="Email Address"
                     name="email"
+                    autoComplete="off"
                     onKeyDown={() => {
                       setFormError((curr) => {
                         const { email, ...rest } = curr;
@@ -297,15 +300,16 @@ export default function SignupForm1(props: any) {
                     name="phone"
                     fullWidth
                     required
+                    autoComplete="off"
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
                     country={"in"}
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
-                    onKeyDown={()=>{
+                    onKeyDown={() => {
                       setFormError((curr) => {
-                        const { phone, ...rest} = curr;
+                        const { phone, ...rest } = curr;
                         return rest;
                       });
                     }}
@@ -362,12 +366,13 @@ export default function SignupForm1(props: any) {
                       inputType={InputType.TEXT}
                       required
                       fullWidth
-                      onCopy={(event : any)=>handleDefault(event)}
-                      onPaste={(event : any)=>handleDefault(event)}
+                      onCopy={(event: any) => handleDefault(event)}
+                      onPaste={(event: any) => handleDefault(event)}
                       name="password"
                       label="Password"
                       type={!showPassword ? "password" : "text"}
                       id="password"
+                      autoComplete="off"
                       error={formError?.password?.error}
                       helperText={formError?.password?.msg}
                       onKeyDown={() => {
@@ -411,8 +416,8 @@ export default function SignupForm1(props: any) {
                       helperText={formError?.repassword?.msg}
                       required
                       fullWidth
-                      onCopy={(event : any)=>handleDefault(event)}
-                      onPaste={(event : any)=>handleDefault(event)}
+                      onCopy={(event: any) => handleDefault(event)}
+                      onPaste={(event: any) => handleDefault(event)}
                       name="repassword"
                       label="Re-enter Password"
                       type={!showRePassword ? "password" : "text"}
