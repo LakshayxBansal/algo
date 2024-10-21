@@ -62,7 +62,6 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
       props.setOpenDrawer(true);
       setOpen(idToOpenMap);
       setSelectedId(id);
-      // console.log("maopings",idToOpenMap,id)
   }
 
 

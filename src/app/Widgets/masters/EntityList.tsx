@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { GridColDef, GridFilterModel, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridToolbar, useGridApiRef,  gridClasses } from "@mui/x-data-grid";
+import {
+  GridColDef,
+  GridFilterModel,
+  gridPreferencePanelStateSelector,
+  GridPreferencePanelsValue,
+  GridToolbar,
+  useGridApiRef,
+  gridClasses,
+  GridColumnVisibilityModel,
+} from "@mui/x-data-grid";
 import {
   Box,
   Button,
@@ -34,7 +43,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import { AddDialog } from "./addDialog";
-import { RenderFormFunctionT } from "@/app/models/models";
+import { entitiyCompT, iconCompT, RenderFormFunctionT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
@@ -49,26 +58,29 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import { useSearchParams } from "next/navigation";
 import UploadFileForm from "./UploadFileForm";
+import Seperator from "../seperator";
+// import DeleteComponent from "./DeleteComponent";
+import DeleteComponent from "./component/DeleteComponent";
 
-type ModifyT = {
-  title?: string;
-  renderForm?: RenderFormFunctionT;
-  fileUploadFeatureReqd?: boolean;
-  // fnFileUpad: () => {}
-  fnFileUpad?: any; // update with type -- Ayushi
-  sampleFileName?: String;
-  fetchDataFn: (
-    page: number,
-    searchText: string,
-    pgSize: number
-  ) => Promise<any>;
-  fnFetchDataByID?: (id: number) => Promise<any>;
-  fnDeleteDataByID?: (id: number) => Promise<any>;
-  fnFetchColumns?:()=>Promise<any>;
-  customCols: GridColDef[];
-  AddAllowed: boolean;
-  height?: string;
-};
+// type ModifyT = {
+//   title?: string;
+//   renderForm?: RenderFormFunctionT;
+//   fileUploadFeatureReqd?: boolean;
+//   // fnFileUpad: () => {}
+//   fnFileUpad?: any; // update with type -- Ayushi
+//   sampleFileName?: String;
+//   fetchDataFn: (
+//     page: number,
+//     searchText: string,
+//     pgSize: number
+//   ) => Promise<any>;
+//   fnFetchDataByID?: (id: number) => Promise<any>;
+//   fnDeleteDataByID?: (id: number) => Promise<any>;
+//   fnFetchColumns?: () => Promise<any>;
+//   customCols: GridColDef[];
+//   AddAllowed: boolean;
+//   height?: string;
+// };
 
 const pgSize = 10;
 
@@ -79,9 +91,10 @@ enum dialogMode {
   FileUpload,
 }
 
-export default function EntityList(props: ModifyT) {
+export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [data, setData] = useState([]);
+  const [allColumns, setAllColumns] = useState([] as any);
   const [NRows, setNRows] = useState<number>(0);
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
@@ -92,15 +105,18 @@ export default function EntityList(props: ModifyT) {
   const [ids, setIds] = useState<number>(0);
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState<GridColumnVisibilityModel>({});
+
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
-  console.log("grid ref", apiRef);
+  let searchText;
 
-
+  //for navbar search
   const searchParams = useSearchParams();
   const searchData: string | null = searchParams.get("searchText");
+  //for navbar search
 
-  let searchText;
   useEffect(() => {
     const fetchData = debounce(async (searchText) => {
       const rows: any = await props.fetchDataFn(
@@ -108,8 +124,48 @@ export default function EntityList(props: ModifyT) {
         searchText as string,
         pgSize as number
       );
-      setData(rows.data);
-      setNRows(rows.count as number);
+      if (rows.data) {
+        setData(rows.data);
+        setNRows(rows.count as number);
+      }
+      const optionsColumn: GridColDef[] = [
+        {
+          field: "Icon menu",
+          headerName: "More Options",
+          minWidth: 50,
+          hideable: false,
+          renderCell: (params) => {
+            return <IconComponent id={params.row.id} />;
+          },
+        },
+      ];
+      const allDfltCols: GridColDef[] = optionsColumn.concat(props.customCols);
+      const dfltColFields: string[] = allDfltCols.map((col) => col.field);
+      if (props.fnFetchColumns) {
+        const columnsData = await props.fnFetchColumns();
+        if (columnsData) {
+          const dbColumns = columnsData.map((col: any) => ({
+            field: col.column_name,
+            headerName: col.column_label,
+          }));
+          // filter on columns not to showinitially
+          const filteredColumns = dbColumns.filter(
+            (col: any) => !dfltColFields.includes(col.field)
+          );
+          //columns not to showinitially
+          const allColumns = allDfltCols.concat(filteredColumns);
+          const visibleColumns = allColumns.reduce((model: any, col: any) => {
+            model[col.field] = dfltColFields.includes(col.field); // Hide if in fieldsToHide
+            return model;
+          }, {});
+          setColumnVisibilityModel(visibleColumns);
+          setAllColumns(allColumns);
+          // setColumnsChanged(true);
+          // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
+        }
+      } else {
+        setAllColumns(allDfltCols);
+      }
     }, 400);
 
     if (searchData) {
@@ -117,14 +173,6 @@ export default function EntityList(props: ModifyT) {
     } else {
       fetchData(search);
     }
-
-    const columnsaData = async()=>{
-      if(props.fnFetchColumns){
-        const columnsData = await props.fnFetchColumns();
-        console.log("front end data",columnsData);
-      }
-    }
-    columnsaData();
   }, [
     PageModel,
     filterModel,
@@ -132,14 +180,13 @@ export default function EntityList(props: ModifyT) {
     search,
     dialogOpen,
     searchData,
-    props
+    apiRef,
   ]);
 
-  const toggleColumnsPanel = () => {
+  const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
       apiRef.current.state
     );
-    console.log("preference state", preferencePanelState);
     if (preferencePanelState.open) {
       apiRef.current.hidePreferences();
     } else {
@@ -147,13 +194,22 @@ export default function EntityList(props: ModifyT) {
     }
   };
 
+  const handleSearch= (e:React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(e.target.value);
+    }
+
+    const handleAddBtn = ()=>{
+      setDialogOpen(true);
+        setDlgMode(dialogMode.Add);
+    }
+
   async function onModifyDialog(modId: number) {
     if (props.fnFetchDataByID && modId) {
       const data = await props.fnFetchDataByID(modId);
-      console.log(data);
       setModData(data[0]);
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
+      setAnchorEl(null);
     }
   }
 
@@ -162,22 +218,12 @@ export default function EntityList(props: ModifyT) {
       setIds(modId);
       setDialogOpen(true);
       setDlgMode(dialogMode.Delete);
+      setAnchorEl(null);
     }
   }
 
-  async function onDeleteDialog(modId: number) {
-    if (props.fnDeleteDataByID && modId) {
-      const data = await props.fnDeleteDataByID(modId);
-      setSnackOpen(true);
 
-      setTimeout(() => {
-        dialogOpen ? setDialogOpen(false) : null;
-        setSnackOpen(false);
-      }, 1000);
-    }
-  }
-
-  const handleDropDown = () => {
+  const handleDropDownBtn = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
@@ -192,78 +238,12 @@ export default function EntityList(props: ModifyT) {
     setOpen(false);
   };
 
-  const hideUploadButton = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
+  const hideUploadBtn = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setOpen(false);
   };
 
-  const columns1: GridColDef[] = [
-    {
-      field: "Icon menu",
-      headerName: "More Options",
-      minWidth: 50,
-      hideable: false ,
-      renderCell: (params) => {
-        return <IconComponent id={params.row.id} />;
-      },
-    },
-  ];
 
-  const defaultColumns: GridColDef[] = columns1.concat(props.customCols);
-
-
-  const DeleteComponent = () => {
-    return (
-      <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
-        <form>
-          <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
-            Are you sure you want to delete?
-          </Typography>
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="flex-end"
-            m={1}
-          >
-            <Button
-              style={{ paddingRight: "20px" }}
-              onClick={() => {
-                setDialogOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                onDeleteDialog(ids);
-              }}
-              variant="contained"
-            >
-              Delete
-            </Button>
-          </Box>
-        </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message={"Record Deleted Successfully"}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
-      </Box>
-    );
-  };
-
-  type iconT = {
-    id: number;
-  };
-
-
-
-
-
-  function IconComponent(props: iconT) {
+  function IconComponent(props: iconCompT) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const optionMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
@@ -291,7 +271,7 @@ export default function EntityList(props: ModifyT) {
           <MenuItem
             onClick={() => {
               onModifyDialog(props.id);
-              setAnchorEl(null);
+            
             }}
           >
             <EditIcon fontSize="large" />
@@ -300,7 +280,6 @@ export default function EntityList(props: ModifyT) {
           <MenuItem
             onClick={() => {
               handleDeleteDialog(props.id);
-              setAnchorEl(null);
             }}
           >
             {" "}
@@ -311,12 +290,6 @@ export default function EntityList(props: ModifyT) {
       </Box>
     );
   }
-
-  function isSnakeCase(str: string): boolean {
-    const snakeCaseRegex = /^[a-z]+(_[a-z]+)*$/;
-    return snakeCaseRegex.test(str);
-  }
-
 
   return (
     <Box>
@@ -335,7 +308,7 @@ export default function EntityList(props: ModifyT) {
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
               props.renderForm(setDialogOpen, (arg) => {}, modData)
             ) : dlgMode === dialogMode.Delete ? (
-              <DeleteComponent />
+              <DeleteComponent fnDeleteDataByID={props.fnDeleteDataByID} open={dialogOpen} setDialogOpen={setDialogOpen} modId={ids} />
             ) : null}
           </AddDialog>
         )}
@@ -348,17 +321,19 @@ export default function EntityList(props: ModifyT) {
             overflow: "hidden",
           }}
         >
-          <Grid container spacing={2} style={{ verticalAlign: "center" }}>
-            <Grid item xs={8}>
-              <Box sx={{ width: "50%" }}>
+          <Grid
+            container
+            spacing={2}
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <Grid item xs={12} sm={8} md={8}>
+              <Box sx={{ width: { xs: "92%", md: "50%" } }}>
                 <TextField
                   variant="outlined"
                   fullWidth
                   placeholder="Search..."
                   value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                  }}
+                  onChange={handleSearch}
                   margin="normal"
                   InputProps={{
                     startAdornment: (
@@ -381,16 +356,17 @@ export default function EntityList(props: ModifyT) {
             </Grid>
             <Grid
               item
-              xs={3}
+              xs={8}
+              sm={3}
+              md={3}
               sx={{
-                textAlign: "right",
-                marginTop: "1.1rem",
-                paddingRight: "45px",
+                textAlign: { xs: "center", md: "right" },
               }}
             >
               {props.AddAllowed ? (
                 <Box>
                   <ButtonGroup
+                    size="small"
                     variant="contained"
                     ref={anchorRef}
                     aria-label="Button group with a nested menu"
@@ -405,11 +381,8 @@ export default function EntityList(props: ModifyT) {
                   >
                     <Tooltip title="Add New" placement="top-start" arrow>
                       <Button
-                        onClick={() => {
-                          setDialogOpen(true);
-                          setDlgMode(dialogMode.Add);
-                        }}
-                        style={{ backgroundColor: "#e05a5a" }}
+                        size="small"
+                        onClick={handleAddBtn}
                       >
                         <AddIcon
                           fontSize="small"
@@ -425,8 +398,7 @@ export default function EntityList(props: ModifyT) {
                         aria-expanded={open ? "true" : undefined}
                         aria-label="select merge strategy"
                         aria-haspopup="menu"
-                        onClick={handleDropDown}
-                        style={{ backgroundColor: "#e05a5a" }}
+                        onClick={handleDropDownBtn}
                       >
                         <ArrowDropDownIcon />
                       </Button>
@@ -451,22 +423,20 @@ export default function EntityList(props: ModifyT) {
                         }}
                       >
                         <Paper>
-                          <ClickAwayListener
-                            onClickAway={uploadButtonClose}
-                          >
-                            <Tooltip title="Upload File" placement="right" arrow>
+                          <ClickAwayListener onClickAway={uploadButtonClose}>
+                            <Tooltip
+                              title="Upload File"
+                              placement="right"
+                              arrow
+                            >
                               <Button
                                 key={"Upload File"}
-                                onClick={hideUploadButton}
+                                onClick={hideUploadBtn}
                                 component="label"
                                 role={undefined}
                                 variant="outlined"
                                 tabIndex={-1}
                                 startIcon={<CloudUploadIcon />}
-                                sx={{
-                                  bordercolor: "#e05a5a",
-                                  color: "#e05a5a",
-                                }}
                               >
                                 <VisuallyHiddenInput
                                   type="file"
@@ -475,7 +445,7 @@ export default function EntityList(props: ModifyT) {
                                   }) => {
                                     const file = event.target.files[0];
                                     if (file) {
-                                      console.log("Selected file:", file.name);
+                                      // console.log("Selected file:", file.name);
                                     }
                                   }}
                                   multiple
@@ -492,15 +462,10 @@ export default function EntityList(props: ModifyT) {
               ) : (
                 <Tooltip title="Add New">
                   <Button
-                    onClick={() => {
-                      setDialogOpen(true);
-                      setDlgMode(dialogMode.Add);
-                    }}
-                    style={{
-                      backgroundColor: "#e05a5a",
-                      padding: "10px 15px",
-                      color: "#fff",
-                    }}
+                    size="small"
+                    variant="contained"
+                    sx={{ width: { xs: "85%", md: "auto" } }}
+                    onClick={handleAddBtn}
                   >
                     <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
                     Add New
@@ -510,13 +475,11 @@ export default function EntityList(props: ModifyT) {
             </Grid>
             <Grid
               item
-              xs={1}
+              xs={4}
+              sm={1}
+              md={1}
               sx={{
-                verticalAlign: "center",
-                marginTop: "10px",
-                display: "flex",
-                justifyContent: "space-around",
-                alignItems: "flex-end",
+                textAlign: { xs: "center", md: "center" },
               }}
             >
               <Tooltip title="Manage Columns" placement="top-end" arrow>
@@ -524,16 +487,18 @@ export default function EntityList(props: ModifyT) {
                   aria-controls="tune-menu"
                   aria-haspopup="true"
                   ref={(ref) => setAnchorEl(ref)}
-                  onClick={toggleColumnsPanel}
+                  onClick={toggleColBtn}
                 >
                   <TuneIcon fontSize="medium" />
                 </IconButton>
               </Tooltip>
             </Grid>
           </Grid>
+          <Seperator />
           <StripedDataGrid
+            disableColumnMenu
             rows={data ? data : []}
-            columns={defaultColumns}
+            columns={allColumns}
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
@@ -545,6 +510,10 @@ export default function EntityList(props: ModifyT) {
             onFilterModelChange={setFilterModel}
             loading={!data}
             apiRef={apiRef}
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={(newModel) => {
+              setColumnVisibilityModel(newModel);
+            }}
             slotProps={{
               columnsPanel: {
                 sx: {
@@ -552,17 +521,16 @@ export default function EntityList(props: ModifyT) {
                   //   display: "none"
                   // },
 
-                  ".MuiDataGrid-columnsManagementHeader":{
-                    display: "none"
-                  }
-                }
+                  ".MuiDataGrid-columnsManagementHeader": {
+                    display: "none",
+                  },
+                },
               },
               panel: {
                 anchorEl: () => {
                   const preferencePanelState = gridPreferencePanelStateSelector(
                     apiRef.current.state
                   );
-                  console.log("grid preference ",GridPreferencePanelsValue)
                   if (
                     preferencePanelState.openedPanelValue ===
                       GridPreferencePanelsValue.columns &&
@@ -570,13 +538,14 @@ export default function EntityList(props: ModifyT) {
                   ) {
                     return anchorEl;
                   }
-                  const columnHeadersElement = apiRef.current.rootElementRef?.current?.querySelector(
-                    `.${gridClasses.columnHeaders}`
-                  )!;
-                  console.log("column header", columnHeadersElement);
+
+                  const columnHeadersElement =
+                    apiRef.current.rootElementRef?.current?.querySelector(
+                      `.${gridClasses.columnHeaders}`
+                    )!;
                   return columnHeadersElement;
-                }
-              }
+                },
+              },
             }}
             disableRowSelectionOnClick
             sx={{ maxHeight: props.height }}
