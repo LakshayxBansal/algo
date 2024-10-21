@@ -7,7 +7,7 @@ import { Box, Paper, Typography, Accordion, AccordionSummary, AccordionDetails }
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
-import SnackModal from "../miscellaneous/SnackModal";
+import SnackModal from "../utils/SnackModalUtils";
 
 export default async function Companies() {
   try {

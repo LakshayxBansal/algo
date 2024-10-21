@@ -17,7 +17,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useRouter } from "next/navigation";
 import LeftMenuTree from "./leftmenutree";
 import { menuTreeT, searchDataT } from "../../models/models";
-import ProfileModal from "@/app/miscellaneous/ProfileModal";
+import ProfileMenu from "@/app/cap/admin/profile/ProfileMenu";
 import mainLogo from "../../../../public/logo.png";
 import Image from "next/image";
 import {
@@ -36,7 +36,6 @@ import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
 import SecondNavbar from "./SecondNavbar";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import DialogModal from "@/app/miscellaneous/DialogModal";
 
 const drawerWidth: number = 290;
 
@@ -336,7 +335,7 @@ export default function MenuBar(props: propsType) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <ProfileModal
+            <ProfileMenu
               userId={props.userId}
               companyId={props.companyId}
               img={props.profileImg}
@@ -370,7 +369,6 @@ export default function MenuBar(props: propsType) {
                         {children}
             </Box>
         </Box>
-        <DialogModal/>
       </>
     );
   }
