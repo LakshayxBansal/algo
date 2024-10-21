@@ -39,6 +39,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+  const [printNameFn, setPrintNameFn] = useState(entityData.printName);
+
+  const handlePrintNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPrintNameFn(event.target.value);
+  };
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -76,8 +83,16 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : entityData.country_id? entityData.country_id :0;
-    data.state_id = selectValues.state ? selectValues.state.id : entityData.state_id? entityData.state_id :0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country_id
+      ? entityData.country_id
+      : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state_id
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -109,7 +124,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val ? val : {id: 0, name: ""};
+    values[name] = val ? val : { id: 0, name: "" };
 
     if (name === "country") {
       values["state"] = {};
@@ -187,6 +202,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              onChange={handlePrintNameChange}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -227,7 +243,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               fullWidth
               error={formError?.printName?.error}
               helperText={formError?.printName?.msg}
-              defaultValue={entityData.printName}
+              defaultValue={printNameFn}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { printName, ...rest } = curr;
@@ -352,9 +368,12 @@ export default function OrganisationForm(props: masterFormPropsT) {
               id={"state"}
               label={"State"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={selectValues.country || entityData.country_id ? false : true}
+              disable={
+                selectValues.country || entityData.country_id ? false : true
+              }
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
               defaultValue={defaultState}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
@@ -405,7 +424,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

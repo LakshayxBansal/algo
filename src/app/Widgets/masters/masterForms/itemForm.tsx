@@ -33,8 +33,8 @@ export default function ItemForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: itemSchemaT = props.data ? props.data : {};
 
-  entityData.group = props.data.group_id;
-  entityData.unit = props.data.unit_id;
+  entityData.group = props.data?.group_id;
+  entityData.unit = props.data?.unit_id;
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
@@ -74,12 +74,12 @@ export default function ItemForm(props: masterFormPropsT) {
     data.group = selectValues.itemGroup
       ? selectValues.itemGroup.id
       : entityData.group
-      ? entityData.group_name
+      ? entityData.group
       : 0;
     data.unit = selectValues.unit
       ? selectValues.unit.id
       : entityData.unit
-      ? entityData.unit_name
+      ? entityData.unit
       : 0;
     return data;
   };

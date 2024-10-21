@@ -226,10 +226,9 @@ export async function getDepartmentColumns(){
     console.log("session", session);
     if(session){
       const result = await getDepartmentColumnsDb(session.user.dbInfo.dbName as string);
-      console.log(result);
-      return result[0];
+      return result;
     }
   }catch(e){
-    console.log(e);
+    logger.error(e);
   }
 }
