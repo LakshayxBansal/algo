@@ -15,7 +15,7 @@ import {
   stateListSchemaT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../selectMasterWrapper";
@@ -26,6 +26,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
   let entityData: stateListSchemaT = props.data ? props.data : {};
 
   useEffect(()=>{
@@ -40,8 +41,8 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    
-    data.country_id = selectValues.country 
+      
+    data.country_id = selectValues.country?.id
     ? selectValues.country.id 
     : selectValues.country_id 
         ? selectValues.country_id 
@@ -52,8 +53,12 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -129,7 +134,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -166,6 +171,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
                 data={data}
               />
             )}
+            required
           />
           <InputControl
             autoFocus
@@ -176,6 +182,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             name="name"
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            required
           />
           <InputControl
             id="alias"
@@ -203,6 +210,13 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

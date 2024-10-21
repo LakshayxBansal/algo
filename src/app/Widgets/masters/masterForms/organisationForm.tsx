@@ -14,7 +14,6 @@ import { getStates } from "@/app/controllers/masters.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import CountryForm from "./countryForm";
-import StateForm from "./countryForm";
 import {
   masterFormPropsT,
   optionsDataT,
@@ -22,15 +21,17 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import StateForm from "./stateForm";
 
 export default function OrganisationForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
 
   const entityData: organisationSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
@@ -38,6 +39,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+  const [printNameFn, setPrintNameFn] = useState(entityData.printName);
+
+  const handlePrintNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPrintNameFn(event.target.value);
+  };
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -54,11 +62,12 @@ export default function OrganisationForm(props: masterFormPropsT) {
     const result = await persistEntity(data as organisationSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      setFormError({});
+      setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -74,8 +83,16 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country_id
+      ? entityData.country_id
+      : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state_id
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -92,7 +109,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
   }
 
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues.country?.name || entityData.country;
 
     const states = await getStates(stateStr, country);
     if (states.length > 0) {
@@ -107,13 +124,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val;
+    values[name] = val ? val : { id: 0, name: "" };
 
     if (name === "country") {
-      values["states"] = {};
+      values["state"] = {};
       setDefaultState(undefined);
       setStateKey((prev) => 1 - prev);
-      values.state = null;
+      // values.state = null;
     }
     setSelectValues(values);
   };
@@ -139,7 +156,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Organisation" : "Add Organisation"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -185,6 +202,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              onChange={handlePrintNameChange}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -225,7 +243,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               fullWidth
               error={formError?.printName?.error}
               helperText={formError?.printName?.msg}
-              defaultValue={entityData.printName}
+              defaultValue={printNameFn}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { printName, ...rest } = curr;
@@ -326,8 +344,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
               name={"country"}
               id={"country"}
               label={"Country"}
-              // fullWidth
-              // width={210}
               dialogTitle={"Add country"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
               fetchDataFn={getCountries}
@@ -351,24 +367,20 @@ export default function OrganisationForm(props: masterFormPropsT) {
               name={"state"}
               id={"state"}
               label={"State"}
-              // width={210}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={selectValues.country ? false : true}
+              disable={
+                selectValues.country || entityData.country_id ? false : true
+              }
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
               defaultValue={defaultState}
-              // defaultValue={
-              //   {
-              //     id: entityData.state_id,
-              //     name: entityData.state,
-              //   } as optionsDataT
-              // }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  parentData={selectValues.country?.id}
+                  parentData={selectValues.country?.id || entityData.country_id}
                 />
               )}
             />
@@ -412,7 +424,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
@@ -422,6 +436,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
       </Box>
     </>
   );

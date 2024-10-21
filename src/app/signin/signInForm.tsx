@@ -16,6 +16,8 @@ import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
 import styles from "../signup/SignUpForm.module.css";
 import * as zs from "../zodschema/zodschema";
+import { getTotalInvite } from "../controllers/user.controller";
+import { getCompanyCount } from "../services/company.service";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -45,7 +47,7 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
-    document.body.classList.add('cursor-wait');
+    document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -68,11 +70,17 @@ export default function AuthPage(props: authPagePropsType) {
         redirect: false,
         userContact: data.contact,
         password: data.password,
-      }).then((status) => {
+      }).then(async(status) => {
         if (status?.ok) {
-          setTimeout(() => { 
-            router.push(successCallBackUrl);
-          }, 1000);
+          // setTimeout(() => {
+            const totalInvites = await getTotalInvite();
+            const totalCompanies = await getCompanyCount(data.contact);
+            if(totalInvites.rowCount===0 && Number(totalCompanies[0].rowCount)===0){
+              router.push("/addcompany");
+            }else{
+              router.push(successCallBackUrl);
+            }
+          // }, 1000);
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};
@@ -95,9 +103,9 @@ export default function AuthPage(props: authPagePropsType) {
 
   useEffect(() => {
     return () => {
-      document.body.classList.remove('cursor-wait');
+      document.body.classList.remove("cursor-wait");
     };
-}, []);
+  }, []);
 
   getCsrfToken()
     .then((token) => {
@@ -186,7 +194,7 @@ export default function AuthPage(props: authPagePropsType) {
             <form action={actValidate} noValidate>
               {formError?.form?.error && (
                 <p style={{ color: "red" }}>{formError?.form.msg}</p>
-              )} 
+              )}
               <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
               <Grid item xs={12} sm={12} md={12}>
@@ -200,9 +208,10 @@ export default function AuthPage(props: authPagePropsType) {
                     id="usercontact"
                     label="Email Address"
                     name="email"
+                    autoComplete="off"
                     onKeyDown={() => {
                       setFormError((curr) => {
-                        const { email,form, ...rest} = curr;
+                        const { email, form, ...rest } = curr;
                         return rest;
                       });
                     }}
@@ -232,6 +241,7 @@ export default function AuthPage(props: authPagePropsType) {
                     id="usercontact"
                     label="Phone No"
                     name="phone"
+                    autoComplete="off"
                     fullWidth
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
@@ -241,7 +251,7 @@ export default function AuthPage(props: authPagePropsType) {
                     disableDropdown={false}
                     onKeyDown={() => {
                       setFormError((curr) => {
-                        const { phone,form, ...rest} = curr;
+                        const { phone, form, ...rest } = curr;
                         return rest;
                       });
                     }}
@@ -302,11 +312,12 @@ export default function AuthPage(props: authPagePropsType) {
                     label="Password"
                     type={!showPassword ? "password" : "text"}
                     id="password"
+                    autoComplete="off"
                     error={formError?.password?.error}
                     helperText={formError?.password?.msg}
                     onKeyDown={() => {
                       setFormError((curr) => {
-                        const { password,form, ...rest} = curr;
+                        const { password, form, ...rest } = curr;
                         return rest;
                       });
                     }}
@@ -328,7 +339,11 @@ export default function AuthPage(props: authPagePropsType) {
                   />
                   <Button
                     type="button"
-                    sx={{ marginLeft: "-65px", marginTop: "0.5rem", mb: "0.5rem" }}
+                    sx={{
+                      marginLeft: "-65px",
+                      marginTop: "0.5rem",
+                      mb: "0.5rem",
+                    }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}

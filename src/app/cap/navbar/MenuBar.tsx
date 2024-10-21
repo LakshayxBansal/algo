@@ -17,7 +17,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useRouter } from "next/navigation";
 import LeftMenuTree from "./leftmenutree";
 import { menuTreeT, searchDataT } from "../../models/models";
-import ProfileModal from "@/app/miscellaneous/ProfileModal";
+import ProfileMenu from "@/app/cap/admin/profile/ProfileMenu";
 import mainLogo from "../../../../public/logo.png";
 import Image from "next/image";
 import {
@@ -36,9 +36,8 @@ import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
 import SecondNavbar from "./SecondNavbar";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import DialogModal from "@/app/miscellaneous/DialogModal";
 
-const drawerWidth: number = 240;
+const drawerWidth: number = 290;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -47,7 +46,7 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  backgroundColor: "#005a9f",
+  // backgroundColor: "#005a9f",
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
@@ -69,7 +68,7 @@ const Drawer = styled(MuiDrawer, {
   "& .MuiDrawer-paper": {
     position: "relative",
     whiteSpace: "nowrap",
-    width: open ? 240 : 72,
+    width: open ? 290 : 72,
     height:"97vh",
     overflowY: 'auto',
     transition: theme.transitions.create("width", {
@@ -170,7 +169,10 @@ export default function MenuBar(props: propsType) {
       }
     }, 100);
 
-    maindata(search);
+    if (search.length > 0) {
+      maindata(search);
+
+    }
   }, [search]);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
@@ -333,7 +335,7 @@ export default function MenuBar(props: propsType) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <ProfileModal
+            <ProfileMenu
               userId={props.userId}
               companyId={props.companyId}
               img={props.profileImg}
@@ -344,7 +346,8 @@ export default function MenuBar(props: propsType) {
         {/* <SecondNavbar title={"secondnav"}/> */}
         </AppBar>
         <Box sx={{ display: "flex" }}>
-          <Drawer variant="permanent" anchor="left" open={open}>
+          <Drawer variant="permanent" anchor="left" open={open} sx={{display:{xs:"none",sm:"flex"}}}>
+            {/* need to work on this as on xs it should be at the top */}
             <Toolbar
               sx={{
                 display: "flex",
@@ -363,11 +366,10 @@ export default function MenuBar(props: propsType) {
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "100%"}}>
+          <Box style={{ width: "96vw"}}>
                         {children}
             </Box>
         </Box>
-        <DialogModal/>
       </>
     );
   }

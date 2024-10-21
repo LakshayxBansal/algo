@@ -3,6 +3,7 @@ import { getSession } from "@/app/services/session.service";
 import { getMasterObjects, getRightsData, getTransactionObjects, getReportObjects } from "@/app/controllers/rights.controller";
 import RightPage from "./RightPage";
 import { Typography } from "@mui/material";
+import { redirect } from "next/navigation";
 
 
 type DataState = {
@@ -37,7 +38,7 @@ function getParentCountDefaultValue(rightsData: any, masterObjects: any, transac
                     } else {
                         countData[`master_${role}_${right}`] = 1;
                     }
-                }else{
+                } else {
                     if (!countData.hasOwnProperty(`master_${role}_${right}`)) {
                         countData[`master_${role}_${right}`] = 0;
                     }
@@ -50,7 +51,7 @@ function getParentCountDefaultValue(rightsData: any, masterObjects: any, transac
                     } else {
                         countData[`transaction_${role}_${right}`] = 1;
                     }
-                }else{
+                } else {
                     if (!countData.hasOwnProperty(`transaction_${role}_${right}`)) {
                         countData[`transaction_${role}_${right}`] = 0;
                     }
@@ -63,7 +64,7 @@ function getParentCountDefaultValue(rightsData: any, masterObjects: any, transac
                     } else {
                         countData[`report_${role}_${right}`] = 1;
                     }
-                }else{
+                } else {
                     if (!countData.hasOwnProperty(`report_${role}_${right}`)) {
                         countData[`report_${role}_${right}`] = 0;
                     }
@@ -79,9 +80,9 @@ function getParentDataDefaultValue(countData: any) {
     ["master", "transaction", "report"].map((parentObj: any) => {
         roles.map((role: any) => {
             rights.map((right: any) => {
-                if(countData[`${parentObj}_${role}_${right}`] === 0){
+                if (countData[`${parentObj}_${role}_${right}`] === 0) {
                     defaultParentData[`${parentObj}_${role}_${right}`] = false;
-                }else{
+                } else {
                     defaultParentData[`${parentObj}_${role}_${right}`] = true;
                 }
                 // countData[`${parentObj}_${role}_${right}`] === 0 ? defaultParentData[`${parentObj}_${role}_${right}`] = false : defaultParentData[`${parentObj}_${role}_${right}`] = true;
@@ -96,28 +97,30 @@ export default async function Rights() {
     try {
         const session = await getSession();
         if (session) {
-            const rightsData: DataState | undefined = await getRightsData();
-            const masterObjects = await getMasterObjects();
-            const transactionObjects = await getTransactionObjects();
-            const reportObjects = await getReportObjects();
-            const parentCountDefaultValue = getParentCountDefaultValue(rightsData, masterObjects, transactionObjects, reportObjects);
-            const parentDataDefaultValue = getParentDataDefaultValue(parentCountDefaultValue);
+                const rightsData: DataState | undefined = await getRightsData();
+                const masterObjects = await getMasterObjects();
+                const transactionObjects = await getTransactionObjects();
+                const reportObjects = await getReportObjects();
+                const parentCountDefaultValue = getParentCountDefaultValue(rightsData, masterObjects, transactionObjects, reportObjects);
+                const parentDataDefaultValue = getParentDataDefaultValue(parentCountDefaultValue);
 
-            if(session.user.dbInfo.roleId===3){
+                if (session.user.dbInfo.roleId === 3) {
+                    return (
+                        <>
+                            <Typography>This Page is not Accessible</Typography>
+                        </>
+                    )
+                }
+
                 return (
                     <>
-                        <Typography>This Page is not Accessible</Typography>
+                        <RightPage userRoleId={session.user.dbInfo.roleId} rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
                     </>
                 )
-            }
-        
-            return (
-                <>
-                    <RightPage userRoleId={session.user.dbInfo.roleId} rightsData={rightsData} masterObjects={masterObjects} transactionObjects={transactionObjects} reportObjects={reportObjects} parentCountDefaultValue={parentCountDefaultValue} parentDataDefaultValue={parentDataDefaultValue} />
-                </>
-            )
+
         }
     } catch (error) {
         logger.error(error);
     }
+    redirect("/signin")
 }

@@ -1,5 +1,6 @@
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
+import { GridColDef } from "@mui/x-data-grid";
 
 export type userSchemaT = z.infer<typeof zs.userSchema>;
 
@@ -193,3 +194,42 @@ export type getUnitT = [
 ];
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
+
+export type deleteCompT={
+  fnDeleteDataByID?: (id: number) => Promise<any>;
+  open:boolean;
+  setDialogOpen:(props: any) => void;
+  modId:number;
+
+};
+
+export type  entitiyCompT = {
+  title?: string;
+  renderForm?: RenderFormFunctionT;
+  fileUploadFeatureReqd?: boolean;
+  // fnFileUpad: () => {}
+  fnFileUpad?: any; // update with type -- Ayushi
+  sampleFileName?: String;
+  fetchDataFn: (
+    page: number,
+    searchText: string,
+    pgSize: number
+  ) => Promise<any>;
+  fnFetchDataByID?: (id: number) => Promise<any>;
+  fnDeleteDataByID?: (id: number) => Promise<any>;
+  fnFetchColumns?: () => Promise<any>;
+  customCols: GridColDef[];
+  AddAllowed: boolean;
+  height?: string;
+};
+
+export type iconCompT = {
+  id: number;
+  fnFetchDataByID?: (id: number) => Promise<any>;
+  fnDeleteDataByID?: (id: number) => Promise<any>;
+  setModData?:(props: any) => void;
+  setDlgMode?:(props: any) => void;
+  setDialogOpen?:(props: any) => void;
+  setIds?:(props: any) => void;
+
+};

@@ -39,10 +39,9 @@ export default async function AppMenu(props: {children: React.ReactNode}) {
           </MenuBar>
         );
       } 
-    } else {
-      redirect("/signin");
     }
   } catch (e) {
     console.log(e);
   }
+  redirect("/signin");
 }

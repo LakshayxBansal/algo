@@ -41,11 +41,11 @@ export default function UnitForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
+      setFormError({});
+      setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
-      setSnackOpen(true);
     } else {
       const issues = result.data;
       // show error on screen
@@ -96,7 +96,7 @@ export default function UnitForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Unit" : "Add Unit"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -157,7 +157,7 @@ export default function UnitForm(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

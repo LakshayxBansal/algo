@@ -7,6 +7,7 @@ import {
   delExecutiveById,
   getExecutiveById,
   getExecutiveByPage,
+  getExecutiveColumns,
 } from "@/app/controllers/executive.controller";
 
 const columns: GridColDef[] = [
@@ -32,6 +33,9 @@ const columns: GridColDef[] = [
   },
 ];
 
+
+// const reqcols = ["name","alias","email","mobile"];
+
 export default function executive() {
   return (
     <>
@@ -47,8 +51,10 @@ export default function executive() {
         fetchDataFn={getExecutiveByPage}
         fnFetchDataByID={getExecutiveById}
         fnDeleteDataByID={delExecutiveById}
+        fnFetchColumns={getExecutiveColumns}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

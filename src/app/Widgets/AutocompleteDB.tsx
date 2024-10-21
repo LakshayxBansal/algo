@@ -59,14 +59,14 @@ export function AutocompleteDB(props: autocompleteDBT) {
   const [selectDefault, setSelectDefault] = useState(
     Boolean(props.defaultValue)
   );
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const getData = debounce(async (input) => {
       let results  
       
-      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts)) {
+      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
         results = (await props.fetchDataFn(props.defaultOptions?'':input)) as optionsDataT[] 
         if(props.diaglogVal.reloadOpts){
           setDefaultOpts(results)
@@ -80,7 +80,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }
       
       setOptions([] as optionsDataT[]);
-      setLoading(false);
+      // setLoading(false);
       if (results) {
         if (autoSelect && inputValue === "") {
           props.setDialogVal(results[0]);
@@ -94,7 +94,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
         props.setDialogVal(props.defaultValue as optionsDataT)
         setSelectDefault(false)
       } else {
-        setLoading(true)
+        // setLoading(true)
         getData(inputValue);
       }
     }
@@ -127,7 +127,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       id={props.id}
       disabled={props.disable ? props.disable : false}
       options={options}
-      loading={loading}
+      // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
       renderOption={(p, option) => {
         const pWithKey = p as HTMLAttributes<HTMLLIElement> & { key: string }

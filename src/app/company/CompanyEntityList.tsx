@@ -10,8 +10,10 @@ import CreateCompany from "./CreateCompany";
 import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
 import { Typography } from "@mui/material";
+import React from "react";
 
 export default function CompanyEntityList() {
+
   const columns: GridColDef[] = [
     { field: "RowID", headerName: "ID", width: 90 },
     {
@@ -31,6 +33,23 @@ export default function CompanyEntityList() {
       width: 150,
     },
     {
+      field: "roleId",
+      headerName: "Role",
+      width: 150,
+      renderCell: (params) => {
+        let role = "none";
+        if(params.row.roleId===1){
+          role = "Admin";
+        }else if(params.row.roleId===2){
+          role = "Manager";
+        }else if(params.row.roleId===3){
+          role = "Executive";
+        }
+        return (
+          <h6>{role}</h6>
+      )},
+    },
+    {
       field: "createdBy",
       headerName: "Created By",
       width: 150,
@@ -39,8 +58,11 @@ export default function CompanyEntityList() {
       field: "createdOn",
       headerName: "Created On",
       width: 150,
-    },
+    }
   ];
+
+  // const companyDefaultColumns=["companyName","companyAlias","createdBy","createdOn"];
+
   return (
     <AuthWrapper>
       <EntityList
@@ -57,7 +79,7 @@ export default function CompanyEntityList() {
         fnDeleteDataByID={deleteCompanyById}
         customCols={columns}
         AddAllowed={true}
-        height="20em"
+        height="60vh"
       ></EntityList>
     </AuthWrapper>
   );

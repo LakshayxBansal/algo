@@ -51,8 +51,11 @@ export default function ContactGroupForm(props: masterFormPropsT) {
         name: result.data[0].name,
       };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      },1000);
+      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -111,7 +114,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Contact Group" : "Add Contact Group"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -163,7 +166,6 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               }}
             />
             <InputControl
-              autoFocus
               inputType={InputType.TEXT}
               id="alias"
               label="Alias"
@@ -190,7 +192,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val })
+                setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
               }
               dialogTitle={"Add Parent Group"}
               fetchDataFn={getContactGroup}
@@ -213,7 +215,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               mt: 2
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

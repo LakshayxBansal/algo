@@ -7,15 +7,18 @@ import {
   delDepartmentById,
   getDepartmentById,
   getDepartmentByPage,
+  getDepartmentColumns,
 } from "@/app/controllers/department.controller";
 
 const columns: GridColDef[] = [
   {
     field: "name",
-    headerName: "Name",
+    headerName: "Department Name",
     editable: true,
   },
 ];
+
+// const reqcols = ["name"]
 
 export default function Department() {
   return (
@@ -32,9 +35,10 @@ export default function Department() {
         fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         fnDeleteDataByID={delDepartmentById}
+        fnFetchColumns={getDepartmentColumns}
         customCols={columns}
         AddAllowed={true}
-        height = "30em"
+        height = "60vh"
       ></EntityList>
     </>
   );

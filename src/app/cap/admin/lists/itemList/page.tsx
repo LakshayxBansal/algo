@@ -11,9 +11,9 @@ import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "Name", editable: true },
-  { field: "group_id", headerName: "Group Id", editable: true },
+  { field: "group_name", headerName: "Group Name", editable: true },
   { field: "alias", headerName: "Alias", editable: true },
-  { field: "unit_id", headerName: "Unit Id", editable: true },
+  { field: "unit_name", headerName: "Unit Name", editable: true },
 ];
 
 export default function Items() {
@@ -33,6 +33,7 @@ export default function Items() {
         fnDeleteDataByID={delItemById}
         customCols={columns}
         AddAllowed={true}
+        height = "30em"
       ></EntityList>
     </>
   );

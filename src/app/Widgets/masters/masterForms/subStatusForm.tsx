@@ -74,9 +74,11 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -127,7 +129,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
             {(props.data ? "Update " : "Add ") +
               "Sub-Status for " +
               (props.parentData === 1 ? "Open" : "Closed")}{" "}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -187,7 +189,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
               mt:2
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

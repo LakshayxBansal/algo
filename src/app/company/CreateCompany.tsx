@@ -1,13 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
+import { useRouter } from "next/navigation"
 import {
   companySchemaT,
   masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -18,18 +20,16 @@ import {
 import Seperator from "../Widgets/seperator";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import { SelectMasterWrapper } from "../Widgets/masters/selectMasterWrapper";
 import {
   getCountriesMaster,
   getStates,
   getStatesMaster,
 } from "../controllers/masters.controller";
-import StateForm from "../Widgets/masters/masterForms/stateForm";
-import CountryForm from "../Widgets/masters/masterForms/countryForm";
 import { Collapse, IconButton } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsT) {
+export default function CreateCompany(props: masterFormPropsWithDataT) {
+  const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -73,8 +73,16 @@ export default function CreateCompany(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country
+        ? entityData.country_id
+        : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -101,7 +109,11 @@ export default function CreateCompany(props: masterFormPropsT) {
     });
   };
   return (
-    <Paper elevation={3} sx={{ mt: 2, mb: 1.5, p: 2 }} square={false}>
+    <Paper
+      elevation={3}
+      sx={{ mt: 2, mb: 1.5, p: 2, minWidth: "50vw" }}
+      square={false}
+    >
       <Box
         sx={{
           position: "sticky",
@@ -218,7 +230,7 @@ export default function CreateCompany(props: masterFormPropsT) {
               label="Address Line 2"
               name="add2"
               id="add2"
-              fullWidth
+              // fullWidth
               error={formError?.add2?.error}
               helperText={formError?.add2?.msg}
               defaultValue={entityData.add2}
@@ -240,28 +252,30 @@ export default function CreateCompany(props: masterFormPropsT) {
                 entityData.state_id = undefined;
                 entityData.state = "";
               }}
+              width={340}
               fetchDataFn={getCountriesMaster}
               diaglogVal={
                 selectValues.country
                   ? {
-                      id: selectValues.country?.id,
-                      name: selectValues.country?.name ?? "",
-                      detail: undefined,
-                    }
+                    id: selectValues.country?.id,
+                    name: selectValues.country?.name ?? "",
+                    detail: undefined,
+                  }
                   : ({
-                      id: entityData.country_id,
-                      name: entityData.country,
-                    } as optionsDataT)
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
             <AutocompleteDB
               name={"state"}
               id={"state"}
               label={"State"}
+              width={340}
               onChange={(e, val, s) => {
                 setSelectValues({ ...selectValues, state: val });
                 entityData.state_id = undefined;
@@ -278,19 +292,19 @@ export default function CreateCompany(props: masterFormPropsT) {
               diaglogVal={
                 selectValues.state
                   ? {
-                      id: selectValues.state?.id,
-                      name: selectValues.state?.name ?? "",
-                      detail: undefined,
-                    }
+                    id: selectValues.state?.id,
+                    name: selectValues.state?.name ?? "",
+                    detail: undefined,
+                  }
                   : ({
-                      id: entityData.state_id,
-                      name: entityData.state,
-                    } as optionsDataT)
+                    id: entityData.state_id,
+                    name: entityData.state,
+                  } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
 
             <InputControl
@@ -333,7 +347,16 @@ export default function CreateCompany(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>
+            <Button
+              onClick={() => {
+                if (props.parentData === "addcompany") {
+                  router.push("/signin");
+                } else {
+                  handleCancel();
+                }
+              }}
+              tabIndex={-1}
+            >
               Cancel
             </Button>
             <Button

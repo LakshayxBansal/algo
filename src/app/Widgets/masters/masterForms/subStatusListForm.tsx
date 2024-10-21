@@ -20,7 +20,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   enquirySubStatusMasterT,
   masterFormPropsWithDataT,
-  selectKeyValueT,
 } from "@/app/models/models";
 import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
 
@@ -29,9 +28,10 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [status_id, setStatus] = useState<number>(1);
+  const [status_id, setStatus] = useState<number | undefined>(
+    props.data?.enquiry_status_id
+  );
   const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
-  console.log("entityData : ",entityData)
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -40,15 +40,21 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
       data[key] = value;
     }
 
-    data["status_id"] = status_id;
+    data["enquiry_status_id"] = status_id
+      ? status_id
+      : entityData.enquiry_status_id
+      ? entityData.enquiry_status_id
+      : 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -61,8 +67,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     }
   };
 
-  function onStatusChange(event: React.SyntheticEvent) {
-    setStatus(Number((event.target as HTMLInputElement).value));;
+  function onStatusChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setStatus(Number(event.target.value));
   }
 
   async function persistEntity(data: enquirySubStatusMasterT) {
@@ -99,7 +105,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Sub-Status" : "Add Sub-Status"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -138,7 +144,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                 row
                 name="status"
                 id="status"
-                defaultValue={entityData.enquiry_status_id}
+                value={status_id}
                 onChange={onStatusChange}
               >
                 <FormControlLabel
@@ -146,10 +152,28 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                   control={<label />}
                   label="Status :"
                 />
-                <FormControlLabel value={1} control={<Radio />} label="Open" />
+                <FormControlLabel
+                  value={1}
+                  control={
+                    <Radio
+                      inputProps={{
+                        tabIndex: -1,
+                        "aria-label": "Open status",
+                      }}
+                    />
+                  }
+                  label="Open"
+                />
                 <FormControlLabel
                   value={2}
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      inputProps={{
+                        tabIndex: -1,
+                        "aria-label": "Closed status",
+                      }}
+                    />
+                  }
                   label="Closed"
                 />
               </RadioGroup>
@@ -180,7 +204,9 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
