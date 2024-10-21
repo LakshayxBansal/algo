@@ -61,6 +61,7 @@ import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 // import DeleteComponent from "./DeleteComponent";
 import DeleteComponent from "./component/DeleteComponent";
+import IconComponent from "./component/IconComponent";
 
 // type ModifyT = {
 //   title?: string;
@@ -103,7 +104,7 @@ export default function EntityList(props: entitiyCompT) {
   const [search, setSearch] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
-  const [snackOpen, setSnackOpen] = useState<boolean>(false);
+  // const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [columnVisibilityModel, setColumnVisibilityModel] =
     useState<GridColumnVisibilityModel>({});
@@ -135,7 +136,7 @@ export default function EntityList(props: entitiyCompT) {
           minWidth: 50,
           hideable: false,
           renderCell: (params) => {
-            return <IconComponent id={params.row.id} />;
+            return <IconComponent id={params.row.id} fnDeleteDataByID={props.fnDeleteDataByID} fnFetchDataByID={props.fnFetchDataByID} setDlgMode={setDlgMode} setDialogOpen={setDialogOpen} setModData={setModData} setIds={setIds} modify={dialogMode.Modify} delete={dialogMode.Delete}/>;
           },
         },
       ];
@@ -243,53 +244,55 @@ export default function EntityList(props: entitiyCompT) {
   };
 
 
-  function IconComponent(props: iconCompT) {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const optionMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
+  // function IconComponent(props: {id:number}) {
+  //   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  //   const optionMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  //     setAnchorEl(event.currentTarget);
+  //   };
 
-    const optionMenuClose = () => {
-      setAnchorEl(null);
-    };
+  //   const optionMenuClose = () => {
+  //     setAnchorEl(null);
+  //   };
 
-    return (
-      <Box>
-        <IconButton
-          aria-controls="simple-menu"
-          aria-haspopup="true"
-          onClick={optionMenuOpen}
-        >
-          <MoreVertIcon />
-        </IconButton>
-        <StyledMenu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={optionMenuClose}
-        >
-          <MenuItem
-            onClick={() => {
-              onModifyDialog(props.id);
+  //   return (
+  //     <Box>
+  //       <IconButton
+  //         aria-controls="simple-menu"
+  //         aria-haspopup="true"
+  //         onClick={optionMenuOpen}
+  //       >
+  //         <MoreVertIcon />
+  //       </IconButton>
+  //       <StyledMenu
+  //         id="simple-menu"
+  //         anchorEl={anchorEl}
+  //         open={Boolean(anchorEl)}
+  //         onClose={optionMenuClose}
+  //       >
+  //         <MenuItem
+  //           onClick={() => {
+  //             onModifyDialog(props.id);
             
-            }}
-          >
-            <EditIcon fontSize="large" />
-            <Typography variant="h6">Edit</Typography>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleDeleteDialog(props.id);
-            }}
-          >
-            {" "}
-            <DeleteIcon />
-            <Typography variant="h6">Delete</Typography>
-          </MenuItem>
-        </StyledMenu>
-      </Box>
-    );
-  }
+  //           }}
+  //         >
+  //           <EditIcon fontSize="large" />
+  //           <Typography variant="h6">Edit</Typography>
+  //         </MenuItem>
+  //         <MenuItem
+  //           onClick={() => {
+  //             handleDeleteDialog(props.id);
+  //           }}
+  //         >
+  //           {" "}
+  //           <DeleteIcon />
+  //           <Typography variant="h6">Delete</Typography>
+  //         </MenuItem>
+  //       </StyledMenu>
+  //     </Box>
+  //   );
+  // }
+
+  console.log("changed",dialogOpen);
 
   return (
     <Box>
@@ -363,7 +366,7 @@ export default function EntityList(props: entitiyCompT) {
                 textAlign: { xs: "center", md: "right" },
               }}
             >
-              {props.AddAllowed ? (
+              {props.uploadAllowed && (
                 <Box>
                   <ButtonGroup
                     size="small"
@@ -459,8 +462,9 @@ export default function EntityList(props: entitiyCompT) {
                     )}
                   </Popper>
                 </Box>
-              ) : (
-                <Tooltip title="Add New">
+              )}
+
+              {props.AddAllowed && (<Tooltip title="Add New">
                   <Button
                     size="small"
                     variant="contained"
@@ -470,8 +474,9 @@ export default function EntityList(props: entitiyCompT) {
                     <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
                     Add New
                   </Button>
-                </Tooltip>
-              )}
+                </Tooltip>)
+
+              }
             </Grid>
             <Grid
               item
