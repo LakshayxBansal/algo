@@ -1,5 +1,6 @@
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
+import { GridColDef } from "@mui/x-data-grid";
 
 export type userSchemaT = z.infer<typeof zs.userSchema>;
 
@@ -96,6 +97,7 @@ export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
 
 //jp_dev
@@ -192,3 +194,44 @@ export type getUnitT = [
 ];
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
+
+export type deleteCompT={
+  fnDeleteDataByID?: (id: number) => Promise<any>;
+  open:boolean;
+  setDialogOpen:(props: any) => void;
+  modId:number;
+
+};
+
+export type  entitiyCompT = {
+  title?: string;
+  renderForm?: RenderFormFunctionT;
+  fileUploadFeatureReqd?: boolean;
+  // fnFileUpad: () => {}
+  fnFileUpad?: any; // update with type -- Ayushi
+  sampleFileName?: String;
+  fetchDataFn: (
+    page: number,
+    searchText: string,
+    pgSize: number
+  ) => Promise<any>;
+  fnFetchDataByID?: (id: number) => Promise<any>;
+  fnDeleteDataByID?: (id: number) => Promise<any>;
+  fnFetchColumns?: () => Promise<any>;
+  customCols: GridColDef[];
+  AddAllowed?: boolean;
+  uploadAllowed?:boolean;
+  height?: string;
+};
+
+export type iconCompT = {
+  id: number;
+  fnFetchDataByID?: (id: number) => Promise<any>;
+  fnDeleteDataByID?: (id: number) => Promise<any>;
+  setModData:(props: any) => void;
+  setDlgMode:(props: any) => void;
+  setDialogOpen:(props: any) => void;
+  setIds:(props: any) => void;
+  delete:any;
+  modify:any;
+};

@@ -18,6 +18,8 @@ const columns: GridColDef[] = [
   },
 ];
 
+// const reqcols = ["name"]
+
 export default function Department() {
   return (
     <>
@@ -35,8 +37,9 @@ export default function Department() {
         fnDeleteDataByID={delDepartmentById}
         fnFetchColumns={getDepartmentColumns}
         customCols={columns}
-        AddAllowed={true}
-        height = "30em"
+        AddAllowed={false}
+        uploadAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

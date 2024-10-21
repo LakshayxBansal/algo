@@ -187,13 +187,20 @@ export const ItemSchema = z.object({
 export const itemToListFormSchema = z.object({
   id: z.number().optional(),
   enquiry_id: z.number().optional(),
-  item: z.string().min(1).max(75),
+  item: z.string().min(1, {
+    message: "Item Name must not be empty",
+  }),
   item_id: z.number(),
-  quantity: z.string(),
-  unit: z.string(),
+  quantity: z
+    .number()
+    .min(1, { message: "Quantity must not be empty" }),
+  unit: z.string().min(1, {
+    message: "Unit Name must not be empty",
+  }),
   unit_id: z.number(),
   remarks: z.string().max(5000).optional(),
 });
+
 export const itemToListFormArraySchema = z.array(itemToListFormSchema);
 
 export const UnitSchema = z.object({
@@ -387,7 +394,7 @@ export const enquiryHeaderSchema = z.object({
 export const enquiryLedgerSchema = z.object({
   enquiry_id: z.number().optional(),
   status_version: z.number().optional(),
-  allocated_to_id: z.number().min(0),
+  allocated_to_id: z.number().min(0).optional(),
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),
@@ -396,7 +403,7 @@ export const enquiryLedgerSchema = z.object({
   action_taken_id: z.number().min(1),
   action_taken: z.string().min(1).max(60),
   next_action_id: z.number().min(1).optional(),
-  next_action: z.string().min(1).max(60).optional(),
+  next_action: z.string().max(60).optional(),
   next_action_date: z.string().min(1).max(20),
   suggested_action_remark: z.string().max(5000).optional(),
   action_taken_remark: z.string().max(5000).optional(),
@@ -406,6 +413,8 @@ export const enquiryLedgerSchema = z.object({
   active: z.number().optional(),
 });
 
+
+export const enquiryDataSchema = enquiryHeaderSchema.merge(enquiryLedgerSchema);
 /**
  * contact group
  */
@@ -567,23 +576,23 @@ export const stateSchema = z.object({
     .string()
     .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
-  country_id: z.number().refine((val)=> val !== 0 ,{
-        message: "Country name must not be empty", 
-        path: ["country"], 
-      } )
-  
-    // .number({
-    //   required_error: "Age is required",
-    //   invalid_type_error: "Country can not be empty",
-    // })
-    // .refine(
-    //   (val) => {
-    //     return isNaN(val) || val !== undefined;
-    //   },
-    //   {
-    //     message: "Country name must not be empty", 
-    //     path: ["country"], 
-    // ),
+  country_id: z.number().refine((val) => val !== 0, {
+    message: "Country name must not be empty",
+    path: ["country"],
+  }),
+
+  // .number({
+  //   required_error: "Age is required",
+  //   invalid_type_error: "Country can not be empty",
+  // })
+  // .refine(
+  //   (val) => {
+  //     return isNaN(val) || val !== undefined;
+  //   },
+  //   {
+  //     message: "Country name must not be empty",
+  //     path: ["country"],
+  // ),
 });
 
 /**
@@ -745,7 +754,8 @@ export const inviteUserSchema = z
     companyId: z.number(),
     executiveId: z.number().optional(),
     inviteDate: z.date().optional(),
-  }).refine(
+  })
+  .refine(
     (schema) => {
       return !(schema.email === "");
     },

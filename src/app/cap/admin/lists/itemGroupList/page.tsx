@@ -34,7 +34,7 @@ export default function ItemGroup() {
         fnDeleteDataByID={delItemGroupById}
         customCols={columns}
         AddAllowed={true}
-        height = "30em"
+        height = "60vh"
       ></EntityList>
     </>
   );

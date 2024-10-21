@@ -31,7 +31,11 @@ export default function AddItemToListForm(props: masterFormPropsT) {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
-      data[key] = value;
+      if (key === "quantity") {
+        data[key] = Number(value);
+      } else {
+        data[key] = value;
+      }
     }
 
     formData = updateFormData(data);
@@ -61,8 +65,8 @@ export default function AddItemToListForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.item_id = selectValues.item_id ? selectValues.item_id : 0;
-    data.unit_id = selectValues.unit_id ? selectValues.unit_id : 0;
+    data.item_id = selectValues.item ? selectValues.item.id : 0;
+    data.unit_id = selectValues.unit ? selectValues.unit.id : 0;
     return data;
   };
 
@@ -73,7 +77,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
     name: string
   ) {
     let values = { ...selectValues };
-    values[`${name}_id`] = val.id;
+    values[name] = val;
     setSelectValues(values);
   }
 
@@ -153,6 +157,11 @@ export default function AddItemToListForm(props: masterFormPropsT) {
             <InputControl
               required
               inputType={InputType.TEXT}
+              type="number"
+              decPlaces={0}
+              min={0}
+              max={10}
+              // style= { textAlign: "right" },
               name="quantity"
               id="quantity"
               label="Quantity"

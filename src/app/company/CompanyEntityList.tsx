@@ -60,26 +60,27 @@ export default function CompanyEntityList() {
       width: 150,
     }
   ];
+
+  // const companyDefaultColumns=["companyName","companyAlias","createdBy","createdOn"];
+
   return (
-    <>
-      <AuthWrapper>
-        <EntityList
-          title="Company List"
-          renderForm={(fnDialogOpen, fnDialogValue, data) => (
-            <CreateCompany
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-              data={data}
-            />
-          )}
-          fetchDataFn={getCompanies}
-          fnFetchDataByID={getCompanyById}
-          fnDeleteDataByID={deleteCompanyById}
-          customCols={columns}
-          AddAllowed={true}
-          height="20em"
-        ></EntityList>
-      </AuthWrapper>
-    </>
+    <AuthWrapper>
+      <EntityList
+        title="Company List"
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+          <CreateCompany
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
+        fetchDataFn={getCompanies}
+        fnFetchDataByID={getCompanyById}
+        fnDeleteDataByID={deleteCompanyById}
+        customCols={columns}
+        AddAllowed={true}
+        height="60vh"
+      ></EntityList>
+    </AuthWrapper>
   );
 }

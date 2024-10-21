@@ -5,9 +5,11 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
+import { useRouter } from "next/navigation"
 import {
   companySchemaT,
   masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -26,7 +28,8 @@ import {
 import { Collapse, IconButton } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsT) {
+export default function CreateCompany(props: masterFormPropsWithDataT) {
+  const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -73,13 +76,13 @@ export default function CreateCompany(props: masterFormPropsT) {
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -254,19 +257,19 @@ export default function CreateCompany(props: masterFormPropsT) {
               diaglogVal={
                 selectValues.country
                   ? {
-                      id: selectValues.country?.id,
-                      name: selectValues.country?.name ?? "",
-                      detail: undefined,
-                    }
+                    id: selectValues.country?.id,
+                    name: selectValues.country?.name ?? "",
+                    detail: undefined,
+                  }
                   : ({
-                      id: entityData.country_id,
-                      name: entityData.country,
-                    } as optionsDataT)
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
             <AutocompleteDB
               name={"state"}
@@ -289,19 +292,19 @@ export default function CreateCompany(props: masterFormPropsT) {
               diaglogVal={
                 selectValues.state
                   ? {
-                      id: selectValues.state?.id,
-                      name: selectValues.state?.name ?? "",
-                      detail: undefined,
-                    }
+                    id: selectValues.state?.id,
+                    name: selectValues.state?.name ?? "",
+                    detail: undefined,
+                  }
                   : ({
-                      id: entityData.state_id,
-                      name: entityData.state,
-                    } as optionsDataT)
+                    id: entityData.state_id,
+                    name: entityData.state,
+                  } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
 
             <InputControl
@@ -344,7 +347,16 @@ export default function CreateCompany(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>
+            <Button
+              onClick={() => {
+                if (props.parentData === "addcompany") {
+                  router.push("/signin");
+                } else {
+                  handleCancel();
+                }
+              }}
+              tabIndex={-1}
+            >
               Cancel
             </Button>
             <Button
