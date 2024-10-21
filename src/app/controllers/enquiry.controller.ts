@@ -34,7 +34,7 @@ export async function createEnquiry({
   enqData,
   item,
 }: {
-  enqData: any;
+  enqData: enquiryDataSchemaT;
   item: enquiryItemSchemaT[];
 }) {
   let result;

@@ -391,7 +391,7 @@ export const enquiryHeaderSchema = z.object({
 export const enquiryLedgerSchema = z.object({
   enquiry_id: z.number().optional(),
   status_version: z.number().optional(),
-  allocated_to_id: z.number().min(0),
+  allocated_to_id: z.number().min(0).optional(),
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),

@@ -7,8 +7,7 @@ export async function enquiryDataFormat({
   formData: FormData;
   selectValues: selectKeyValueT;
 }) {
-  const formatDate = (dateStr: string | null): string | null => {
-    if (!dateStr) return null;
+  const formatDate = (dateStr: string ): string => {
     const dt = new Date(dateStr);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
