@@ -151,10 +151,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
 
   // Render either a TextField or a Checkbox based on the props
 
-  var elements = document.getElementsByClassName("MuiIconButton-sizeMedium");
-       for (var i = 0; i < elements.length; i++) {
-        (elements[i] as HTMLElement).tabIndex = -1;
-      }
     
   switch (inputType) {
     case InputType.TEXT: {
