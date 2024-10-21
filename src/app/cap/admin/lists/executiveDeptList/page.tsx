@@ -34,7 +34,7 @@ export default function executiveDept() {
         fnDeleteDataByID={delExecutiveDeptById}
         customCols={columns}
         AddAllowed={true}
-        height = "30em"
+        height = "60vh"
       ></EntityList>
     </>
   );

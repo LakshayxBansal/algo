@@ -97,6 +97,7 @@ export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
 
 //jp_dev
@@ -218,7 +219,8 @@ export type  entitiyCompT = {
   fnDeleteDataByID?: (id: number) => Promise<any>;
   fnFetchColumns?: () => Promise<any>;
   customCols: GridColDef[];
-  AddAllowed: boolean;
+  AddAllowed?: boolean;
+  uploadAllowed?:boolean;
   height?: string;
 };
 
@@ -226,9 +228,10 @@ export type iconCompT = {
   id: number;
   fnFetchDataByID?: (id: number) => Promise<any>;
   fnDeleteDataByID?: (id: number) => Promise<any>;
-  setModData?:(props: any) => void;
-  setDlgMode?:(props: any) => void;
-  setDialogOpen?:(props: any) => void;
-  setIds?:(props: any) => void;
-
+  setModData:(props: any) => void;
+  setDlgMode:(props: any) => void;
+  setDialogOpen:(props: any) => void;
+  setIds:(props: any) => void;
+  delete:any;
+  modify:any;
 };
