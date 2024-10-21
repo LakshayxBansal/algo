@@ -1,12 +1,21 @@
 "use server";
-import { createEnquiryDB, getHeaderDataAction, getItemDataAction, getLedgerDataAction, showItemGridDB } from "../services/enquiry.service";
+import {
+  createEnquiryDB,
+  getHeaderDataAction,
+  getItemDataAction,
+  getLedgerDataAction,
+  showItemGridDB,
+} from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
+  enquiryDataSchemaT,
   enquiryHeaderSchemaT,
   enquiryItemSchemaT,
   enquiryLedgerSchemaT,
+  selectKeyValueT,
 } from "@/app/models/models";
 import {
+  enquiryDataSchema,
   enquiryHeaderSchema,
   enquiryLedgerSchema,
   itemToListFormArraySchema,
@@ -15,39 +24,40 @@ import {
 import { logger } from "@/app/utils/logger.utils";
 import { Session } from "next-auth";
 
-type enqData={
-  head: enquiryHeaderSchemaT;
-  ledger: enquiryLedgerSchemaT;
-  item : enquiryItemSchemaT[]
-}
+// type enqData = {
+//   head: enquiryHeaderSchemaT;
+//   ledger: enquiryLedgerSchemaT;
+//   item: enquiryItemSchemaT[];
+// };
 
-export async function createEnquiry(enqData: {
-  head: enquiryHeaderSchemaT;
-  ledger: enquiryLedgerSchemaT;
-  item : enquiryItemSchemaT[]
+export async function createEnquiry({
+  enqData,
+  item,
+}: {
+  enqData: enquiryDataSchemaT;
+  item: enquiryItemSchemaT[];
 }) {
   let result;
-
-  const transformEnqData = (enqData: enqData) => {
-    const updatedItems = enqData.item.map(({ item, unit, ...rest }) => rest);
-            return {
-      ...enqData,
-      item: JSON.stringify(updatedItems) 
-    };
-  };
-
   try {
     const session = await getSession();
     if (session) {
-      const headParsed = enquiryHeaderSchema.safeParse(enqData.head);
+      const updatedEnqData = {
+        ...enqData,
+        status_version: 0,
+        allocated_to_id: 0,
+        allocated_to: "",
+        enquiry_tran_type: 1,
+        active: 1,
+      };
+      const enqDataParsed = enquiryDataSchema.safeParse(updatedEnqData);
+      const itemParsed = itemToListFormArraySchema.safeParse(item);
+      if (enqDataParsed.success && itemParsed.success) {
+        const enqActionData = {
+          headerLedger: updatedEnqData,
+          item: JSON.stringify(item),
+        };
 
-      const ledgerParsed = enquiryLedgerSchema.safeParse(enqData.ledger);
-      const itemParsed = itemToListFormArraySchema.safeParse(enqData.item)
-      if (headParsed.success && ledgerParsed.success && itemParsed.success) {
-        
-        const updatedEnqData = transformEnqData(enqData);
-        
-        const dbResult = await createEnquiryDB(session,updatedEnqData );
+        const dbResult = await createEnquiryDB(session, enqActionData);
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
@@ -62,15 +72,24 @@ export async function createEnquiry(enqData: {
           };
         }
       } else {
-        let issues;
-        if (!headParsed.success) {
-          issues = headParsed.error.issues;
-        } else if (!ledgerParsed.success) {
-          issues = ledgerParsed.error.issues;
+        let enqIssue: any[] = [];
+        let itemIssue: any[] = [];
+        if (!enqDataParsed.success) {
+          enqIssue = enqDataParsed.error.issues;
         }
-        //result = {status: false, data: parsed.error.flatten().fieldErrors };
-        result = { status: false, data: issues };
+        if (!itemParsed.success) {
+          itemIssue = itemParsed.error.issues;
+        }
+        result = {
+          status: false,
+          data: [
+            { enqDataIssue: enqIssue.length > 0 ? enqIssue : null },
+            { itemIssue: itemIssue.length > 0 ? itemIssue : null },
+          ],
+        };
       }
+      console.log("result ", result);
+      
     } else {
       result = {
         status: false,
@@ -81,6 +100,7 @@ export async function createEnquiry(enqData: {
   } catch (e) {
     logger.error(e);
   }
+
   result = {
     status: false,
     data: [{ path: ["form"], message: "Error: Unknown Error" }],
@@ -105,19 +125,34 @@ export async function showItemGrid() {
   }
 }
 
-
-export async function getEnquiryById(id:number) {
+export async function getEnquiryById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const headerData =await getHeaderDataAction(session , 7);
-      const ledgerData= await getLedgerDataAction(session,7);
-      const itemData= await getItemDataAction(session , 7);
+      const headerData = await getHeaderDataAction(session, 7);
+      const ledgerData = await getLedgerDataAction(session, 7);
+      const itemData = await getItemDataAction(session, 7);
 
-      return {headerData,ledgerData,itemData};
+      return { headerData, ledgerData, itemData };
     }
   } catch (error) {
-    throw error;
+    logger.error(error);
   }
+}
 
+export async function updateEnquiryById({
+  id,
+  ledgerData,
+}: {
+  id: number;
+  ledgerData: enquiryLedgerSchemaT;
+}) {
+  try {
+    const session = await getSession();
+    if (session) {
+      const updateDataParsed = enquiryLedgerSchema.safeParse(ledgerData);
+    }
+  } catch (error) {
+    logger.error(error);
+  }
 }
