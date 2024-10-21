@@ -233,7 +233,7 @@ export const contactSchema = z.object({
     ]),
   aadhaar: z.union([
     z.literal(""),
-    z.string(),
+    z.string().optional(),
   ]),
   address1: z.string().max(75, "Field must contain at most 75 character(s)"),
   address2: z.string().max(75, "Field must contain at most 75 character(s)"),

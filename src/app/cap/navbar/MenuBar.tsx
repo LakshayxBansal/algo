@@ -46,7 +46,7 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  backgroundColor: "#005a9f",
+  // backgroundColor: "#005a9f",
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
@@ -346,7 +346,8 @@ export default function MenuBar(props: propsType) {
         {/* <SecondNavbar title={"secondnav"}/> */}
         </AppBar>
         <Box sx={{ display: "flex" }}>
-          <Drawer variant="permanent" anchor="left" open={open}>
+          <Drawer variant="permanent" anchor="left" open={open} sx={{display:{xs:"none",sm:"flex"}}}>
+            {/* need to work on this as on xs it should be at the top */}
             <Toolbar
               sx={{
                 display: "flex",
@@ -365,7 +366,7 @@ export default function MenuBar(props: propsType) {
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "100%"}}>
+          <Box style={{ width: "96vw"}}>
                         {children}
             </Box>
         </Box>

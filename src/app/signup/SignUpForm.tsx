@@ -228,6 +228,7 @@ export default function SignupForm1(props: any) {
                   autoFocus
                   fullWidth
                   required
+                  titleCase = {true}
                   autoComplete="off"
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}

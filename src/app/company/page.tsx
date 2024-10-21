@@ -3,8 +3,15 @@ import { getSession } from "../services/session.service";
 import { redirect } from "next/navigation";
 import CompanyEntityList from "./CompanyEntityList";
 import InviteEntityList from "./InviteEntityList";
-import { Box, Paper, Typography, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {
+  Box,
+  Paper,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
 import SnackModal from "../utils/SnackModalUtils";
@@ -16,30 +23,37 @@ export default async function Companies() {
     if (session) {
       return (
         <>
-          <Box >
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-              <Typography variant="h6" marginLeft="2%" marginTop="1rem">
-                Company List
-              </Typography>
+          <Box>
+            <Box>
+              <Paper style={{ margin: "20px 20px", padding: "10px" }}>
+                <Typography variant="h6">Company List</Typography>
+              </Paper>
             </Box>
-            <Box sx={{ marginTop: "1rem" }}>
+            <Box>
               <CompanyEntityList />
             </Box>
-            <Accordion>
-              <AccordionSummary
-                sx={{ bgcolor: "white", width: "97%", margin: "auto", marginTop: "1rem" }}
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-              >
-                <Typography variant="h6">
-                  Total Invites : {totalInvites.rowCount}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ bgcolor: "white" }}>
-                <InviteEntityList />
-              </AccordionDetails>
-            </Accordion>
+            <Box sx={{ height: "10vh", margin: "20px 20px" }}>
+              <Accordion>
+                <AccordionSummary
+                  sx={{
+                    bgcolor: "white",
+                    width: "97%",
+                    margin: "auto",
+                    marginTop: "1rem",
+                  }}
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <Typography variant="h6">
+                    Total Invites : {totalInvites.rowCount}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ bgcolor: "white" }}>
+                  <InviteEntityList />
+                </AccordionDetails>
+              </Accordion>
+            </Box>
           </Box>
         </>
       );
