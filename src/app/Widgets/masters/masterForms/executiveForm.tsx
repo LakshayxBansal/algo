@@ -517,6 +517,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   error: formError?.dob?.error,
                   helperText: formError?.dob?.msg,
                 },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
               }}
             />
             <InputControl
@@ -531,6 +534,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   error: formError?.doa?.error,
                   helperText: formError?.doa?.msg,
                 },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
               }}
             />
             <InputControl
@@ -545,6 +551,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   error: formError?.doj?.error,
                   helperText: formError?.doj?.msg,
                 },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
               }}
             />
           </Box>
