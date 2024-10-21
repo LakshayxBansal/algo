@@ -7,6 +7,7 @@ import { Box, Paper, Typography, Accordion, AccordionSummary, AccordionDetails }
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
+import SnackModal from "../miscellaneous/SnackModal";
 
 export default async function Companies() {
   try {
@@ -16,9 +17,11 @@ export default async function Companies() {
       return (
         <>
           <Box >
-            <Typography variant="h6" marginLeft="2%" marginTop="1rem">
-              Company List
-            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+              <Typography variant="h6" marginLeft="2%" marginTop="1rem">
+                Company List
+              </Typography>
+            </Box>
             <Box sx={{ marginTop: "1rem" }}>
               <CompanyEntityList />
             </Box>

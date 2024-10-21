@@ -23,12 +23,16 @@ export default function CellDbName(props: { row: dbInfoT; userId: number }) {
   };
 
   return (
-    <Link
-      href=""
-      onClick={handleClick}
-      style={{ textDecoration: "none", color: "rgb(59 131 249)" }}
-    >
+    <>
+    {row.roleId ? (
+    <Link href="" onClick={handleClick} style={{ textDecoration: "none", color: "rgb(59 131 249)" }}>
       {row.companyName}
-    </Link>
+    </Link>)
+    :
+    (<Link href="" style={{ textDecoration: "none", cursor: "default" }}>
+      {row.companyName}
+    </Link>)
+    }
+    </>
   );
 }

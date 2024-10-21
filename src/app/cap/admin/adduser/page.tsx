@@ -8,11 +8,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { logger } from '@/app/utils/logger.utils';
 
 export default async function AddUser() {
-  let path = "";
   try {
     const session = await getSession();
     if (session) {
-      if (session.user.dbInfo.roleId) {
         return (
           <>
             <Box >
@@ -35,14 +33,9 @@ export default async function AddUser() {
             </Box>
           </>
         );
-      } else {
-        path = "/company"
-      }
-    } else {
-      path = "/signin";
     }
   } catch (error) {
     logger.error(error);
   }
-  redirect(path);
+  redirect("/signin");
 }
