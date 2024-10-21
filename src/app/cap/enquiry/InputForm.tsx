@@ -108,43 +108,67 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [itemFormError, setItemFormError] = useState<
+    Record<number, Record<string, { msg: string; error: boolean }>>
+  >({});
   const [data, setData] = React.useState(rows);
-  const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
-  let result;
-  let issues;
 
   const handleSubmit = async (formData: FormData) => {
-    
-    const formatedData = await enquiryDataFormat({formData,selectValues})
+    const formatedData = await enquiryDataFormat({ formData, selectValues });
 
+    let result;
+    let issues = [];
 
+    result = await createEnquiry({
+      enqData: formatedData,
+      item: data,
+    });
+    if (result.status) {
+      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      setSnackOpen(true);
+      setTimeout(function () {
+        setFormError;
+        location.reload();
+      }, 3000);
+    } else {
+      issues = result?.data;
+    }
 
-    let issues: ZodIssue[] = [];
-        
-      result = await createEnquiry({
-        enqData:formatedData,
-        item:data
-      });
-      if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name };
-        setSnackOpen(true);
-        setTimeout(function () {
-          location.reload();
-        }, 3000);
-      } else {
-        issues = result?.data;
-      }
-   
+    let formIssue: ZodIssue[] = [];
+    let itemIssue = [];
 
-    if (issues?.length > 0) {
-      // show error on screen
+    formIssue = issues[0].enqDataIssue ? issues[0].enqDataIssue : issues;
+    itemIssue = issues[1].itemIssue;
+
+    if (formIssue?.length > 0) {
+      // set errors for form inputs
       const errorState: Record<string, { msg: string; error: boolean }> = {};
-      for (const issue of issues) {
+      for (const issue of formIssue) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
       setFormError(errorState);
+    }
+    //set errors for item grid
+    if (itemIssue?.length > 0) {
+      const temp: Record<
+        number,
+        Record<string, { msg: string; error: boolean }>
+      > = {};
+
+      itemIssue.forEach((row: any) => {
+        const key = row.path[0];
+        const field = row.path[1];
+        if (!temp[key]) {
+          temp[key] = {};
+        }
+
+        // Add or update the field's error message
+        temp[key][field] = { msg: row.message, error: true };
+      });
+      console.log("Item Issues", temp);
+      setItemFormError(temp);
     }
   };
 
@@ -181,7 +205,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
 
   return (
     <Box>
-      <form action={handleSubmit} style={{ padding: "1em" }}>
+      <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid container>
           <Grid item xs={12}>
             <Seperator>Enquiry Details</Seperator>
@@ -330,6 +354,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       setdgDialogOpen={setDialogOpen}
                       dgFormError={formError}
                       setdgFormError={setFormError}
+                      dgItemFormError={itemFormError}
                     />
                   </Box>
                 </Grid>

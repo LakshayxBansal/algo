@@ -24,11 +24,11 @@ import {
 import { logger } from "@/app/utils/logger.utils";
 import { Session } from "next-auth";
 
-type enqData = {
-  head: enquiryHeaderSchemaT;
-  ledger: enquiryLedgerSchemaT;
-  item: enquiryItemSchemaT[];
-};
+// type enqData = {
+//   head: enquiryHeaderSchemaT;
+//   ledger: enquiryLedgerSchemaT;
+//   item: enquiryItemSchemaT[];
+// };
 
 export async function createEnquiry({
   enqData,

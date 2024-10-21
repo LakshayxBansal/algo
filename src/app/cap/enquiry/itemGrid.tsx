@@ -10,7 +10,7 @@ import {
   GridToolbarContainer,
 } from "@mui/x-data-grid";
 
-import { styled } from "@mui/material/styles";
+import { darken, lighten, styled, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 
@@ -47,6 +47,7 @@ type ItemGridProps = {
   setdgDialogOpen: any;
   dgFormError: any;
   setdgFormError: any;
+  dgItemFormError: any;
   // Add other props here as needed
 };
 
@@ -103,12 +104,29 @@ function CustomNoRowsOverlay() {
   );
 }
 
+const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
+  color: darken(color, coefficient),
+  ...theme.applyStyles("light", {
+    color: lighten(color, coefficient),
+  }),
+});
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  "& .super-app-theme--Rejected": {
+    ...getTextColor(theme.palette.error.main, theme, 0.1),
+    "&:hover": {
+      ...getTextColor(theme.palette.error.main, theme, 0.2),
+    },
+  },
+}));
+
 export default function ItemGrid({
   dgData,
   setdgData,
   setdgDialogOpen,
   dgFormError,
   setdgFormError,
+  dgItemFormError
 }: ItemGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -125,26 +143,26 @@ export default function ItemGrid({
     setModifiedRowData(values);
   }
 
+  //Setting editmode with selected row id and then setting selected row data in modifiedRowData state
   const handleEditClick = (id: GridRowId) => () => {
     setEditMode(id);
     const selectedRowData = dgData.find((row: any) => row.id === id); // Find the corresponding row data
-    setModifiedRowData(selectedRowData); //Setting selected row data in modifiedRowData state
+    setModifiedRowData(selectedRowData);
   };
 
+  // Filtering out the row with the matching id and saving into rows of data grid: DELETING THE SELECTED ROW
   const handleDeleteClick = (id: GridRowId) => () => {
-    // Filter out the row with the matching id
     if (dgData.length > 0) {
       const updatedRows = dgData.filter((row: any) => row.id !== id);
 
-      // Update the data state with the filtered rows
+      // Updating the data state with the filtered rows
       setdgData(updatedRows);
     }
   };
 
+  //Saving the data from modifiedRowData state into rows of data grid
   const handleSaveClick = () => {
-    //save the data from modifiedRowData state into rows of data grid
-
-    const parsedData = itemToListFormSchema.safeParse(modifiedRowData);
+    const parsedData = itemToListFormSchema.safeParse(modifiedRowData); //Validating on saving
     if (parsedData.success) {
       const updatedData = dgData.map((row: any) =>
         row.id === modifiedRowData?.id ? modifiedRowData : row
@@ -152,6 +170,7 @@ export default function ItemGrid({
       setdgData(updatedData);
       setModifiedRowData(undefined);
       setEditMode(null);
+      //Removing field erros on successful validation
       setdgFormError((curr: any) => {
         const { item, quantity, unit, remark, ...rest } = curr;
         return rest;
@@ -168,8 +187,13 @@ export default function ItemGrid({
     }
   };
 
+  // Removing the id from editmode on cancelling and removing field errors
   const handleCancelClick = () => {
     setEditMode(null);
+    setdgFormError((curr: any) => {
+      const { item, quantity, unit, remark, ...rest } = curr;
+      return rest;
+    });
   };
 
   const columns: GridColDef[] = [
@@ -200,7 +224,7 @@ export default function ItemGrid({
               }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ItemForm
-                  setDialogOpen={fnDialogOpen}  
+                  setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
                 />
@@ -215,8 +239,8 @@ export default function ItemGrid({
       headerName: "Quantity",
       type: "number",
       width: 80,
-      // align: "left",
-      // headerAlign: "left",
+      align: "left",
+      headerAlign: "left",
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
@@ -249,8 +273,8 @@ export default function ItemGrid({
       headerName: "Unit Name",
       type: "number",
       width: 150,
-      // align: "left",
-      // headerAlign: "left",
+      align: "left",
+      headerAlign: "left",
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
@@ -360,9 +384,7 @@ export default function ItemGrid({
     },
   ];
 
-  const rows: any = [];
-
-  function EditToolbar() {
+  function AddItemToolbar() {
     const handleClick = () => {
       setdgDialogOpen(true);
     };
@@ -379,15 +401,28 @@ export default function ItemGrid({
     );
   }
 
+  const demoRows: any = [
+    {
+      id: 1,
+      item: "Water Cooler",
+      quantity: 2,
+      unit: "Unit 1",
+      remarks: "test",
+    },
+  ];
+
+  const rejectedRowIds = [1, 3]; // Add the IDs you want to compare
+
+
   return (
     <>
-      <DataGrid
+      <StyledDataGrid
         columns={columns}
         rows={dgData ? dgData : []}
         disableRowSelectionOnClick
         slots={{
           noRowsOverlay: CustomNoRowsOverlay,
-          toolbar: EditToolbar as GridSlots["toolbar"],
+          toolbar: AddItemToolbar as GridSlots["toolbar"],
         }}
         sx={{
           "& .MuiDataGrid-columnHeaders": {
@@ -404,6 +439,11 @@ export default function ItemGrid({
             ? 70
             : 50
         }
+        getRowClassName={(params) =>
+          Object.keys(dgItemFormError).includes((params.row.id - 1).toString()) 
+              ? `super-app-theme--Rejected` 
+              : ""
+      }
       />
     </>
   );

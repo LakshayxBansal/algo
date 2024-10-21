@@ -174,84 +174,84 @@ export default function UpdateInputForm(props: {
   }
 
   const handleSubmit = async (formData: FormData) => {
-    let dt = new Date(formData.get("date") as string);
-    const date =
-      dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
-    dt = new Date(formData.get("next_action_date") as string);
-    const nextActionDate =
-      dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
+    // let dt = new Date(formData.get("date") as string);
+    // const date =
+    //   dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
+    // dt = new Date(formData.get("next_action_date") as string);
+    // const nextActionDate =
+    //   dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
 
-    const headerData = {
-      enq_number: formData.get("enq_number") as string,
-      date: date,
-      contact_id: selectValues.contact?.id,
-      received_by_id: selectValues.received_by?.id,
-      category_id: selectValues.category?.id,
-      source_id: selectValues.source?.id,
-      contact: selectValues.contact?.name,
-      received_by: selectValues.received_by?.name,
-      category: selectValues.category?.name,
-      source: selectValues.source?.name,
-      call_receipt_remark: (formData.get("call_receipt_remark") ??
-        "") as string,
-    };
-    let ledgerData = {
-      status_version: 0,
-      allocated_to_id: 0,
-      allocated_to: "",
-      date: date,
-      status_id: Number(formData.get("status")),
-      sub_status_id: selectValues.sub_status?.id,
-      sub_status: selectValues.sub_status?.name,
-      action_taken_id: selectValues.action_taken?.id,
-      action_taken: selectValues.action_taken?.name,
-      next_action_id: selectValues.next_action?.id,
-      next_action: selectValues.next_action?.name,
-      next_action_date: nextActionDate,
-      suggested_action_remark: (formData.get("suggested_action_remark") ??
-        "") as string,
-      action_taken_remark: (formData.get("action_taken_remark") ??
-        "") as string,
-      closure_remark: (formData.get("closure_remark") ?? "") as string,
-      enquiry_tran_type: 1,
-      active: 1,
-    };
+    // const headerData = {
+    //   enq_number: formData.get("enq_number") as string,
+    //   date: date,
+    //   contact_id: selectValues.contact?.id,
+    //   received_by_id: selectValues.received_by?.id,
+    //   category_id: selectValues.category?.id,
+    //   source_id: selectValues.source?.id,
+    //   contact: selectValues.contact?.name,
+    //   received_by: selectValues.received_by?.name,
+    //   category: selectValues.category?.name,
+    //   source: selectValues.source?.name,
+    //   call_receipt_remark: (formData.get("call_receipt_remark") ??
+    //     "") as string,
+    // };
+    // let ledgerData = {
+    //   status_version: 0,
+    //   allocated_to_id: 0,
+    //   allocated_to: "",
+    //   date: date,
+    //   status_id: Number(formData.get("status")),
+    //   sub_status_id: selectValues.sub_status?.id,
+    //   sub_status: selectValues.sub_status?.name,
+    //   action_taken_id: selectValues.action_taken?.id,
+    //   action_taken: selectValues.action_taken?.name,
+    //   next_action_id: selectValues.next_action?.id,
+    //   next_action: selectValues.next_action?.name,
+    //   next_action_date: nextActionDate,
+    //   suggested_action_remark: (formData.get("suggested_action_remark") ??
+    //     "") as string,
+    //   action_taken_remark: (formData.get("action_taken_remark") ??
+    //     "") as string,
+    //   closure_remark: (formData.get("closure_remark") ?? "") as string,
+    //   enquiry_tran_type: 1,
+    //   active: 1,
+    // };
 
-    const headerParsed = enquiryHeaderSchema.safeParse(headerData);
-    const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
-    let issues: ZodIssue[] = [];
-    if (headerParsed.success && ledgerParsed.success) {
-      result = await createEnquiry({
-        head: headerData,
-        ledger: ledgerData,
-        item: data,
-      });
-      if (result.status) {
-        const newVal = { id: result.data[0].id, name: result.data[0].name };
-        setSnackOpen(true);
-        setTimeout(function () {
-          location.reload();
-        }, 3000);
-      } else {
-        issues = result?.data;
-      }
-    } else {
-      if (!ledgerParsed.success) {
-        issues = [...ledgerParsed.error.issues];
-      }
-      if (!headerParsed.success) {
-        issues = [...issues, ...headerParsed.error.issues];
-      }
-    }
+    // const headerParsed = enquiryHeaderSchema.safeParse(headerData);
+    // const ledgerParsed = enquiryLedgerSchema.safeParse(ledgerData);
+    // let issues: ZodIssue[] = [];
+    // if (headerParsed.success && ledgerParsed.success) {
+    //   result = await createEnquiry({
+    //     head: headerData,
+    //     ledger: ledgerData,
+    //     item: data,
+    //   });
+    //   if (result.status) {
+    //     const newVal = { id: result.data[0].id, name: result.data[0].name };
+    //     setSnackOpen(true);
+    //     setTimeout(function () {
+    //       location.reload();
+    //     }, 3000);
+    //   } else {
+    //     issues = result?.data;
+    //   }
+    // } else {
+    //   if (!ledgerParsed.success) {
+    //     issues = [...ledgerParsed.error.issues];
+    //   }
+    //   if (!headerParsed.success) {
+    //     issues = [...issues, ...headerParsed.error.issues];
+    //   }
+    // }
 
-    if (issues.length > 0) {
-      // show error on screen
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      for (const issue of issues) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
-      }
-      setFormError(errorState);
-    }
+    // if (issues.length > 0) {
+    //   // show error on screen
+    //   const errorState: Record<string, { msg: string; error: boolean }> = {};
+    //   for (const issue of issues) {
+    //     errorState[issue.path[0]] = { msg: issue.message, error: true };
+    //   }
+    //   setFormError(errorState);
+    // }
   };
 
   async function getSubStatusforStatus(stateStr: string) {
