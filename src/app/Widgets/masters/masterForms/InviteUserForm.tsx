@@ -117,7 +117,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             Add Invite User
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -238,7 +238,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
           </Grid>
           <Grid item xs={12} sm={12} md={12} sx={{ mt: 3 }}>
                 <Grid container>
-                <Button onClick={handleCancel}>Cancel</Button>
+                <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
