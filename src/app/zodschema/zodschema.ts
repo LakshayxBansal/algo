@@ -763,5 +763,6 @@ export const inviteUserSchema = z
     id : z.number().optional(),
     description : z.string().min(1).max(255),
     executiveId : z.number().optional(),
-    fileBuffer : z.string().optional()
+    file : z.string().optional(),
+    docId : z.number().optional()
   }) 
