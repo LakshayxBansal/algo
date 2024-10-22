@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { docDescriptionSchemaT, masterFormPropsT, selectKeyValueT } from "@/app/models/models";
+import { docDescriptionSchemaT, masterFormPropsT, masterFormPropsWithDataT, selectKeyValueT } from "@/app/models/models";
 import { getItem, getItemById } from "@/app/controllers/item.controller";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { addDocument, updateDocument } from "@/app/controllers/executive.controller";
+// import { addDocument, updateDocument } from "@/app/controllers/executive.controller";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -29,14 +29,14 @@ const VisuallyHiddenInput = styled('input')({
     left: 0,
     whiteSpace: 'nowrap',
     width: 1,
-  });
+});
 
-export default function AddDocsForm(props: masterFormPropsT) {
+export default function AddDocsForm(props: any) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
     const [snackOpen, setSnackOpen] = React.useState(false);
-
+    const [file,setFile] = React.useState<FileList | null>(null);;
     const handleCancel = () => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
     };
@@ -44,48 +44,18 @@ export default function AddDocsForm(props: masterFormPropsT) {
     const handleSubmit = async (formData: FormData) => {
         let data: { [key: string]: any } = {}; // Initialize an empty object
 
-        for (const [key, value] of formData.entries()) {
-            data[key] = value;
-        }
-
+        data["description"] = formData.get("description");
+        data["document"] = file;
         console.log("data : ",data);
-        const result = await persistEntity(data as docDescriptionSchemaT);
-        if (result.status) {
-            const newVal = {
-              id: result.data[0].id,
-              name: result.data[0].name,
-            };
-            props.setDialogValue ? props.setDialogValue(newVal) : null;
-            setFormError({});
-            setSnackOpen(true);
-            setTimeout(() => {
-              props.setDialogOpen ? props.setDialogOpen(false) : null;
-            }, 1000);
-          } else {
-            const issues = result.data;
-            // show error on screen
-            const errorState: Record<string, { msg: string; error: boolean }> = {};
-            for (const issue of issues) {
-              for (const path of issue.path) {
-                errorState[path] = { msg: issue.message, error: true };
-              }
-            }
-            errorState["form"] = { msg: "Error encountered", error: true };
-            setFormError(errorState);
-          }
-        
+        props.setData
+            ? props.setData((prevData: any) => [
+                ...prevData,
+                { id: prevData.length + 1, ...data },
+            ])
+            : null;
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
     };
 
-    async function persistEntity(data : docDescriptionSchemaT) {
-        let result;
-        if (props.data) {
-          data["id"] = props.data.id;
-          result = await updateDocument(data);
-        } else {
-          result = await addDocument(data);
-        }
-        return result;
-      }
 
     const clearFormError = () => {
         setFormError((curr) => {
@@ -157,12 +127,12 @@ export default function AddDocsForm(props: masterFormPropsT) {
                             variant="contained"
                             tabIndex={-1}
                             startIcon={<CloudUploadIcon />}
-                            sx={{width: '200px', height: '35px'}}
+                            sx={{ width: '200px', height: '35px' }}
                         >
                             Upload files
                             <VisuallyHiddenInput
                                 type="file"
-                                onChange={(event) => console.log(event.target.files)}
+                                onChange={(event) => setFile(event.target.files ? event.target.files[0] as any : null)}
                                 multiple
                             />
                         </Button>

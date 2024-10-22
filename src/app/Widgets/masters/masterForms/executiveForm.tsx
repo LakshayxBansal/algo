@@ -105,6 +105,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
+
+  console.log("form data : ", data);
   function EditToolbar() {
 
     const handleClick = () => {
@@ -966,7 +968,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           </Box>
           {dialogOpen && (
           <AddDialog
-            title="Add Item to Item List"
+            title=""
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >

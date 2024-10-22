@@ -336,11 +336,12 @@ export async function getExecutiveColumnsDb(crmDb:string){
 
 export async function addDocumentDB(crmDb : string,data : docDescriptionSchemaT){
   try{
-    return excuteQuery({
+    const result = await excuteQuery({
       host:crmDb,
-      query:"select * from custom_fields_master where object_type_id =11",
-      values:""
+      query:"call addDocument(?,?,?);",
+      values:[data.description,data.docId,data.executiveId]
     });
+    console.log(result);
   }catch(e){
     logger.error(e);
   }
@@ -350,7 +351,7 @@ export async function updateDocumentDB(crmDb : string,data : docDescriptionSchem
   try{
     return excuteQuery({
       host:crmDb,
-      query:"select * from custom_fields_master where object_type_id =11",
+      query:"insert into executive_docs (description,doc_id,executive_id) values (?,?,?);",
       values:""
     });
   }catch(e){

@@ -356,128 +356,117 @@ export async function getExecutiveColumns() {
   }
 }
 
-export async function addDocument(data: mdl.docDescriptionSchemaT) {
-  let result;
-  try {
-    const session = await getSession();
-    if (session) {
-      const parsed = zs.docDescriptionSchema.safeParse(data);
+// export async function addDocument(data: mdl.docDescriptionSchemaT) {
+//   let result;
+//   try {
+//     const session = await getSession();
+//     if (session) {
+//       const parsed = zs.docDescriptionSchema.safeParse(data);
 
-      if (parsed.success) {
-        // check if invite needs to be sent
-        // if (data.crm_user === inviteSring) {
-        //   inviteResult = inviteUser(data as executiveSchemaT);
-        //   data.crm_map_id = 0;
-        // } else {
-        //   crm_map_id = await getCrmUserId(
-        //     session.user.dbInfo.dbName,
-        //     data.crm_user
-        //   );
-        //   data.crm_map_id = crm_map_id;
-        // }
-        // console.log("inviteResult", inviteResult);
-        // console.log("CRM", crm_map_id);
-        const dbResult = await addDocumentDB(
-          session.user.dbInfo.dbName,
-          data as mdl.docDescriptionSchemaT
-        );
+//       if (parsed.success) {
+//         // call api to upload document and return docId
+//         data["docId"] = 10;
+//         const dbResult = await addDocumentDB(
+//           session.user.dbInfo.dbName,
+//           data as mdl.docDescriptionSchemaT
+//         );
 
-        if (dbResult[0].length === 0) {
-          result = { status: true, data: dbResult[1] };
-        } else {
-          let errorState: { path: (string | number)[]; message: string }[] =
-            [];
-          dbResult[0].forEach((error: any) => {
-            errorState.push({
-              path: [error.error_path],
-              message: error.error_text,
-            });
-          });
-          result = {
-            status: false,
-            data: errorState,
-          };
-        }
-      } else {
-        let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
-          errorState.push({
-            path: issue.path,
-            message: issue.message,
-          });
-        }
-        result = { status: false, data: errorState };
-      }
-    } else {
-      result = {
-        status: false,
-        data: [{ path: ["form"], message: "Error: Server Error" }],
-      };
-    }
-    return result;
-  } catch (e: any) {
-    console.log(e);
-  }
-  result = {
-    status: false,
-    data: [{ path: ["form"], message: "Error: Unknown Error" }],
-  };
-  return result;
-}
+//         // if (dbResult[0].length === 0) {
+//           // result = { status: true, data: dbResult[1] };
+//         } else {
+//           let errorState: { path: (string | number)[]; message: string }[] =
+//             [];
+//           // dbResult[0].forEach((error: any) => {
+//             errorState.push({
+//               path: [error.error_path],
+//               message: error.error_text,
+//             });
+//           });
+//           result = {
+//             status: false,
+//             data: errorState,
+//           };
+//         }
+//       } else {
+//         let errorState: { path: (string | number)[]; message: string }[] = [];
+//         for (const issue of parsed.error.issues) {
+//           errorState.push({
+//             path: issue.path,
+//             message: issue.message,
+//           });
+//         }
+//         result = { status: false, data: errorState };
+//       }
+//     } else {
+//       result = {
+//         status: false,
+//         data: [{ path: ["form"], message: "Error: Server Error" }],
+//       };
+//     }
+//     return result;
+//   } catch (e: any) {
+//     console.log(e);
+//   }
+//   result = {
+//     status: false,
+//     data: [{ path: ["form"], message: "Error: Unknown Error" }],
+//   };
+//   return result;
+// }
 
-export async function updateDocument(data: mdl.docDescriptionSchemaT) {
-  let result;
-  try {
-    const session = await getSession();
-    if (session) {
-      const parsed = zs.docDescriptionSchema.safeParse(data);
+// export async function updateDocument(data: mdl.docDescriptionSchemaT) {
+//   let result;
+//   try {
+//     const session = await getSession();
+//     if (session) {
+//       const parsed = zs.docDescriptionSchema.safeParse(data);
 
-      if (parsed.success) {
-        const dbResult = await updateDocumentDB(
-          session.user.dbInfo.dbName,
-          data as mdl.docDescriptionSchemaT
-        );
+//       if (parsed.success) {
+//         const dbResult = await updateDocumentDB(
+//           session.user.dbInfo.dbName,
+//           data as mdl.docDescriptionSchemaT
+//         );
 
-        if (dbResult[0].length === 0) {
-          result = { status: true, data: dbResult[1] };
-        } else {
-          let errorState: { path: (string | number)[]; message: string }[] = [];
-          dbResult[0].forEach((error: any) => {
-            errorState.push({
-              path: [error.error_path],
-              message: error.error_text,
-            });
-          });
-          result = {
-            status: false,
-            data: errorState,
-          };
-        }
-      } else {
-        console.log(parsed.error.issues);
+//         if (dbResult[0].length === 0) {
+//           result = { status: true, data: dbResult[1] };
+//         } else {
+//           let errorState: { path: (string | number)[]; message: string }[] = [];
+//           dbResult[0].forEach((error: any) => {
+//             errorState.push({
+//               path: [error.error_path],
+//               message: error.error_text,
+//             });
+//           });
+//           result = {
+//             status: false,
+//             data: errorState,
+//           };
+//         }
+//       } else {
+//         console.log(parsed.error.issues);
 
-        let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
-          errorState.push({
-            path: issue.path,
-            message: issue.message,
-          });
-        }
-        result = { status: false, data: errorState };
-      }
-    } else {
-      result = {
-        status: false,
-        data: [{ path: ["form"], message: "Error: Server Error" }],
-      };
-    }
-    return result;
-  } catch (e: any) {
-    console.log(e);
-  }
-  result = {
-    status: false,
-    data: [{ path: ["form"], message: "Error: Unknown Error" }],
-  };
-  return result;
-}
+//         let errorState: { path: (string | number)[]; message: string }[] = [];
+//         for (const issue of parsed.error.issues) {
+//           errorState.push({
+//             path: issue.path,
+//             message: issue.message,
+//           });
+//         }
+//         result = { status: false, data: errorState };
+//       }
+//     } else {
+//       result = {
+//         status: false,
+//         data: [{ path: ["form"], message: "Error: Server Error" }],
+//       };
+//     }
+//     return result;
+//   } catch (e: any) {
+//     console.log(e);
+//   }
+//   result = {
+//     status: false,
+//     data: [{ path: ["form"], message: "Error: Unknown Error" }],
+//   };
+//   return result;
+// }
