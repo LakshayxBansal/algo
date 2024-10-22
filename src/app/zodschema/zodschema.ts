@@ -269,7 +269,8 @@ export const contactSchema = z.object({
   state_id: z.number().optional(),
   country_id: z.number().optional(),
   country: z.string().optional(),
-  city: z.string().max(75, "Field must contain at most 75 character(s)").optional()
+  city: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
+  stamp: z.number().optional()
 });
 
 export const areaSchema = z.object({
@@ -278,6 +279,7 @@ export const areaSchema = z.object({
     .string()
     .max(60, "Field must contain atmost 60 character(s)")
     .min(1, "Field must contain atleast 1 character(s)"),
+  stamp: z.number().optional()
 });
 
 export const stateListSchema = z.object({
@@ -561,6 +563,7 @@ export const countrySchema = z.object({
     .string()
     .max(45, "Field must contain at most 45 character(s)")
     .optional(),
+  stamp: z.number().optional()
 });
 
 export const stateSchema = z.object({

@@ -45,10 +45,13 @@ export default function AreaForm(props: masterFormPropsT) {
       // show error on screen
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
+        if(issue.path[0] === "refresh"){
+          errorState["form"] = { msg: issue.message, error: true};
+        }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -56,7 +59,7 @@ export default function AreaForm(props: masterFormPropsT) {
   async function persistEntity(data: areaSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
+      Object.assign(data, { id: props.data.id, stamp:props.data.stamp });
       result = await updateArea(data);
     } else {
       result = await createArea(data);
