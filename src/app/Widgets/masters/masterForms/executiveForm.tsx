@@ -2,12 +2,19 @@
 import React, { useEffect, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import { getInviteDetailByContact } from "@/app/controllers/user.controller";
+import { styled } from "@mui/material/styles";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -47,15 +54,46 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
-import { useRouter } from "next/navigation";
+import { DataGrid, GridActionsCellItem, GridColDef, GridRowId, GridSlots, GridToolbarContainer } from "@mui/x-data-grid";
+import { AddDialog } from "../addDialog";
+import AddDocsForm from "@/app/cap/admin/lists/executiveList/AddDocsForm";
+
+type ModifiedRowT = {
+  id?: number;
+  enquiry_id?: number;
+  item?: string;
+  item_id?: number;
+  quantity?: string;
+  unit?: string;
+  unit_id?: number;
+  remarks?: string;
+};
+
+const rows: any = [];
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [data, setData] = React.useState(rows);
+  const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [editMode, setEditMode] = useState<GridRowId | null>();
   const entityData: executiveSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
@@ -67,9 +105,159 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
-  const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
-  const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
- 
+  function EditToolbar() {
+
+    const handleClick = () => {
+      setDialogOpen(true);
+    };
+
+    return (
+      <GridToolbarContainer
+        sx={{ display: "flex", justifyContent: "space-between" }}
+      >
+        <Seperator>Document List</Seperator>
+        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+          Add Document
+        </Button>
+      </GridToolbarContainer>
+    );
+  }
+
+  const columns: GridColDef[] = [
+    {
+      field: "description",
+      headerName: "Description",
+      type: "string",
+      width: 150,
+      align: "left",
+      headerAlign: "left",
+      renderCell: (params) => {
+        if (editMode === params.row.id) {
+          return (
+            <InputControl
+              required
+              inputType={InputType.TEXT}
+              name="description"
+              id="description"
+              defaultValue={params.row.description}
+              error={formError?.description?.error}
+              helperText={formError?.description?.msg}
+              onChange={(e: any) => {
+                setModifiedRowData((prevState) => ({
+                  ...prevState,
+                  quantity: e.target.value,
+                }));
+              }}
+            />
+          );
+        }
+      },
+    },
+    {
+      field: "document",
+      headerName: "Document",
+      width: 150,
+      renderCell: (params) => {
+        if (editMode === params.row.id) {
+          return (
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload files
+              <VisuallyHiddenInput
+                type="file"
+                onChange={(event) => console.log(event.target.files)}
+                multiple
+              />
+            </Button>
+          );
+        }
+      },
+    },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 100,
+      getActions: (params) => {
+        if (editMode === params.row.id) {
+          return [
+            <GridActionsCellItem
+              key={params.row.id}
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={handleSaveClick}
+            />,
+            <GridActionsCellItem
+              key={params.row.id}
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            key={params.row.id}
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(params.row.id)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            key={params.row.id}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(params.row.id)}
+            color="inherit"
+          />,
+        ];
+      },
+    },
+  ];
+
+  const handleSaveClick = () => {
+    //save the data from modifiedRowData state into rows of data grid
+    if (data.length > 0) {
+      const updatedRows = data.map((row: any) =>
+        row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
+      );
+      setData(updatedRows);
+      setEditMode(null);
+    }
+  };
+
+  const handleDeleteClick = (id: GridRowId) => () => {
+    // Filter out the row with the matching id
+    if (data.length > 0) {
+      const updatedRows = data.filter((row: any) => row.id !== id);
+
+      // Update the data state with the filtered rows
+      setData(updatedRows);
+    }
+  };
+
+  const handleCancelClick = () => {
+    setEditMode(null);
+  };
+
+  const handleEditClick = (id: GridRowId) => () => {
+    setEditMode(id);
+    const selectedRowData = data.find((row: any) => row.id === id); // Find the corresponding row data
+    setModifiedRowData(selectedRowData); //Setting selected row data in modifiedRowData state
+  };
+
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
@@ -148,42 +336,95 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-      ? entityData.executive_group_id
-      : 0;
+        ? entityData.executive_group_id
+        : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-      ? entityData.role_id
-      : 0;
+        ? entityData.role_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-      ? entityData.crm_user_id
-      : 0;
+        ? entityData.crm_user_id
+        : 0;
     data.executive_dept_id = selectValues.department
       ? selectValues.department.id
       : entityData.executive_dept_id
-      ? entityData.executive_dept_id
-      : 0;
+        ? entityData.executive_dept_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
     return data;
   };
+
+  const StyledGridOverlay = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    "& .no-rows-primary": {
+      fill: "#3D4751",
+      ...theme.applyStyles("light", {
+        fill: "#AEB8C2",
+      }),
+    },
+    "& .no-rows-secondary": {
+      fill: "#1D2126",
+      ...theme.applyStyles("light", {
+        fill: "#E8EAED",
+      }),
+    },
+  }));
+
+  function CustomNoRowsOverlay() {
+    return (
+      <StyledGridOverlay>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          width={96}
+          viewBox="0 0 452 257"
+          aria-hidden
+          focusable="false"
+        >
+          <path
+            className="no-rows-primary"
+            d="M348 69c-46.392 0-84 37.608-84 84s37.608 84 84 84 84-37.608 84-84-37.608-84-84-84Zm-104 84c0-57.438 46.562-104 104-104s104 46.562 104 104-46.562 104-104 104-104-46.562-104-104Z"
+          />
+          <path
+            className="no-rows-primary"
+            d="M308.929 113.929c3.905-3.905 10.237-3.905 14.142 0l63.64 63.64c3.905 3.905 3.905 10.236 0 14.142-3.906 3.905-10.237 3.905-14.142 0l-63.64-63.64c-3.905-3.905-3.905-10.237 0-14.142Z"
+          />
+          <path
+            className="no-rows-primary"
+            d="M308.929 191.711c-3.905-3.906-3.905-10.237 0-14.142l63.64-63.64c3.905-3.905 10.236-3.905 14.142 0 3.905 3.905 3.905 10.237 0 14.142l-63.64 63.64c-3.905 3.905-10.237 3.905-14.142 0Z"
+          />
+          <path
+            className="no-rows-secondary"
+            d="M0 10C0 4.477 4.477 0 10 0h380c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 20 0 15.523 0 10ZM0 59c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 69 0 64.523 0 59ZM0 106c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 153c0-5.523 4.477-10 10-10h195.5c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 200c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 247c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10Z"
+          />
+        </svg>
+        <Box sx={{ mt: 2 }}>No Items Added</Box>
+      </StyledGridOverlay>
+    );
+  }
 
   async function getStatesforCountry(stateStr: string) {
     const country = selectValues.country?.name || entityData.country;
@@ -205,7 +446,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     name: string
   ) {
     let values = { ...selectValues };
-    values[name] = val? val : { id: 0, name: ""};
+    values[name] = val ? val : { id: 0, name: "" };
     if (name === "country") {
       values["state"] = {};
       setDefaultState(undefined);
@@ -213,7 +454,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       else setStateDisable(false);
       setStateKey(prev => 1-prev);
     }
-    if(name === "department") {
+    if (name === "department") {
       values["role"] = {};
       setDefaultRole(undefined);
       if(values.department.id === 0) setRoleDisable(true);
@@ -242,7 +483,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   };
 
 
-  
+
   return (
     <Box>
       <Box
@@ -356,7 +597,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   name: entityData.executive_dept,
                 } as optionsDataT
               }
-              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
               onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn={getExecutiveDept}
               fnFetchDataByID={getDeptById}
@@ -380,7 +621,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               }
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={defaultRole}
-              
+
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
               disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (roleDisable) ? true : false}
@@ -400,7 +641,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               label={"Executive Group"}
               width={210}
               dialogTitle={"Add Executive Group"}
-              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
               defaultValue={
                 {
                   id: entityData.executive_group_id,
@@ -460,7 +701,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  // isExecutive={true}
+                // isExecutive={true}
                 />
               )}
             />
@@ -654,7 +895,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 />
               )}
             />
-            
+
             <InputControl
               inputType={InputType.TEXT}
               name="city"
@@ -675,6 +916,32 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               helperText={formError?.pincode?.msg}
             />
           </Box>
+          {/* {enquiryMaintainItems && ( */}
+          <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
+            <Box
+              sx={{
+                height: 300,
+              }}
+            >
+              <DataGrid
+                columns={columns}
+                rows={data ? data : []}
+                disableRowSelectionOnClick
+                slots={{
+                  noRowsOverlay: CustomNoRowsOverlay,
+                  toolbar: EditToolbar as GridSlots["toolbar"],
+                }}
+                sx={{
+                  "& .MuiDataGrid-columnHeaders": {
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                      fontWeight: "bold",
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Grid>
+          {/* )} */}
           <Box
             sx={{
               display: "flex",
@@ -697,6 +964,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               Submit
             </Button>
           </Box>
+          {dialogOpen && (
+          <AddDialog
+            title="Add Item to Item List"
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <AddDocsForm
+              setDialogOpen={setDialogOpen}
+              setData={setData}
+            />
+          </AddDialog>
+        )}
         </form>
         <Snackbar
           open={snackOpen}
