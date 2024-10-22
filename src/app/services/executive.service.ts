@@ -18,7 +18,7 @@ export async function createExecutiveDB(
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -35,17 +35,32 @@ export async function createExecutiveDB(
         data.dob,
         data.doa,
         data.doj,
+        data.pan,
+        data.aadhaar,
         data.area_id,
-        data.call_type_id,
-        data.crm_map_id,
+        data.call_type,
+        data.crm_user_id,
         data.role_id,
         data.executive_dept_id,
         data.executive_group_id,
         session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
+    console.log('session.user.userId')
+    console.log("services : ",result);
     return result;
   } catch (e) {
+    console.log("service")
     console.log(e);
   }
   return null;

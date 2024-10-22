@@ -19,6 +19,7 @@ import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 import { getScreenDescription } from "./object.controller";
+import { modifyPhone } from "../utils/phoneUtils";
 
 const inviteSring = "Send Invite...";
 
@@ -26,8 +27,11 @@ export async function createExecutive(data: executiveSchemaT) {
   let result;
   try {
     const session = await getSession();
+
     if (session) {
-      const parsed = zs.executiveSchema.safeParse(data);
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
+      const parsed = zs.executiveSchema.safeParse(data);        
 
       if (parsed.success) {
         // check if invite needs to be sent
@@ -43,10 +47,12 @@ export async function createExecutive(data: executiveSchemaT) {
         // }
         // console.log("inviteResult", inviteResult);
         // console.log("CRM", crm_map_id);
+
           const dbResult = await createExecutiveDB(
             session,
             data as executiveSchemaT
           );
+          console.log("data",data);
 
           if (dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };

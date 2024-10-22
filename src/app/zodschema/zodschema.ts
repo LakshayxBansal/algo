@@ -260,7 +260,18 @@ export const executiveSchema = z
       z.string().min(10).regex(panRegEx, "Invalid PAN number!"),
     ]),
     aadhaar: z.union([z.literal(""), z.string().max(20)]),
-  })
+    c_col1: z.string().optional(),
+    c_col2: z.string().optional(),
+    c_col3: z.string().optional(),
+    c_col4: z.string().optional(),
+    c_col5: z.string().optional(),
+    c_col6: z.string().optional(),
+    c_col7: z.string().optional(),
+    c_col8: z.string().optional(),
+    c_col9: z.string().optional(),
+    c_col10: z.string().optional()
+  }
+)
   .refine(
     (schema) => {
       return !(schema.email === "" && schema.mobile === "");

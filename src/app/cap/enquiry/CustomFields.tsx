@@ -44,6 +44,18 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                         required={!!props.desc.is_mandatory}
                     />
                 );
+            case 3:
+                return (
+                    <InputControl
+                        id={props.desc.column_name_id}
+                        label={props.desc.column_label}
+                        inputType={InputType.TEXT}
+                        type="number"
+                        name={props.desc.column_name}
+                        fullWidth
+                        required={!!props.desc.is_mandatory}
+                    />
+                );
             case 4:
                 return (
                     <InputControl
@@ -78,8 +90,8 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                     <FormControl>
                         <RadioGroup
                             row
-                            name="option"
-                            id="option"
+                            name={props.desc.column_name}
+                            id={props.desc.column_name_id}
                             onChange={onStatusChange}
                         >
                             <FormControlLabel
