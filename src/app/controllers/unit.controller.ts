@@ -304,7 +304,7 @@ export async function delUnitById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const check = await checksIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
+      if(check[0]?.count>0){
         return ("Can't Be DELETED!");
       }
       else{

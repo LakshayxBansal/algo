@@ -42,11 +42,12 @@ export async function updateOrganisationDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
         data.name,
+        data.stamp,
         data.printName,
         data.pan,
         data.gstin,

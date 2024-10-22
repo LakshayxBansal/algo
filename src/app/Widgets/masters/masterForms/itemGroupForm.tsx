@@ -29,7 +29,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: itemGroupSchemaT = props.data ? props.data : {};
-  console.log("value in form", selectValues);
+  // console.log("value in form", selectValues);
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -45,7 +45,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
 
     const result = await persistEntity(data as itemGroupSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
@@ -56,12 +56,15 @@ export default function ItemGroupForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -82,6 +85,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
 
     if (props.data) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateItemGroup(data);
     } else {
       result = await createItemGroup(data);

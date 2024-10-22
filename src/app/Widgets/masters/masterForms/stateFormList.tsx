@@ -63,12 +63,15 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -77,7 +80,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
   async function persistEntity(data: stateListSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: entityData.id });   
+      Object.assign(data, { id: entityData.id, stamp: entityData.stamp });   
       result = await updateState(data);
     } else {     
       result = await createState(data);

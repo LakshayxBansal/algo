@@ -114,6 +114,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         const newVal = {
           id: result.data[0].id,
           name: result.data[0].name,
+          stamp: result.data[0].stamp,
         };
         // if(inviteId){
         //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
@@ -128,12 +129,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         const issues = result.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Error encountered", error: true };
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
+            if(path==="refresh"){
+              errorState["form"] = { msg: issue.message, error: true };
+            }
           }
         }
-        errorState["form"] = { msg: "Error encountered", error: true };
         setFormError(errorState);
       }
     } catch (error) {
@@ -220,6 +224,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateExecutive(data);
     } else {
       result = await createExecutive(data);
@@ -379,7 +384,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  parentData={selectValues.department.id}
+                  parentData={selectValues.department?.id || entityData.executive_dept_id}
                 />
               )}
             />
