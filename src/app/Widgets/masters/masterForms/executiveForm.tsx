@@ -498,6 +498,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.whatsapp?.error}
                 helperText={formError?.whatsapp?.msg}
                 defaultValue={entityData.whatsapp}
+                slotProps={{
+                  flagButton : {
+                    tabIndex: -1
+                  },
+                }}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { whatsapp, ...rest } = curr;

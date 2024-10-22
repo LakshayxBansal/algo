@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect, useRef } from "react";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Checkbox, { CheckboxProps } from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -67,6 +67,14 @@ type CustomControlProps<T> = BaseControlProps & T;
 export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", decPlaces,titleCase= false, ...props }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
   const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
+  const inputRef = useRef<HTMLDivElement | null>(null);
+
+  if (inputRef.current) {
+    const flagButton = inputRef.current.getElementsByClassName('MuiTelInput-IconButton')[0] as HTMLElement;
+    if (flagButton) {
+      flagButton.tabIndex = -1;
+    }
+  }
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     switch (inputType) {
@@ -207,10 +215,11 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
       // It's a phone input
       return (
         <MuiTelInput
+        ref={inputRef}
           defaultCountry="IN"
           {...props}
           value={value}
-          onChange={onPhoneChange}
+          onChange={onPhoneChange} 
         />
       );
       break;
