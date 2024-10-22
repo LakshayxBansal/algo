@@ -9,9 +9,12 @@ export async function getCompanyDetailsById(id: number) {
       host: "userDb",
       query:
         "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, \
-        s.name state, co.name country from company c\
-        left outer join crmapp.state_master s on c.state_id = s.id \
-        left outer join crmapp.country_master co on c.country_id = co.id \
+		    dh.host, dh.port, dbInfo.id dbInfoId, s.name state, co.name country, uc.role_id from company c\
+        left join state_master s on c.state_id = s.id \
+        left join country_master co on c.country_id = co.id \
+        left join userCompany uc on uc.company_id = c.id\
+        left join dbInfo on dbInfo.id = c.dbinfo_id\
+        left join dbHost dh on dh.id = dbInfo.host_id\
         where c.id=?;",
       values: [id],
     });
@@ -82,10 +85,17 @@ export async function createCompanyDB(
   return result;
 }
 
-export async function createTablesAndProc(dbName: string) {
+export async function createTablesAndProc(
+  dbName: string,
+  userId: number,
+  userName: string,
+  userEmail: string,
+  userMobile: string
+) {
   let result;
   try {
-    const scripts: string[] = dbTableAndProScript.split("~");
+    let scripts: string[] = dbTableAndProScript.split("~");
+    scripts.push(`INSERT INTO status_bar (user_id) VALUES (${userId});`);
     let data;
     for (let idx in scripts) {
       let query = scripts[idx];
@@ -95,6 +105,13 @@ export async function createTablesAndProc(dbName: string) {
         values: [],
       });
     }
+    data += await excuteQuery({
+      host: dbName,
+      query:
+        "INSERT INTO executive_master (name, email, mobile, created_by, created_on, crm_user_id, role_id) values\
+                (?, ?, ?, ?, now(), ?, 1);",
+      values: [userName, userEmail, userMobile, userId, userId],
+    });
     result = {
       status: true,
       data: data,
@@ -132,12 +149,34 @@ export async function createCompanyAndInfoDb(
         userId,
       ],
     });
-    console.log("result", result);
-
     return result;
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function dropCompanyDatabase(
+  dbName: string,
+  host: string,
+  port: number
+) {
+  let result;
+  try {
+    const data = await createDbConn({
+      hostIp: host,
+      hostPort: port,
+      query: "drop database " + dbName,
+    });
+    result = {
+      status: true,
+    };
+  } catch (e) {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
+  }
+  return result;
 }
 
 export async function dropDatabase(dbName: string) {
@@ -155,8 +194,7 @@ export async function dropDatabase(dbName: string) {
 
 export async function deleteCompanyAndDbInfo(
   companyId: number,
-  dbInfoId: number,
-  userCompanyId: number
+  dbInfoId: number
 ) {
   try {
     let result = await excuteQuery({
@@ -173,13 +211,14 @@ export async function deleteCompanyAndDbInfo(
 
     result += await excuteQuery({
       host: "userDb",
-      query: "DELETE FROM userCompany WHERE id = ?",
-      values: [userCompanyId],
+      query: "DELETE FROM userCompany WHERE company_id = ?",
+      values: [companyId],
     });
 
-    return result;
+    return { status: true };
   } catch (e) {
     console.log(e);
+    return { status: false, message: "Something went wrong." };
   }
 }
 
@@ -199,11 +238,11 @@ export async function getCompaniesDb(
     const results = await excuteQuery({
       host: "userDb",
       query:
-        "SELECT company_id id, companyName, companyAlias, dbinfo_id,\
+        "SELECT company_id id, companyName, companyAlias, dbinfo_id, total_count,\
          (SELECT u.name as userName FROM user u where u.id=createdBy) as createdBy, createdOn, \
           CONCAT(dbInfoName, dbInfoId) dbName, host, port, userId,roleId, RowNum as RowID \
           FROM (SELECT c.id as company_id, c.name as companyName, c.alias as companyAlias, c.dbinfo_id dbinfo_id,\
-          c.created_by createdBy, c.created_on createdOn,\
+          c.created_by createdBy, c.created_on createdOn, count(1) over () total_count,\
           h.host host, h.port port, d.name as dbInfoName, d.id as dbInfoId, u.id as userId,uc.role_id as roleId, ROW_NUMBER() OVER () AS RowNum \
           FROM userCompany as uc, \
           user u, \
@@ -213,7 +252,7 @@ export async function getCompaniesDb(
           uc.isAccepted = 1 and \
           uc.company_id = c.id and \
           c.dbinfo_id = d.id and \
-          d.host_id = h.id AND" +
+          d.host_id = h.id AND " +
         (filter ? "c.name LIKE CONCAT('%',?,'%') AND" : "") +
         " u.id=? \
           order by c.name) AS NumberedRows \
@@ -230,23 +269,19 @@ export async function getCompaniesDb(
 }
 
 export async function getCompanyCount(
-  userId: number,
-  value: string | undefined
+  userContact: string
 ) {
   try {
     return excuteQuery({
       host: "userDb",
       query:
         "Select count(*) as rowCount from \
-          company as c, \
           userCompany as uc, \
           user as u\
           where \
-          u.id=? and \
-          u.id = uc.user_id and \
-          uc.company_id = c.id" +
-        (value ? " and c.name LIKE CONCAT('%',?,'%')" : ""),
-      values: [userId, value],
+          u.contact = ? and \
+          u.id = uc.user_id",
+      values: [userContact],
     });
   } catch (e) {
     console.log(e);

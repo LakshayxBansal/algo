@@ -39,7 +39,7 @@ export default function organisation() {
         fnDeleteDataByID={delOrganisationById}
         customCols={columns}
         AddAllowed={true}
-        height="40em"
+        height = "60vh"
       ></EntityList>
     </>
   );

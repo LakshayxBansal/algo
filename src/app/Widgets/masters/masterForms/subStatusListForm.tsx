@@ -3,10 +3,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import {
-  createEnquirySubStatus,
-  updateEnquirySubStatus,
-} from "@/app/controllers/enquirySubStatus.controller";
+import { createEnquirySubStatus } from "@/app/controllers/enquirySubStatus.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
@@ -23,15 +20,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   enquirySubStatusMasterT,
   masterFormPropsWithDataT,
-  selectKeyValueT,
 } from "@/app/models/models";
+import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
 
 export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [status_id, setStatus] = useState<number>(1);
+  const [status_id, setStatus] = useState<number | undefined>(
+    props.data?.enquiry_status_id
+  );
   const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
 
   const handleSubmit = async (formData: FormData) => {
@@ -41,15 +40,21 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
       data[key] = value;
     }
 
-    data["status_id"] = status_id;
+    data["enquiry_status_id"] = status_id
+      ? status_id
+      : entityData.enquiry_status_id
+      ? entityData.enquiry_status_id
+      : 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -62,15 +67,15 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     }
   };
 
-  function onStatusChange(event: React.SyntheticEvent) {
-    setStatus(Number((event.target as HTMLInputElement).value));
+  function onStatusChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setStatus(Number(event.target.value));
   }
 
   async function persistEntity(data: enquirySubStatusMasterT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-      result = await updateEnquirySubStatus(data);
+      result = await updateEnquirySubStatusList(data);
     } else result = await createEnquirySubStatus(data);
     return result;
   }
@@ -100,7 +105,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Sub-Status" : "Add Sub-Status"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -124,8 +129,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="subStatusForm" sx={{ m: 2 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -139,7 +144,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                 row
                 name="status"
                 id="status"
-                defaultValue={1}
+                value={status_id}
                 onChange={onStatusChange}
               >
                 <FormControlLabel
@@ -147,32 +152,61 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                   control={<label />}
                   label="Status :"
                 />
-                <FormControlLabel value={1} control={<Radio />} label="Open" />
+                <FormControlLabel
+                  value={1}
+                  control={
+                    <Radio
+                      inputProps={{
+                        tabIndex: -1,
+                        "aria-label": "Open status",
+                      }}
+                    />
+                  }
+                  label="Open"
+                />
                 <FormControlLabel
                   value={2}
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      inputProps={{
+                        tabIndex: -1,
+                        "aria-label": "Closed status",
+                      }}
+                    />
+                  }
                   label="Closed"
                 />
               </RadioGroup>
             </FormControl>
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Sub-Status Name"
-              inputType={InputType.TEXT}
               name="name"
+              fullWidth
+              required
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

@@ -28,7 +28,6 @@ export default function SignupForm1(props: any) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inActiveUserId, setInActiveUserId] = useState<number | undefined>();
   const [signUpData, setSignUpData] = useState<userSchemaT>();
@@ -42,21 +41,23 @@ export default function SignupForm1(props: any) {
       setEmailElement(false);
       setContact("email");
       setFormError({});
+      setFormError({});
     } else {
       setEmailElement(true);
       setContact("phone");
       setFormError({});
+      setFormError({});
     }
   };
 
-  const handleDefault = (event : any) => {
+  const handleDefault = (event: any) => {
     event.preventDefault();
   };
 
   async function makeUserActiveAgain(userId: number | undefined) {
     try {
       await makeUserActive(userId);
-      router.push("/congrats");
+      router.push("/signin");
     } catch (error) {
       logger.info(error);
     } finally {
@@ -79,7 +80,7 @@ export default function SignupForm1(props: any) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setFormError({});
-      router.push("/congrats");
+      router.push("/signin");
     } else {
       // show error on screen
       const issues = result.data;
@@ -116,15 +117,6 @@ export default function SignupForm1(props: any) {
       await handleRegister(data as userSchemaT);
     }
   };
-
-  function onPhoneChange(
-    value: string,
-    data: {} | CountryData,
-    event: ChangeEvent<HTMLInputElement>,
-    formattedValue: string
-  ) {
-    setPhoneNumber(value);
-  }
 
   return (
     <Box
@@ -236,11 +228,13 @@ export default function SignupForm1(props: any) {
                   autoFocus
                   fullWidth
                   required
+                  titleCase = {true}
+                  autoComplete="off"
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
-                  onKeyDown={()=>{
+                  onKeyDown={() => {
                     setFormError((curr) => {
-                      const { name, ...rest} = curr;
+                      const { name, ...rest } = curr;
                       return rest;
                     });
                   }}
@@ -272,9 +266,10 @@ export default function SignupForm1(props: any) {
                     id="email"
                     label="Email Address"
                     name="email"
-                    onKeyDown={()=>{
+                    autoComplete="off"
+                    onKeyDown={() => {
                       setFormError((curr) => {
-                        const { email, ...rest} = curr;
+                        const { email, ...rest } = curr;
                         return rest;
                       });
                     }}
@@ -305,13 +300,19 @@ export default function SignupForm1(props: any) {
                     name="phone"
                     fullWidth
                     required
+                    autoComplete="off"
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
                     country={"in"}
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
                     disableDropdown={false}
-                    onkeydown={onPhoneChange}
+                    onKeyDown={() => {
+                      setFormError((curr) => {
+                        const { phone, ...rest } = curr;
+                        return rest;
+                      });
+                    }}
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "40px",
@@ -365,17 +366,18 @@ export default function SignupForm1(props: any) {
                       inputType={InputType.TEXT}
                       required
                       fullWidth
-                      onCopy={(event : any)=>handleDefault(event)}
-                      onPaste={(event : any)=>handleDefault(event)}
+                      onCopy={(event: any) => handleDefault(event)}
+                      onPaste={(event: any) => handleDefault(event)}
                       name="password"
                       label="Password"
                       type={!showPassword ? "password" : "text"}
                       id="password"
+                      autoComplete="off"
                       error={formError?.password?.error}
                       helperText={formError?.password?.msg}
-                      onKeyDown={()=>{
+                      onKeyDown={() => {
                         setFormError((curr) => {
-                          const { password, ...rest} = curr;
+                          const { password, ...rest } = curr;
                           return rest;
                         });
                       }}
@@ -414,8 +416,8 @@ export default function SignupForm1(props: any) {
                       helperText={formError?.repassword?.msg}
                       required
                       fullWidth
-                      onCopy={(event : any)=>handleDefault(event)}
-                      onPaste={(event : any)=>handleDefault(event)}
+                      onCopy={(event: any) => handleDefault(event)}
+                      onPaste={(event: any) => handleDefault(event)}
                       name="repassword"
                       label="Re-enter Password"
                       type={!showRePassword ? "password" : "text"}

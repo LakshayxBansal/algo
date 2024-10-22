@@ -34,6 +34,7 @@ export default function enquirySource() {
         fnDeleteDataByID={delEnquirySourceById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

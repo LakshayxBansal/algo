@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
-import { getInviteDetailByContact } from "@/app/controllers/inviteUser.controller";
+import { getInviteDetailByContact } from "@/app/controllers/user.controller";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -17,7 +17,7 @@ import {
   getExecutiveGroupById,
 } from "@/app/controllers/executiveGroup.controller";
 import { getBizAppUser } from "@/app/controllers/user.controller";
-import { insertExecutiveIdToInviteUser } from "@/app/controllers/inviteUser.controller";
+import { insertExecutiveIdToInviteUser } from "@/app/controllers/user.controller";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import ExecutiveRoleForm from "./executiveRoleForm";
@@ -26,7 +26,7 @@ import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
-import { getCountries, getStateById, getStates } from "@/app/controllers/masters.controller";
+import { getCountries, getCountryById, getStateById, getStates } from "@/app/controllers/masters.controller";
 import {
   getDeptById,
   getExecutiveDept,
@@ -38,6 +38,7 @@ import {
 import {
   executiveSchemaT,
   masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -48,7 +49,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
-export default function ExecutiveForm(props: masterFormPropsT) {
+export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -71,6 +72,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
 
+
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
     // dbResult = [{ id: 0, name: "Send invite..." }, ...dbResult];
@@ -81,6 +83,11 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   // function onDepartmentChange(event: React.SyntheticEvent, value: any) {
   //   setExecutiveDepartment(value);
   // }
+
+  // useEffect(()=>{setDefaultState({id: 0, name: ""} as optionsDataT)},[selectValues.country])
+
+  console.log("THIS IS DESC", props.desc);
+
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -97,9 +104,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
         data[key] = value;
       }
 
-      console.log("HERE IS YOUR DATA BABY", data);
-
-
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
       data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
@@ -112,7 +116,6 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       //   inviteId = invite.id;
       // }
       const result = await persistEntity(data as executiveSchemaT);
-
       if (result.status) {
         const newVal = {
           id: result.data[0].id,
@@ -186,7 +189,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
   };
 
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues.country?.name || entityData.country;
 
     const states = await getStates(stateStr, country);
     if (states.length > 0) {
@@ -684,7 +687,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props?.data ? "Update Executive" : "Add Executive"}
+            {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -736,7 +739,7 @@ export default function ExecutiveForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

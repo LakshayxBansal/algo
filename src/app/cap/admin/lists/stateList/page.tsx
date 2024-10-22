@@ -11,8 +11,13 @@ import StateFormList from "@/app/Widgets/masters/masterForms/stateFormList";
 
 const columns: GridColDef[] = [
   {
+    field: "Country_name",
+    headerName: "Country",
+    editable: true,
+  },
+  {
     field: "name",
-    headerName: "Name",
+    headerName: "State",
     editable: true,
   },
 ];
@@ -34,6 +39,7 @@ export default function State() {
         fnDeleteDataByID={delStateById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

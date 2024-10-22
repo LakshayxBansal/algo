@@ -12,6 +12,8 @@ import {
   insertUserIdInExecutiveDb,
   delExecutiveDetailsById,
   checkIfUsed,
+  getProfileDetailsById,
+  getExecutiveColumnsDb,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -20,6 +22,7 @@ import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 import { getScreenDescription } from "./object.controller";
 import { modifyPhone } from "../utils/phoneUtils";
+import { logger } from "../utils/logger.utils";
 
 const inviteSring = "Send Invite...";
 
@@ -31,7 +34,7 @@ export async function createExecutive(data: executiveSchemaT) {
     if (session) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
-      const parsed = zs.executiveSchema.safeParse(data);        
+      const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
         // check if invite needs to be sent
@@ -53,11 +56,12 @@ export async function createExecutive(data: executiveSchemaT) {
             data as executiveSchemaT
           );
           console.log("data",data);
+          console.log("BBRESULT",dbResult);
 
           if (dbResult[0].length === 0) {
             result = { status: true, data: dbResult[1] };
             if(dbResult[1][0].crm_user_id){
-              await mapUser(dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
+              await mapUser(true,dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
             }
           } else {
             let errorState: { path: (string | number)[]; message: string }[] =
@@ -105,6 +109,8 @@ export async function updateExecutive(data: executiveSchemaT) {
   try {
     const session = await getSession();
     if (session) {
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
@@ -116,7 +122,10 @@ export async function updateExecutive(data: executiveSchemaT) {
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           if(dbResult[1][0].crm_user_id){
-            await mapUser(dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
+            await mapUser(true,dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
+          }
+          if(data.prev_crm_user_id !==0 && dbResult[1][0].crm_user_id !== data.prev_crm_user_id){
+            await mapUser(false,data.prev_crm_user_id as number,0,session.user.dbInfo.id);
           }
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -216,6 +225,17 @@ export async function getExecutiveById(id: number) {
       return[
         desc
       ]
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getProfileById(id: number) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getProfileDetailsById(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;
@@ -328,5 +348,18 @@ export async function getExecutiveProfileImageByCrmUserId(crmUserId: number) {
     return null;
   } catch (error) {
     throw error;
+  }
+}
+
+export async function getExecutiveColumns(){
+  try{
+    const session = await getSession();
+    console.log("session", session);
+    if(session){
+      const result = await getExecutiveColumnsDb(session.user.dbInfo.dbName as string);
+      return result;
+    }
+  }catch(e){
+    logger.error(e);
   }
 }

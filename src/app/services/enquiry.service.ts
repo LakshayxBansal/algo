@@ -1,36 +1,44 @@
-"use server"
+"use server";
 
-import excuteQuery  from '../utils/db/db';
-import { enquiryHeaderSchemaT, enquiryLedgerSchemaT } from '@/app/models/models';
-import { Session } from 'next-auth';
+import excuteQuery from "../utils/db/db";
+import {
+  enquiryDataSchemaT,
+  enquiryHeaderSchemaT,
+  enquiryItemSchemaT,
+  enquiryLedgerSchemaT,
+} from "@/app/models/models";
+import { Session } from "next-auth";
 
-
-export async function createEnquiryDB(session: Session, enqData: { head: enquiryHeaderSchemaT, ledger:enquiryLedgerSchemaT } ) {
+export async function createEnquiryDB(
+  session: Session,
+  enqData: { headerLedger: enquiryDataSchemaT ; item: any }
+) {
   try {
-
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query:
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        enqData.head.enq_number,
-        enqData.head.date,
-        enqData.head.contact_id,
-        enqData.head.received_by_id,
-        enqData.head.category_id,
-        enqData.head.source_id,
-        enqData.ledger.allocated_to_id,
-        enqData.ledger.status_id,
-        enqData.ledger.sub_status_id,
-        enqData.ledger.action_taken_id,
-        enqData.ledger.next_action_id,
-        enqData.ledger.next_action_date,
-        enqData.ledger.enquiry_remark,
-        enqData.ledger.suggested_action_remark,
-        enqData.ledger.action_taken_remark,
-        enqData.ledger.closure_remark,
-        enqData.ledger.enquiry_tran_type,
-        1,
-        session.user.userId
+        enqData.headerLedger.enq_number,
+        enqData.headerLedger.date,
+        enqData.headerLedger.contact_id,
+        enqData.headerLedger.received_by_id,
+        enqData.headerLedger.category_id,
+        enqData.headerLedger.source_id,
+        enqData.headerLedger.call_receipt_remark,
+        enqData.headerLedger.allocated_to_id,
+        enqData.headerLedger.status_id,
+        enqData.headerLedger.sub_status_id,
+        enqData.headerLedger.action_taken_id,
+        enqData.headerLedger.next_action_id,
+        enqData.headerLedger.next_action_date,
+        enqData.headerLedger.suggested_action_remark,
+        enqData.headerLedger.action_taken_remark,
+        enqData.headerLedger.closure_remark,
+        enqData.headerLedger.enquiry_tran_type,
+        enqData.headerLedger.active,
+        session.user.userId,
+        enqData.item
       ],
     });
   } catch (e) {
@@ -39,10 +47,12 @@ export async function createEnquiryDB(session: Session, enqData: { head: enquiry
   return null;
 }
 
-export async function getEnquiryStatusList(crmDb: string, searchString: string) {
-
+export async function getEnquiryStatusList(
+  crmDb: string,
+  searchString: string
+) {
   try {
-    let query = 'select id as id, name as name from enquiry_status_master';
+    let query = "select id as id, name as name from enquiry_status_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -51,13 +61,110 @@ export async function getEnquiryStatusList(crmDb: string, searchString: string) 
     }
     const result = await excuteQuery({
       host: crmDb,
-      query: query, 
+      query: query,
       values: values,
     });
 
     return result;
-
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function showItemGridDB(crmDb: string) {
+  try {
+    let query =
+      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type="enquiry_support"';
+    let values: any[] = [];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getHeaderDataAction(session:Session , id:number){
+  try {
+    const result = await excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+        "SELECT h.*, \
+       cm.name AS contact_name, \
+       em.name AS received_by_name, \
+       ecm.name AS category_name, \
+       esm.name AS source_name, \
+       created.name AS created_by_name, \
+       modified.name AS modified_by_name \
+  FROM enquiry_header_tran h \
+  JOIN contact_master cm ON cm.id = h.contact_id \
+  JOIN executive_master em ON em.id = h.received_by_id \
+  JOIN enquiry_category_master ecm ON ecm.id = h.category_id \
+  JOIN enquiry_source_master esm ON esm.id = h.source_id \
+  JOIN executive_master created ON created.id = h.created_by \
+  LEFT JOIN executive_master modified ON modified.id = h.modified_by \
+  WHERE h.id = ?;",
+      values: [id],
+    });
+    return result;
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+export async function getLedgerDataAction(session:Session , id:number){
+  try {
+    const result = await excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+        "SELECT l.*, \
+       st.name AS status_name, \
+       sub_st.name AS sub_status_name, \
+       eam.name AS action_taken_name, \
+       next_action.name AS next_action_name, \
+       em2.name AS modified_by_name, \
+       em3.name AS created_by_name \
+  FROM enquiry_ledger_tran l \
+  JOIN enquiry_status_master st ON st.id = l.status_id \
+  JOIN enquiry_sub_status_master sub_st ON sub_st.id = l.sub_status_id \
+  LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id \
+  LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id \
+  LEFT JOIN executive_master em2 ON em2.id = l.modified_by \
+  JOIN executive_master em3 ON em3.id = l.created_by \
+  WHERE l.enquiry_id = ?;",
+      values: [id],
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+
+export async function getItemDataAction(session:Session, id:number){
+  try {
+    const result = await excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+      "SELECT i.*, im.name AS item_name, \
+      um.name AS unit_name \
+ FROM crmapp1.enquiry_item_tran i \
+ JOIN crmapp1.unit_master um ON um.id = i.unit_id \
+ JOIN crmapp1.item_master im ON im.id = i.item_id \
+ WHERE i.enquiry_id = ?;",
+      values: [id],
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    
   }
 }

@@ -5,6 +5,7 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import {
   createContactGroup,
+  getContactGroupById,
   updateContactGroup,
 } from "../../../controllers/contactGroup.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
@@ -50,8 +51,11 @@ export default function ContactGroupForm(props: masterFormPropsT) {
         name: result.data[0].name,
       };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      },1000);
+      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -104,12 +108,13 @@ export default function ContactGroupForm(props: masterFormPropsT) {
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
+          mt: 1
         }}
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Contact Group" : "Add Contact Group"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -133,11 +138,8 @@ export default function ContactGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )}
-        <form action={handleSubmit}>
+      <Box id="contactGroup" sx={{ mt: 2, p: 3 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -148,56 +150,72 @@ export default function ContactGroupForm(props: masterFormPropsT) {
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Group Name"
-              inputType={InputType.TEXT}
               name="name"
+              required
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
-              autoFocus
+              inputType={InputType.TEXT}
               id="alias"
               label="Alias"
-              inputType={InputType.TEXT}
               name="alias"
               defaultValue={entityData.alias}
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { alias, ...rest } = curr;
+                  return rest;
+                });
+              }}  
             />
             <SelectMasterWrapper
               name={"parent"}
               id={"parent"}
               label={"Parent Group"}
               width={210}
-              dialogTitle={"Add Parent Group"}
               defaultValue={
                 {
-                  id: entityData.parent_id,
+                  id: entityData.id,
                   name: entityData.parent,
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val })
+                setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
               }
+              dialogTitle={"Add Parent Group"}
               fetchDataFn={getContactGroup}
+              // fnFetchDataByID={getContactGroupById}
+              formError={formError?.parentgroup}
               allowNewAdd={false}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ContactGroupForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                />
-              )}
+              allowModify={false}
+              // renderForm={(fnDialogOpen, fnDialogValue) => (
+              //   <ContactGroupForm
+              //     setDialogOpen={fnDialogOpen}
+              //     setDialogValue={fnDialogValue}
+              //   />
+              // )}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

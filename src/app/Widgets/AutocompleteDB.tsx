@@ -39,28 +39,47 @@ type autocompleteDBT = {
   required?: boolean;
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
-  fnSetModifyMode: (id: string) => void,
-  disable?: boolean
+  fnSetModifyMode: (id: string) => void;
+  disable?: boolean;
+  defaultOptions?: optionsDataT[]
   //children: React.FunctionComponentElements
 };
 
 export function AutocompleteDB(props: autocompleteDBT) {
+  const filterOpts = async (opts: optionsDataT[], input: string) => {
+    return opts.filter(item => item.name.toLowerCase().includes(input ? input.toLowerCase() : ''));
+  }
+
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
-  const [options, setOptions] = useState<optionsDataT[]>([]);
+  const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(props.defaultOptions ? props.defaultOptions : []);
+  const [options, setOptions] = useState<optionsDataT[]>(defaultOpts);
   const width = props.width ? props.width : 300;
   const [valueChange, setvalueChange] = useState(true);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
   const [selectDefault, setSelectDefault] = useState(
     Boolean(props.defaultValue)
   );
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const getData = debounce(async (input) => {
-      const results = (await props.fetchDataFn(input)) as optionsDataT[];
+      let results
+
+      if (!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
+        results = (await props.fetchDataFn(props.defaultOptions ? '' : input)) as optionsDataT[]
+        if (props.diaglogVal.reloadOpts) {
+          setDefaultOpts(results)
+          props.setDialogVal({ ...props.diaglogVal, reloadOpts: false })
+          return
+        }
+      }
+      else {
+        results = await filterOpts(defaultOpts, input)
+      }
+
       setOptions([] as optionsDataT[]);
-      setLoading(false);
+      // setLoading(false);
       if (results) {
         if (autoSelect && inputValue === "") {
           props.setDialogVal(results[0]);
@@ -73,13 +92,13 @@ export function AutocompleteDB(props: autocompleteDBT) {
         props.setDialogVal(props.defaultValue as optionsDataT)
         setSelectDefault(false)
       } else {
-        setLoading(true)
+        // setLoading(true)
         getData(inputValue);
       }
     }
   }, [inputValue, autoSelect, open]);
 
-  // console.log("autocompletedb", options)
+  // console.log("autocompletedb",options)
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
@@ -106,7 +125,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       id={props.id}
       disabled={props.disable ? props.disable : false}
       options={options}
-      loading={loading}
+      // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
       renderOption={(p, option) => {
         const pWithKey = p as HTMLAttributes<HTMLLIElement> & { key: string }

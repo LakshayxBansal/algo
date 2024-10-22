@@ -14,6 +14,7 @@ import {
   createAllocationType,
   updateAllocationType,
 } from "@/app/controllers/allocationType.controller";
+import { setErrorMap } from "zod";
 
 export default function AllocationTypeMasterForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -30,20 +31,31 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      // for (const issue of issues) {
+      //   for (const path of issue.path) {
+      //     errorState[path] = { msg: issue.message, error: true };
+      //   }
+      // }
       for (const issue of issues) {
-        for (const path of issue.path) {
-          errorState[path] = { msg: issue.message, error: true };
-        }
+        errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
+      console.log(issues);
+      if(issues[0].path==="refresh"){
+        errorState["form"] = { msg: issues[0].message, error: true };
+      }
+      else {
+        errorState["form"] = { msg: "Error encountered", error: true };
+      }
       setFormError(errorState);
     }
   };
@@ -56,7 +68,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-
+      data["stamp"]=entityData.stamp;
       result = await updateAllocationType(data);
     } else result = await createAllocationType(data);
     return result;
@@ -70,11 +82,11 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper sx={{ width: "50%", margin: "auto", marginTop: "10rem" }}>
+    <Paper elevation={3} sx={{ mt: 2, p: 1 }} square={false}>
       <Box
         sx={{
           position: "sticky",
-          top: "0px",
+          top: "2px",
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
@@ -83,7 +95,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Allocation type" : "Add Allocation Type"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -107,35 +119,43 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box sx={{ mt: 2, mb: 1, p: 1 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(1, 1fr)",
             }}
           >
             <InputControl
+              inputType={InputType.TEXT}
               autoFocus
               id="name"
               label="Name"
-              inputType={InputType.TEXT}
               name="name"
-              defaultValue={props.data?.name}
+              required
               fullWidth
+              defaultValue={props.data?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
@@ -147,7 +167,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={3000}
+          autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}

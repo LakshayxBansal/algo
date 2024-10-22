@@ -39,6 +39,7 @@ export default function executiveGroup() {
         fnDeleteDataByID={delExecutiveGroupById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

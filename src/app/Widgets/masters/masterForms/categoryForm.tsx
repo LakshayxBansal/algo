@@ -87,7 +87,7 @@ export default function CategoryForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Category" : "Add Category"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -111,8 +111,8 @@ export default function CategoryForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box sx={{ mt: 2, mb: 1, p: 1 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -128,18 +128,26 @@ export default function CategoryForm(props: masterFormPropsT) {
               inputType={InputType.TEXT}
               name="name"
               fullWidth
+              required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={props.data?.name}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

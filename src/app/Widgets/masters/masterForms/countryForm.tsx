@@ -10,7 +10,7 @@ import Grid from "@mui/material/Grid";
 import { nameMasterData } from "@/app/zodschema/zodschema";
 import { masterFormPropsT, countrySchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -18,19 +18,23 @@ export default function CountryForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: countrySchemaT = props.data ? props.data : {};
 
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
-      alias: formData.get("alias") as string,
+      alias: formData.get("alias"),
     };
-    const result = await persistEntity(data);
+    const result = await persistEntity(data as countrySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -80,8 +84,8 @@ export default function CountryForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify Country" : "Add Country"}
-            <IconButton onClick={handleCancel}>
+            {props.data ? "Update Country" : "Add Country"}
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -105,7 +109,7 @@ export default function CountryForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -116,31 +120,47 @@ export default function CountryForm(props: masterFormPropsT) {
         >
           <InputControl
             autoFocus
+            inputType={InputType.TEXT}
             id="name"
             label="Country Name"
-            inputType={InputType.TEXT}
-            defaultValue={entityData.name}
             name="name"
+            required
+            fullWidth
+            defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }} 
           />
           <InputControl
+            inputType={InputType.TEXT}
             id="alias"
             label="Alias"
-            inputType={InputType.TEXT}
-            defaultValue={entityData.alias}
             name="alias"
+            fullWidth
+            defaultValue={entityData.alias}
             error={formError?.alias?.error}
             helperText={formError?.alias?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { alias, ...rest } = curr;
+                return rest;
+              });
+            }} 
           />
         </Box>
         <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            mt:2
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"
@@ -150,6 +170,13 @@ export default function CountryForm(props: masterFormPropsT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

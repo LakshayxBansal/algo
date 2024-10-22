@@ -49,7 +49,7 @@ const CustomButton = styled(Box)(({ theme }) => ({
     flexDirection: "row",
     flexWrap: "nowrap",
     height: "100%",
-    justifyContent: "space-between",
+    justifyContent: "center",
     width: "100%",
   },
   "& .contents": {
@@ -136,9 +136,9 @@ export function GoogleSignUpButton({
               <path fill="none" d="M0 0h48v48H0z"></path>
             </svg>
           </div>
-          <span className="contents"></span>
+          <span className="contents">{children} {provider.name}</span>
         </div>
-        {children} {provider.name}
+        {/* {children} {provider.name} */}
       </CustomButton>
     </div>
   );

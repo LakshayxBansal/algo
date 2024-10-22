@@ -7,21 +7,24 @@ import {
   delDepartmentById,
   getDepartmentById,
   getDepartmentByPage,
+  getDepartmentColumns,
 } from "@/app/controllers/department.controller";
 
 const columns: GridColDef[] = [
   {
     field: "name",
-    headerName: "Name",
+    headerName: "Department Name",
     editable: true,
   },
 ];
+
+// const reqcols = ["name"]
 
 export default function Department() {
   return (
     <>
       <EntityList
-        title="Department Master"
+        title="Department Master" // deprecated
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <DepartmentForm
             setDialogOpen={fnDialogOpen}
@@ -32,8 +35,11 @@ export default function Department() {
         fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         fnDeleteDataByID={delDepartmentById}
+        fnFetchColumns={getDepartmentColumns}
         customCols={columns}
-        AddAllowed={true}
+        AddAllowed={false}
+        uploadAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

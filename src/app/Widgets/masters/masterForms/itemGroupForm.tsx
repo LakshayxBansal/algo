@@ -5,6 +5,7 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import {
   createItemGroup,
+  getItemGroupById,
   updateItemGroup,
 } from "../../../controllers/itemGroup.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
@@ -28,6 +29,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: itemGroupSchemaT = props.data ? props.data : {};
+  console.log("value in form", selectValues);
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -36,19 +38,20 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
-    formData = updateFormData(formData);
-
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
+    formData = updateFormData(data);
 
     const result = await persistEntity(data as itemGroupSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -64,15 +67,11 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.append(
-      "itemGroup_id",
-      selectValues.parent
-        ? selectValues.parent.id
-        : entityData.parent_id
-        ? entityData.parent_id
-        : 0
-    );
-
+    data.parent_id = selectValues.parent
+      ? selectValues.parent.id
+      : entityData.parent_id
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -111,7 +110,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Item Group" : "Add Item Group"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -135,11 +134,8 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        {/* {formError?.form?.error && (
-          <p style={{ color: "red" }}>{formError?.form.msg}</p>
-        )} */}
-        <form action={handleSubmit}>
+      <Box id="itemGroupForm" sx={{ m: 2 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -150,23 +146,35 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Group Name"
-              inputType={InputType.TEXT}
               name="name"
+              required
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
-              autoFocus
+              inputType={InputType.TEXT}
               id="alias"
               label="Alias"
-              inputType={InputType.TEXT}
               name="alias"
               defaultValue={entityData.alias}
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { alias, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <SelectMasterWrapper
               name={"parent"}
@@ -176,15 +184,27 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               dialogTitle={"Add Parent Group"}
               defaultValue={
                 {
-                  id: entityData.parent_id,
-                  name: entityData.name,
+                  id: entityData.id,
+                  name: entityData.parent,
                 } as optionsDataT
               }
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val })
-              }
+              // defaultValue={
+              //   {
+              //     id: entityData.parent_id,
+              //     name: entityData.name,
+              //   } as optionsDataT
+              // }
+              onChange={(e, val, s) => {
+                setSelectValues({
+                  ...selectValues,
+                  parent: val ? val : { id: 0, name: "" },
+                });
+              }}
               fetchDataFn={getItemGroup}
+              fnFetchDataByID={getItemGroupById}
               allowNewAdd={false}
+              allowModify={false}
+              formError={formError?.parentgroup}
               renderForm={(fnDialogOpen, fnDialogValue) => (
                 <ItemGroupForm
                   setDialogOpen={fnDialogOpen}
@@ -199,7 +219,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

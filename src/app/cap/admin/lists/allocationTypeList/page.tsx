@@ -34,6 +34,7 @@ export default function AllocationType() {
         fnDeleteDataByID={delAllocationTypeById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

@@ -40,7 +40,7 @@ type selectMasterWrapperT = {
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
   disable?: boolean;
-  objectTypeID?: number
+  defaultOptions?: optionsDataT[]
 };
 
 enum dialogMode {
@@ -60,17 +60,11 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const allowModify = props.allowModify === false ? false : true;
 
 
-  async function getFormData() {
-    const desc = props.objectTypeID ? await getScreenDescription(props.objectTypeID) : [];
-    setDesc(desc);
-
-  }
-
-
   async function openDialog() {
     if (allowNewAdd) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
+        console.log("S.M.W", data[0]);
         setDesc(data[0]);
       }
       setDialogOpen(true);
@@ -78,6 +72,15 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     }
     // getDescriptionData();
   }
+
+  // this is a wrapper function to enable a call the the parent controls onchange
+  function changeDialogValue(val: optionsDataT) {
+    setDialogValue(val);
+    if (props.onChange) {
+      props.onChange(null, val, setDialogValue);
+    }
+  }
+
 
   async function onModifyDialog() {
     if (allowModify) {
@@ -114,6 +117,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             defaultValue={props.defaultValue}
             fnSetModifyMode={onModifyDialog}
             disable={props.disable}
+            defaultOptions={props.defaultOptions}
           />
           {!props.disable && (
             <IconButton tabIndex={-1} size="small">
@@ -168,8 +172,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
         >
           {props.renderForm
             ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, setDialogValue, desc)
-              : props.renderForm(setDialogOpen, setDialogValue, desc, modData)
+              ? props.renderForm(setDialogOpen, changeDialogValue, desc)
+              : props.renderForm(setDialogOpen, changeDialogValue, desc, modData)
             : 1}
         </AddDialog>
       )}

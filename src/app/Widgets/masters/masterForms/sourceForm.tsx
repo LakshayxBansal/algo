@@ -73,7 +73,7 @@ export default function SourceForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper>
+    <Paper elevation={3} sx={{ mt: 2, p: 1 }} square={false}> 
       <Box
         sx={{
           position: "sticky",
@@ -86,7 +86,7 @@ export default function SourceForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Source" : "Add Source"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -111,34 +111,42 @@ export default function SourceForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
-              width: 300,
+              columnGap: 3,
               rowGap: 1,
               gridTemplateColumns: "repeat(1, 1fr)",
             }}
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="source_master"
               label="Source Name"
-              inputType={InputType.TEXT}
               name="name"
+              required
+              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
-              fullWidth
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

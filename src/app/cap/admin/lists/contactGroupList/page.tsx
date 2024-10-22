@@ -34,6 +34,7 @@ export default function ContactGroup() {
         fnDeleteDataByID={delContactGroupById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

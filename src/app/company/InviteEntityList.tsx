@@ -1,7 +1,7 @@
 "use client"
 import { GridColDef, GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import EntityList from "../Widgets/masters/EntityList"
-import { acceptInvite, getInviteByUserContact, rejectInvite } from "../controllers/inviteUser.controller";
+import { acceptInvite, getInviteByUserContact, rejectInvite } from "../controllers/user.controller";
 import { Button } from "@mui/material";
 import { revalidatePage, redirectToPage } from "./SelectCompany";
 // import { useRouter } from "next/navigation";
@@ -60,18 +60,11 @@ async function handleReject(params: any) {
 export default function InviteEntityList() {
   return <>
     <EntityList
-      title="Invite List"
-      // renderForm={(fnDialogOpen, fnDialogValue, data) => (
-      //   <CreateCompany
-      //   setDialogOpen={fnDialogOpen}
-      //   setDialogValue={fnDialogValue}
-      //   data={data}
-      //   />
-      // )} 
+      title="Invite List" 
       fetchDataFn={getInviteByUserContact}
-      // fnFetchDataByID={getCompanyById}
       customCols={columns}
-      AddAllowed={false}>
+      AddAllowed={false}
+      height="40vh">
     </EntityList>
   </>
 }

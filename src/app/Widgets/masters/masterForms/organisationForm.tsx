@@ -1,18 +1,19 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import {
   createOrganisation,
   updateOrganisation,
 } from "../../../controllers/organisation.controller";
-import Grid from "@mui/material/Grid";
-import { getCountries } from "../../../controllers/masters.controller";
+import {
+  getCountries,
+  getCountryById,
+  getStateById,
+} from "../../../controllers/masters.controller";
 import { getStates } from "@/app/controllers/masters.controller";
-import { organisationSchema } from "@/app/zodschema/zodschema";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import CountryForm from "./countryForm";
-import StateForm from "./countryForm";
 import {
   masterFormPropsT,
   optionsDataT,
@@ -20,17 +21,31 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import StateForm from "./stateForm";
 
 export default function OrganisationForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
 
   const entityData: organisationSchemaT = props.data ? props.data : {};
+  const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
+    id: entityData.state_id,
+    name: entityData.state,
+  } as optionsDataT);
+  const [stateKey, setStateKey] = useState(0);
+  const [printNameFn, setPrintNameFn] = useState(entityData.printName);
+
+  const handlePrintNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPrintNameFn(event.target.value);
+  };
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -47,11 +62,12 @@ export default function OrganisationForm(props: masterFormPropsT) {
     const result = await persistEntity(data as organisationSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      setFormError({});
+      setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -67,8 +83,16 @@ export default function OrganisationForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.country_id = selectValues.country ? selectValues.country.id : 0;
-    data.state_id = selectValues.state ? selectValues.state.id : 0;
+    data.country_id = selectValues.country
+      ? selectValues.country.id
+      : entityData.country_id
+      ? entityData.country_id
+      : 0;
+    data.state_id = selectValues.state
+      ? selectValues.state.id
+      : entityData.state_id
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -85,7 +109,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
   }
 
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues.country?.name || entityData.country;
 
     const states = await getStates(stateStr, country);
     if (states.length > 0) {
@@ -93,16 +117,23 @@ export default function OrganisationForm(props: masterFormPropsT) {
     }
   }
 
-  function onSelectChange(
+  const onSelectChange = async (
     event: React.SyntheticEvent,
     val: any,
     setDialogValue: any,
     name: string
-  ) {
+  ) => {
     let values = { ...selectValues };
-    values[name] = val;
+    values[name] = val ? val : { id: 0, name: "" };
+
+    if (name === "country") {
+      values["state"] = {};
+      setDefaultState(undefined);
+      setStateKey((prev) => 1 - prev);
+      // values.state = null;
+    }
     setSelectValues(values);
-  }
+  };
 
   const clearFormError = () => {
     setFormError((curr) => {
@@ -124,8 +155,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Organsation" : "Add Organisation"}
-            <IconButton onClick={handleCancel}>
+            {props.data ? "Update Organisation" : "Add Organisation"}
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -150,8 +181,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="sourceForm" sx={{ m: 2 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -167,18 +198,33 @@ export default function OrganisationForm(props: masterFormPropsT) {
               label="Name"
               name="name"
               required
+              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              onChange={handlePrintNameChange}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               id="alias"
               label="Alias"
               name="alias"
+              fullWidth
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
               defaultValue={entityData.alias}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { alias, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
@@ -194,27 +240,48 @@ export default function OrganisationForm(props: masterFormPropsT) {
               id="printName"
               label="Print Name"
               name="printName"
+              fullWidth
               error={formError?.printName?.error}
               helperText={formError?.printName?.msg}
-              defaultValue={entityData.printName}
+              defaultValue={printNameFn}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { printName, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               id="pan"
               label="PAN"
               name="pan"
+              fullWidth
               error={formError?.pan?.error}
               helperText={formError?.pan?.msg}
               defaultValue={entityData.pan}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { pan, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               id="gstin"
               label="GSTIN"
               name="gstin"
+              fullWidth
               error={formError?.gstin?.error}
               helperText={formError?.gstin?.msg}
               defaultValue={entityData.gstin}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { gstin, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <InputControl
@@ -222,30 +289,48 @@ export default function OrganisationForm(props: masterFormPropsT) {
             label="Address Line 1"
             name="address1"
             id="address1"
+            fullWidth
             error={formError?.address1?.error}
             helperText={formError?.address1?.msg}
             defaultValue={entityData.address1}
-            fullWidth
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { address1, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           <InputControl
             inputType={InputType.TEXT}
             label="Address Line 2"
             name="address2"
             id="address2"
+            fullWidth
             error={formError?.address2?.error}
             helperText={formError?.address2?.msg}
             defaultValue={entityData.address2}
-            fullWidth
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { address2, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           <InputControl
             inputType={InputType.TEXT}
             label="Address Line 3"
             name="address3"
             id="address3"
+            fullWidth
             error={formError?.address3?.error}
             helperText={formError?.address3?.msg}
             defaultValue={entityData.address3}
-            fullWidth
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { address3, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           <Box
             sx={{
@@ -259,41 +344,43 @@ export default function OrganisationForm(props: masterFormPropsT) {
               name={"country"}
               id={"country"}
               label={"Country"}
-              width={210}
               dialogTitle={"Add country"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
               fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
               defaultValue={
                 {
                   id: entityData.country_id,
                   name: entityData.country,
                 } as optionsDataT
               }
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <CountryForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
             />
             <SelectMasterWrapper
+              key={stateKey}
               name={"state"}
               id={"state"}
               label={"State"}
-              width={210}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+              disable={
+                selectValues.country || entityData.country_id ? false : true
+              }
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
-              defaultValue={
-                {
-                  id: entityData.state_id,
-                  name: entityData.state,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              fnFetchDataByID={getStateById}
+              defaultValue={defaultState}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.country?.id || entityData.country_id}
                 />
               )}
             />
@@ -302,27 +389,44 @@ export default function OrganisationForm(props: masterFormPropsT) {
               name="city"
               id="city"
               label="City"
+              fullWidth
               error={formError?.city?.error}
               helperText={formError?.city?.msg}
               defaultValue={entityData.city}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { city, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <InputControl
               inputType={InputType.TEXT}
               name="pincode"
               id="pincode"
               label="Pin Code"
+              fullWidth
               error={formError?.pincode?.error}
               helperText={formError?.pincode?.msg}
               defaultValue={entityData.pincode}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { pincode, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
@@ -332,6 +436,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
       </Box>
     </>
   );

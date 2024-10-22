@@ -8,6 +8,8 @@ import {
   getEnquiryActionByPage,
 } from "@/app/controllers/enquiryAction.controller";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
+import UploadFile from "@/app/Widgets/masters/UploadFileForm";
+import { createContactsBatch } from "@/app/controllers/contact.controller";
 
 const columns: GridColDef[] = [
   {
@@ -29,11 +31,15 @@ export default function Action() {
             data={data}
           />
         )}
+        fileUploadFeatureReqd={true} 
+        fnFileUpad={createContactsBatch} 
+        sampleFileName=""
         fetchDataFn={getEnquiryActionByPage}
         fnFetchDataByID={getActionById}
         fnDeleteDataByID={delActionById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

@@ -7,7 +7,6 @@ import {
   createExecutiveDept,
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
-import Grid from "@mui/material/Grid";
 import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
 import { Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
@@ -35,10 +34,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       setSnackOpen(true);
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
+      setFormError({});
+      setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
-      setFormError({});
     } else {
       const issues = result.data;
       // show error on screen
@@ -90,8 +90,8 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Department" : "Add Department"}
-            <IconButton onClick={handleCancel}>
+            {props.data ? "Update Executive Department" : "Add Executive Department"}
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -115,7 +115,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -125,23 +125,32 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           }}
         >
           <InputControl
+            inputType={InputType.TEXT}
             autoFocus
             id="name"
             label="Executive Dept Name"
-            inputType={InputType.TEXT}
             name="name"
+            fullWidth
+            required
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
             defaultValue={entityData.name}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
         </Box>
         <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            mt: 2
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"

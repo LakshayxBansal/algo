@@ -7,7 +7,6 @@ import {
   createDepartment,
   updateDepartment,
 } from "../../../controllers/department.controller";
-import Grid from "@mui/material/Grid";
 import { nameMasterDataT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
@@ -86,7 +85,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Department" : "Add Department"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -110,34 +109,43 @@ export default function DepartmentForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="departmentForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="departmentForm" sx={{  mt: 2, mb: 1, p: 1 }}>
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
               columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(1, 1fr)",
             }}
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Department Name"
-              inputType={InputType.TEXT}
               name="name"
+              fullWidth
+              required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

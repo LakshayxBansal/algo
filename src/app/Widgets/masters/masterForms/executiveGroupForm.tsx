@@ -22,7 +22,7 @@ import {
 import { SelectMasterWrapper } from "../../masters/selectMasterWrapper";
 import Seperator from "../../seperator";
 import StateForm from "./stateForm";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -30,9 +30,11 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveGroupSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
+  console.log(selectValues);
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -43,9 +45,12 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
     const result = await persistEntity(data as executiveGroupSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(() => {
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -61,7 +66,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent ? selectValues.parent.id : 0;
+    data.parent_id = selectValues.parent ? selectValues.parent.id : entityData.parent_id? entityData.parent_id: 0;
     return data;
   };
 
@@ -100,8 +105,8 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify Executive Group" : "Add Executive Group"}
-            <IconButton onClick={handleCancel}>
+            {props.data ? "Update Executive Group" : "Add Executive Group"}
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -125,7 +130,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
+      <form action={handleSubmit} noValidate>
         <Box
           sx={{
             display: "grid",
@@ -140,19 +145,33 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             label="Executive Group Name"
             inputType={InputType.TEXT}
             name="name"
+            fullWidth
+            required
             defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           <InputControl
-            autoFocus
+            inputType={InputType.TEXT}
             id="alias"
             label="Alias"
-            inputType={InputType.TEXT}
             name="alias"
+            fullWidth
             defaultValue={entityData.alias}
             error={formError?.alias?.error}
-            helperText={formError?.name?.msg}
+            helperText={formError?.alias?.msg}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { alias, ...rest } = curr;
+                return rest;
+              });
+            }}
           />
           {/* <AutocompleteDB<optionsDataT>
           name={"parentgroup"}
@@ -169,7 +188,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             label={"Parent Executive Group"}
             width={210}
             onChange={(e, val, s) =>
-              setSelectValues({ ...selectValues, parent: val })
+              setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
             }
             dialogTitle={"Parent Executive Group"}
             fetchDataFn={getExecutiveGroup}
@@ -197,7 +216,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             justifyContent: "flex-end",
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"
@@ -207,6 +226,13 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

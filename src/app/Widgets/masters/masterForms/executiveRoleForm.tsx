@@ -7,8 +7,8 @@ import {
   getExecutiveRole,
   createExecutiveRole,
   updateExecutiveRole,
+  getExecutiveRoleById,
 } from "@/app/controllers/executiveRole.controller";
-import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
@@ -92,7 +92,11 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parentRole ? selectValues.parentRole.id : 0;
+    data.parent_id = selectValues.parentRole
+      ? selectValues.parentRole.id
+      : entityData.parent_id
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -131,8 +135,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Role" : "Add Role"}
-            <IconButton onClick={handleCancel}>
+            {entityData.id ? "Update Executive Role" : "Add Executive Role"}
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -156,8 +160,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit}>
+      <Box id="executiveRole">
+        <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
@@ -168,35 +172,49 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
           >
             <InputControl
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
               label="Executive Role Name"
-              inputType={InputType.TEXT}
               name="name"
+              required
+              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
             <SelectMasterWrapper
               name={"parentrole"}
               id={"parentrole"}
               label={"Parent Executive Role"}
-              width={210}
               dialogTitle={"Add Executive Role"}
               fetchDataFn={getExecutiveRole}
+              fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
-                  id: entityData.parent_id,
+                  id: entityData.id,
                   name: entityData.parentRole,
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parentRole: val })
+                setSelectValues({
+                  ...selectValues,
+                  parentRole: val ? val : { id: 0, name: "" },
+                })
               }
               allowNewAdd={false}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
+              allowModify={false}
+              renderForm={(fnDialogOpen, fnDialogValue, data, parentData) => (
                 <ExecutiveRoleForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.parent?.parent_id}
                 />
               )}
             />
@@ -205,9 +223,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

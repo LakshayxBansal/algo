@@ -82,6 +82,7 @@ export default function AutoGrid(props: any) {
 
   const handleRefresh = () => {
     setRefresh(!refresh)
+    setRowSelectionModel([]);
   };
 
   useEffect(() => {
@@ -790,7 +791,6 @@ export default function AutoGrid(props: any) {
                     size="small"
                     sx={{
                       textTransform: "none",
-                      margin: "0 0.5vw",
                     }}
                     onClick={() => setDialogOpen(true)}
                     disabled={!enableAllocate}
@@ -803,8 +803,9 @@ export default function AutoGrid(props: any) {
                 variant="contained"
                 size="small"
                 sx={{ textTransform: "none" }}
+                disabled={!selectedRow}
               >
-                Feed Report
+                Status Update
               </ContainedButton>
             </Box>
           </Grid>
@@ -876,12 +877,12 @@ export default function AutoGrid(props: any) {
             columnGap: 3,
           }}
         >
-          <Grid container alignItems="center" justifyContent="space-between" marginTop={2} >
-            <Grid item xs={12} sm={10} md={4}>
+          <Grid container alignItems="center" justifyContent="space-between" marginTop={2}>
+            <Grid item xs={12} sm={5} md={4}>
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{ margin: "0 1vw", textTransform: "none" }}
+                sx={{ mr: "1vw", ml: "0.3vw", textTransform: "none" }}
                 onClick={() => setDetails(!details)}
               >
                 {details ? "Hide Details" : "Show Details"}
@@ -894,7 +895,7 @@ export default function AutoGrid(props: any) {
                 </Link>
               </ContainedButton>
             </Grid>
-            <Grid item xs={10} sm={10} md={1}>
+            <Grid item xs={10} sm={1} md={1}>
               <ContainedButton
                 variant="contained"
                 size="small"
