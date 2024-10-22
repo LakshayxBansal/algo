@@ -17,6 +17,7 @@ export type inviteUserSchemaT = z.infer<typeof zs.inviteUserSchema>;
 export type companySchemaT = z.infer<typeof zs.companySchema>;
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
+export type docDescriptionSchemaT = z.infer<typeof zs.docDescriptionSchema>;
 
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 

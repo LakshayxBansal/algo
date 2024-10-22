@@ -14,6 +14,8 @@ import {
   checkIfUsed,
   getProfileDetailsById,
   getExecutiveColumnsDb,
+  addDocumentDB,
+  updateDocumentDB,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -48,30 +50,31 @@ export async function createExecutive(data: executiveSchemaT) {
         // }
         // console.log("inviteResult", inviteResult);
         // console.log("CRM", crm_map_id);
-          const dbResult = await createExecutiveDB(
-            session,
-            data as executiveSchemaT
-          );
+        const dbResult = await createExecutiveDB(
+          session,
+          data as executiveSchemaT
+        );
 
-          if (dbResult[0].length === 0) {
-            result = { status: true, data: dbResult[1] };
-            if(dbResult[1][0].crm_user_id){
-              await mapUser(true,dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
-            }
-          } else {
-            let errorState: { path: (string | number)[]; message: string }[] =
-              [];
-            dbResult[0].forEach((error: any) => {
-              errorState.push({
-                path: [error.error_path],
-                message: error.error_text,
-              });
-            });
-            result = {
-              status: false,
-              data: errorState,
-            };
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+          if (dbResult[1][0].crm_user_id) {
+            await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
           }
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] =
+            [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
         for (const issue of parsed.error.issues) {
@@ -116,11 +119,11 @@ export async function updateExecutive(data: executiveSchemaT) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          if(dbResult[1][0].crm_user_id){
-            await mapUser(true,dbResult[1][0].crm_user_id,dbResult[1][0].role_id,session.user.dbInfo.id);
+          if (dbResult[1][0].crm_user_id) {
+            await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
           }
-          if(data.prev_crm_user_id !==0 && dbResult[1][0].crm_user_id !== data.prev_crm_user_id){
-            await mapUser(false,data.prev_crm_user_id as number,0,session.user.dbInfo.id);
+          if (data.prev_crm_user_id !== 0 && dbResult[1][0].crm_user_id !== data.prev_crm_user_id) {
+            await mapUser(false, data.prev_crm_user_id as number, 0, session.user.dbInfo.id);
           }
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -252,8 +255,8 @@ export async function delExecutiveById(id: number) {
         return "Can't Be DELETED!";
       } else {
         const mappedUser = await getExecutiveById(id);
-        if(mappedUser[0].crm_user_id){
-          await mapUser(false,mappedUser[0].crm_user_id,0,session.user.dbInfo.id);
+        if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
+          await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
         }
         const result = await delExecutiveDetailsById(
           session.user.dbInfo.dbName,
@@ -340,15 +343,141 @@ export async function getExecutiveProfileImageByCrmUserId(crmUserId: number) {
   }
 }
 
-export async function getExecutiveColumns(){
-  try{
+export async function getExecutiveColumns() {
+  try {
     const session = await getSession();
     console.log("session", session);
-    if(session){
+    if (session) {
       const result = await getExecutiveColumnsDb(session.user.dbInfo.dbName as string);
       return result;
     }
-  }catch(e){
+  } catch (e) {
     logger.error(e);
   }
+}
+
+export async function addDocument(data: mdl.docDescriptionSchemaT) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = zs.docDescriptionSchema.safeParse(data);
+
+      if (parsed.success) {
+        // check if invite needs to be sent
+        // if (data.crm_user === inviteSring) {
+        //   inviteResult = inviteUser(data as executiveSchemaT);
+        //   data.crm_map_id = 0;
+        // } else {
+        //   crm_map_id = await getCrmUserId(
+        //     session.user.dbInfo.dbName,
+        //     data.crm_user
+        //   );
+        //   data.crm_map_id = crm_map_id;
+        // }
+        // console.log("inviteResult", inviteResult);
+        // console.log("CRM", crm_map_id);
+        const dbResult = await addDocumentDB(
+          session.user.dbInfo.dbName,
+          data as mdl.docDescriptionSchemaT
+        );
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] =
+            [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({
+            path: issue.path,
+            message: issue.message,
+          });
+        }
+        result = { status: false, data: errorState };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e: any) {
+    console.log(e);
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function updateDocument(data: mdl.docDescriptionSchemaT) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session) {
+      const parsed = zs.docDescriptionSchema.safeParse(data);
+
+      if (parsed.success) {
+        const dbResult = await updateDocumentDB(
+          session.user.dbInfo.dbName,
+          data as mdl.docDescriptionSchemaT
+        );
+
+        if (dbResult[0].length === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          result = {
+            status: false,
+            data: errorState,
+          };
+        }
+      } else {
+        console.log(parsed.error.issues);
+
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({
+            path: issue.path,
+            message: issue.message,
+          });
+        }
+        result = { status: false, data: errorState };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (e: any) {
+    console.log(e);
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
 }

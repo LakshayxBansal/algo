@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT, selectKeyValueT } from "@/app/models/models";
+import { docDescriptionSchemaT, masterFormPropsT, selectKeyValueT } from "@/app/models/models";
 import { getItem, getItemById } from "@/app/controllers/item.controller";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { addDocument, updateDocument } from "@/app/controllers/executive.controller";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -34,7 +35,6 @@ export default function AddDocsForm(props: masterFormPropsT) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
-    const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
     const [snackOpen, setSnackOpen] = React.useState(false);
 
     const handleCancel = () => {
@@ -48,48 +48,44 @@ export default function AddDocsForm(props: masterFormPropsT) {
             data[key] = value;
         }
 
-        formData = updateFormData(data);
-        const parsed = zs.itemToListFormSchema.safeParse(data);
-        if (parsed.success) {
-            props.setData
-                ? props.setData((prevData: any) => [
-                    ...prevData,
-                    { id: prevData.length + 1, ...data },
-                ])
-                : null;
-            setTimeout(() => {
-                props.setDialogOpen ? props.setDialogOpen(false) : null;
-            }, 1000);
+        console.log("data : ",data);
+        const result = await persistEntity(data as docDescriptionSchemaT);
+        if (result.status) {
+            const newVal = {
+              id: result.data[0].id,
+              name: result.data[0].name,
+            };
+            props.setDialogValue ? props.setDialogValue(newVal) : null;
             setFormError({});
             setSnackOpen(true);
-        } else {
-            const issues = parsed.error.issues;
+            setTimeout(() => {
+              props.setDialogOpen ? props.setDialogOpen(false) : null;
+            }, 1000);
+          } else {
+            const issues = result.data;
+            // show error on screen
             const errorState: Record<string, { msg: string; error: boolean }> = {};
             for (const issue of issues) {
-                for (const path of issue.path) {
-                    errorState[path] = { msg: issue.message, error: true };
-                }
+              for (const path of issue.path) {
+                errorState[path] = { msg: issue.message, error: true };
+              }
             }
+            errorState["form"] = { msg: "Error encountered", error: true };
             setFormError(errorState);
+          }
+        
+    };
+
+    async function persistEntity(data : docDescriptionSchemaT) {
+        let result;
+        if (props.data) {
+          data["id"] = props.data.id;
+          result = await updateDocument(data);
+        } else {
+          result = await addDocument(data);
         }
-    };
-
-    const updateFormData = (data: any) => {
-        data.item_id = selectValues.item_id ? selectValues.item_id : 0;
-        data.unit_id = selectValues.unit_id ? selectValues.unit_id : 0;
-        return data;
-    };
-
-    function onSelectChange(
-        event: React.SyntheticEvent,
-        val: any,
-        setDialogValue: any,
-        name: string
-    ) {
-        let values = { ...selectValues };
-        values[`${name}_id`] = val.id;
-        setSelectValues(values);
-    }
+        return result;
+      }
 
     const clearFormError = () => {
         setFormError((curr) => {
@@ -161,7 +157,7 @@ export default function AddDocsForm(props: masterFormPropsT) {
                             variant="contained"
                             tabIndex={-1}
                             startIcon={<CloudUploadIcon />}
-                            sx={{maxWidth: '150px', maxHeight: '35px', minWidth: '150px', minHeight: '35px'}}
+                            sx={{width: '200px', height: '35px'}}
                         >
                             Upload files
                             <VisuallyHiddenInput

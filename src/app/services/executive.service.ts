@@ -1,7 +1,7 @@
 "use server";
 
 import excuteQuery from "../utils/db/db";
-import { executiveSchemaT } from "../models/models";
+import { docDescriptionSchemaT, executiveSchemaT } from "../models/models";
 import { Session } from "next-auth";
 import { logger } from "../utils/logger.utils";
 
@@ -323,6 +323,30 @@ export async function insertUserIdInExecutiveDb(
 }
 
 export async function getExecutiveColumnsDb(crmDb:string){
+  try{
+    return excuteQuery({
+      host:crmDb,
+      query:"select * from custom_fields_master where object_type_id =11",
+      values:""
+    });
+  }catch(e){
+    logger.error(e);
+  }
+}
+
+export async function addDocumentDB(crmDb : string,data : docDescriptionSchemaT){
+  try{
+    return excuteQuery({
+      host:crmDb,
+      query:"select * from custom_fields_master where object_type_id =11",
+      values:""
+    });
+  }catch(e){
+    logger.error(e);
+  }
+}
+
+export async function updateDocumentDB(crmDb : string,data : docDescriptionSchemaT){
   try{
     return excuteQuery({
       host:crmDb,
