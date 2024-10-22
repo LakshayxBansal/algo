@@ -192,3 +192,4 @@ export type getUnitT = [
 ];
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
+export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
