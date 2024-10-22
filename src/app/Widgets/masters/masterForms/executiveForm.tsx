@@ -47,8 +47,10 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
+import { useRouter } from "next/navigation";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
+  const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -65,8 +67,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
-
-
+  const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
+  const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
+ 
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
@@ -206,11 +209,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     if (name === "country") {
       values["state"] = {};
       setDefaultState(undefined);
+      if(values.country.id === 0) setStateDisable(true);
+      else setStateDisable(false);
       setStateKey(prev => 1-prev);
     }
     if(name === "department") {
       values["role"] = {};
       setDefaultRole(undefined);
+      if(values.department.id === 0) setRoleDisable(true);
+      else setRoleDisable(false);
       setRoleKey(prev => 1-prev);
     }
     setSelectValues(values);
@@ -247,14 +254,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           bgcolor: "white",
         }}
       >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
+        {
+          props.parentData ? (<></>) : (
+            <Seperator>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              {props.data ? "Update Executive" : "Add Executive"}
+              <IconButton onClick={handleCancel} tabIndex={-1}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Seperator>
+          )
+        }
       </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
@@ -372,7 +383,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
-              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (selectValues.department || entityData.executive_dept_id) ? false : true}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (roleDisable) ? true : false}
               formError={formError?.role ?? formError.role}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <ExecutiveRoleForm
@@ -487,6 +498,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.whatsapp?.error}
                 helperText={formError?.whatsapp?.msg}
                 defaultValue={entityData.whatsapp}
+                slotProps={{
+                  flagButton : {
+                    tabIndex: -1
+                  },
+                }}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { whatsapp, ...rest } = curr;
@@ -506,6 +522,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   error: formError?.dob?.error,
                   helperText: formError?.dob?.msg,
                 },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
               }}
             />
             <InputControl
@@ -520,6 +539,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   error: formError?.doa?.error,
                   helperText: formError?.doa?.msg,
                 },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
               }}
             />
             <InputControl
@@ -534,6 +556,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   error: formError?.doj?.error,
                   helperText: formError?.doj?.msg,
                 },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
               }}
             />
           </Box>
@@ -614,7 +639,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               label={"State"}
               width={210}
               dialogTitle={"Add State"}
-              disable={selectValues.country || entityData.country_id ? false : true}
+              // disable={selectValues.country || entityData.country_id ? false : true}
+              disable={stateDisable}
               defaultValue={defaultState}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
               fetchDataFn={getStatesforCountry}
@@ -655,7 +681,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={()=>{
+              if(props.parentData === 'profile'){
+                router.push('/cap');
+              }
+              else{
+                handleCancel();
+              }
+            }} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
