@@ -113,7 +113,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update State" : "Add State"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -203,7 +203,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             justifyContent: "flex-end",
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"
