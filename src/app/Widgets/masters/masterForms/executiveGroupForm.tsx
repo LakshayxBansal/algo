@@ -34,6 +34,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveGroupSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
+  console.log(selectValues);
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -44,7 +45,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
     const result = await persistEntity(data as executiveGroupSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
@@ -65,7 +66,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent ? selectValues.parent.id : 0;
+    data.parent_id = selectValues.parent ? selectValues.parent.id : entityData.parent_id? entityData.parent_id: 0;
     return data;
   };
 
@@ -105,7 +106,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Executive Group" : "Add Executive Group"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -157,7 +158,6 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             }}
           />
           <InputControl
-            autoFocus
             inputType={InputType.TEXT}
             id="alias"
             label="Alias"
@@ -188,7 +188,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             label={"Parent Executive Group"}
             width={210}
             onChange={(e, val, s) =>
-              setSelectValues({ ...selectValues, parent: val })
+              setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
             }
             dialogTitle={"Parent Executive Group"}
             fetchDataFn={getExecutiveGroup}
@@ -216,7 +216,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             justifyContent: "flex-end",
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"

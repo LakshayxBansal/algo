@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid";
 import { nameMasterData } from "../../../zodschema/zodschema";
 import { masterFormPropsT, areaSchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -16,6 +16,7 @@ export default function AreaForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: areaSchemaT = props.data ? props.data : {};
   // submit function. Save to DB and set value to the dropdown control
   console.log(entityData);
@@ -27,8 +28,11 @@ export default function AreaForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
+      setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     }
     // } else {
     //   issues = parsed.error.issues;
@@ -41,10 +45,13 @@ export default function AreaForm(props: masterFormPropsT) {
       // show error on screen
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
+        if(issue.path[0] === "refresh"){
+          errorState["form"] = { msg: issue.message, error: true};
+        }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -52,7 +59,7 @@ export default function AreaForm(props: masterFormPropsT) {
   async function persistEntity(data: areaSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
+      Object.assign(data, { id: props.data.id, stamp:props.data.stamp });
       result = await updateArea(data);
     } else {
       result = await createArea(data);
@@ -85,7 +92,7 @@ export default function AreaForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Modify Area" : "Add Area"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -136,7 +143,7 @@ export default function AreaForm(props: masterFormPropsT) {
             justifyContent: "flex-end",
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"
@@ -146,6 +153,13 @@ export default function AreaForm(props: masterFormPropsT) {
           </Button>
         </Box>
       </form>
+      <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
     </>
   );
 }

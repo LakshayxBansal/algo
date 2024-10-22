@@ -85,8 +85,8 @@ export async function updateEnquiryCategoryDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateCategory(?, ?, ?);",
-      values: [categoryData.id, categoryData.name, session.user.userId],
+      query: "call updateCategory(?, ?, ?, ?);",
+      values: [categoryData.id, categoryData.name, categoryData.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);

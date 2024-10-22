@@ -2,6 +2,7 @@
 
 import excuteQuery from "../utils/db/db";
 import {
+  enquiryDataSchemaT,
   enquiryHeaderSchemaT,
   enquiryItemSchemaT,
   enquiryLedgerSchemaT,
@@ -10,7 +11,7 @@ import { Session } from "next-auth";
 
 export async function createEnquiryDB(
   session: Session,
-  enqData: { head: enquiryHeaderSchemaT; ledger: enquiryLedgerSchemaT ; item: any }
+  enqData: { headerLedger: enquiryDataSchemaT ; item: any }
 ) {
   try {
     return excuteQuery({
@@ -18,24 +19,24 @@ export async function createEnquiryDB(
       query:
         "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
-        enqData.head.enq_number,
-        enqData.head.date,
-        enqData.head.contact_id,
-        enqData.head.received_by_id,
-        enqData.head.category_id,
-        enqData.head.source_id,
-        enqData.head.call_receipt_remark,
-        enqData.ledger.allocated_to_id,
-        enqData.ledger.status_id,
-        enqData.ledger.sub_status_id,
-        enqData.ledger.action_taken_id,
-        enqData.ledger.next_action_id,
-        enqData.ledger.next_action_date,
-        enqData.ledger.suggested_action_remark,
-        enqData.ledger.action_taken_remark,
-        enqData.ledger.closure_remark,
-        enqData.ledger.enquiry_tran_type,
-        enqData.ledger.active,
+        enqData.headerLedger.enq_number,
+        enqData.headerLedger.date,
+        enqData.headerLedger.contact_id,
+        enqData.headerLedger.received_by_id,
+        enqData.headerLedger.category_id,
+        enqData.headerLedger.source_id,
+        enqData.headerLedger.call_receipt_remark,
+        enqData.headerLedger.allocated_to_id,
+        enqData.headerLedger.status_id,
+        enqData.headerLedger.sub_status_id,
+        enqData.headerLedger.action_taken_id,
+        enqData.headerLedger.next_action_id,
+        enqData.headerLedger.next_action_date,
+        enqData.headerLedger.suggested_action_remark,
+        enqData.headerLedger.action_taken_remark,
+        enqData.headerLedger.closure_remark,
+        enqData.headerLedger.enquiry_tran_type,
+        enqData.headerLedger.active,
         session.user.userId,
         enqData.item
       ],

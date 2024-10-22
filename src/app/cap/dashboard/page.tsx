@@ -10,62 +10,66 @@ import ClosedCard from "./ClosedCard";
 import OpenCard from "./OpenCard";
 import UnassignedCard from "./UnassignedCard";
 import OverviewCard from "./OverviewCard";
+import { logger } from "@/app/utils/logger.utils";
 
 export default async function Dashboard() {
-  const session = await getSession();
-  if (session?.user.dbInfo) {
-    return (
-      <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>
-        <Box sx={{ py: 3, maxWidth: "90vw", margin: "auto" }}>
-          <Grid container spacing={3}>
-            <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
-              <div>
-                {" "}
-                <OpenCard />{" "}
-              </div>
-            </Grid>
-            <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
-              <div>
-                {" "}
-                <UnassignedCard />{" "}
-              </div>
-            </Grid>
-            <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
-              <div>
-                {" "}
-                <ClosedCard />{" "}
-              </div>
-            </Grid>
-            <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
-              <div>
-                {" "}
-                <AverageAgeCard />{" "}
-              </div>
-            </Grid>
-          </Grid>
-          <Grid container spacing={3} sx={{ pt: 4 }}>
-            <Grid item xs={11} sm={12} md={6} sx={{ margin: "auto" }}>
-              <div>
-                <OverviewCard />
-              </div>
-            </Grid>
-            <Grid item xs={11} sm={12} md={6} sx={{ margin: "auto" }}>
-              <div>
-                <EnquiryList />
-              </div>
-            </Grid>
-          </Grid>
-          <Grid container spacing={3} sx={{ mt: 4 }}>
-            <Grid item xs={11} sm={12} md={12} sx={{ margin: "auto" }}>
-              <div>
-                <ExecutiveEnquiryList />
-              </div>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    );
-  } else {
-    redirect("/signin");
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+        return (
+          <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>
+            <Box sx={{ py: 3, maxWidth: "90vw", margin: "auto" }}>
+              <Grid container spacing={3}>
+                <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
+                  <div>
+                    {" "}
+                    <OpenCard />{" "}
+                  </div>
+                </Grid>
+                <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
+                  <div>
+                    {" "}
+                    <UnassignedCard />{" "}
+                  </div>
+                </Grid>
+                <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
+                  <div>
+                    {" "}
+                    <ClosedCard />{" "}
+                  </div>
+                </Grid>
+                <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
+                  <div>
+                    {" "}
+                    <AverageAgeCard />{" "}
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container spacing={3} sx={{ pt: 4 }}>
+                <Grid item xs={11} sm={12} md={6} sx={{ margin: "auto" }}>
+                  <div>
+                    <OverviewCard />
+                  </div>
+                </Grid>
+                <Grid item xs={11} sm={12} md={6} sx={{ margin: "auto" }}>
+                  <div>
+                    <EnquiryList />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container spacing={3} sx={{ mt: 4 }}>
+                <Grid item xs={11} sm={12} md={12} sx={{ margin: "auto" }}>
+                  <div>
+                    <ExecutiveEnquiryList />
+                  </div>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        );
+    }
+  } catch (error) {
+    logger.error(error);
   }
+  redirect("/signin");
 }

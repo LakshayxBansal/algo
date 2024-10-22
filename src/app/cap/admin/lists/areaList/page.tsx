@@ -34,6 +34,7 @@ export default function Area() {
         fnDeleteDataByID={delAreaById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

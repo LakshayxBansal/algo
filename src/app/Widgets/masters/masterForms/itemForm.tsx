@@ -33,12 +33,14 @@ export default function ItemForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: itemSchemaT = props.data ? props.data : {};
 
+  entityData.group = props.data?.group_id;
+  entityData.unit = props.data?.unit_id;
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {}; 
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -72,12 +74,12 @@ export default function ItemForm(props: masterFormPropsT) {
     data.group = selectValues.itemGroup
       ? selectValues.itemGroup.id
       : entityData.group
-      ? entityData.group_name
+      ? entityData.group
       : 0;
     data.unit = selectValues.unit
       ? selectValues.unit.id
       : entityData.unit
-      ? entityData.unit_name
+      ? entityData.unit
       : 0;
     return data;
   };
@@ -114,7 +116,7 @@ export default function ItemForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Item" : "Add Item"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -189,6 +191,7 @@ export default function ItemForm(props: masterFormPropsT) {
               dialogTitle={"Add Item Group"}
               fetchDataFn={getItemGroup}
               fnFetchDataByID={getItemGroupById}
+              allowModify={true}
               defaultValue={
                 {
                   id: entityData.group,
@@ -196,8 +199,9 @@ export default function ItemForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, itemGroup: val })
+                setSelectValues({ ...selectValues, itemGroup: val ? val : { id: 0, name: "" } })
               }
+              formError={formError?.itemGroup}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                 <ItemGroupForm
                   setDialogOpen={fnDialogOpen}
@@ -212,6 +216,7 @@ export default function ItemForm(props: masterFormPropsT) {
               label={"Unit Name"}
               // width={210}
               dialogTitle={"Add Unit"}
+              allowModify={true}
               defaultValue={
                 {
                   id: entityData.unit,
@@ -219,7 +224,7 @@ export default function ItemForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, unit: val })
+                setSelectValues({ ...selectValues, unit: val ? val : { id: 0, name: "" } })
               }
               fetchDataFn={getUnit}
               fnFetchDataByID={getUnitById}
@@ -264,7 +269,7 @@ export default function ItemForm(props: masterFormPropsT) {
               mt: 1,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

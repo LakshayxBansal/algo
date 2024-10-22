@@ -34,6 +34,7 @@ export default function subStatus() {
         fnDeleteDataByID={delSubStatusById}
         customCols={columns}
         AddAllowed={true}
+        height = "60vh"
       ></EntityList>
     </>
   );

@@ -10,18 +10,18 @@ export default async function MyForm() {
     const session = await getSession();
 
     if (session) {
-      const masterData = {
-        userName: session.user?.name as string,
-      };
+        const masterData = {
+          userName: session.user?.name as string,
+        };
 
-      const config_data = await showItemGrid();
-      const config = JSON.parse(config_data?.config);
-      if (config_data?.status) {
-        console.log("Config Data is present->", config);
-      } else {
-        console.log("Config Data is not present->", config);
-      }
-      return <InputForm baseData={masterData} config={config}></InputForm>;
+        const config_data = await showItemGrid();
+        const config = JSON.parse(config_data?.config);
+        if (config_data?.status) {
+          console.log("Config Data is present->", config);
+        } else {
+          console.log("Config Data is not present->", config);
+        }
+        return <InputForm baseData={masterData} config={config}></InputForm>;
     }
   } catch (e) {
     // show error page

@@ -26,6 +26,7 @@ export default function CategoryForm(props: masterFormPropsT) {
     let result;
     if (entityData.id) {
       data.id = entityData.id;
+      data.stamp = entityData.stamp;
       result = await updateEnquiryCategory(data);
     } else result = await createEnquiryCategory(data);
 
@@ -51,13 +52,16 @@ export default function CategoryForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
-
+      
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = {msg: issue.message, error: true};
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -87,7 +91,7 @@ export default function CategoryForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {entityData.id ? "Update Category" : "Add Category"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -147,7 +151,7 @@ export default function CategoryForm(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

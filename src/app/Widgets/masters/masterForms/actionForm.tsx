@@ -22,7 +22,6 @@ export default function ActionForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: nameMasterDataT = props.data ? props.data : {};
 
-  // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     // const data = { name: formData.get("name") as string };
     // console.log(data);
@@ -65,21 +64,25 @@ export default function ActionForm(props: masterFormPropsT) {
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     } else {
       const issues = result.data;
-      console.log("these are issues",issues);
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"]={ msg: issue.message, error: true};
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -96,14 +99,12 @@ export default function ActionForm(props: masterFormPropsT) {
   };
 
   async function persistEntity(data: nameMasterDataT) {
-    console.log(data);
     let result;
     if (props.data) {
-      console.log("prosp",props.data)
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateEnquiryAction(data);
     } else result = await createEnquiryAction(data);
-    console.log("result",result);
     return result;
   }
 
@@ -121,7 +122,7 @@ export default function ActionForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Action" : "Add Action"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -174,7 +175,7 @@ export default function ActionForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

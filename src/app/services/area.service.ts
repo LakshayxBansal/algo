@@ -116,8 +116,8 @@ export async function updateAreaDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateArea(?,?,?);",
-      values: [sourceData.name, sourceData.id, session.user.userId],
+      query: "call updateArea(?,?,?,?);",
+      values: [sourceData.name, sourceData.id, sourceData.stamp ,session.user.userId],
     });
   } catch (e) {
     console.log(e);

@@ -59,6 +59,14 @@ export default function ContactForm(props: masterFormPropsT) {
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
+  const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
+  const [stateDisable, setStateDisable] = useState(!entityData.country);
+
+  const handlePrintNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPrintNameFn(event.target.value);
+  };
 
   async function getStatesforCountry(stateStr: string) {
     const country = selectValues.country?.name || entityData.country;
@@ -76,13 +84,16 @@ export default function ContactForm(props: masterFormPropsT) {
     name: string
   ) => {
     let values = { ...selectValues };
-    values[name] = val;
+    values[name] = val ? val : { id: 0, name: " " };
 
     if (name === "country") {
-      values["states"] = {};
+      setStateDisable(false);
+      values["state"] = {};
       setDefaultState(undefined);
+      if(values.country.id===0){
+        setStateDisable(true);
+      }
       setStateKey((prev) => 1 - prev);
-      values.state = null;
     }
     setSelectValues(values);
   };
@@ -101,7 +112,11 @@ export default function ContactForm(props: masterFormPropsT) {
 
     const result = await persistEntity(data as contactSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, reloadOpts:true };
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        reloadOpts: true,
+      };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setTimeout(() => {
@@ -112,12 +127,15 @@ export default function ContactForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true};
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -126,33 +144,33 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-        ? entityData.contactGroup_id
-        : 0;
+      ? entityData.contactGroup_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-        ? entityData.organisation_id
-        : 0;
+      ? entityData.organisation_id
+      : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-        ? entityData.department_id
-        : 0;
+      ? entityData.department_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.contactGroup_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -160,7 +178,7 @@ export default function ContactForm(props: masterFormPropsT) {
   async function persistEntity(data: contactSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
+      Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
       result = await updateContact(data);
     } else {
       result = await createContact(data);
@@ -189,7 +207,7 @@ export default function ContactForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Contact" : "Add Contact"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -236,6 +254,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
+                onChange={handlePrintNameChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -265,7 +284,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name="print_name"
                 error={formError?.print_name?.error}
                 helperText={formError?.print_name?.msg}
-                defaultValue={entityData.print_name}
+                defaultValue={printNameFn}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { print_name, ...rest } = curr;
@@ -279,7 +298,10 @@ export default function ContactForm(props: masterFormPropsT) {
                 label={"Organisation"}
                 width={210}
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, organisation: val })
+                  setSelectValues({
+                    ...selectValues,
+                    organisation: val ? val : { id: 0, name: "" },
+                  })
                 }
                 dialogTitle={"Organisation"}
                 fetchDataFn={getOrganisation}
@@ -303,10 +325,15 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="pan"
                 label="PAN"
                 name="pan"
-                required
                 error={formError?.pan?.error}
                 helperText={formError?.pan?.msg}
                 defaultValue={entityData.pan}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { pan, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.TEXT}
@@ -352,7 +379,10 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, contactGroup: val })
+                  setSelectValues({
+                    ...selectValues,
+                    contactGroup: val ? val : { id: 0, name: "" },
+                  })
                 }
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <ContactGroupForm
@@ -376,7 +406,10 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, department: val })
+                  setSelectValues({
+                    ...selectValues,
+                    department: val ? val : { id: 0, name: "" },
+                  })
                 }
                 fetchDataFn={getDepartment}
                 fnFetchDataByID={getDepartmentById}
@@ -404,7 +437,10 @@ export default function ContactForm(props: masterFormPropsT) {
                   } as optionsDataT
                 }
                 onChange={(e, val, s) =>
-                  setSelectValues({ ...selectValues, area: val })
+                  setSelectValues({
+                    ...selectValues,
+                    area: val ? val : { id: 0, name: "" },
+                  })
                 }
                 // formError={formE}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
@@ -541,46 +577,50 @@ export default function ContactForm(props: masterFormPropsT) {
                 fullWidth
               />
               <SelectMasterWrapper
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              dialogTitle={"Add country"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-              fetchDataFn={getCountries}
-              fnFetchDataByID={getCountryById}
-              defaultValue={
-                {
-                  id: entityData.country_id,
-                  name: entityData.country,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <CountryForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-            <SelectMasterWrapper
-              key={stateKey}
-              name={"state"}
-              id={"state"}
-              label={"State"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={selectValues.country || entityData.country_id ? false : true}
-              dialogTitle={"Add State"}
-              fetchDataFn={getStatesforCountry}
-              defaultValue={defaultState}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <StateForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                  parentData={selectValues.country?.id || entityData.country_id}
-                />
-              )}
-            />
+                name={"country"}
+                id={"country"}
+                label={"Country"}
+                dialogTitle={"Add country"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+                fetchDataFn={getCountries}
+                fnFetchDataByID={getCountryById}
+                defaultValue={
+                  {
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT
+                }
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <CountryForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                  />
+                )}
+              />
+              <SelectMasterWrapper
+                key={stateKey}
+                name={"state"}
+                id={"state"}
+                label={"State"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+                disable={stateDisable}
+                dialogTitle={"Add State"}
+                fetchDataFn={getStatesforCountry}
+                fnFetchDataByID={getStateById}
+                defaultValue={defaultState}
+                allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <StateForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                    parentData={
+                      selectValues.country?.id || entityData.country_id
+                    }
+                  />
+                )}
+              />
               <InputControl
                 inputType={InputType.TEXT}
                 name="city"
@@ -620,7 +660,9 @@ export default function ContactForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

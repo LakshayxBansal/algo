@@ -39,12 +39,15 @@ export default function CountryForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -52,7 +55,7 @@ export default function CountryForm(props: masterFormPropsT) {
   async function persistEntity(data: countrySchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
+      Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
       result = await updateCountry(data);
     } else {
       result = await createCountry(data);
@@ -85,7 +88,7 @@ export default function CountryForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {props.data ? "Update Country" : "Add Country"}
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -160,7 +163,7 @@ export default function CountryForm(props: masterFormPropsT) {
             mt:2
           }}
         >
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
           <Button
             type="submit"
             variant="contained"
