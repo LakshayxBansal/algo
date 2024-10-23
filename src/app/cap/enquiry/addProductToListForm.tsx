@@ -140,6 +140,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               name={"product"}
               id={"product"}
               label={"Product Name"}
+              showDetails={true}
               dialogTitle={"Add Product"}
               fetchDataFn={getProduct}
               fnFetchDataByID={getProductById}

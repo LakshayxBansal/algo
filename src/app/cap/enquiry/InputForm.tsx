@@ -220,6 +220,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       name={"contact"}
                       id={"contact"}
                       label={"Contact"}
+                      showDetails={true}
                       dialogTitle={"Add Contact"}
                       onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
                       fetchDataFn={getContact}
@@ -293,6 +294,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       name={"received_by"}
                       id={"received_by"}
                       label={"Received By"}
+                      showDetails={true}
                       dialogTitle={"Add Executive"}
                       onChange={(e, v, s) =>
                         onSelectChange(e, v, s, "received_by")
