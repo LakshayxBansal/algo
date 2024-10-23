@@ -14,8 +14,8 @@ import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
 import { optionsDataT } from '@/app/models/models';
-import { inputStyles } from "../utils/styles/autoDbStyles";
 import { CustomStyledDiv } from "../utils/styledComponents";
+import { inputStyles } from "../utils/theme.util";
 
 type OnChangeFunction = (
   event: any,
@@ -196,7 +196,11 @@ export function AutocompleteDB(props: autocompleteDBT) {
         </Popper>
         
         ) : (
-          <Popper {...props} />
+          <Popper {...props}>
+            <CustomStyledDiv>
+              {props.children as ReactNode}
+            </CustomStyledDiv>
+          </Popper>
         )
       }
       onBlur={(e) => setAutoSelect(props.notEmpty)}
