@@ -61,11 +61,12 @@ export async function updateItemGroupDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateItemGroup(?,?,?,?,?);",
+      query: "call updateItemGroup(?,?,?,?,?,?);",
 
       values: [
         sourceData.id,
         sourceData.name,
+        sourceData.stamp,
         sourceData.alias,
         sourceData.parent_id,
         session.user.userId,
