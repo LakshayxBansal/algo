@@ -53,11 +53,12 @@ export async function updateContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
         data.name,
+        data.stamp,
         data.print_name,
         data.contactGroup_id,
         data.pan,

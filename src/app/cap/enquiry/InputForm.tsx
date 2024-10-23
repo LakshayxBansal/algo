@@ -127,41 +127,41 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       }, 3000);
     } else {
       issues = result?.data;
-    }
 
-    let formIssue: ZodIssue[] = [];
-    let itemIssue = [];
+      let formIssue: ZodIssue[] = [];
+      let itemIssue = [];
 
-    formIssue = issues[0].enqDataIssue ? issues[0].enqDataIssue : issues;
-    itemIssue = issues[1].itemIssue;
+      formIssue = issues[0]?.enqDataIssue ? issues[0].enqDataIssue : issues;
+      itemIssue = issues[1]?.itemIssue;
 
-    if (formIssue?.length > 0) {
-      // set errors for form inputs
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      for (const issue of formIssue) {
-        errorState[issue.path[0]] = { msg: issue.message, error: true };
-      }
-      setFormError(errorState);
-    }
-    //set errors for item grid
-    if (itemIssue?.length > 0) {
-      const temp: Record<
-        number,
-        Record<string, { msg: string; error: boolean }>
-      > = {};
-
-      itemIssue.forEach((row: any) => {
-        const key = row.path[0];
-        const field = row.path[1];
-        if (!temp[key]) {
-          temp[key] = {};
+      if (formIssue?.length > 0) {
+        // set errors for form inputs
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        for (const issue of formIssue) {
+          errorState[issue.path[0]] = { msg: issue.message, error: true };
         }
+        setFormError(errorState);
+      }
+      //set errors for item grid
+      if (itemIssue?.length > 0) {
+        const temp: Record<
+          number,
+          Record<string, { msg: string; error: boolean }>
+        > = {};
 
-        // Add or update the field's error message
-        temp[key][field] = { msg: row.message, error: true };
-      });
-      console.log("Item Issues", temp);
-      setItemFormError(temp);
+        itemIssue.forEach((row: any) => {
+          const key = row.path[0];
+          const field = row.path[1];
+          if (!temp[key]) {
+            temp[key] = {};
+          }
+
+          // Add or update the field's error message
+          temp[key][field] = { msg: row.message, error: true };
+        });
+        console.log("Item Issues", temp);
+        setItemFormError(temp);
+      }
     }
   };
 

@@ -61,11 +61,12 @@ export async function updateContactGroupDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateContactGroup(?,?,?,?,?);",
+      query: "call updateContactGroup(?,?,?,?,?,?);",
 
       values: [
         sourceData.id,
         sourceData.name,
+        sourceData.stamp,
         sourceData.alias,
         sourceData.parent_id,
         session.user.userId,

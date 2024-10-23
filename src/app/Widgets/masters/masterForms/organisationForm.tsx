@@ -40,6 +40,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.printName);
+  const [stateDisable, setStateDisable] = useState(!entityData.country);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -127,10 +128,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
     values[name] = val ? val : { id: 0, name: "" };
 
     if (name === "country") {
+      setStateDisable(false);
       values["state"] = {};
       setDefaultState(undefined);
+      if(values.country.id===0){
+        setStateDisable(true);
+      }
       setStateKey((prev) => 1 - prev);
-      // values.state = null;
     }
     setSelectValues(values);
   };
@@ -368,9 +372,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               id={"state"}
               label={"State"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={
-                selectValues.country || entityData.country_id ? false : true
-              }
+              disable={stateDisable}
               dialogTitle={"Add State"}
               fetchDataFn={getStatesforCountry}
               fnFetchDataByID={getStateById}

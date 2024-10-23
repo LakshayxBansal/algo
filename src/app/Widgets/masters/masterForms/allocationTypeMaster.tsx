@@ -46,15 +46,13 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       //     errorState[path] = { msg: issue.message, error: true };
       //   }
       // }
+      // let flag = 0;
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
-      }
-      console.log(issues);
-      if(issues[0].path==="refresh"){
-        errorState["form"] = { msg: issues[0].message, error: true };
-      }
-      else {
-        errorState["form"] = { msg: "Error encountered", error: true };
+        if (issue.path[0] === "refresh") {
+          errorState["form"] = { msg: issue.message, error: true };
+        }
       }
       setFormError(errorState);
     }
@@ -68,7 +66,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-      data["stamp"]=entityData.stamp;
+      data["stamp"] = entityData.stamp;
       result = await updateAllocationType(data);
     } else result = await createAllocationType(data);
     return result;
@@ -155,7 +153,9 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
               mt: 2,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"

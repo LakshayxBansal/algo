@@ -48,8 +48,10 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { useRouter } from "next/navigation";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
+  const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -68,7 +70,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
-
+  const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
+  const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
 
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
@@ -218,11 +221,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     if (name === "country") {
       values["state"] = {};
       setDefaultState(undefined);
+      if (values.country.id === 0) setStateDisable(true);
+      else setStateDisable(false);
       setStateKey(prev => 1 - prev);
     }
     if (name === "department") {
       values["role"] = {};
       setDefaultRole(undefined);
+      if (values.department.id === 0) setRoleDisable(true);
+      else setRoleDisable(false);
       setRoleKey(prev => 1 - prev);
     }
     setSelectValues(values);
@@ -746,7 +753,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={() => {
+              if (props.parentData === 'profile') {
+                router.push('/cap');
+              }
+              else {
+                handleCancel();
+              }
+            }} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
