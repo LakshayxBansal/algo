@@ -36,7 +36,8 @@ export default function AddDocsForm(props: any) {
         Record<string, { msg: string; error: boolean }>
     >({});
     const [snackOpen, setSnackOpen] = React.useState(false);
-    const [file,setFile] = React.useState<FileList | null>(null);;
+    const [file,setFile] = React.useState<string | ArrayBuffer | null | undefined>();
+    const [selectedFileName,setSelectedFileName] = React.useState("");
     const handleCancel = () => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
     };
@@ -45,7 +46,8 @@ export default function AddDocsForm(props: any) {
         let data: { [key: string]: any } = {}; // Initialize an empty object
 
         data["description"] = formData.get("description");
-        data["document"] = file;
+        data["document"] = selectedFileName;
+        data["file"] = file;
         console.log("data : ",data);
         props.setData
             ? props.setData((prevData: any) => [
@@ -56,6 +58,22 @@ export default function AddDocsForm(props: any) {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
     };
 
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+
+        if (files && files.length > 0) {
+            const file = files[0];
+            setSelectedFileName(file.name);
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                const base64String = reader.result;
+                // console.log(base64String);
+                setFile(base64String);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
 
     const clearFormError = () => {
         setFormError((curr) => {
@@ -121,7 +139,7 @@ export default function AddDocsForm(props: any) {
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
                         />
-                        <Button
+                        {file ? selectedFileName : <Button
                             component="label"
                             role={undefined}
                             variant="contained"
@@ -132,10 +150,10 @@ export default function AddDocsForm(props: any) {
                             Upload files
                             <VisuallyHiddenInput
                                 type="file"
-                                onChange={(event) => setFile(event.target.files ? event.target.files[0] as any : null)}
+                                onChange={handleFileChange}
                                 multiple
                             />
-                        </Button>
+                        </Button>}
                     </Box>
                     <Box
                         sx={{

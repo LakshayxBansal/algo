@@ -60,13 +60,9 @@ import AddDocsForm from "@/app/cap/admin/lists/executiveList/AddDocsForm";
 
 type ModifiedRowT = {
   id?: number;
-  enquiry_id?: number;
-  item?: string;
-  item_id?: number;
-  quantity?: string;
-  unit?: string;
-  unit_id?: number;
-  remarks?: string;
+  description?: string;
+  document?: string;
+  file?: string | ArrayBuffer | null ;
 };
 
 const rows: any = [];
@@ -88,7 +84,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [data, setData] = React.useState(rows);
+  const [docData, setDocData] = React.useState(rows);
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
@@ -106,7 +102,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
 
-  console.log("form data : ", data);
   function EditToolbar() {
 
     const handleClick = () => {
@@ -147,7 +142,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               onChange={(e: any) => {
                 setModifiedRowData((prevState) => ({
                   ...prevState,
-                  quantity: e.target.value,
+                  description: e.target.value,
                 }));
               }}
             />
@@ -162,6 +157,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
+            <>
+            {modifiedRowData?.file ? modifiedRowData?.document : 
             <Button
               component="label"
               role={undefined}
@@ -172,10 +169,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               Upload files
               <VisuallyHiddenInput
                 type="file"
-                onChange={(event) => console.log(event.target.files)}
+                onChange={handleFileChange}
                 multiple
               />
-            </Button>
+            </Button>}
+            </>
           );
         }
       },
@@ -231,22 +229,45 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   const handleSaveClick = () => {
     //save the data from modifiedRowData state into rows of data grid
-    if (data.length > 0) {
-      const updatedRows = data.map((row: any) =>
+    if (docData.length > 0) {
+      const updatedRows = docData.map((row: any) =>
         row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
       );
-      setData(updatedRows);
+      setDocData(updatedRows);
       setEditMode(null);
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+
+    if (files && files.length > 0) {
+        const file = files[0];
+        setModifiedRowData((prevState) => ({
+          ...prevState,
+          document: file.name,
+        }));
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            const base64String = reader.result;
+            // console.log(base64String);
+            setModifiedRowData((prevState) => ({
+              ...prevState,
+              file: base64String,
+            }));
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
   const handleDeleteClick = (id: GridRowId) => () => {
     // Filter out the row with the matching id
-    if (data.length > 0) {
-      const updatedRows = data.filter((row: any) => row.id !== id);
+    if (docData.length > 0) {
+      const updatedRows = docData.filter((row: any) => row.id !== id);
 
       // Update the data state with the filtered rows
-      setData(updatedRows);
+      setDocData(updatedRows);
     }
   };
 
@@ -256,8 +277,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   const handleEditClick = (id: GridRowId) => () => {
     setEditMode(id);
-    const selectedRowData = data.find((row: any) => row.id === id); // Find the corresponding row data
+    const selectedRowData = docData.find((row: any) => row.id === id); // Find the corresponding row data
     setModifiedRowData(selectedRowData); //Setting selected row data in modifiedRowData state
+    setModifiedRowData((prevState) => ({
+      ...prevState,
+      file: undefined,
+    }));
   };
 
   entityData.executive_dept_id = props.data?.dept_id;
@@ -302,7 +327,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
       //   inviteId = invite.id;
       // }
-      const result = await persistEntity(data as executiveSchemaT);
+
+      const result = await persistEntity(data as executiveSchemaT, docData);
       if (result.status) {
         const newVal = {
           id: result.data[0].id,
@@ -466,13 +492,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     setSelectValues(values);
   }
 
-  async function persistEntity(data: executiveSchemaT) {
+  async function persistEntity(data: executiveSchemaT, docData : any) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
-      result = await updateExecutive(data);
+      result = await updateExecutive(data, docData);
     } else {
-      result = await createExecutive(data);
+      result = await createExecutive(data,docData);
     }
     return result;
   }
@@ -927,7 +953,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             >
               <DataGrid
                 columns={columns}
-                rows={data ? data : []}
+                rows={docData ? docData : []}
                 disableRowSelectionOnClick
                 slots={{
                   noRowsOverlay: CustomNoRowsOverlay,
@@ -974,7 +1000,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           >
             <AddDocsForm
               setDialogOpen={setDialogOpen}
-              setData={setData}
+              setData={setDocData}
             />
           </AddDialog>
         )}
