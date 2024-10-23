@@ -56,6 +56,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
+  console.log("ENTITIES", entityData);
+
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -71,6 +73,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
+
 
 
   async function getApplicationUser(searchStr: string) {
@@ -134,12 +137,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         const issues = result.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Error encountered", error: true };
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
+            if (path == "refresh") {
+              errorState["form"] = { msg: issue.message, error: true };
+            }
           }
         }
-        errorState["form"] = { msg: "Error encountered", error: true };
         setFormError(errorState);
       }
     } catch (error) {
@@ -226,6 +232,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateExecutive(data);
     } else {
       result = await createExecutive(data);
@@ -647,15 +654,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     ],
   ]);
 
-  console.log("props", props.desc);
-
 
   const CustomFields = props.desc.filter((row: any) => row.is_default_column == 0);
+  console.log("CustomFields", CustomFields);
+
 
   const CustomComponentMap = new Map<string, React.ReactNode>(
     CustomFields.map((field: any) => [
       field.column_name_id, // Use `id` as the key
-      <CustomField key={field.id} desc={field} /> // React element as value
+      <CustomField key={field.id} desc={field} defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]} /> // React element as value
     ])
   );
 

@@ -1,5 +1,6 @@
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
 import { Autocomplete, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
+import dayjs from "dayjs";
 import { useState } from "react";
 
 type CustomFieldT = {
@@ -23,7 +24,7 @@ type CustomFieldT = {
     column_order: number
 }
 
-export default function CustomField(props: { desc: CustomFieldT }) {
+export default function CustomField(props: { desc: CustomFieldT, defaultValue: any }) {
     console.log(props.desc);
     const [status, setStatus] = useState(0);
 
@@ -42,6 +43,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                         name={props.desc.column_name}
                         fullWidth
                         required={!!props.desc.is_mandatory}
+                        defaultValue={props.defaultValue}
                     />
                 );
             case 3:
@@ -54,6 +56,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                         name={props.desc.column_name}
                         fullWidth
                         required={!!props.desc.is_mandatory}
+                        defaultValue={props.defaultValue}
                     />
                 );
             case 4:
@@ -65,6 +68,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                         name={props.desc.column_name}
                         fullWidth
                         required={props.desc.is_mandatory}
+                        defaultValue={dayjs(props.defaultValue)}
                     />
                 )
             case 5:
@@ -72,6 +76,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                 return (
                     <Autocomplete
                         options={list_item}
+                        defaultValue={props.defaultValue}
                         renderInput={(params) => (
                             <InputControl
                                 {...params}
@@ -93,6 +98,7 @@ export default function CustomField(props: { desc: CustomFieldT }) {
                             name={props.desc.column_name}
                             id={props.desc.column_name_id}
                             onChange={onStatusChange}
+                            defaultValue={props.defaultValue}
                         >
                             <FormControlLabel
                                 value={0}

@@ -82,11 +82,12 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
         data.name,
+        data.stamp,
         data.address1,
         data.address2,
         data.address3,
@@ -109,6 +110,16 @@ export async function updateExecutiveDB(
         data.executive_dept_id,
         data.executive_group_id,
         session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
   } catch (e) {
@@ -149,7 +160,8 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
-         s.name state, co.name country, us.name as crm_user\
+         s.name state, co.name country, us.name as crm_user,eccm.c_col1,eccm.c_col2,eccm.c_col3,\
+         eccm.c_col4,eccm.c_col5,eccm.c_col6,eccm.c_col7,eccm.c_col8,eccm.c_col9,eccm.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
@@ -157,6 +169,7 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id\
+         left outer join executive_custom_column_master eccm on eccm.executive_id=em.id\
          where em.id=?",
       values: [id],
     });
@@ -166,6 +179,7 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
     console.log(e);
   }
 }
+
 export async function getProfileDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
