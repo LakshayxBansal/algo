@@ -28,19 +28,15 @@ export async function updateProductDB(session: Session, data: zm.productSchemaT)
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateProduct(?,?,?,?,?,?,?);",
+      query: "call updateProduct(?,?,?,?,?,?,?,?);",
       values: [
         data.id,
         data.name,
-        // data.stamp,
+        data.stamp,
         data.group,
         data.alias,
         data.unit,
         data.hsn_code,
-        // data.created_by,
-        // data.modified_by,
-        // data.created_on,
-        // data.modified_on,
         session.user.userId,
       ],
     });

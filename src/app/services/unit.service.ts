@@ -21,8 +21,8 @@ export async function updateUnitDB(session: Session, data: zm.unitSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateUnit(?,?,?);",
-      values: [data.id, data.name, session.user.userId],
+      query: "call updateUnit(?,?,?,?);",
+      values: [data.id, data.name, data.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);

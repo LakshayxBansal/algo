@@ -290,6 +290,7 @@ export const stateListSchema = z.object({
   name: z.string().min(1, "State Name must not be empty").max(60),
   alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
+  stamp: z.number().optional(),
 });
 
 export const executiveSchema = z
@@ -482,6 +483,7 @@ export const currencySchema = z.object({
     .optional(),
   decimal_places: z.string().min(1).max(60),
   currency_system: z.string().min(1).max(60),
+  stamp: z.number().optional(),
 });
 /**
  * Executive Role
@@ -576,6 +578,7 @@ export const stateSchema = z.object({
     .string()
     .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
+  stamp: z.number().optional(),
   country_id: z.number().refine((val) => val !== 0, {
     message: "Country name must not be empty",
     path: ["country"],
