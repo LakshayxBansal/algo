@@ -7,31 +7,31 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import {
-  itemSchemaT,
+  productSchemaT,
   masterFormPropsT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { createItem } from "@/app/controllers/item.controller";
+import { createProduct } from "@/app/controllers/product.controller";
 import {
-  getItemGroup,
-  getItemGroupById,
-} from "@/app/controllers/itemGroup.controller";
+  getProductGroup,
+  getProductGroupById,
+} from "@/app/controllers/productGroup.controller";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
-import ItemGroupForm from "./itemGroupForm";
+import ProductGroupForm from "./productGroupForm"
 import UnitForm from "./unitForm";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateItem } from "@/app/controllers/item.controller";
+import { updateProduct } from "@/app/controllers/product.controller";
 
-export default function ItemForm(props: masterFormPropsT) {
+export default function ProductForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: itemSchemaT = props.data ? props.data : {};
+  const entityData: productSchemaT = props.data ? props.data : {};
 
   entityData.group = props.data?.group_id;
   entityData.unit = props.data?.unit_id;
@@ -47,7 +47,7 @@ export default function ItemForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
-    const result = await persistEntity(data as itemSchemaT);
+    const result = await persistEntity(data as productSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
@@ -71,8 +71,8 @@ export default function ItemForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.group = selectValues.itemGroup
-      ? selectValues.itemGroup.id
+    data.group = selectValues.productGroup
+      ? selectValues.productGroup.id
       : entityData.group
       ? entityData.group
       : 0;
@@ -84,13 +84,13 @@ export default function ItemForm(props: masterFormPropsT) {
     return data;
   };
 
-  async function persistEntity(data: itemSchemaT) {
+  async function persistEntity(data: productSchemaT) {
     let result;
     if (props.data) {
       Object.assign(data, { id: props.data.id });
-      result = await updateItem(data);
+      result = await updateProduct(data);
     } else {
-      result = await createItem(data);
+      result = await createProduct(data);
     }
     return result;
   }
@@ -115,7 +115,7 @@ export default function ItemForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Item" : "Add Item"}
+            {entityData.id ? "Update Product" : "Add Product"}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -185,12 +185,12 @@ export default function ItemForm(props: masterFormPropsT) {
               }}
             />
             <SelectMasterWrapper
-              name={"itemGroup"}
-              id={"itemGroup"}
-              label={"Item Group Name"}
-              dialogTitle={"Add Item Group"}
-              fetchDataFn={getItemGroup}
-              fnFetchDataByID={getItemGroupById}
+              name={"productGroup"}
+              id={"productGroup"}
+              label={"Product Group Name"}
+              dialogTitle={"Add Product Group"}
+              fetchDataFn={getProductGroup}
+              fnFetchDataByID={getProductGroupById}
               allowModify={true}
               defaultValue={
                 {
@@ -199,11 +199,11 @@ export default function ItemForm(props: masterFormPropsT) {
                 } as optionsDataT
               }
               onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, itemGroup: val ? val : { id: 0, name: "" } })
+                setSelectValues({ ...selectValues, productGroup: val ? val : { id: 0, name: "" } })
               }
-              formError={formError?.itemGroup}
+              formError={formError?.productGroup}
               renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                <ItemGroupForm
+                <ProductGroupForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}

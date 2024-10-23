@@ -4,14 +4,14 @@ import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import {
-  createItemGroup,
-  getItemGroupById,
-  updateItemGroup,
-} from "../../../controllers/itemGroup.controller";
+  createProductGroup,
+  getProductGroupById,
+  updateProductGroup,
+} from "../../../controllers/productGroup.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { getItemGroup } from "@/app/controllers/itemGroup.controller";
+import { getProductGroup } from "@/app/controllers/productGroup.controller";
 import {
-  itemGroupSchemaT,
+  productGroupSchemaT,
   masterFormPropsT,
   optionsDataT,
   selectKeyValueT,
@@ -22,13 +22,13 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function ItemGroupForm(props: masterFormPropsT) {
+export default function ProductGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: itemGroupSchemaT = props.data ? props.data : {};
+  const entityData: productGroupSchemaT = props.data ? props.data : {};
   console.log("value in form", selectValues);
 
   const handleCancel = () => {
@@ -43,7 +43,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
     }
     formData = updateFormData(data);
 
-    const result = await persistEntity(data as itemGroupSchemaT);
+    const result = await persistEntity(data as productGroupSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
@@ -75,16 +75,16 @@ export default function ItemGroupForm(props: masterFormPropsT) {
     return data;
   };
 
-  async function persistEntity(data: itemGroupSchemaT) {
+  async function persistEntity(data: productGroupSchemaT) {
     let result;
 
     console.log(props.data);
 
     if (props.data) {
       data["id"] = entityData.id;
-      result = await updateItemGroup(data);
+      result = await updateProductGroup(data);
     } else {
-      result = await createItemGroup(data);
+      result = await createProductGroup(data);
     }
 
     return result;
@@ -109,7 +109,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Item Group" : "Add Item Group"}
+            {entityData.id ? "Update Product Group" : "Add Product Group"}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -134,7 +134,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="itemGroupForm" sx={{ m: 2 }}>
+      <Box id="productGroupForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
@@ -200,13 +200,13 @@ export default function ItemGroupForm(props: masterFormPropsT) {
                   parent: val ? val : { id: 0, name: "" },
                 });
               }}
-              fetchDataFn={getItemGroup}
-              fnFetchDataByID={getItemGroupById}
+              fetchDataFn={getProductGroup}
+              fnFetchDataByID={getProductGroupById}
               allowNewAdd={false}
               allowModify={false}
               formError={formError?.parentgroup}
               renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ItemGroupForm
+                <ProductGroupForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                 />
