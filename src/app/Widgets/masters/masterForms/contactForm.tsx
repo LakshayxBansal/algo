@@ -296,6 +296,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name={"organisation"}
                 id={"organisation"}
                 label={"Organisation"}
+                showDetails={true}
                 width={210}
                 onChange={(e, val, s) =>
                   setSelectValues({
@@ -369,6 +370,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 id={"contactGroup"}
                 label={"Group"}
                 width={210}
+                showDetails={true}
                 dialogTitle={"Group"}
                 fetchDataFn={getContactGroup}
                 fnFetchDataByID={getContactGroupById}

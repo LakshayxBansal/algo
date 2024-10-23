@@ -14,6 +14,8 @@ import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
 import { optionsDataT } from '@/app/models/models';
+import { inputStyles } from "../utils/styles/autoDbStyles";
+import { CustomStyledDiv } from "../utils/styledComponents";
 
 type OnChangeFunction = (
   event: any,
@@ -42,6 +44,7 @@ type autocompleteDBT = {
   fnSetModifyMode: (id: string) => void;
   disable?: boolean;
   defaultOptions?: optionsDataT[]
+  showDetails: boolean
   //children: React.FunctionComponentElements
 };
 
@@ -61,6 +64,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
   );
   // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const showDetails= props.showDetails;
+
 
   useEffect(() => {
     const getData = debounce(async (input) => {
@@ -129,10 +135,20 @@ export function AutocompleteDB(props: autocompleteDBT) {
       options={options}
       // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
+      
+      filterOptions={(options, { inputValue }) => 
+        options.filter(option => 
+          option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
+        )
+      }
       renderOption={(p, option) => {
-        const pWithKey = p as HTMLAttributes<HTMLLIElement> & { key: string }
+        const pWithKey = p as HTMLAttributes<HTMLLIElement> & { key: string };
         const { ["key"]: _, ...newP } = pWithKey;
-        return <li key={pWithKey.key} {...newP}>{option.name}</li>;
+        return (
+          <li key={pWithKey.key} {...newP}>
+            {option.name}
+          </li>
+        );
         //return <li>{getOptions(option, props.renderOptions)}</li>;
       }}
       sx={{ width: { width } }}
@@ -152,19 +168,37 @@ export function AutocompleteDB(props: autocompleteDBT) {
       onHighlightChange={onHighlightChange}
       value={props.diaglogVal}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      PopperComponent={(props) => (
-        <Popper {...props}>
-          {props.children as ReactNode}
-          <TextField
-            id="popper_textid_temp_5276"
-            variant="outlined"
-            inputProps={{ style: { color: "blue", fontSize: 10 } }}
-            multiline
-            rows={2}
-            fullWidth
-          />
+      PopperComponent={(props) =>
+
+       showDetails ? (
+          <Popper
+          {...props}
+        >
+         <CustomStyledDiv>
+            {props.children as ReactNode}
+        
+            <TextField
+              id="popper_textid_temp_5276"
+              variant="standard"
+              defaultValue={"Please select from Options"}
+              InputProps={{
+                style: {
+                  ...inputStyles, 
+                  height: "100%"
+                },
+              }}
+              multiline
+              rows={3}
+              fullWidth 
+              
+            />
+           </CustomStyledDiv>
         </Popper>
-      )}
+        
+        ) : (
+          <Popper {...props} />
+        )
+      }
       onBlur={(e) => setAutoSelect(props.notEmpty)}
       onOpen={(e) => {
         setOpen(true);
@@ -179,7 +213,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
         console.log(newValue);
 
         if (reason != "blur") {
-          props.setDialogVal(newValue ? (newValue as optionsDataT) : ({} as optionsDataT));
+          props.setDialogVal(
+            newValue ? (newValue as optionsDataT) : ({} as optionsDataT)
+          );
           props.onChange
             ? props.onChange(event, newValue, props.setDialogVal)
             : null;
@@ -196,7 +232,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
       // autoHighlight
       autoComplete
       includeInputInList
-      disableClearable={inputValue?inputValue.length===0:!Boolean(props.diaglogVal.id)}
+      disableClearable={
+        inputValue ? inputValue.length === 0 : !Boolean(props.diaglogVal.id)
+      }
     />
   );
 }
