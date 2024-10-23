@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   FormControl,
   FormControlLabel,
@@ -32,8 +32,6 @@ import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
-import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
-import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -50,25 +48,14 @@ import {
   getActionById,
   getEnquiryAction,
 } from "@/app/controllers/enquiryAction.controller";
-import { getItem, getItemById } from "@/app/controllers/item.controller";
 
 import dayjs from "dayjs";
-import {
-  enquiryHeaderSchema,
-  enquiryLedgerSchema,
-} from "@/app/zodschema/zodschema";
 import { ZodIssue } from "zod";
-import { optionsDataT, selectKeyValueT } from "@/app/models/models";
-import { styled } from "@mui/material/styles";
-import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
+import { selectKeyValueT } from "@/app/models/models";
+
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import AddItemToListForm from "./addItemToListForm";
-import ItemGrid from "./itemGrid";
+import AddProductToListForm from "./addProductToListForm";
+import ProductGrid from "./productGrid";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
 const strA = "custom_script.js";
@@ -86,18 +73,7 @@ export interface IformData {
 }
 
 const formConfig = {
-  showItems: false,
-};
-
-type ModifiedRowT = {
-  id?: number;
-  enquiry_id?: number;
-  item?: string;
-  item_id?: number;
-  quantity?: string;
-  unit?: string;
-  unit_id?: number;
-  remarks?: string;
+  showProducts: false,
 };
 
 const rows: any = [];
@@ -108,7 +84,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [itemFormError, setItemFormError] = useState<
+  const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
   const [data, setData] = React.useState(rows);
@@ -123,7 +99,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
 
     result = await createEnquiry({
       enqData: formatedData,
-      item: data,
+      product: data,
     });
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -136,10 +112,10 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
       issues = result?.data;
 
       let formIssue: ZodIssue[] = [];
-      let itemIssue = [];
+      let productIssue = [];
 
       formIssue = issues[0]?.enqDataIssue ? issues[0].enqDataIssue : issues;
-      itemIssue = issues[1]?.itemIssue;
+      productIssue = issues[1]?.productIssue;
 
       if (formIssue?.length > 0) {
         // set errors for form inputs
@@ -149,14 +125,14 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
         }
         setFormError(errorState);
       }
-      //set errors for item grid
-      if (itemIssue?.length > 0) {
+      //set errors for product grid
+      if (productIssue?.length > 0) {
         const temp: Record<
           number,
           Record<string, { msg: string; error: boolean }>
         > = {};
 
-        itemIssue.forEach((row: any) => {
+        productIssue.forEach((row: any) => {
           const key = row.path[0];
           const field = row.path[1];
           if (!temp[key]) {
@@ -166,8 +142,8 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
           // Add or update the field's error message
           temp[key][field] = { msg: row.message, error: true };
         });
-        console.log("Item Issues", temp);
-        setItemFormError(temp);
+        console.log("Product Issues", temp);
+        setProductFormError(temp);
       }
     }
   };
@@ -348,13 +324,13 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                       height: 300,
                     }}
                   >
-                    <ItemGrid
+                    <ProductGrid
                       dgData={data}
                       setdgData={setData}
                       setdgDialogOpen={setDialogOpen}
                       dgFormError={formError}
                       setdgFormError={setFormError}
-                      dgItemFormError={itemFormError}
+                      dgProductFormError={productFormError}
                     />
                   </Box>
                 </Grid>
@@ -526,11 +502,11 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
         </Grid>
         {dialogOpen && (
           <AddDialog
-            title="Add Item to Item List"
+            title="Add Product to Product List"
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
-            <AddItemToListForm
+            <AddProductToListForm
               setDialogOpen={setDialogOpen}
               setData={setData}
             />

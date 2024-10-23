@@ -3,7 +3,7 @@ import InputForm from "./InputForm";
 import { getSession } from "../../services/session.service";
 import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
-import { showItemGrid } from "@/app/controllers/enquiry.controller";
+import { showProductGrid } from "@/app/controllers/enquiry.controller";
 
 export default async function MyForm() {
   try {
@@ -14,7 +14,7 @@ export default async function MyForm() {
           userName: session.user?.name as string,
         };
 
-        const config_data = await showItemGrid();
+        const config_data = await showProductGrid();
         const config = JSON.parse(config_data?.config);
         if (config_data?.status) {
           console.log("Config Data is present->", config);
