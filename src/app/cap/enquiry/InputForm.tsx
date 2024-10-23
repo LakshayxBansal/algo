@@ -177,7 +177,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
     setSelectValues(values);
   }
 
-  const enquiryMaintainItems = props.config.enquiryMaintainItems;
+  const enquiryMaintainProducts = props.config.enquiryMaintainProducts;
 
   return (
     <Box>
@@ -319,7 +319,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
             </Grid>
 
             <Grid container spacing={2}>
-              {enquiryMaintainItems && (
+              {enquiryMaintainProducts && (
                 <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
                   <Box
                     sx={{
@@ -341,7 +341,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
               <Grid
                 item
                 xs={12}
-                md={enquiryMaintainItems ? 6 : 12}
+                md={enquiryMaintainProducts ? 6 : 12}
                 sx={{ display: "flex", flexDirection: "column" }}
               >
                 <Grid item xs={12} md={12}>
