@@ -4,11 +4,11 @@ import excuteQuery from "../utils/db/db";
 import * as zm from "../models/models";
 import { Session } from "next-auth";
 
-export async function createItemDB(session: Session, data: zm.itemSchemaT) {
+export async function createProductDB(session: Session, data: zm.productSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createItem(?,?,?,?,?,?);",
+      query: "call createProduct(?,?,?,?,?,?);",
       values: [
         data.name,
         data.group,
@@ -24,23 +24,19 @@ export async function createItemDB(session: Session, data: zm.itemSchemaT) {
   return null;
 }
 
-export async function updateItemDB(session: Session, data: zm.itemSchemaT) {
+export async function updateProductDB(session: Session, data: zm.productSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateItem(?,?,?,?,?,?,?);",
+      query: "call updateProduct(?,?,?,?,?,?,?,?);",
       values: [
         data.id,
         data.name,
-        // data.stamp,
+        data.stamp,
         data.group,
         data.alias,
         data.unit,
         data.hsn_code,
-        // data.created_by,
-        // data.modified_by,
-        // data.created_on,
-        // data.modified_on,
         session.user.userId,
       ],
     });
@@ -53,10 +49,10 @@ export async function updateItemDB(session: Session, data: zm.itemSchemaT) {
 /**
  *
  * @param crmDb database to search in
- * @param searchString partial string to search in item_master.name
+ * @param searchString partial string to search in product_master.name
  * @returns
  */
-export async function getItemList(crmDb: string, searchString: string) {
+export async function getProductList(crmDb: string, searchString: string) {
   try {
     const search_value = searchString ? searchString : '';
     
@@ -71,11 +67,11 @@ export async function getItemList(crmDb: string, searchString: string) {
   }
 }
 
-export async function deleteItemListDetailsById(crmDb: string, id: number) {
+export async function deleteProductListDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from item_master where id=?;",
+      query: "delete from product_master where id=?;",
       values: [id],
     });
 
@@ -85,7 +81,7 @@ export async function deleteItemListDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function getItemByPageDb(
+export async function getProductByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -103,7 +99,7 @@ export async function getItemByPageDb(
       query:
         "SELECT *,RowNum as RowID \
        FROM (Select im.*, gm.name as group_name, um.name as unit_name, ROW_NUMBER() OVER () AS RowNum\
-       from item_master im left join item_group_master gm on im.group_id=gm.id \
+       from product_master im left join product_group_master gm on im.group_id=gm.id \
        left join unit_master um on im.unit_id=um.id " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
         "order by im.name\
@@ -118,12 +114,12 @@ export async function getItemByPageDb(
   }
 }
 
-export async function getItemCount(crmDb: string, value: string | undefined) {
+export async function getProductCount(crmDb: string, value: string | undefined) {
   try {
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT count(*) as rowCount from item_master " +
+        "SELECT count(*) as rowCount from product_master " +
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
@@ -135,16 +131,16 @@ export async function getItemCount(crmDb: string, value: string | undefined) {
 /**
  *
  * @param crmDb database to search in
- * @param id id to search in item_master
+ * @param id id to search in product_master
  * @returns
  */
-export async function fetchItemById(crmDb: string, id: number) {
+export async function fetchProductById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
       query:
         "select im.*, gm.name as group_name, um.name as unit_name\
-       from item_master im left join item_group_master gm on im.group_id=gm.id \
+       from product_master im left join product_group_master gm on im.group_id=gm.id \
        left join unit_master um on im.unit_id=um.id where im.id=?",
       values: [id],
     });

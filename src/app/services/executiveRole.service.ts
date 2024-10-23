@@ -106,10 +106,11 @@ export async function updateExecutiveRoleDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateExecutiveRole(?, ?, ?, ?);",
+      query: "call updateExecutiveRole(?, ?, ?, ?, ?);",
       values: [
         executiveRoleData.id,
         executiveRoleData.name,
+        executiveRoleData.stamp,
         executiveRoleData.parent_id,
         session.user.userId,
       ],

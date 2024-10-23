@@ -58,9 +58,13 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"]={ msg: issue.message, error: true };
+          }
         }
       }
       setFormError(errorState);
@@ -75,6 +79,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateEnquirySubStatusList(data);
     } else result = await createEnquirySubStatus(data);
     return result;
