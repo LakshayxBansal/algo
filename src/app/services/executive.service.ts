@@ -341,7 +341,7 @@ export async function addDocumentDB(crmDb : string,data : docDescriptionSchemaT)
       query:"call addDocument(?,?,?);",
       values:[data.description,data.docId,data.executiveId]
     });
-    console.log(result);
+    return result;
   }catch(e){
     logger.error(e);
   }
