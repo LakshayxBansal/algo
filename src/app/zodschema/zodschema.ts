@@ -689,12 +689,12 @@ export const enquirySupportConfig = z.object({
   supportReqd: z.boolean().optional(),
 
   enquiryCloseCall: z.boolean().optional(),
-  enquiryMaintainItems: z.boolean().optional(),
+  enquiryMaintainProducts: z.boolean().optional(),
   enquirySaveFAQ: z.boolean().optional(),
   enquiryMaintainAction: z.boolean().optional(),
 
   supportCloseCall: z.boolean().optional(),
-  supportMaintainItems: z.boolean().optional(),
+  supportMaintainProducts: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
   supportMaintainContract: z.boolean().optional(),
