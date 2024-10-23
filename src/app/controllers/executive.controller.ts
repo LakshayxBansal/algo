@@ -46,7 +46,7 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-  
+          
           if (dbResult[1][0].crm_user_id) {
             await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
           }
