@@ -57,6 +57,7 @@ import { getSession } from "@/app/services/session.service";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRowId, GridSlots, GridToolbarContainer } from "@mui/x-data-grid";
 import { AddDialog } from "../addDialog";
 import AddDocsForm from "@/app/cap/admin/lists/executiveList/AddDocsForm";
+import { useRouter } from "next/navigation";
 
 type ModifiedRowT = {
   id?: number;
@@ -101,6 +102,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
+  const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
+  const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
 
   function EditToolbar() {
 
@@ -497,6 +500,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     if (props.data) {
       data["id"] = entityData.id;
       result = await updateExecutive(data, docData);
+      
     } else {
       result = await createExecutive(data,docData);
     }
