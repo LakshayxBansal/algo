@@ -44,7 +44,7 @@ type autocompleteDBT = {
   fnSetModifyMode: (id: string) => void;
   disable?: boolean;
   defaultOptions?: optionsDataT[]
-  showDetails: boolean
+  showDetails?: boolean
   //children: React.FunctionComponentElements
 };
 
@@ -65,7 +65,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
   // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const showDetails= props.showDetails;
+  const showDetails= props.showDetails ? props.showDetails : false;
 
 
   useEffect(() => {
