@@ -214,7 +214,7 @@ export async function getExecutiveById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const desc = await getScreenDescription(11);
+      const desc = await getScreenDescription(11,"c");
       if(id){
         let data = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
         return[

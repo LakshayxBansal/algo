@@ -64,7 +64,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     if (allowNewAdd) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-        console.log("S.M.W", data[0]);
         setDesc(data[0]);
       }
       setDialogOpen(true);

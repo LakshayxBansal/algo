@@ -1,16 +1,17 @@
 "use server";
-import { getScreenDescriptionDB } from "../services/object.servic";
+import { getScreenDescriptionDB } from "../services/object.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
 
-export async function getScreenDescription(objectID: number) {
+export async function getScreenDescription(objectID: number,action_id: string) {
   let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
       result = await getScreenDescriptionDB(
         session.user.dbInfo.dbName,
-        objectID
+        objectID,
+        action_id
       );
       return result;
     }
