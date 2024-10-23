@@ -68,7 +68,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue: a
                         name={props.desc.column_name}
                         fullWidth
                         required={props.desc.is_mandatory}
-                        defaultValue={dayjs(props.defaultValue)}
+                        defaultValue={props.defaultValue ? dayjs(props.defaultValue) : null}
                     />
                 )
             case 5:
