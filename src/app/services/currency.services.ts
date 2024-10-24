@@ -64,12 +64,13 @@ export async function updateCurrencyDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateCurrency(?,?,?,?,?,?);",
+      query: "call updateCurrency(?,?,?,?,?,?,?);",
 
       values: [
         sourceData.id,
         sourceData.symbol,
         sourceData.name,
+        sourceData.stamp,
         sourceData.shortForm,
         sourceData.decimal_places,
         sourceData.currency_system,

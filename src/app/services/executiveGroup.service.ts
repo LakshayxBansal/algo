@@ -107,9 +107,10 @@ export async function updateExecutiveGroupDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateExecutiveGroup(?,?,?,?,?);",
+      query: "call updateExecutiveGroup(?,?,?,?,?,?);",
       values: [
         sourceData.name,
+        sourceData.stamp,
         sourceData.alias,
         sourceData.id,
         sourceData.parent_id,

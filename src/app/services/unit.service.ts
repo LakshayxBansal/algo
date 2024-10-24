@@ -21,8 +21,8 @@ export async function updateUnitDB(session: Session, data: zm.unitSchemaT) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateUnit(?,?,?);",
-      values: [data.id, data.name, session.user.userId],
+      query: "call updateUnit(?,?,?,?);",
+      values: [data.id, data.name, data.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -143,7 +143,7 @@ export async function checksIfUsed(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "SELECT COUNT(*) as count FROM unit_master um INNER JOIN item_master im ON im.unit_id = um.id where um.id=?;",
+      query: "SELECT COUNT(*) as count FROM unit_master um INNER JOIN product_master im ON im.unit_id = um.id where um.id=?;",
       values: [id],
     });
     return result;

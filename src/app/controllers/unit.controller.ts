@@ -78,7 +78,7 @@ export async function updateUnit(data: mdl.unitSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      const parsed = zs.ItemSchema.safeParse(data);
+      const parsed = zs.ProductSchema.safeParse(data);
 
       if (parsed.success) {
         const dbResult = await updateUnitDB(session, data as mdl.unitSchemaT);
@@ -304,7 +304,7 @@ export async function delUnitById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const check = await checksIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
+      if(check[0]?.count>0){
         return ("Can't Be DELETED!");
       }
       else{

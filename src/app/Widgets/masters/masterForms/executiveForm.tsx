@@ -126,6 +126,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         const newVal = {
           id: result.data[0].id,
           name: result.data[0].name,
+          stamp: result.data[0].stamp,
         };
         // if(inviteId){
         //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
@@ -144,7 +145,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
-            if (path == "refresh") {
+            if (path === "refresh") {
               errorState["form"] = { msg: issue.message, error: true };
             }
           }

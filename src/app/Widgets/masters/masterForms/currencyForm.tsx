@@ -63,12 +63,13 @@ export default function CurrencyForm(props: masterFormPropsT) {
       const issues = result.data;
 
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
+        if (issue.path === 'refresh') {
+          errorState["form"] = { msg: issue.message, error: true };
+        }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
-      console.log(errorState);
-
       setFormError(errorState);
     }
   };
@@ -78,6 +79,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
 
     if (entityData?.id) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateCurrency(data);
       console.log(entityData);
     } else {

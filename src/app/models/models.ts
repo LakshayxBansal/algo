@@ -8,9 +8,9 @@ export type organisationSchemaT = z.infer<typeof zs.organisationSchema>;
 
 export type contactSchemaT = z.infer<typeof zs.contactSchema>;
 
-export type itemSchemaT = z.infer<typeof zs.ItemSchema>;
+export type productSchemaT = z.infer<typeof zs.ProductSchema>;
 
-export type itemGroupSchemaT = z.infer<typeof zs.itemGroupSchema>;
+export type productGroupSchemaT = z.infer<typeof zs.productGroupSchema>;
 
 export type unitSchemaT = z.infer<typeof zs.UnitSchema>;
 export type inviteUserSchemaT = z.infer<typeof zs.inviteUserSchema>;
@@ -98,7 +98,7 @@ export type masterFormPropsWithDataT = {
 export type enquirySubStatusMasterT = z.infer<typeof zs.enquirySubStatusMaster>;
 export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
-export type enquiryItemSchemaT = z.infer<typeof zs.itemToListFormSchema>;
+export type enquiryProductSchemaT = z.infer<typeof zs.productToListFormSchema>;
 export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
 
@@ -183,7 +183,7 @@ export type getContactByPageT = [
   }
 ];
 
-export type getItemT = [
+export type getProductT = [
   {
     id: number;
     name: string;
