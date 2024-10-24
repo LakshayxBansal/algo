@@ -38,7 +38,8 @@ export default function State() {
         fnFetchDataByID={getStateById}
         fnDeleteDataByID={delStateById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

@@ -72,14 +72,14 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
           idToOpenPop.current.set(page.id, event.currentTarget);
           setHoverId(page.id);
         }
-        console.log("enter", idToOpenPop.current);
+        // console.log("enter", idToOpenPop.current);
         setHoverOpen(true);
   }
 
   const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT) => {
     // setHoverOpen(false);
     clearTimeout(timeoutRef.current);
-    console.log("returning", isReturning);
+    // console.log("returning", isReturning);
     // if (hoverOpen){
       setHoverId(page.id);
       timeoutRef.current =  setTimeout(() => {
@@ -94,7 +94,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
             if (greatestKey !== null) {
               idToOpenPop.current.delete(greatestKey);
             }
-            console.log("working")
+            // console.log("working")
           // }
         }, 100);
         // console.log(id);
@@ -113,7 +113,7 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
     if (greatestKey !== null) {
       idToOpenPop.current.delete(greatestKey);
     }
-    console.log("working popper")
+    // console.log("working popper")
   }
 
   function handleCollapse(id: number): boolean {

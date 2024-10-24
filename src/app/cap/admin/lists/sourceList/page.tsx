@@ -33,7 +33,8 @@ export default function enquirySource() {
         fnFetchDataByID={getEnquirySourceById}
         fnDeleteDataByID={delEnquirySourceById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

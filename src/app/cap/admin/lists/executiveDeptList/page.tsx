@@ -33,7 +33,8 @@ export default function executiveDept() {
         fnFetchDataByID={getDeptById}
         fnDeleteDataByID={delExecutiveDeptById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

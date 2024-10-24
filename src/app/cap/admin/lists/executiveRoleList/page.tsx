@@ -33,7 +33,8 @@ export default function executiveRole() {
         fnFetchDataByID={getExecutiveRoleById}
         fnDeleteDataByID={delExecutiveRoleById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

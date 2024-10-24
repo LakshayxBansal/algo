@@ -33,7 +33,8 @@ export default function Category() {
         fnFetchDataByID={getCategoryById}
         fnDeleteDataByID={delCategoryById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>
