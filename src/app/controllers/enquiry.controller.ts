@@ -5,6 +5,7 @@ import {
   getProductDataAction,
   getLedgerDataAction,
   showProductGridDB,
+  getLoggedInUserDetailsDB,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -125,6 +126,23 @@ export async function showProductGrid() {
   }
 }
 
+export async function getLoggedInUserDetails() {
+  let result;
+
+  try {
+    const session = await getSession();
+    if (session) {
+      const dbResult = await getLoggedInUserDetailsDB(session.user.dbInfo.dbName, session.user.userId);
+      if (dbResult) {
+        result = { status: true, data: dbResult[0] };
+      }
+    }
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
 export async function getEnquiryById(id: number) {
   try {
     const session = await getSession();
@@ -156,3 +174,4 @@ export async function updateEnquiryById({
     logger.error(error);
   }
 }
+
