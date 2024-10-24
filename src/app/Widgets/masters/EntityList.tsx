@@ -120,6 +120,7 @@ export default function EntityList(props: entitiyCompT) {
       //   allDfltCols = props.customCols;
       // }
       //if roleid is 1(admin) show options columns
+      
       allDfltCols = optionsColumn.concat(props.customCols);
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
       if (props.fnFetchColumns) {
