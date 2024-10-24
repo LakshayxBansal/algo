@@ -38,7 +38,8 @@ export default function organisation() {
         fnFetchDataByID={getOrganisationById}
         fnDeleteDataByID={delOrganisationById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

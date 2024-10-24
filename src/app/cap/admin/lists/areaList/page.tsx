@@ -33,7 +33,8 @@ export default function Area() {
         fnFetchDataByID={getById}
         fnDeleteDataByID={delAreaById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

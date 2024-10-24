@@ -38,7 +38,8 @@ export default function executiveGroup() {
         fnFetchDataByID={getExecutiveGroupById}
         fnDeleteDataByID={delExecutiveGroupById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>
