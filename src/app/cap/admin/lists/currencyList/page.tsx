@@ -38,7 +38,8 @@ export default function Currency() {
         fnFetchDataByID={getCurrencyById}
         fnDeleteDataByID={delCurrencyById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

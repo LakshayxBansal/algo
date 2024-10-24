@@ -11,7 +11,7 @@ import { Session } from "next-auth";
 
 export async function createEnquiryDB(
   session: Session,
-  enqData: { headerLedger: enquiryDataSchemaT ; product: any }
+  enqData: { headerLedger: enquiryDataSchemaT; product: any }
 ) {
   try {
     return excuteQuery({
@@ -38,7 +38,7 @@ export async function createEnquiryDB(
         enqData.headerLedger.enquiry_tran_type,
         enqData.headerLedger.active,
         session.user.userId,
-        enqData.product
+        enqData.product,
       ],
     });
   } catch (e) {
@@ -89,7 +89,23 @@ export async function showProductGridDB(crmDb: string) {
   }
 }
 
-export async function getHeaderDataAction(session:Session , id:number){
+export async function getLoggedInUserDetailsDB(crmDb: string, userId: number) {
+  try {
+    let query = "select * from executive_master em where em.crm_user_id = ?";
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: [userId],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getHeaderDataAction(session: Session, id: number) {
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
@@ -112,14 +128,12 @@ export async function getHeaderDataAction(session:Session , id:number){
       values: [id],
     });
     return result;
-    
   } catch (error) {
     console.log(error);
-    
   }
 }
 
-export async function getLedgerDataAction(session:Session , id:number){
+export async function getLedgerDataAction(session: Session, id: number) {
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
@@ -144,17 +158,15 @@ export async function getLedgerDataAction(session:Session , id:number){
     return result;
   } catch (error) {
     console.log(error);
-    
   }
 }
 
-
-export async function getProductDataAction(session:Session, id:number){
+export async function getProductDataAction(session: Session, id: number) {
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-      "SELECT i.*, im.name AS product_name, \
+        "SELECT i.*, im.name AS product_name, \
       um.name AS unit_name \
  FROM crmapp1.enquiry_product_tran i \
  JOIN crmapp1.unit_master um ON um.id = i.unit_id \
@@ -165,6 +177,5 @@ export async function getProductDataAction(session:Session, id:number){
     return result;
   } catch (error) {
     console.log(error);
-    
   }
 }

@@ -33,7 +33,8 @@ export default function ProductGroup() {
         fnFetchDataByID={getProductGroupById}
         fnDeleteDataByID={delProductGroupById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

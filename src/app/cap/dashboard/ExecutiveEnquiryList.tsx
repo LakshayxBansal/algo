@@ -84,6 +84,7 @@ export default async function ExecutiveEnquiryList() {
           Enquiries
         </Typography>
         <DataGrid
+          disableColumnMenu
           rows={data}
           columns={columns}
           initialState={{
