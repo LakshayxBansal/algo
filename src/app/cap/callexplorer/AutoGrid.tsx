@@ -780,7 +780,11 @@ export default function AutoGrid(props: any) {
             }}
           />
         </Paper>
-        <Grid container alignItems={"center"}>
+        <Grid container alignItems={"center"} marginTop={0.5} sx={{
+          mt: {
+            xs: "1vh"
+          }
+        }} marginBottom={1}>
           <Grid item md={2.5} sm={6} xs={12} sx={{ margin: "auto" }}>
             <Box
               sx={{
@@ -886,8 +890,8 @@ export default function AutoGrid(props: any) {
             columnGap: 3,
           }}
         >
-          <Grid container alignItems="center" justifyContent="space-between" marginTop={2}>
-            <Grid item xs={12} sm={5} md={4} >
+          <Grid container alignItems="center" sx={{ justifyContent: { xs: "center", sm: "space-between", md: "space-between" } }} marginTop={2}>
+            <Grid item xs={8.5} sm={5} md={4} >
               <ContainedButton
                 variant="contained"
                 size="small"
@@ -897,7 +901,7 @@ export default function AutoGrid(props: any) {
                     md: "0.3vw",
                     lg: "2vw"
                   },
-                  textTransform: "none"
+                  textTransform: "none",
                 }}
                 onClick={() => setDetails(!details)}
               >
@@ -918,7 +922,7 @@ export default function AutoGrid(props: any) {
                 sx={{
                   marginLeft: { xs: 0, sm: -1.5 }, // Aligns right from small screens (600px) and up
                   marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
-                  width: { xs: '80vw', sm: 'auto' }, // Makes full width on extra small screens
+                  width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
                   textTransform: "none"
                 }}
               >
