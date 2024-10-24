@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, TextField, Tooltip, Typography, } from "@mui/material";
 import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
-import { ContainedButton, MinimizedDataGrid, StripedDataGrid, StyledMenu } from "../../utils/styledComponents";
+import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../../controllers/executive.controller";
 import { optionsDataT } from "../../models/models";
@@ -48,7 +48,6 @@ export default function AutoGrid(props: any) {
   type DlgState = { [key: string]: HTMLElement | null; };
   const [enableAllocate, setEnableAllocate] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const anchorRef = React.useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
 
   const toggleColBtn = () => {
@@ -66,13 +65,6 @@ export default function AutoGrid(props: any) {
     // const value = parseInt(event.target.value, 10);
     const value = Number(event.target.value);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
-  };
-
-  const handleCloseFilter = (field: string) => {
-    setDlgState((prevState) => ({
-      ...prevState,
-      [field]: null,
-    }));
   };
 
 
@@ -109,45 +101,6 @@ export default function AutoGrid(props: any) {
 
   const handleColumnVisibility = () => {
     return <>
-      {/* <IconButton
-        aria-controls="tune-menu"
-        aria-haspopup="true"
-        onClick={(event) => {
-          setDlgState((prevState) => ({
-            ...prevState,
-            columnConfig: event.currentTarget,  // Set the clicked button as the anchorEl directly here
-          }));
-        }}
-      >
-        <TuneIcon fontSize="small" />
-      </IconButton>
-      <Box>
-        <StyledMenu
-          id="tune-menu"
-          anchorEl={dlgState['columnConfig']}
-          open={Boolean(dlgState['columnConfig'])}
-          onClose={() => handleCloseFilter('columnConfig')}
-        >
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {column1
-              .filter(col => col.field !== 'columnConfig')
-              .map((col) => (
-                // (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
-                <FormControlLabel
-                  key={col.field}
-                  control={
-                    <Checkbox
-                      checked={columnVisibilityModel[col.field] !== false}
-                      onChange={() => handleColumnVisibilityChange(col.field)}
-                      disabled={(col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") ? false : true}
-                    />
-                  }
-                  label={col.headerName}
-                />
-              ))}
-          </div>
-        </StyledMenu>
-      </Box> */}
       <Tooltip title="Manage Columns" placement="top-end" arrow>
         <IconButton
           aria-controls="tune-menu"
@@ -205,13 +158,6 @@ export default function AutoGrid(props: any) {
       ["subStatus"]: null, // Set the selected value for the specific field
     }));
   }
-
-  const handleColumnVisibilityChange = (field: string) => {
-    setColumnVisibilityModel((prev: { [x: string]: any }) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
 
   const options = {
     timeZone: 'Asia/Kolkata',
