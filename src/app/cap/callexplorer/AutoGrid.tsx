@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, TextField, Tooltip, Typography, } from "@mui/material";
-import { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import { ContainedButton, StripedDataGrid, StyledMenu } from "../../utils/styledComponents";
+import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
+import { ContainedButton, MinimizedDataGrid, StripedDataGrid, StyledMenu } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../../controllers/executive.controller";
 import { optionsDataT } from "../../models/models";
@@ -47,6 +47,20 @@ export default function AutoGrid(props: any) {
   const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
   type DlgState = { [key: string]: HTMLElement | null; };
   const [enableAllocate, setEnableAllocate] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+  const apiRef = useGridApiRef();
+
+  const toggleColBtn = () => {
+    const preferencePanelState = gridPreferencePanelStateSelector(
+      apiRef.current.state
+    );
+    if (preferencePanelState.open) {
+      apiRef.current.hidePreferences();
+    } else {
+      apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
+    }
+  };
 
   const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // const value = parseInt(event.target.value, 10);
@@ -95,7 +109,7 @@ export default function AutoGrid(props: any) {
 
   const handleColumnVisibility = () => {
     return <>
-      <IconButton
+      {/* <IconButton
         aria-controls="tune-menu"
         aria-haspopup="true"
         onClick={(event) => {
@@ -133,7 +147,17 @@ export default function AutoGrid(props: any) {
               ))}
           </div>
         </StyledMenu>
-      </Box>
+      </Box> */}
+      <Tooltip title="Manage Columns" placement="top-end" arrow>
+        <IconButton
+          aria-controls="tune-menu"
+          aria-haspopup="true"
+          ref={(ref) => setAnchorEl(ref)}
+          onClick={toggleColBtn}
+        >
+          <TuneIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
     </>
   }
 
@@ -227,14 +251,15 @@ export default function AutoGrid(props: any) {
       field: "Type",
       headerName: "Status",
       width: 50,
+      hideable: false,
       renderCell: (params) => {
         return <CustomColor row={params.row} />;
       },
     },
-    { field: "id", headerName: "Call No.", width: 70, sortable: false },
-    { field: "contactParty", headerName: "Contact/Party", width: 130 },
+    { field: "id", headerName: "Call No.", hideable: false, width: 70, sortable: false },
+    { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
-      field: "date", width: 130, headerName: "Date",
+      field: "date", width: 130, headerName: "Date", hideable: false,
       renderCell: (params) => {
         return params.row.date.toDateString();
       },
@@ -695,7 +720,7 @@ export default function AutoGrid(props: any) {
         </Seperator>
         <Paper elevation={1}
         >
-          <StripedDataGrid
+          <MinimizedDataGrid
             disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
@@ -711,7 +736,43 @@ export default function AutoGrid(props: any) {
             onPaginationModelChange={setPageModel}
             rowCount={totalRowCount}
             checkboxSelection
+            apiRef={apiRef}
             loading={loading}
+            slotProps={{
+              columnsPanel: {
+                sx: {
+                  // "& .MuiDataGrid-panelFooter button:firstChild": {
+                  //   display: "none"
+                  // },
+                  ".MuiDataGrid-columnsManagementRow:first-child": {
+                    display: "none"
+                  },
+                  ".MuiDataGrid-columnsManagementHeader": {
+                    display: "none",
+                  },
+                },
+              },
+              panel: {
+                anchorEl: () => {
+                  const preferencePanelState = gridPreferencePanelStateSelector(
+                    apiRef.current.state
+                  );
+                  if (
+                    preferencePanelState.openedPanelValue ===
+                    GridPreferencePanelsValue.columns &&
+                    anchorEl
+                  ) {
+                    return anchorEl;
+                  }
+
+                  const columnHeadersElement =
+                    apiRef.current.rootElementRef?.current?.querySelector(
+                      `.${gridClasses.columnHeaders}`
+                    )!;
+                  return columnHeadersElement;
+                },
+              },
+            }}
             // slots={{
             //   footer: handleColumnVisibility
             // }}
@@ -736,47 +797,6 @@ export default function AutoGrid(props: any) {
               // '& .MuiDataGrid-virtualScroller': {
               //   overflowY: 'auto',
               // },
-              '& .MuiDataGrid-cellCheckbox': {
-                width: '30px',
-                height: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-cellCheckbox .MuiCheckbox-root': {
-                padding: 0,
-              },
-              '& .MuiDataGrid-cellCheckbox .MuiSvgIcon-root': {
-                width: '15px',
-                height: '15px',
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox': {
-                width: '38px',
-                height: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox .MuiCheckbox-root': {
-                padding: 0,
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox .MuiSvgIcon-root': {
-                width: '15px',
-                height: '15px',
-              },
-              '& .MuiDataGrid-footerContainer': {
-                height: '28px', // Force footer container to 30px
-                minHeight: '28px', // Override any minimum height constraints
-              },
-              '& .MuiTablePagination-root': {
-                height: '28px', // Ensure pagination component also respects 30px height
-                minHeight: '28px',
-                overflow: "hidden"
-              },
-              '& .MuiTablePagination-toolbar': {
-                height: '28px', // Adjust the toolbar within the pagination
-                minHeight: '28px',
-              },
             }}
           />
         </Paper>
