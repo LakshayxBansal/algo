@@ -3,11 +3,11 @@ import * as React from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
 import {
-  delItemById,
-  getItemById,
-  getItemByPage,
-} from "@/app/controllers/item.controller";
-import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
+  delProductById,
+  getProductById,
+  getProductByPage,
+} from "@/app/controllers/product.controller";
+import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "Name", editable: true },
@@ -16,21 +16,21 @@ const columns: GridColDef[] = [
   { field: "unit_name", headerName: "Unit Name", editable: true },
 ];
 
-export default function Items() {
+export default function Products() {
   return (
     <>
       <EntityList
-        title="Item Master"
+        title="Product Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <ItemForm
+          <ProductForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
             data={data}
           />
         )}
-        fetchDataFn={getItemByPage}
-        fnFetchDataByID={getItemById}
-        fnDeleteDataByID={delItemById}
+        fetchDataFn={getProductByPage}
+        fnFetchDataByID={getProductById}
+        fnDeleteDataByID={delProductById}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

@@ -36,7 +36,7 @@ export async function getCountryByIDList(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select id as id, name as name, alias as alias from country_master cm where cm.id=?;",
+        "select id as id, name as name, alias as alias, stamp as stamp from country_master cm where cm.id=?;",
       values: [id],
     });
 
@@ -272,9 +272,10 @@ export async function updateCountryDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateCountry(?,?,?,?);",
+      query: "call updateCountry(?,?,?,?,?);",
       values: [
         sourceData.name,
+        sourceData.stamp,
         sourceData.id,
         sourceData.alias,
         session.user.userId,
@@ -320,9 +321,10 @@ export async function updateStateDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateState(?,?,?,?,?);",
+      query: "call updateState(?,?,?,?,?,?);",
       values: [
         sourceData.name,
+        sourceData.stamp,
         sourceData.id,
         sourceData.alias,
         sourceData.country_id,

@@ -40,6 +40,7 @@ type selectMasterWrapperT = {
   notEmpty?: boolean;
   disable?: boolean;
   defaultOptions?:optionsDataT[]
+  showDetails?: boolean ;
 };
 
 enum dialogMode {
@@ -107,6 +108,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             fnSetModifyMode={onModifyDialog}
             disable={props.disable}
             defaultOptions={props.defaultOptions}
+            showDetails = {props.showDetails? props.showDetails : false}
           />
           {!props.disable && (
             <IconButton tabIndex={-1} size="small">

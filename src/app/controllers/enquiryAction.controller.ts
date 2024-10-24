@@ -70,7 +70,7 @@ export async function delActionById(id: number) {
 }
 /**
  *
- * @param Id id of the item to be searched
+ * @param Id id of the product to be searched
  * @returns
  */
 

@@ -122,110 +122,22 @@ export async function createAllocationType(data: nameMasterDataT) {
   return result;
 }
 
-// export async function updateAllocationType(data: nameMasterDataT) {
-//   let result;
-//   try {
-//     const session = await getSession();
-//     if (session) {
-//       // const data = {
-//       //   name: formData.get("name") as string,
-//       // };
-
-//       const parsed = zs.nameMasterData.safeParse(data);
-//       if (parsed.success) {
-//         const dbResult = await updateAllocationTypeDb(session, data);
-
-//         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
-//           result = { status: true, data: dbResult[1] };
-//         } else {
-//           result = {
-//             status: false,
-//             data: [
-//               {
-//                 path: [dbResult[0][0].error_path],
-//                 message: dbResult[0][0].error_text,
-//               },
-//             ],
-//           };
-//         }
-//       } else {
-//         //result = {status: false, data: parsed.error.flatten().fieldErrors };
-//         result = { status: false, data: parsed.error.issues };
-//       }
-//     } else {
-//       result = {
-//         status: false,
-//         data: [{ path: ["form"], message: "Error: Server Error" }],
-//       };
-//     }
-//     console.log(result);
-
-//     return result;
-//   } catch (e) {
-//     console.log(e);
-//     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
-//       result = {
-//         status: false,
-//         data: [{ path: ["name"], message: "Error: Value already exist" }],
-//       };
-//       return result;
-//     }
-//   }
-//   result = {
-//     status: false,
-//     data: [{ path: ["form"], message: "Error: Unknown Error" }],
-//   };
-//   return result;
-// }
-
 export async function updateAllocationType(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
     if (session) {
+      // const data = {
+      //   name: formData.get("name") as string,
+      // };
+
       const parsed = zs.nameMasterData.safeParse(data);
-      if (!parsed.success) {
-        return { status: false, data: parsed.error.issues };
-      }
-
-      // if (data.id === undefined) {
-      //   return { status: false, data: [{ path: ["id"], message: "ID is required" }] };
-      // }
-
-      const currentData = await getAllocationDetailsById(
-        session.user.dbInfo.dbName,
-        data.id
-      );
-
-      console.log("data", currentData);
-
-      if (currentData.length === 0) {
-        return {
-          status: false,
-          data: [{ path: "refresh", message: "Record not found" }],
-        };
-      }
-
-      const currentStamp = currentData[0].stamp;
-
-      if (currentStamp !== data.stamp) {
-        return {
-          status: false,
-          data: [
-            {
-              path: "refresh",
-              message: "Data is updated, please refresh the page",
-            },
-          ],
-        };
-      } else {
+      if (parsed.success) {
         const dbResult = await updateAllocationTypeDb(session, data);
-        console.log(dbResult);
 
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {
-          console.log("result", result);
           result = {
             status: false,
             data: [
@@ -236,6 +148,9 @@ export async function updateAllocationType(data: nameMasterDataT) {
             ],
           };
         }
+      } else {
+        //result = {status: false, data: parsed.error.flatten().fieldErrors };
+        result = { status: false, data: parsed.error.issues };
       }
     } else {
       result = {
@@ -243,19 +158,24 @@ export async function updateAllocationType(data: nameMasterDataT) {
         data: [{ path: ["form"], message: "Error: Server Error" }],
       };
     }
+    console.log(result);
+
     return result;
   } catch (e) {
+    console.log(e);
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
-      return {
+      result = {
         status: false,
-        data: [{ path: ["name"], message: "Error: Value already exists" }],
+        data: [{ path: ["name"], message: "Error: Value already exist" }],
       };
+      return result;
     }
-    return {
-      status: false,
-      data: [{ path: ["form"], message: "Error: Unknown Error" }],
-    };
   }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
 }
 
 export async function getAllocationTypeByPage(

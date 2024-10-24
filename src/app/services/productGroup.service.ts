@@ -4,9 +4,9 @@ import * as zm from "../models/models";
 import { Session } from "next-auth";
 import excuteQuery from "../utils/db/db";
 
-export async function getItemGroupList(crmDb: string, searchString: string) {
+export async function getProductGroupList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from item_group_master";
+    let query = "select id as id, name as name from product_group_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -32,14 +32,14 @@ export async function getItemGroupList(crmDb: string, searchString: string) {
  * @returns result from DB (returning *)
  */
 
-export async function createItemGroupDb(
+export async function createProductGroupDb(
   session: Session,
-  sourceData: zm.itemGroupSchemaT
+  sourceData: zm.productGroupSchemaT
 ) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createItemGroup(?,?,?,?,?)",
+      query: "call createProductGroup(?,?,?,?,?)",
       values: [
         sourceData.name,
         sourceData.alias,
@@ -54,18 +54,19 @@ export async function createItemGroupDb(
   return null;
 }
 
-export async function updateItemGroupDb(
+export async function updateProductGroupDb(
   session: Session,
-  sourceData: zm.itemGroupSchemaT
+  sourceData: zm.productGroupSchemaT
 ) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateItemGroup(?,?,?,?,?);",
+      query: "call updateProductGroup(?,?,?,?,?,?);",
 
       values: [
         sourceData.id,
         sourceData.name,
+        sourceData.stamp,
         sourceData.alias,
         sourceData.parent_id,
         session.user.userId,
@@ -76,15 +77,15 @@ export async function updateItemGroupDb(
   }
   return null;
 }
-// export async function createItemGroupDb(
+// export async function createProductGroupDb(
 //   session: Session,
-//   sourceData: zm.itemGroupSchemaT
+//   sourceData: zm.productGroupSchemaT
 // ) {
 //   try {
 //     return excuteQuery({
 //       host: session.user.dbInfo.dbName,
 //       query:
-//         "insert into item_group_master (name, created_by, created_on) \
+//         "insert into product_group_master (name, created_by, created_on) \
 //        values (?, (select crm_user_id from executive_master where email=?), now()) returning *",
 //       values: [sourceData.name, session.user.userId],
 //     });
@@ -97,15 +98,15 @@ export async function updateItemGroupDb(
 /**
  *
  * @param crmDb database to search in
- * @param id id to search in item_master
+ * @param id id to search in product_master
  * @returns
  */
-export async function getItemGroupDetailsById(crmDb: string, id: number) {
+export async function getProductGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT c1.*, c2.name parent FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id \
+        "SELECT c1.*, c2.name parent FROM product_group_master c1 left outer join product_group_master c2 on c1.parent_id = c2.id \
         where c1.id=?;",
       values: [id],
     });
@@ -121,7 +122,7 @@ export async function checkIfUsed(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-     "SELECT COUNT(*) as count FROM item_group_master ig INNER JOIN item_master im ON im.group_id = ig.id where ig.id=?;",      
+     "SELECT COUNT(*) as count FROM product_group_master ig INNER JOIN product_master im ON im.group_id = ig.id where ig.id=?;",      
      values: [id],
     });
     return result;
@@ -130,11 +131,11 @@ export async function checkIfUsed(crmDb: string, id: number) {
   }
 }
 
-export async function delItemGroupDetailsById(crmDb: string, id: number) {
+export async function delProductGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from item_group_master where id=?;",
+      query: "delete from product_group_master where id=?;",
       values: [id],
     });
 
@@ -144,7 +145,7 @@ export async function delItemGroupDetailsById(crmDb: string, id: number) {
   }
 }
 
-export async function getItemGroupByPageDb(
+export async function getProductGroupByPageDb(
   crmDb: string,
   page: number,
   filter: string | undefined,
@@ -160,7 +161,7 @@ export async function getItemGroupByPageDb(
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM item_group_master c1 left outer join item_group_master c2 on c1.parent_id = c2.id " +
+        "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM product_group_master c1 left outer join product_group_master c2 on c1.parent_id = c2.id " +
         (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
         "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
@@ -173,7 +174,7 @@ export async function getItemGroupByPageDb(
   }
 }
 
-export async function getItemGroupCount(
+export async function getProductGroupCount(
   crmDb: string,
   value: string | undefined
 ) {
@@ -181,7 +182,7 @@ export async function getItemGroupCount(
     return excuteQuery({
       host: crmDb,
       query:
-        "SELECT count(*) as rowCount from item_group_master" +
+        "SELECT count(*) as rowCount from product_group_master" +
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });

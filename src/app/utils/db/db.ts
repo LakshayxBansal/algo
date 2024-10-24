@@ -143,6 +143,7 @@ export default async function excuteQuery({host, query, values }: {host: string,
 
 // To create database using provided host and port
 export async function createDbConn({hostIp, hostPort, query}: {hostIp: string, hostPort: number, query: string}){
+  let results;
   let conn;
   try {
     conn = await mariadb.createConnection({
@@ -152,9 +153,12 @@ export async function createDbConn({hostIp, hostPort, query}: {hostIp: string, h
       password: process.env.USERDB_PASSWORD,
     })
 
-    const results = await conn.query(query);
-    return results;
+    results = await conn.query(query);
   } catch (error) {
     throw error
+  } finally {
+    conn?.end();
   }
+  return results;
+
 }

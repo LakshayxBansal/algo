@@ -39,7 +39,7 @@ import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
-import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
+import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
 import Box from "@mui/material/Box";
@@ -57,7 +57,7 @@ import {
   getActionById,
   getEnquiryAction,
 } from "@/app/controllers/enquiryAction.controller";
-import { getItem, getItemById } from "@/app/controllers/item.controller";
+import { getProduct, getProductById } from "@/app/controllers/product.controller";
 
 import dayjs from "dayjs";
 import {
@@ -74,7 +74,7 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import AddItemToListForm from "../enquiry/addItemToListForm";
+import AddProductToListForm from "../enquiry/addProductToListForm";
 
 export interface IformData {
   userName: string;
@@ -82,8 +82,8 @@ export interface IformData {
 
 type ModifiedRowT = {
   id?: number;
-  item?: string;
-  item_id?: number;
+  product?: string;
+  product_id?: number;
   quantity?: number;
   unit?: string;
   unit_id?: number;
@@ -93,8 +93,8 @@ type ModifiedRowT = {
 const rows: any = [
   // {
   //   id: 1,
-  //   item: "Test Item",
-  //   item_id: 1,
+  //   product: "Test Product",
+  //   product_id: 1,
   //   quantity: 15,
   //   unit: "Unit1",
   //   unit_id: 1,
@@ -102,8 +102,8 @@ const rows: any = [
   // },
   // {
   //   id: 2,
-  //   item: "Test Item 2",
-  //   item_id: 2,
+  //   product: "Test Product 2",
+  //   product_id: 2,
   //   quantity: 8,
   //   unit: "Unit2",
   //   unit_id: 2,
@@ -111,8 +111,8 @@ const rows: any = [
   // },
   // {
   //   id: 3,
-  //   item: "Test Item",
-  //   item_id: 1,
+  //   product: "Test Product",
+  //   product_id: 1,
   //   quantity: 500,
   //   unit: "Unit3",
   //   unit_id: 3,
@@ -120,8 +120,8 @@ const rows: any = [
   // },
   // {
   //   id: 4,
-  //   item: "Test Item2",
-  //   item_id: 2,
+  //   product: "Test Product2",
+  //   product_id: 2,
   //   quantity: 5,
   //   unit: "Unit4",
   //   unit_id: 4,
@@ -129,8 +129,8 @@ const rows: any = [
   // },
   // {
   //   id: 5,
-  //   item: "Test Item",
-  //   item_id: 1,
+  //   product: "Test Product",
+  //   product_id: 1,
   //   quantity: 12,
   //   unit: "Unit2",
   //   unit_id: 2,
@@ -165,9 +165,9 @@ export default function UpdateInputForm(props: {
       <GridToolbarContainer
         sx={{ display: "flex", justifyContent: "space-between" }}
       >
-        <Seperator>Item List</Seperator>
+        <Seperator>Product List</Seperator>
         <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-          Add Item
+          Add Product
         </Button>
       </GridToolbarContainer>
     );
@@ -224,7 +224,7 @@ export default function UpdateInputForm(props: {
     //   result = await createEnquiry({
     //     head: headerData,
     //     ledger: ledgerData,
-    //     item: data,
+    //     product: data,
     //   });
     //   if (result.status) {
     //     const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -323,32 +323,32 @@ export default function UpdateInputForm(props: {
 
   const columns: GridColDef[] = [
     {
-      field: "item",
-      headerName: "Item Name",
+      field: "product",
+      headerName: "Product Name",
       width: 180,
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
             <SelectMasterWrapper
-              name={"item"}
-              id={"item"}
+              name={"product"}
+              id={"product"}
               label={""}
-              dialogTitle={"Add Item"}
-              fetchDataFn={getItem}
-              fnFetchDataByID={getItemById}
+              dialogTitle={"Add Product"}
+              fetchDataFn={getProduct}
+              fnFetchDataByID={getProductById}
               required
-              formError={formError?.item ?? formError.item}
+              formError={formError?.product ?? formError.product}
               onChange={(e, v, s) =>
-                onSelectDataGridRowStateChange(e, v, s, "item")
+                onSelectDataGridRowStateChange(e, v, s, "product")
               }
               defaultValue={
                 {
-                  id: params.row.item_id,
-                  name: params.row.item,
+                  id: params.row.product_id,
+                  name: params.row.product,
                 } as optionsDataT
               }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <ItemForm
+                <ProductForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
@@ -553,7 +553,7 @@ export default function UpdateInputForm(props: {
             d="M0 10C0 4.477 4.477 0 10 0h380c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 20 0 15.523 0 10ZM0 59c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 69 0 64.523 0 59ZM0 106c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 153c0-5.523 4.477-10 10-10h195.5c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 200c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 247c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10Z"
           />
         </svg>
-        <Box sx={{ mt: 2 }}>No Items Added</Box>
+        <Box sx={{ mt: 2 }}>No Products Added</Box>
       </StyledGridOverlay>
     );
   }
@@ -915,11 +915,11 @@ export default function UpdateInputForm(props: {
         </Grid>
         {dialogOpen && (
           <AddDialog
-            title="Add Item to Item List"
+            title="Add Product to Product List"
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
-            <AddItemToListForm
+            <AddProductToListForm
               setDialogOpen={setDialogOpen}
               setData={setData}
             />

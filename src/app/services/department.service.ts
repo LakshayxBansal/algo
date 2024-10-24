@@ -99,8 +99,8 @@ export async function updateDepartmentDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateDepartment(?, ?, ?)",
-      values: [sourceData.id, sourceData.name, session.user.userId],
+      query: "call updateDepartment(?, ?, ?, ?)",
+      values: [sourceData.id, sourceData.name, sourceData.stamp, session.user.userId],
     });
   } catch (e) {
     logger.error(e);

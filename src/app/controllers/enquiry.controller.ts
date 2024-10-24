@@ -2,15 +2,16 @@
 import {
   createEnquiryDB,
   getHeaderDataAction,
-  getItemDataAction,
+  getProductDataAction,
   getLedgerDataAction,
-  showItemGridDB,
+  showProductGridDB,
+  getLoggedInUserDetailsDB,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
   enquiryDataSchemaT,
   enquiryHeaderSchemaT,
-  enquiryItemSchemaT,
+  enquiryProductSchemaT,
   enquiryLedgerSchemaT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -18,8 +19,8 @@ import {
   enquiryDataSchema,
   enquiryHeaderSchema,
   enquiryLedgerSchema,
-  itemToListFormArraySchema,
-  itemToListFormSchema,
+  productToListFormArraySchema,
+  productToListFormSchema,
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
 import { Session } from "next-auth";
@@ -27,15 +28,15 @@ import { Session } from "next-auth";
 // type enqData = {
 //   head: enquiryHeaderSchemaT;
 //   ledger: enquiryLedgerSchemaT;
-//   item: enquiryItemSchemaT[];
+//   product: enquiryProductSchemaT[];
 // };
 
 export async function createEnquiry({
   enqData,
-  item,
+  product,
 }: {
   enqData: enquiryDataSchemaT;
-  item: enquiryItemSchemaT[];
+  product: enquiryProductSchemaT[];
 }) {
   let result;
   try {
@@ -50,11 +51,11 @@ export async function createEnquiry({
         active: 1,
       };
       const enqDataParsed = enquiryDataSchema.safeParse(updatedEnqData);
-      const itemParsed = itemToListFormArraySchema.safeParse(item);
-      if (enqDataParsed.success && itemParsed.success) {
+      const productParsed = productToListFormArraySchema.safeParse(product);
+      if (enqDataParsed.success && productParsed.success) {
         const enqActionData = {
           headerLedger: updatedEnqData,
-          item: JSON.stringify(item),
+          product: JSON.stringify(product),
         };
 
         const dbResult = await createEnquiryDB(session, enqActionData);
@@ -73,18 +74,18 @@ export async function createEnquiry({
         }
       } else {
         let enqIssue: any[] = [];
-        let itemIssue: any[] = [];
+        let productIssue: any[] = [];
         if (!enqDataParsed.success) {
           enqIssue = enqDataParsed.error.issues;
         }
-        if (!itemParsed.success) {
-          itemIssue = itemParsed.error.issues;
+        if (!productParsed.success) {
+          productIssue = productParsed.error.issues;
         }
         result = {
           status: false,
           data: [
             { enqDataIssue: enqIssue.length > 0 ? enqIssue : null },
-            { itemIssue: itemIssue.length > 0 ? itemIssue : null },
+            { productIssue: productIssue.length > 0 ? productIssue : null },
           ],
         };
       }
@@ -108,15 +109,32 @@ export async function createEnquiry({
   return result;
 }
 
-export async function showItemGrid() {
+export async function showProductGrid() {
   let result;
 
   try {
     const session = await getSession();
     if (session) {
-      const dbResult = await showItemGridDB(session.user.dbInfo.dbName);
+      const dbResult = await showProductGridDB(session.user.dbInfo.dbName);
       if (dbResult) {
         result = { status: true, config: dbResult[0].config };
+      }
+    }
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getLoggedInUserDetails() {
+  let result;
+
+  try {
+    const session = await getSession();
+    if (session) {
+      const dbResult = await getLoggedInUserDetailsDB(session.user.dbInfo.dbName, session.user.userId);
+      if (dbResult) {
+        result = { status: true, data: dbResult[0] };
       }
     }
     return result;
@@ -131,9 +149,9 @@ export async function getEnquiryById(id: number) {
     if (session?.user.dbInfo) {
       const headerData = await getHeaderDataAction(session, 7);
       const ledgerData = await getLedgerDataAction(session, 7);
-      const itemData = await getItemDataAction(session, 7);
+      const productData = await getProductDataAction(session, 7);
 
-      return { headerData, ledgerData, itemData };
+      return { headerData, ledgerData, productData };
     }
   } catch (error) {
     logger.error(error);
@@ -156,3 +174,4 @@ export async function updateEnquiryById({
     logger.error(error);
   }
 }
+

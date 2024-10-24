@@ -2,12 +2,12 @@
 import * as React from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
-import ItemGroupForm from "@/app/Widgets/masters/masterForms/itemGroupForm";
+import ProductGroupForm from "@/app/Widgets/masters/masterForms/productGroupForm";
 import {
-  delItemGroupById,
-  getItemGroupById,
-  getItemGroupByPage,
-} from "@/app/controllers/itemGroup.controller";
+  delProductGroupById,
+  getProductGroupById,
+  getProductGroupByPage,
+} from "@/app/controllers/productGroup.controller";
 
 const columns: GridColDef[] = [
   {
@@ -17,21 +17,21 @@ const columns: GridColDef[] = [
   },
 ];
 
-export default function ItemGroup() {
+export default function ProductGroup() {
   return (
     <>
       <EntityList
-        title="Item Group Master"
+        title="Product Group Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <ItemGroupForm
+          <ProductGroupForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
             data={data}
           />
         )}
-        fetchDataFn={getItemGroupByPage}
-        fnFetchDataByID={getItemGroupById}
-        fnDeleteDataByID={delItemGroupById}
+        fetchDataFn={getProductGroupByPage}
+        fnFetchDataByID={getProductGroupById}
+        fnDeleteDataByID={delProductGroupById}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

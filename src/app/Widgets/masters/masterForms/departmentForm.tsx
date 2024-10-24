@@ -46,10 +46,13 @@ export default function DepartmentForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
+        if(issue.path[0]==="refresh"){
+          errorState["form"]={msg:issue.message, error: true };
+        }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -57,7 +60,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
   async function persistEntity(data: nameMasterDataT) {
     let result;
     if (entityData.id) {
-      data = { ...data, id: entityData.id };
+      data = { ...data, id: entityData.id, stamp: entityData.stamp };
       result = await updateDepartment(data);
     } else result = await createDepartment(data);
 
