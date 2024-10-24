@@ -93,6 +93,50 @@ export default function AutoGrid(props: any) {
     return () => clearInterval(timer);
   }, [refreshInterval]);
 
+  const handleColumnVisibility = () => {
+    return <>
+      <IconButton
+        aria-controls="tune-menu"
+        aria-haspopup="true"
+        onClick={(event) => {
+          setDlgState((prevState) => ({
+            ...prevState,
+            columnConfig: event.currentTarget,  // Set the clicked button as the anchorEl directly here
+          }));
+        }}
+      >
+        <TuneIcon fontSize="small" />
+      </IconButton>
+      <Box>
+        <StyledMenu
+          id="tune-menu"
+          anchorEl={dlgState['columnConfig']}
+          open={Boolean(dlgState['columnConfig'])}
+          onClose={() => handleCloseFilter('columnConfig')}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {column1
+              .filter(col => col.field !== 'columnConfig')
+              .map((col) => (
+                // (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
+                <FormControlLabel
+                  key={col.field}
+                  control={
+                    <Checkbox
+                      checked={columnVisibilityModel[col.field] !== false}
+                      onChange={() => handleColumnVisibilityChange(col.field)}
+                      disabled={(col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") ? false : true}
+                    />
+                  }
+                  label={col.headerName}
+                />
+              ))}
+          </div>
+        </StyledMenu>
+      </Box>
+    </>
+  }
+
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     setRowSelectionModel(selectionModel);
     // Enable Allocate Call button if there are selected rows and no row has 'Closed' callStatus
@@ -645,45 +689,7 @@ export default function AutoGrid(props: any) {
               Call Explorer
             </Box>
             <Box>
-              <IconButton
-                aria-controls="tune-menu"
-                aria-haspopup="true"
-                onClick={(event) => {
-                  setDlgState((prevState) => ({
-                    ...prevState,
-                    columnConfig: event.currentTarget,  // Set the clicked button as the anchorEl directly here
-                  }));
-                }}
-              >
-                <TuneIcon fontSize="small" />
-              </IconButton>
-              <Box>
-                <StyledMenu
-                  id="tune-menu"
-                  anchorEl={dlgState['columnConfig']}
-                  open={Boolean(dlgState['columnConfig'])}
-                  onClose={() => handleCloseFilter('columnConfig')}
-                >
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    {column1
-                      .filter(col => col.field !== 'columnConfig')
-                      .map((col) => (
-                        // (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
-                        <FormControlLabel
-                          key={col.field}
-                          control={
-                            <Checkbox
-                              checked={columnVisibilityModel[col.field] !== false}
-                              onChange={() => handleColumnVisibilityChange(col.field)}
-                              disabled={(col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") ? false : true}
-                            />
-                          }
-                          label={col.headerName}
-                        />
-                      ))}
-                  </div>
-                </StyledMenu>
-              </Box>
+              {handleColumnVisibility()}
             </Box>
           </Grid>
         </Seperator>
@@ -706,6 +712,9 @@ export default function AutoGrid(props: any) {
             rowCount={totalRowCount}
             checkboxSelection
             loading={loading}
+            // slots={{
+            //   footer: handleColumnVisibility
+            // }}
             sx={{
               // height: "10em",
               mt: "1%",
@@ -878,11 +887,18 @@ export default function AutoGrid(props: any) {
           }}
         >
           <Grid container alignItems="center" justifyContent="space-between" marginTop={2}>
-            <Grid item xs={12} sm={5} md={4}>
+            <Grid item xs={12} sm={5} md={4} >
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{ mr: "1vw", ml: "0.3vw", textTransform: "none" }}
+                sx={{
+                  mr: "1vw",
+                  ml: {
+                    md: "0.3vw",
+                    lg: "2vw"
+                  },
+                  textTransform: "none"
+                }}
                 onClick={() => setDetails(!details)}
               >
                 {details ? "Hide Details" : "Show Details"}
@@ -900,9 +916,9 @@ export default function AutoGrid(props: any) {
                 variant="contained"
                 size="small"
                 sx={{
-                  marginLeft: { xs: 0, sm: 1 }, // Aligns right from small screens (600px) and up
+                  marginLeft: { xs: 0, sm: -1.5 }, // Aligns right from small screens (600px) and up
                   marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
-                  width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
+                  width: { xs: '80vw', sm: 'auto' }, // Makes full width on extra small screens
                   textTransform: "none"
                 }}
               >
