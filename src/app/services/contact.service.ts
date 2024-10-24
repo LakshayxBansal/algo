@@ -53,11 +53,12 @@ export async function updateContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
         data.name,
+        data.stamp,
         data.print_name,
         data.contactGroup_id,
         data.pan,
@@ -94,20 +95,14 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    let query =
-      "select id as id, name as name, email, alias, mobile, pan from contact_master";
-    let values: any[] = [];
-
-    if (searchString !== "") {
-      query = query + " where name like '%" + searchString + "%'";
-      values = [];
-    }
+    const search_value = searchString ? searchString : '';
+    
     const result = await excuteQuery({
       host: crmDb,
-      query: query,
-      values: values,
-    });
-    return result;
+      query: "call search_contacts(?);",
+      values: [search_value]
+    })
+    return result[0];  
   } catch (e) {
     console.log(e);
   }

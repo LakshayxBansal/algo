@@ -70,11 +70,12 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
         data.name,
+        data.stamp,
         data.address1,
         data.address2,
         data.address3,
@@ -112,20 +113,14 @@ export async function updateExecutiveDB(
  */
 export async function getExecutiveList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from executive_master";
-    let values: any[] = [];
-
-    if (searchString !== "") {
-      query = query + " where name like '%" + searchString + "%'";
-      values = [];
-    }
+    const search_value = searchString ? searchString : '';
+    
     const result = await excuteQuery({
       host: crmDb,
-      query: query,
-      values: values,
-    });
-
-    return result;
+      query: "call search_executive(?);",
+      values: [search_value]
+    })
+    return result[0];  
   } catch (e) {
     console.log(e);
   }

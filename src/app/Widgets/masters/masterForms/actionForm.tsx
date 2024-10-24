@@ -22,7 +22,6 @@ export default function ActionForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: nameMasterDataT = props.data ? props.data : {};
 
-  // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     // const data = { name: formData.get("name") as string };
     // console.log(data);
@@ -72,16 +71,18 @@ export default function ActionForm(props: masterFormPropsT) {
       }, 1000);
     } else {
       const issues = result.data;
-      console.log("these are issues",issues);
 
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"]={ msg: issue.message, error: true};
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -98,14 +99,12 @@ export default function ActionForm(props: masterFormPropsT) {
   };
 
   async function persistEntity(data: nameMasterDataT) {
-    console.log(data);
     let result;
     if (props.data) {
-      console.log("prosp",props.data)
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateEnquiryAction(data);
     } else result = await createEnquiryAction(data);
-    console.log("result",result);
     return result;
   }
 

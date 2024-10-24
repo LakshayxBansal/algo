@@ -1,55 +1,51 @@
 "use client";
 import React, { useState } from "react";
-import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import Seperator from "../../seperator";
-import Snackbar from "@mui/material/Snackbar";
 import {
-  itemSchemaT,
+  createProductGroup,
+  getProductGroupById,
+  updateProductGroup,
+} from "../../../controllers/productGroup.controller";
+import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { getProductGroup } from "@/app/controllers/productGroup.controller";
+import {
+  productGroupSchemaT,
   masterFormPropsT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { createItem } from "@/app/controllers/item.controller";
-import {
-  getItemGroup,
-  getItemGroupById,
-} from "@/app/controllers/itemGroup.controller";
-import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
-import ItemGroupForm from "./itemGroupForm";
-import UnitForm from "./unitForm";
+import Seperator from "../../seperator";
+import Snackbar from "@mui/material/Snackbar";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateItem } from "@/app/controllers/item.controller";
 
-export default function ItemForm(props: masterFormPropsT) {
+export default function ProductGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: itemSchemaT = props.data ? props.data : {};
+  const entityData: productGroupSchemaT = props.data ? props.data : {};
+  console.log("value in form", selectValues);
 
-  entityData.group = props.data?.group_id;
-  entityData.unit = props.data?.unit_id;
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; 
+    let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-
     formData = updateFormData(data);
-    const result = await persistEntity(data as itemSchemaT);
+
+    const result = await persistEntity(data as productGroupSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
@@ -60,41 +56,43 @@ export default function ItemForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
   const updateFormData = (data: any) => {
-    data.group = selectValues.itemGroup
-      ? selectValues.itemGroup.id
-      : entityData.group
-      ? entityData.group
-      : 0;
-    data.unit = selectValues.unit
-      ? selectValues.unit.id
-      : entityData.unit
-      ? entityData.unit
+    data.parent_id = selectValues.parent
+      ? selectValues.parent.id
+      : entityData.parent_id
+      ? entityData.parent_id
       : 0;
     return data;
   };
 
-  async function persistEntity(data: itemSchemaT) {
+  async function persistEntity(data: productGroupSchemaT) {
     let result;
+
+    console.log(props.data);
+
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
-      result = await updateItem(data);
+      data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
+      result = await updateProductGroup(data);
     } else {
-      result = await createItem(data);
+      result = await createProductGroup(data);
     }
+
     return result;
   }
-
   const clearFormError = () => {
     setFormError((curr) => {
       const { form, ...rest } = curr;
@@ -115,7 +113,7 @@ export default function ItemForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Item" : "Add Item"}
+            {entityData.id ? "Update Product Group" : "Add Product Group"}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -140,27 +138,26 @@ export default function ItemForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      <Box id="productGroupForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
-              columnGap: 2,
+              columnGap: 3,
               rowGap: 1,
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
             <InputControl
-              inputType={InputType.TEXT}
               autoFocus
+              inputType={InputType.TEXT}
               id="name"
-              label="Name"
+              label="Group Name"
               name="name"
               required
-              fullWidth
+              defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -173,10 +170,9 @@ export default function ItemForm(props: masterFormPropsT) {
               id="alias"
               label="Alias"
               name="alias"
-              fullWidth
+              defaultValue={entityData.alias}
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
-              defaultValue={entityData.alias}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { alias, ...rest } = curr;
@@ -185,88 +181,46 @@ export default function ItemForm(props: masterFormPropsT) {
               }}
             />
             <SelectMasterWrapper
-              name={"itemGroup"}
-              id={"itemGroup"}
-              label={"Item Group Name"}
-              dialogTitle={"Add Item Group"}
-              fetchDataFn={getItemGroup}
-              fnFetchDataByID={getItemGroupById}
-              allowModify={true}
+              name={"parent"}
+              id={"parent"}
+              label={"Parent Group"}
+              width={210}
+              dialogTitle={"Add Parent Group"}
               defaultValue={
                 {
-                  id: entityData.group,
-                  name: entityData.group_name,
+                  id: entityData.id,
+                  name: entityData.parent,
                 } as optionsDataT
               }
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, itemGroup: val ? val : { id: 0, name: "" } })
-              }
-              formError={formError?.itemGroup}
-              renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                <ItemGroupForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-            <SelectMasterWrapper
-              name={"unit"}
-              id={"unit"}
-              label={"Unit Name"}
-              // width={210}
-              dialogTitle={"Add Unit"}
-              allowModify={true}
-              defaultValue={
-                {
-                  id: entityData.unit,
-                  name: entityData.unit_name,
-                } as optionsDataT
-              }
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, unit: val ? val : { id: 0, name: "" } })
-              }
-              fetchDataFn={getUnit}
-              fnFetchDataByID={getUnitById}
-              renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                <UnitForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="hsn_code"
-              id="hsn_code"
-              label="HSN Code"
-              fullWidth
-              error={formError?.hsn_code?.error}
-              helperText={formError?.hsn_code?.msg}
-              defaultValue={entityData.hsn_code}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { hsn_code, ...rest } = curr;
-                  return rest;
+              // defaultValue={
+              //   {
+              //     id: entityData.parent_id,
+              //     name: entityData.name,
+              //   } as optionsDataT
+              // }
+              onChange={(e, val, s) => {
+                setSelectValues({
+                  ...selectValues,
+                  parent: val ? val : { id: 0, name: "" },
                 });
               }}
+              fetchDataFn={getProductGroup}
+              fnFetchDataByID={getProductGroupById}
+              allowNewAdd={false}
+              allowModify={false}
+              formError={formError?.parentgroup}
+              renderForm={(fnDialogOpen, fnDialogValue) => (
+                <ProductGroupForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                />
+              )}
             />
           </Box>
           <Box
             sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          ></Box>
-
-          <Box
-            sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
@@ -281,7 +235,7 @@ export default function ItemForm(props: masterFormPropsT) {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={1000}
+          autoHideDuration={3000}
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}

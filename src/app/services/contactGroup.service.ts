@@ -6,20 +6,14 @@ import excuteQuery from "../utils/db/db";
 
 export async function getContactGroupList(crmDb: string, searchString: string) {
   try {
-    let query = "select id as id, name as name from contact_group_master";
-    let values: any[] = [];
-
-    if (searchString !== "") {
-      query = query + " where name like '%" + searchString + "%'";
-      values = [];
-    }
+    const search_value = searchString ? searchString : '';
+    
     const result = await excuteQuery({
       host: crmDb,
-      query: query,
-      values: values,
-    });
-
-    return result;
+      query: "call search_contact_group(?);",
+      values: [search_value]
+    })
+    return result[0]; 
   } catch (e) {
     console.log(e);
   }
@@ -61,11 +55,12 @@ export async function updateContactGroupDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateContactGroup(?,?,?,?,?);",
+      query: "call updateContactGroup(?,?,?,?,?,?);",
 
       values: [
         sourceData.id,
         sourceData.name,
+        sourceData.stamp,
         sourceData.alias,
         sourceData.parent_id,
         session.user.userId,

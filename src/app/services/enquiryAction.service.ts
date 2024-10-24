@@ -101,9 +101,9 @@ export async function updateEnquiryActionDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateAction(?,?,?);",
+      query: "call updateAction(?,?,?,?);",
 
-      values: [statusData.id, statusData.name, session.user.userId],
+      values: [statusData.id, statusData.name, statusData.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);
