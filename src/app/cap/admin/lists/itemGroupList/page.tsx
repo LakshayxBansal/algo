@@ -33,7 +33,8 @@ export default function ItemGroup() {
         fnFetchDataByID={getItemGroupById}
         fnDeleteDataByID={delItemGroupById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

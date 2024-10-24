@@ -17,7 +17,7 @@ export const theme = createTheme({
             // in order for it to look correct.
             transform: "translate(13px, -6px) scale(0.75)",
           },
-          // background: "#F8FAFB",
+          background: "#F8FAFB",
         },
       },
       defaultProps: {

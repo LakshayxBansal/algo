@@ -39,7 +39,7 @@ import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
-
+import { getRoleID } from "@/app/controllers/entityList.controller";
 const pgSize = 10;
 
 enum dialogMode {
@@ -62,7 +62,7 @@ export default function EntityList(props: entitiyCompT) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [columnVisibilityModel, setColumnVisibilityModel] =useState<GridColumnVisibilityModel>({});
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -80,6 +80,9 @@ export default function EntityList(props: entitiyCompT) {
         searchText as string,
         pgSize as number
       );
+
+      const roleId = await getRoleID();
+      console.log(roleId);
       if (rows.data) {
         setData(rows.data);
         setNRows(rows.count as number);
@@ -107,7 +110,17 @@ export default function EntityList(props: entitiyCompT) {
           },
         },
       ];
-      const allDfltCols: GridColDef[] = optionsColumn.concat(props.customCols);
+
+      //if roleid is 1(admin) show options columns
+      let allDfltCols: GridColDef[];
+
+      if (roleId == 1) {
+        allDfltCols = optionsColumn.concat(props.customCols);
+      } else {
+        allDfltCols = props.customCols;
+      }
+      //if roleid is 1(admin) show options columns
+
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
       if (props.fnFetchColumns) {
         const columnsData = await props.fnFetchColumns();
@@ -420,7 +433,7 @@ export default function EntityList(props: entitiyCompT) {
               columnsPanel: {
                 sx: {
                   "& .MuiDataGrid-panelFooter button:firstChild": {
-                    display: "none"
+                    display: "none",
                   },
 
                   ".MuiDataGrid-columnsManagementHeader": {
