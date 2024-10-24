@@ -338,7 +338,7 @@ export async function addDocumentDB(crmDb : string,data : docDescriptionSchemaT)
   try{
     const result = await excuteQuery({
       host:crmDb,
-      query:"call addDocument(?,?,?);",
+      query:"insert into executive_docs (description,doc_id,executive_id) values (?,?,?);",
       values:[data.description,data.docId,data.executiveId]
     });
     return result;

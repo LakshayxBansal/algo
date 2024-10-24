@@ -332,10 +332,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       // }
 
       const result = await persistEntity(data as executiveSchemaT, docData);
-      if (result.status) {
+      if (result?.status) {
         const newVal = {
-          id: result.data[0].id,
-          name: result.data[0].name,
+          id: result?.data[0].id,
+          name: result?.data[0].name,
         };
         // if(inviteId){
         //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
@@ -347,7 +347,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
-        const issues = result.data;
+        const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         for (const issue of issues) {
@@ -500,7 +500,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     if (props.data) {
       data["id"] = entityData.id;
       result = await updateExecutive(data, docData);
-      
     } else {
       result = await createExecutive(data,docData);
     }

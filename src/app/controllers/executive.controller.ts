@@ -25,6 +25,8 @@ import * as mdl from "../models/models";
 import { modifyPhone } from "../utils/phoneUtils";
 import { logger } from "../utils/logger.utils";
 import axios from "axios";
+import FormData from 'form-data';
+import { Buffer } from "buffer";
 
 const inviteSring = "Send Invite...";
 
@@ -48,19 +50,24 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           for(const doc of docData){
-            const formData  : any = {
-              app_id : "e2fda9ab-7b36-4461-839e-ab6ed3545e76",
-              meta_data : '{"name" : "subodh"}',
-              file_data : doc.file
-            }
+            const formData = new FormData();
+
+            formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
+            formData.append('meta_data', `{"name": "${doc.description}"}`);
+
+            const base64Data = doc.file.replace(/^data:.*;base64,/, "");
+            const buffer = Buffer.from(base64Data, 'base64');
+            formData.append('file_data', buffer, {filename: doc.document, contentType: 'application/text'})
+            
             const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
               headers : {
-                "Content-Type" : "multipart/form-data",
+                ...formData.getHeaders(),
                 "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
                 "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
               }}
             )
-            doc["docId"] = 10;
+            console.log(docInfo);
+            doc["docId"] = docInfo.data.document_id;
             doc["executiveId"] = dbResult[1][0].id;
             await addDocument(doc);
           }
@@ -369,41 +376,11 @@ export async function addDocument(data: mdl.docDescriptionSchemaT) {
     if (session) {
       const parsed = zs.docDescriptionSchema.safeParse(data);
       if (parsed.success) {
-        const dbResult = await addDocumentDB(
+        result = await addDocumentDB(
           session.user.dbInfo.dbName,
           data as mdl.docDescriptionSchemaT
         );
-        if (dbResult[0].length === 0) {
-          result = { status: true, data: dbResult[1] };
-        } else {
-          let errorState: { path: (string | number)[]; message: string }[] =
-            [];
-          dbResult[0].forEach((error: any) => {
-            errorState.push({
-              path: [error.error_path],
-              message: error.error_text,
-            });
-          });
-          result = {
-            status: false,
-            data: errorState,
-          };
-        }
-      } else {
-        let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
-          errorState.push({
-            path: issue.path,
-            message: issue.message,
-          });
-        }
-        result = { status: false, data: errorState };
       }
-    } else {
-      result = {
-        status: false,
-        data: [{ path: ["form"], message: "Error: Server Error" }],
-      };
     }
     return result;
   } catch (e: any) {
