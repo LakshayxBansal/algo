@@ -78,9 +78,9 @@ export async function updateEnquirySubStatusDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call UpdateEnquirySubStatus(?,?,?);",
+      query: "call UpdateEnquirySubStatus(?,?,?,?);",
 
-      values: [statusData.id, statusData.name, session.user.userId],
+      values: [statusData.id, statusData.name, statusData.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -95,9 +95,9 @@ export async function updateEnquirySubStatusListDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call UpdateEnquirySubStatusList(?,?,?,?);",
+      query: "call UpdateEnquirySubStatusList(?,?,?,?,?);",
 
-      values: [statusData.id, statusData.name, statusData.enquiry_status_id, session.user.userId],
+      values: [statusData.id, statusData.name, statusData.stamp, statusData.enquiry_status_id, session.user.userId],
     });
   } catch (e) {
     console.log(e);

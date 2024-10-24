@@ -8,15 +8,15 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT, selectKeyValueT } from "@/app/models/models";
-import { getItem, getItemById } from "@/app/controllers/item.controller";
+import { getProduct, getProductById } from "@/app/controllers/product.controller";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "../../Widgets/masters/masterForms/unitForm";
 import { Collapse, IconButton, TextField } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
+import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 
-export default function AddItemToListForm(props: masterFormPropsT) {
+export default function AddProductToListForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -39,7 +39,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
-    const parsed = zs.itemToListFormSchema.safeParse(data);
+    const parsed = zs.productToListFormSchema.safeParse(data);
     if (parsed.success) {
       props.setData
         ? props.setData((prevData: any) => [
@@ -65,7 +65,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.item_id = selectValues.item ? selectValues.item.id : 0;
+    data.product_id = selectValues.product ? selectValues.product.id : 0;
     data.unit_id = selectValues.unit ? selectValues.unit.id : 0;
     return data;
   };
@@ -101,7 +101,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Add Item To Item List
+            Add Product To Product List
             <IconButton onClick={handleCancel}>
               <CloseIcon />
             </IconButton>
@@ -137,17 +137,18 @@ export default function AddItemToListForm(props: masterFormPropsT) {
             }}
           >
             <SelectMasterWrapper
-              name={"item"}
-              id={"item"}
-              label={"Item Name"}
-              dialogTitle={"Add Item"}
-              fetchDataFn={getItem}
-              fnFetchDataByID={getItemById}
+              name={"product"}
+              id={"product"}
+              label={"Product Name"}
+              showDetails={true}
+              dialogTitle={"Add Product"}
+              fetchDataFn={getProduct}
+              fnFetchDataByID={getProductById}
               required
-              formError={formError?.item ?? formError.item}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "item")}
+              formError={formError?.product ?? formError.product}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <ItemForm
+                <ProductForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
@@ -192,7 +193,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
             label="Remarks"
             multiline
             name="remarks"
-            id="item_remark"
+            id="product_remark"
             rows={6}
             fullWidth
           />
@@ -217,7 +218,7 @@ export default function AddItemToListForm(props: masterFormPropsT) {
           open={snackOpen}
           autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
-          message="Item Added (See the end of the list)!"
+          message="Product Added (See the end of the list)!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>

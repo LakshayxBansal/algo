@@ -345,3 +345,11 @@ export const CustomTextField = styled(TextField)(({ theme }) => ({
     margin: 0,
   },
 }));
+
+export const CustomStyledDiv = styled('div')(({ theme }) => ({
+  zIndex: 1300,
+  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+  borderRadius: '4px',
+  border: '1px solid #ddd',
+}));
+

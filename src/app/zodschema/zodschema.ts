@@ -159,7 +159,7 @@ const contactDetailsSchema = z
     }
   );
 
-export const ItemSchema = z.object({
+export const ProductSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
@@ -184,13 +184,13 @@ export const ItemSchema = z.object({
   modified_on: z.date().optional(),
 });
 
-export const itemToListFormSchema = z.object({
+export const productToListFormSchema = z.object({
   id: z.number().optional(),
   enquiry_id: z.number().optional(),
-  item: z.string().min(1, {
-    message: "Item Name must not be empty",
+  product: z.string().min(1, {
+    message: "Product Name must not be empty",
   }),
-  item_id: z.number(),
+  product_id: z.number(),
   quantity: z
     .number()
     .min(1, { message: "Quantity must not be empty" }),
@@ -201,7 +201,7 @@ export const itemToListFormSchema = z.object({
   remarks: z.string().max(5000).optional(),
 });
 
-export const itemToListFormArraySchema = z.array(itemToListFormSchema);
+export const productToListFormArraySchema = z.array(productToListFormSchema);
 
 export const UnitSchema = z.object({
   id: z.number().optional(),
@@ -290,6 +290,7 @@ export const stateListSchema = z.object({
   name: z.string().min(1, "State Name must not be empty").max(60),
   alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
+  stamp: z.number().optional(),
 });
 
 export const executiveSchema = z
@@ -441,9 +442,9 @@ export const contactGroupSchema = z.object({
 });
 
 /**
- * item group
+ * product group
  */
-export const itemGroupSchema = z.object({
+export const productGroupSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
@@ -482,6 +483,7 @@ export const currencySchema = z.object({
     .optional(),
   decimal_places: z.string().min(1).max(60),
   currency_system: z.string().min(1).max(60),
+  stamp: z.number().optional(),
 });
 /**
  * Executive Role
@@ -576,6 +578,7 @@ export const stateSchema = z.object({
     .string()
     .max(45, "Alias must contain at most 45 character(s)")
     .optional(),
+  stamp: z.number().optional(),
   country_id: z.number().refine((val) => val !== 0, {
     message: "Country name must not be empty",
     path: ["country"],
@@ -686,12 +689,12 @@ export const enquirySupportConfig = z.object({
   supportReqd: z.boolean().optional(),
 
   enquiryCloseCall: z.boolean().optional(),
-  enquiryMaintainItems: z.boolean().optional(),
+  enquiryMaintainProducts: z.boolean().optional(),
   enquirySaveFAQ: z.boolean().optional(),
   enquiryMaintainAction: z.boolean().optional(),
 
   supportCloseCall: z.boolean().optional(),
-  supportMaintainItems: z.boolean().optional(),
+  supportMaintainProducts: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
   supportMaintainContract: z.boolean().optional(),

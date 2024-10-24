@@ -4,14 +4,14 @@ import excuteQuery from "../utils/db/db";
 import {
   enquiryDataSchemaT,
   enquiryHeaderSchemaT,
-  enquiryItemSchemaT,
+  enquiryProductSchemaT,
   enquiryLedgerSchemaT,
 } from "@/app/models/models";
 import { Session } from "next-auth";
 
 export async function createEnquiryDB(
   session: Session,
-  enqData: { headerLedger: enquiryDataSchemaT ; item: any }
+  enqData: { headerLedger: enquiryDataSchemaT ; product: any }
 ) {
   try {
     return excuteQuery({
@@ -38,7 +38,7 @@ export async function createEnquiryDB(
         enqData.headerLedger.enquiry_tran_type,
         enqData.headerLedger.active,
         session.user.userId,
-        enqData.item
+        enqData.product
       ],
     });
   } catch (e) {
@@ -71,7 +71,7 @@ export async function getEnquiryStatusList(
   }
 }
 
-export async function showItemGridDB(crmDb: string) {
+export async function showProductGridDB(crmDb: string) {
   try {
     let query =
       'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type="enquiry_support"';
@@ -149,16 +149,16 @@ export async function getLedgerDataAction(session:Session , id:number){
 }
 
 
-export async function getItemDataAction(session:Session, id:number){
+export async function getProductDataAction(session:Session, id:number){
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-      "SELECT i.*, im.name AS item_name, \
+      "SELECT i.*, im.name AS product_name, \
       um.name AS unit_name \
- FROM crmapp1.enquiry_item_tran i \
+ FROM crmapp1.enquiry_product_tran i \
  JOIN crmapp1.unit_master um ON um.id = i.unit_id \
- JOIN crmapp1.item_master im ON im.id = i.item_id \
+ JOIN crmapp1.product_master im ON im.id = i.product_id \
  WHERE i.enquiry_id = ?;",
       values: [id],
     });

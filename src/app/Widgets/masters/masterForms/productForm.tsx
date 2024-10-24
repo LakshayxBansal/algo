@@ -1,51 +1,55 @@
 "use client";
 import React, { useState } from "react";
-import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import {
-  createItemGroup,
-  getItemGroupById,
-  updateItemGroup,
-} from "../../../controllers/itemGroup.controller";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { getItemGroup } from "@/app/controllers/itemGroup.controller";
+import Seperator from "../../seperator";
+import Snackbar from "@mui/material/Snackbar";
 import {
-  itemGroupSchemaT,
+  productSchemaT,
   masterFormPropsT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import Seperator from "../../seperator";
-import Snackbar from "@mui/material/Snackbar";
+import { createProduct } from "@/app/controllers/product.controller";
+import {
+  getProductGroup,
+  getProductGroupById,
+} from "@/app/controllers/productGroup.controller";
+import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
+import ProductGroupForm from "./productGroupForm"
+import UnitForm from "./unitForm";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { updateProduct } from "@/app/controllers/product.controller";
 
-export default function ItemGroupForm(props: masterFormPropsT) {
+export default function ProductForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: itemGroupSchemaT = props.data ? props.data : {};
-  console.log("value in form", selectValues);
+  const entityData: productSchemaT = props.data ? props.data : {};
 
+  entityData.group = props.data?.group_id;
+  entityData.unit = props.data?.unit_id;
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {}; 
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    formData = updateFormData(data);
 
-    const result = await persistEntity(data as itemGroupSchemaT);
+    formData = updateFormData(data);
+    const result = await persistEntity(data as productSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
@@ -56,39 +60,44 @@ export default function ItemGroupForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent
-      ? selectValues.parent.id
-      : entityData.parent_id
-      ? entityData.parent_id
+    data.group = selectValues.productGroup
+      ? selectValues.productGroup.id
+      : entityData.group
+      ? entityData.group
+      : 0;
+    data.unit = selectValues.unit
+      ? selectValues.unit.id
+      : entityData.unit
+      ? entityData.unit
       : 0;
     return data;
   };
 
-  async function persistEntity(data: itemGroupSchemaT) {
+  async function persistEntity(data: productSchemaT) {
     let result;
-
-    console.log(props.data);
-
     if (props.data) {
-      data["id"] = entityData.id;
-      result = await updateItemGroup(data);
+      Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
+      result = await updateProduct(data);
     } else {
-      result = await createItemGroup(data);
+      result = await createProduct(data);
     }
-
     return result;
   }
+
   const clearFormError = () => {
     setFormError((curr) => {
       const { form, ...rest } = curr;
@@ -109,7 +118,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Item Group" : "Add Item Group"}
+            {entityData.id ? "Update Product" : "Add Product"}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -134,26 +143,27 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="itemGroupForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
               display: "grid",
-              columnGap: 3,
+              columnGap: 2,
               rowGap: 1,
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
             <InputControl
-              autoFocus
               inputType={InputType.TEXT}
+              autoFocus
               id="name"
-              label="Group Name"
+              label="Name"
               name="name"
               required
-              defaultValue={entityData.name}
+              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -166,9 +176,10 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               id="alias"
               label="Alias"
               name="alias"
-              defaultValue={entityData.alias}
+              fullWidth
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+              defaultValue={entityData.alias}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { alias, ...rest } = curr;
@@ -177,46 +188,88 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               }}
             />
             <SelectMasterWrapper
-              name={"parent"}
-              id={"parent"}
-              label={"Parent Group"}
-              width={210}
-              dialogTitle={"Add Parent Group"}
+              name={"productGroup"}
+              id={"productGroup"}
+              label={"Product Group Name"}
+              dialogTitle={"Add Product Group"}
+              fetchDataFn={getProductGroup}
+              fnFetchDataByID={getProductGroupById}
+              allowModify={true}
               defaultValue={
                 {
-                  id: entityData.id,
-                  name: entityData.parent,
+                  id: entityData.group,
+                  name: entityData.group_name,
                 } as optionsDataT
               }
-              // defaultValue={
-              //   {
-              //     id: entityData.parent_id,
-              //     name: entityData.name,
-              //   } as optionsDataT
-              // }
-              onChange={(e, val, s) => {
-                setSelectValues({
-                  ...selectValues,
-                  parent: val ? val : { id: 0, name: "" },
-                });
-              }}
-              fetchDataFn={getItemGroup}
-              fnFetchDataByID={getItemGroupById}
-              allowNewAdd={false}
-              allowModify={false}
-              formError={formError?.parentgroup}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ItemGroupForm
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, productGroup: val ? val : { id: 0, name: "" } })
+              }
+              formError={formError?.productGroup}
+              renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+                <ProductGroupForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  data={data}
                 />
               )}
+            />
+            <SelectMasterWrapper
+              name={"unit"}
+              id={"unit"}
+              label={"Unit Name"}
+              // width={210}
+              dialogTitle={"Add Unit"}
+              allowModify={true}
+              defaultValue={
+                {
+                  id: entityData.unit,
+                  name: entityData.unit_name,
+                } as optionsDataT
+              }
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, unit: val ? val : { id: 0, name: "" } })
+              }
+              fetchDataFn={getUnit}
+              fnFetchDataByID={getUnitById}
+              renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+                <UnitForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              name="hsn_code"
+              id="hsn_code"
+              label="HSN Code"
+              fullWidth
+              error={formError?.hsn_code?.error}
+              helperText={formError?.hsn_code?.msg}
+              defaultValue={entityData.hsn_code}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { hsn_code, ...rest } = curr;
+                  return rest;
+                });
+              }}
             />
           </Box>
           <Box
             sx={{
+              display: "grid",
+              columnGap: 3,
+              rowGap: 1,
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+          ></Box>
+
+          <Box
+            sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
@@ -231,7 +284,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={3000}
+          autoHideDuration={1000}
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}

@@ -83,12 +83,15 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"]={ msg: issue.message, error: true };
+          }
         }
       }
-      // errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -97,6 +100,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
     let result;
     if (props.data) {
       data["id"] = entityData.id;
+      data["stamp"] = entityData.stamp;
       result = await updateEnquirySubStatus(data);
     } else result = await createEnquirySubStatus(data);
     return result;
