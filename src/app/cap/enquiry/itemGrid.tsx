@@ -417,6 +417,7 @@ export default function ItemGrid({
   return (
     <>
       <StyledDataGrid
+        disableColumnMenu
         columns={columns}
         rows={dgData ? dgData : []}
         disableRowSelectionOnClick

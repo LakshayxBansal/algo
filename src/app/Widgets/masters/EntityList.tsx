@@ -114,13 +114,13 @@ export default function EntityList(props: entitiyCompT) {
       //if roleid is 1(admin) show options columns
       let allDfltCols: GridColDef[];
 
-      if (roleId == 1) {
-        allDfltCols = optionsColumn.concat(props.customCols);
-      } else {
-        allDfltCols = props.customCols;
-      }
+      // if (roleId == 1) {
+      //   allDfltCols = optionsColumn.concat(props.customCols);
+      // } else {
+      //   allDfltCols = props.customCols;
+      // }
       //if roleid is 1(admin) show options columns
-
+      allDfltCols = optionsColumn.concat(props.customCols);
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
       if (props.fnFetchColumns) {
         const columnsData = await props.fnFetchColumns();

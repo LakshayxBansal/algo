@@ -41,6 +41,7 @@ export default async function EnquiryList() {
       </Typography>
       <Box sx={{ height: 380 }}>
         <DataGrid
+          disableColumnMenu
           rows={openEnquiries}
           columns={columns}
           initialState={{

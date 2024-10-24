@@ -713,6 +713,7 @@ export default function UpdateInputForm(props: {
                     }}
                   >
                     <DataGrid
+                      disableColumnMenu
                       columns={columns}
                       rows={data ? data : []}
                       disableRowSelectionOnClick

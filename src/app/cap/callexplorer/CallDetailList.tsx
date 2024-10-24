@@ -111,6 +111,7 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
 
     return (<>
         <StripedDataGrid
+            disableColumnMenu
             rows={data ? data : []}
             rowHeight={30}
             columnHeaderHeight={30}
