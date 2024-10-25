@@ -784,7 +784,11 @@ export default function AutoGrid(props: any) {
                 sx={{ textTransform: "none" }}
                 disabled={!selectedRow}
               >
-                Status Update
+                <Link href={`/cap/enquiry?id=${selectedRow?.id}`} style={{
+                  textDecoration: "none",
+                }}>
+                  Status Update
+                </Link>
               </ContainedButton>
             </Box>
           </Grid>
@@ -892,7 +896,7 @@ export default function AutoGrid(props: any) {
                   textTransform: "none"
                 }}
               >
-                <Link href="/cap" style={{
+                <Link href={`/cap`} style={{
                   textDecoration: "none",
                 }}>
                   Quit
