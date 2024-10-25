@@ -45,11 +45,12 @@ export default function AddDocsForm(props: any) {
         data["description"] = formData.get("description");
         data["document"] = selectedFileName;
         data["file"] = file;
+        data["type"] = "state";
         console.log("data : ",data);
         props.setData
             ? props.setData((prevData: any) => [
                 ...prevData,
-                { id: prevData.length + 1, ...data },
+                { id: (0-prevData.length-1), ...data },
             ])
             : null;
         props.setDialogOpen ? props.setDialogOpen(false) : null;

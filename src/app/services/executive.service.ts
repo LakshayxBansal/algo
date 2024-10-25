@@ -354,3 +354,39 @@ export async function updateDocumentDB(crmDb : string,data : docDescriptionSchem
   }
 }
 
+export async function getExecutiveDocsDB(crmDb : string,executiveId : number){
+  try{
+    const result = await excuteQuery({
+      host:crmDb,
+      query:"select * from executive_docs where executive_id = ?;",
+      values:[executiveId]
+    });
+    return result;
+  }catch(e){
+    logger.error(e);
+  }
+}
+
+export async function updateExecutiveDocDB(crmDb : string,description : string,id :number){
+  try{
+    await excuteQuery({
+      host:crmDb,
+      query:"update executive_docs set description = ? where id = ?;",
+      values:[description,id]
+    });
+  }catch(e){
+    logger.error(e);
+  }
+}
+
+export async function deleteExecutiveDocDB(crmDb : string,id :number){
+  try{
+    await excuteQuery({
+      host:crmDb,
+      query:"delete from executive_docs where id = ?;",
+      values:[id]
+    });
+  }catch(e){
+    logger.error(e);
+  }
+}

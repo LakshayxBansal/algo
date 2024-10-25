@@ -11,7 +11,6 @@ function IconComponent(props: iconCompT) {
     console.log(props);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     async function onModifyDialog(modId: number) {
-        console.log("clicked")
         if (props.fnFetchDataByID && modId) {
           const data = await props.fnFetchDataByID(modId);
           console.log(data);

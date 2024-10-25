@@ -40,7 +40,9 @@ import {
 } from "@/app/controllers/executiveDept.controller";
 import {
   createExecutive,
+  deleteExecutiveDoc,
   updateExecutive,
+  updateExecutiveDoc,
 } from "@/app/controllers/executive.controller";
 import {
   executiveSchemaT,
@@ -66,7 +68,11 @@ type ModifiedRowT = {
   file?: string | ArrayBuffer | null ;
 };
 
-const rows: any = [];
+const rows: any = [
+  {id: 1, description : "description 1", document : "document-id-1", type: "db"},
+  {id: 2, description : "description 2", document : "document-id-2", type: "db"},
+  {id: 3, description : "description 3", document : "document-id-3", type : "db"},
+];
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -161,7 +167,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         if (editMode === params.row.id) {
           return (
             <>
-            {modifiedRowData?.file ? modifiedRowData?.document : 
+            {modifiedRowData?.document}
+            {/* {modifiedRowData?.file ? modifiedRowData?.document : 
             <Button
               component="label"
               role={undefined}
@@ -175,7 +182,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 onChange={handleFileChange}
                 multiple
               />
-            </Button>}
+            </Button>} */}
             </>
           );
         }
@@ -196,7 +203,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               sx={{
                 color: "primary.main",
               }}
-              onClick={handleSaveClick}
+              onClick={params.row.type==="db" ? handleSaveClickDB : handleSaveClick}
             />,
             <GridActionsCellItem
               key={params.row.id}
@@ -222,7 +229,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             key={params.row.id}
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(params.row.id)}
+            // onClick={handleDeleteClick(params.row.id)}
+            onClick={params.row.type==="db" ? () => handleDeleteClickDB(params.row) : handleDeleteClick(params.row.id)}
             color="inherit"
           />,
         ];
@@ -241,28 +249,30 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-
-    if (files && files.length > 0) {
-        const file = files[0];
-        setModifiedRowData((prevState) => ({
-          ...prevState,
-          document: file.name,
-        }));
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            const base64String = reader.result;
-            // console.log(base64String);
-            setModifiedRowData((prevState) => ({
-              ...prevState,
-              file: base64String,
-            }));
-        };
-        reader.readAsDataURL(file);
+  const handleSaveClickDB = async() => {
+    try{
+      await updateExecutiveDoc(modifiedRowData?.description as string,modifiedRowData?.id as number);
+      const updatedRows = docData.map((row: any) =>
+        row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
+      );
+      setDocData(updatedRows);
+      setEditMode(null);
+    }catch(error){
+      throw error;
     }
-}
+  }
+
+  const handleDeleteClickDB = async(data : any) => {
+    try{
+      if (docData.length > 0) {
+        const updatedRows = docData.filter((row: any) => row.id !== data.id);
+        await deleteExecutiveDoc(data.id);
+        setDocData(updatedRows);
+      }
+    }catch(error){
+      throw error;
+    }
+  }
 
   const handleDeleteClick = (id: GridRowId) => () => {
     // Filter out the row with the matching id
@@ -331,7 +341,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   inviteId = invite.id;
       // }
 
-      const result = await persistEntity(data as executiveSchemaT, docData);
+      const newDocsData = docData.filter((row: any) => row.type !== "db");
+
+      const result = await persistEntity(data as executiveSchemaT, newDocsData);
       if (result?.status) {
         const newVal = {
           id: result?.data[0].id,
@@ -359,7 +371,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             }
           }
         }
-        errorState["form"] = { msg: "Error encountered", error: true };
         setFormError(errorState);
       }
     } catch (error) {

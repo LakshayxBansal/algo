@@ -16,6 +16,9 @@ import {
   getExecutiveColumnsDb,
   addDocumentDB,
   updateDocumentDB,
+  getExecutiveDocsDB,
+  updateExecutiveDocDB,
+  deleteExecutiveDocDB,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -66,7 +69,6 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
                 "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
               }}
             )
-            console.log(docInfo);
             doc["docId"] = docInfo.data.document_id;
             doc["executiveId"] = dbResult[1][0].id;
             await addDocument(doc);
@@ -386,63 +388,40 @@ export async function addDocument(data: mdl.docDescriptionSchemaT) {
   } catch (e: any) {
     console.log(e);
   }
-  result = {
-    status: false,
-    data: [{ path: ["form"], message: "Error: Unknown Error" }],
-  };
   return result;
 }
 
-export async function updateDocument(data: mdl.docDescriptionSchemaT) {
-  let result;
-  try {
+export async function getExecutiveDocs(executiveId : number){
+  try{
     const session = await getSession();
-    if (session) {
-      const parsed = zs.docDescriptionSchema.safeParse(data);
-      if (parsed.success) {
-        const dbResult = await updateDocumentDB(
-          session.user.dbInfo.dbName,
-          data as mdl.docDescriptionSchemaT
-        );
-        if (dbResult[0].length === 0) {
-          result = { status: true, data: dbResult[1] };
-        } else {
-          let errorState: { path: (string | number)[]; message: string }[] = [];
-          dbResult[0].forEach((error: any) => {
-            errorState.push({
-              path: [error.error_path],
-              message: error.error_text,
-            });
-          });
-          result = {
-            status: false,
-            data: errorState,
-          };
-        }
-      } else {
-        console.log(parsed.error.issues);
-        let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
-          errorState.push({
-            path: issue.path,
-            message: issue.message,
-          });
-        }
-        result = { status: false, data: errorState };
-      }
-    } else {
-      result = {
-        status: false,
-        data: [{ path: ["form"], message: "Error: Server Error" }],
-      };
+    if(session){
+      const result = await getExecutiveDocsDB(session.user.dbInfo.dbName,executiveId);
+      return result;
     }
-    return result;
-  } catch (e: any) {
-    console.log(e);
+  }catch(error){
+    logger.error(error);
   }
-  result = {
-    status: false,
-    data: [{ path: ["form"], message: "Error: Unknown Error" }],
-  };
-  return result;
+}
+
+export async function updateExecutiveDoc(description : string,id : number){
+  try{
+    const session = await getSession();
+    if(session){
+      await updateExecutiveDocDB(session.user.dbInfo.dbName,description,id);
+    }
+  }catch(error){
+    logger.error(error);
+  }
+}
+
+export async function deleteExecutiveDoc(id : number){
+  try{
+    const session = await getSession();
+    if(session){
+      await deleteExecutiveDocDB(session.user.dbInfo.dbName,id);
+      // api to delete doc
+    }
+  }catch(error){
+    logger.error(error);
+  }
 }
