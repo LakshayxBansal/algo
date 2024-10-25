@@ -51,7 +51,7 @@ import {
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
-import { selectKeyValueT } from "@/app/models/models";
+import { optionsDataT, selectKeyValueT } from "@/app/models/models";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
@@ -78,7 +78,11 @@ const formConfig = {
 
 const rows: any = [];
 
-export default function InputForm(props: { baseData: IformData; config: any }) {
+export default function InputForm(props: {
+  baseData: IformData;
+  config: any;
+  loggedInUserData: any;
+}) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [formError, setFormError] = useState<
@@ -312,6 +316,12 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                           data={data}
                         />
                       )}
+                      defaultValue={
+                        {
+                          id: props.loggedInUserData?.id,
+                          name: props.loggedInUserData?.name,
+                        } as optionsDataT
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -424,6 +434,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
                     data={data}
                   />
                 )}
+                allowNewAdd={status === "1"}
               />
               <SelectMasterWrapper
                 name={"action_taken"}
@@ -520,7 +531,7 @@ export default function InputForm(props: { baseData: IformData; config: any }) {
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
         message={"Enquiry saved successfully!"}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center"}}
       />
     </Box>
   );

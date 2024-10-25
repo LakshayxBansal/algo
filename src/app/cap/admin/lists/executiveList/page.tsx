@@ -51,7 +51,8 @@ export default function executive() {
         fnDeleteDataByID={delExecutiveById}
         // fnFetchColumns={getExecutiveColumns}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

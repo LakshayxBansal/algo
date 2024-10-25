@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, TextField, Tooltip, Typography, } from "@mui/material";
-import { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import { ContainedButton, StripedDataGrid, StyledMenu } from "../../utils/styledComponents";
+import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
+import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../../controllers/executive.controller";
 import { optionsDataT } from "../../models/models";
@@ -47,18 +47,24 @@ export default function AutoGrid(props: any) {
   const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
   type DlgState = { [key: string]: HTMLElement | null; };
   const [enableAllocate, setEnableAllocate] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const apiRef = useGridApiRef();
+
+  const toggleColBtn = () => {
+    const preferencePanelState = gridPreferencePanelStateSelector(
+      apiRef.current.state
+    );
+    if (preferencePanelState.open) {
+      apiRef.current.hidePreferences();
+    } else {
+      apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
+    }
+  };
 
   const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // const value = parseInt(event.target.value, 10);
     const value = Number(event.target.value);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
-  };
-
-  const handleCloseFilter = (field: string) => {
-    setDlgState((prevState) => ({
-      ...prevState,
-      [field]: null,
-    }));
   };
 
 
@@ -92,6 +98,21 @@ export default function AutoGrid(props: any) {
 
     return () => clearInterval(timer);
   }, [refreshInterval]);
+
+  const handleColumnVisibility = () => {
+    return <>
+      <Tooltip title="Manage Columns" placement="top-end" arrow>
+        <IconButton
+          aria-controls="tune-menu"
+          aria-haspopup="true"
+          ref={(ref) => setAnchorEl(ref)}
+          onClick={toggleColBtn}
+        >
+          <TuneIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
+    </>
+  }
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
     setRowSelectionModel(selectionModel);
@@ -138,13 +159,6 @@ export default function AutoGrid(props: any) {
     }));
   }
 
-  const handleColumnVisibilityChange = (field: string) => {
-    setColumnVisibilityModel((prev: { [x: string]: any }) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
-
   const options = {
     timeZone: 'Asia/Kolkata',
     hour12: true, // Use 12-hour format with AM/PM
@@ -183,14 +197,15 @@ export default function AutoGrid(props: any) {
       field: "Type",
       headerName: "Status",
       width: 50,
+      hideable: false,
       renderCell: (params) => {
         return <CustomColor row={params.row} />;
       },
     },
-    { field: "id", headerName: "Call No.", width: 70, sortable: false },
-    { field: "contactParty", headerName: "Contact/Party", width: 130 },
+    { field: "id", headerName: "Call No.", hideable: false, width: 70, sortable: false },
+    { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
-      field: "date", width: 130, headerName: "Date",
+      field: "date", width: 130, headerName: "Date", hideable: false,
       renderCell: (params) => {
         return params.row.date.toDateString();
       },
@@ -645,51 +660,13 @@ export default function AutoGrid(props: any) {
               Call Explorer
             </Box>
             <Box>
-              <IconButton
-                aria-controls="tune-menu"
-                aria-haspopup="true"
-                onClick={(event) => {
-                  setDlgState((prevState) => ({
-                    ...prevState,
-                    columnConfig: event.currentTarget,  // Set the clicked button as the anchorEl directly here
-                  }));
-                }}
-              >
-                <TuneIcon fontSize="small" />
-              </IconButton>
-              <Box>
-                <StyledMenu
-                  id="tune-menu"
-                  anchorEl={dlgState['columnConfig']}
-                  open={Boolean(dlgState['columnConfig'])}
-                  onClose={() => handleCloseFilter('columnConfig')}
-                >
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    {column1
-                      .filter(col => col.field !== 'columnConfig')
-                      .map((col) => (
-                        // (col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") &&
-                        <FormControlLabel
-                          key={col.field}
-                          control={
-                            <Checkbox
-                              checked={columnVisibilityModel[col.field] !== false}
-                              onChange={() => handleColumnVisibilityChange(col.field)}
-                              disabled={(col.field !== "date" && col.field !== "contactParty" && col.field !== "Type" && col.field !== "id") ? false : true}
-                            />
-                          }
-                          label={col.headerName}
-                        />
-                      ))}
-                  </div>
-                </StyledMenu>
-              </Box>
+              {handleColumnVisibility()}
             </Box>
           </Grid>
         </Seperator>
         <Paper elevation={1}
         >
-          <StripedDataGrid
+          <MinimizedDataGrid
             disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
@@ -705,7 +682,46 @@ export default function AutoGrid(props: any) {
             onPaginationModelChange={setPageModel}
             rowCount={totalRowCount}
             checkboxSelection
+            apiRef={apiRef}
             loading={loading}
+            slotProps={{
+              columnsPanel: {
+                sx: {
+                  // "& .MuiDataGrid-panelFooter button:firstChild": {
+                  //   display: "none"
+                  // },
+                  ".MuiDataGrid-columnsManagementRow:first-child": {
+                    display: "none"
+                  },
+                  ".MuiDataGrid-columnsManagementHeader": {
+                    display: "none",
+                  },
+                },
+              },
+              panel: {
+                anchorEl: () => {
+                  const preferencePanelState = gridPreferencePanelStateSelector(
+                    apiRef.current.state
+                  );
+                  if (
+                    preferencePanelState.openedPanelValue ===
+                    GridPreferencePanelsValue.columns &&
+                    anchorEl
+                  ) {
+                    return anchorEl;
+                  }
+
+                  const columnHeadersElement =
+                    apiRef.current.rootElementRef?.current?.querySelector(
+                      `.${gridClasses.columnHeaders}`
+                    )!;
+                  return columnHeadersElement;
+                },
+              },
+            }}
+            // slots={{
+            //   footer: handleColumnVisibility
+            // }}
             sx={{
               // height: "10em",
               mt: "1%",
@@ -727,51 +743,14 @@ export default function AutoGrid(props: any) {
               // '& .MuiDataGrid-virtualScroller': {
               //   overflowY: 'auto',
               // },
-              '& .MuiDataGrid-cellCheckbox': {
-                width: '30px',
-                height: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-cellCheckbox .MuiCheckbox-root': {
-                padding: 0,
-              },
-              '& .MuiDataGrid-cellCheckbox .MuiSvgIcon-root': {
-                width: '15px',
-                height: '15px',
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox': {
-                width: '38px',
-                height: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox .MuiCheckbox-root': {
-                padding: 0,
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox .MuiSvgIcon-root': {
-                width: '15px',
-                height: '15px',
-              },
-              '& .MuiDataGrid-footerContainer': {
-                height: '28px', // Force footer container to 30px
-                minHeight: '28px', // Override any minimum height constraints
-              },
-              '& .MuiTablePagination-root': {
-                height: '28px', // Ensure pagination component also respects 30px height
-                minHeight: '28px',
-                overflow: "hidden"
-              },
-              '& .MuiTablePagination-toolbar': {
-                height: '28px', // Adjust the toolbar within the pagination
-                minHeight: '28px',
-              },
             }}
           />
         </Paper>
-        <Grid container alignItems={"center"}>
+        <Grid container alignItems={"center"} marginTop={0.5} sx={{
+          mt: {
+            xs: "1vh"
+          }
+        }} marginBottom={1}>
           <Grid item md={2.5} sm={6} xs={12} sx={{ margin: "auto" }}>
             <Box
               sx={{
@@ -877,12 +856,19 @@ export default function AutoGrid(props: any) {
             columnGap: 3,
           }}
         >
-          <Grid container alignItems="center" justifyContent="space-between" marginTop={2}>
-            <Grid item xs={12} sm={5} md={4}>
+          <Grid container alignItems="center" sx={{ justifyContent: { xs: "center", sm: "space-between", md: "space-between" } }} marginTop={2}>
+            <Grid item xs={8.5} sm={5} md={4} >
               <ContainedButton
                 variant="contained"
                 size="small"
-                sx={{ mr: "1vw", ml: "0.3vw", textTransform: "none" }}
+                sx={{
+                  mr: "1vw",
+                  ml: {
+                    md: "0.3vw",
+                    lg: "2vw"
+                  },
+                  textTransform: "none",
+                }}
                 onClick={() => setDetails(!details)}
               >
                 {details ? "Hide Details" : "Show Details"}
@@ -900,7 +886,7 @@ export default function AutoGrid(props: any) {
                 variant="contained"
                 size="small"
                 sx={{
-                  marginLeft: { xs: 0, sm: 1 }, // Aligns right from small screens (600px) and up
+                  marginLeft: { xs: 0, sm: -1.5 }, // Aligns right from small screens (600px) and up
                   marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
                   width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
                   textTransform: "none"

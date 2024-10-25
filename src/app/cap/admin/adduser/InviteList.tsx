@@ -1,6 +1,6 @@
 "use client"
 import { GridColDef } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { getInviteUserByCompany, getInviteUserById } from "@/app/controllers/user.controller";
 import EntityList from "../../../Widgets/masters/EntityList";
 import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
@@ -74,7 +74,7 @@ export default function InviteList({companyId}:{companyId : number}) {
   //   }
   // },[]);
 
-  return <>
+  return <Box>
     <EntityList
     title="Invite User"
     renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -90,5 +90,5 @@ export default function InviteList({companyId}:{companyId : number}) {
       AddAllowed={true}
       height="40vh">
     </EntityList>
-  </>
+  </Box>
 }

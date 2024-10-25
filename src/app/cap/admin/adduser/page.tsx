@@ -19,9 +19,7 @@ export default async function AddUser() {
       <Box>
         <UserList />
         <Box sx={{ height:"10vh",margin:"20px 20px" }}>
-        {/* , overflow: "scroll" */}
           <Accordion>
-          {/* sx={{ bgcolor: "#F1F1EF" }} */}
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -29,7 +27,7 @@ export default async function AddUser() {
             >
               Invited User
             </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails sx={{marginBottom:"3em"}}>
               <InviteList companyId={session.user.dbInfo.id} />
             </AccordionDetails>
           </Accordion>
