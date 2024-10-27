@@ -35,6 +35,7 @@ export default function AddDocsForm(props: any) {
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [file,setFile] = React.useState<string | ArrayBuffer | null | undefined>();
     const [selectedFileName,setSelectedFileName] = React.useState("");
+    const [fileType,setFileType] = React.useState("");
     const handleCancel = () => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
     };
@@ -45,6 +46,7 @@ export default function AddDocsForm(props: any) {
         data["description"] = formData.get("description");
         data["document"] = selectedFileName;
         data["file"] = file;
+        data["fileType"] = 
         data["type"] = "state";
         console.log("data : ",data);
         props.setData
@@ -62,6 +64,8 @@ export default function AddDocsForm(props: any) {
         if (files && files.length > 0) {
             const file = files[0];
             setSelectedFileName(file.name);
+            setFileType(file.type);
+
             const reader = new FileReader();
 
             reader.onloadend = () => {

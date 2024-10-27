@@ -132,14 +132,13 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
-         s.name state, co.name country, us.name as crm_user\
+         s.name state, co.name country , '' as crm_user \
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
-         left outer join userDb.user us on em.crm_user_id=us.id\
          where em.id=?",
       values: [id],
     });

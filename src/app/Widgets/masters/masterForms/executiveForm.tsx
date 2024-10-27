@@ -15,6 +15,7 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -43,6 +44,7 @@ import {
   deleteExecutiveDoc,
   updateExecutive,
   updateExecutiveDoc,
+  viewExecutiveDoc,
 } from "@/app/controllers/executive.controller";
 import {
   executiveSchemaT,
@@ -60,16 +62,18 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRowId, GridSlots, GridTo
 import { AddDialog } from "../addDialog";
 import AddDocsForm from "@/app/cap/admin/lists/executiveList/AddDocsForm";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 type ModifiedRowT = {
   id?: number;
   description?: string;
   document?: string;
   file?: string | ArrayBuffer | null ;
+  fileType?: string;
 };
 
 const rows: any = [
-  {id: 1, description : "description 1", document : "document-id-1", type: "db"},
+  {id: 1, description : "description 1", document : "382d5e36-16d2-4991-86ef-b73e66513e16", type: "db"},
   {id: 2, description : "description 2", document : "document-id-2", type: "db"},
   {id: 3, description : "description 3", document : "document-id-3", type : "db"},
 ];
@@ -98,6 +102,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [editMode, setEditMode] = useState<GridRowId | null>();
   const entityData: executiveSchemaT = props.data ? props.data : {};
+  console.log("props : ",entityData);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -186,6 +191,23 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             </>
           );
         }
+        if(params.row.type==="db"){
+          return (
+            <>
+            {/* <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+            > */}
+            <IconButton onClick={()=>{handleViewClickDB(params.row)}} aria-label="file">
+            <AttachFileIcon/>
+          </IconButton>
+            {/* </Button> */}
+            </>
+          );
+        }
       },
     },
     {
@@ -269,6 +291,24 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         await deleteExecutiveDoc(data.id);
         setDocData(updatedRows);
       }
+    }catch(error){
+      throw error;
+    }
+  }
+
+  const handleViewClickDB = async(data : any) => {
+    try{
+      const result = await viewExecutiveDoc(data.document);
+      console.log("view doc : ",result);
+      const blob = new Blob([result], { type:  data.fileType});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "download"
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }catch(error){
       throw error;
     }

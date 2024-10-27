@@ -30,6 +30,7 @@ import { logger } from "../utils/logger.utils";
 import axios from "axios";
 import FormData from 'form-data';
 import { Buffer } from "buffer";
+import { getUserDetailsById } from "./user.controller";
 
 const inviteSring = "Send Invite...";
 
@@ -134,6 +135,27 @@ export async function updateExecutive(data: executiveSchemaT, docData : any) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          for(const doc of docData){
+            const formData = new FormData();
+
+            formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
+            formData.append('meta_data', `{"name": "${doc.description}"}`);
+
+            const base64Data = doc.file.replace(/^data:.*;base64,/, "");
+            const buffer = Buffer.from(base64Data, 'base64');
+            formData.append('file_data', buffer, {filename: doc.document, contentType: 'application/text'})
+            
+            const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
+              headers : {
+                ...formData.getHeaders(),
+                "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
+                "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
+              }}
+            )
+            doc["docId"] = docInfo.data.document_id;
+            doc["executiveId"] = dbResult[1][0].id;
+            await addDocument(doc);
+          }
           if (dbResult[1][0].crm_user_id) {
             await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
           }
@@ -227,7 +249,16 @@ export async function getExecutiveById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+      const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+      if(executiveDetails.length>0 && executiveDetails[0].crm_user_id){
+        const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
+        if(crm_user){
+          executiveDetails[0].crm_user = crm_user.name;
+        }
+        const docData = await getExecutiveDocs(id);
+        executiveDetails[0].docData = docData;
+      }
+      return executiveDetails;
     }
   } catch (error) {
     throw error;
@@ -420,6 +451,22 @@ export async function deleteExecutiveDoc(id : number){
     if(session){
       await deleteExecutiveDocDB(session.user.dbInfo.dbName,id);
       // api to delete doc
+    }
+  }catch(error){
+    logger.error(error);
+  }
+}
+
+export async function viewExecutiveDoc(documentId : string){
+  try{
+    const session = await getSession();
+    if(session){
+      const result = await axios.get(`http://192.168.1.200:3000/api/document?document_id=${documentId}&app_id=e2fda9ab-7b36-4461-839e-ab6ed3545e76`,{
+        headers : {
+          "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
+          "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
+        }});
+        return result.data;
     }
   }catch(error){
     logger.error(error);
