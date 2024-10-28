@@ -273,7 +273,20 @@ export async function getProfileById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getProfileDetailsById(session.user.dbInfo.dbName, id);
+      const executiveDetails = await getProfileDetailsById(session.user.dbInfo.dbName, id);
+      if(executiveDetails.length>0 && executiveDetails[0].crm_user_id){
+        const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
+        if(crm_user){
+          executiveDetails[0].crm_user = crm_user.name;
+        }
+      }
+      const docData = await getExecutiveDocs(id);
+      if(executiveDetails.length > 0 && docData.length > 0){
+        executiveDetails[0].docData = docData;
+      }else{
+        executiveDetails[0].docData = [];
+      }
+      return executiveDetails;
     }
   } catch (error) {
     throw error;
