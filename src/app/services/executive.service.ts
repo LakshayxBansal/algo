@@ -357,7 +357,7 @@ export async function getExecutiveDocsDB(crmDb : string,executiveId : number){
   try{
     const result = await excuteQuery({
       host:crmDb,
-      query:"select * from executive_docs where executive_id = ?;",
+      query:"select *,'db' as type from executive_docs where executive_id = ?;",
       values:[executiveId]
     });
     return result;
