@@ -255,8 +255,12 @@ export async function getExecutiveById(id: number) {
         if(crm_user){
           executiveDetails[0].crm_user = crm_user.name;
         }
-        const docData = await getExecutiveDocs(id);
+      }
+      const docData = await getExecutiveDocs(id);
+      if(executiveDetails.length > 0 && docData.length > 0){
         executiveDetails[0].docData = docData;
+      }else{
+        executiveDetails[0].docData = [];
       }
       return executiveDetails;
     }

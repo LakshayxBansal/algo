@@ -56,7 +56,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [docData, setDocData] = React.useState(props?.data ? props.data.docData : []);
+  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
@@ -119,9 +119,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   inviteId = invite.id;
       // }
 
-      const newDocsData = docData.filter((row: any) => row.type !== "db");
-
-      const result = await persistEntity(data as executiveSchemaT, newDocsData);
+      const result = await persistEntity(data as executiveSchemaT);
       if (result?.status) {
         const newVal = {
           id: result?.data[0].id,
@@ -235,14 +233,17 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     setSelectValues(values);
   }
 
-  async function persistEntity(data: executiveSchemaT, docData : any) {
+  async function persistEntity(data: executiveSchemaT) {
     let result;
+    console.log("doc data : ",docData)
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
+    console.log("new doc data : ",newDocsData)
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;
-      result = await updateExecutive(data,docData);
+      result = await updateExecutive(data,newDocsData);
     } else {
-      result = await createExecutive(data,docData);
+      result = await createExecutive(data,newDocsData);
     }
     return result;
   }
@@ -303,7 +304,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         <IconButton sx={{float : "right"}} onClick={()=>{setDialogOpen(true)}} aria-label="file">
           <AttachFileIcon/>
         </IconButton>
-        <Typography sx={{float : "right"}}>{props?.data ? props.data.docData.length > 0 ? props.data.docData.length : "" : ""}</Typography>
+        <Typography sx={{float : "right"}}>{props?.data ? props?.data?.docData?.length > 0 ? props?.data?.docData?.length : "" : ""}</Typography>
         </Box>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {/* {formError?.form?.error && (
