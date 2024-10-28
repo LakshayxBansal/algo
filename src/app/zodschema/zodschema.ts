@@ -687,17 +687,31 @@ export const nameAliasData = z.object({
 export const enquirySupportConfig = z.object({
   enquiryReqd: z.boolean().optional(),
   supportReqd: z.boolean().optional(),
+  contractReqd: z.boolean().optional(),
+  enquiryGenerationReqd: z.boolean().optional(),
+  appReqd: z.boolean().optional(),
+  category: z.string().optional(),
+  isEnabled: z.boolean().optional(),
+  // voucherNumber: z.boolean().optional(),
 
   enquiryCloseCall: z.boolean().optional(),
   enquiryMaintainItems: z.boolean().optional(),
   enquirySaveFAQ: z.boolean().optional(),
   enquiryMaintainAction: z.boolean().optional(),
+  enquiryVoucherNumber: z.boolean().optional(),
 
   supportCloseCall: z.boolean().optional(),
   supportMaintainItems: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
   supportMaintainContract: z.boolean().optional(),
+  supportVoucherNumber: z.boolean().optional(),
+
+  contractReqdVoucherNumber: z.boolean().optional(),
+
+  enquiryGenerationReqdVoucherNumber: z.boolean().optional(),
+
+  appReqdVoucherNumber: z.boolean().optional(),
 
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
