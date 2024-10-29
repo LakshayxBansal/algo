@@ -81,9 +81,6 @@ export default function AutoGrid(props: any) {
     async function getEnquiries() {
       const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page, pageModel.pageSize);
       setData(result?.result);
-      console.log("le re tera result", result?.result);
-      console.log("or ye tera data", data);
-
       setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
