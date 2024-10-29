@@ -2,6 +2,8 @@
 
 import * as zs from "../zodschema/zodschema";
 import { executiveSchemaT } from "../models/models";
+import { join } from 'path';
+import { writeFile } from 'fs/promises';
 import {
   createExecutiveDB,
   getExecutiveByPageDb,
@@ -60,8 +62,9 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
             formData.append('meta_data', `{"name": "${doc.description}"}`);
 
             const base64Data = doc.file.replace(/^data:.*;base64,/, "");
+            const contentType = "application/pdf";
             const buffer = Buffer.from(base64Data, 'base64');
-            formData.append('file_data', buffer, {filename: doc.document, contentType: 'application/text'})
+            formData.append('file_data', buffer, {filename: doc.document, contentType: contentType});
             
             const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
               headers : {
@@ -142,6 +145,7 @@ export async function updateExecutive(data: executiveSchemaT, docData : any) {
             formData.append('meta_data', `{"name": "${doc.description}"}`);
 
             const base64Data = doc.file.replace(/^data:.*;base64,/, "");
+            const contentType = "application/pdf";
             const buffer = Buffer.from(base64Data, 'base64');
             formData.append('file_data', buffer, {filename: doc.document, contentType: 'application/text'})
             
@@ -474,6 +478,7 @@ export async function deleteExecutiveDoc(id : number){
   }
 }
 
+
 export async function viewExecutiveDoc(documentId : string){
   try{
     const session = await getSession();
@@ -482,8 +487,13 @@ export async function viewExecutiveDoc(documentId : string){
         headers : {
           "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
           "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-        }});
-        return result.data;
+        },
+        responseType : "arraybuffer"
+      });
+      const base64Data = Buffer.from(result.data, "binary").toString("base64");
+      // const contentType = detectMimeType(base64Data);
+      return {base64Data, contentType : "application/pdf"};
+
     }
   }catch(error){
     logger.error(error);

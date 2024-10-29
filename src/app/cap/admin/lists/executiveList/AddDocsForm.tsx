@@ -63,6 +63,7 @@ export default function AddDocsForm(props: any) {
 
         if (files && files.length > 0) {
             const file = files[0];
+            console.log("upload file : ",file);
             setSelectedFileName(file.name);
             setFileType(file.type);
 

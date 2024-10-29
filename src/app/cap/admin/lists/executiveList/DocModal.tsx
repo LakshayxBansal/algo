@@ -14,6 +14,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AddIcon from "@mui/icons-material/Add";
 import AddDocsForm from "./AddDocsForm";
+import { join } from 'path';
+import { writeFile } from 'fs/promises';
+// import { fileTypeFromBuffer } from 'file-type';
 import { deleteExecutiveDoc, updateExecutiveDoc, viewExecutiveDoc } from "@/app/controllers/executive.controller";
 
 type ModifiedRowT = {
@@ -268,26 +271,45 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
         }
     }
 
+
     const handleViewClickDB = async (data: any) => {
         try {
             const result = await viewExecutiveDoc(data.doc_id);
-            const blob = new Blob([result], { type: "application/pdf" });
+            
+            if(result?.base64Data && result?.contentType){
+                const { base64Data, contentType } = result;
+            
+            
+            if(base64Data){
+                const binary = atob(base64Data);
+            const len = binary.length;
+            const buffer = new Uint8Array(len);
+
+            for (let i = 0; i < len; i++) {
+                buffer[i] = binary.charCodeAt(i);
+            }
+
+            // Create a Blob from the binary data
+            const blob = new Blob([buffer], { type: contentType });
+            console.log('BLOB : ', blob);
 
             // Create object URL from Blob
             const url = window.URL.createObjectURL(blob);
 
-            // Create temporary link element
+            // Download logic
             const link = document.createElement('a');
             link.href = url;
-            link.download = data.description;
-
-            // Append link to document, click it, and remove it
+            link.download = data.description || 'download.pdf';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            // Clean up by revoking the object URL
+            // Revoke the object URL to free memory
             window.URL.revokeObjectURL(url);
+            }
+        }
+
+            
         } catch (error) {
             throw error;
         }
