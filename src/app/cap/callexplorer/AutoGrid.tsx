@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, TextField, Tooltip, Typography, } from "@mui/material";
+import { FormControl, FormControlLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, TextField, Tooltip, Typography, } from "@mui/material";
 import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
 import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -23,6 +23,7 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Link from "next/link";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import FilterMenu from "./FilterMenu";
+
 
 
 export default function AutoGrid(props: any) {
@@ -78,17 +79,25 @@ export default function AutoGrid(props: any) {
   useEffect(() => {
     setLoading(true)
     async function getEnquiries() {
-      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
+      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page, pageModel.pageSize);
       setData(result?.result);
+      console.log("le re tera result", result?.result);
+      console.log("or ye tera data", data);
+
       setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
     setLoading(false)
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh])
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, pageModel.page, pageModel.pageSize])
 
   const handleRefresh = () => {
-    setRefresh(!refresh)
+    setPageModel((prev: any) => ({
+      ...prev,
+      page: 0,
+    }));
     setRowSelectionModel([]);
+    setSelectedRow(null);
+    setRefresh(!refresh)
   };
 
   useEffect(() => {
