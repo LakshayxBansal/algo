@@ -84,7 +84,7 @@ export default function InputForm(props: {
   loggedInUserData: any;
 }) {
   const [status, setStatus] = useState("1");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({"received_by":{id:props.loggedInUserData.id, name:props.loggedInUserData.name}});
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -444,6 +444,8 @@ export default function InputForm(props: {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
                 fetchDataFn={getEnquiryAction}
                 fnFetchDataByID={getActionById}
+                formError={formError?.action_taken ?? formError.action_taken}
+
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm
                     setDialogOpen={fnDialogOpen}

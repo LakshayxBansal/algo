@@ -187,15 +187,23 @@ export const ProductSchema = z.object({
 export const productToListFormSchema = z.object({
   id: z.number().optional(),
   enquiry_id: z.number().optional(),
-  product: z.string().min(1, {
+  // product: z.string().min(1, {
+  //   message: "Product Name must not be empty",
+  // })
+  product: z.string().min(1).max(60).optional().refine((val) => val !== undefined && val.length !== 0, {
     message: "Product Name must not be empty",
+    path: ["product"],
   }),
-  product_id: z.number(),
+  product_id: z.number().min(1).refine((val) => val !== 0, {
+    message: "Product Name must not be empty",
+    path: ["product"],
+  }),
   quantity: z
     .number()
     .min(1, { message: "Quantity must not be empty" }),
-  unit: z.string().min(1, {
+  unit: z.string().min(1).optional().refine((val) => val !== undefined && val.length !== 0, {
     message: "Unit Name must not be empty",
+    path: ["unit"],
   }),
   unit_id: z.number(),
   remarks: z.string().max(5000).optional(),
@@ -370,17 +378,44 @@ export const executiveSchema = z
 
 export const enquiryHeaderSchema = z.object({
   id: z.number().optional(),
-  enq_number: z.string().min(1).max(75),
+  enq_number: z.string().min(1).max(75).refine((val) => val.length !== 0, {
+    message: "Enquiry number must not be empty",
+    path: ["enq_number"],
+  }),
   date: z.string().min(1).max(20),
   auto_number: z.number().optional(),
-  contact_id: z.number().min(1),
-  contact: z.string().min(1).max(60),
-  received_by_id: z.number().min(1),
-  received_by: z.string().min(1).max(60),
-  category_id: z.number().min(1),
-  category: z.string().min(1).max(60),
-  source_id: z.number().min(1),
-  source: z.string().min(1).max(60),
+  contact_id: z.number().min(1).refine((val) => val !== 0, {
+    message: "Contact name must not be empty",
+    path: ["contact"],
+  }),
+  contact: z.string().min(1).max(60).refine((val) => val.length !== 0, {
+    message: "Contact name must not be empty",
+    path: ["contact"],
+  }),
+  received_by_id: z.number().min(1).refine((val) => val !== 0, {
+    message: "Received by must not be empty",
+    path: ["received_by"],
+  }),
+  received_by: z.string().min(1).max(60).refine((val) => val.length !== 0, {
+    message: "Received by must not be empty",
+    path: ["received_by"],
+  }),
+  category_id: z.number().min(1).refine((val) => val !== 0, {
+    message: "Category must not be empty",
+    path: ["category"],
+  }),
+  category: z.string().min(1).max(60).refine((val) => val.length !== 0, {
+    message: "Category must not be empty",
+    path: ["category"],
+  }),
+  source_id: z.number().min(1).refine((val) => val !== 0, {
+    message: "Source must not be empty",
+    path: ["source"],
+  }),
+  source: z.string().min(1).max(60).refine((val) => val.length !== 0, {
+    message: "Source must not be empty",
+    path: ["source"],
+  }),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
@@ -399,12 +434,18 @@ export const enquiryLedgerSchema = z.object({
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1).max(50),
-  sub_status_id: z.number().min(1),
-  action_taken_id: z.number().min(1),
-  action_taken: z.string().min(1).max(60),
-  next_action_id: z.number().min(1).optional(),
-  next_action: z.string().max(60).optional(),
+  sub_status: z.string().min(1).max(50).refine((val) => val.length !== 0, {
+    message: "Sub Status must not be empty",
+    path: ["sub_status"],
+  }),
+  sub_status_id: z.number().min(1).refine((val) => val !== 0, {
+    message: "Sub Status must not be empty",
+    path: ["sub_status"],
+  }),
+  action_taken_id: z.number().optional(),
+  action_taken: z.string().optional(),
+  next_action_id: z.number().optional(),
+  next_action: z.string().optional(),
   next_action_date: z.string().min(1).max(20),
   suggested_action_remark: z.string().max(5000).optional(),
   action_taken_remark: z.string().max(5000).optional(),
