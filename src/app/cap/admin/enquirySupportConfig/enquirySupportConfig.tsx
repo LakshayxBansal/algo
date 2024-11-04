@@ -17,9 +17,9 @@ import {
   AccordionSummary,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Dynamic from "./form";
+import Dynamic from "./genericDynamicForm";
 
-// interface EnquiryConfigFormProps {props: enquiryConfigSchemaT}
+interface EnquiryConfigFormProps {props: enquiryConfigSchemaT}
 
 export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
   const [formError, setFormError] = useState<
@@ -57,6 +57,46 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     generalShowList: props.generalShowList ?? false,
   });
 
+  const [enquiryVoucherSettings, setEnquiryVoucherSettings] = useState({
+    prefix: "",
+    suffix: "",
+    length: 0,
+    prefillWithZero: false,
+    parent: "enquiry",
+  });
+  
+  const [supportVoucherSettings, setSupportVoucherSettings] = useState({
+    prefix: "",
+    suffix: "",
+    length: 0,
+    prefillWithZero: false,
+    parent: "support",
+  });
+  
+  const [contractVoucherSettings, setContractVoucherSettings] = useState({
+    prefix: "",
+    suffix: "",
+    length: 0,
+    prefillWithZero: false,
+    parent: "contract",
+  });  
+
+  const [enquiryGenerationVoucherSettings, setEnquiryGenerationVoucherSettings] = useState({
+    prefix: "",
+    suffix: "",
+    length: 0,
+    prefillWithZero: false,
+    parent: "enquiryGeneration",
+  });
+
+  const [appVoucherSettings, setappVoucherSettings] = useState({
+    prefix: "",
+    suffix: "",
+    length: 0,
+    prefillWithZero: false,
+    parent: "app",
+  });
+
   const handleSubmit = async (formData: FormData) => {
     console.log("formData : ",formData);
     let data: { [key: string]: any } = {};
@@ -65,20 +105,6 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
       data[key] = value === "on" ? true : value;
     }
     console.log("data : ",data);
-    const parsed = enquirySupportConfig.safeParse(data);
-
-    if (!parsed.success) {
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      parsed.error.errors.forEach((issue) => {
-        issue.path.forEach((path) => {
-          errorState[path] = { msg: issue.message, error: true };
-        });
-      });
-      errorState["form"] = { msg: "Validation failed", error: true };
-      setFormError(errorState);
-      return;
-    }
-
     const result = await persistEntity(data as enquiryConfigSchemaT);
 
     if (result.status) {
@@ -106,7 +132,8 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
   const handleCancel = () => {
     // Handle cancel action if necessary
   };
-
+  
+console.log("Render", enquiryVoucherSettings);
   const handleCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     name: keyof enquiryConfigSchemaT
@@ -174,7 +201,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
 
   return (
     <Paper>
-      {/* <Seperator>Enquiry / Support Configuration</Seperator> */}
+      <Seperator>Enquiry / Support Configuration </Seperator>
       <Box sx={{ p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
@@ -245,9 +272,17 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     "enquiryVoucherNumber",
                     !formState.enquiryReqd
                   )}
-                  {formState.enquiryVoucherNumber && ( 
-                    <Dynamic />
-                  )}
+                  {/* {formState.enquiryVoucherNumber && (  */}
+                    {/* // <Dynamic /> */}
+                    {formState.enquiryVoucherNumber && (
+                      <Dynamic
+                        settings={enquiryVoucherSettings}
+                        setSettings={setEnquiryVoucherSettings}
+                        label="Enquiry Voucher Details"
+                        parent="enquiry"
+                      />
+                    )}
+                  {/* )} */}
                 </FormGroup>
               </AccordionDetails>
             </Accordion>
@@ -318,7 +353,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     !formState.supportReqd
                   )}
                   {formState.supportVoucherNumber && ( 
-                    <Dynamic />
+                    <Dynamic
+                    settings={supportVoucherSettings}
+                    setSettings={setSupportVoucherSettings}
+                    label="Support Voucher Details"
+                    parent="support"
+                  />
                   )}
                 </FormGroup>
               </AccordionDetails>
@@ -348,7 +388,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     !formState.contractReqd
                   )}
                   {formState.contractReqdVoucherNumber && ( 
-                    <Dynamic />
+                    <Dynamic
+                    settings={contractVoucherSettings}
+                    setSettings={setContractVoucherSettings}
+                    label="Contract Voucher Details"
+                    parent="contract"
+                  />
                   )}
               </AccordionDetails>
             </Accordion>
@@ -377,7 +422,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     !formState.enquiryGenerationReqd
                   )}
                   {formState.enquiryGenerationReqdVoucherNumber && ( 
-                    <Dynamic />
+                    <Dynamic
+                    settings={enquiryGenerationVoucherSettings}
+                    setSettings={setEnquiryGenerationVoucherSettings}
+                    label="Enquiry Generation Voucher Details"
+                    parent="enquiryGeneration"
+                  />
                   )}
               </AccordionDetails>
             </Accordion>
@@ -438,178 +488,17 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     !formState.appReqd
                   )}
                   {formState.appReqdVoucherNumber && ( 
-                    <Dynamic />
+                     <Dynamic
+                     settings={appVoucherSettings}
+                     setSettings={setappVoucherSettings}
+                     label="App Voucher Details"
+                     parent="app"
+                   />
                   )}
                 </FormGroup>
               </AccordionDetails>
             </Accordion>
           </div>
-
-          {/* <Box
-            sx={{
-              mt: 0,
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              columnGap: 3,
-            }}
-          >
-            {createCheckBox(
-              "enquiryReqd",
-              "enquiryReqd",
-              "Enquiry Management (Pre Sales)",
-              formState.enquiryReqd as boolean,
-              "enquiryReqd",
-              false
-            )}
-            {createCheckBox(
-              "supportReqd",
-              "supportReqd",
-              "Support Management (Post Sales)",
-              formState.supportReqd as boolean,
-              "supportReqd",
-              false
-            )}
-          </Box>
-
-          <Box
-            sx={{
-              mt: 1,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <Box
-              component={"fieldset"}
-              sx={{ border: "1px solid grey", borderRadius: "4px", p: 2 }}
-            >
-              <legend>Enquiry Management Options</legend>
-              <FormGroup>
-                {createCheckBox(
-                  "enquiryCloseCall",
-                  "enquiryCloseCall",
-                  "Can Close Call at the time of Call Receipt",
-                  formState.enquiryCloseCall as boolean,
-                  "enquiryCloseCall",
-                  !formState.enquiryReqd
-                )}
-                {createCheckBox(
-                  "enquiryMaintainItems",
-                  "enquiryMaintainItems",
-                  "Maintain Items in Call Receipt",
-                  formState.enquiryMaintainItems as boolean,
-                  "enquiryMaintainItems",
-                  !formState.enquiryReqd
-                )}
-                {createCheckBox(
-                  "enquirySaveFAQ",
-                  "enquirySaveFAQ",
-                  "Ask to Save FAQ on Call Receipt and Report Saving",
-                  formState.enquirySaveFAQ as boolean,
-                  "enquirySaveFAQ",
-                  !formState.enquiryReqd
-                )}
-                {createCheckBox(
-                  "enquiryMaintainAction",
-                  "enquiryMaintainAction",
-                  "Maintain Action Taken for Call Receipt",
-                  formState.enquiryMaintainAction as boolean,
-                  "enquiryMaintainAction",
-                  !formState.enquiryReqd
-                )}
-              </FormGroup>
-            </Box>
-
-            <Box
-              component={"fieldset"}
-              sx={{ border: "1px solid grey", borderRadius: "4px", p: 2 }}
-            >
-              <legend>Support Management Options</legend>
-              <FormGroup>
-                {createCheckBox(
-                  "supportCloseCall",
-                  "supportCloseCall",
-                  "Can Close Call at the time of Call Receipt",
-                  formState.supportCloseCall as boolean,
-                  "supportCloseCall",
-                  !formState.supportReqd
-                )}
-                {createCheckBox(
-                  "supportMaintainItems",
-                  "supportMaintainItems",
-                  "Maintain Items in Call Receipt",
-                  formState.supportMaintainItems as boolean,
-                  "supportMaintainItems",
-                  !formState.supportReqd
-                )}
-                {createCheckBox(
-                  "supportSaveFAQ",
-                  "supportSaveFAQ",
-                  "Can Close Call at the time of Call Receipt",
-                  formState.supportSaveFAQ as boolean,
-                  "supportSaveFAQ",
-                  !formState.supportReqd
-                )}
-                {createCheckBox(
-                  "supportMaintainAction",
-                  "supportMaintainAction",
-                  "Maintain Action Taken for Call Receipt",
-                  formState.supportMaintainAction as boolean,
-                  "supportMaintainAction",
-                  !formState.supportReqd
-                )}
-                {createCheckBox(
-                  "supportMaintainContract",
-                  "supportMaintainContract",
-                  "Maintain Contracts for Support",
-                  formState.supportMaintainContract as boolean,
-                  "supportMaintainContract",
-                  !formState.supportReqd
-                )}
-              </FormGroup>
-            </Box>
-          </Box>
-
-          <Box
-            component={"fieldset"}
-            sx={{ mt: 2, border: "1px solid grey", borderRadius: "4px", p: 2 }}
-          >
-            <legend>General Configuration Options</legend>
-            <FormGroup
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                columnGap: 3,
-              }}
-            >
-              {createCheckBox(
-                "generalMaintainArea",
-                "generalMaintainArea",
-                "Maintain Area / Region in Call Receipt",
-                formState.generalMaintainArea as boolean,
-                "generalMaintainArea",
-                false
-              )}
-              {createCheckBox(
-                "generalMaintainImage",
-                "generalMaintainImage",
-                "Maintain Image Information",
-                formState.generalMaintainImage as boolean,
-                "generalMaintainImage",
-                false
-              )}
-              {createCheckBox(
-                "generalShowList",
-                "generalShowList",
-                "Show List in Call Allocation",
-                formState.generalShowList as boolean,
-                "generalShowList",
-                false
-              )}
-            </FormGroup>
-          </Box> */}
-
           <Box
             sx={{
               display: "flex",

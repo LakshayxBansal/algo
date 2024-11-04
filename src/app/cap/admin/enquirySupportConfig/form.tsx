@@ -9,6 +9,11 @@ export default function Dynamic() {
   const [suffix, setSuffix] = useState<string>("");
   const [numberLength, setNumberLength] = useState<number | "">("");
   const [prefillWithZero, setPrefillWithZero] = useState<boolean>(false);
+  // const [data, setData] = useState<object>({});
+
+  // const obj = {prefix: String, suffix: String, numberLength: Number, prefillWithZero: Boolean}
+
+  // setData(obj);
 
   const getDisplayValue = () => {
     if (numberLength) {

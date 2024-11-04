@@ -76,7 +76,7 @@ import { logger } from "@/app/utils/logger.utils";
 // }
 
 export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
-  // console.log("data : ", data);
+  console.log("data : ", data);
   let result;
 
   try {
@@ -103,6 +103,10 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.enquiryVoucherNumber && {
               VoucherNumber: data.enquiryVoucherNumber,
             }),
+            ...(data.enquiryPrefix && { prefix: data.enquiryPrefix }), 
+            ...(data.enquirySuffix && { suffix: data.enquirySuffix }), 
+            ...(data.enquiryLength && { length: data.enquiryLength }), 
+            ...(data.enquiryPrefillWithZero !== undefined && { prefillWithZero: data.enquiryPrefillWithZero }), 
           };
           entries.push(enquiryEntry);
         }
@@ -122,6 +126,10 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.supportVoucherNumber && {
               VoucherNumber: data.supportVoucherNumber,
             }),
+            ...(data.supportPrefix && { prefix: data.supportPrefix }), 
+            ...(data.supportSuffix && { suffix: data.supportSuffix }), 
+            ...(data.supportLength && { length: data.supportLength }), 
+            ...(data.supportPrefillWithZero !== undefined && { prefillWithZero: data.supportPrefillWithZero }), 
           };
           entries.push(supportEntry);
         }
@@ -133,6 +141,10 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.contractReqdVoucherNumber && {
               VoucherNumber: data.contractReqdVoucherNumber,
             }),
+            ...(data.contractReqdPrefix && { prefix: data.contractReqdPrefix }), 
+            ...(data.contractReqdSuffix && { suffix: data.contractReqdSuffix }), 
+            ...(data.contractReqdLength && { length: data.contractReqdLength }), 
+            ...(data.contractReqdPrefillWithZero !== undefined && { prefillWithZero: data.contractReqdPrefillWithZero }),
           };
           entries.push(contractEntry);
         }
@@ -143,7 +155,10 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             isEnabled: true,
             ...(data.appReqdVoucherNumber && {
               VoucherNumber: data.appReqdVoucherNumber,
-            }),
+            }), ...(data.appReqdPrefix && { prefix: data.appReqdPrefix }), 
+            ...(data.appReqdSuffix && { suffix: data.appReqdSuffix }), 
+            ...(data.appReqdLength && { length: data.appReqdLength }), 
+            ...(data.appReqdPrefillWithZero !== undefined && { prefillWithZero: data.appReqdPrefillWithZero }),
           };
           entries.push(appEntry);
         }
@@ -155,6 +170,11 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.enquiryGenerationReqdVoucherNumber && {
               VoucherNumber: data.enquiryGenerationReqdVoucherNumber,
             }),
+            ...(data.enquiryGenerationReqdPrefix && { prefix: data.enquiryGenerationReqdPrefix }), 
+            ...(data.enquiryGenerationReqdSuffix && { suffix: data.enquiryGenerationReqdSuffix }), 
+            ...(data.enquiryGenerationReqdLength && { length: data.enquiryGenerationReqdLength }), 
+            ...(data.enquiryGenerationReqdPrefillWithZero !== undefined && { prefillWithZero: data.enquiryGenerationReqdPrefillWithZero }), // Include prefillWithZero
+      
           };
           entries.push(enquiryGenEntry);
         }
