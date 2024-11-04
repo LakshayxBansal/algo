@@ -445,7 +445,6 @@ export default function InputForm(props: {
                 fetchDataFn={getEnquiryAction}
                 fnFetchDataByID={getActionById}
                 formError={formError?.action_taken ?? formError.action_taken}
-
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm
                     setDialogOpen={fnDialogOpen}
