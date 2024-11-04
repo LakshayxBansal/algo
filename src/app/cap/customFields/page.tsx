@@ -48,16 +48,17 @@ const FieldConfigurator = () => {
         }
         getEnquiries();
     }, [])
-
+    let customCount = 0;
     const addField = () => {
+        customCount++;
         const newField = {
             action_id: 1,
             column_format: null,
             column_id: null,
             column_label: "Label",
-            column_name: "name",
-            column_name_id: "name",
-            column_order: field.length,
+            column_name: `c_col${customCount}`,
+            column_name_id: `c_col${customCount}`,
+            column_order: field.length + 1,
             column_type_id: 1,
             created_by: null,
             created_on: null,
@@ -75,9 +76,13 @@ const FieldConfigurator = () => {
     };
 
 
-    const handleChange = (index: number, field: keyof typeof initial[0], value: any) => {
+    const handleChange = (index: number, Item: keyof typeof initial[0], value: any) => {
         const updatedFields: any = [...field];
-        updatedFields[index][field] = value;
+        console.log(index, Item, value);
+
+        updatedFields[index][Item] = value;
+        console.log("Updated Fields", updatedFields);
+
         setField(updatedFields);
     };
 
@@ -210,7 +215,7 @@ const FieldConfigurator = () => {
                                 control={
                                     <Checkbox
                                         checked={item.is_mandatory === 1 ? true : false}
-                                        onChange={(e) => handleChange(index, "is_mandatory", e.target.checked)}
+                                        onChange={(e) => handleChange(index, "is_mandatory", (e.target.checked ? 1 : 0))}
                                     />
                                 }
                                 label="Mandatory"
@@ -220,7 +225,7 @@ const FieldConfigurator = () => {
                                 control={
                                     <Checkbox
                                         checked={item.is_disabled === "1" ? true : false}
-                                        onChange={(e) => handleChange(index, "is_disabled", e.target.checked)}
+                                        onChange={(e) => handleChange(index, "is_disabled", e.target.checked ? 1 : 0)}
                                     />
                                 }
                                 label="Disabled"
