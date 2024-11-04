@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { FormControl, FormControlLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, TextField, Tooltip, Typography, } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from "@mui/material";
 import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
 import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -15,7 +15,7 @@ import AutocompleteDB from "../../Widgets/AutocompleteDB";
 import CallDetailList from "./CallDetailList";
 import { getEnquirySubStatus } from "../../controllers/enquirySubStatus.controller";
 import { getEnquiryAction } from "../../controllers/enquiryAction.controller";
-import { getCallEnquiries } from "../../controllers/callExplorer.controller";
+import { getCallEnquiries, getCallSupportEnquiries } from "../../controllers/callExplorer.controller";
 import { AddDialog } from "../../Widgets/masters/addDialog";
 import AllocateCall from "./AllocateCall";
 import Seperator from "@/app/Widgets/seperator";
@@ -23,7 +23,9 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Link from "next/link";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import FilterMenu from "./FilterMenu";
-
+import { getSupportCategory } from "@/app/controllers/supportCategory.controller";
+import { getSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
+import { getSupportAction } from "@/app/controllers/supportAction.controller";
 
 
 export default function AutoGrid(props: any) {
@@ -49,7 +51,37 @@ export default function AutoGrid(props: any) {
   type DlgState = { [key: string]: HTMLElement | null; };
   const [enableAllocate, setEnableAllocate] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [value, setValue] = React.useState(0);
+
   const apiRef = useGridApiRef();
+
+  const ITEM_HEIGHT = 30;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 200,
+    },
+  },
+};
+
+const tabOptions=[
+  {
+    "name":"enquiry",
+    "getCategory": getEnquiryCategory,
+    "getSubStatus": getEnquirySubStatus,
+    "getAction": getEnquiryAction,
+    "getCallData": getCallEnquiries
+
+  },{
+    "name":"support",
+    "getCategory": getSupportCategory,
+    "getSubStatus": getSupportSubStatus,
+    "getAction": getSupportAction,
+    "getCallData": getCallSupportEnquiries
+  }
+]
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -79,13 +111,18 @@ export default function AutoGrid(props: any) {
   useEffect(() => {
     setLoading(true)
     async function getEnquiries() {
-      const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page, pageModel.pageSize);
+      // const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
+      // const supportResult= await getCallSupportEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
+      const result= await tabOptions[value].getCallData(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
+      console.log('result', result);
+     
+      
       setData(result?.result);
-      setTotalRowCount(Number(result?.count));
+      setTotalRowCount(Number(result?.count ));
     }
     getEnquiries();
     setLoading(false)
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, pageModel.page, pageModel.pageSize])
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, value])
 
   const handleRefresh = () => {
     setPageModel((prev: any) => ({
@@ -274,7 +311,7 @@ export default function AutoGrid(props: any) {
               label={"Category"}
               // onChange={(e, val, s) => setCategorySearchText(val)}
               onChange={(e, val, s) => handleFilterChange('callCategory', val)}
-              fetchDataFn={getEnquiryCategory}
+              fetchDataFn={tabOptions[value].getCategory}
               defaultValue={
                 {
                   id: filterValueState?.callCategory?.id,
@@ -491,7 +528,7 @@ export default function AutoGrid(props: any) {
               onChange={(e, val, s) => handleFilterChange('subStatus', val)}
               // fetchDataFn={getSubStatusforStatus}
               fetchDataFn={(roleStr: string) =>
-                getEnquirySubStatus(roleStr, status)
+                tabOptions[value].getSubStatus(roleStr, status)
               }
               defaultValue={
                 {
@@ -530,7 +567,7 @@ export default function AutoGrid(props: any) {
               id={"next_action"}
               label={"Next Action"}
               onChange={(e, val, s) => handleFilterChange('nextAction', val)}
-              fetchDataFn={getEnquiryAction}
+              fetchDataFn={tabOptions[value].getAction}
               defaultValue={
                 {
                   id: filterValueState?.nextAction?.id,
@@ -638,6 +675,14 @@ export default function AutoGrid(props: any) {
     setCallFilter(event.target.value as string);
   };
 
+  //options of options in checkbox
+  const checkboxOptions = ['Enquiry', 'Support'];
+
+
+
+	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+		setValue(newValue);
+	};
 
   const CallType = (props: { text: string, color: string }) => {
     return (
@@ -658,13 +703,49 @@ export default function AutoGrid(props: any) {
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '90vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%" } }}>
-      <Box sx={{ maxWidth: "92vw" }}>
-        <Seperator>
+    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '85vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%" , paddingTop: 2 } }}>
+      <Box sx={{ maxWidth: "92vw" }} >
+        <Seperator >
           <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-            <Box sx={{ ml: 2 }}>
-              Call Explorer
+           
+            <Box>
+            <Box sx={{ width: '100%' }}>
+			<Tabs
+				value={value}
+				onChange={handleChange}
+				aria-label="tabs for different content"
+			>
+				<Tab label="Enquiry" />
+				<Tab label="Support" />
+			</Tabs>
+			
+		</Box>
             </Box>
+            
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "center", sm: "center", md: "center", lg: "flex-end" }, // Center on small and medium screens, align right on large screens
+                alignItems: "center", // Vertically center the CallTypes
+                flexWrap: "nowrap", // Prevent wrapping of call types
+              }}
+            >
+              <Grid container spacing={2} sx={{ flex: 1, justifyContent: { xs: 'center', sm: 'center', md: 'center', lg: 'flex-end' }, alignItems: "center" }}>
+                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Open-Unallocated" color="blue" />
+                </Grid>
+                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Open-Allocated" color="purple" />
+                </Grid>
+                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Closed-Failure" color="red" />
+                </Grid>
+                <Grid item xs="auto" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CallType text="Closed-Success" color="green" />
+                </Grid>
+              </Grid>
+            </Box>
+         
             <Box>
               {handleColumnVisibility()}
             </Box>
@@ -752,12 +833,41 @@ export default function AutoGrid(props: any) {
             }}
           />
         </Paper>
-        <Grid container alignItems={"center"} marginTop={0.5} sx={{
-          mt: {
-            xs: "1vh"
-          }
-        }} marginBottom={1}>
-          <Grid item md={2.5} sm={6} xs={12} sx={{ margin: "auto" }}>
+       
+
+        {selectedRow && details && (<Box sx={{ mt: 2 , fontSize:"14px"}}> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
+        {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white", mt: 2 }}>
+          <CallDetailList selectedRow={selectedRow} refresh={refresh} callType={value}/>
+        </Paper>}
+        <Box
+          
+        >
+          <Grid container alignItems="center" sx={{ justifyContent: { xs: "center", sm: "space-between", md: "space-between" } }} marginTop={2} >
+            <Grid item xs={8.5} sm={5} md={3}  >
+            <Box sx={{display: "flex", alignItems: "center" , justifyContent: { xs: "center" , md:"flex-start" }}}>
+              <ContainedButton
+                variant="contained"
+                size="small"
+                sx={{
+                  mr: "1vw",
+                  
+                  textTransform: "none",
+                }}
+                onClick={() => setDetails(!details)}
+              >
+                {details ? "Hide Details" : "Show Details"}
+              </ContainedButton>
+              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
+                <Link href="/cap/enquiry" style={{
+                  textDecoration: "none",
+                }}>
+                  New Call Receipt
+                </Link>
+              </ContainedButton>
+              </Box>
+            </Grid>
+            <Grid item xs={8.5} sm={5} md={3}>
+            
             <Box
               sx={{
                 display: "flex",
@@ -790,7 +900,7 @@ export default function AutoGrid(props: any) {
                 sx={{ textTransform: "none" }}
                 disabled={!selectedRow}
               >
-                <Link href={`/cap/enquiry?id=${selectedRow?.id}`} style={{
+                <Link href={`/cap/${tabOptions[value].name}?id=${selectedRow?.id}`} style={{
                   textDecoration: "none",
                 }}>
                   Status Update
@@ -829,69 +939,10 @@ export default function AutoGrid(props: any) {
               </Typography>
             </Box>
           </Grid>
-          <Grid item md={6.5} sm={12} xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "center", sm: "center", md: "center", lg: "flex-end" }, // Center on small and medium screens, align right on large screens
-                alignItems: "center", // Vertically center the CallTypes
-                flexWrap: "nowrap", // Prevent wrapping of call types
-              }}
-            >
-              <Grid container spacing={2} sx={{ flex: 1, justifyContent: { xs: 'center', sm: 'center', md: 'center', lg: 'flex-end' }, alignItems: "center" }}>
-                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
-                  <CallType text="Open-Unallocated" color="blue" />
-                </Grid>
-                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
-                  <CallType text="Open-Allocated" color="purple" />
-                </Grid>
-                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
-                  <CallType text="Closed-Failure" color="red" />
-                </Grid>
-                <Grid item xs="auto" sx={{ display: 'flex', alignItems: 'center' }}>
-                  <CallType text="Closed-Success" color="green" />
-                </Grid>
-              </Grid>
-            </Box>
-          </Grid>
-        </Grid>
-
-        {selectedRow && details && (<Box> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
-        {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white" }}>
-          <CallDetailList selectedRow={selectedRow} refresh={refresh} />
-        </Paper>}
-        <Box
-          sx={{
-            rowGap: 1,
-            columnGap: 3,
-          }}
-        >
-          <Grid container alignItems="center" sx={{ justifyContent: { xs: "center", sm: "space-between", md: "space-between" } }} marginTop={2}>
-            <Grid item xs={8.5} sm={5} md={4} >
-              <ContainedButton
-                variant="contained"
-                size="small"
-                sx={{
-                  mr: "1vw",
-                  ml: {
-                    md: "0.3vw",
-                    lg: "2vw"
-                  },
-                  textTransform: "none",
-                }}
-                onClick={() => setDetails(!details)}
-              >
-                {details ? "Hide Details" : "Show Details"}
-              </ContainedButton>
-              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
-                <Link href="/cap/enquiry" style={{
-                  textDecoration: "none",
-                }}>
-                  New Call Receipt
-                </Link>
-              </ContainedButton>
-            </Grid>
-            <Grid item xs={10} sm={1} md={1}>
+    
+            
+            <Grid item xs={10} sm={1} md={3}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <ContainedButton
                 variant="contained"
                 size="small"
@@ -909,6 +960,7 @@ export default function AutoGrid(props: any) {
                 </Link>
 
               </ContainedButton>
+              </Box>
             </Grid>
           </Grid>
         </Box>
@@ -923,3 +975,7 @@ export default function AutoGrid(props: any) {
     </Box >
   );
 }
+
+
+
+
