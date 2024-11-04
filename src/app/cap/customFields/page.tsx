@@ -1,50 +1,84 @@
 "use client"
 
-import React, { useState } from "react";
-import {
-    Box,
-    Paper,
-    Typography,
-    TextField,
-    Select,
-    MenuItem,
-    FormControlLabel,
-    Checkbox,
-    Button,
-    IconButton,
-    Stack
-} from "@mui/material";
-import {
-    DragHandle as DragHandleIcon,
-    ArrowUpward as ArrowUpwardIcon,
-    ArrowDownward as ArrowDownwardIcon
-} from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import { Box, Paper, Typography, TextField, Select, MenuItem, FormControlLabel, Checkbox, Button, IconButton, Stack, FormControl, InputLabel } from "@mui/material";
+import { DragHandle as DragHandleIcon, ArrowUpward as ArrowUpwardIcon, ArrowDownward as ArrowDownwardIcon } from "@mui/icons-material";
+import { getScreenDescription } from "@/app/controllers/object.controller";
 
 const initialFields = [
-    { id: "1", label: "Name", type: "text", mandatory: true, disabled: false },
-    { id: "2", label: "Alias", type: "text", mandatory: false, disabled: false },
-    { id: "3", label: "Phone", type: "numeric", mandatory: true, disabled: false },
+    { id: "1", label: "Name", type: "text", is_mandatory: true, is_disabled: false },
+    { id: "2", label: "Alias", type: "text", is_mandatory: false, is_disabled: false },
+    { id: "3", label: "Phone", type: "numeric", is_mandatory: true, is_disabled: false },
 ];
+
+const initial = [
+    {
+        action_id: 1,
+        column_format: null,
+        column_id: null,
+        column_label: "Name Label",
+        column_name: "name",
+        column_name_id: "name",
+        column_order: 1,
+        column_type_id: 1,
+        created_by: null,
+        created_on: null,
+        form_section: null,
+        id: 25,
+        is_default_column: 1,
+        is_default_mandatory: 1,
+        is_disabled: "0",
+        is_mandatory: 1,
+        modified_by: null,
+        modified_on: null,
+        object_type_id: 11
+    }
+]
 
 const FieldConfigurator = () => {
     const [fields, setFields] = useState(initialFields);
+    const [field, setField] = useState(initial);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
+
+    useEffect(() => {
+        async function getEnquiries() {
+            const result = await getScreenDescription(11, 1);
+            console.log(result);
+            setField(result);
+        }
+        getEnquiries();
+    }, [])
 
     const addField = () => {
         const newField = {
-            id: Date.now().toString(),
-            label: "",
-            type: "text",
-            mandatory: false,
-            disabled: false,
+            action_id: 1,
+            column_format: null,
+            column_id: null,
+            column_label: "Label",
+            column_name: "name",
+            column_name_id: "name",
+            column_order: field.length,
+            column_type_id: 1,
+            created_by: null,
+            created_on: null,
+            form_section: null,
+            id: 25,
+            is_default_column: 0,
+            is_default_mandatory: 1,
+            is_disabled: "0",
+            is_mandatory: 1,
+            modified_by: null,
+            modified_on: null,
+            object_type_id: 11
         };
-        setFields([...fields, newField]);
+        setField([...field, newField]);
     };
 
-    const handleChange = (index: number, field: keyof typeof fields[0], value: any) => {
-        const updatedFields: any = [...fields];
+
+    const handleChange = (index: number, field: keyof typeof initial[0], value: any) => {
+        const updatedFields: any = [...field];
         updatedFields[index][field] = value;
-        setFields(updatedFields);
+        setField(updatedFields);
     };
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
@@ -68,31 +102,31 @@ const FieldConfigurator = () => {
 
         if (draggedItem === null) return;
 
-        const newFields = [...fields];
+        const newFields = [...field];
         const [draggedField] = newFields.splice(draggedItem, 1);
         newFields.splice(dropIndex, 0, draggedField);
 
-        setFields(newFields);
+        setField(newFields);
         setDraggedItem(null);
     };
 
     const moveItem = (fromIndex: number, direction: "up" | "down") => {
         if (
             (direction === "up" && fromIndex === 0) ||
-            (direction === "down" && fromIndex === fields.length - 1)
+            (direction === "down" && fromIndex === field.length - 1)
         ) {
             return;
         }
 
-        const newFields = [...fields];
+        const newFields = [...field];
         const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
         const [movedItem] = newFields.splice(fromIndex, 1);
         newFields.splice(toIndex, 0, movedItem);
-        setFields(newFields);
+        setField(newFields);
     };
 
     const handleSubmit = () => {
-        console.log("Final field order and properties:", fields);
+        console.log("Final field order and properties:", field);
         alert("Field configuration saved!");
     };
 
@@ -103,7 +137,7 @@ const FieldConfigurator = () => {
             </Typography>
 
             <Stack spacing={1}>
-                {fields.map((field, index) => (
+                {field.map((field, index) => (
                     <Paper
                         key={field.id}
                         elevation={1}
@@ -143,31 +177,32 @@ const FieldConfigurator = () => {
 
                             <TextField
                                 label="Label"
-                                value={field.label}
-                                onChange={(e) => handleChange(index, "label", e.target.value)}
+                                value={field.column_label}
+                                onChange={(e) => handleChange(index, "column_label", e.target.value)}
                                 size="small"
                                 sx={{ width: 200 }}
                             />
-
-                            <Select
-                                value={field.type}
-                                onChange={(e) => handleChange(index, "type", e.target.value)}
-                                size="small"
-                                sx={{ width: 120 }}
-                            >
-                                <MenuItem value="text">Text</MenuItem>
-                                <MenuItem value="numeric">Numeric</MenuItem>
-                                <MenuItem value="date">Date</MenuItem>
-                                <MenuItem value="date">Currency</MenuItem>
-                                <MenuItem value="date">List</MenuItem>                                <MenuItem value="date">Date</MenuItem>
-                                <MenuItem value="date">Options</MenuItem>
-                            </Select>
+                            {field.is_default_column !== 1 && <FormControl size="small" sx={{ width: 140 }}>
+                                <InputLabel>Column Type</InputLabel>
+                                <Select
+                                    value={field.column_type_id}
+                                    label="Column Type"
+                                    onChange={(e) => handleChange(index, "column_type_id", e.target.value)}
+                                >
+                                    <MenuItem value={1}>Text</MenuItem>
+                                    <MenuItem value={3}>Numeric</MenuItem>
+                                    <MenuItem value={4}>Date</MenuItem>
+                                    <MenuItem value={6}>Currency</MenuItem>
+                                    <MenuItem value={5}>List</MenuItem>
+                                    <MenuItem value={2}>Options</MenuItem>
+                                </Select>
+                            </FormControl>}
 
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={field.mandatory}
-                                        onChange={(e) => handleChange(index, "mandatory", e.target.checked)}
+                                        checked={field.is_mandatory === 1 ? true : false}
+                                        onChange={(e) => handleChange(index, "is_mandatory", e.target.checked)}
                                     />
                                 }
                                 label="Mandatory"
@@ -176,8 +211,8 @@ const FieldConfigurator = () => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={field.disabled}
-                                        onChange={(e) => handleChange(index, "disabled", e.target.checked)}
+                                        checked={field.is_disabled === "1" ? true : false}
+                                        onChange={(e) => handleChange(index, "is_disabled", e.target.checked)}
                                     />
                                 }
                                 label="Disabled"
