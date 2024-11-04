@@ -203,6 +203,7 @@ export const MinimizedDataGrid = styled(DataGrid)(({ theme }) => ({
   //   border:"none"
   // }
 }));
+
 export const StyledMenu = styled(Menu)(({ theme }) => ({
   "& .MuiPaper-root": {
     borderRadius: 6,
