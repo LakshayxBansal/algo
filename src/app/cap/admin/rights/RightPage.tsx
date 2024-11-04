@@ -71,11 +71,11 @@ function Child({ object, handleChange, data, role, parentName, userRoleId }: { o
 }
 
 
-export default function RightPage({ userRoleId,rightsData, masterObjects, transactionObjects, reportObjects, parentCountDefaultValue, parentDataDefaultValue }: { userRoleId: number, rightsData: any, masterObjects: any, transactionObjects: any, reportObjects: any, parentCountDefaultValue: any, parentDataDefaultValue: any }) {
-    const [data, setData] = React.useState(rightsData);
-    const [parentData, setParentData] = React.useState<any>(parentDataDefaultValue);
-    const [parentDataCount, setParentDataCount] = React.useState<any>(parentCountDefaultValue);
-    const [role, setRole] = React.useState(userRoleId===1 ? "manager" : "executive");
+export default function RightPage({ rightData, category, children }: { rightData: Array<{field: string,value : boolean}>, category : Array<{name: string, obejcts : Array<{id:number,name:string}>}>, children :  Array<{ id: number, name: string }> }) {
+    const [data, setData] = React.useState(rightData);
+    // const [parentData, setParentData] = React.useState<any>(parentDataDefaultValue);
+    // const [parentDataCount, setParentDataCount] = React.useState<any>(parentCountDefaultValue);
+    const [role, setRole] = React.useState(children);
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [openMaster, setOpenMaster] = React.useState(false);
     const [openTransaction, setOpenTransaction] = React.useState(false);

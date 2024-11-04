@@ -1,7 +1,7 @@
 "use server"
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils"
-import { getRightsDb, manageRightsDb,getObjectsDb, getMasterObjectsDb, getTransactionObjectsDb, getReportObjectsDb } from "../services/rights.service";
+import { getRightsDb, manageRightsDb, getObjectsDb } from "../services/rights.service";
 
 type DataState = {
     [key: string] : boolean;
@@ -43,29 +43,41 @@ export async function manageRights(data : any) {
     }
 }
 
+// export async function getRightsData() {
+//     try{
+//         const session = await getSession();
+//         if(session){
+//             const result = await getRightsDb(session.user.dbInfo.dbName);
+//             let resultObject : DataState = {};
+//             const resultLength = result.length;
+//             for(let i = 0;i<resultLength;i++){
+//                 for (let key in result[i]) {
+//                     const first_key = key.split("_")[0];
+//                     if(first_key==="admin" || first_key==="manager" || first_key==="executive"){
+//                         const objectNameWithOutSpace = result[i]["object_name"].replace(/\s+/g, '');
+//                         const objectName = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
+//                         const newKey = `${objectName}_${key}`;
+//                         if(result[i][key]===1){
+//                             resultObject[newKey] = true;
+//                         }else{
+//                             resultObject[newKey] = false;
+//                         }
+//                     }
+//                 }
+//             }
+//             return resultObject;
+//         }
+//     }catch(error){
+//         logger.error(error);
+//     }
+// }
+
 export async function getRightsData() {
     try{
         const session = await getSession();
         if(session){
             const result = await getRightsDb(session.user.dbInfo.dbName);
-            let resultObject : DataState = {};
-            const resultLength = result.length;
-            for(let i = 0;i<resultLength;i++){
-                for (let key in result[i]) {
-                    const first_key = key.split("_")[0];
-                    if(first_key==="admin" || first_key==="manager" || first_key==="executive"){
-                        const objectNameWithOutSpace = result[i]["object_name"].replace(/\s+/g, '');
-                        const objectName = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
-                        const newKey = `${objectName}_${key}`;
-                        if(result[i][key]===1){
-                            resultObject[newKey] = true;
-                        }else{
-                            resultObject[newKey] = false;
-                        }
-                    }
-                }
-            }
-            return resultObject;
+            return result;
         }
     }catch(error){
         logger.error(error);
@@ -84,36 +96,36 @@ export async function getObjects() {
     }
 }
 
-export async function getMasterObjects() {
-    try{
-        const session = await getSession();
-        if(session){
-            const objects = await getMasterObjectsDb(session.user.dbInfo.dbName);
-            return objects;
-        }
-    }catch(error){
-        logger.error(error);
-    }
-}
-export async function getTransactionObjects() {
-    try{
-        const session = await getSession();
-        if(session){
-            const objects = await getTransactionObjectsDb(session.user.dbInfo.dbName);
-            return objects;
-        }
-    }catch(error){
-        logger.error(error);
-    }
-}
-export async function getReportObjects() {
-    try{
-        const session = await getSession();
-        if(session){
-            const objects = await getReportObjectsDb(session.user.dbInfo.dbName);
-            return objects;
-        }
-    }catch(error){
-        logger.error(error);
-    }
-}
+// export async function getMasterObjects() {
+//     try{
+//         const session = await getSession();
+//         if(session){
+//             const objects = await getMasterObjectsDb(session.user.dbInfo.dbName);
+//             return objects;
+//         }
+//     }catch(error){
+//         logger.error(error);
+//     }
+// }
+// export async function getTransactionObjects() {
+//     try{
+//         const session = await getSession();
+//         if(session){
+//             const objects = await getTransactionObjectsDb(session.user.dbInfo.dbName);
+//             return objects;
+//         }
+//     }catch(error){
+//         logger.error(error);
+//     }
+// }
+// export async function getReportObjects() {
+//     try{
+//         const session = await getSession();
+//         if(session){
+//             const objects = await getReportObjectsDb(session.user.dbInfo.dbName);
+//             return objects;
+//         }
+//     }catch(error){
+//         logger.error(error);
+//     }
+// }
