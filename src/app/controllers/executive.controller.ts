@@ -22,6 +22,7 @@ import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 import { modifyPhone } from "../utils/phoneUtils";
 import { logger } from "../utils/logger.utils";
+import { revalidatePage } from "../company/SelectCompany";
 
 const inviteSring = "Send Invite...";
 
@@ -153,6 +154,7 @@ export async function updateExecutive(data: executiveSchemaT) {
         data: [{ path: ["form"], message: "Error: Server Error" }],
       };
     }
+    revalidatePage('/cap/admin/profile');
     return result;
   } catch (e: any) {
     console.log(e);
