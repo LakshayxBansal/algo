@@ -18,7 +18,10 @@ import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
-import { getProduct, getProductById } from "@/app/controllers/product.controller";
+import {
+  getProduct,
+  getProductById,
+} from "@/app/controllers/product.controller";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
@@ -126,7 +129,7 @@ export default function ProductGrid({
   setdgDialogOpen,
   dgFormError,
   setdgFormError,
-  dgProductFormError
+  dgProductFormError,
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -183,7 +186,12 @@ export default function ProductGrid({
           errorState[path] = { msg: issue.message, error: true };
         }
       }
-      setdgFormError(errorState);
+      setdgFormError((curr: any) => {
+        return {
+          ...curr,
+          ...errorState,
+        };
+      });
     }
   };
 
@@ -238,7 +246,7 @@ export default function ProductGrid({
       field: "quantity",
       headerName: "Quantity",
       type: "number",
-      width: 80,
+      width: 130,
       align: "left",
       headerAlign: "left",
       renderCell: (params) => {
@@ -272,7 +280,7 @@ export default function ProductGrid({
       field: "unit",
       headerName: "Unit Name",
       type: "number",
-      width: 150,
+      width: 180,
       align: "left",
       headerAlign: "left",
       renderCell: (params) => {
@@ -401,19 +409,6 @@ export default function ProductGrid({
     );
   }
 
-  const demoRows: any = [
-    {
-      id: 1,
-      product: "Water Cooler",
-      quantity: 2,
-      unit: "Unit 1",
-      remarks: "test",
-    },
-  ];
-
-  const rejectedRowIds = [1, 3]; // Add the IDs you want to compare
-
-
   return (
     <>
       <StyledDataGrid
@@ -441,10 +436,12 @@ export default function ProductGrid({
             : 50
         }
         getRowClassName={(params) =>
-          Object.keys(dgProductFormError).includes((params.row.id - 1).toString()) 
-              ? `super-app-theme--Rejected` 
-              : ""
-      }
+          Object.keys(dgProductFormError).includes(
+            (params.row.id - 1).toString()
+          )
+            ? `super-app-theme--Rejected`
+            : ""
+        }
       />
     </>
   );
