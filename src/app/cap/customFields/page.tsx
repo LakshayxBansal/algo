@@ -137,9 +137,9 @@ const FieldConfigurator = () => {
             </Typography>
 
             <Stack spacing={1}>
-                {field.map((field, index) => (
+                {field.map((item, index) => (
                     <Paper
-                        key={field.id}
+                        key={item.id}
                         elevation={1}
                         draggable
                         onDragStart={(e) => handleDragStart(e, index)}
@@ -168,7 +168,7 @@ const FieldConfigurator = () => {
                                     <IconButton
                                         size="small"
                                         onClick={() => moveItem(index, "down")}
-                                        disabled={index === fields.length - 1}
+                                        disabled={index === field.length - 1}
                                     >
                                         <ArrowDownwardIcon fontSize="small" />
                                     </IconButton>
@@ -177,15 +177,15 @@ const FieldConfigurator = () => {
 
                             <TextField
                                 label="Label"
-                                value={field.column_label}
+                                value={item.column_label}
                                 onChange={(e) => handleChange(index, "column_label", e.target.value)}
                                 size="small"
                                 sx={{ width: 200 }}
                             />
-                            {field.is_default_column !== 1 && <FormControl size="small" sx={{ width: 140 }}>
+                            {item.is_default_column !== 1 && <FormControl size="small" sx={{ width: 140 }}>
                                 <InputLabel>Column Type</InputLabel>
                                 <Select
-                                    value={field.column_type_id}
+                                    value={item.column_type_id}
                                     label="Column Type"
                                     onChange={(e) => handleChange(index, "column_type_id", e.target.value)}
                                 >
@@ -198,10 +198,18 @@ const FieldConfigurator = () => {
                                 </Select>
                             </FormControl>}
 
+                            {item.is_default_column !== 1 && <TextField
+                                label="Format"
+                                value={item.column_format}
+                                onChange={(e) => handleChange(index, "column_format", e.target.value)}
+                                size="small"
+                                sx={{ width: 200 }}
+                            />}
+
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={field.is_mandatory === 1 ? true : false}
+                                        checked={item.is_mandatory === 1 ? true : false}
                                         onChange={(e) => handleChange(index, "is_mandatory", e.target.checked)}
                                     />
                                 }
@@ -211,7 +219,7 @@ const FieldConfigurator = () => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={field.is_disabled === "1" ? true : false}
+                                        checked={item.is_disabled === "1" ? true : false}
                                         onChange={(e) => handleChange(index, "is_disabled", e.target.checked)}
                                     />
                                 }
