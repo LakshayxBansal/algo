@@ -93,8 +93,8 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             category: "enquiry",
             isEnabled: true,
             ...(data.enquiryCloseCall && { CloseCall: data.enquiryCloseCall }),
-            ...(data.enquiryMaintainItems && {
-              MaintainItems: data.enquiryMaintainItems,
+            ...(data.enquiryMaintainProducts && {
+              MaintainProducts: data.enquiryMaintainProducts,
             }),
             ...(data.enquirySaveFAQ && { SaveFAQ: data.enquirySaveFAQ }),
             ...(data.enquiryMaintainAction && {
@@ -116,8 +116,8 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             category: "support",
             isEnabled: true,
             ...(data.supportCloseCall && { CloseCall: data.supportCloseCall }),
-            ...(data.supportMaintainItems && {
-              MaintainItems: data.supportMaintainItems,
+            ...(data.supportMaintainProducts && {
+              MaintainProducts: data.supportMaintainProducts,
             }),
             ...(data.supportSaveFAQ && { SaveFAQ: data.supportSaveFAQ }),
             ...(data.supportMaintainAction && {

@@ -1,15 +1,5 @@
 "use client";
-"use client";
 
-import React, { useState, ChangeEvent } from "react";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import FormGroup from "@mui/material/FormGroup";
-import Snackbar from "@mui/material/Snackbar";
-import Seperator from "../../../Widgets/seperator";
-import { updateEnquirySupportConfig } from "../../../controllers/enquirySupportConfig.controller";
-import { enquirySupportConfig } from "../../../zodschema/zodschema";
 import React, { useState, ChangeEvent } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -45,13 +35,13 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     appReqd: props.appReqd ?? false,
 
     enquiryCloseCall: props.enquiryCloseCall ?? false,
-    enquiryMaintainItems: props.enquiryMaintainItems ?? false,
+    enquiryMaintainProducts: props.enquiryMaintainProducts ?? false,
     enquirySaveFAQ: props.enquirySaveFAQ ?? false,
     enquiryMaintainAction: props.enquiryMaintainAction ?? false,
     enquiryVoucherNumber: props.enquiryVoucherNumber ?? false,
 
     supportCloseCall: props.supportCloseCall ?? false,
-    supportMaintainItems: props.supportMaintainItems ?? false,
+    supportMaintainProducts: props.supportMaintainProducts ?? false,
     supportSaveFAQ: props.supportSaveFAQ ?? false,
     supportMaintainAction: props.supportMaintainAction ?? false,
     supportVoucherNumber: props.supportVoucherNumber ?? false,
@@ -132,27 +122,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
       setFormError(errorState);
     }
   };
-    if (result.status) {
-      setSnackOpen(true);
-      setFormError({});
-    } else {
-      const issues = result.data;
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      for (const issue of issues) {
-        for (const path of issue.path) {
-          errorState[path] = { msg: issue.message, error: true };
-        }
-      }
-      errorState["form"] = { msg: "Error encountered", error: true };
-      setFormError(errorState);
-    }
-  };
 
-  async function persistEntity(data: enquiryConfigSchemaT) {
-    let result;
-    result = await updateEnquirySupportConfig(data);
-    return result;
-  }
   async function persistEntity(data: enquiryConfigSchemaT) {
     let result;
     result = await updateEnquirySupportConfig(data);
@@ -179,7 +149,7 @@ console.log("Render", enquiryVoucherSettings);
             updatedState = {
               ...updatedState,
               enquiryCloseCall: false,
-              enquiryMaintainItems: false,
+              enquiryMaintainProducts: false,
               enquirySaveFAQ: false,
               enquiryMaintainAction: false,
             };
@@ -187,7 +157,7 @@ console.log("Render", enquiryVoucherSettings);
             updatedState = {
               ...updatedState,
               supportCloseCall: false,
-              supportMaintainItems: false,
+              supportMaintainProducts: false,
               supportSaveFAQ: false,
               supportMaintainAction: false,
             };
@@ -223,8 +193,8 @@ console.log("Render", enquiryVoucherSettings);
           handleCheckboxChange(e, group)
         }
         disabled={disable}
-        // error={formError?.enquiryMaintainItems?.error}
-        // helperText={formError?.enquiryMaintainItems?.msg}
+        // error={formError?.enquiryMaintainProducts?.error}
+        // helperText={formError?.enquiryMaintainProducts?.msg}
       />
     );
   }
@@ -271,11 +241,11 @@ console.log("Render", enquiryVoucherSettings);
                     !formState.enquiryReqd
                   )}
                   {createCheckBox(
-                    "enquiryMaintainItems",
-                    "enquiryMaintainItems",
-                    "Maintain Items in Call Receipt",
-                    formState.enquiryMaintainItems as boolean,
-                    "enquiryMaintainItems",
+                    "enquiryMaintainProducts",
+                    "enquiryMaintainProducts",
+                    "Maintain Products in Call Receipt",
+                    formState.enquiryMaintainProducts as boolean,
+                    "enquiryMaintainProducts",
                     !formState.enquiryReqd
                   )}
                   {createCheckBox(
@@ -343,11 +313,11 @@ console.log("Render", enquiryVoucherSettings);
                     !formState.supportReqd
                   )}
                   {createCheckBox(
-                    "supportMaintainItems",
-                    "supportMaintainItems",
-                    "Maintain Items in Call Receipt",
-                    formState.supportMaintainItems as boolean,
-                    "supportMaintainItems",
+                    "supportMaintainProducts",
+                    "supportMaintainProducts",
+                    "Maintain Products in Call Receipt",
+                    formState.supportMaintainProducts as boolean,
+                    "supportMaintainProducts",
                     !formState.supportReqd
                   )}
                   {createCheckBox(
@@ -539,11 +509,6 @@ console.log("Render", enquiryVoucherSettings);
           >
             <Button onClick={handleCancel}>Cancel</Button>
 
-            <Button variant="contained" color="primary" type="submit">
-              Save
-            </Button>
-          </Box>
-        </form>
             <Button variant="contained" color="primary" type="submit">
               Save
             </Button>
