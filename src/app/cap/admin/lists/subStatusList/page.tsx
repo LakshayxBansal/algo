@@ -33,7 +33,8 @@ export default function subStatus() {
         fnFetchDataByID={getEnquirySubSatusById}
         fnDeleteDataByID={delSubStatusById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

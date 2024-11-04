@@ -89,19 +89,19 @@ export async function updateEnquirySupportConfigDB(
 }
 
 export async function initEnquiryConfigSchema(): Promise<enquiryConfigSchemaT> {
-  return {
-    enquiryReqd: false,
-    supportReqd: false,
-    enquiryCloseCall: false,
-    enquiryMaintainItems: false,
-    enquirySaveFAQ: false,
-    enquiryMaintainAction: false,
-    supportCloseCall: false,
-    supportMaintainItems: false,
-    supportSaveFAQ: false,
-    supportMaintainAction: false,
-    generalMaintainArea: false,
-    generalMaintainImage: false,
-    generalShowList: false,
-  };
+    return {
+        enquiryReqd: false,
+        supportReqd: false,
+        enquiryCloseCall: false,
+        enquiryMaintainProducts: false,
+        enquirySaveFAQ: false,
+        enquiryMaintainAction: false,
+        supportCloseCall: false,
+        supportMaintainProducts: false,
+        supportSaveFAQ: false,
+        supportMaintainAction: false,
+        generalMaintainArea: false,
+        generalMaintainImage: false,
+        generalShowList: false,
+    };
 }

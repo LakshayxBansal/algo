@@ -1,5 +1,15 @@
 "use client";
+"use client";
 
+import React, { useState, ChangeEvent } from "react";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import FormGroup from "@mui/material/FormGroup";
+import Snackbar from "@mui/material/Snackbar";
+import Seperator from "../../../Widgets/seperator";
+import { updateEnquirySupportConfig } from "../../../controllers/enquirySupportConfig.controller";
+import { enquirySupportConfig } from "../../../zodschema/zodschema";
 import React, { useState, ChangeEvent } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -122,7 +132,27 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
       setFormError(errorState);
     }
   };
+    if (result.status) {
+      setSnackOpen(true);
+      setFormError({});
+    } else {
+      const issues = result.data;
+      const errorState: Record<string, { msg: string; error: boolean }> = {};
+      for (const issue of issues) {
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
+      }
+      errorState["form"] = { msg: "Error encountered", error: true };
+      setFormError(errorState);
+    }
+  };
 
+  async function persistEntity(data: enquiryConfigSchemaT) {
+    let result;
+    result = await updateEnquirySupportConfig(data);
+    return result;
+  }
   async function persistEntity(data: enquiryConfigSchemaT) {
     let result;
     result = await updateEnquirySupportConfig(data);
@@ -509,6 +539,11 @@ console.log("Render", enquiryVoucherSettings);
           >
             <Button onClick={handleCancel}>Cancel</Button>
 
+            <Button variant="contained" color="primary" type="submit">
+              Save
+            </Button>
+          </Box>
+        </form>
             <Button variant="contained" color="primary" type="submit">
               Save
             </Button>

@@ -8,7 +8,6 @@ import { logger } from '@/app/utils/logger.utils';
 export default async function callExplorer() {
   try {
     const session = await getSession();
-    console.log();
     if (session) {
         const result = await getCallEnquiries({}, "reset", "", "0", "0", 1, 10);
         return (

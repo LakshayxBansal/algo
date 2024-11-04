@@ -3,7 +3,7 @@ import UpdateInputForm from "./UpdateInputForm";
 import { getSession } from "../../services/session.service";
 import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
-import { getEnquiryById, showItemGrid } from "@/app/controllers/enquiry.controller";
+import { getEnquiryById, showProductGrid } from "@/app/controllers/enquiry.controller";
 
 export default async function MyForm(props :any) {
 
@@ -15,7 +15,7 @@ export default async function MyForm(props :any) {
         userName: session.user?.name as string,
       };
 
-      const config_data = await showItemGrid();
+      const config_data = await showProductGrid();
       const fetchedData= await getEnquiryById(props.id);      
       const config = JSON.parse(config_data?.config);
       if (config_data?.status) {

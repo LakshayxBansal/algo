@@ -9,7 +9,6 @@ export async function POST(
         
         const res = await req.json();
         
-        console.log(res)
         const crmApp = res.app
         const event_id = Number(res.event_id);
         const event_type_id = Number(res.event_type_id);

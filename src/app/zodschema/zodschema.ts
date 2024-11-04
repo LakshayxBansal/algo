@@ -159,7 +159,7 @@ const contactDetailsSchema = z
     }
   );
 
-export const ItemSchema = z.object({
+export const ProductSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
@@ -184,13 +184,13 @@ export const ItemSchema = z.object({
   modified_on: z.date().optional(),
 });
 
-export const itemToListFormSchema = z.object({
+export const productToListFormSchema = z.object({
   id: z.number().optional(),
   enquiry_id: z.number().optional(),
-  item: z.string().min(1, {
-    message: "Item Name must not be empty",
+  product: z.string().min(1, {
+    message: "Product Name must not be empty",
   }),
-  item_id: z.number(),
+  product_id: z.number(),
   quantity: z
     .number()
     .min(1, { message: "Quantity must not be empty" }),
@@ -201,7 +201,7 @@ export const itemToListFormSchema = z.object({
   remarks: z.string().max(5000).optional(),
 });
 
-export const itemToListFormArraySchema = z.array(itemToListFormSchema);
+export const productToListFormArraySchema = z.array(productToListFormSchema);
 
 export const UnitSchema = z.object({
   id: z.number().optional(),
@@ -442,9 +442,9 @@ export const contactGroupSchema = z.object({
 });
 
 /**
- * item group
+ * product group
  */
-export const itemGroupSchema = z.object({
+export const productGroupSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
@@ -695,7 +695,7 @@ export const enquirySupportConfig = z.object({
   // voucherNumber: z.boolean().optional(),
 
   enquiryCloseCall: z.boolean().optional(),
-  enquiryMaintainItems: z.boolean().optional(),
+  enquiryMaintainProducts: z.boolean().optional(),
   enquirySaveFAQ: z.boolean().optional(),
   enquiryMaintainAction: z.boolean().optional(),
   enquiryVoucherNumber: z.boolean().optional(),
@@ -705,7 +705,7 @@ export const enquirySupportConfig = z.object({
   enquiryPrefillWithZero: z.boolean().optional(),
 
   supportCloseCall: z.boolean().optional(),
-  supportMaintainItems: z.boolean().optional(),
+  supportMaintainProducts: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
   supportMaintainContract: z.boolean().optional(),

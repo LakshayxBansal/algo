@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   GridColDef,
   GridFilterModel,
   gridPreferencePanelStateSelector,
   GridPreferencePanelsValue,
-  GridToolbar,
   useGridApiRef,
   gridClasses,
   GridColumnVisibilityModel,
@@ -15,74 +15,31 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Checkbox,
   ClickAwayListener,
-  Container,
   debounce,
-  Divider,
-  FormControlLabel,
   Grid,
   Grow,
   IconButton,
   InputAdornment,
-  MenuItem,
-  MenuList,
   Paper,
   Popper,
-  Snackbar,
   Tooltip,
-  Typography,
   TextField,
-  styled,
-  AppBar,
-  Toolbar,
-  Breadcrumbs,
-  Link,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SearchIcon from "@mui/icons-material/Search";
-import { AddDialog } from "./addDialog";
-import { entitiyCompT, iconCompT, RenderFormFunctionT } from "@/app/models/models";
-import { StripedDataGrid } from "@/app/utils/styledComponents";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
 import TuneIcon from "@mui/icons-material/Tune";
-import { StyledMenu } from "../../utils/styledComponents";
+import SearchIcon from "@mui/icons-material/Search";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { ArrowDropDownIcon } from "@mui/x-date-pickers";
-import { any } from "zod";
+import { AddDialog } from "./addDialog";
+import { entitiyCompT } from "@/app/models/models";
+import { StripedDataGrid } from "@/app/utils/styledComponents";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
-import HomeIcon from "@mui/icons-material/Home";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
-import { useSearchParams } from "next/navigation";
 import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
-// import DeleteComponent from "./DeleteComponent";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
-
-// type ModifyT = {
-//   title?: string;
-//   renderForm?: RenderFormFunctionT;
-//   fileUploadFeatureReqd?: boolean;
-//   // fnFileUpad: () => {}
-//   fnFileUpad?: any; // update with type -- Ayushi
-//   sampleFileName?: String;
-//   fetchDataFn: (
-//     page: number,
-//     searchText: string,
-//     pgSize: number
-//   ) => Promise<any>;
-//   fnFetchDataByID?: (id: number) => Promise<any>;
-//   fnDeleteDataByID?: (id: number) => Promise<any>;
-//   fnFetchColumns?: () => Promise<any>;
-//   customCols: GridColDef[];
-//   AddAllowed: boolean;
-//   height?: string;
-// };
-
+import { getRoleID } from "@/app/controllers/entityList.controller";
 const pgSize = 10;
 
 enum dialogMode {
@@ -104,10 +61,8 @@ export default function EntityList(props: entitiyCompT) {
   const [search, setSearch] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
-  // const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] =
-    useState<GridColumnVisibilityModel>({});
+  const [columnVisibilityModel, setColumnVisibilityModel] =useState<GridColumnVisibilityModel>({});
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -125,6 +80,9 @@ export default function EntityList(props: entitiyCompT) {
         searchText as string,
         pgSize as number
       );
+
+      const roleId = await getRoleID();
+      console.log(roleId);
       if (rows.data) {
         setData(rows.data);
         setNRows(rows.count as number);
@@ -136,11 +94,34 @@ export default function EntityList(props: entitiyCompT) {
           minWidth: 50,
           hideable: false,
           renderCell: (params) => {
-            return <IconComponent id={params.row.id} fnDeleteDataByID={props.fnDeleteDataByID} fnFetchDataByID={props.fnFetchDataByID} setDlgMode={setDlgMode} setDialogOpen={setDialogOpen} setModData={setModData} setIds={setIds} modify={dialogMode.Modify} delete={dialogMode.Delete}/>;
+            return (
+              <IconComponent
+                id={params.row.id}
+                fnDeleteDataByID={props.fnDeleteDataByID}
+                fnFetchDataByID={props.fnFetchDataByID}
+                setDlgMode={setDlgMode}
+                setDialogOpen={setDialogOpen}
+                setModData={setModData}
+                setIds={setIds}
+                modify={dialogMode.Modify}
+                delete={dialogMode.Delete}
+              />
+            );
           },
         },
       ];
-      const allDfltCols: GridColDef[] = optionsColumn.concat(props.customCols);
+
+      //if roleid is 1(admin) show options columns
+      let allDfltCols: GridColDef[];
+
+      // if (roleId == 1) {
+      //   allDfltCols = optionsColumn.concat(props.customCols);
+      // } else {
+      //   allDfltCols = props.customCols;
+      // }
+      //if roleid is 1(admin) show options columns
+      
+      allDfltCols = optionsColumn.concat(props.customCols);
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
       if (props.fnFetchColumns) {
         const columnsData = await props.fnFetchColumns();
@@ -195,34 +176,14 @@ export default function EntityList(props: entitiyCompT) {
     }
   };
 
-  const handleSearch= (e:React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value);
-    }
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
 
-    const handleAddBtn = ()=>{
-      setDialogOpen(true);
-        setDlgMode(dialogMode.Add);
-    }
-
-  async function onModifyDialog(modId: number) {
-    if (props.fnFetchDataByID && modId) {
-      const data = await props.fnFetchDataByID(modId);
-      setModData(data[0]);
-      setDialogOpen(true);
-      setDlgMode(dialogMode.Modify);
-      setAnchorEl(null);
-    }
-  }
-
-  function handleDeleteDialog(modId: number) {
-    if (props.fnDeleteDataByID && modId) {
-      setIds(modId);
-      setDialogOpen(true);
-      setDlgMode(dialogMode.Delete);
-      setAnchorEl(null);
-    }
-  }
-
+  const handleAddBtn = () => {
+    setDialogOpen(true);
+    setDlgMode(dialogMode.Add);
+  };
 
   const handleDropDownBtn = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -235,62 +196,12 @@ export default function EntityList(props: entitiyCompT) {
     ) {
       return;
     }
-
     setOpen(false);
   };
 
   const hideUploadBtn = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setOpen(false);
   };
-
-
-  // function IconComponent(props: {id:number}) {
-  //   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  //   const optionMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-  //     setAnchorEl(event.currentTarget);
-  //   };
-
-  //   const optionMenuClose = () => {
-  //     setAnchorEl(null);
-  //   };
-
-  //   return (
-  //     <Box>
-  //       <IconButton
-  //         aria-controls="simple-menu"
-  //         aria-haspopup="true"
-  //         onClick={optionMenuOpen}
-  //       >
-  //         <MoreVertIcon />
-  //       </IconButton>
-  //       <StyledMenu
-  //         id="simple-menu"
-  //         anchorEl={anchorEl}
-  //         open={Boolean(anchorEl)}
-  //         onClose={optionMenuClose}
-  //       >
-  //         <MenuItem
-  //           onClick={() => {
-  //             onModifyDialog(props.id);
-            
-  //           }}
-  //         >
-  //           <EditIcon fontSize="large" />
-  //           <Typography variant="h6">Edit</Typography>
-  //         </MenuItem>
-  //         <MenuItem
-  //           onClick={() => {
-  //             handleDeleteDialog(props.id);
-  //           }}
-  //         >
-  //           {" "}
-  //           <DeleteIcon />
-  //           <Typography variant="h6">Delete</Typography>
-  //         </MenuItem>
-  //       </StyledMenu>
-  //     </Box>
-  //   );
-  // }
 
   return (
     <Box>
@@ -309,7 +220,12 @@ export default function EntityList(props: entitiyCompT) {
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
               props.renderForm(setDialogOpen, (arg) => {}, modData)
             ) : dlgMode === dialogMode.Delete ? (
-              <DeleteComponent fnDeleteDataByID={props.fnDeleteDataByID} open={dialogOpen} setDialogOpen={setDialogOpen} modId={ids} />
+              <DeleteComponent
+                fnDeleteDataByID={props.fnDeleteDataByID}
+                open={dialogOpen}
+                setDialogOpen={setDialogOpen}
+                modId={ids}
+              />
             ) : null}
           </AddDialog>
         )}
@@ -381,10 +297,7 @@ export default function EntityList(props: entitiyCompT) {
                     }}
                   >
                     <Tooltip title="Add New" placement="top-start" arrow>
-                      <Button
-                        size="small"
-                        onClick={handleAddBtn}
-                      >
+                      <Button size="small" onClick={handleAddBtn}>
                         <AddIcon
                           fontSize="small"
                           style={{ marginRight: "5px" }}
@@ -462,7 +375,8 @@ export default function EntityList(props: entitiyCompT) {
                 </Box>
               )}
 
-              {props.AddAllowed && (<Tooltip title="Add New">
+              {props.AddAllowed && (
+                <Tooltip title="Add New">
                   <Button
                     size="small"
                     variant="contained"
@@ -472,9 +386,8 @@ export default function EntityList(props: entitiyCompT) {
                     <AddIcon fontSize="small" style={{ marginRight: "5px" }} />
                     Add New
                   </Button>
-                </Tooltip>)
-
-              }
+                </Tooltip>
+              )}
             </Grid>
             <Grid
               item
@@ -520,9 +433,9 @@ export default function EntityList(props: entitiyCompT) {
             slotProps={{
               columnsPanel: {
                 sx: {
-                  // "& .MuiDataGrid-panelFooter button:firstChild": {
-                  //   display: "none"
-                  // },
+                  "& .MuiDataGrid-panelFooter button:firstChild": {
+                    display: "none",
+                  },
 
                   ".MuiDataGrid-columnsManagementHeader": {
                     display: "none",

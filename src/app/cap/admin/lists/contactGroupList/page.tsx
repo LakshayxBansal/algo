@@ -33,7 +33,8 @@ export default function ContactGroup() {
         fnFetchDataByID={getContactGroupById}
         fnDeleteDataByID={delContactGroupById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>
