@@ -1,26 +1,29 @@
 "use client";
 import NextBreadcrumb from "@/app/utils/NextBreadcrumbs";
-import React from "react";
+import React, { useState } from "react";
 import { Paper, Grid, Typography } from "@mui/material";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 function SecondNavbar() {
-  const path = usePathname();
-  const match1 = path.match(/\/([^/]+)$/);
+  // const path = usePathname();
+  const searchParams = useSearchParams();
+  const title = searchParams.get("pgTitle")
 
-  let title: string;
-  if (match1) {
-    title = match1[1]
-      .replace(/([a-z])([A-Z])/g, "$1 $2")
-      .replace(/^\w/, (c) => c.toUpperCase());
+  // const match1 = path.match(/\/([^/]+)$/);
+
+  // let title: string;
+  // if (match1) {
+  //   title = match1[1]
+  //     .replace(/([a-z])([A-Z])/g, "$1 $2")
+  //     .replace(/^\w/, (c) => c.toUpperCase());
    
-  } else {
-    title = "";
-  }
+  // } else {
+  //   title = "";
+  // }
 
   return (
     <div>
-      <Paper elevation ={3} style={{ padding: 7, margin:20, marginTop:80, alignItems:"center" }}>
+      <Paper elevation ={3} style={{ padding: 5, margin:20, marginTop:80, alignItems:"center" }}>
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h6" style={{ verticalAlign: "baseline" }}>

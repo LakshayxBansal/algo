@@ -205,6 +205,7 @@ export type deleteCompT={
 
 export type  entitiyCompT = {
   title?: string;
+  // setTitlee:(props: any) => void;
   renderForm?: RenderFormFunctionT;
   fileUploadFeatureReqd?: boolean;
   // fnFileUpad: () => {}
