@@ -24,7 +24,7 @@ import Link from "next/link";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import FilterMenu from "./FilterMenu";
 
-
+export let handleRefresh: any;
 
 export default function AutoGrid(props: any) {
   const pgSize = 10;
@@ -77,6 +77,8 @@ export default function AutoGrid(props: any) {
   };
 
   useEffect(() => {
+    console.log("chal raa hai");
+
     setLoading(true)
     async function getEnquiries() {
       const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page, pageModel.pageSize);
@@ -87,7 +89,7 @@ export default function AutoGrid(props: any) {
     setLoading(false)
   }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, pageModel.page, pageModel.pageSize])
 
-  const handleRefresh = () => {
+  handleRefresh = () => {
     setPageModel((prev: any) => ({
       ...prev,
       page: 0,
@@ -96,6 +98,7 @@ export default function AutoGrid(props: any) {
     setSelectedRow(null);
     setRefresh(!refresh)
   };
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -120,7 +123,9 @@ export default function AutoGrid(props: any) {
     </>
   }
 
+
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
+    setSelectedRow
     setRowSelectionModel(selectionModel);
     // Enable Allocate Call button if there are selected rows and no row has 'Closed' callStatus
     if (selectionModel.length > 0) {
@@ -245,7 +250,6 @@ export default function AutoGrid(props: any) {
               value={filterValueState?.date?.final}
               onChange={(val: any) => handleFilterChange("date", { ...filterValueState?.date, "final": val })}
             />
-
           </MenuItem>
         </FilterMenu>
       ),
@@ -676,6 +680,7 @@ export default function AutoGrid(props: any) {
             disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
+            keepNonExistentRowsSelected
             rows={data ? data : []}
             columns={column1}
             columnVisibilityModel={columnVisibilityModel}
