@@ -77,7 +77,7 @@ export default function InputForm(props: { baseData: IformData }) {
       name: props.baseData.loggedInUserData.name,
     },
   });
-const [formError, setFormError] = useState<
+  const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [productFormError, setProductFormError] = useState<
@@ -179,10 +179,11 @@ const [formError, setFormError] = useState<
     return { label: "default label", required: false }; // Default if no match is found
   };
 
-  const defaultComponentMap = new Map<string, React.ReactNode>([
+  const defaultComponentMap = new Map<string, React.ReactElement>([
     [
       "enq_number",
       <InputControl
+        key="enq_number"
         label={fieldPropertiesById("enq_number").label}
         id="enq_number"
         inputType={InputType.TEXT}
@@ -196,6 +197,7 @@ const [formError, setFormError] = useState<
     [
       "date",
       <InputControl
+        key="date"
         label={fieldPropertiesById("date").label}
         inputType={InputType.DATETIMEINPUT}
         id="date"
@@ -210,6 +212,7 @@ const [formError, setFormError] = useState<
     [
       "contact",
       <SelectMasterWrapper
+        key="contact"
         name={"contact"}
         id={"contact"}
         label={fieldPropertiesById("contact").label}
@@ -232,6 +235,7 @@ const [formError, setFormError] = useState<
     [
       "category",
       <SelectMasterWrapper
+        key="category"
         name={"category"}
         id={"category"}
         label={fieldPropertiesById("category").label}
@@ -253,6 +257,7 @@ const [formError, setFormError] = useState<
     [
       "source",
       <SelectMasterWrapper
+        key="source"
         name={"source"}
         id={"source"}
         label={fieldPropertiesById("source").label}
@@ -274,6 +279,7 @@ const [formError, setFormError] = useState<
     [
       "received_by",
       <SelectMasterWrapper
+        key="received_by"
         name={"received_by"}
         id={"received_by"}
         label={fieldPropertiesById("received_by").label}
@@ -303,6 +309,7 @@ const [formError, setFormError] = useState<
     [
       "call_receipt_remark",
       <TextField
+        key="call_receipt_remark"
         placeholder="Call receipt remarks"
         label={fieldPropertiesById("call_receipt_remark").label}
         multiline
@@ -316,6 +323,7 @@ const [formError, setFormError] = useState<
     [
       "suggested_action_remark",
       <TextField
+        key="suggested_action_remark"
         placeholder="Suggested Action Remarks"
         label={fieldPropertiesById("suggested_action_remark").label}
         multiline
@@ -331,9 +339,10 @@ const [formError, setFormError] = useState<
       <FormControl
         sx={{ pl: "0.625em" }}
         required={fieldPropertiesById("status").required}
+        key="status"
       >
         <RadioGroup
-          key="status"
+          // key="status"
           row
           name="status"
           id="status"
@@ -342,19 +351,19 @@ const [formError, setFormError] = useState<
           sx={{ color: "black" }}
         >
           <FormControlLabel
-            key={123}
+            // key="status"
             value="Status"
             control={<label />}
             label={fieldPropertiesById("status").label}
           />
           <FormControlLabel
-            key={124}
+            // key="open"
             value="1"
             control={<Radio />}
             label="Open"
           />
           <FormControlLabel
-            key={125}
+            // key="closed"
             value="2"
             control={<Radio />}
             label="Closed"
@@ -365,6 +374,7 @@ const [formError, setFormError] = useState<
     [
       "sub_status",
       <SelectMasterWrapper
+        key="sub_status"
         name={"sub_status"}
         id={"sub_status"}
         label={fieldPropertiesById("sub_status").label}
@@ -388,6 +398,7 @@ const [formError, setFormError] = useState<
     [
       "action_taken",
       <SelectMasterWrapper
+        key="action_taken"
         name={"action_taken"}
         id={"action_taken"}
         label={fieldPropertiesById("action_taken").label}
@@ -408,6 +419,7 @@ const [formError, setFormError] = useState<
     [
       "next_action",
       <SelectMasterWrapper
+        key="next_action"
         name={"next_action"}
         id={"next_action"}
         label={fieldPropertiesById("next_action").label}
@@ -429,6 +441,7 @@ const [formError, setFormError] = useState<
     [
       "next_action_date",
       <InputControl
+        key="next_action_date"
         label={fieldPropertiesById("next_action_date").label}
         required={fieldPropertiesById("next_action_date").required}
         inputType={InputType.DATETIMEINPUT}
@@ -440,6 +453,7 @@ const [formError, setFormError] = useState<
     [
       "closure_remark",
       <TextField
+        key="closure_remark"
         placeholder="Closure remarks"
         label={fieldPropertiesById("closure_remark").label}
         required={fieldPropertiesById("closure_remark").required}
@@ -454,6 +468,7 @@ const [formError, setFormError] = useState<
     [
       "product_grid",
       <ProductGrid
+        key="product_grid"
         label={fieldPropertiesById("product_grid").label}
         id="product_grid"
         name="product_grid"
@@ -468,10 +483,10 @@ const [formError, setFormError] = useState<
   ]);
 
   const CustomFields = props.baseData.fields.filter(
-    (row: any) => row.is_default_column == 0
+    (row: any) => row.is_default_column === 0
   );
 
-  const CustomComponentMap = new Map<string, React.ReactNode>(
+  const CustomComponentMap = new Map<string, React.ReactElement>(
     CustomFields.map((field: any) => [
       field.column_name_id, // Use `id` as the key for the fieldArr
       <CustomField
@@ -483,7 +498,8 @@ const [formError, setFormError] = useState<
     ])
   );
 
-  let fieldArr: React.ReactNode[] = [];
+  let fieldArr: React.ReactElement[] = [];
+
   const skipColumns = [
     "product_grid",
     "call_receipt_remark",
@@ -497,7 +513,7 @@ const [formError, setFormError] = useState<
           React.cloneElement(
             defaultComponentMap.get("product_grid") as React.ReactElement,
             {
-              key: `default-product-grid`,
+              key: `default_product_grid`,
             }
           )
         );
@@ -507,7 +523,7 @@ const [formError, setFormError] = useState<
               "call_receipt_remark"
             ) as React.ReactElement,
             {
-              key: `default-call-receipt-remark`,
+              key: `default_call_receipt_remark`,
             }
           )
         );
@@ -517,7 +533,7 @@ const [formError, setFormError] = useState<
               "suggested_action_remark"
             ) as React.ReactElement,
             {
-              key: `default-suggested-action-remark`,
+              key: `default_suggested_action_remark`,
             }
           )
         );
@@ -526,7 +542,7 @@ const [formError, setFormError] = useState<
           React.cloneElement(
             defaultComponentMap.get(field.column_name_id) as React.ReactElement,
             {
-              key: `default-${field.column_name_id}`,
+              key: `default_${field.column_name_id}`,
             }
           )
         );
@@ -536,14 +552,12 @@ const [formError, setFormError] = useState<
         React.cloneElement(
           CustomComponentMap.get(field.column_name_id) as React.ReactElement,
           {
-            key: `custom-${field.column_name_id}`,
+            key: `custom_${field.column_name_id}`,
           }
         )
       );
     }
   });
-
-  // console.log("fieldArr", fieldArr);
 
   const enquiryMaintainProducts =
     props.baseData.config_data.enquiryMaintainProducts;
@@ -556,57 +570,39 @@ const [formError, setFormError] = useState<
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
-            {fieldArr.forEach((field as React.ReactNode) => {})}
-              if (field.props?.children?.props?.id === "status") {
+            {fieldArr.map((field, index) => {
+              if (field.key === "default_status") {
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    key={`status-container-${field.key || index}`}
-                  >
-                    <Seperator key={`separator-${field.key || index}`}>
-                      Final Status
-                    </Seperator>
+                  <Grid item xs={12} key={`status_${index}`}>
+                    <Seperator>Final Status</Seperator>
                     {field}
                   </Grid>
                 );
               }
-
-            }
-            )}
 
               if (
-                field.props?.id !== "product_grid" &&
-                field.props?.id !== "call_receipt_remark" &&
-                field.props?.id !== "suggested_action_remark"
+                field.key !== "default_product_grid" &&
+                field.key !== "default_call_receipt_remark" &&
+                field.key !== "default_suggested_action_remark"
               ) {
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={3}
-                    key={`field-container-${field.key || index}`}
-                  >
+                  <Grid item xs={12} sm={3} key={`field_${index}`}>
                     {field}
                   </Grid>
                 );
               }
 
-              if (field.props?.id === "product_grid") {
+              if (field.key === "default_product_grid") {
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    key={`product-grid-container-${field.key || index}`}
-                  >
+                  <Grid item xs={12} key={`fixed_box_${index}`}>
                     <Grid container spacing={2}>
                       {enquiryMaintainProducts && (
                         <Grid
                           item
                           xs={12}
                           md={6}
+                          key="product-grid-container"
                           sx={{ marginY: "0.5%" }}
-                          key="product-grid-left"
                         >
                           <Box
                             sx={{
@@ -632,10 +628,10 @@ const [formError, setFormError] = useState<
                         item
                         xs={12}
                         md={enquiryMaintainProducts ? 6 : 12}
-                        sx={{ display: "flex", flexDirection: "column" }}
                         key="remarks-container"
+                        sx={{ display: "flex", flexDirection: "column" }}
                       >
-                        <Grid item xs={12} md={12} key="call-receipt-container">
+                        <Grid item xs={12} md={12} key="call-receipt-remark">
                           <TextField
                             placeholder="Call receipt remarks"
                             label={
@@ -656,7 +652,7 @@ const [formError, setFormError] = useState<
                           item
                           xs={12}
                           md={12}
-                          key="suggested-action-container"
+                          key="suggested-action-remark"
                         >
                           <TextField
                             placeholder="Suggested Action Remarks"
@@ -680,6 +676,7 @@ const [formError, setFormError] = useState<
                   </Grid>
                 );
               }
+              return null;
             })}
           </Grid>
         </Grid>
