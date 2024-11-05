@@ -3,7 +3,7 @@ import excuteQuery from "../utils/db/db";
 
 export async function createCustomFieldsDB(crmDb: string, object_id: number,action_id: number,data: any) {
   try {
-console.log("data in services",data[0]);
+console.log("data in services",data);
 
     const result = await excuteQuery({
       host: crmDb,

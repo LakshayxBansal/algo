@@ -24,7 +24,7 @@ import {
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
 
-interface FieldItem {
+type FieldItem = {
     action_id: number;
     column_format: string | null;
     column_id: number | null;
