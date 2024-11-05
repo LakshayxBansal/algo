@@ -338,7 +338,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
 
     return (
         <>
-            <Box sx={{ height: "500px", width: "800px" }}>
+            <Box sx={{ height: "500px", width: "800px", p: 2, m: 2 }}>
                 <DataGrid
                     columns={columns}
                     rows={docData ? docData : []}
@@ -353,6 +353,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                                 fontWeight: "bold",
                             },
                         },
+                        boxShadow : 1
                     }}
                 />
             </Box>

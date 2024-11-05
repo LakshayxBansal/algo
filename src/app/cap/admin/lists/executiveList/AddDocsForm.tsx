@@ -130,7 +130,8 @@ export default function AddDocsForm(props: any) {
                             display: "grid",
                             columnGap: 2,
                             rowGap: 1,
-                            gridTemplateColumns: "repeat(2, 1fr)",
+                            gridTemplateColumns: "1fr auto",
+                            alignItems: "center"
                         }}
                     >
                         <InputControl
@@ -162,6 +163,7 @@ export default function AddDocsForm(props: any) {
                         sx={{
                             display: "flex",
                             justifyContent: "flex-end",
+                            m: 1
                         }}
                     >
                         <Button onClick={handleCancel}>Cancel</Button>

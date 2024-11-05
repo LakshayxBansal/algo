@@ -42,7 +42,7 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
-import { Collapse, IconButton, Typography } from "@mui/material";
+import { Badge, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
@@ -305,12 +305,30 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box>
-        <IconButton sx={{float : "right"}} onClick={()=>{setDialogOpen(true)}} aria-label="file">
-          <AttachFileIcon/>
+      <Tooltip 
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", m:1 }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
         </IconButton>
-        <Typography sx={{float : "right"}}>{props?.data ? props?.data?.docData?.length > 0 ? props?.data?.docData?.length : "" : ""}</Typography>
-        </Box>
+     </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
