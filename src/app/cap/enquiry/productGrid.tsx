@@ -45,6 +45,9 @@ type ModifiedRowT = {
 };
 
 type ProductGridProps = {
+  label: string;
+  id?: string;
+  name?: string;
   dgData: any;
   setdgData: any;
   setdgDialogOpen: any;
@@ -124,6 +127,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 export default function ProductGrid({
+  label,
   dgData,
   setdgData,
   setdgDialogOpen,
@@ -401,7 +405,7 @@ export default function ProductGrid({
       <GridToolbarContainer
         sx={{ display: "flex", justifyContent: "space-between" }}
       >
-        <Seperator>Product List</Seperator>
+        <Seperator>{label}</Seperator>
         <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
           Add Product
         </Button>

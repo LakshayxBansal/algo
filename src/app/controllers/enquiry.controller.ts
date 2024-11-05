@@ -4,7 +4,7 @@ import {
   getHeaderDataAction,
   getProductDataAction,
   getLedgerDataAction,
-  showProductGridDB,
+  getConfigDataDB,
   getLoggedInUserDetailsDB,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
@@ -24,6 +24,7 @@ import {
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
 import { Session } from "next-auth";
+import { getScreenDescription } from "./object.controller";
 
 // type enqData = {
 //   head: enquiryHeaderSchemaT;
@@ -90,7 +91,6 @@ export async function createEnquiry({
         };
       }
       console.log("result ", result);
-      
     } else {
       result = {
         status: false,
@@ -109,13 +109,13 @@ export async function createEnquiry({
   return result;
 }
 
-export async function showProductGrid() {
+export async function getConfigData() {
   let result;
 
   try {
     const session = await getSession();
     if (session) {
-      const dbResult = await showProductGridDB(session.user.dbInfo.dbName);
+      const dbResult = await getConfigDataDB(session.user.dbInfo.dbName);
       if (dbResult) {
         result = { status: true, config: dbResult[0].config };
       }
@@ -132,7 +132,10 @@ export async function getLoggedInUserDetails() {
   try {
     const session = await getSession();
     if (session) {
-      const dbResult = await getLoggedInUserDetailsDB(session.user.dbInfo.dbName, session.user.userId);
+      const dbResult = await getLoggedInUserDetailsDB(
+        session.user.dbInfo.dbName,
+        session.user.userId
+      );
       if (dbResult) {
         result = { status: true, data: dbResult[0] };
       }
@@ -143,7 +146,7 @@ export async function getLoggedInUserDetails() {
   }
 }
 
-export async function getEnquiryById(id: number) {
+export async function getEnquiryById(id: number | undefined) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -174,4 +177,3 @@ export async function updateEnquiryById({
     logger.error(error);
   }
 }
-
