@@ -124,7 +124,7 @@ export default function AutoGrid(props: any) {
     }
     getEnquiries();
     setLoading(false)
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, value])
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, value, pageModel.page, pageModel.pageSize])
 
   handleRefresh = () => {
     setPageModel((prev: any) => ({
