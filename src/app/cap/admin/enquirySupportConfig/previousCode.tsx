@@ -24,12 +24,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
         supportReqd: props.supportReqd ?? false,
 
         enquiryCloseCall: props.enquiryCloseCall ?? false,
-        enquiryMaintainItems: props.enquiryMaintainItems ?? false,
+        enquiryMaintainProducts: props.enquiryMaintainProducts ?? false,
         enquirySaveFAQ: props.enquirySaveFAQ ?? false,
         enquiryMaintainAction: props.enquiryMaintainAction ?? false,
 
         supportCloseCall: props.supportCloseCall ?? false,
-        supportMaintainItems: props.supportMaintainItems ?? false,
+        supportMaintainProducts: props.supportMaintainProducts ?? false,
         supportSaveFAQ: props.supportSaveFAQ ?? false,
         supportMaintainAction: props.supportMaintainAction ?? false,
 
@@ -38,15 +38,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
         generalShowList: props.generalShowList ?? false,
     });
 
-
-
     const handleSubmit = async (formData: FormData) => {
         let data: { [key: string]: any } = {};
 
         for (const [key, value] of formData.entries()) {
             data[key] = value === 'on' ? true : value;
         }
-
 
         const parsed = enquirySupportConfig.safeParse(data);
 
@@ -61,7 +58,6 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
             setFormError(errorState);
             return;
         }
-
 
         const result = await persistEntity(data as enquiryConfigSchemaT);
 
@@ -81,17 +77,11 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
         }
     };
 
-
-
-
     async function persistEntity(data: enquiryConfigSchemaT) {
         let result;
         result = await updateEnquirySupportConfig(data);
         return result;
     }
-
-
-
 
     const handleCancel = () => {
         // Handle cancel action if necessary
@@ -110,7 +100,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                         updatedState = {
                             ...updatedState,
                             enquiryCloseCall: false,
-                            enquiryMaintainItems: false,
+                            enquiryMaintainProducts: false,
                             enquirySaveFAQ: false,
                             enquiryMaintainAction: false,
                         };
@@ -118,13 +108,12 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                         updatedState = {
                             ...updatedState,
                             supportCloseCall: false,
-                            supportMaintainItems: false,
+                            supportMaintainProducts: false,
                             supportSaveFAQ: false,
                             supportMaintainAction: false,
                         };
                     }
                 }
-    
                 return updatedState;
             });
         } else {
@@ -153,9 +142,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     }
 
     return (
-
         <Paper>
-
             <Seperator>Enquiry / Support Configuration</Seperator>
             <Box sx={{ p: 3 }}>
                 {formError?.form?.error && <p style={{ color: 'red' }}>{formError?.form.msg}</p>}
@@ -166,78 +153,53 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                         handleSubmit(formData);
                     }}
                 >
-
                     <Box sx={{ mt: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 3 }}>
                         {createCheckBox("enquiryReqd", "enquiryReqd", "Enquiry Management (Pre Sales)", formState.enquiryReqd as boolean, 'enquiryReqd', false)}
                         {createCheckBox("supportReqd", "supportReqd", "Support Management (Post Sales)", formState.supportReqd as boolean, 'supportReqd', false)}
                     </Box>
-
-
                     <Box sx={{ mt: 1, display: 'grid', columnGap: 3, rowGap: 1, gridTemplateColumns: 'repeat(2, 1fr)' }}>
                         <Box component={'fieldset'} sx={{ border: '1px solid grey', borderRadius: '4px', p: 2 }}>
                             <legend>Enquiry Management Options</legend>
                             <FormGroup>
                                 {createCheckBox("enquiryCloseCall", "enquiryCloseCall", "Can Close Call at the time of Call Receipt", formState.enquiryCloseCall as boolean, 'enquiryCloseCall', !formState.enquiryReqd)}
-                                {createCheckBox("enquiryMaintainItems", "enquiryMaintainItems", "Maintain Items in Call Receipt", formState.enquiryMaintainItems as boolean, 'enquiryMaintainItems', !formState.enquiryReqd)}
+                                {createCheckBox("enquiryMaintainItems", "enquiryMaintainItems", "Maintain Items in Call Receipt", formState.enquiryMaintainProducts as boolean, 'enquiryMaintainProducts', !formState.enquiryReqd)}
                                 {createCheckBox("enquirySaveFAQ", "enquirySaveFAQ", "Ask to Save FAQ on Call Receipt and Report Saving", formState.enquirySaveFAQ as boolean, 'enquirySaveFAQ', !formState.enquiryReqd)}
                                 {createCheckBox("enquiryMaintainAction", "enquiryMaintainAction", "Maintain Action Taken for Call Receipt", formState.enquiryMaintainAction as boolean, 'enquiryMaintainAction', !formState.enquiryReqd)}
                             </FormGroup>
                         </Box>
-
-
                         <Box component={'fieldset'} sx={{ border: '1px solid grey', borderRadius: '4px', p: 2 }}>
                             <legend>Support Management Options</legend>
                             <FormGroup>
                                 {createCheckBox("supportCloseCall", "supportCloseCall", "Can Close Call at the time of Call Receipt", formState.supportCloseCall as boolean, 'supportCloseCall', !formState.supportReqd)}
-                                {createCheckBox("supportMaintainItems", "supportMaintainItems", "Maintain Items in Call Receipt", formState.supportMaintainItems as boolean, 'supportMaintainItems', !formState.supportReqd)}
+                                {createCheckBox("supportMaintainItems", "supportMaintainItems", "Maintain Items in Call Receipt", formState.supportMaintainProducts as boolean, 'supportMaintainProducts', !formState.supportReqd)}
                                 {createCheckBox("supportSaveFAQ", "supportSaveFAQ", "Can Close Call at the time of Call Receipt", formState.supportSaveFAQ as boolean, 'supportSaveFAQ', !formState.supportReqd)}
                                 {createCheckBox("supportMaintainAction", "supportMaintainAction", "Maintain Action Taken for Call Receipt", formState.supportMaintainAction as boolean, 'supportMaintainAction', !formState.supportReqd)}
                                 {createCheckBox("supportMaintainContract", "supportMaintainContract", "Maintain Contracts for Support", formState.supportMaintainContract as boolean, 'supportMaintainContract', !formState.supportReqd)}
-
                             </FormGroup>
                         </Box>
-
                     </Box>
-
-
-
-
                     <Box component={'fieldset'} sx={{ mt: 2, border: '1px solid grey', borderRadius: '4px', p: 2 }}>
                         <legend>General Configuration Options</legend>
                         <FormGroup sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 3 }}>
                             {createCheckBox("generalMaintainArea", "generalMaintainArea", "Maintain Area / Region in Call Receipt", formState.generalMaintainArea as boolean, 'generalMaintainArea', false)}
                             {createCheckBox("generalMaintainImage", "generalMaintainImage", "Maintain Image Information", formState.generalMaintainImage as boolean, 'generalMaintainImage', false)}
                             {createCheckBox("generalShowList", "generalShowList", "Show List in Call Allocation", formState.generalShowList as boolean, 'generalShowList', false)}
-
                         </FormGroup>
                     </Box>
-
-
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, columnGap: 2 }}>
-
                       <Button onClick={handleCancel}>Cancel</Button>
-
                       <Button variant="contained" color="primary" type="submit">
                         Save
                       </Button>
-
                     </Box>
-
-
                 </form>
-
-
                 <Snackbar
                     open={snackOpen}
                     autoHideDuration={6000}
                     onClose={() => setSnackOpen(false)}
                     message={'Configuration saved successfully!'}
                 />
-
             </Box>
-
-
         </Paper>
-
     );
 }

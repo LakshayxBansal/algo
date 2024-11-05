@@ -4,87 +4,83 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import FormGroup from "@mui/material/FormGroup";
 import { Typography } from "@mui/material";
 
-interface VoucherSettings {
-  prefix: string;
-  suffix: string;
-  length: number;
-  prefillWithZero: boolean;
-  parent: string;
+interface field {
+  id: string;
+  name: string;
+  value: any;
 }
 
 interface DynamicProps {
-  settings: VoucherSettings;
-  setSettings: React.Dispatch<React.SetStateAction<VoucherSettings>>;
-  label: string;
-  parent: string;
+  prefix: field;
+  suffix: field;
+  length: field;
+  prefillWithZero: field;
+  onChange: (name: string, dataType: string, value: any) => void;
 }
-// const getDisplayValue = () => {
-//   if (numberLength) {
-//     const zeros = prefillWithZero ? "0".repeat(Number(numberLength)) : "";
-//     return `${prefix}${zeros}${suffix}`;
-//   }
-//   return "";
-// };
 
-const Dynamic: React.FC<DynamicProps> = ({ settings, setSettings, label }) => {
-  const { prefix, suffix, length, prefillWithZero, parent } = settings;
+export default function Dynamic(props: DynamicProps) {
+  const { prefix, suffix, length, prefillWithZero } = props;
+  console.log("props : ", props);
 
   const getDisplayValue = () => {
-    if (length) {
-      const zeros = prefillWithZero ? "0".repeat(Number(length)) : "";
-      return `${prefix}${zeros}${suffix}`;
+    const numLength = Number(length.value);
+
+    if (length && length.value && !isNaN(numLength)) {
+      const zeros = prefillWithZero.value ? "0".repeat(numLength) : "";
+      return `${prefix.value}${zeros}${suffix.value}`;
     }
     return "";
   };
+
   return (
     <FormGroup>
-      <h3>{label}</h3>
       <div style={{ display: "flex", alignItems: "left", gap: "8px" }}>
         <Typography>Prefix: </Typography>
         <InputControl
           inputType={InputType.TEXT}
-          id="prefix"
-          name={`${parent}Prefix`}
+          id={prefix.id}
+          name={prefix.name}
           custLabel="Prefix"
-          value={settings.prefix}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSettings({ ...settings, prefix: e.target.value })
-          }
+          value={prefix.value || ""}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            console.log("bbbb : ", prefix.name, e.target.value);
+            props.onChange(prefix.name, "text", e.target.value);
+          }}
         />
       </div>
       <div>
         <Typography>Suffix: </Typography>
         <InputControl
           inputType={InputType.TEXT}
-          id="suffix"
-          name={`${parent}Suffix`}
+          id={suffix.id}
+          name={suffix.name}
           custLabel="Suffix"
-          value={settings.suffix}
+          value={suffix.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSettings({ ...settings, suffix: e.target.value })
+            props.onChange(suffix.name, "", e.target.value)
           }
         />
         <Typography>Length of Digits: </Typography>
         <InputControl
           inputType={InputType.TEXT}
-          id="length"
-          name={`${parent}Length`}
-          custLabel="Length of Digits"
-          value={settings.length}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSettings({ ...settings, length: Number(e.target.value) })
-          }
+          id={length.id}
+          name={length.name}
+          custLabel="Length"
+          value={length.value}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            props.onChange(length.name, "", e.target.value);
+          }}
         />
         <Typography>Prefill with Zero: </Typography>
         <InputControl
           inputType={InputType.CHECKBOX}
-          id="prefillWithZero"
-          name={`${parent}PrefillWithZero`}
-          // custLabel="Prefill with Zero"
-          checked={settings.prefillWithZero}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSettings({ ...settings, prefillWithZero: e.target.checked })
-          }
+          id={prefillWithZero.id}
+          name={prefillWithZero.name}
+          checked={prefillWithZero.value}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            props.onChange(prefillWithZero.name, "", e.target.checked);
+            console.log("check : ", e.target.value);
+          }}
         />
         <Typography>Display Value: </Typography>
         <InputControl
@@ -97,6 +93,4 @@ const Dynamic: React.FC<DynamicProps> = ({ settings, setSettings, label }) => {
       </div>
     </FormGroup>
   );
-};
-
-export default Dynamic;
+}

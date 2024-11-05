@@ -109,6 +109,12 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.enquiryPrefillWithZero !== undefined && { prefillWithZero: data.enquiryPrefillWithZero }), 
           };
           entries.push(enquiryEntry);
+        }else{
+          const enquiryEntry = {
+            category: "enquiry",
+            isEnabled: false,
+          };
+          entries.push(enquiryEntry);
         }
 
         if (data.supportReqd) {
@@ -132,19 +138,31 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.supportPrefillWithZero !== undefined && { prefillWithZero: data.supportPrefillWithZero }), 
           };
           entries.push(supportEntry);
+        }else{
+          const supportEntry = {
+            category: "support",
+            isEnabled: false,
+          };
+          entries.push(supportEntry);
         }
 
         if (data.contractReqd) {
           const contractEntry = {
             category: "contract",
             isEnabled: true,
-            ...(data.contractReqdVoucherNumber && {
-              VoucherNumber: data.contractReqdVoucherNumber,
+            ...(data.contractVoucherNumber && {
+              VoucherNumber: data.contractVoucherNumber,
             }),
-            ...(data.contractReqdPrefix && { prefix: data.contractReqdPrefix }), 
-            ...(data.contractReqdSuffix && { suffix: data.contractReqdSuffix }), 
-            ...(data.contractReqdLength && { length: data.contractReqdLength }), 
-            ...(data.contractReqdPrefillWithZero !== undefined && { prefillWithZero: data.contractReqdPrefillWithZero }),
+            ...(data.contractPrefix && { prefix: data.contractPrefix }), 
+            ...(data.contractSuffix && { suffix: data.contractSuffix }), 
+            ...(data.contractLength && { length: data.contractLength }), 
+            ...(data.contractPrefillWithZero !== undefined && { prefillWithZero: data.contractPrefillWithZero }),
+          };
+          entries.push(contractEntry);
+        }else{
+          const contractEntry = {
+            category: "contract",
+            isEnabled: false,
           };
           entries.push(contractEntry);
         }
@@ -153,12 +171,18 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
           const appEntry = {
             category: "app",
             isEnabled: true,
-            ...(data.appReqdVoucherNumber && {
-              VoucherNumber: data.appReqdVoucherNumber,
-            }), ...(data.appReqdPrefix && { prefix: data.appReqdPrefix }), 
-            ...(data.appReqdSuffix && { suffix: data.appReqdSuffix }), 
-            ...(data.appReqdLength && { length: data.appReqdLength }), 
-            ...(data.appReqdPrefillWithZero !== undefined && { prefillWithZero: data.appReqdPrefillWithZero }),
+            ...(data.appVoucherNumber && {
+              VoucherNumber: data.appVoucherNumber,
+            }), ...(data.appPrefix && { prefix: data.appPrefix }), 
+            ...(data.appSuffix && { suffix: data.appSuffix }), 
+            ...(data.appLength && { length: data.appLength }), 
+            ...(data.appPrefillWithZero !== undefined && { prefillWithZero: data.appPrefillWithZero }),
+          };
+          entries.push(appEntry);
+        }else{
+          const appEntry = {
+            category: "app",
+            isEnabled: false,
           };
           entries.push(appEntry);
         }
@@ -167,14 +191,20 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
           const enquiryGenEntry = {
             category: "enquiryGeneration",
             isEnabled: true,
-            ...(data.enquiryGenerationReqdVoucherNumber && {
-              VoucherNumber: data.enquiryGenerationReqdVoucherNumber,
+            ...(data.enquiryGenerationVoucherNumber && {
+              VoucherNumber: data.enquiryGenerationVoucherNumber,
             }),
-            ...(data.enquiryGenerationReqdPrefix && { prefix: data.enquiryGenerationReqdPrefix }), 
-            ...(data.enquiryGenerationReqdSuffix && { suffix: data.enquiryGenerationReqdSuffix }), 
-            ...(data.enquiryGenerationReqdLength && { length: data.enquiryGenerationReqdLength }), 
-            ...(data.enquiryGenerationReqdPrefillWithZero !== undefined && { prefillWithZero: data.enquiryGenerationReqdPrefillWithZero }), // Include prefillWithZero
+            ...(data.enquiryGenerationPrefix && { prefix: data.enquiryGenerationPrefix }), 
+            ...(data.enquiryGenerationSuffix && { suffix: data.enquiryGenerationSuffix }), 
+            ...(data.enquiryGenerationLength && { length: data.enquiryGenerationLength }), 
+            ...(data.enquiryGenerationPrefillWithZero !== undefined && { prefillWithZero: data.enquiryGenerationPrefillWithZero }), // Include prefillWithZero
       
+          };
+          entries.push(enquiryGenEntry);
+        }else{
+          const enquiryGenEntry = {
+            category: "enquiryGeneration",
+            isEnabled: false,
           };
           entries.push(enquiryGenEntry);
         }

@@ -17,9 +17,9 @@ import {
   AccordionSummary,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Dynamic from "./genericDynamicForm";
+import Dynamic from "./prevGenericForm";
 
-interface EnquiryConfigFormProps {props: enquiryConfigSchemaT}
+// interface EnquiryConfigFormProps {props: enquiryConfigSchemaT}
 
 export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
   const [formError, setFormError] = useState<
@@ -46,11 +46,11 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     supportMaintainAction: props.supportMaintainAction ?? false,
     supportVoucherNumber: props.supportVoucherNumber ?? false,
 
-    contractReqdVoucherNumber: props.contractReqdVoucherNumber ?? false,
+    contractVoucherNumber: props.contractVoucherNumber ?? false,
 
-    enquiryGenerationReqdVoucherNumber: props.enquiryGenerationReqdVoucherNumber ?? false,
+    enquiryGenerationVoucherNumber: props.enquiryGenerationVoucherNumber ?? false,
 
-    appReqdVoucherNumber: props.appReqdVoucherNumber ?? false,
+    appVoucherNumber: props.appVoucherNumber ?? false,
 
     generalMaintainArea: props.generalMaintainArea ?? false,
     generalMaintainImage: props.generalMaintainImage ?? false,
@@ -133,7 +133,6 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     // Handle cancel action if necessary
   };
   
-console.log("Render", enquiryVoucherSettings);
   const handleCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     name: keyof enquiryConfigSchemaT
@@ -161,7 +160,32 @@ console.log("Render", enquiryVoucherSettings);
               supportSaveFAQ: false,
               supportMaintainAction: false,
             };
-          }
+          } 
+          // else if (name === "contractReqd") {
+          //   updatedState = {
+          //     ...updatedState,
+          //     supportCloseCall: false,
+          //     supportMaintainProducts: false,
+          //     supportSaveFAQ: false,
+          //     supportMaintainAction: false,
+          //   };
+          // } else if (name === "supportReqd") {
+          //   updatedState = {
+          //     ...updatedState,
+          //     supportCloseCall: false,
+          //     supportMaintainProducts: false,
+          //     supportSaveFAQ: false,
+          //     supportMaintainAction: false,
+          //   };
+          // } else if (name === "supportReqd") {
+          //   updatedState = {
+          //     ...updatedState,
+          //     supportCloseCall: false,
+          //     supportMaintainProducts: false,
+          //     supportSaveFAQ: false,
+          //     supportMaintainAction: false,
+          //   };
+          // } 
         }
 
         return updatedState;
@@ -193,15 +217,15 @@ console.log("Render", enquiryVoucherSettings);
           handleCheckboxChange(e, group)
         }
         disabled={disable}
-        // error={formError?.enquiryMaintainProducts?.error}
-        // helperText={formError?.enquiryMaintainProducts?.msg}
+        error={formError?.enquiryMaintainProducts?.error}
+        helperText={formError?.enquiryMaintainProducts?.msg}
       />
     );
   }
 
   return (
     <Paper>
-      <Seperator>Enquiry / Support Configuration </Seperator>
+      {/* <Seperator>Enquiry / Support Configuration </Seperator> */}
       <Box sx={{ p: 3 }}>
         {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
@@ -383,11 +407,11 @@ console.log("Render", enquiryVoucherSettings);
                     "contractReqdVoucherNumber",
                     "contractReqdVoucherNumber",
                     "Do you want to keep Voucher Number?",
-                    formState.contractReqdVoucherNumber as boolean,
-                    "contractReqdVoucherNumber",
+                    formState.contractVoucherNumber as boolean,
+                    "contractVoucherNumber",
                     !formState.contractReqd
                   )}
-                  {formState.contractReqdVoucherNumber && ( 
+                  {formState.contractVoucherNumber && ( 
                     <Dynamic
                     settings={contractVoucherSettings}
                     setSettings={setContractVoucherSettings}
@@ -417,11 +441,11 @@ console.log("Render", enquiryVoucherSettings);
                     "enquiryGenerationReqdVoucherNumber",
                     "enquiryGenerationReqdVoucherNumber",
                     "Do you want to keep Voucher Number?",
-                    formState.enquiryGenerationReqdVoucherNumber as boolean,
-                    "enquiryGenerationReqdVoucherNumber",
+                    formState.enquiryGenerationVoucherNumber as boolean,
+                    "enquiryGenerationVoucherNumber",
                     !formState.enquiryGenerationReqd
                   )}
-                  {formState.enquiryGenerationReqdVoucherNumber && ( 
+                  {formState.enquiryGenerationVoucherNumber && ( 
                     <Dynamic
                     settings={enquiryGenerationVoucherSettings}
                     setSettings={setEnquiryGenerationVoucherSettings}
@@ -483,11 +507,11 @@ console.log("Render", enquiryVoucherSettings);
                     "appReqdVoucherNumber",
                     "appReqdVoucherNumber",
                     "Do you want to keep Voucher Number?",
-                    formState.appReqdVoucherNumber as boolean,
-                    "appReqdVoucherNumber",
+                    formState.appVoucherNumber as boolean,
+                    "appVoucherNumber",
                     !formState.appReqd
                   )}
-                  {formState.appReqdVoucherNumber && ( 
+                  {formState.appVoucherNumber && ( 
                      <Dynamic
                      settings={appVoucherSettings}
                      setSettings={setappVoucherSettings}
@@ -508,7 +532,6 @@ console.log("Render", enquiryVoucherSettings);
             }}
           >
             <Button onClick={handleCancel}>Cancel</Button>
-
             <Button variant="contained" color="primary" type="submit">
               Save
             </Button>
