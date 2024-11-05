@@ -36,7 +36,7 @@ import { getUserDetailsById } from "./user.controller";
 
 const inviteSring = "Send Invite...";
 
-export async function createExecutive(data: executiveSchemaT, docData : any) {
+export async function createExecutive(data: executiveSchemaT, docData: any) {
   let result;
   try {
     const session = await getSession();
@@ -44,9 +44,9 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
-  
+
       if (parsed.success) {
-        
+
         const dbResult = await createExecutiveDB(
           session,
           data as executiveSchemaT
@@ -55,24 +55,26 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          for(const doc of docData){
+          for (const doc of docData) {
             const formData = new FormData();
 
             formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
             formData.append('meta_data', `{"name": "${doc.description}"}`);
 
             const base64Data = doc.file.replace(/^data:.*;base64,/, "");
-            const contentType = "application/pdf";
+            const contentType = doc.fileType;
             const buffer = Buffer.from(base64Data, 'base64');
-            formData.append('file_data', buffer, {filename: doc.document, contentType: contentType});
-            
-            const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
-              headers : {
+            formData.append('file_data', buffer, { filename: doc.document, contentType: contentType });
+
+            const docInfo = await axios.post("http://192.168.1.200:3000/addDoc", formData, {
+              headers: {
                 ...formData.getHeaders(),
-                "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
-                "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-              }}
+                "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
+                "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+              }
+            }
             )
+
             doc["docId"] = docInfo.data.document_id;
             doc["executiveId"] = dbResult[1][0].id;
             await addDocument(doc);
@@ -121,7 +123,7 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
   return result;
 }
 
-export async function updateExecutive(data: executiveSchemaT, docData : any) {
+export async function updateExecutive(data: executiveSchemaT, docData: any) {
   let result;
   try {
     const session = await getSession();
@@ -138,27 +140,30 @@ export async function updateExecutive(data: executiveSchemaT, docData : any) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          for(const doc of docData){
+          for (const doc of docData) {
             const formData = new FormData();
 
-            formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
+            formData.append('app_id', '9334f8d1-1b69-476f-b143-2b5b048cc458');
             formData.append('meta_data', `{"name": "${doc.description}"}`);
 
             const base64Data = doc.file.replace(/^data:.*;base64,/, "");
-            const contentType = "application/pdf";
+            const contentType = doc.fileType;
             const buffer = Buffer.from(base64Data, 'base64');
-            formData.append('file_data', buffer, {filename: doc.document, contentType: 'application/text'})
-            
-            const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
-              headers : {
+            formData.append('doc', buffer, { filename: doc.document, contentType: contentType });
+
+            const docInfo = await axios.post("http://192.168.1.200:3000/addDoc", formData, {
+              headers: {
                 ...formData.getHeaders(),
-                "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
-                "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-              }}
+                "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
+                "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+              }
+            }
             )
-            doc["docId"] = docInfo.data.document_id;
-            doc["executiveId"] = dbResult[1][0].id;
-            await addDocument(doc);
+            if (docInfo.data.status) {
+              doc["docId"] = docInfo.data.data.doc_id;
+              doc["executiveId"] = dbResult[1][0].id;
+              await addDocument(doc);
+            }
           }
           if (dbResult[1][0].crm_user_id) {
             await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
@@ -254,16 +259,16 @@ export async function getExecutiveById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
-      if(executiveDetails.length>0 && executiveDetails[0].crm_user_id){
+      if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
         const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
-        if(crm_user){
+        if (crm_user) {
           executiveDetails[0].crm_user = crm_user.name;
         }
       }
       const docData = await getExecutiveDocs(id);
-      if(executiveDetails.length > 0 && docData.length > 0){
+      if (executiveDetails.length > 0 && docData.length > 0) {
         executiveDetails[0].docData = docData;
-      }else{
+      } else {
         executiveDetails[0].docData = [];
       }
       return executiveDetails;
@@ -278,16 +283,16 @@ export async function getProfileById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const executiveDetails = await getProfileDetailsById(session.user.dbInfo.dbName, id);
-      if(executiveDetails.length>0 && executiveDetails[0].crm_user_id){
+      if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
         const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
-        if(crm_user){
+        if (crm_user) {
           executiveDetails[0].crm_user = crm_user.name;
         }
       }
       const docData = await getExecutiveDocs(id);
-      if(executiveDetails.length > 0 && docData.length > 0){
+      if (executiveDetails.length > 0 && docData.length > 0) {
         executiveDetails[0].docData = docData;
-      }else{
+      } else {
         executiveDetails[0].docData = [];
       }
       return executiveDetails;
@@ -443,59 +448,75 @@ export async function addDocument(data: mdl.docDescriptionSchemaT) {
   return result;
 }
 
-export async function getExecutiveDocs(executiveId : number){
-  try{
+export async function getExecutiveDocs(executiveId: number) {
+  try {
     const session = await getSession();
-    if(session){
-      const result = await getExecutiveDocsDB(session.user.dbInfo.dbName,executiveId);
+    if (session) {
+      const result = await getExecutiveDocsDB(session.user.dbInfo.dbName, executiveId);
       return result;
     }
-  }catch(error){
+  } catch (error) {
     logger.error(error);
   }
 }
 
-export async function updateExecutiveDoc(description : string,id : number){
-  try{
+export async function updateExecutiveDoc(description: string, id: number) {
+  try {
     const session = await getSession();
-    if(session){
-      await updateExecutiveDocDB(session.user.dbInfo.dbName,description,id);
+    if (session) {
+      await updateExecutiveDocDB(session.user.dbInfo.dbName, description, id);
     }
-  }catch(error){
+  } catch (error) {
     logger.error(error);
   }
 }
 
-export async function deleteExecutiveDoc(id : number){
-  try{
+export async function deleteExecutiveDoc(id : number, doc_id : string) {
+  try {
     const session = await getSession();
-    if(session){
-      await deleteExecutiveDocDB(session.user.dbInfo.dbName,id);
-      // api to delete doc
-    }
-  }catch(error){
-    logger.error(error);
-  }
-}
+    if (session) {
+      const body = {
+        "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
+        "doc_id": doc_id
+      }
 
-
-export async function viewExecutiveDoc(documentId : string){
-  try{
-    const session = await getSession();
-    if(session){
-      const result = await axios.get(`http://192.168.1.200:3000/api/document?document_id=${documentId}&app_id=e2fda9ab-7b36-4461-839e-ab6ed3545e76`,{
-        headers : {
-          "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
-          "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-        },
-        responseType : "arraybuffer"
+      const result = await axios.delete("http://192.168.1.200:3000/deleteDoc", {
+        data: body, // body data should go inside the `data` field
+        headers: {
+          "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
+          "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+        }
       });
-      const base64Data = Buffer.from(result.data, "binary").toString("base64");
-      // const contentType = detectMimeType(base64Data);
-      return {base64Data, contentType : "application/pdf"};
+      await deleteExecutiveDocDB(session.user.dbInfo.dbName, id);
+      // api to delete doc
 
     }
-  }catch(error){
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+
+export async function viewExecutiveDoc(documentId: string) {
+  try {
+    const session = await getSession();
+    if (session) {
+      const body = {
+        "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
+        "doc_id": documentId
+      }
+
+      const result = await axios.post("http://192.168.1.200:3000/getDoc", body, {
+        headers: {
+          "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
+          "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+        },
+      });
+      let base64Data = Buffer.from(result.data.data.doc_buffer.data, "binary").toString("base64");
+      return { buffer: base64Data, contentType: result.data.data.doc_type, fileName: result.data.data.doc_title };
+
+    }
+  } catch (error) {
     logger.error(error);
   }
 }

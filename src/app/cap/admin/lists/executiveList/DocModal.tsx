@@ -263,7 +263,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
         try {
             if (docData.length > 0) {
                 const updatedRows = docData.filter((row: any) => row.id !== data.id);
-                await deleteExecutiveDoc(data.id);
+                await deleteExecutiveDoc(data.id,data.doc_id);
                 setDocData(updatedRows);
             }
         } catch (error) {
@@ -275,41 +275,38 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleViewClickDB = async (data: any) => {
         try {
             const result = await viewExecutiveDoc(data.doc_id);
-            
-            if(result?.base64Data && result?.contentType){
-                const { base64Data, contentType } = result;
-            
-            
-            if(base64Data){
-                const binary = atob(base64Data);
-            const len = binary.length;
-            const buffer = new Uint8Array(len);
 
-            for (let i = 0; i < len; i++) {
-                buffer[i] = binary.charCodeAt(i);
+            if (result?.buffer && result?.contentType && result?.fileName) {
+                const { buffer, contentType, fileName } = result;
+
+                    const binary = atob(buffer);
+                    const len = binary.length;
+                    const bufferArray = new Uint8Array(len);
+
+                    for (let i = 0; i < len; i++) {
+                        bufferArray[i] = binary.charCodeAt(i);
+                    }
+
+                    // Create a Blob from the binary data
+                    const blob = new Blob([bufferArray], { type: contentType });
+                    console.log('BLOB : ', blob);
+
+                    // Create object URL from Blob
+                    const url = window.URL.createObjectURL(blob);
+
+                    // Download logic
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = fileName || data.description;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Revoke the object URL to free memory
+                    window.URL.revokeObjectURL(url);
             }
 
-            // Create a Blob from the binary data
-            const blob = new Blob([buffer], { type: contentType });
-            console.log('BLOB : ', blob);
 
-            // Create object URL from Blob
-            const url = window.URL.createObjectURL(blob);
-
-            // Download logic
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = data.description || 'download.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Revoke the object URL to free memory
-            window.URL.revokeObjectURL(url);
-            }
-        }
-
-            
         } catch (error) {
             throw error;
         }

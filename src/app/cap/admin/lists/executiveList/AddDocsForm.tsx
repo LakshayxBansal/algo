@@ -46,7 +46,7 @@ export default function AddDocsForm(props: any) {
         data["description"] = formData.get("description");
         data["document"] = selectedFileName;
         data["file"] = file;
-        data["fileType"] = 
+        data["fileType"] = fileType;
         data["type"] = "state";
         console.log("data : ",data);
         props.setData
