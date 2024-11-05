@@ -1,5 +1,5 @@
 "use client";
-import { optionsDataT, selectKeyValueT } from "@/app/models/models";
+import { optionsDataT, regionalSettingSchemaT, selectKeyValueT } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Seperator from "@/app/Widgets/seperator";
@@ -28,9 +28,9 @@ export default function RegionalInfo(props: { data: any }) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    formData = updateFormData(data);
+    data = updateFormData(data as regionalSettingSchemaT);
 
-    const result = await persistEntity(data);
+    const result = await persistEntity(data as regionalSettingSchemaT);
     if (result.status) {
       setFormError({});
       setSnackOpen(true);
@@ -41,7 +41,7 @@ export default function RegionalInfo(props: { data: any }) {
     }
   };
 
-  const updateFormData = (data: any) => {
+  const updateFormData = (data: regionalSettingSchemaT) => {
     data.country_id = entityData.country_id
       ? entityData.country_id
       : selectValues.country
@@ -56,7 +56,7 @@ export default function RegionalInfo(props: { data: any }) {
     return data;
   };
 
-  async function persistEntity(data: any) {
+  async function persistEntity(data: regionalSettingSchemaT) {
     let result = await updateRegionalSetting(data, props.data.config_type_id);
     return result;
   }
