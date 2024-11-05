@@ -364,7 +364,9 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                 }}
             >
                 <Button onClick={() => {
+                    setDocData((prevData : any) => prevData.filter((doc : any) => doc.id >= 0));
                     setDialogOpen(false)
+
                 }} tabIndex={-1}>Cancel</Button>
                 <Button
                     variant="contained"
@@ -373,7 +375,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                         setDialogOpen(false)
                     }}
                 >
-                    Submit
+                    Done
                 </Button>
             </Box>
             {openAddDocDialog && (
