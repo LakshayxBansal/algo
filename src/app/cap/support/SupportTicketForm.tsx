@@ -10,29 +10,18 @@ import {
   TextField,
 } from "@mui/material";
 
-import { createEnquiry } from "@/app/controllers/enquiry.controller";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl } from "@/app/Widgets/input/InputControl";
 import { InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
-  getEnquirySource,
-  getEnquirySourceById,
-} from "@/app/controllers/enquirySource.controller";
-import {
   getContact,
   getContactById,
 } from "@/app/controllers/contact.controller";
-import {
-  getCategoryById,
-  getEnquiryCategory,
-} from "@/app/controllers/enquiryCategory.controller";
-import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
+
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
-import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
-import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
-import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
+
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
@@ -40,64 +29,65 @@ import {
   getExecutive,
   getExecutiveById,
 } from "@/app/controllers/executive.controller";
-import {
-  getEnquirySubSatusById,
-  getEnquirySubStatus,
-} from "@/app/controllers/enquirySubStatus.controller";
-import {
-  getActionById,
-  getEnquiryAction,
-} from "@/app/controllers/enquiryAction.controller";
 
 import dayjs from "dayjs";
-import { ZodIssue } from "zod";
-import { optionsDataT, selectKeyValueT } from "@/app/models/models";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import AddProductToListForm from "./addProductToListForm";
-import ProductGrid from "./productGrid";
-import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
+import {
+  masterFormPropsT,
+  selectKeyValueT,
+  supportProductSchemaT,
+  supportTicketSchemaT,
+  suppportProductArraySchemaT,
+} from "@/app/models/models";
+import SupportCategoryForm from "@/app/Widgets/masters/masterForms/supportCatergoryForm";
+import {
+  getSupportCategory,
+  getSupportCategoryById,
+} from "@/app/controllers/supportCategory.controller";
+import {
+  getSupportAction,
+  getSupportActionById,
+} from "@/app/controllers/supportAction.controller";
+import SupportActionForm from "@/app/Widgets/masters/masterForms/supportActionForm";
+import {
+  getSupportSubSatusById,
+  getSupportSubStatus,
+} from "@/app/controllers/supportSubStatus.controller";
+import Support from "./page";
+import SupportSubStatusForm from "@/app/Widgets/masters/masterForms/supportSubStatusForm";
+import { createSupportTicket } from "@/app/controllers/supportTicket.controller";
+import { supportDataFormat } from "@/app/utils/formatData/supportDataformat";
+import {
+  getProduct,
+  getProductById,
+} from "@/app/controllers/product.controller";
+import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
+import ProductList from "./productList";
+import SupportProductGrid from "./SupportProductGrid";
+import { ZodIssue } from "zod";
 
-const strA = "custom_script.js";
-const scrA = require("./" + strA);
-
-export interface IformData {
-  userName: string;
-}
-
-const formConfig = {
-  showProducts: false,
-};
-
-const rows: any = [];
-
-export default function InputForm(props: {
-  baseData: IformData;
-  config: any;
-  loggedInUserData: any;
-}) {
-  const [status, setStatus] = useState("1");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({"received_by":{id:props.loggedInUserData.id, name:props.loggedInUserData.name}});
+const SupportTicketForm = (props: masterFormPropsT) => {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [status, setStatus] = useState("1");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
-  const [data, setData] = React.useState(rows);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [snackOpen, setSnackOpen] = useState(false);
+
+  const [data, setData] = useState<suppportProductArraySchemaT>([]);
 
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues });
+    const formatedData = await supportDataFormat({ formData, selectValues });
 
     let result;
-    let issues = [];
 
-    result = await createEnquiry({
-      enqData: formatedData,
-      product: data,
-    });
+    result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
@@ -106,12 +96,14 @@ export default function InputForm(props: {
         location.reload();
       }, 3000);
     } else {
-      issues = result?.data;
+      const issues = result?.data;
 
       let formIssue: ZodIssue[] = [];
       let productIssue = [];
 
-      formIssue = issues[0]?.enqDataIssue ? issues[0].enqDataIssue : issues;
+      formIssue = issues[0]?.ticketDataIssue
+        ? issues[0].ticketDataIssue
+        : issues;
       productIssue = issues[1]?.productIssue;
 
       if (formIssue?.length > 0) {
@@ -139,21 +131,31 @@ export default function InputForm(props: {
           // Add or update the field's error message
           temp[key][field] = { msg: row.message, error: true };
         });
-        console.log("Product Issues", temp);
         setProductFormError(temp);
       }
     }
   };
 
-  const handleButtonClick = async () => {
-    scrA.makeInputReadOnly("ticket_description");
-
-    // Append the script element to the head
-    //document.head.appendChild(script);
-  };
+  const isProduct = props?.data?.mantainProduct ? true : true;
+  async function persistEntity(
+    data: supportTicketSchemaT,
+    productData: suppportProductArraySchemaT
+  ) {
+    let result;
+    // if (props.data) {
+    //   Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
+    //    result = await updateOrganisation(data);
+    // } else {
+    result = await createSupportTicket({
+      supportData: data,
+      productData: productData,
+    });
+    // }
+    return result;
+  }
 
   async function getSubStatusforStatus(stateStr: string) {
-    const subStatus = await getEnquirySubStatus(stateStr, status);
+    const subStatus = await getSupportSubStatus(stateStr, status);
     if (subStatus?.length > 0) {
       return subStatus;
     }
@@ -174,51 +176,25 @@ export default function InputForm(props: {
     setSelectValues(values);
   }
 
-  const enquiryMaintainProducts = props.config.enquiryMaintainProducts;
-
   return (
     <Box>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid container>
           <Grid item xs={12}>
-            <Seperator>Enquiry Details</Seperator>
+            <Seperator>Support Ticket Details </Seperator>
           </Grid>
           <Grid item xs={12}>
-            <Grid container>
-              <Grid item xs={12} md={12}>
-                <Grid container spacing={3}>
+            <Grid container spacing={2}>
+              {/* Main Grid Container */}
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={2}>
                   <Grid item xs={12} sm={6} md={6}>
-                    <InputControl
-                      label="Enquiry Description"
-                      id="enq_number"
-                      inputType={InputType.TEXT}
-                      name="enq_number"
-                      fullWidth
-                      required
-                      error={formError?.enq_number?.error}
-                      helperText={formError?.enq_number?.msg}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={3} md={3}>
-                    <InputControl
-                      label="Received on"
-                      inputType={InputType.DATETIMEINPUT}
-                      id="date"
-                      name="date"
-                      defaultValue={dayjs(new Date())}
-                      required
-                      error={formError?.date?.error}
-                      helperText={formError?.date?.msg}
-                      sx={{ display: "flex", flexGrow: 1 }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={3} md={3}>
                     <SelectMasterWrapper
-                      name={"contact"}
-                      id={"contact"}
-                      label={"Contact"}
+                      name="contact"
+                      id="contact"
+                      label="Contact"
                       showDetails={true}
-                      dialogTitle={"Add Contact"}
+                      dialogTitle="Add Contact"
                       onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
                       fetchDataFn={getContact}
                       fnFetchDataByID={getContactById}
@@ -233,66 +209,68 @@ export default function InputForm(props: {
                       )}
                     />
                   </Grid>
-                </Grid>
-              </Grid>
 
-              <Grid item xs={12} md={12}>
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <Grid container spacing={5}>
-                      <Grid item xs={12} md={6}>
-                        <SelectMasterWrapper
-                          name={"category"}
-                          id={"category"}
-                          label={"Category"}
-                          dialogTitle={"Add Category"}
-                          onChange={(e, v, s) =>
-                            onSelectChange(e, v, s, "category")
-                          }
-                          fetchDataFn={getEnquiryCategory}
-                          fnFetchDataByID={getCategoryById}
-                          required
-                          formError={formError?.category ?? formError.category}
-                          renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                            <CategoryForm
-                              setDialogOpen={fnDialogOpen}
-                              setDialogValue={fnDialogValue}
-                              data={data}
-                            />
-                          )}
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                        <SelectMasterWrapper
-                          name={"source"}
-                          id={"source"}
-                          label={"Source"}
-                          dialogTitle={"Add Source"}
-                          onChange={(e, v, s) =>
-                            onSelectChange(e, v, s, "source")
-                          }
-                          fetchDataFn={getEnquirySource}
-                          fnFetchDataByID={getEnquirySourceById}
-                          required
-                          formError={formError?.source ?? formError.source}
-                          renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                            <SourceForm
-                              setDialogOpen={fnDialogOpen}
-                              setDialogValue={fnDialogValue}
-                              data={data}
-                            />
-                          )}
-                        />
-                      </Grid>
-                    </Grid>
+                  <Grid item xs={12} sm={6} md={6}>
+                    <InputControl
+                      label="Received on"
+                      inputType={InputType.DATETIMEINPUT}
+                      id="date"
+                      name="date"
+                      defaultValue={dayjs(new Date())}
+                      required
+                      error={formError?.date?.error}
+                      helperText={formError?.date?.msg}
+                      sx={{ display: "flex", flexGrow: 1 }}
+                    />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} sm={6} md={12}>
+                    <InputControl
+                      label="Ticket Description"
+                      id="tkt_number"
+                      inputType={InputType.TEXT}
+                      name="tkt_number"
+                      fullWidth
+                      required
+                      error={formError?.tkt_number?.error}
+                      helperText={formError?.tkt_number?.msg}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: 100,
+                          alignItems: "start",
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6}>
                     <SelectMasterWrapper
-                      name={"received_by"}
-                      id={"received_by"}
-                      label={"Received By"}
+                      name="category"
+                      id="category"
+                      label="Category"
+                      dialogTitle="Add Category"
+                      onChange={(e, v, s) =>
+                        onSelectChange(e, v, s, "category")
+                      }
+                      fetchDataFn={getSupportCategory}
+                      fnFetchDataByID={getSupportCategoryById}
+                      required
+                      formError={formError?.category ?? formError.category}
+                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                        <SupportCategoryForm
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
+                          data={data}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={6}>
+                    <SelectMasterWrapper
+                      name="received_by"
+                      id="received_by"
+                      label="Received By"
                       showDetails={true}
-                      dialogTitle={"Add Executive"}
+                      dialogTitle="Add Executive"
                       onChange={(e, v, s) =>
                         onSelectChange(e, v, s, "received_by")
                       }
@@ -302,50 +280,60 @@ export default function InputForm(props: {
                       formError={
                         formError?.received_by ?? formError.received_by
                       }
-                      renderForm={(fnDialogOpen, fnDialogValue, desc, data) => (
+                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <ExecutiveForm
                           setDialogOpen={fnDialogOpen}
                           setDialogValue={fnDialogValue}
-                          desc={desc}
                           data={data}
                         />
                       )}
-                      defaultValue={
-                        {
-                          id: props.loggedInUserData?.id,
-                          name: props.loggedInUserData?.name,
-                        } as optionsDataT
-                      }
                     />
                   </Grid>
+                  {/* <Grid item xs={12} sm={6} md={12}>
+                <InputControl
+                  label="Ticket Description"
+                  id="tkt_number"
+                  inputType={InputType.TEXT}
+                  name="tkt_number"
+                  fullWidth
+                  required
+                  error={formError?.tkt_number?.error}
+                  helperText={formError?.tkt_number?.msg}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: 100, 
+                      alignItems: "start", 
+                    },
+                    
+                  }}
+                />
+                
+              </Grid> */}
                 </Grid>
+              </Grid>
+              <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
+                <Box
+                  sx={{
+                    height: 300,
+                  }}
+                >
+                  <SupportProductGrid
+                    dgData={data}
+                    setdgData={setData}
+                    setdgDialogOpen={setDialogOpen}
+                    dgFormError={formError}
+                    setdgFormError={setFormError}
+                    dgProductFormError={productFormError}
+                  />
+                </Box>
               </Grid>
             </Grid>
 
             <Grid container spacing={2}>
-              {enquiryMaintainProducts && (
-                <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
-                  <Box
-                    sx={{
-                      height: 300,
-                    }}
-                  >
-                    <ProductGrid
-                      dgData={data}
-                      setdgData={setData}
-                      setdgDialogOpen={setDialogOpen}
-                      dgFormError={formError}
-                      setdgFormError={setFormError}
-                      dgProductFormError={productFormError}
-                    />
-                  </Box>
-                </Grid>
-              )}
-
               <Grid
                 item
                 xs={12}
-                md={enquiryMaintainProducts ? 6 : 12}
+                md={12}
                 sx={{ display: "flex", flexDirection: "column" }}
               >
                 <Grid item xs={12} md={12}>
@@ -376,12 +364,18 @@ export default function InputForm(props: {
             <Grid item xs={12}>
               <Seperator>Final Status</Seperator>
             </Grid>
+
             <Box
               sx={{
                 display: "grid",
                 columnGap: 3,
                 rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(2, 1fr)",
+                  lg: "repeat(3, 1fr)",
+                },
               }}
             >
               <FormControl sx={{ pl: "0.625em" }}>
@@ -410,6 +404,7 @@ export default function InputForm(props: {
                   />
                 </RadioGroup>
               </FormControl>
+
               <SelectMasterWrapper
                 name={"sub_status"}
                 id={"sub_status"}
@@ -417,46 +412,46 @@ export default function InputForm(props: {
                 dialogTitle={"Add Sub-Status for " + status}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
-                fnFetchDataByID={getEnquirySubSatusById}
+                fnFetchDataByID={getSupportSubSatusById}
                 required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <SubStatusForm
+                  <SupportSubStatusForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                     parentData={status}
                     data={data}
                   />
                 )}
-                allowNewAdd={status === "1"}
               />
+
               <SelectMasterWrapper
                 name={"action_taken"}
                 id={"action_taken"}
                 label={"Action Taken"}
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
-                fetchDataFn={getEnquiryAction}
-                fnFetchDataByID={getActionById}
-                formError={formError?.action_taken ?? formError.action_taken}
+                fetchDataFn={getSupportAction}
+                fnFetchDataByID={getSupportActionById}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <ActionForm
+                  <SupportActionForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                     data={data}
                   />
                 )}
               />
+
               <SelectMasterWrapper
                 name={"next_action"}
                 id={"next_action"}
                 label={"Next Action"}
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
-                fetchDataFn={getEnquiryAction}
+                fetchDataFn={getSupportAction}
                 formError={formError?.next_action ?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <ActionForm
+                  <SupportActionForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                     data={data}
@@ -464,6 +459,7 @@ export default function InputForm(props: {
                 )}
                 disable={status === "2"}
               />
+
               <InputControl
                 label="When"
                 inputType={InputType.DATETIMEINPUT}
@@ -471,6 +467,7 @@ export default function InputForm(props: {
                 name="next_action_date"
                 defaultValue={dayjs(new Date())}
               />
+
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
                   <TextField
@@ -514,10 +511,7 @@ export default function InputForm(props: {
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
-            <AddProductToListForm
-              setDialogOpen={setDialogOpen}
-              setData={setData}
-            />
+            <ProductList setDialogOpen={setDialogOpen} setData={setData} />
           </AddDialog>
         )}
       </form>
@@ -525,9 +519,11 @@ export default function InputForm(props: {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={"Enquiry saved successfully!"}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center"}}
+        message={"Ticket Details saved successfully!"}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
   );
-}
+};
+
+export default SupportTicketForm;

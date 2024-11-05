@@ -101,6 +101,11 @@ export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryProductSchemaT = z.infer<typeof zs.productToListFormSchema>;
 export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
+//Support ticket schemas
+export type supportTicketSchemaT = z.infer<typeof zs.supportTicketSchema>;
+export type supportProductSchemaT= z.infer<typeof zs.supportProductSchema>;
+export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArraySchema>;
+
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
