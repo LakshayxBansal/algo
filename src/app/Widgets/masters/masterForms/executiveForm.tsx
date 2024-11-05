@@ -192,6 +192,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
+    data.role = selectValues.role
+      ? selectValues.role.name
+      : entityData.role
+      ? entityData.role
+      : "";
     return data;
   };
 

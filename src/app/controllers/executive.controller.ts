@@ -33,6 +33,7 @@ import axios from "axios";
 import FormData from 'form-data';
 import { Buffer } from "buffer";
 import { getUserDetailsById } from "./user.controller";
+import { revalidatePage } from "../company/SelectCompany";
 
 const inviteSring = "Send Invite...";
 
@@ -202,6 +203,7 @@ export async function updateExecutive(data: executiveSchemaT, docData: any) {
         data: [{ path: ["form"], message: "Error: Server Error" }],
       };
     }
+    revalidatePage('/cap/admin/profile');
     return result;
   } catch (e: any) {
     console.log(e);

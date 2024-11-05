@@ -2,7 +2,7 @@
 
 import { createTheme } from "@mui/material/styles";
 
-interface InputStyle {
+interface autocompleteTextfieldSxT {
   color: string;
   fontWeight: string;
   background: string;
@@ -56,7 +56,7 @@ export const theme = createTheme({
 */
 
 
-export const inputStyles: InputStyle = {
+export const autocompleteTextfieldSx: autocompleteTextfieldSxT = {
   color: "white",
   fontWeight: 'bold',
   background: "linear-gradient(to right, #1769aa, #4dabf5)",
