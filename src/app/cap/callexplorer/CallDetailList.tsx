@@ -1,10 +1,10 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
-import { getCallEnquiryDetails } from "../../controllers/callExplorer.controller";
+import { getCallEnquiryDetails, getCallSupportDetails } from "../../controllers/callExplorer.controller";
 import { StripedDataGrid } from "../../utils/styledComponents";
 import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
 
-export default function CallDetailList({ selectedRow, refresh }: { selectedRow: any, refresh: any }) {
+export default function CallDetailList({ selectedRow, refresh , callType }: { selectedRow: any, refresh: any, callType:number }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
     const [data, setData] = useState([]);
     const [pageSize, setPageSize] = useState(10); // Default page size
@@ -25,11 +25,16 @@ export default function CallDetailList({ selectedRow, refresh }: { selectedRow: 
     useEffect(() => {
 
         async function getEnquiries() {
-            const result = await getCallEnquiryDetails(selectedRow?.id);
+            let result;
+            if(callType === 0)
+            {
+                result = await getCallEnquiryDetails(selectedRow?.id);
+            }
+            else if(callType === 1) result = await getCallSupportDetails(selectedRow?.id);
             setData(result);
         }
         getEnquiries();
-    }, [selectedRow, refresh])
+    }, [selectedRow, refresh, callType]);
 
     const truncateText = (text: string, maxLength: number) => {
         if (text.length > maxLength) {
