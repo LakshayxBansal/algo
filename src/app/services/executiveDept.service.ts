@@ -57,8 +57,8 @@ export async function updateExecutiveDeptDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateExecutiveDept(?, ?, ?);",
-      values: [sourceData.id, sourceData.name, session.user.userId],
+      query: "call updateExecutiveDept(?, ?, ?, ?);",
+      values: [sourceData.id, sourceData.name, sourceData.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);

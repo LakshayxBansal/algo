@@ -38,7 +38,8 @@ export default function Action() {
         fnFetchDataByID={getActionById}
         fnDeleteDataByID={delActionById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

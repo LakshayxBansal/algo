@@ -44,7 +44,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
     formData = updateFormData(data);
     const result = await persistEntity(data as executiveGroupSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
@@ -55,12 +55,15 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"] = { msg: issue.message, error: true} ;
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
@@ -73,7 +76,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   async function persistEntity(data: executiveGroupSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id });
+      Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
       result = await updateExecutiveGroup(data);
     } else {
       result = await createExecutiveGroup(data);

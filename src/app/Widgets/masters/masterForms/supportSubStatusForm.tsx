@@ -3,92 +3,111 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
-import {
-  createItemGroup,
-  getItemGroupById,
-  updateItemGroup,
-} from "../../../controllers/itemGroup.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import { getItemGroup } from "@/app/controllers/itemGroup.controller";
-import {
-  itemGroupSchemaT,
-  masterFormPropsT,
-  optionsDataT,
-  selectKeyValueT,
-} from "@/app/models/models";
+
+import Grid from "@mui/material/Grid";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
+import Paper from "@mui/material/Paper";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import {
+  enquirySubStatusMasterT,
+  masterFormPropsWithDataT,
+} from "@/app/models/models";
+import { createSupportSubStatus, updateSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
 
-export default function ItemGroupForm(props: masterFormPropsT) {
+export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: itemGroupSchemaT = props.data ? props.data : {};
-  console.log("value in form", selectValues);
+  const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
+  const statusName = props.parentData === "1" ? "Open" : "Closed";
 
-  const handleCancel = () => {
-    props.setDialogOpen ? props.setDialogOpen(false) : null;
-  };
-
+  // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
+    // formData.append("status", props.statusName as string);
+
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    formData = updateFormData(data);
 
-    const result = await persistEntity(data as itemGroupSchemaT);
+    data["status"] = statusName;
+
+    // let result;
+    // let issues;
+    // let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    // for (const [key, value] of formData.entries()) {
+    //   data[key] = value;
+    // }
+    // const parsed = enquirySubStatusMaster.safeParse(data);
+    // if (parsed.success) {
+    //   result = await createEnquirySubStatus(formData);
+    //   if (result.status){
+    //     const newVal = {id: result.data[0].id, name: result.data[0].name};
+    //     props.setDialogValue? props.setDialogValue(newVal.name) : null;
+    //     setSnackOpen(true);
+    //   } else {
+    //     issues = result?.data;
+    //   }
+    // } else {
+    //   issues = parsed.error.issues;
+    // }
+
+    // if (parsed.success && result?.status) {
+    //   props.setDialogOpen? props.setDialogOpen(false) : null;
+    // } else {
+    //   // show error on screen
+    //   const errorState: Record<string, {msg: string, error: boolean}> = {};
+    //   for (const issue of issues) {
+    //     errorState[issue.path[0]] = {msg: issue.message, error: true};
+    //   }
+    //   setFormError(errorState);
+    // }
+    const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
+      setTimeout(()=>{
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
+      errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          if(path==="refresh"){
+            errorState["form"]={ msg: issue.message, error: true };
+          }
         }
       }
-      errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
-  const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent
-      ? selectValues.parent.id
-      : entityData.parent_id
-      ? entityData.parent_id
-      : 0;
-    return data;
-  };
-
-  async function persistEntity(data: itemGroupSchemaT) {
+  async function persistEntity(data: enquirySubStatusMasterT) {
     let result;
-
-    console.log(props.data);
-
     if (props.data) {
       data["id"] = entityData.id;
-      result = await updateItemGroup(data);
-    } else {
-      result = await createItemGroup(data);
-    }
-
+      data["stamp"] = entityData.stamp;
+      result = await updateSupportSubStatus(data);
+    } else result = await createSupportSubStatus(data);
     return result;
   }
+
+  const handleCancel = () => {
+    props.setDialogOpen ? props.setDialogOpen(false) : null;
+  };
+
   const clearFormError = () => {
     setFormError((curr) => {
       const { form, ...rest } = curr;
@@ -97,7 +116,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
   };
 
   return (
-    <>
+    <Paper>
       <Box
         sx={{
           position: "sticky",
@@ -109,7 +128,9 @@ export default function ItemGroupForm(props: masterFormPropsT) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Item Group" : "Add Item Group"}
+            {(props.data ? "Update " : "Add ") +
+              "Sub-Status for " +
+              (props.parentData === 1 ? "Open" : "Closed")}{" "}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -134,7 +155,7 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="itemGroupForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Box
             sx={{
@@ -148,9 +169,10 @@ export default function ItemGroupForm(props: masterFormPropsT) {
               autoFocus
               inputType={InputType.TEXT}
               id="name"
-              label="Group Name"
+              label="Sub-Status Name"
               name="name"
               required
+              fullWidth
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
@@ -159,64 +181,14 @@ export default function ItemGroupForm(props: masterFormPropsT) {
                   const { name, ...rest } = curr;
                   return rest;
                 });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="alias"
-              label="Alias"
-              name="alias"
-              defaultValue={entityData.alias}
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { alias, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <SelectMasterWrapper
-              name={"parent"}
-              id={"parent"}
-              label={"Parent Group"}
-              width={210}
-              dialogTitle={"Add Parent Group"}
-              defaultValue={
-                {
-                  id: entityData.id,
-                  name: entityData.parent,
-                } as optionsDataT
-              }
-              // defaultValue={
-              //   {
-              //     id: entityData.parent_id,
-              //     name: entityData.name,
-              //   } as optionsDataT
-              // }
-              onChange={(e, val, s) => {
-                setSelectValues({
-                  ...selectValues,
-                  parent: val ? val : { id: 0, name: "" },
-                });
-              }}
-              fetchDataFn={getItemGroup}
-              fnFetchDataByID={getItemGroupById}
-              allowNewAdd={false}
-              allowModify={false}
-              formError={formError?.parentgroup}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ItemGroupForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                />
-              )}
+              }} 
             />
           </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt:2
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
@@ -237,6 +209,6 @@ export default function ItemGroupForm(props: masterFormPropsT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </>
+    </Paper>
   );
 }

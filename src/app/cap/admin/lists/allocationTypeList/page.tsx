@@ -33,7 +33,8 @@ export default function AllocationType() {
         fnFetchDataByID={getAllocationTypeById}
         fnDeleteDataByID={delAllocationTypeById}
         customCols={columns}
-        AddAllowed={true}
+        uploadAllowed={true}
+        AddAllowed={false}
         height = "60vh"
       ></EntityList>
     </>

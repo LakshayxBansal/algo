@@ -18,8 +18,11 @@ import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
-import { getItem, getItemById } from "@/app/controllers/item.controller";
-import ItemForm from "@/app/Widgets/masters/masterForms/itemForm";
+import {
+  getProduct,
+  getProductById,
+} from "@/app/controllers/product.controller";
+import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
 
@@ -28,26 +31,26 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { itemToListFormSchema } from "@/app/zodschema/zodschema";
+import { productToListFormSchema } from "@/app/zodschema/zodschema";
 
 type ModifiedRowT = {
   id?: number;
   enquiry_id?: number;
-  item?: string;
-  item_id?: number;
+  product?: string;
+  product_id?: number;
   quantity?: number;
   unit?: string;
   unit_id?: number;
   remarks?: string;
 };
 
-type ItemGridProps = {
+type ProductGridProps = {
   dgData: any;
   setdgData: any;
   setdgDialogOpen: any;
   dgFormError: any;
   setdgFormError: any;
-  dgItemFormError: any;
+  dgProductFormError: any;
   // Add other props here as needed
 };
 
@@ -99,7 +102,7 @@ function CustomNoRowsOverlay() {
           d="M0 10C0 4.477 4.477 0 10 0h380c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 20 0 15.523 0 10ZM0 59c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 69 0 64.523 0 59ZM0 106c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 153c0-5.523 4.477-10 10-10h195.5c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 200c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 247c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10Z"
         />
       </svg>
-      <Box sx={{ mt: 2 }}>No Items Added</Box>
+      <Box sx={{ mt: 2 }}>No Products Added</Box>
     </StyledGridOverlay>
   );
 }
@@ -120,14 +123,14 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-export default function ItemGrid({
+export default function ProductGrid({
   dgData,
   setdgData,
   setdgDialogOpen,
   dgFormError,
   setdgFormError,
-  dgItemFormError
-}: ItemGridProps) {
+  dgProductFormError,
+}: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
 
@@ -162,7 +165,7 @@ export default function ItemGrid({
 
   //Saving the data from modifiedRowData state into rows of data grid
   const handleSaveClick = () => {
-    const parsedData = itemToListFormSchema.safeParse(modifiedRowData); //Validating on saving
+    const parsedData = productToListFormSchema.safeParse(modifiedRowData); //Validating on saving
     if (parsedData.success) {
       const updatedData = dgData.map((row: any) =>
         row.id === modifiedRowData?.id ? modifiedRowData : row
@@ -172,7 +175,7 @@ export default function ItemGrid({
       setEditMode(null);
       //Removing field erros on successful validation
       setdgFormError((curr: any) => {
-        const { item, quantity, unit, remark, ...rest } = curr;
+        const { product, quantity, unit, remark, ...rest } = curr;
         return rest;
       });
     } else {
@@ -183,7 +186,12 @@ export default function ItemGrid({
           errorState[path] = { msg: issue.message, error: true };
         }
       }
-      setdgFormError(errorState);
+      setdgFormError((curr: any) => {
+        return {
+          ...curr,
+          ...errorState,
+        };
+      });
     }
   };
 
@@ -191,39 +199,39 @@ export default function ItemGrid({
   const handleCancelClick = () => {
     setEditMode(null);
     setdgFormError((curr: any) => {
-      const { item, quantity, unit, remark, ...rest } = curr;
+      const { product, quantity, unit, remark, ...rest } = curr;
       return rest;
     });
   };
 
   const columns: GridColDef[] = [
     {
-      field: "item",
-      headerName: "Item Name",
+      field: "product",
+      headerName: "Product Name",
       width: 180,
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
             <SelectMasterWrapper
-              name={"item"}
-              id={"item"}
+              name={"product"}
+              id={"product"}
               label={""}
-              dialogTitle={"Add Item"}
-              fetchDataFn={getItem}
-              fnFetchDataByID={getItemById}
+              dialogTitle={"Add Product"}
+              fetchDataFn={getProduct}
+              fnFetchDataByID={getProductById}
               required
-              formError={dgFormError?.item ?? dgFormError.item}
+              formError={dgFormError?.product ?? dgFormError.product}
               onChange={(e, v, s) =>
-                onSelectDataGridRowStateChange(e, v, s, "item")
+                onSelectDataGridRowStateChange(e, v, s, "product")
               }
               defaultValue={
                 {
-                  id: params.row.item_id,
-                  name: params.row.item,
+                  id: params.row.product_id,
+                  name: params.row.product,
                 } as optionsDataT
               }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <ItemForm
+                <ProductForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
@@ -238,7 +246,7 @@ export default function ItemGrid({
       field: "quantity",
       headerName: "Quantity",
       type: "number",
-      width: 80,
+      width: 130,
       align: "left",
       headerAlign: "left",
       renderCell: (params) => {
@@ -272,7 +280,7 @@ export default function ItemGrid({
       field: "unit",
       headerName: "Unit Name",
       type: "number",
-      width: 150,
+      width: 180,
       align: "left",
       headerAlign: "left",
       renderCell: (params) => {
@@ -384,7 +392,7 @@ export default function ItemGrid({
     },
   ];
 
-  function AddItemToolbar() {
+  function AddProductToolbar() {
     const handleClick = () => {
       setdgDialogOpen(true);
     };
@@ -393,36 +401,24 @@ export default function ItemGrid({
       <GridToolbarContainer
         sx={{ display: "flex", justifyContent: "space-between" }}
       >
-        <Seperator>Item List</Seperator>
+        <Seperator>Product List</Seperator>
         <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-          Add Item
+          Add Product
         </Button>
       </GridToolbarContainer>
     );
   }
 
-  const demoRows: any = [
-    {
-      id: 1,
-      item: "Water Cooler",
-      quantity: 2,
-      unit: "Unit 1",
-      remarks: "test",
-    },
-  ];
-
-  const rejectedRowIds = [1, 3]; // Add the IDs you want to compare
-
-
   return (
     <>
       <StyledDataGrid
+        disableColumnMenu
         columns={columns}
         rows={dgData ? dgData : []}
         disableRowSelectionOnClick
         slots={{
           noRowsOverlay: CustomNoRowsOverlay,
-          toolbar: AddItemToolbar as GridSlots["toolbar"],
+          toolbar: AddProductToolbar as GridSlots["toolbar"],
         }}
         sx={{
           "& .MuiDataGrid-columnHeaders": {
@@ -432,7 +428,7 @@ export default function ItemGrid({
           },
         }}
         rowHeight={
-          dgFormError.item ||
+          dgFormError.product ||
           dgFormError.quantity ||
           dgFormError.unit ||
           dgFormError.remark
@@ -440,10 +436,12 @@ export default function ItemGrid({
             : 50
         }
         getRowClassName={(params) =>
-          Object.keys(dgItemFormError).includes((params.row.id - 1).toString()) 
-              ? `super-app-theme--Rejected` 
-              : ""
-      }
+          Object.keys(dgProductFormError).includes(
+            (params.row.id - 1).toString()
+          )
+            ? `super-app-theme--Rejected`
+            : ""
+        }
       />
     </>
   );
