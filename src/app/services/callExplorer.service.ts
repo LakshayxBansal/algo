@@ -286,3 +286,263 @@ export async function updateCallAllocationDb(
   }
   return null;
 }
+
+export async function getCallSupportTicketsDb(
+  crmDb: string,
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string,
+  page: number,
+  pageSize: number
+) {
+  try {
+    let query: string =
+      "SELECT th.id, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
+       tssm.name AS subStatus, tam.name AS actionTaken, taxm.name AS nextAction, am.name AS area, tl.next_action_date AS actionDate \
+FROM ticket_header_tran th \
+LEFT JOIN ticket_ledger_tran tl ON tl.ticket_id = th.id \
+LEFT JOIN contact_master cm ON th.contact_id = cm.id \
+LEFT JOIN ticket_category_master tcm ON th.category_id = tcm.id \
+LEFT JOIN ticket_status_master tsm ON tl.status_id = tsm.id \
+LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \
+LEFT JOIN ticket_action_master tam ON tl.action_taken_id = tam.id \
+LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
+LEFT JOIN area_master am ON am.id = cm.area_id \
+LEFT JOIN executive_master em ON em.id = tl.allocated_to \
+WHERE tl.id = (SELECT MAX(lt.id) \
+               FROM ticket_ledger_tran lt \
+               WHERE lt.ticket_id = tl.ticket_id)";
+
+    const whereConditions: string[] = [];
+    let values = [];
+
+    if (filterValueState.callCategory) {
+      whereConditions.push(`tcm.name = ?`);
+      values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.area) {
+      whereConditions.push(`am.name = ?`);
+      values.push(filterValueState.area.name);
+    }
+    if (filterValueState.nextAction) {
+      whereConditions.push(`taxm.name = ?`);
+      values.push(filterValueState.nextAction.name);
+    }
+    if (filterType === "allocated") {
+      whereConditions.push(`tl.allocated_to IS NOT NULL`);
+      if (filterValueState.executive) {
+        whereConditions.push(
+          `em.name LIKE "%${filterValueState.executive.name}%"`
+        );
+      }
+    } else if (filterType === "unallocated") {
+      whereConditions.push(`tl.allocated_to IS NULL`);
+    }
+    if (filterValueState.subStatus) {
+      whereConditions.push(`tssm.name = ?`);
+      values.push(filterValueState.subStatus.name);
+    }
+    if (selectedStatus == "Open" && callFilter == "1") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tl.allocated_to IS NOT NULL`
+      );
+    } else if (selectedStatus == "Open" && callFilter == "2") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tl.allocated_to IS NULL`
+      );
+    }
+    if (selectedStatus == "Closed" && callFilter == "3") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tssm.name = "Success"`
+      );
+    } else if (selectedStatus == "Closed" && callFilter == "4") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tssm.name = "Failure"`
+      );
+    }
+    if (selectedStatus !== "" && callFilter === "0") {
+      whereConditions.push(`tsm.name = "${selectedStatus}"`);
+    }
+
+    if (dateFilter !== "0") {
+      const initial = filterValueState.actionDate?.initial ?? null;
+      const final = filterValueState.actionDate?.final ?? null;
+      if (dateFilter === "1") {
+        whereConditions.push(`tl.next_action_date = CURDATE()`);
+      }
+      if (dateFilter === "3") {
+        whereConditions.push(
+          `tl.next_action_date BETWEEN '${initial}' AND '${final}'`
+        );
+      }
+    }
+    if (filterValueState.date) {
+      const initial = filterValueState.date?.initial ?? null;
+      const final = filterValueState.date?.final ?? null;
+      whereConditions.push(`th.date BETWEEN '${initial}' AND '${final}'`);
+    }
+
+    if (whereConditions.length > 0) {
+      query += " AND ";
+      query += whereConditions.join(" AND ");
+    }
+
+    const offset = (page - 1) * pageSize;
+    query += ` LIMIT ? OFFSET ?`;
+    values.push(pageSize, offset);
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query,
+      values: values,
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCallSupportTicketsCountDb(
+  crmDb: string,
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string
+) {
+  try {
+    let query: string =
+      "SELECT COUNT(*) as totalCount \
+      FROM ticket_header_tran th \
+      LEFT JOIN ticket_ledger_tran tl ON tl.ticket_id = th.id \
+      LEFT JOIN contact_master cm ON th.contact_id = cm.id \
+      LEFT JOIN ticket_category_master tcm ON th.category_id = tcm.id \
+      LEFT JOIN ticket_status_master tsm ON tl.status_id = tsm.id \
+      LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \
+      LEFT JOIN ticket_action_master tam ON tl.action_taken_id = tam.id \
+      LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
+      LEFT JOIN area_master am ON am.id = cm.area_id \
+      LEFT JOIN executive_master em ON em.id = tl.allocated_to \
+      WHERE tl.date = (SELECT MAX(lt.date) FROM ticket_ledger_tran lt \
+                       WHERE lt.ticket_id = tl.ticket_id)";
+
+    const whereConditions: string[] = [];
+    let values = [];
+
+    if (filterValueState.callCategory) {
+      whereConditions.push(`tcm.name = ?`);
+      values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.area) {
+      whereConditions.push(`am.name = ?`);
+      values.push(filterValueState.area.name);
+    }
+    if (filterValueState.nextAction) {
+      whereConditions.push(`taxm.name = ?`);
+      values.push(filterValueState.nextAction.name);
+    }
+    if (filterType === "allocated") {
+      whereConditions.push(`tl.allocated_to IS NOT NULL`);
+      if (filterValueState.executive) {
+        whereConditions.push(
+          `em.name LIKE "%${filterValueState.executive.name}%"`
+        );
+      }
+    } else if (filterType === "unallocated") {
+      whereConditions.push(`tl.allocated_to IS NULL`);
+    }
+    if (filterValueState.subStatus) {
+      whereConditions.push(`tssm.name = ?`);
+      values.push(filterValueState.subStatus.name);
+    }
+    if (selectedStatus == "Open" && callFilter == "1") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tl.allocated_to IS NOT NULL`
+      );
+    } else if (selectedStatus == "Open" && callFilter == "2") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tl.allocated_to IS NULL`
+      );
+    }
+    if (selectedStatus == "Closed" && callFilter == "3") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tssm.name = "Success"`
+      );
+    } else if (selectedStatus == "Closed" && callFilter == "4") {
+      whereConditions.push(
+        `tsm.name = "${selectedStatus}" AND tssm.name = "Failure"`
+      );
+    }
+    if (selectedStatus !== "" && callFilter === "0") {
+      whereConditions.push(`tsm.name = "${selectedStatus}"`);
+    }
+    if (dateFilter !== "0") {
+      const initial = filterValueState.actionDate?.initial ?? null;
+      const final = filterValueState.actionDate?.final ?? null;
+      if (dateFilter === "1") {
+        whereConditions.push(`tl.next_action_date = CURDATE()`);
+      }
+      if (dateFilter === "3") {
+        whereConditions.push(
+          `tl.next_action_date BETWEEN '${initial}' AND '${final}'`
+        );
+      }
+    }
+    if (filterValueState.date) {
+      const initial = filterValueState.date?.initial ?? null;
+      const final = filterValueState.date?.final ?? null;
+      whereConditions.push(`th.date BETWEEN '${initial}' AND '${final}'`);
+    }
+
+    if (whereConditions.length > 0) {
+      query += " AND ";
+      query += whereConditions.join(" AND ");
+    }
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query,
+      values: values,
+    });
+
+    return result[0].totalCount;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+export async function getCallSupportDetailsDb(crmDb: string, id: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: `
+        SELECT 
+          tl.id AS id, \
+          tl.date, \
+          em.name AS executive, \
+          tssm.name AS subStatus, \
+          tam.name AS actionTaken, \
+          taxm.name AS nextAction, \
+          tl.next_action_date AS actionDate, \
+          tl.status_id, \
+          tl.closure_remark, \
+          tl.suggested_action_remark \
+        FROM ticket_ledger_tran tl \
+        LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \
+        LEFT JOIN ticket_action_master tam ON tl.action_taken_id = tam.id \
+        LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
+        LEFT JOIN executive_master em ON em.id = tl.allocated_to \
+        WHERE tl.ticket_id = ? \
+      `,
+      values: [id],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
