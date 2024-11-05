@@ -1,5 +1,4 @@
 "use server";
-import { Session } from "inspector";
 import excuteQuery from "../utils/db/db";
 
 export async function getScreenDescriptionDB(crmDb: string, object_id: number,action_id: number) {
