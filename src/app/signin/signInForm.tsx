@@ -345,6 +345,7 @@ export default function AuthPage(props: authPagePropsType) {
                       mb: "0.5rem",
                     }}
                     onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
                   >
                     {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                   </Button>
@@ -368,6 +369,7 @@ export default function AuthPage(props: authPagePropsType) {
                       textDecoration: "underline",
                     },
                   }}
+                  tabIndex={-1}
                 >
                   Forgot Password?
                 </Link>
@@ -412,6 +414,7 @@ export default function AuthPage(props: authPagePropsType) {
                         key={provider.id}
                         provider={provider}
                         callbackUrl="/company"
+                        tabIndex={-1}
                       >
                         Sign In With
                       </GoogleSignUpButton>
@@ -426,7 +429,7 @@ export default function AuthPage(props: authPagePropsType) {
                 md={12}
                 sx={{ display: "flex", justifyContent: "center", mt: "5%" }}
               >
-                <Link href="/signup" variant="body2">
+                <Link href="/signup" variant="body2" tabIndex={-1}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
