@@ -101,6 +101,8 @@ export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
 //Support ticket schemas
 export type supportTicketSchemaT = z.infer<typeof zs.supportTicketSchema>;
+export type supportHeaderSchemaT = z.infer<typeof zs.supportHeaderSchema>;
+export type supportLedgerSchemaT = z.infer<typeof zs.supportLedgerSchema>;
 export type supportProductSchemaT= z.infer<typeof zs.supportProductSchema>;
 export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArraySchema>;
 
