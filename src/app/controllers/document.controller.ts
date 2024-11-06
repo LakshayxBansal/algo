@@ -16,13 +16,13 @@ export async function uploadDocument(docData: any, dataId: number, objectId : nu
             for (const doc of docData) {
                 const formData = new FormData();
 
-                formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
+                formData.append('app_id', '9334f8d1-1b69-476f-b143-2b5b048cc458');
                 formData.append('meta_data', `{"name": "${doc.description}"}`);
 
                 const base64Data = doc.file.replace(/^data:.*;base64,/, "");
                 const contentType = doc.fileType;
                 const buffer = Buffer.from(base64Data, 'base64');
-                formData.append('file_data', buffer, { filename: doc.document, contentType: contentType });
+                formData.append('doc', buffer, { filename: doc.document, contentType: contentType });
 
                 const docInfo = await axios.post("http://192.168.1.200:3000/addDoc", formData, {
                     headers: {
@@ -33,9 +33,11 @@ export async function uploadDocument(docData: any, dataId: number, objectId : nu
                 }
                 )
 
-                doc["docId"] = docInfo.data.document_id;
-                doc["executiveId"] = dataId;
-                await addDocument(doc,objectId);
+                if (docInfo.data.status) {
+                    doc["docId"] = docInfo.data.data.doc_id;
+                    doc["dataId"] = dataId;
+                    await addDocument(doc,objectId);
+                }
             }
         }
     } catch (error) {

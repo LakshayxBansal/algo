@@ -48,7 +48,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
-import DocModal from "@/app/cap/admin/lists/executiveList/DocModal";
+import DocModal from "@/app/utils/docs/DocModal";
 
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
@@ -61,7 +61,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
-  console.log("props : ",entityData);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -240,9 +239,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
-    console.log("doc data : ",docData)
     const newDocsData = docData.filter((row: any) => row.type !== "db");
-    console.log("new doc data : ",newDocsData)
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;

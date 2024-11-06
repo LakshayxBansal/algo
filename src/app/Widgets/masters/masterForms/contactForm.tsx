@@ -41,16 +41,21 @@ import {
   getStates,
 } from "@/app/controllers/masters.controller";
 import { masterFormPropsT } from "@/app/models/models";
-import { Paper } from "@mui/material";
+import { Badge, Paper, Tooltip, Typography } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { AddDialog } from "../addDialog";
+import DocModal from "@/app/utils/docs/DocModal";
 
 export default function ContactForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
   const entityData: contactSchemaT = props.data ? props.data : {};
@@ -177,11 +182,12 @@ export default function ContactForm(props: masterFormPropsT) {
 
   async function persistEntity(data: contactSchemaT) {
     let result;
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
-      result = await updateContact(data);
+      result = await updateContact(data,newDocsData);
     } else {
-      result = await createContact(data);
+      result = await createContact(data,newDocsData);
     }
     return result;
   }
@@ -231,6 +237,30 @@ export default function ContactForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Tooltip
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", paddingRight: 0}}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+     </Tooltip>
       <Box id="contactForm" sx={{ p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
@@ -673,6 +703,15 @@ export default function ContactForm(props: masterFormPropsT) {
               Submit
             </Button>
           </Box>
+          {dialogOpen && (
+          <AddDialog
+            title=""
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
+          </AddDialog>
+        )}
         </form>
         <Snackbar
           open={snackOpen}

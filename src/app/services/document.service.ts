@@ -9,7 +9,7 @@ export async function addDocumentDB(crmDb: string, data: docDescriptionSchemaT, 
         const result = await excuteQuery({
             host: crmDb,
             query: "insert into docs_table (description,doc_id,data_id,object_id) values (?,?,?,?);",
-            values: [data.description, data.docId, data.executiveId, objectId]
+            values: [data.description, data.docId, data.dataId, objectId]
         });
         return result;
     } catch (e) {
