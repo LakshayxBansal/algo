@@ -31,14 +31,11 @@ export async function getEnquirySupportConfigDB(crmDb: string) {
   try {
 
     const configQuery = `SELECT ac.*, cm.config_type FROM app_config_new ac JOIN config_meta_data cm ON ac.object_id = cm.id`;
-    // const configQuery = `SELECT ac.config, cm.config_type FROM app_config_new ac JOIN config_meta_data cm ON ac.object_id = cm.id WHERE ac.object_id=?`;
     const configResult = await executeQuery({
       host: crmDb,
       query: configQuery,
       values: [],
     });
-
-    // console.log("result", configResult);
 
     if (configResult && configResult.length > 0) {
       return configResult;

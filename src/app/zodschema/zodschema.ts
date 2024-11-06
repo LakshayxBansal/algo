@@ -756,6 +756,21 @@ export const nameAliasData = z.object({
   alias: z.string().max(45),
 });
 
+export const regionalSettingSchema = z.object({
+  id: z.number().optional(),
+  country_id: z.number(),
+  state_id: z.number(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  decimalPlaces: z.string().optional(),
+  timeFormat: z.string().optional(),
+  currencyString: z.string().optional(),
+  currencySymbol: z.string().optional(),
+  currencySubString: z.string().optional(),
+  currencyCharacter: z.string().optional(),
+  dateFormat: z.string().optional(),
+});
+
 export const enquirySupportConfig = z.object({
   enquiryReqd: z.boolean().optional(),
   supportReqd: z.boolean().optional(),
@@ -764,6 +779,7 @@ export const enquirySupportConfig = z.object({
   appReqd: z.boolean().optional(),
   category: z.string().optional(),
   isEnabled: z.boolean().optional(),
+  // regionalData: regionalSettingSchema,
   // voucherNumber: z.boolean().optional(),
 
   enquiryCloseCall: z.boolean().optional(),
@@ -808,6 +824,18 @@ export const enquirySupportConfig = z.object({
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
   generalShowList: z.boolean().optional(),
+
+  country_id: z.number().optional(),
+  state_id: z.number().optional(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  decimalPlaces: z.string().optional(),
+  timeFormat: z.string().optional(),
+  currencyString: z.string().optional(),
+  currencySymbol: z.string().optional(),
+  currencySubString: z.string().optional(),
+  currencyCharacter: z.string().optional(),
+  dateFormat: z.string().optional(),
 });
 
 export const companySchema = z.object({
@@ -870,18 +898,3 @@ export const inviteUserSchema = z
     },
     { message: "Please provide email", path: ["email"] }
   );
-
-  export const regionalSettingSchema = z.object({
-    id: z.number().optional(),
-    country_id: z.number(),
-    state_id: z.number(),
-    country: z.string().optional(),
-    state: z.string().optional(),
-    decimalPaces: z.string().optional(),
-    timeFormat: z.string().optional(),
-    currencyString: z.string().optional(),
-    currencySymbol: z.string().optional(),
-    currencySubString: z.string().optional(),
-    currencyCharacter: z.string().optional(),
-    dateformat: z.string().optional(),
-  });

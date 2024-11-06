@@ -1,4 +1,5 @@
 // import EnquiryConfigForm from '../enquirySupportConfig/enquirySupportConfig';
+import { getRegionalSetting } from "@/app/controllers/config.controller";
 import EnquiryConfigForm from "./refactoredCode";
 import { loadEnquirySupportConfig } from "@/app/controllers/enquirySupportConfig.controller";
 import { getSession } from "@/app/services/session.service";
@@ -8,12 +9,17 @@ const EnquiryConfigPage = async () => {
   const session = await getSession();
   if (session) {
     const enquiryConfig = await loadEnquirySupportConfig();
+    const regionalData = (await getRegionalSetting())[0];
+    console.log(regionalData);
+    
+    
+    regionalData["config"] = JSON.parse(regionalData["config"]);
 
     if (!enquiryConfig) {
       redirect("/signin");
     }
 
-    return <EnquiryConfigForm {...enquiryConfig} />;
+    return <EnquiryConfigForm {...enquiryConfig} regionalData={regionalData} />;
   } else {
     redirect("/signin");
   }

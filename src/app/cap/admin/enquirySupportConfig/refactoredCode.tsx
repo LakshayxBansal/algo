@@ -6,18 +6,32 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Snackbar from "@mui/material/Snackbar";
 import { updateEnquirySupportConfig } from "../../../controllers/enquirySupportConfig.controller";
-import { enquiryConfigSchemaT } from "@/app/models/models";
+import { enquiryConfigSchemaT, regionalSettingSchemaT, selectKeyValueT } from "@/app/models/models";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckBoxForm from "./checkBoxForm";
 import Dynamic from "./genericDynamicForm";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import RegionalInfo from "../regional/regionalInfoForm";
 
-export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
+type configT = {
+  regionalData: {
+    id: number,
+    object_id: number,
+    enabled: number,
+    config: regionalSettingSchemaT
+  }
+} & enquiryConfigSchemaT;
+
+export default function EnquiryConfigForm(props: configT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
+  const regionalData = props.regionalData;
+  const [entityData, setEntityData] = useState(props.regionalData.config);
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+
 
   const [enquiry, setEnquiry] = useState({
       checkBoxData: [
@@ -80,7 +94,6 @@ checked : props.appReqd,
 })
   
 const handleEnquiryChange = (name: string, dataType: string, value: any) => {
-  console.log("aaaa : ",name,dataType,value);
   if(dataType==="checkBox"){setEnquiry((prev) => ({
     ...prev,
     checkBoxData: prev.checkBoxData.map((field) =>
@@ -148,11 +161,7 @@ const handleAppChange = (name: string, dataType: string, value: any) => {
 const handleSubmit = async (formData: FormData) => {
   console.log("formData : ",formData);
   let data: { [key: string]: any } = {};
-  data["enquiryReqd"] = false;
-  data["supportReqd"] = false;
-  data["contractReqd"] = false;
-  data["enquiryGenerationReqd"] = false;
-  data["appReqd"] = false;
+  
   
   for (const [key, value] of formData.entries()) {
     data[key] = value === "on" ? true : value;
@@ -174,7 +183,7 @@ const handleSubmit = async (formData: FormData) => {
     updatePrefixSuffixData('enquiryGeneration', enquiryGeneration),
     updatePrefixSuffixData('app', app)
   );
-  
+  data = updateFormData(data as enquiryConfigSchemaT);
   console.log(data);
   
   const result = await persistEntity(data as enquiryConfigSchemaT);
@@ -195,6 +204,21 @@ const handleSubmit = async (formData: FormData) => {
   }
 };
 
+const updateFormData = (data: enquiryConfigSchemaT) => {
+  data.country_id = entityData.country_id
+    ? entityData.country_id
+    : selectValues.country
+    ? selectValues.country.id
+    : 0;
+  data.state_id = entityData.state_id
+    ? entityData.state_id
+    : selectValues.state
+    ? selectValues.state.id
+    : 0;
+
+  return data;
+};
+
 async function persistEntity(data: enquiryConfigSchemaT) {
   let result;
   console.log("Data at client", data);
@@ -205,6 +229,12 @@ async function persistEntity(data: enquiryConfigSchemaT) {
 
 const handleCancel = () => {
 };
+
+// const fetchRegionalData = async () =>{
+//   const data = (await getRegionalSetting())[0];
+//   data["config"] = JSON.parse(data["config"]);
+//   setRegionalData(data["config"]);
+// }
 
   return (
     <Paper>
@@ -240,7 +270,8 @@ const handleCancel = () => {
                     checked: isChecked,
                     checkBoxData: prev.checkBoxData.map((field) => ({
                       ...field,
-                      disable: isChecked
+                      disable: isChecked,
+                      checked: isChecked
                     }))
                   }));
                 }}
@@ -248,7 +279,7 @@ const handleCancel = () => {
               </AccordionSummary>
             <AccordionDetails>
               <CheckBoxForm fields={enquiry.checkBoxData} type="checkBox" onChange={handleEnquiryChange}/>
-             {
+              {
                (enquiry.checkBoxData[enquiry.checkBoxData.length-1].checked)&&
                 <Dynamic prefix={enquiry.enquiryPrefix} suffix={enquiry.enquirySuffix} length={enquiry.enquiryLength} prefillWithZero={enquiry.enquiryPrefillWithZero} onChange={handleEnquiryChange}/>
               }
@@ -273,7 +304,8 @@ const handleCancel = () => {
                     checked: isChecked,
                     checkBoxData: prev.checkBoxData.map((field) => ({
                       ...field,
-                      disable: isChecked
+                      disable: isChecked,
+                      checked: isChecked
                     }))
                   }));
                 }}
@@ -306,7 +338,8 @@ const handleCancel = () => {
                     checked: isChecked,
                     checkBoxData: prev.checkBoxData.map((field) => ({
                       ...field,
-                      disable: isChecked
+                      disable: isChecked,
+                      checked: isChecked
                     }))
                   }));
                 }}
@@ -339,7 +372,8 @@ const handleCancel = () => {
                     checked: isChecked,
                     checkBoxData: prev.checkBoxData.map((field) => ({
                       ...field,
-                      disable: isChecked
+                      disable: isChecked,
+                      checked: isChecked
                     }))
                   }));
                 }}
@@ -363,7 +397,7 @@ const handleCancel = () => {
                 inputType={InputType.CHECKBOX}
                 id="appReqd"
                 name="appReqd"
-                custLabel="App Management"
+                custLabel="Regional Settings"
                 checked={app.checked}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   const isChecked = e.target.checked;
@@ -372,13 +406,15 @@ const handleCancel = () => {
                     checked: isChecked,
                     checkBoxData: prev.checkBoxData.map((field) => ({
                       ...field,
-                      disable: isChecked
+                      disable: isChecked,
+                      checked: isChecked
                     }))
                   }));
                 }}
               />
               </AccordionSummary>
             <AccordionDetails>
+            <RegionalInfo data={regionalData} selectValues={selectValues} setSelectValues={setSelectValues} entityData={entityData} setEntityData={setEntityData}/>
               <CheckBoxForm fields={app.checkBoxData} type="checkBox" onChange={handleAppChange}/>
               {
                (app.checkBoxData[app.checkBoxData.length-1].checked)&&

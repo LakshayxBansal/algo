@@ -47,8 +47,6 @@ export default function Dynamic(props: DynamicProps) {
             props.onChange(prefix.name, "text", e.target.value);
           }}
         />
-      </div>
-      <div>
         <Typography>Suffix: </Typography>
         <InputControl
           inputType={InputType.TEXT}
@@ -59,7 +57,9 @@ export default function Dynamic(props: DynamicProps) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             props.onChange(suffix.name, "", e.target.value)
           }
-        />
+          />
+          </div>
+      <div style={{ display: "flex", alignItems: "left", gap: "8px" }}>
         <Typography>Length of Digits: </Typography>
         <InputControl
           inputType={InputType.TEXT}
@@ -82,6 +82,8 @@ export default function Dynamic(props: DynamicProps) {
             console.log("check : ", e.target.value);
           }}
         />
+        </div>
+        <div style={{ display: "flex", alignItems: "left", gap: "8px" }}>
         <Typography>Display Value: </Typography>
         <InputControl
           id="displayValue"

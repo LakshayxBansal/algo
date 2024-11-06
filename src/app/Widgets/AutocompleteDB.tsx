@@ -138,7 +138,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       
       filterOptions={(options, { inputValue }) => 
         options.filter(option => 
-          option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
+          option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name?.toLowerCase().includes(inputValue.toLowerCase())
         )
       }
       renderOption={(p, option) => {

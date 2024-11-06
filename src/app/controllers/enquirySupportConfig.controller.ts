@@ -7,73 +7,6 @@ import {
 } from "../services/enquirySupportConfig.service";
 import { enquirySupportConfig } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
-import { logger } from "@/app/utils/logger.utils";
-
-// export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
-//   console.log("data : ",data);
-//   let result;
-
-//   try {
-//     const session = await getSession();
-
-//     if (session) {
-
-//       const parsed = enquirySupportConfig.safeParse(data);
-
-//       if (parsed.success) {
-
-//         const dbResult = await updateEnquirySupportConfigDB(session, data);
-//         // console.log('sdsdsds', dbResult.length);
-//         if (dbResult.length > 0) {
-//           result = { status: true, data: dbResult[1] };
-//         } else {
-//           let errorState: { path: (string | number)[]; message: string }[] = [];
-//           dbResult[0].forEach((error: any) => {
-//             errorState.push({
-//               path: [error.error_path],
-//               message: error.error_text,
-//             });
-//           });
-//           result = {
-//             status: false,
-//             data: errorState,
-//           };
-//         }
-//       } else {
-//         let errorState: { path: (string | number)[]; message: string }[] = [];
-//         for (const issue of parsed.error.issues) {
-//           errorState.push({ path: issue.path, message: issue.message });
-//         }
-//         result = { status: false, data: errorState };
-//         return result;
-//       }
-//     } else {
-//       result = {
-//         status: false,
-//         data: [{ path: ["form"], message: "Error: Server Error" }],
-//       };
-//     }
-
-//     return result;
-//   } catch (e: any) {
-//     console.log(e);
-
-//     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
-//       result = {
-//         status: false,
-//         data: [{ path: ["name"], message: "Error: Value already exists" }],
-//       };
-//       return result;
-//     }
-//   }
-
-//   result = {
-//     status: false,
-//     data: [{ path: ["form"], message: "Error: Unknown Error" }],
-//   };
-
-//   return result;
-// }
 
 export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
   console.log("data : ", data);
@@ -103,13 +36,15 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.enquiryVoucherNumber && {
               VoucherNumber: data.enquiryVoucherNumber,
             }),
-            ...(data.enquiryPrefix && { prefix: data.enquiryPrefix }), 
-            ...(data.enquirySuffix && { suffix: data.enquirySuffix }), 
-            ...(data.enquiryLength && { length: data.enquiryLength }), 
-            ...(data.enquiryPrefillWithZero !== undefined && { prefillWithZero: data.enquiryPrefillWithZero }), 
+            ...(data.enquiryPrefix && { prefix: data.enquiryPrefix }),
+            ...(data.enquirySuffix && { suffix: data.enquirySuffix }),
+            ...(data.enquiryLength && { length: data.enquiryLength }),
+            ...(data.enquiryPrefillWithZero !== undefined && {
+              prefillWithZero: data.enquiryPrefillWithZero,
+            }),
           };
           entries.push(enquiryEntry);
-        }else{
+        } else {
           const enquiryEntry = {
             category: "enquiry",
             isEnabled: false,
@@ -132,13 +67,15 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.supportVoucherNumber && {
               VoucherNumber: data.supportVoucherNumber,
             }),
-            ...(data.supportPrefix && { prefix: data.supportPrefix }), 
-            ...(data.supportSuffix && { suffix: data.supportSuffix }), 
-            ...(data.supportLength && { length: data.supportLength }), 
-            ...(data.supportPrefillWithZero !== undefined && { prefillWithZero: data.supportPrefillWithZero }), 
+            ...(data.supportPrefix && { prefix: data.supportPrefix }),
+            ...(data.supportSuffix && { suffix: data.supportSuffix }),
+            ...(data.supportLength && { length: data.supportLength }),
+            ...(data.supportPrefillWithZero !== undefined && {
+              prefillWithZero: data.supportPrefillWithZero,
+            }),
           };
           entries.push(supportEntry);
-        }else{
+        } else {
           const supportEntry = {
             category: "support",
             isEnabled: false,
@@ -153,13 +90,15 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.contractVoucherNumber && {
               VoucherNumber: data.contractVoucherNumber,
             }),
-            ...(data.contractPrefix && { prefix: data.contractPrefix }), 
-            ...(data.contractSuffix && { suffix: data.contractSuffix }), 
-            ...(data.contractLength && { length: data.contractLength }), 
-            ...(data.contractPrefillWithZero !== undefined && { prefillWithZero: data.contractPrefillWithZero }),
+            ...(data.contractPrefix && { prefix: data.contractPrefix }),
+            ...(data.contractSuffix && { suffix: data.contractSuffix }),
+            ...(data.contractLength && { length: data.contractLength }),
+            ...(data.contractPrefillWithZero !== undefined && {
+              prefillWithZero: data.contractPrefillWithZero,
+            }),
           };
           entries.push(contractEntry);
-        }else{
+        } else {
           const contractEntry = {
             category: "contract",
             isEnabled: false,
@@ -168,20 +107,34 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
         }
 
         if (data.appReqd) {
+          console.log(data);
+
           const appEntry = {
-            category: "app",
+            category: "regional_setting",
             isEnabled: true,
             ...(data.appVoucherNumber && {
               VoucherNumber: data.appVoucherNumber,
-            }), ...(data.appPrefix && { prefix: data.appPrefix }), 
-            ...(data.appSuffix && { suffix: data.appSuffix }), 
-            ...(data.appLength && { length: data.appLength }), 
-            ...(data.appPrefillWithZero !== undefined && { prefillWithZero: data.appPrefillWithZero }),
+            }),
+            country_id: data.country_id,
+            state_id: data.state_id,
+            dateFormat: data.dateFormat,
+            timeFormat: data.timeFormat,
+            currencySymbol: data.currencySymbol,
+            currencyString: data.currencyString,
+            currencySubString: data.currencySubString,
+            currencyCharacter: data.currencyCharacter,
+            decimalPlaces: data.decimalPlaces,
+            ...(data.appPrefix && { prefix: data.appPrefix }),
+            ...(data.appSuffix && { suffix: data.appSuffix }),
+            ...(data.appLength && { length: data.appLength }),
+            ...(data.appPrefillWithZero !== undefined && {
+              prefillWithZero: data.appPrefillWithZero,
+            }),
           };
           entries.push(appEntry);
-        }else{
+        } else {
           const appEntry = {
-            category: "app",
+            category: "regional_setting",
             isEnabled: false,
           };
           entries.push(appEntry);
@@ -194,14 +147,21 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             ...(data.enquiryGenerationVoucherNumber && {
               VoucherNumber: data.enquiryGenerationVoucherNumber,
             }),
-            ...(data.enquiryGenerationPrefix && { prefix: data.enquiryGenerationPrefix }), 
-            ...(data.enquiryGenerationSuffix && { suffix: data.enquiryGenerationSuffix }), 
-            ...(data.enquiryGenerationLength && { length: data.enquiryGenerationLength }), 
-            ...(data.enquiryGenerationPrefillWithZero !== undefined && { prefillWithZero: data.enquiryGenerationPrefillWithZero }), // Include prefillWithZero
-      
+            ...(data.enquiryGenerationPrefix && {
+              prefix: data.enquiryGenerationPrefix,
+            }),
+            ...(data.enquiryGenerationSuffix && {
+              suffix: data.enquiryGenerationSuffix,
+            }),
+            ...(data.enquiryGenerationLength && {
+              length: data.enquiryGenerationLength,
+            }),
+            ...(data.enquiryGenerationPrefillWithZero !== undefined && {
+              prefillWithZero: data.enquiryGenerationPrefillWithZero,
+            }), // Include prefillWithZero
           };
           entries.push(enquiryGenEntry);
-        }else{
+        } else {
           const enquiryGenEntry = {
             category: "enquiryGeneration",
             isEnabled: false,
@@ -211,7 +171,10 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
 
         let results: any = [];
         for (const entry of entries) {
-          const result = await updateEnquirySupportConfigDB(session, entry);
+          const result = await updateEnquirySupportConfigDB(
+            session,
+            entry as enquiryConfigSchemaT
+          );
           if (result.length > 0) results.push(result[0]);
         }
 
@@ -272,24 +235,27 @@ export async function loadEnquirySupportConfig(): Promise<enquiryConfigSchemaT |
     const data: any = {};
     if (configRes !== null) {
       const transformedResult = configRes.map((item: any) => {
-        const config = JSON.parse(item.config);
-        const configType = item.config_type;
+        if (item.config) {
+          const config = JSON.parse(item.config);
+          const configType = item.config_type;
 
-        // console.log("config", typeof config);
-        if (Object.keys(config).length !== 0) {
-          for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-              data[`${configType}${key}`] = config[key];
+          // console.log("config", typeof config);
+          if (Object.keys(config).length !== 0) {
+            for (const key in config) {
+              if (config.hasOwnProperty(key)) {
+                data[`${configType}${key}`] = config[key];
+              }
             }
+            data[`${configType}Reqd`] = true;
+          } else {
+            data[`${configType}Reqd`] = false;
           }
-          data[`${configType}Reqd`] = true;
-        } else {
-          data[`${configType}Reqd`] = false;
         }
       });
 
       // console.log(data);
     }
+
     return data;
   } catch (error) {
     console.error("Error loading enquiry support config:", error);
