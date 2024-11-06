@@ -6,6 +6,7 @@ import { useState } from "react";
 import Seperator from "../../Widgets/seperator";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateCallAllocation } from "../../controllers/callExplorer.controller";
+import { handleRefresh } from "./AutoGrid";
 
 interface customprop extends masterFormPropsT {
     setRefresh: (props: any) => void;
@@ -33,6 +34,7 @@ export default function AllocateCall(props: customprop) {
         const result = await updateCallAllocation(selectValues.executive.id, data.remark, props.data);
         if (result > 0) {
             setSnackOpen(true);
+            handleRefresh();
             setTimeout(() => {
                 props.setDialogOpen ? props.setDialogOpen(false) : null;
             }, 1000);
@@ -142,6 +144,7 @@ export default function AllocateCall(props: customprop) {
                             value={remark}
                             onChange={(e: any) => setRemark(e.target.value)}
                             multiline={true}
+                            maxRows={3}
                         />
                     </Box>
                     <Box
@@ -156,7 +159,8 @@ export default function AllocateCall(props: customprop) {
                                 <Button type="submit"
                                     variant="contained"
                                     sx={{ width: "15%", marginLeft: "5%" }}
-                                    disabled={!selectValues.executive || !remark}>
+                                    disabled={!selectValues.executive || !remark}
+                                >
                                     Submit
                                 </Button>
                             </span>
