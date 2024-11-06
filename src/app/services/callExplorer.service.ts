@@ -110,7 +110,7 @@ export async function getCallEnquiriesDb(
       query += whereConditions.join(" AND ");
     }
 
-    const offset = (page) * pageSize;
+    const offset = (page-1) * pageSize;
     query += ` LIMIT ? OFFSET ?`;
     values.push(pageSize, offset);
 
