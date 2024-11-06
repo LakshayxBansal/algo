@@ -132,13 +132,14 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
             }),
           };
           entries.push(appEntry);
-        } else {
-          const appEntry = {
-            category: "regional_setting",
-            isEnabled: false,
-          };
-          entries.push(appEntry);
-        }
+        } 
+        // else {
+        //   const appEntry = {
+        //     category: "regional_setting",
+        //     isEnabled: false,
+        //   };
+        //   entries.push(appEntry);
+        // }
 
         if (data.enquiryGenerationReqd) {
           const enquiryGenEntry = {

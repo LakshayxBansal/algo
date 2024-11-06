@@ -29,7 +29,7 @@ export default function EnquiryConfigForm(props: configT) {
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
   const regionalData = props.regionalData;
-  const [entityData, setEntityData] = useState(props.regionalData.config);
+  const [entityData, setEntityData] = useState(props.regionalData?.config);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
 
 
@@ -83,15 +83,15 @@ export default function EnquiryConfigForm(props: configT) {
  })
  const [app, setApp] = useState({
   checkBoxData: [
-  { id: "appVoucherNumber",name: "appVoucherNumber",custLabel: "Do you want to keep Voucher Number?" ,checked: props.appVoucherNumber as boolean ?? false, group: "appVoucherNumber", disable: props.appReqd}
-], 
+    { id: "appVoucherNumber",name: "appVoucherNumber",custLabel: "Do you want to keep Voucher Number?" ,checked: props.appVoucherNumber as boolean ?? false, group: "appVoucherNumber", disable: props.appReqd}
+  ], 
 
-appPrefix: {id: "appPrefix", name: "appPrefix", value: "" },
-appSuffix: {id: "appSuffix", name: "appSuffix", value: "" },
-appLength: {id: "appLength", name: "appLength", value: "" },
-appPrefillWithZero: {id: "appPrefillWithZero", name: "appPrefillWithZero", value: false },
-checked : props.appReqd,
-})
+    appPrefix: {id: "appPrefix", name: "appPrefix", value: "" },
+    appSuffix: {id: "appSuffix", name: "appSuffix", value: "" },
+    appLength: {id: "appLength", name: "appLength", value: "" },
+    appPrefillWithZero: {id: "appPrefillWithZero", name: "appPrefillWithZero", value: false },
+    checked : props.appReqd,
+  })
   
 const handleEnquiryChange = (name: string, dataType: string, value: any) => {
   if(dataType==="checkBox"){setEnquiry((prev) => ({
