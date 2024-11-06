@@ -164,7 +164,7 @@ export const theme = createTheme(MUILight);
 */
 
 
-export const inputStyles: InputStyle = {
+export const autocompleteTextfieldSx: autocompleteTextfieldSxT = {
   color: "white",
   fontWeight: 'bold',
   background: "linear-gradient(to right, #1769aa, #4dabf5)",
