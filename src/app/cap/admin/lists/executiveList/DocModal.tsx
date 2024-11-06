@@ -10,14 +10,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AddIcon from "@mui/icons-material/Add";
 import AddDocsForm from "./AddDocsForm";
-import { join } from 'path';
-import { writeFile } from 'fs/promises';
-// import { fileTypeFromBuffer } from 'file-type';
-import { deleteExecutiveDoc, updateExecutiveDoc, viewExecutiveDoc } from "@/app/controllers/executive.controller";
+import { deleteExecutiveDoc, updateExecutiveDoc, viewExecutiveDoc } from "@/app/controllers/document.controller";
 
 type ModifiedRowT = {
     id?: number;
