@@ -90,7 +90,6 @@ export async function createEnquiry({
           ],
         };
       }
-      console.log("result ", result);
     } else {
       result = {
         status: false,

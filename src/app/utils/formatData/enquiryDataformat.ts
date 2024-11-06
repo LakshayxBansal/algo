@@ -1,3 +1,4 @@
+"use server";
 import { selectKeyValueT } from "@/app/models/models";
 
 export async function enquiryDataFormat({
@@ -7,7 +8,7 @@ export async function enquiryDataFormat({
   formData: FormData;
   selectValues: selectKeyValueT;
 }) {
-  const formatDate = (dateStr: string ): string => {
+  const formatDate = (dateStr: string): string => {
     const dt = new Date(dateStr);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
@@ -39,9 +40,20 @@ export async function enquiryDataFormat({
     next_action_id: selectValues.next_action?.id,
     next_action: selectValues.next_action?.name ?? "",
     next_action_date: nextActionDate,
-    suggested_action_remark: (formData.get("suggested_action_remark") ?? "") as string,
+    suggested_action_remark: (formData.get("suggested_action_remark") ??
+      "") as string,
     action_taken_remark: (formData.get("action_taken_remark") ?? "") as string,
     closure_remark: (formData.get("closure_remark") ?? "") as string,
+    c_col1: (formData.get("c_col1") ?? "") as string,
+    c_col2: (formData.get("c_col2") ?? "") as string,
+    c_col3: (formData.get("c_col3") ?? "") as string,
+    c_col4: (formData.get("c_col4") ?? "") as string,
+    c_col5: (formData.get("c_col5") ?? "") as string,
+    c_col6: (formData.get("c_col6") ?? "") as string,
+    c_col7: (formData.get("c_col7") ?? "") as string,
+    c_col8: (formData.get("c_col8") ?? "") as string,
+    c_col9: (formData.get("c_col9") ?? "") as string,
+    c_col10: (formData.get("c_col10") ?? "") as string,
   };
 
   return { ...headerData, ...ledgerData };
