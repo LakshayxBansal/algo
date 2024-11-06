@@ -1,6 +1,5 @@
-// import EnquiryConfigForm from '../enquirySupportConfig/enquirySupportConfig';
+import EnquiryConfigForm from '../enquirySupportConfig/enquirySupportConfig';
 import { getRegionalSetting } from "@/app/controllers/config.controller";
-import EnquiryConfigForm from "./refactoredCode";
 import { loadEnquirySupportConfig } from "@/app/controllers/enquirySupportConfig.controller";
 import { getSession } from "@/app/services/session.service";
 import { redirect } from "next/navigation";
