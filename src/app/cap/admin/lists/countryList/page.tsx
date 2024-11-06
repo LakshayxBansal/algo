@@ -21,7 +21,7 @@ export default function Country() {
   return (
     <>
       <EntityList
-        title="Country List"
+        title="Country Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CountryForm
             setDialogOpen={fnDialogOpen}

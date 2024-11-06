@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   GridColDef,
   GridFilterModel,
@@ -40,6 +40,7 @@ import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { getRoleID } from "@/app/controllers/entityList.controller";
+import { useRouter } from "next/navigation";
 const pgSize = 10;
 
 enum dialogMode {
@@ -66,7 +67,13 @@ export default function EntityList(props: entitiyCompT) {
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
+  const router = useRouter();
+  const url  = usePathname();
   let searchText;
+  
+ 
+
+
 
   //for navbar search
   const searchParams = useSearchParams();
@@ -82,7 +89,6 @@ export default function EntityList(props: entitiyCompT) {
       );
 
       const roleId = await getRoleID();
-      console.log(roleId);
       if (rows.data) {
         setData(rows.data);
         setNRows(rows.count as number);
@@ -137,7 +143,7 @@ export default function EntityList(props: entitiyCompT) {
           //columns not to showinitially
           const allColumns = allDfltCols.concat(filteredColumns);
           const visibleColumns = allColumns.reduce((model: any, col: any) => {
-            model[col.field] = dfltColFields.includes(col.field); // Hide if in fieldsToHide
+            model[col.field] = dfltColFields.includes(col.field);
             return model;
           }, {});
           setColumnVisibilityModel(visibleColumns);
@@ -148,8 +154,19 @@ export default function EntityList(props: entitiyCompT) {
       } else {
         setAllColumns(allDfltCols);
       }
+      //for title
+      // let newUrl : string;
+      // console.log(url);
+      // if(url.includes("?")){
+      //   newUrl = url+`&pgTitle=${props.title}`
+      // }else{
+      //   newUrl = url+`?pgTitle=${props.title}`
+      // }
+      // router.push(newUrl);
+      //for title
+      
     }, 400);
-
+    
     if (searchData) {
       fetchData(searchData);
     } else {
@@ -163,6 +180,7 @@ export default function EntityList(props: entitiyCompT) {
     dialogOpen,
     searchData,
     apiRef,
+    props
   ]);
 
   const toggleColBtn = () => {
@@ -260,7 +278,7 @@ export default function EntityList(props: entitiyCompT) {
                     ),
                     style: {
                       backgroundColor: "#f5f5f5",
-                      marginLeft: "1.1em",
+                      // marginLeft: "1.1em",
                     },
                   }}
                   InputLabelProps={{
@@ -268,6 +286,7 @@ export default function EntityList(props: entitiyCompT) {
                       backgroundColor: "#f5f5f5",
                     },
                   }}
+                  sx={{ marginLeft: '1.1em' }}
                 />
               </Box>
             </Grid>
@@ -414,6 +433,7 @@ export default function EntityList(props: entitiyCompT) {
           <StripedDataGrid
             disableColumnMenu
             rows={data ? data : []}
+            rowHeight={40}
             columns={allColumns}
             rowCount={NRows}
             getRowId={(row) => row.id}

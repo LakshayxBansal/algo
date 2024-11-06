@@ -26,7 +26,7 @@ export default function Currency() {
   return (
     <>
       <EntityList
-        title="Currency List"
+        title="Currency Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CurrencyForm
             setDialogOpen={fnDialogOpen}

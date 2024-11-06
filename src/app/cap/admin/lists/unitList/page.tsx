@@ -21,7 +21,7 @@ export default function Unit() {
   return (
     <>
       <EntityList
-        title="Unit List"
+        title="Unit Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <UnitForm
             setDialogOpen={fnDialogOpen}

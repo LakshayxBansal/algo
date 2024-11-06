@@ -24,7 +24,7 @@ export default function Department() {
   return (
     <>
       <EntityList
-        title="Department Master" // deprecated
+        title="Department Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <DepartmentForm
             setDialogOpen={fnDialogOpen}
