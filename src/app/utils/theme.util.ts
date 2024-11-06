@@ -85,11 +85,11 @@ const themeDefault: ThemeOptions = {
       },
     },
   },
-  props: {
-    MuiTooltip: {
-      arrow: true,
-    },
-  },
+  // props: {
+  //   MuiTooltip: {
+  //     arrow: true,
+  //   },
+  // },
 }
 
 export const MUILight: ThemeOptions = {
@@ -163,8 +163,8 @@ export const theme = createTheme(MUILight);
     },
 */
 
-
-export const autocompleteTextfieldSx: autocompleteTextfieldSxT = {
+// autocompleteTextfieldSxT
+export const autocompleteTextfieldSx: any = {
   color: "white",
   fontWeight: 'bold',
   background: "linear-gradient(to right, #1769aa, #4dabf5)",
