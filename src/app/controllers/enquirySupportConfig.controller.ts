@@ -106,7 +106,7 @@ export async function updateEnquirySupportConfig(data: enquiryConfigSchemaT) {
           entries.push(contractEntry);
         }
 
-        if (data.appReqd) {
+        if (data.regional_settingReqd) {
           console.log(data);
 
           const appEntry = {

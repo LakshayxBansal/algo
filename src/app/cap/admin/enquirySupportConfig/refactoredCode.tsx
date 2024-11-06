@@ -83,14 +83,14 @@ export default function EnquiryConfigForm(props: configT) {
  })
  const [app, setApp] = useState({
   checkBoxData: [
-    { id: "appVoucherNumber",name: "appVoucherNumber",custLabel: "Do you want to keep Voucher Number?" ,checked: props.appVoucherNumber as boolean ?? false, group: "appVoucherNumber", disable: props.appReqd}
+    { id: "appVoucherNumber",name: "appVoucherNumber",custLabel: "Do you want to keep Voucher Number?" ,checked: props.appVoucherNumber as boolean ?? false, group: "appVoucherNumber", disable: props.regional_settingReqd}
   ], 
 
     appPrefix: {id: "appPrefix", name: "appPrefix", value: "" },
     appSuffix: {id: "appSuffix", name: "appSuffix", value: "" },
     appLength: {id: "appLength", name: "appLength", value: "" },
     appPrefillWithZero: {id: "appPrefillWithZero", name: "appPrefillWithZero", value: false },
-    checked : props.appReqd,
+    checked : props.regional_settingReqd,
   })
   
 const handleEnquiryChange = (name: string, dataType: string, value: any) => {
@@ -395,8 +395,8 @@ const handleCancel = () => {
               >
                 <InputControl
                 inputType={InputType.CHECKBOX}
-                id="appReqd"
-                name="appReqd"
+                id="regional_settingReqd"
+                name="regional_settingReqd"
                 custLabel="Regional Settings"
                 checked={app.checked}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {

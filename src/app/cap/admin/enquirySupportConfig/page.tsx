@@ -9,9 +9,9 @@ const EnquiryConfigPage = async () => {
   const session = await getSession();
   if (session) {
     const enquiryConfig = await loadEnquirySupportConfig();
-    const regionalData = (await getRegionalSetting())[0];
-    console.log(regionalData);
+    console.log(enquiryConfig);
     
+    const regionalData = (await getRegionalSetting())[0];    
     
     regionalData["config"] = JSON.parse(regionalData["config"]);
 

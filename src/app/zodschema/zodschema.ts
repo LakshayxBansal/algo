@@ -776,7 +776,7 @@ export const enquirySupportConfig = z.object({
   supportReqd: z.boolean().optional(),
   contractReqd: z.boolean().optional(),
   enquiryGenerationReqd: z.boolean().optional(),
-  appReqd: z.boolean().optional(),
+  regional_settingReqd: z.boolean().optional(),
   category: z.string().optional(),
   isEnabled: z.boolean().optional(),
   // regionalData: regionalSettingSchema,
