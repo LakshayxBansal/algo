@@ -433,6 +433,7 @@ export default function EntityList(props: entitiyCompT) {
           <StripedDataGrid
             disableColumnMenu
             rows={data ? data : []}
+            rowHeight={40}
             columns={allColumns}
             rowCount={NRows}
             getRowId={(row) => row.id}

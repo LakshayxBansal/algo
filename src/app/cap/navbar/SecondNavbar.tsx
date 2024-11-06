@@ -5,21 +5,21 @@ import { Paper, Grid, Typography } from "@mui/material";
 import { usePathname, useSearchParams } from "next/navigation";
 
 function SecondNavbar() {
-  // const path = usePathname();
+  const path = usePathname();
   const searchParams = useSearchParams();
-  const title = searchParams.get("pgTitle")
+  // const title = searchParams.get("pgTitle")
 
-  // const match1 = path.match(/\/([^/]+)$/);
+  const match1 = path.match(/\/([^/]+)$/);
 
-  // let title: string;
-  // if (match1) {
-  //   title = match1[1]
-  //     .replace(/([a-z])([A-Z])/g, "$1 $2")
-  //     .replace(/^\w/, (c) => c.toUpperCase());
+  let title: string;
+  if (match1) {
+    title = match1[1]
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/^\w/, (c) => c.toUpperCase());
    
-  // } else {
-  //   title = "";
-  // }
+  } else {
+    title = "";
+  }
 
   return (
     <div>
