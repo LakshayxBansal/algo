@@ -164,7 +164,12 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <CustomTextField {...textFieldProps} onChange={onChange} />;
+      return <CustomTextField {...textFieldProps}   InputLabelProps={{
+        style: {
+          zIndex: 0, // Adjust this value as needed
+        },
+      }}
+      onChange={onChange} />;
       break;
     }
     case InputType.CHECKBOX: {
