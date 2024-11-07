@@ -1,13 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Badge,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Radio,
   RadioGroup,
   Snackbar,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 
 import Seperator from "@/app/Widgets/seperator";
@@ -18,7 +22,7 @@ import {
   getContact,
   getContactById,
 } from "@/app/controllers/contact.controller";
-
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
 
@@ -66,6 +70,7 @@ import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 import ProductList from "./productList";
 import SupportProductGrid from "./SupportProductGrid";
 import { ZodIssue } from "zod";
+import DocModal from "@/app/utils/docs/DocModal";
 
 const SupportTicketForm = (props: masterFormPropsT) => {
   const [formError, setFormError] = useState<
@@ -76,6 +81,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [status, setStatus] = useState("1");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
@@ -146,9 +153,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
     //   Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
     //    result = await updateOrganisation(data);
     // } else {
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     result = await createSupportTicket({
       supportData: data,
       productData: productData,
+      docData : newDocsData
     });
     // }
     return result;
@@ -182,6 +191,30 @@ const SupportTicketForm = (props: masterFormPropsT) => {
         <Grid container>
           <Grid item xs={12}>
             <Seperator>Support Ticket Details </Seperator>
+            <Tooltip
+              title={docData.length > 0 ? (
+                docData.map((file: any, index: any) => (
+                  <Typography variant="body2" key={index}>
+                    {file.description}
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2" color="white">
+                  No files available
+                </Typography>
+              )}
+            >
+              <IconButton
+                sx={{ float: "right", position: "relative", paddingRight: 0 }}
+                onClick={() => setDocDialogOpen(true)}
+                aria-label="file"
+              >
+                <Badge badgeContent={docData.length} color="primary">
+                  <AttachFileIcon></AttachFileIcon>
+                </Badge>
+
+              </IconButton>
+            </Tooltip>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
@@ -433,6 +466,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
                 fetchDataFn={getSupportAction}
                 fnFetchDataByID={getSupportActionById}
+                formError={formError.action_taken}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportActionForm
                     setDialogOpen={fnDialogOpen}
@@ -512,6 +546,15 @@ const SupportTicketForm = (props: masterFormPropsT) => {
             setDialogOpen={setDialogOpen}
           >
             <ProductList setDialogOpen={setDialogOpen} setData={setData} />
+          </AddDialog>
+        )}
+        {docDialogOpen && (
+          <AddDialog
+            title=""
+            open={docDialogOpen}
+            setDialogOpen={setDocDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDocDialogOpen} />
           </AddDialog>
         )}
       </form>

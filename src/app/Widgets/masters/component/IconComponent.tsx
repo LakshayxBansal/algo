@@ -7,20 +7,19 @@ import { StyledMenu } from "@/app/utils/styledComponents";
 import { iconCompT } from "@/app/models/models";
 
 function IconComponent(props: iconCompT) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  
-  async function onModifyDialog(modId: number) {
-    console.log("clicked");
-    if (props.fnFetchDataByID && modId) {
-      const data = await props.fnFetchDataByID(modId);
-      console.log(data);
-
-      props.setModData(data[0]);
-      props.setDialogOpen(true);
-      props.setDlgMode(props.modify); //dialogMode.Modify
-      setAnchorEl(null);
-    }
-  }
+    console.log(props);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    async function onModifyDialog(modId: number) {
+        if (props.fnFetchDataByID && modId) {
+          const data = await props.fnFetchDataByID(modId);
+          console.log(data);
+          
+          props.setModData(data[0]);
+          props.setDialogOpen(true);
+          props.setDlgMode(props.modify); //dialogMode.Modify
+          setAnchorEl(null);
+        }
+      }
 
   function handleDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
