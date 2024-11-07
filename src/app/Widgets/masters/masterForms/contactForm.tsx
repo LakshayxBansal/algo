@@ -120,7 +120,7 @@ export default function ContactForm(props: masterFormPropsT) {
       const newVal = {
         id: result.data[0].id,
         name: result.data[0].name,
-        reloadOpts: true,
+        // reloadOpts: true,
       };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
