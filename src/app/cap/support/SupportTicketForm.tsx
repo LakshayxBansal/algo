@@ -78,7 +78,7 @@ import { format } from "path";
 
 const SupportTicketForm = (props: masterFormPropsT) => {
 
-  const masterData = props.data.masterData ?? {};
+  const masterData = props?.data?.masterData ?? {};
 
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -86,16 +86,16 @@ const SupportTicketForm = (props: masterFormPropsT) => {
 
   const [snackOpen, setSnackOpen] = useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>(masterData);
-  const [status, setStatus] = useState(masterData.status.id!= null ? masterData.status.id.toString() : "1");
+  const [status, setStatus] = useState(masterData?.status?.id!= null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState(props?.data?.docData ??[]);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
 
   
-  const [data, setData] = useState<suppportProductArraySchemaT>(props.data.productData ?? []);
+  const [data, setData] = useState<suppportProductArraySchemaT>(props?.data?.productData ?? []);
 
 
   const handleSubmit = async (formData: FormData) => {
@@ -105,7 +105,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
 
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      // const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
       setTimeout(function () {
         setFormError;
