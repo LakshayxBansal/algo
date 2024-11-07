@@ -1,5 +1,5 @@
 import React from "react";
-import InputForm from "./InputForm2";
+import InputForm from "./InputForm";
 import { getSession } from "../../services/session.service";
 import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
