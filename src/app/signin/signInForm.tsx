@@ -47,7 +47,7 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
-    document.body.classList.add("cursor-wait");
+    // document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -101,11 +101,11 @@ export default function AuthPage(props: authPagePropsType) {
     }
   }
 
-  useEffect(() => {
-    return () => {
-      document.body.classList.remove("cursor-wait");
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     document.body.classList.remove("cursor-wait");
+  //   };
+  // }, []);
 
   getCsrfToken()
     .then((token) => {
