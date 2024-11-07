@@ -37,7 +37,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
     }
     
 
-    export async function formatedData(supportData : any) {
+ async function formatedData(supportData : any) {
       const {
          ledgerData: {
             action_taken_id,
