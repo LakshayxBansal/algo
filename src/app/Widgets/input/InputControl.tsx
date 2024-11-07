@@ -194,6 +194,11 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
       return (
         <CustomTextField
           {...textFieldProps}
+          InputLabelProps={{
+            style: {
+              zIndex: 0, // Adjust this value as needed
+            },
+          }}
           onChange={onChange}
           onKeyDown={handleKeyDown}
         />

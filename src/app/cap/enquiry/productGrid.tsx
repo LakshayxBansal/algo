@@ -115,6 +115,9 @@ const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
 });
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  '.MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal': {
+    zIndex: 0,
+  },
   "& .super-app-theme--Rejected": {
     ...getTextColor(theme.palette.error.main, theme, 0.1),
     "&:hover": {
