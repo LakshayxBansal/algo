@@ -4,7 +4,9 @@ import { checkPhone, checkPhoneEmpty } from "../utils/phoneUtils";
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|^$/
 );
-const panRegEx = new RegExp(/^[a-zA-Z0-9]{5}[0-9]{4}[a-zA-Z0-9]$/);
+// const panRegEx = new RegExp(/^[a-zA-Z0-9]{5}[0-9]{4}[a-zA-Z0-9]$/);
+const panRegEx = new RegExp(/^[A-Z]{5}[0-9]{4}[A-Z]$/);
+
 const emailRegex = new RegExp(
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 );
@@ -298,20 +300,20 @@ export const stateListSchema = z.object({
 export const executiveSchema = z
   .object({
     id: z.number().optional(),
-    alias: z.string().max(60).optional(),
+    alias: z.string().max(60, "Alias must contain atmost 60 character(s)").optional(),
     name: z
       .string()
       .min(1, "Executive Name must conatin atleast 1 character")
       .max(60, "Executive Name must contain atmost 60 character(s)"),
-    address1: z.string().max(75).optional(),
-    address2: z.string().max(75).optional(),
-    address3: z.string().max(75).optional(),
-    city: z.string().max(75).optional(),
+    address1: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
+    address2: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
+    address3: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
+    city: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
     state_id: z.number().optional(),
-    state: z.string().max(60).optional(),
-    pincode: z.string().max(15).optional(),
+    state: z.string().max(60, "State name must contain atmost 60 character(s)").optional(),
+    pincode: z.string().max(15, "Pincode must contain atmost 15 character(s)").optional(),
     country_id: z.number().optional(),
-    country: z.string().max(60).optional(),
+    country: z.string().max(60, "Country name must contain atmost 60 character(s)").optional(),
     email: z
       .union([
         z.literal(""),
@@ -358,7 +360,8 @@ export const executiveSchema = z
       z.literal(""),
       z.string().min(10).regex(panRegEx, "Invalid PAN Number!"),
     ]),
-    aadhaar: z.union([z.literal(""), z.string().max(20)]),
+    // aadhaar: z.union([z.literal(""), z.string().max(20)]),
+    aadhaar: z.union([z.literal(""), z.string().optional()]),
   })
   .refine(
     (schema) => {

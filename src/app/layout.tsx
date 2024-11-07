@@ -21,23 +21,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  // const pathname = usePathname();
   
 
-  useEffect(() => {
-    document.body.classList.add('cursor-wait');
+  // useEffect(() => {
+  //   document.body.classList.add('cursor-wait');
 
-    const handleComplete = () => {
-      document.body.classList.remove('cursor-wait');
-    };
+  //   const handleComplete = () => {
+  //     document.body.classList.remove('cursor-wait');
+  //   };
 
-    const timeout = setTimeout(handleComplete, 1000); // Adjust the timeout as necessary
+  //   const timeout = setTimeout(handleComplete, 1000); // Adjust the timeout as necessary
 
-    return () => {
-      clearTimeout(timeout);
-      document.body.classList.remove('cursor-wait');
-    };
-  }, [pathname]);
+  //   return () => {
+  //     clearTimeout(timeout);
+  //     document.body.classList.remove('cursor-wait');
+  //   };
+  // }, [pathname]);
 
   return (
     <html lang="en">

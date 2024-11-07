@@ -274,11 +274,14 @@ export default function LeftMenuTree(props: {
                               elevation={8}
                               style={{ maxHeight: "20em", overflowY: "auto" }}
                             >
+                              {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
+
                               {ShowPopper({
                                 pages: page.children,
                                 level: page.id,
                                 menuLevel: 0,
                               })}
+                              {/* </div> */}
                             </Paper>
                         </Grow>
                       )}
