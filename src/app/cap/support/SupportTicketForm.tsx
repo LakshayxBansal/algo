@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   FormControl,
@@ -40,6 +40,8 @@ import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import {
   masterFormPropsT,
   selectKeyValueT,
+  supportHeaderSchemaT,
+  supportLedgerSchemaT,
   supportProductSchemaT,
   supportTicketSchemaT,
   suppportProductArraySchemaT,
@@ -60,7 +62,7 @@ import {
 } from "@/app/controllers/supportSubStatus.controller";
 import Support from "./page";
 import SupportSubStatusForm from "@/app/Widgets/masters/masterForms/supportSubStatusForm";
-import { createSupportTicket } from "@/app/controllers/supportTicket.controller";
+import { createSupportTicket, updateSupportData } from "@/app/controllers/supportTicket.controller";
 import { supportDataFormat } from "@/app/utils/formatData/supportDataformat";
 import {
   getProduct,
@@ -71,15 +73,20 @@ import ProductList from "./productList";
 import SupportProductGrid from "./SupportProductGrid";
 import { ZodIssue } from "zod";
 import DocModal from "@/app/utils/docs/DocModal";
+import { update } from "lodash";
+import { format } from "path";
 
 const SupportTicketForm = (props: masterFormPropsT) => {
+
+  const masterData = props.data.masterData ?? {};
+
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [snackOpen, setSnackOpen] = useState(false);
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [status, setStatus] = useState("1");
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>(masterData);
+  const [status, setStatus] = useState(masterData.status.id!= null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
@@ -87,12 +94,14 @@ const SupportTicketForm = (props: masterFormPropsT) => {
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
 
-  const [data, setData] = useState<suppportProductArraySchemaT>([]);
+  
+  const [data, setData] = useState<suppportProductArraySchemaT>(props.data.productData ?? []);
+
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await supportDataFormat({ formData, selectValues });
 
-    let result;
+    let result:any;
 
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
@@ -154,12 +163,18 @@ const SupportTicketForm = (props: masterFormPropsT) => {
     //    result = await updateOrganisation(data);
     // } else {
     const newDocsData = docData.filter((row: any) => row.type !== "db");
+    if (props.data) {
+     data.id = props.data.ticket_id;
+     data.created_by= props.data.created_by;
+     data.stamp = props.data.stamp;
+      result = await updateSupportData(data, productData);
+    } else {
     result = await createSupportTicket({
       supportData: data,
       productData: productData,
       docData : newDocsData
     });
-    // }
+    }
     return result;
   }
 
@@ -233,6 +248,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       fnFetchDataByID={getContactById}
                       required
                       formError={formError?.contact ?? formError.contact}
+                      defaultValue={masterData.contact}
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <ContactForm
                           setDialogOpen={fnDialogOpen}
@@ -249,7 +265,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       inputType={InputType.DATETIMEINPUT}
                       id="date"
                       name="date"
-                      defaultValue={dayjs(new Date())}
+                      // defaultValue={headerData?.date ?? dayjs(new Date())}
+                      defaultValue={dayjs(props?.data?.date)?? dayjs(new Date())}
                       required
                       error={formError?.date?.error}
                       helperText={formError?.date?.msg}
@@ -264,6 +281,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       name="tkt_number"
                       fullWidth
                       required
+                      defaultValue={props.data?.tkt_number}
                       error={formError?.tkt_number?.error}
                       helperText={formError?.tkt_number?.msg}
                       sx={{
@@ -287,6 +305,9 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       fnFetchDataByID={getSupportCategoryById}
                       required
                       formError={formError?.category ?? formError.category}
+                      defaultValue={
+                       masterData.category
+                      }
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <SupportCategoryForm
                           setDialogOpen={fnDialogOpen}
@@ -312,6 +333,9 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       required
                       formError={
                         formError?.received_by ?? formError.received_by
+                      }
+                      defaultValue={
+                        masterData.received_by
                       }
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <ExecutiveForm
@@ -376,6 +400,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     multiline
                     name="call_receipt_remark"
                     id="call_receipt_remark"
+                    defaultValue={props.data?.call_receipt_remark}
                     rows={6}
                     fullWidth
                   />
@@ -386,6 +411,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     label="Suggested Action Remarks"
                     multiline
                     name="suggested_action_remark"
+                    defaultValue={props.data?.suggested_action_remark}
                     id="suggested_action_remark"
                     rows={6}
                     fullWidth
@@ -416,7 +442,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                   row
                   name="status"
                   id="status"
-                  defaultValue="1"
+                  defaultValue={(masterData?.status != null ? masterData?.status.id.toString() : "1")}
                   onChange={onStatusChange}
                   sx={{ color: "black" }}
                 >
@@ -448,6 +474,10 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 fnFetchDataByID={getSupportSubSatusById}
                 required
                 formError={formError?.sub_status ?? formError.sub_status}
+                defaultValue={
+                 masterData.sub_status
+                }
+                allowNewAdd={status === '1'}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportSubStatusForm
                     setDialogOpen={fnDialogOpen}
@@ -466,7 +496,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
                 fetchDataFn={getSupportAction}
                 fnFetchDataByID={getSupportActionById}
-                formError={formError.action_taken}
+            
+                formError={formError?.action_taken ?? formError.action_taken}
+                defaultValue={
+                  masterData.action_taken
+                }
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportActionForm
                     setDialogOpen={fnDialogOpen}
@@ -484,6 +518,9 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getSupportAction}
                 formError={formError?.next_action ?? formError.next_action}
+                defaultValue={
+                  masterData.next_action
+                }
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportActionForm
                     setDialogOpen={fnDialogOpen}
@@ -499,7 +536,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 inputType={InputType.DATETIMEINPUT}
                 id="next_action_date"
                 name="next_action_date"
-                defaultValue={dayjs(new Date())}
+                // defaultValue={ledgerData?.next_action_date ?? dayjs(new Date())}
+                defaultValue={dayjs(props.data?.next_action_date ) ?? dayjs(new Date())}
               />
 
               <Grid item xs={12} md={12}>
@@ -513,6 +551,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     rows={2}
                     fullWidth
                     disabled={status === "1"}
+                    defaultValue={props.data?.closure_remark}
                   />
                 </Grid>
               </Grid>
@@ -562,7 +601,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={"Ticket Details saved successfully!"}
+        message={props.data ?"Ticket Details updated successfully!" :"Ticket Details saved successfully!"}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
