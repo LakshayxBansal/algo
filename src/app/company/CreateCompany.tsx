@@ -53,6 +53,9 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        if(props.parentData==="addcompany"){
+          router.push("/company");
+        }
       }, 1000);
     } else {
       const issues = result.data;

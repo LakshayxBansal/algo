@@ -19,13 +19,17 @@ import {
   supportProductArraySchema,
   supportTicketSchema,
 } from "../zodschema/zodschema";
+import { uploadDocument } from "./document.controller";
+import { getObjectByName } from "./rights.controller";
 
 export async function createSupportTicket({
   supportData,
   productData,
+  docData
 }: {
   supportData: supportTicketSchemaT;
   productData: suppportProductArraySchemaT;
+  docData : any
 }) {
   let result;
   try {
@@ -51,6 +55,8 @@ export async function createSupportTicket({
         );
         if (dbResult?.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Support");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
         } else {
           result = {
             status: false,
