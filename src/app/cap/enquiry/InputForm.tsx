@@ -64,23 +64,9 @@ import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
-const strA = "custom_script.js";
-const scrA = require("./" + strA);
-//import {makeInputReadOnly} from './custom_script';
-
-/*
-const My_COMPONENTS = {
-  ComponentA: require(strA),
-  ComponentB: require('./folder/ComponentB'),
-}
-*/
 export interface IformData {
   userName: string;
 }
-
-const formConfig = {
-  showProducts: false,
-};
 
 const rows: any = [];
 
@@ -90,7 +76,12 @@ export default function InputForm(props: {
   loggedInUserData: any;
 }) {
   const [status, setStatus] = useState("1");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({ "received_by": { id: props.loggedInUserData.id, name: props.loggedInUserData.name } });
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({
+    received_by: {
+      id: props.loggedInUserData.id,
+      name: props.loggedInUserData.name,
+    },
+  });
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -161,13 +152,6 @@ export default function InputForm(props: {
     }
   };
 
-  const handleButtonClick = async () => {
-    scrA.makeInputReadOnly("ticket_description");
-
-    // Append the script element to the head
-    //document.head.appendChild(script);
-  };
-
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getEnquirySubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -197,7 +181,7 @@ export default function InputForm(props: {
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid container>
           <Grid item xs={12}>
-            <Seperator>Enquiry Details</Seperator>
+            <Seperator><div style={{ fontSize: "0.8em" , fontWeight: "bold"}}>Enquiry Details</div></Seperator>
             <Tooltip
               title={docData.length > 0 ? (
                 docData.map((file: any, index: any) => (
@@ -396,6 +380,8 @@ export default function InputForm(props: {
                     id="call_receipt_remark"
                     rows={6}
                     fullWidth
+                    error={formError?.call_receipt_remark?.error}
+                    helperText={formError?.call_receipt_remark?.msg}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -413,7 +399,7 @@ export default function InputForm(props: {
             </Grid>
 
             <Grid item xs={12}>
-              <Seperator>Final Status</Seperator>
+              <Seperator><div style={{ fontSize: "0.8em" , fontWeight: "bold"}}>Final Status</div></Seperator>
             </Grid>
             <Box
               sx={{
@@ -509,6 +495,9 @@ export default function InputForm(props: {
                 id="next_action_date"
                 name="next_action_date"
                 defaultValue={dayjs(new Date())}
+                disabled={status === "2"}
+                error={formError?.next_action_date?.error}
+                helperText={formError?.next_action_date?.msg}
               />
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
@@ -518,7 +507,7 @@ export default function InputForm(props: {
                     multiline
                     name="closure_remark"
                     id="closure_remark"
-                    rows={2}
+                    rows={1}
                     fullWidth
                     disabled={status === "1"}
                   />
