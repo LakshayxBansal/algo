@@ -5,7 +5,7 @@ import { masterFormPropsT, optionsDataT, selectKeyValueT } from "../../models/mo
 import { useState } from "react";
 import Seperator from "../../Widgets/seperator";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateCallAllocation } from "../../controllers/callExplorer.controller";
+import { updateCallAllocation, updateSupportCallAllocation } from "../../controllers/callExplorer.controller";
 import { handleRefresh } from "./AutoGrid";
 
 interface customprop extends masterFormPropsT {
@@ -31,7 +31,12 @@ export default function AllocateCall(props: customprop) {
         data.contactGroup_id = selectValues.contactGroup
             ? selectValues.contactGroup.id
             : 0;
-        const result = await updateCallAllocation(selectValues.executive.id, data.remark, props.data);
+        let result; 
+        if(props.formName ==="enquiry"){
+        result=await updateCallAllocation(selectValues.executive.id, data.remark, props.data);}
+        else{
+            result = await updateSupportCallAllocation(selectValues.executive.id, data.remark, props.data);
+        }
         if (result > 0) {
             setSnackOpen(true);
             handleRefresh();

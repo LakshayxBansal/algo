@@ -8,6 +8,7 @@ import {
   getCallSupportTicketsCountDb,
   getCallSupportTicketsDb,
   updateCallAllocationDb,
+  updateSupportCallAllocationDb,
 } from "../services/callExplorer.service";
 
 export async function getCallEnquiries(
@@ -64,6 +65,27 @@ export async function updateCallAllocation(
     if (session?.user.dbInfo) {
       const data = { executiveId, remark, id };
       const result = await updateCallAllocationDb(
+        session.user.dbInfo.dbName,
+        session.user.userId,
+        data
+      );
+      return result.affectedRows;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateSupportCallAllocation(
+  executiveId: number,
+  remark: string,
+  id: Array<number>
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const data = { executiveId, remark, id };
+      const result = await updateSupportCallAllocationDb(
         session.user.dbInfo.dbName,
         session.user.userId,
         data
