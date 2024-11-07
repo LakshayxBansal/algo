@@ -4,7 +4,7 @@ import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Checkbox, { CheckboxProps } from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Dayjs } from "dayjs";
-import 'dayjs/locale/en';
+import "dayjs/locale/en";
 import {
   DatePickerProps,
   DateTimePicker,
@@ -27,20 +27,19 @@ import {
   Unstable_NumberInput as BaseNumberInput,
   NumberInputProps,
   numberInputClasses,
-} from '@mui/base/Unstable_NumberInput';
+} from "@mui/base/Unstable_NumberInput";
 import { CustomTextField } from "@/app/utils/styledComponents";
 import capitalizeFirstChar from "@/app/utils/titleCase.utils";
 
-
-// for number 
-  // inputtype = TEXT
-  // type="number"
-  // decPlaces=2 // for 2 decimal places
-  // inputProps: {
-  //   min: 0,
-  //   max: 10,
-  //   style: { textAlign: "right" },
-  // },
+// for number
+// inputtype = TEXT
+// type="number"
+// decPlaces=2 // for 2 decimal places
+// inputProps: {
+//   min: 0,
+//   max: 10,
+//   style: { textAlign: "right" },
+// },
 
 export enum InputType {
   TEXT,
@@ -55,7 +54,7 @@ export enum InputType {
 interface BaseControlProps {
   inputType: InputType;
   custLabel?: string;
-  decPlaces?: number,
+  decPlaces?: number;
   // Add any additional props here
 }
 
@@ -64,13 +63,31 @@ interface BaseControlProps {
 type CustomControlProps<T> = BaseControlProps & T;
 
 // Define the base control component
-export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, custLabel = "", decPlaces,titleCase= false, ...props }) => {
+export const InputControl: React.FC<CustomControlProps<any>> = ({
+  inputType,
+  custLabel = "",
+  decPlaces,
+  titleCase = false,
+  ...props
+}) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
-  const [value, setValue] = React.useState(props.defaultValue ? props.defaultValue : '')
+  const [value, setValue] = React.useState(
+    props.defaultValue ? props.defaultValue : ""
+  );
   const inputRef = useRef<HTMLDivElement | null>(null);
 
+  let prevKey = "",
+    currentKey = "";
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    prevKey = currentKey;
+    currentKey = event.key;
+  };
+
   if (inputRef.current) {
-    const flagButton = inputRef.current.getElementsByClassName('MuiTelInput-IconButton')[0] as HTMLElement;
+    const flagButton = inputRef.current.getElementsByClassName(
+      "MuiTelInput-IconButton"
+    )[0] as HTMLElement;
     if (flagButton) {
       flagButton.tabIndex = -1;
     }
@@ -80,8 +97,19 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
-        if(titleCase && props.type!== "number"){
-         event.target.value = capitalizeFirstChar(event.target.value);
+        if (titleCase && props.type !== "number") {
+          //  event.target.value = capitalizeFirstChar(event.target.value);
+          const currValue = event.target.value;
+          const position = event.target.selectionStart;
+          if (
+            currValue.length === 1 ||
+            (prevKey === " " &&
+              position === currValue.length &&
+              currentKey !== "Backspace")
+          ) {
+            const newChar = currValue.charAt(currValue.length - 1).toUpperCase();
+            event.target.value = currValue.slice(0, -1) + newChar;
+          }
         }
         if (props.type === "number") {
           const value = event.target.value;
@@ -115,8 +143,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
-    console.log('datechange')
-    console.log(value)
+    console.log("datechange");
+    console.log(value);
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -159,7 +187,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
 
   // Render either a TextField or a Checkbox based on the props
 
-    
   switch (inputType) {
     case InputType.TEXT: {
       // It's a TextField
@@ -221,11 +248,11 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({ inputType, cus
       // It's a phone input
       return (
         <MuiTelInput
-        ref={inputRef}
+          ref={inputRef}
           defaultCountry="IN"
           {...props}
           value={value}
-          onChange={onPhoneChange} 
+          onChange={onPhoneChange}
         />
       );
       break;

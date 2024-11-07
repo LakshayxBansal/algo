@@ -443,6 +443,8 @@ export const supportHeaderSchema = z.object({
   created_by: z.number().optional(),
   created_on: z.date().optional(),
   call_receipt_remark: z.string().max(5000).optional(),
+  modified_by_name: z.string().max(60).optional(),
+  created_by_name: z.string().max(60).optional()
 });
 
 export const supportLedgerSchema = z.object({
@@ -456,7 +458,7 @@ export const supportLedgerSchema = z.object({
   sub_status_id: z.number().min(1,"Sub status must not be empty"),
   action_taken_id: z.number().min(1,"Action must not be empty"),
   action_taken: z.string().min(1,"Action must not be empty").max(60),
-  next_action_id: z.number().min(1).optional(),
+  next_action_id: z.number().min(1).nullable().optional(),
   next_action: z.string().max(60).optional(),
   next_action_date: z.string().min(1).max(20),
   suggested_action_remark: z.string().max(5000).optional(),
@@ -465,6 +467,13 @@ export const supportLedgerSchema = z.object({
   ticket_tran_type: z.number().optional(),
   id: z.number().optional(),
   active: z.number().optional(),
+  modified_by: z.number().optional(),
+  modified_on: z.date().optional(),
+  created_by: z.number().optional(),
+  created_on: z.date().optional(),
+  modified_by_name: z.string().max(60).optional(),
+  created_by_name: z.string().max(60).optional(),
+  stamp: z.number().optional(),
 });
 
 
@@ -480,13 +489,16 @@ export const supportProductSchema = z.object({
     .min(1, "Field must not be empty")
     .max(60, "Field must contain at most 60 character(s)"),
   quanity: z.number().min(1).optional(),
-  unit_id : z.number().min(1).optional(),
+  unit_id : z.number().min(1).nullable().optional(),
   unit: z.string().max(60).optional(),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+  modified_by_name: z.string().max(60).optional(),
+  created_by_name: z.string().max(60).optional(),
+
 })
 
 export const supportProductArraySchema= z.array(supportProductSchema);
@@ -839,3 +851,11 @@ export const inviteUserSchema = z
     },
     { message: "Please provide email", path: ["email"] }
   );
+
+  export const docDescriptionSchema = z.object({
+    id : z.number().optional(),
+    description : z.string().min(1).max(255),
+    dataId : z.number().optional(),
+    file : z.string().optional(),
+    docId : z.string().optional()
+  }) 
