@@ -81,7 +81,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
 
   const [snackOpen, setSnackOpen] = useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>(masterData);
-  const [status, setStatus] = useState(masterData?.status?.id!= null ? masterData?.status.id.toString() : "1");
+  const [status, setStatus] = useState(masterData.status.id!= null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
