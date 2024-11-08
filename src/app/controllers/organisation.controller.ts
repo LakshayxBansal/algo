@@ -19,7 +19,7 @@ import { bigIntToNum } from "../utils/db/types";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
 
-export async function createOrganisation(data: zm.organisationSchemaT,docData : any) {
+export async function createOrganisation(data: zm.organisationSchemaT,docData : zm.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -79,7 +79,7 @@ export async function createOrganisation(data: zm.organisationSchemaT,docData : 
   return result;
 }
 
-export async function updateOrganisation(data: zm.organisationSchemaT, docData : any) {
+export async function updateOrganisation(data: zm.organisationSchemaT, docData : zm.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();

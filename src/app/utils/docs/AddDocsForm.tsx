@@ -12,6 +12,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { docDescriptionSchemaT } from "@/app/models/models";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -41,13 +42,12 @@ export default function AddDocsForm(props: any) {
         let data: { [key: string]: any } = {}; // Initialize an empty object
 
         data["description"] = formData.get("description");
-        data["document"] = selectedFileName;
+        data["fileName"] = selectedFileName;
         data["file"] = file;
         data["fileType"] = fileType;
         data["type"] = "state";
-        console.log("data : ",data);
         props.setData
-            ? props.setData((prevData: any) => [
+            ? props.setData((prevData : docDescriptionSchemaT[]) => [
                 ...prevData,
                 { id: (0-prevData.length-1), ...data },
             ])

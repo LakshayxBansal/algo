@@ -877,7 +877,10 @@ export const inviteUserSchema = z
   export const docDescriptionSchema = z.object({
     id : z.number().optional(),
     description : z.string().min(1).max(255),
-    dataId : z.number().optional(),
+    fileName : z.string().optional(),
+    objectId : z.number().optional(),
+    objectTypeId : z.number().optional(),
     file : z.string().optional(),
+    fileType : z.string().optional(),
     docId : z.string().optional()
   }) 
