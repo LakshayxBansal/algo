@@ -57,7 +57,7 @@ import {
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
-import { optionsDataT, selectKeyValueT } from "@/app/models/models";
+import { docDescriptionSchemaT, optionsDataT, selectKeyValueT } from "@/app/models/models";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
@@ -100,7 +100,7 @@ export default function InputForm(props: {
   const [data, setData] = React.useState(rows);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
-  const [docData, setDocData] = React.useState([]);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {

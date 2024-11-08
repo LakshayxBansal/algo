@@ -29,6 +29,7 @@ import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import {
   contactSchemaT,
+  docDescriptionSchemaT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -54,7 +55,7 @@ export default function ContactForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);

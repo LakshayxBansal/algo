@@ -4,12 +4,12 @@ import excuteQuery from "../utils/db/db";
 import { docDescriptionSchemaT } from "../models/models";
 import { logger } from "../utils/logger.utils";
 
-export async function addDocumentDB(crmDb: string, data: docDescriptionSchemaT, objectId : number) {
+export async function addDocumentDB(crmDb: string, data: docDescriptionSchemaT, objectTypeId : number) {
     try {
         const result = await excuteQuery({
             host: crmDb,
-            query: "insert into docs_table (description,doc_id,data_id,object_id) values (?,?,?,?);",
-            values: [data.description, data.docId, data.dataId, objectId]
+            query: "insert into object_docs_table (description,doc_id,object_id,object_type_id) values (?,?,?,?);",
+            values: [data.description, data.docId, data.objectId, objectTypeId]
         });
         return result;
     } catch (e) {
@@ -17,12 +17,12 @@ export async function addDocumentDB(crmDb: string, data: docDescriptionSchemaT, 
     }
 }
 
-export async function getDocsDB(crmDb: string, dataId: number,objectId : number) {
+export async function getDocsDB(crmDb: string, objectId: number,objectTypeId : number) {
     try {
         const result = await excuteQuery({
             host: crmDb,
-            query: "select *,'db' as type from docs_table where data_id = ? and object_id = ?;",
-            values: [dataId,objectId]
+            query: "select id as id, description as description, doc_id as docId,'db' as type from object_docs_table where object_id = ? and object_type_id = ?;",
+            values: [objectId,objectTypeId]
         });
         return result;
     } catch (e) {
@@ -34,7 +34,7 @@ export async function updateExecutiveDocDB(crmDb: string, description: string, i
     try {
         await excuteQuery({
             host: crmDb,
-            query: "update docs_table set description = ? where id = ?;",
+            query: "update object_docs_table set description = ? where id = ?;",
             values: [description, id]
         });
     } catch (e) {
@@ -46,7 +46,7 @@ export async function deleteExecutiveDocDB(crmDb: string, id: number) {
     try {
         await excuteQuery({
             host: crmDb,
-            query: "delete from docs_table where id = ?;",
+            query: "delete from object_docs_table where id = ?;",
             values: [id]
         });
     } catch (e) {
