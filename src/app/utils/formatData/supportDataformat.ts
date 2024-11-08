@@ -1,11 +1,14 @@
+import Category from "@/app/cap/admin/lists/categoryList/page";
 import { selectKeyValueT } from "@/app/models/models";
 
 export async function supportDataFormat({
   formData,
   selectValues,
+  otherData
 }: {
   formData: FormData;
   selectValues: selectKeyValueT;
+  otherData?: any
 }) {
   const formatDate = (dateStr: string ): string => {
     const dt = new Date(dateStr);
@@ -24,7 +27,6 @@ export async function supportDataFormat({
     contact: selectValues.contact?.name ?? "",
     received_by: selectValues.received_by?.name ?? "",
     category: selectValues.category?.name ?? "",
-    source: selectValues.source?.name ?? "",
     call_receipt_remark: (formData.get("call_receipt_remark") ?? "") as string,
   };
 
@@ -43,5 +45,8 @@ export async function supportDataFormat({
     closure_remark: (formData.get("closure_remark") ?? "") as string,
   };
 
-  return { ...headerData, ...ledgerData };
+  return { ...headerData, ...ledgerData ,...otherData};
 }
+
+
+

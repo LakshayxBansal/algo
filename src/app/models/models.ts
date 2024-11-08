@@ -17,6 +17,7 @@ export type inviteUserSchemaT = z.infer<typeof zs.inviteUserSchema>;
 export type companySchemaT = z.infer<typeof zs.companySchema>;
 export type currencySchemaT = z.infer<typeof zs.currencySchema>;
 export type areaSchemaT = z.infer<typeof zs.areaSchema>;
+export type docDescriptionSchemaT = z.infer<typeof zs.docDescriptionSchema>;
 
 export type contactGroupSchemaT = z.infer<typeof zs.contactGroupSchema>;
 
@@ -101,6 +102,8 @@ export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
 //Support ticket schemas
 export type supportTicketSchemaT = z.infer<typeof zs.supportTicketSchema>;
+export type supportHeaderSchemaT = z.infer<typeof zs.supportHeaderSchema>;
+export type supportLedgerSchemaT = z.infer<typeof zs.supportLedgerSchema>;
 export type supportProductSchemaT= z.infer<typeof zs.supportProductSchema>;
 export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArraySchema>;
 

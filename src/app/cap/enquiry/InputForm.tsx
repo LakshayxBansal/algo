@@ -1,13 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Badge,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Radio,
   RadioGroup,
   Snackbar,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 
 import { createEnquiry } from "@/app/controllers/enquiry.controller";
@@ -35,6 +39,8 @@ import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import DocModal from "@/app/utils/docs/DocModal";
 
 import {
   getExecutive,
@@ -58,23 +64,9 @@ import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
-const strA = "custom_script.js";
-const scrA = require("./" + strA);
-//import {makeInputReadOnly} from './custom_script';
-
-/*
-const My_COMPONENTS = {
-  ComponentA: require(strA),
-  ComponentB: require('./folder/ComponentB'),
-}
-*/
 export interface IformData {
   userName: string;
 }
-
-const formConfig = {
-  showProducts: false,
-};
 
 const rows: any = [];
 
@@ -84,7 +76,12 @@ export default function InputForm(props: {
   loggedInUserData: any;
 }) {
   const [status, setStatus] = useState("1");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({"received_by":{id:props.loggedInUserData.id, name:props.loggedInUserData.name}});
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({
+    received_by: {
+      id: props.loggedInUserData.id,
+      name: props.loggedInUserData.name,
+    },
+  });
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -94,6 +91,8 @@ export default function InputForm(props: {
   const [data, setData] = React.useState(rows);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
+  const [docData, setDocData] = React.useState([]);
+  const [docDialogOpen, setDocDialogOpen] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await enquiryDataFormat({ formData, selectValues });
@@ -104,6 +103,7 @@ export default function InputForm(props: {
     result = await createEnquiry({
       enqData: formatedData,
       product: data,
+      docData: docData
     });
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -152,13 +152,6 @@ export default function InputForm(props: {
     }
   };
 
-  const handleButtonClick = async () => {
-    scrA.makeInputReadOnly("ticket_description");
-
-    // Append the script element to the head
-    //document.head.appendChild(script);
-  };
-
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getEnquirySubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -188,7 +181,31 @@ export default function InputForm(props: {
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid container>
           <Grid item xs={12}>
-            <Seperator>Enquiry Details</Seperator>
+            <Seperator><div style={{ fontSize: "0.8em" , fontWeight: "bold"}}>Enquiry Details</div></Seperator>
+            <Tooltip
+              title={docData.length > 0 ? (
+                docData.map((file: any, index: any) => (
+                  <Typography variant="body2" key={index}>
+                    {file.description}
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2" color="white">
+                  No files available
+                </Typography>
+              )}
+            >
+              <IconButton
+                sx={{ float: "right", position: "relative", paddingRight: 0 }}
+                onClick={() => setDocDialogOpen(true)}
+                aria-label="file"
+              >
+                <Badge badgeContent={docData.length} color="primary">
+                  <AttachFileIcon></AttachFileIcon>
+                </Badge>
+
+              </IconButton>
+            </Tooltip>
           </Grid>
           <Grid item xs={12}>
             <Grid container>
@@ -363,6 +380,8 @@ export default function InputForm(props: {
                     id="call_receipt_remark"
                     rows={6}
                     fullWidth
+                    error={formError?.call_receipt_remark?.error}
+                    helperText={formError?.call_receipt_remark?.msg}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -380,7 +399,7 @@ export default function InputForm(props: {
             </Grid>
 
             <Grid item xs={12}>
-              <Seperator>Final Status</Seperator>
+              <Seperator><div style={{ fontSize: "0.8em" , fontWeight: "bold"}}>Final Status</div></Seperator>
             </Grid>
             <Box
               sx={{
@@ -476,6 +495,9 @@ export default function InputForm(props: {
                 id="next_action_date"
                 name="next_action_date"
                 defaultValue={dayjs(new Date())}
+                disabled={status === "2"}
+                error={formError?.next_action_date?.error}
+                helperText={formError?.next_action_date?.msg}
               />
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
@@ -485,7 +507,7 @@ export default function InputForm(props: {
                     multiline
                     name="closure_remark"
                     id="closure_remark"
-                    rows={2}
+                    rows={1}
                     fullWidth
                     disabled={status === "1"}
                   />
@@ -526,13 +548,22 @@ export default function InputForm(props: {
             />
           </AddDialog>
         )}
+        {docDialogOpen && (
+          <AddDialog
+            title=""
+            open={docDialogOpen}
+            setDialogOpen={setDocDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDocDialogOpen} />
+          </AddDialog>
+        )}
       </form>
       <Snackbar
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
         message={"Enquiry saved successfully!"}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center"}}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
   );
