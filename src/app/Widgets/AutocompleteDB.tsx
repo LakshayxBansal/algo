@@ -214,7 +214,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
-        console.log(newValue);
+        // console.log(newValue);
 
         if (reason != "blur") {
           props.setDialogVal(

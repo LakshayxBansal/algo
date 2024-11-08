@@ -259,10 +259,17 @@ export default function ProductGrid({
               required
               inputType={InputType.TEXT}
               type="number"
-              decPlaces={0}
-              min={0}
-              max={10}
-              // style= { textAlign: "right" },
+              inputProps={{
+                min: 0,
+                max: 10000000,
+                style: { textAlign: "right" },
+                onKeyDown: (e: any) => {
+                  // Prevent 'e' character
+                  if (e.key === "e" || e.key === "E") {
+                    e.preventDefault();
+                  }
+                },
+              }}
               name="quantity"
               id="quantity"
               defaultValue={params.row.quantity}
