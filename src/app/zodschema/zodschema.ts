@@ -859,6 +859,21 @@ export const inviteUserSchema = z
     { message: "Please provide email", path: ["email"] }
   );
 
+  export const regionalSettingSchema = z.object({
+    id: z.number().optional(),
+    country_id: z.number(),
+    state_id: z.number(),
+    country: z.string().optional(),
+    state: z.string().optional(),
+    decimalPaces: z.string().optional(),
+    timeFormat: z.string().optional(),
+    currencyString: z.string().optional(),
+    currencySymbol: z.string().optional(),
+    currencySubString: z.string().optional(),
+    currencyCharacter: z.string().optional(),
+    dateformat: z.string().optional(),
+  });
+
   export const docDescriptionSchema = z.object({
     id : z.number().optional(),
     description : z.string().min(1).max(255),

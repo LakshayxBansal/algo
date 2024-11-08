@@ -1,5 +1,5 @@
 "use server";
-import { companySchemaT, dbInfoT, userSchemaT } from "../models/models";
+import { companySchemaT, dbInfoT, regionalSettingSchemaT } from "../models/models";
 import {
   createCompanyDB,
   getHostId,
@@ -13,6 +13,12 @@ import {
   updateCompanyDB,
   dropCompanyDatabase,
 } from "../services/company.service";
+import {
+  createRegionalSettingDb,
+  getCountryWithCurrencyDb,
+  getRegionalSettingDb,
+  updateteRegionalSettingDb,
+} from "../services/config.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
@@ -89,9 +95,9 @@ export async function createCompany(data: companySchemaT) {
 
       if (parsed.success) {
         let dbName = "crmapp";
+        let hostDetails;
 
         const hostRes = await getHostId();
-        let hostDetails;
         if (hostRes.status) {
           hostDetails = hostRes.data;
         } else {
@@ -119,6 +125,32 @@ export async function createCompany(data: companySchemaT) {
           if (!result.status) {
             return result;
           }
+
+          const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
+
+          let regionalData: regionalSettingSchemaT = {
+            country_id: data.country_id ?? 0,
+            country: data.country ?? "",
+            state_id: data.state_id ?? 0,
+            state: data.state ?? "",
+            decimalPaces: "Two Digits",
+            timeFormat: "12 Hours",
+            currencyString: "",
+            currencySymbol: "",
+            currencySubString: "",
+            currencyCharacter: "",
+            dateformat: "",
+          };
+
+          if (data.country_id !== 0) {
+            regionalData.currencyString = countryData[0].currencyString;
+            regionalData.currencySymbol = countryData[0].currencySymbol;
+            regionalData.currencySubString = countryData[0].currencySubString;
+            regionalData.currencyCharacter = countryData[0].currencyCharacter;
+            regionalData.dateformat = countryData[0].date_format;
+          }
+
+          const regionalSettingResult = await createRegionalSettingDb(dbName, regionalData);
 
           result = { status: true, data: companyData[1] };
         } else {
@@ -173,9 +205,38 @@ export async function updateCompany(data: companySchemaT) {
     const session = await getSession();
     if (session?.user) {
       const parsed = companySchema.safeParse(data);
+      let dbName = "crmapp";
       if (parsed.success) {
         const dbResult = await updateCompanyDB(data as companySchemaT);
         if (dbResult[0].length === 0) {
+          dbName += dbResult[1][0].dbinfo_id;
+
+          const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
+
+          let regionalDataRes = (await getRegionalSettingDb(dbName))[0];
+          let regionalData: regionalSettingSchemaT = {
+            country_id: data.country_id ?? 0,
+            country: data.country ?? "",
+            state_id: data.state_id ?? 0,
+            state: data.state ?? "",
+            decimalPaces: "Two Digits",
+            timeFormat: "12 Hours",
+            currencyString: "",
+            currencySymbol: "",
+            currencySubString: "",
+            currencyCharacter: "",
+            dateformat: "",
+          };
+
+          if (data.country_id !== 0) {
+            regionalData.currencyString = countryData[0].currencyString;
+            regionalData.currencySymbol = countryData[0].currencySymbol;
+            regionalData.currencySubString = countryData[0].currencySubString;
+            regionalData.currencyCharacter = countryData[0].currencyCharacter;
+            regionalData.dateformat = countryData[0].date_format;
+          }
+
+          const regionalResult = await updateteRegionalSettingDb(dbName, regionalData, regionalDataRes.config_type_id);
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
