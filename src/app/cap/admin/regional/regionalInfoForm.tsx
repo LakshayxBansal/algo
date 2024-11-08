@@ -104,18 +104,17 @@ export default function RegionalInfo(props: {
 
   return (
     <>
-      <Paper sx={{ margin: "0 20px", padding: "1%" }}>
-        <Box mb={2} sx={{ width: "100%" }}>
+      <Paper sx={{  padding: "1%" }}>
+        <Box mb={2} sx={{ width: "80%%" }}>
           <Seperator>Regional Settings</Seperator>
         </Box>
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "90%" }}>
           {/* <form action={handleSubmit}> */}
           <Box
             sx={{
               display: "grid",
-              columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
               paddingBottom: "10px",
               flexWrap: "wrap",
             }}
@@ -183,9 +182,8 @@ export default function RegionalInfo(props: {
           <Box
             sx={{
               display: "grid",
-              columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
               paddingBottom: "10px",
               flexWrap: "wrap",
             }}
@@ -241,9 +239,8 @@ export default function RegionalInfo(props: {
           <Box
             sx={{
               display: "grid",
-              columnGap: 3,
               rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
               paddingBottom: "10px",
               flexWrap: "wrap",
             }}

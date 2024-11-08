@@ -32,7 +32,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     supportReqd: props.supportReqd ?? false,
     contractReqd: props.contractReqd ?? false,
     enquiryGenerationReqd: props.enquiryGenerationReqd ?? false,
-    regional_settingReqd: props.regional_settingReqd ?? false,
+    regionalSettingReqd: props.regionalSettingReqd ?? false,
 
     enquiryCloseCall: props.enquiryCloseCall ?? false,
     enquiryMaintainProducts: props.enquiryMaintainProducts ?? false,
@@ -50,7 +50,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
 
     enquiryGenerationVoucherNumber: props.enquiryGenerationVoucherNumber ?? false,
 
-    appVoucherNumber: props.appVoucherNumber ?? false,
+    regionalSettingVoucherNumber: props.regionalSettingVoucherNumber ?? false,
 
     generalMaintainArea: props.generalMaintainArea ?? false,
     generalMaintainImage: props.generalMaintainImage ?? false,

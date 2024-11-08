@@ -9,8 +9,8 @@ import { updateEnquirySupportConfig } from "../../../controllers/enquirySupportC
 import { enquiryConfigSchemaT, regionalSettingSchemaT, selectKeyValueT } from "@/app/models/models";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CheckBoxForm from "./checkBoxForm";
-import Dynamic from "./voucherNumberForm";
+import CheckBoxForm from "./prevCheckBoxForm";
+import Dynamic from "./prevVoucherNumberForm";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import RegionalInfo from "../regional/regionalInfoForm";
 
@@ -83,14 +83,14 @@ export default function EnquiryConfigForm(props: configT) {
  })
  const [app, setApp] = useState({
   checkBoxData: [
-    { id: "appVoucherNumber",name: "appVoucherNumber",custLabel: "Do you want to keep Voucher Number?" ,checked: props.appVoucherNumber as boolean ?? false, group: "appVoucherNumber", disable: props.regional_settingReqd}
+    { id: "appVoucherNumber",name: "appVoucherNumber",custLabel: "Do you want to keep Voucher Number?" ,checked: props.regionalSettingVoucherNumber as boolean ?? false, group: "appVoucherNumber", disable: props.regionalSettingReqd}
   ], 
 
     appPrefix: {id: "appPrefix", name: "appPrefix", value: "" },
     appSuffix: {id: "appSuffix", name: "appSuffix", value: "" },
     appLength: {id: "appLength", name: "appLength", value: "" },
     appPrefillWithZero: {id: "appPrefillWithZero", name: "appPrefillWithZero", value: false },
-    checked : props.regional_settingReqd,
+    checked : props.regionalSettingReqd,
   })
   
 const handleEnquiryChange = (name: string, dataType: string, value: any) => {
@@ -264,7 +264,6 @@ const handleCancel = () => {
                 checked={enquiry.checked}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   const isChecked = e.target.checked;
-                  // console.log("checked : ", isChecked)
                   setEnquiry((prev) => ({
                     ...prev,
                     checked: isChecked,
@@ -277,7 +276,7 @@ const handleCancel = () => {
                 }}
               />
               </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails style={{ marginLeft: "1.3rem" }}>
               <CheckBoxForm fields={enquiry.checkBoxData} type="checkBox" onChange={handleEnquiryChange}/>
               {
                (enquiry.checkBoxData[enquiry.checkBoxData.length-1].checked)&&
@@ -311,7 +310,7 @@ const handleCancel = () => {
                 }}
               />
               </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails style={{ marginLeft: "1.3rem" }}>
               <CheckBoxForm fields={support.checkBoxData} type="checkBox" onChange={handleSupportChange}/>
               {
                (support.checkBoxData[support.checkBoxData.length-1].checked)&&
@@ -345,7 +344,7 @@ const handleCancel = () => {
                 }}
               />
               </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails style={{ marginLeft: "1.3rem" }}>
               <CheckBoxForm fields={contract.checkBoxData} type="checkBox" onChange={handleContractChange}/>
               {
                (contract.checkBoxData[contract.checkBoxData.length-1].checked)&&
@@ -379,7 +378,7 @@ const handleCancel = () => {
                 }}
               />
               </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails style={{ marginLeft: "1.3rem" }}>
               <CheckBoxForm fields={enquiryGeneration.checkBoxData} type="checkBox" onChange={handleEnquiryGenerationChange}/>
               {
                (enquiryGeneration.checkBoxData[enquiryGeneration.checkBoxData.length-1].checked)&&
@@ -413,7 +412,7 @@ const handleCancel = () => {
                 }}
               />
               </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails style={{ marginLeft: "1.3rem" }}>
             <RegionalInfo data={regionalData} selectValues={selectValues} setSelectValues={setSelectValues} entityData={entityData} setEntityData={setEntityData}/>
               <CheckBoxForm fields={app.checkBoxData} type="checkBox" onChange={handleAppChange}/>
               {
