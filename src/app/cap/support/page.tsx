@@ -19,7 +19,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
             };
             const id= searchParams.id;
             let supportData:any={};
-            let formatedSupportData:any={};
+            let formatedSupportData:any;
             if(id){
            supportData = await getSupportDataById(Number(id) );
            formatedSupportData =  await formatedData(supportData);
