@@ -9,7 +9,7 @@ import FormData from 'form-data';
 import { Buffer } from "buffer";
 import axios from "axios";
 
-export async function uploadDocument(docData: any, dataId: number, objectId : number) {
+export async function uploadDocument(docData: mdl.docDescriptionSchemaT[], objectId: number, objectTypeId : number) {
     try {
         const session = await getSession();
         if (session) {
@@ -19,10 +19,10 @@ export async function uploadDocument(docData: any, dataId: number, objectId : nu
                 formData.append('app_id', '9334f8d1-1b69-476f-b143-2b5b048cc458');
                 formData.append('meta_data', `{"name": "${doc.description}"}`);
 
-                const base64Data = doc.file.replace(/^data:.*;base64,/, "");
-                const contentType = doc.fileType;
-                const buffer = Buffer.from(base64Data, 'base64');
-                formData.append('doc', buffer, { filename: doc.document, contentType: contentType });
+                const base64Data = doc?.file?.replace(/^data:.*;base64,/, "");
+                const contentType = doc?.fileType;
+                const buffer = Buffer.from(base64Data as string, 'base64');
+                formData.append('doc', buffer, { filename: doc?.fileName, contentType: contentType });
 
                 const docInfo = await axios.post("http://192.168.1.200:3000/addDoc", formData, {
                     headers: {
@@ -35,8 +35,8 @@ export async function uploadDocument(docData: any, dataId: number, objectId : nu
 
                 if (docInfo.data.status) {
                     doc["docId"] = docInfo.data.data.doc_id;
-                    doc["dataId"] = dataId;
-                    await addDocument(doc,objectId);
+                    doc["objectId"] = objectId;
+                    await addDocument(doc,objectTypeId);
                 }
             }
         }
@@ -45,7 +45,7 @@ export async function uploadDocument(docData: any, dataId: number, objectId : nu
     }
 }
 
-export async function addDocument(data: mdl.docDescriptionSchemaT, objectId : number) {
+export async function addDocument(data: mdl.docDescriptionSchemaT, objectTypeId : number) {
     let result;
     try {
         const session = await getSession();
@@ -55,7 +55,7 @@ export async function addDocument(data: mdl.docDescriptionSchemaT, objectId : nu
                 result = await addDocumentDB(
                     session.user.dbInfo.dbName,
                     data as mdl.docDescriptionSchemaT,
-                    objectId
+                    objectTypeId
                 );
             }
         }
@@ -66,11 +66,11 @@ export async function addDocument(data: mdl.docDescriptionSchemaT, objectId : nu
     return result;
 }
 
-export async function getDocs(dataId: number,objectId : number) {
+export async function getDocs(objectId: number,objectTypeId : number) {
     try {
         const session = await getSession();
         if (session) {
-            const result = await getDocsDB(session.user.dbInfo.dbName, dataId, objectId);
+            const result = await getDocsDB(session.user.dbInfo.dbName, objectId, objectTypeId);
             return result;
         }
     } catch (error) {
@@ -89,13 +89,13 @@ export async function updateExecutiveDoc(description: string, id: number) {
     }
 }
 
-export async function deleteExecutiveDoc(id: number, doc_id: string) {
+export async function deleteExecutiveDoc(id: number, docId: string) {
     try {
         const session = await getSession();
         if (session) {
             const body = {
                 "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
-                "doc_id": doc_id
+                "doc_id": docId
             }
 
             const result = await axios.delete("http://192.168.1.200:3000/deleteDoc", {
@@ -106,7 +106,6 @@ export async function deleteExecutiveDoc(id: number, doc_id: string) {
                 }
             });
             await deleteExecutiveDocDB(session.user.dbInfo.dbName, id);
-            // api to delete doc
 
         }
     } catch (error) {

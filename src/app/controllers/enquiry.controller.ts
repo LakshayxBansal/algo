@@ -14,6 +14,7 @@ import {
   enquiryProductSchemaT,
   enquiryLedgerSchemaT,
   selectKeyValueT,
+  docDescriptionSchemaT,
 } from "@/app/models/models";
 import {
   enquiryDataSchema,
@@ -40,7 +41,7 @@ export async function createEnquiry({
 }: {
   enqData: enquiryDataSchemaT;
   product: enquiryProductSchemaT[];
-  docData: any;
+  docData: docDescriptionSchemaT[]
 }) {
   let result;
   try {

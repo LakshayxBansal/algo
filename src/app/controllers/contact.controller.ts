@@ -1,7 +1,7 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT, getContactByPageT } from "../models/models";
+import { contactSchemaT, docDescriptionSchemaT, getContactByPageT } from "../models/models";
 import {
   createContactDB,
   DeleteContactList,
@@ -100,7 +100,7 @@ export async function createContactsBatch(data: any) {
   }
 }
 
-export async function createContact(data: contactSchemaT,docData : any) {
+export async function createContact(data: contactSchemaT,docData : docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -159,7 +159,7 @@ export async function createContact(data: contactSchemaT,docData : any) {
   return result;
 }
 
-export async function updateContact(data: contactSchemaT, docData : any) {
+export async function updateContact(data: contactSchemaT, docData : docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();

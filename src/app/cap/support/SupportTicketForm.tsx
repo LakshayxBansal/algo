@@ -38,6 +38,7 @@ import dayjs from "dayjs";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import {
+  docDescriptionSchemaT,
   masterFormPropsT,
   selectKeyValueT,
   supportHeaderSchemaT,
@@ -88,7 +89,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>(masterData);
   const [status, setStatus] = useState(masterData?.status?.id!= null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [docData, setDocData] = React.useState(props?.data?.docData ??[]);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data?.docData ?? []);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
