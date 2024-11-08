@@ -196,7 +196,10 @@ export const productToListFormSchema = z.object({
       path: ["product"],
     }),
   product_id: z.number().min(1),
-  quantity: z.number().min(1, { message: "Quantity Empty !" }),
+  quantity: z.number()
+  .min(1, { message: "Quantity cannot be empty or zero!" })
+  .refine((val) => val >= 0, { message: "Quantity cannot be negative!" })
+  .refine((val) => val <= 10000000, { message: "Quantity cannot exceed 10000000!" }),
   unit: z
     .string()
     .min(1)
@@ -304,20 +307,44 @@ export const stateListSchema = z.object({
 export const executiveSchema = z
   .object({
     id: z.number().optional(),
-    alias: z.string().max(60, "Alias must contain atmost 60 character(s)").optional(),
+    alias: z
+      .string()
+      .max(60, "Alias must contain atmost 60 character(s)")
+      .optional(),
     name: z
       .string()
       .min(1, "Executive Name must conatin atleast 1 character")
       .max(60, "Executive Name must contain atmost 60 character(s)"),
-    address1: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
-    address2: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
-    address3: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
-    city: z.string().max(75, "Field must contain atmost 60 character(s)").optional(),
+    address1: z
+      .string()
+      .max(75, "Field must contain atmost 60 character(s)")
+      .optional(),
+    address2: z
+      .string()
+      .max(75, "Field must contain atmost 60 character(s)")
+      .optional(),
+    address3: z
+      .string()
+      .max(75, "Field must contain atmost 60 character(s)")
+      .optional(),
+    city: z
+      .string()
+      .max(75, "Field must contain atmost 60 character(s)")
+      .optional(),
     state_id: z.number().optional(),
-    state: z.string().max(60, "State name must contain atmost 60 character(s)").optional(),
-    pincode: z.string().max(15, "Pincode must contain atmost 15 character(s)").optional(),
+    state: z
+      .string()
+      .max(60, "State name must contain atmost 60 character(s)")
+      .optional(),
+    pincode: z
+      .string()
+      .max(15, "Pincode must contain atmost 15 character(s)")
+      .optional(),
     country_id: z.number().optional(),
-    country: z.string().max(60, "Country name must contain atmost 60 character(s)").optional(),
+    country: z
+      .string()
+      .max(60, "Country name must contain atmost 60 character(s)")
+      .optional(),
     email: z
       .union([
         z.literal(""),
@@ -382,7 +409,9 @@ export const enquiryHeaderSchema = z.object({
   enq_number: z
     .string()
     .min(1, { message: "Enquiry description must not be empty" })
-    .max(75, { message: "Enquiry description must contain atmost 75 character(s)" }),
+    .max(75, {
+      message: "Enquiry description must contain atmost 75 character(s)",
+    }),
   date: z.string().min(1).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
@@ -398,7 +427,12 @@ export const enquiryHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
-  call_receipt_remark: z.string().trim().max(75, { message: "Call receipt remark must contain at most 75 character(s)" }).optional(),
+  call_receipt_remark: z
+    .string()
+    .max(5000, {
+      message: "Call receipt remark must contain at most 5000 character(s)",
+    })
+    .optional(),
 });
 
 /**
@@ -418,9 +452,24 @@ export const enquiryLedgerSchema = z.object({
   next_action_id: z.number().optional(),
   next_action: z.string().optional(),
   next_action_date: z.string().min(1).max(20).nullable().optional(),
-  suggested_action_remark: z.string().max(5000).optional(),
-  action_taken_remark: z.string().max(5000).optional(),
-  closure_remark: z.string().max(5000).optional(),
+  suggested_action_remark: z
+    .string()
+    .max(5000, {
+      message: "Suggested action remark must contain at most 5000 character(s)",
+    })
+    .optional(),
+  action_taken_remark: z
+    .string()
+    .max(5000, {
+      message: "Action taken remark must contain at most 5000 character(s)",
+    })
+    .optional(),
+  closure_remark: z
+    .string()
+    .max(5000, {
+      message: "Closure remark must contain at most 5000 character(s)",
+    })
+    .optional(),
   enquiry_tran_type: z.number().optional(),
   id: z.number().optional(),
   active: z.number().optional(),
@@ -453,7 +502,7 @@ export const supportHeaderSchema = z.object({
   created_on: z.date().optional(),
   call_receipt_remark: z.string().max(5000).optional(),
   modified_by_name: z.string().max(60).optional(),
-  created_by_name: z.string().max(60).optional()
+  created_by_name: z.string().max(60).optional(),
 });
 
 export const supportLedgerSchema = z.object({
@@ -463,10 +512,10 @@ export const supportLedgerSchema = z.object({
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1,"Sub status must not be empty").max(50),
-  sub_status_id: z.number().min(1,"Sub status must not be empty"),
-  action_taken_id: z.number().min(1,"Action must not be empty"),
-  action_taken: z.string().min(1,"Action must not be empty").max(60),
+  sub_status: z.string().min(1, "Sub status must not be empty").max(50),
+  sub_status_id: z.number().min(1, "Sub status must not be empty"),
+  action_taken_id: z.number().min(1, "Action must not be empty"),
+  action_taken: z.string().min(1, "Action must not be empty").max(60),
   next_action_id: z.number().min(1).nullable().optional(),
   next_action: z.string().max(60).optional(),
   next_action_date: z.string().min(1).max(20),
@@ -496,7 +545,7 @@ export const supportProductSchema = z.object({
     .min(1, "Field must not be empty")
     .max(60, "Field must contain at most 60 character(s)"),
   quanity: z.number().min(1).optional(),
-  unit_id : z.number().min(1).nullable().optional(),
+  unit_id: z.number().min(1).nullable().optional(),
   unit: z.string().max(60).optional(),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
@@ -505,8 +554,7 @@ export const supportProductSchema = z.object({
   created_on: z.date().optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
-
-})
+});
 
 export const supportProductArraySchema = z.array(supportProductSchema);
 
@@ -859,10 +907,10 @@ export const inviteUserSchema = z
     { message: "Please provide email", path: ["email"] }
   );
 
-  export const docDescriptionSchema = z.object({
-    id : z.number().optional(),
-    description : z.string().min(1).max(255),
-    dataId : z.number().optional(),
-    file : z.string().optional(),
-    docId : z.string().optional()
-  }) 
+export const docDescriptionSchema = z.object({
+  id: z.number().optional(),
+  description: z.string().min(1).max(255),
+  dataId: z.number().optional(),
+  file: z.string().optional(),
+  docId: z.string().optional(),
+});
