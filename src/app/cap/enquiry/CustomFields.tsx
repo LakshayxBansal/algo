@@ -25,7 +25,6 @@ type CustomFieldT = {
 }
 
 export default function CustomField(props: { desc: CustomFieldT, defaultValue: any }) {
-    console.log(props.desc);
     const [status, setStatus] = useState(0);
 
     function onStatusChange(event: React.SyntheticEvent, value: any) {
@@ -98,10 +97,10 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue: a
                             name={props.desc.column_name}
                             id={props.desc.column_name_id}
                             onChange={onStatusChange}
-                            defaultValue={props.defaultValue}
+                            defaultValue={props.defaultValue ? props.defaultValue : 0}
+                            value={status || 0}
                         >
                             <FormControlLabel
-                                value={0}
                                 control={<label />}
                                 label={props.desc.column_label + " :"}
                             />

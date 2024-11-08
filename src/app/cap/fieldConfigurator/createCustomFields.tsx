@@ -23,6 +23,8 @@ import {
 } from "@mui/icons-material";
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
+import CloseIcon from "@mui/icons-material/Close";
+
 
 type FieldItem = {
     action_id: number;
@@ -38,7 +40,7 @@ type FieldItem = {
     form_section: string | null;
     id: number;
     is_default_column: number;
-    is_default_mandatory: number;
+    is_default_mandatory: number | null;
     is_disabled: number;
     is_mandatory: number;
     modified_by: number | null;
@@ -46,19 +48,52 @@ type FieldItem = {
     object_type_id: number;
 }
 
+export interface IformData {
+    userID: number;
+}
+
 const FieldConfigurator = () => {
     const [fields, setFields] = useState<FieldItem[]>([]);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
+    const [selectedFormValue, setSelectedFormValue] = useState("");
+    const [selectedFormModeValue, setSelectedFormModeValue] = useState("");
+
+
+    const options = {
+        Form: [
+            { label: 'Enquiry', value: 26 },
+            { label: 'Contact', value: 5 },
+            { label: 'Organization', value: 19 },
+            { label: 'Item', value: 16 },
+            { label: 'Executive', value: 11 },
+            { label: 'Source', value: 2 },
+            { label: 'Executive Group', value: 12 },
+            { label: 'Contact Group', value: 6 },
+        ],
+        Mode: [
+            { label: 'Create', value: 1 },
+            { label: 'Update', value: 2 }
+        ]
+    };
+
+    const handleFormChange = (event: any) => {
+        setSelectedFormValue(event.target.value);
+    };
+
+    const handleFormModeChange = (event: any) => {
+        setSelectedFormModeValue(event.target.value);
+    };
+
 
     useEffect(() => {
         async function getFieldData() {
-            const result = await getScreenDescription(11, 1);
+            const result = await getScreenDescription(Number(selectedFormValue), Number(selectedFormModeValue));
             setFields(result);
         }
         getFieldData();
-    }, []);
+    }, [selectedFormValue, selectedFormModeValue]);
 
-    let customCount = 0;
+    let customCount = fields.filter((row: any) => row.is_default_column === 0).length + 1;
     const addField = () => {
         const newField: FieldItem = {
             action_id: 1,
@@ -74,7 +109,7 @@ const FieldConfigurator = () => {
             form_section: null,
             id: fields.length + 1,
             is_default_column: 0,
-            is_default_mandatory: 0,
+            is_default_mandatory: null,
             is_disabled: 0,
             is_mandatory: 1,
             modified_by: null,
@@ -136,15 +171,48 @@ const FieldConfigurator = () => {
 
     const handleSubmit = async () => {
         console.log("Final field order and properties:", fields);
-        await createCustomFields(11, 1, fields);
+        await createCustomFields(Number(selectedFormValue), Number(selectedFormModeValue), fields);
+        console.log("FIELDS", fields);
+
         alert("Field configuration saved!");
     };
 
     return (
         <Box sx={{ maxWidth: 1200, margin: "auto", p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                Configure Form Fields
+            <Typography variant="h6" gutterBottom>
+                Configure Form Fields :
             </Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+                <FormControl sx={{ width: 200 }} size="small" variant="outlined">
+                    <InputLabel>Select the Form</InputLabel>
+                    <Select
+                        value={selectedFormValue}
+                        onChange={handleFormChange}
+                        label="Select the Form"
+                    >
+                        {options.Form.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ width: 200 }} size="small" variant="outlined">
+                    <InputLabel>Select Form Mode</InputLabel>
+                    <Select
+                        value={selectedFormModeValue}
+                        onChange={handleFormModeChange}
+                        label="Select Form Mode"
+                    >
+                        {options.Mode.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Box>
 
             <Stack spacing={1}>
                 {fields.map((item, index) => (
@@ -164,7 +232,7 @@ const FieldConfigurator = () => {
                             }
                         }}
                     >
-                        <Stack direction="row" spacing={2} alignItems="center">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                 <DragHandleIcon color="action" />
                                 <Stack direction="column">
@@ -192,6 +260,7 @@ const FieldConfigurator = () => {
                                 size="small"
                                 sx={{ width: 200 }}
                             />
+
                             {item.is_default_column !== 1 && (
                                 <FormControl size="small" sx={{ width: 140 }}>
                                     <InputLabel>Column Type</InputLabel>
@@ -240,19 +309,29 @@ const FieldConfigurator = () => {
                                 }
                                 label="Disabled"
                             />
-                        </Stack>
+
+                            {item.is_default_column !== 1 && <Box sx={{ marginLeft: "auto" }}>
+                                <IconButton onClick={() => {
+                                    const newFields = [...fields];
+                                    newFields.splice(index, 1);
+                                    setFields(newFields);
+                                }}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </Box>}
+                        </Box>
                     </Paper>
                 ))}
             </Stack>
 
-            <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+            {selectedFormValue !== "" && selectedFormModeValue !== "" && fields.length > 0 && <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <Button variant="outlined" onClick={addField}>
                     Add Field
                 </Button>
                 <Button variant="contained" onClick={handleSubmit}>
                     Save Configuration
                 </Button>
-            </Box>
+            </Box>}
         </Box>
     );
 };
