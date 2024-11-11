@@ -1,7 +1,7 @@
 "use server"
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils"
-import { getRightsDb, manageRightsDb,getObjectsDb, getMasterObjectsDb, getTransactionObjectsDb, getReportObjectsDb } from "../services/rights.service";
+import { getRightsDb, manageRightsDb,getObjectsDb, getMasterObjectsDb, getTransactionObjectsDb, getReportObjectsDb, getObjectByNameDb } from "../services/rights.service";
 
 type DataState = {
     [key: string] : boolean;
@@ -77,6 +77,18 @@ export async function getObjects() {
         const session = await getSession();
         if(session){
             const objects = await getObjectsDb(session.user.dbInfo.dbName);
+            return objects;
+        }
+    }catch(error){
+        logger.error(error);
+    }
+}
+
+export async function getObjectByName(name : string) {
+    try{
+        const session = await getSession();
+        if(session){
+            const objects = await getObjectByNameDb(session.user.dbInfo.dbName, name);
             return objects;
         }
     }catch(error){

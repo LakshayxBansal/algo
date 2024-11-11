@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from "@mui/material";
+import { Checkbox, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from "@mui/material";
 import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
 import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -26,7 +26,7 @@ import FilterMenu from "./FilterMenu";
 import { getSupportCategory } from "@/app/controllers/supportCategory.controller";
 import { getSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
 import { getSupportAction } from "@/app/controllers/supportAction.controller";
-
+export let handleRefresh: any;
 
 export default function AutoGrid(props: any) {
   const pgSize = 10;
@@ -56,32 +56,38 @@ export default function AutoGrid(props: any) {
   const apiRef = useGridApiRef();
 
   const ITEM_HEIGHT = 30;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 200,
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 200,
+      },
     },
-  },
-};
+  };
 
-const tabOptions=[
-  {
-    "name":"enquiry",
-    "getCategory": getEnquiryCategory,
-    "getSubStatus": getEnquirySubStatus,
-    "getAction": getEnquiryAction,
-    "getCallData": getCallEnquiries
+  const tabOptions = [
+    {
+      "name": "enquiry",
+      "getCategory": getEnquiryCategory,
+      "getSubStatus": getEnquirySubStatus,
+      "getAction": getEnquiryAction,
+      "getCallData": getCallEnquiries
 
-  },{
-    "name":"support",
-    "getCategory": getSupportCategory,
-    "getSubStatus": getSupportSubStatus,
-    "getAction": getSupportAction,
-    "getCallData": getCallSupportEnquiries
-  }
-]
+    }, {
+      "name": "support",
+      "getCategory": getSupportCategory,
+      "getSubStatus": getSupportSubStatus,
+      "getAction": getSupportAction,
+      "getCallData": getCallSupportEnquiries
+    }
+  ]
+
+  React.useLayoutEffect(() => {
+    if (apiRef.current) {
+      apiRef.current.setRowSelectionModel([]); 
+    }
+  }, [value]); 
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -109,22 +115,24 @@ const tabOptions=[
   };
 
   useEffect(() => {
+    console.log("chal raa hai");
+
     setLoading(true)
     async function getEnquiries() {
       // const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
       // const supportResult= await getCallSupportEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
-      const result= await tabOptions[value].getCallData(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
+      const result = await tabOptions[value].getCallData(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
       console.log('result', result);
-     
-      
+
+
       setData(result?.result);
-      setTotalRowCount(Number(result?.count ));
+      setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
     setLoading(false)
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, value])
+  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, value, pageModel.page, pageModel.pageSize])
 
-  const handleRefresh = () => {
+  handleRefresh = () => {
     setPageModel((prev: any) => ({
       ...prev,
       page: 0,
@@ -133,6 +141,7 @@ const tabOptions=[
     setSelectedRow(null);
     setRefresh(!refresh)
   };
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -157,7 +166,9 @@ const tabOptions=[
     </>
   }
 
+
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
+    setSelectedRow
     setRowSelectionModel(selectionModel);
     // Enable Allocate Call button if there are selected rows and no row has 'Closed' callStatus
     if (selectionModel.length > 0) {
@@ -282,7 +293,6 @@ const tabOptions=[
               value={filterValueState?.date?.final}
               onChange={(val: any) => handleFilterChange("date", { ...filterValueState?.date, "final": val })}
             />
-
           </MenuItem>
         </FilterMenu>
       ),
@@ -680,9 +690,9 @@ const tabOptions=[
 
 
 
-	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-		setValue(newValue);
-	};
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   const CallType = (props: { text: string, color: string }) => {
     return (
@@ -703,25 +713,57 @@ const tabOptions=[
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '85vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%" , paddingTop: 2 } }}>
+    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '85vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%", paddingTop: 2 } }}>
       <Box sx={{ maxWidth: "92vw" }} >
         <Seperator >
           <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-           
+
             <Box>
-            <Box sx={{ width: '100%' }}>
-			<Tabs
-				value={value}
-				onChange={handleChange}
-				aria-label="tabs for different content"
-			>
-				<Tab label="Enquiry" />
-				<Tab label="Support" />
-			</Tabs>
-			
-		</Box>
+              <Box sx={{ width: '100%' }}>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="tabs for different content"
+                  variant="fullWidth"
+        sx={{
+          position: 'relative',
+          '& .MuiTab-root': {
+            marginRight: '2px',
+            padding: '8px 16px',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            border: '1px solid #d3d3d3', 
+            backgroundColor: '#f1f1f1', 
+            boxShadow: '0px 6px 6px rgba(0, 0, 0, 0.1)', 
+            transition: 'box-shadow 0.3s, transform 0.3s, background-color 0.3s',
+            '&:hover': {
+              backgroundColor: '#e0e0e0', 
+              boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.2)', 
+              transform: 'translateY(-2px)', 
+            },
+            '&.Mui-selected': {
+              backgroundColor: '#ffffff', // White background for the selected tab
+              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.3)', // Stronger shadow for active tab
+              borderBottom: '3px solid #1976d2', // Chrome-like selected tab indicator
+              fontWeight: 'bold', // Make selected tab text bold
+            },
+            '&:not(.Mui-selected)': {
+              opacity: 0.6, 
+              boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)', 
+            },
+          },
+          '& .MuiTabs-indicator': {
+            display: 'none', 
+          },
+        }}
+                >
+                  <Tab label="Enquiry" />
+                  <Tab label="Support" />
+                </Tabs>
+
+              </Box>
             </Box>
-            
+
             <Box
               sx={{
                 display: "flex",
@@ -745,7 +787,7 @@ const tabOptions=[
                 </Grid>
               </Grid>
             </Box>
-         
+
             <Box>
               {handleColumnVisibility()}
             </Box>
@@ -757,6 +799,7 @@ const tabOptions=[
             disableColumnMenu
             rowHeight={30}
             columnHeaderHeight={30}
+            keepNonExistentRowsSelected
             rows={data ? data : []}
             columns={column1}
             columnVisibilityModel={columnVisibilityModel}
@@ -833,133 +876,135 @@ const tabOptions=[
             }}
           />
         </Paper>
-       
 
-        {selectedRow && details && (<Box sx={{ mt: 2 , fontSize:"14px"}}> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
+
+        {selectedRow && details && (<Box sx={{ mt: 2, fontSize: "14px" }}> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
         {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white", mt: 2 }}>
-          <CallDetailList selectedRow={selectedRow} refresh={refresh} callType={value}/>
+          <CallDetailList selectedRow={selectedRow} refresh={refresh} callType={value} />
         </Paper>}
         <Box
-          
+
         >
           <Grid container alignItems="center" sx={{ justifyContent: { xs: "center", sm: "space-between", md: "space-between" } }} marginTop={2} >
             <Grid item xs={8.5} sm={5} md={3}  >
-            <Box sx={{display: "flex", alignItems: "center" , justifyContent: { xs: "center" , md:"flex-start" }}}>
-              <ContainedButton
-                variant="contained"
-                size="small"
-                sx={{
-                  mr: "1vw",
-                  
-                  textTransform: "none",
-                }}
-                onClick={() => setDetails(!details)}
-              >
-                {details ? "Hide Details" : "Show Details"}
-              </ContainedButton>
-              <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
-                <Link href="/cap/enquiry" style={{
-                  textDecoration: "none",
-                }}>
-                  New Call Receipt
-                </Link>
-              </ContainedButton>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: { xs: "center", md: "flex-start" } }}>
+                <ContainedButton
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    mr: "1vw",
+
+                    textTransform: "none",
+                  }}
+                  onClick={() => setDetails(!details)}
+                >
+                  {details ? "Hide Details" : "Show Details"}
+                </ContainedButton>
+                <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
+               {/* <Link href={`/cap/${tabOptions[value].name}` } style={{
+                    textDecoration: "none",
+                  }}> */}
+                  <Box>
+                    New Call Receipt
+                    </Box>
+                  {/* </Link> */}
+                </ContainedButton>
               </Box>
             </Grid>
             <Grid item xs={8.5} sm={5} md={3}>
-            
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center", // Center vertically on small screens
-                gap: "1vw",
-                justifyContent: { xs: "center" }
-              }}
-            >
-              <Tooltip
-                title={rowSelectionModel?.length == 0 ? "Please select a row first" : enableAllocate ? "" : "Deselect Closed enquiries first"}
-                placement="top"
-              >
-                <span>
-                  <ContainedButton
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    onClick={() => setDialogOpen(true)}
-                    disabled={!enableAllocate}
-                  >
-                    Allocate Call
-                  </ContainedButton>
-                </span>
-              </Tooltip>
-              <ContainedButton
-                variant="contained"
-                size="small"
-                sx={{ textTransform: "none" }}
-                disabled={!selectedRow}
-              >
-                <Link href={`/cap/${tabOptions[value].name}?id=${selectedRow?.id}`} style={{
-                  textDecoration: "none",
-                }}>
-                  Status Update
-                </Link>
-              </ContainedButton>
-            </Box>
-          </Grid>
-          <Grid item md={3} sm={6} xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center", // Vertically center on small screens
-                justifyContent: { xs: "center" }
-              }}
-            >
-              <IconButton
-                aria-label="refresh"
-                onClick={handleRefresh}
-              >
-                <RefreshIcon />
-              </IconButton>
-              <Typography variant="body2" component="span" sx={{ ml: 1 }}>
-                Auto refresh in
-              </Typography>
-              <TextField
-                value={refreshInterval}
-                onChange={handleIntervalChange}
-                variant="standard"
-                size="small"
-                type="number"
-                inputProps={{ min: 1, style: { width: '35px', textAlign: 'center' } }}
-                sx={{ mx: 1, width: 'auto' }} // Fixed width for TextField
-              />
-              <Typography variant="body2" component="span">
-                mins.
-              </Typography>
-            </Box>
-          </Grid>
-    
-            
-            <Grid item xs={10} sm={1} md={3}>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <ContainedButton
-                variant="contained"
-                size="small"
+
+              <Box
                 sx={{
-                  marginLeft: { xs: 0, sm: -1.5 }, // Aligns right from small screens (600px) and up
-                  marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
-                  width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
-                  textTransform: "none"
+                  display: "flex",
+                  alignItems: "center", // Center vertically on small screens
+                  gap: "1vw",
+                  justifyContent: { xs: "center" }
                 }}
               >
-                <Link href={`/cap`} style={{
-                  textDecoration: "none",
-                }}>
-                  Quit
-                </Link>
+                <Tooltip
+                  title={rowSelectionModel?.length == 0 ? "Please select a row first" : enableAllocate ? "" : "Deselect Closed enquiries first"}
+                  placement="top"
+                >
+                  <span>
+                    <ContainedButton
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        textTransform: "none",
+                      }}
+                      onClick={() => setDialogOpen(true)}
+                      disabled={!enableAllocate}
+                    >
+                      Allocate Call
+                    </ContainedButton>
+                  </span>
+                </Tooltip>
+                <ContainedButton
+                  variant="contained"
+                  size="small"
+                  sx={{ textTransform: "none" }}
+                  disabled={!selectedRow}
+                >
+                  <Link href={`/cap/${tabOptions[value].name}?id=${selectedRow?.id}`} style={{
+                    textDecoration: "none",
+                  }}>
+                    Status Update
+                  </Link>
+                </ContainedButton>
+              </Box>
+            </Grid>
+            <Grid item md={3} sm={6} xs={12}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center", // Vertically center on small screens
+                  justifyContent: { xs: "center" }
+                }}
+              >
+                <IconButton
+                  aria-label="refresh"
+                  onClick={handleRefresh}
+                >
+                  <RefreshIcon />
+                </IconButton>
+                <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                  Auto refresh in
+                </Typography>
+                <TextField
+                  value={refreshInterval}
+                  onChange={handleIntervalChange}
+                  variant="standard"
+                  size="small"
+                  type="number"
+                  inputProps={{ min: 1, style: { width: '35px', textAlign: 'center' } }}
+                  sx={{ mx: 1, width: 'auto' }} // Fixed width for TextField
+                />
+                <Typography variant="body2" component="span">
+                  mins.
+                </Typography>
+              </Box>
+            </Grid>
 
-              </ContainedButton>
+
+            <Grid item xs={10} sm={1} md={3}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <ContainedButton
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    marginLeft: { xs: 0, sm: -1.5 }, // Aligns right from small screens (600px) and up
+                    marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
+                    width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
+                    textTransform: "none"
+                  }}
+                >
+                  <Link href={`/cap`} style={{
+                    textDecoration: "none",
+                  }}>
+                    Quit
+                  </Link>
+
+                </ContainedButton>
               </Box>
             </Grid>
           </Grid>
@@ -968,7 +1013,7 @@ const tabOptions=[
           dialogOpen && <AddDialog title={"Allocate Executive"}
             open={dialogOpen}
             setDialogOpen={setDialogOpen}>
-            <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} setRefresh={setRefresh} />
+              <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} setRefresh={setRefresh} formName={tabOptions[value].name} />
           </AddDialog>
         }
       </Box>

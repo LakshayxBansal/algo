@@ -1,7 +1,7 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT, getContactByPageT } from "../models/models";
+import { contactSchemaT, docDescriptionSchemaT, getContactByPageT } from "../models/models";
 import {
   createContactDB,
   DeleteContactList,
@@ -19,6 +19,8 @@ import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import { modifyPhone } from "../utils/phoneUtils";
 import { convertData } from "../utils/validateType.utils";
+import { getObjectByName } from "./rights.controller";
+import { getDocs, uploadDocument } from "./document.controller";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -69,7 +71,7 @@ export async function createContactsBatch(data: any) {
           );
           errorMap.set(contact, errorDetails);
         } else {
-          const result = await createContact(adjustedContact.adjustedData);
+          const result = await createContact(adjustedContact.adjustedData,[]);
 
           if (!result.status) {
             const errorDetails = result.data.map(
@@ -98,7 +100,7 @@ export async function createContactsBatch(data: any) {
   }
 }
 
-export async function createContact(data: contactSchemaT) {
+export async function createContact(data: contactSchemaT,docData : docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -111,6 +113,8 @@ export async function createContact(data: contactSchemaT) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
         if (dbResult.length > 0 && dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Contact");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           dbResult[0].forEach((error: any) => {
@@ -155,7 +159,7 @@ export async function createContact(data: contactSchemaT) {
   return result;
 }
 
-export async function updateContact(data: contactSchemaT) {
+export async function updateContact(data: contactSchemaT, docData : docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -168,6 +172,8 @@ export async function updateContact(data: contactSchemaT) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Contact");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           dbResult[0].forEach((error: any) => {
@@ -237,7 +243,17 @@ export async function getContactById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getContactDetailsById(session.user.dbInfo.dbName, id);
+      const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
+      if(contactDetails.length>0){
+        const objectDetails = await getObjectByName("Contact");
+        const docData = await getDocs(id,objectDetails[0].object_id);
+      if (contactDetails.length > 0 && docData.length > 0) {
+        contactDetails[0].docData = docData;
+      } else {
+        contactDetails[0].docData = [];
+      }
+      return contactDetails;
+      }
     }
   } catch (error) {
     throw error;

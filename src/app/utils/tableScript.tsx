@@ -25,6 +25,14 @@ CREATE TABLE `app_config` (\
   CONSTRAINT `app_config_ibfk_1` FOREIGN KEY (`config_type_id`) REFERENCES `config_meta_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\
   CONSTRAINT `app_config_chk_1` CHECK (json_valid(`config`))\
 );~\
+CREATE TABLE `app_config_new` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `object_id` int(11) NOT NULL,\
+  `enabled` int(11) DEFAULT NULL,\
+  `config` varchar(5000) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
 CREATE TABLE `area_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT '',\
@@ -35,6 +43,13 @@ CREATE TABLE `area_master` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `business_process_master` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `action_id` int(11) NOT NULL,\
+  `action_name` varchar(45) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `action_id_UNIQUE` (`action_id`)\
 );~\
 CREATE TABLE `business_profile` (\
   `id` int(11) NOT NULL,\
@@ -150,11 +165,12 @@ CREATE TABLE `country_master` (\
 );~\
 CREATE TABLE `currency_data` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
-  `symbol` varchar(5) NOT NULL,\
+  `symbol` varchar(60) NOT NULL,\
   `name` varchar(60) NOT NULL,\
   `shortForm` varchar(20) DEFAULT NULL,\
   `decimal_places` varchar(5) NOT NULL,\
   `currency_system` varchar(5) DEFAULT NULL,\
+  `stamp` int(11) NOT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `symbol` (`symbol`),\
   UNIQUE KEY `name` (`name`)\
@@ -195,6 +211,14 @@ CREATE TABLE `department_master` (\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `name_UNIQUE` (`name`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `docs_table` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `description` varchar(255) NOT NULL,\
+  `doc_id` varchar(60) NOT NULL,\
+  `data_id` int(11) NOT NULL,\
+  `object_id` int(11) NOT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `enquiry_action_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -265,16 +289,6 @@ CREATE TABLE `enquiry_header_tran` (\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-CREATE TABLE `enquiry_item_tran` (\
-  `id` int(11) NOT NULL AUTO_INCREMENT,\
-  `enquiry_id` int(11) DEFAULT NULL,\
-  `slno` int(11) DEFAULT NULL,\
-  `item_id` int(11) DEFAULT NULL,\
-  `quantity` decimal(20,4) DEFAULT NULL,\
-  `unit_id` int(11) DEFAULT NULL,\
-  `remark` text DEFAULT NULL,\
-  PRIMARY KEY (`id`)\
-);~\
 CREATE TABLE `enquiry_ledger_tran` (\
   `enquiry_id` int(11) DEFAULT NULL,\
   `status_version` int(11) DEFAULT NULL,\
@@ -307,6 +321,16 @@ CREATE TABLE `enquiry_maturity_type` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `enquiry_product_tran` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `enquiry_id` int(11) DEFAULT NULL,\
+  `slno` int(11) DEFAULT NULL,\
+  `product_id` int(11) DEFAULT NULL,\
+  `quantity` decimal(20,4) DEFAULT NULL,\
+  `unit_id` int(11) DEFAULT NULL,\
+  `remark` text DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `enquiry_source_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -412,8 +436,7 @@ CREATE TABLE `executive_master` (\
   `pan` varchar(45) DEFAULT NULL,\
   `aadhaar` varchar(45) DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
-  UNIQUE KEY `id_UNIQUE` (`id`),\
-  UNIQUE KEY `pan_UNIQUE` (`pan`)\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `executive_role_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
@@ -427,33 +450,6 @@ CREATE TABLE `executive_role_master` (\
   `department_id` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE,\
   UNIQUE KEY `id_UNIQUE` (`id`)\
-);~\
-CREATE TABLE `item_group_master` (\
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
-  `name` varchar(60) DEFAULT NULL,\
-  `alias` varchar(60) DEFAULT NULL,\
-  `stamp` smallint(6) DEFAULT NULL,\
-  `parent_id` int(11) DEFAULT NULL,\
-  `created_on` datetime DEFAULT NULL,\
-  `modified_on` datetime DEFAULT NULL,\
-  `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL,\
-  `is_parent` tinyint(4) DEFAULT NULL,\
-  PRIMARY KEY (`id`)\
-);~\
-CREATE TABLE `item_master` (\
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
-  `name` varchar(60) DEFAULT NULL,\
-  `stamp` smallint(6) DEFAULT NULL,\
-  `group_id` int(11) DEFAULT NULL,\
-  `alias` varchar(60) DEFAULT NULL,\
-  `unit_id` int(11) DEFAULT NULL,\
-  `hsn_code` varchar(60) DEFAULT NULL,\
-  `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL,\
-  `created_on` datetime DEFAULT NULL,\
-  `modified_on` datetime DEFAULT NULL,\
-  PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `master_tran_types` (\
   `id` int(11) NOT NULL,\
@@ -528,6 +524,46 @@ CREATE TABLE `organisation_master` (\
   PRIMARY KEY (`id`),\
   UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
+CREATE TABLE `product_group_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `name` varchar(60) DEFAULT NULL,\
+  `alias` varchar(60) DEFAULT NULL,\
+  `stamp` smallint(6) DEFAULT NULL,\
+  `parent_id` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `is_parent` tinyint(4) DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+CREATE TABLE `product_master` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `name` varchar(60) DEFAULT NULL,\
+  `stamp` smallint(6) DEFAULT NULL,\
+  `group_id` int(11) DEFAULT NULL,\
+  `alias` varchar(60) DEFAULT NULL,\
+  `unit_id` int(11) DEFAULT NULL,\
+  `hsn_code` varchar(60) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  `modified_on` datetime DEFAULT NULL,\
+  `model` varchar(45) DEFAULT NULL,\
+  `category` int(11) DEFAULT NULL,\
+  `version` varchar(45) DEFAULT NULL,\
+  `make` varchar(45) DEFAULT NULL,\
+  `warranty_eligible` tinyint(4) DEFAULT NULL,\
+  `parts_included` tinyint(4) DEFAULT NULL,\
+  `eol` datetime DEFAULT NULL,\
+  `eos` datetime DEFAULT NULL,\
+  `warranty_duration` int(11) DEFAULT NULL,\
+  `warranty_duration_unit` varchar(45) DEFAULT NULL,\
+  `support_eligible` tinyint(4) DEFAULT NULL,\
+  `problem_call_eligible` tinyint(4) DEFAULT NULL,\
+  `product_number` text DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
 CREATE TABLE `state_master` (\
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `alias` varchar(60) DEFAULT '',\
@@ -560,27 +596,43 @@ CREATE TABLE `system_task` (\
   PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `ticket_action_master` (\
-  `id` int(11) NOT NULL,\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(60) DEFAULT '',\
   `stamp` smallint(6) DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
-  PRIMARY KEY (`id`) USING BTREE\
+  PRIMARY KEY (`id`) USING BTREE,\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `ticket_action_tran` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `call_id` int(11) DEFAULT NULL,\
+  `action_taken_by` int(11) DEFAULT NULL,\
+  `action_taken_datetime` datetime DEFAULT NULL,\
+  `action_remark` text DEFAULT NULL,\
+  `call_status_id` int(11) DEFAULT NULL,\
+  `call_sub_status_id` int(11) DEFAULT NULL,\
+  `closer_remark` varchar(255) DEFAULT NULL,\
+  `ticket_action_id` int(11) NOT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `ticket_category_master` (\
-  `id` int(11) DEFAULT NULL,\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(50) DEFAULT NULL,\
   `stamp` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
-  `modified_by` int(11) DEFAULT NULL\
+  `modified_by` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `ticket_header_tran` (\
-  `id` int(11) DEFAULT NULL,\
-  `date` date DEFAULT NULL,\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `date` datetime DEFAULT NULL,\
   `tkt_number` varchar(75) DEFAULT NULL,\
   `time` time DEFAULT NULL,\
   `auto_number` int(11) DEFAULT NULL,\
@@ -592,17 +644,49 @@ CREATE TABLE `ticket_header_tran` (\
   `stamp` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
   `modified_on` datetime DEFAULT NULL,\
-  `allocated_to` int(11) DEFAULT NULL\
+  `allocated_to` int(11) DEFAULT NULL,\
+  `ticket_header_trancol` varchar(45) DEFAULT NULL,\
+  `call_receipt_remark` text DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `created_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
-CREATE TABLE `ticket_item_tran` (\
-  `id` int(11) NOT NULL AUTO_INCREMENT,\
+CREATE TABLE `ticket_ledger_tran` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
+  `ticket_id` int(11) DEFAULT NULL,\
+  `status_version` int(11) DEFAULT NULL,\
+  `allocated_to` int(11) unsigned DEFAULT NULL,\
+  `date` datetime DEFAULT NULL,\
+  `vch_type` smallint(6) DEFAULT NULL,\
+  `executive_id` int(11) DEFAULT NULL,\
+  `status_id` int(11) DEFAULT NULL,\
+  `sub_status_id` int(11) DEFAULT NULL,\
+  `action_taken_id` int(11) DEFAULT NULL,\
+  `next_action_id` int(11) DEFAULT NULL,\
+  `next_action_date` datetime DEFAULT NULL,\
+  `next_action_time` time DEFAULT NULL,\
+  `ticket_remark` text DEFAULT NULL,\
+  `suggested_action_remark` text DEFAULT NULL,\
+  `action_taken_remark` text DEFAULT NULL,\
+  `closure_remark` text DEFAULT NULL,\
+  `ticket_tran_type_id` int(11) DEFAULT NULL,\
+  `created_by` int(11) DEFAULT NULL,\
+  `modified_by` int(11) DEFAULT NULL,\
+  `active` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
+);~\
+CREATE TABLE `ticket_product_tran` (\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `ticket_id` int(11) DEFAULT NULL,\
   `slno` int(11) DEFAULT NULL,\
-  `item_id` int(11) DEFAULT NULL,\
+  `product_id` int(11) DEFAULT NULL,\
   `quantity` decimal(20,4) DEFAULT NULL,\
   `unit_id` int(11) DEFAULT NULL,\
   `remark` text DEFAULT NULL,\
-  PRIMARY KEY (`id`) USING BTREE\
+  PRIMARY KEY (`id`) USING BTREE,\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `ticket_source_master` (\
   `id` int(11) DEFAULT NULL,\
@@ -623,33 +707,17 @@ CREATE TABLE `ticket_status_master` (\
   `modified_on` datetime DEFAULT NULL,\
   PRIMARY KEY (`id`) USING BTREE\
 );~\
-CREATE TABLE `ticket_status_tran` (\
-  `ticket_id` int(11) DEFAULT NULL,\
-  `status_version` int(11) DEFAULT NULL,\
-  `allocated_to` int(11) unsigned DEFAULT NULL,\
-  `date` datetime DEFAULT NULL,\
-  `vch_type` smallint(6) DEFAULT NULL,\
-  `executive_id` int(11) DEFAULT NULL,\
-  `status_id` int(11) DEFAULT NULL,\
-  `sub_status_id` int(11) DEFAULT NULL,\
-  `action_taken_id` int(11) DEFAULT NULL,\
-  `next_action_id` int(11) DEFAULT NULL,\
-  `next_action_date` date DEFAULT NULL,\
-  `next_action_time` time DEFAULT NULL,\
-  `ticket_remark` text DEFAULT NULL,\
-  `suggested_action_remark` text DEFAULT NULL,\
-  `action_taken_remark` text DEFAULT NULL,\
-  `closure_remark` text DEFAULT NULL\
-);~\
 CREATE TABLE `ticket_sub_status_master` (\
-  `id` int(11) DEFAULT NULL,\
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\
   `name` varchar(50) DEFAULT NULL,\
   `stamp` int(11) DEFAULT NULL,\
   `ticket_status_id` int(11) DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
   `created_on` datetime DEFAULT NULL,\
-  `modified_on` datetime DEFAULT NULL\
+  `modified_on` datetime DEFAULT NULL,\
+  PRIMARY KEY (`id`),\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `trans_types_masters` (\
   `id` int(11) NOT NULL,\
@@ -736,13 +804,75 @@ INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashb
   (50,'Currency','Currency',12,'FolderOutlinedIcon','/cap/admin/lists/currencyList',0,'','',0,0,0),\
   (51,'Config','Config',5,'FolderOutlinedIcon','#',0,'','',0,0,0),(52,'Enquiry Config','Enquiry Config',51,'FolderOutlinedIcon','/cap/admin/enquirySupportConfig',0,'','',0,0,0);~\
 \
-CREATE PROCEDURE `createAction`(\
+  CREATE PROCEDURE `addDocument`(\
+    IN description varchar(255),\
+    IN doc_id integer,\
+    IN executive_id integer\
+    )\
+  BEGIN\
+  declare last_insert_id integer;\
+    start transaction;\
+    INSERT INTO executive_docs (description,doc_id,executive_id) VALUES (description,doc_id,executive_id);\
+  set last_insert_id = LAST_INSERT_ID();\
+  \
+  commit;\
+    select * from executive_docs ed where ed.id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `appConfig`(\
+  IN obj_id integer,\
+  IN isEnabled integer,\
+  IN jsonData varchar(5000)\
+  )\
+  BEGIN\
+  DECLARE count_data integer;\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer Default NULL;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    BEGIN\
+      ROLLBACK;\
+      RESIGNAL;\
+    END;\
+  \
+  Start Transaction;\
+  \
+  SELECT COUNT(*) INTO count_data FROM app_config_new ac WHERE ac.object_id = obj_id;\
+  \
+    IF isEnabled = 0 AND count_data > 0 THEN\
+    UPDATE app_config_new ac SET ac.enabled=isEnabled, ac.config=jsonData WHERE ac.object_id = obj_id;\
+    END IF;\
+  \
+    IF isEnabled = 1 THEN\
+    IF count_data > 0 THEN\
+    UPDATE app_config_new ac SET ac.enabled=isEnabled, ac.config=jsonData WHERE ac.object_id = obj_id;\
+    END IF;\
+  \
+  IF count_data = 0 THEN \
+  INSERT INTO app_config_new (object_id, enabled, config) VALUES (obj_id, isEnabled, jsonData);\
+    set last_insert_id = LAST_INSERT_ID();\
+  END IF;\
+  END IF;\
+  \
+  COMMIT;\
+  \
+  IF last_insert_id IS NOT NULL THEN\
+    SELECT * FROM app_config_new ac WHERE ac.id = last_insert_id;\
+  ELSE \
+    SELECT * FROM app_config_new ac where ac.object_id = obj_id;\
+  END IF;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createAction`(\
     IN name varchar(75),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     declare count_name integer;\
     declare last_insert_id integer;\
@@ -756,15 +886,15 @@ BEGIN\
     \
     set error = 0;\
     set error_text = '';\
-   \
+  \
   SELECT \
-      COUNT(*)\
+    COUNT(*)\
   INTO count_name FROM\
-      enquiry_action_master am\
+    enquiry_action_master am\
   WHERE\
     am.name = name OR LENGTH(name) = 0\
         OR name IS NULL;\
-\
+  \
   if count_name > 0 then\
   if length(name) > 0 or name is not null then\
   set error = 1;\
@@ -778,33 +908,35 @@ BEGIN\
   set error_text = 'Action Name cannot be empty';\
   END if;\
   END if;\
-\
+  \
         if error = 0 then\
-			INSERT INTO enquiry_action_master (name,created_by,created_on) VALUES (name,user_id,now());\
+      INSERT INTO enquiry_action_master (name,stamp,created_by,created_on) VALUES (name,0,user_id,now());\
             set last_insert_id = LAST_INSERT_ID();\
-		END if;\
-commit;\
-   \
+    END if;\
+  commit;\
+  \
   SELECT error, error_path, error_text;\
   SELECT \
-      *\
+    *\
   FROM\
-      enquiry_action_master am\
+    enquiry_action_master am\
   WHERE\
-      am.id = last_insert_id;\
+    am.id = last_insert_id;\
   END ;~\
-\
-CREATE  PROCEDURE `createAllocationType`(\
+  \
+  \
+  \
+  CREATE PROCEDURE `createAllocationType`(\
     IN name varchar(75),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     declare count_name integer;\
     declare last_insert_id integer;\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
@@ -814,49 +946,51 @@ BEGIN\
     \
     set error = 0;\
     set error_text = '';\
-   \
+  \
   SELECT \
-      COUNT(*)\
+    COUNT(*)\
   INTO count_name FROM\
-      allocation_type_master am\
+    allocation_type_master am\
   WHERE\
-      am.name = name OR LENGTH(name) = 0\
+    am.name = name OR LENGTH(name) = 0\
         OR name IS NULL;\
-\
+  \
   if count_name > 0 then\
   if length(name) > 0 or name is not null then\
   set error = 1;\
   set error_path = 'name';\
-  set error_text = 'Action Name Already Exists';\
+  set error_text = 'Allocation Name Already Exists';\
   END if;\
-              if length(name) = 0 or name is null then\
+            if length(name) = 0 or name is null then\
   set error = 1;\
   set error_path = 'name';\
-  set error_text = 'Action Name cannot be empty';\
+  set error_text = 'Allocation Name cannot be empty';\
   END if;\
   END if;\
-          if error = 0 then\
+        if error = 0 then\
   INSERT INTO allocation_type_master (name,stamp,created_by,created_on) VALUES (name,0,user_id,now());\
-              set last_insert_id = LAST_INSERT_ID();\
+            set last_insert_id = LAST_INSERT_ID();\
   END if;\
   commit;\
-    \
+  \
   SELECT error, error_path, error_text;\
   SELECT \
-      *\
+    *\
   FROM\
-      allocation_type_master am\
+    allocation_type_master am\
   WHERE\
-      am.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createArea`(\
-	IN name varchar(75),\
+    am.id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createArea`(\
+  IN name varchar(75),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     declare count_name integer;\
     declare last_insert_id integer;\
@@ -865,46 +999,48 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-   \
+  \
     start transaction;\
     \
     set error = 0;\
     set error_text = '';\
-    	\
-		SELECT COUNT(*) INTO count_name\
-		FROM area_master am\
-		WHERE am.name = name or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Area Already Exists';\
-			END if;\
+      \
+    SELECT COUNT(*) INTO count_name\
+    FROM area_master am\
+    WHERE am.name = name or\
+    length(name)=0 or name is null;\
+  \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Area Already Exists';\
+      END if;\
             if length(name) = 0 or name is null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Area cannot be empty';\
-			END if;\
-		END if;\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Area cannot be empty';\
+      END if;\
+    END if;\
         if error = 0 then\
-			INSERT INTO area_master (name,created_by,created_on) VALUES (name,user_id,now());\
+      INSERT INTO area_master (name,stamp,created_by,created_on) VALUES (name,0,user_id,now());\
             set last_insert_id = LAST_INSERT_ID();\
-		END if;\
-	commit;\
+    END if;\
+  commit;\
     \
     select error, error_path, error_text;\
     select * from area_master am where am.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createCategory`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createCategory`(\
     IN name varchar(60),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
     DECLARE last_insert_id integer;\
@@ -913,68 +1049,70 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-\
+  \
     start transaction;\
-   \
+  \
     set error = 0;\
     set last_insert_id = 0;\
     set error_text = '';\
-   		\
-		SELECT COUNT(*) INTO count_name\
-		FROM enquiry_category_master cm\
-		WHERE cm.name = name or length(name) = 0 or name is null;\
-       \
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name Already Exists';\
-			END if;\
-				\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
-       \
-		if error = 0 then\
-			insert into enquiry_category_master (name, created_by, created_on)\
-			   values (name, user_id, now());\
-			set last_insert_id = LAST_INSERT_ID();\
-		END if;\
+      \
+    SELECT COUNT(*) INTO count_name\
+    FROM enquiry_category_master cm\
+    WHERE cm.name = name or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+      \
+    if error = 0 then\
+      insert into enquiry_category_master (name, stamp, created_by, created_on)\
+        values (name, 0, user_id, now());\
+      set last_insert_id = LAST_INSERT_ID();\
+    END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from enquiry_category_master cm where id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createContact`(\
-	IN alias varchar(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createContact`(\
+  IN alias varchar(75),\
     IN name varchar(75),\
-	IN print_name varchar(75),\
-	IN group_id  integer,\
-	IN pan  varchar(20),\
-	IN aadhaar  varchar(20),\
-	IN address1 varchar(75),\
-	IN address2 varchar(75),\
-	IN address3 varchar(75),\
-	IN city varchar(75),\
-	IN state_id  integer,\
-	IN area_id  integer,\
-	IN pincode varchar(15),\
-	IN country_id  integer,\
-	IN email varchar(100),\
-	IN mobile varchar(20),\
-	IN whatsapp varchar(20),\
-	IN dob varchar(20),\
-	IN doa varchar(20),\
-	IN dept_id  integer,\
-	IN org_id  integer,\
+  IN print_name varchar(75),\
+  IN group_id  integer,\
+  IN pan  varchar(20),\
+  IN aadhaar  varchar(20),\
+  IN address1 varchar(75),\
+  IN address2 varchar(75),\
+  IN address3 varchar(75),\
+  IN city varchar(75),\
+  IN state_id  integer,\
+  IN area_id  integer,\
+  IN pincode varchar(15),\
+  IN country_id  integer,\
+  IN email varchar(100),\
+  IN mobile varchar(20),\
+  IN whatsapp varchar(20),\
+  IN dob varchar(20),\
+  IN doa varchar(20),\
+  IN dept_id  integer,\
+  IN org_id  integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-	DECLARE last_insert_id integer;\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
     declare count_pan varchar(20);\
@@ -982,161 +1120,163 @@ BEGIN\
     declare count_email varchar(100);\
     declare count_mobile varchar(20);\
     declare count_whatsapp varchar(20);\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-   \
+  \
     start transaction;\
-     \
+    \
     set error = 0;\
     set last_insert_id = 0;\
     \
-	DROP TABLE IF EXISTS temp_error_log;\
+  DROP TABLE IF EXISTS temp_error_log;\
     \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);	\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );	\
         \
-		SELECT COUNT(*) INTO count_name\
-		FROM contact_master cm\
-		WHERE  cm.name = name or length(name) = 0 or name is null;\
+    SELECT COUNT(*) INTO count_name\
+    FROM contact_master cm\
+    WHERE  cm.name = name or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name alreay exists', 'name');\
-				\
-			END if;\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name alreay exists', 'name');\
+        \
+      END if;\
             if length(name) = 0 or name is null then \
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name cannot be empty', 'name');\
-				\
-			END if;\
-		END if;\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
         \
-		SELECT COUNT(*) INTO count_name\
-		FROM contact_master cm\
-		WHERE cm.alias = name;\
-			if count_name > 0 then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name already exists as alias', 'name');\
-				\
-			END if;\
+      END if;\
+    END if;\
         \
-		\
+    SELECT COUNT(*) INTO count_name\
+    FROM contact_master cm\
+    WHERE cm.alias = name;\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
+        \
+      END if;\
+        \
+    \
         if length(alias) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_alias FROM contact_master cm\
-			WHERE cm.alias = alias ;\
-			if count_alias > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Alias already exists', 'alias');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_alias FROM contact_master cm\
+      WHERE cm.alias = alias ;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
             \
-				SELECT COUNT(*) INTO count_alias FROM contact_master cm\
-				WHERE cm.name = alias;\
-				if count_alias > 0 then\
-					set error = 1;\
-						INSERT INTO temp_error_log (error_text, error_path) \
-						VALUES ('Alias already exists as name', 'alias');\
-						\
-				END if;\
+        SELECT COUNT(*) INTO count_alias FROM contact_master cm\
+        WHERE cm.name = alias;\
+        if count_alias > 0 then\
+          set error = 1;\
+            INSERT INTO temp_error_log (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
             END if;\
             \
         \
         \
         if length(pan) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_pan FROM contact_master cm\
-			WHERE cm.pan = pan;\
-			if count_pan > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Pan already exists', 'pan');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_pan FROM contact_master cm\
+      WHERE cm.pan = pan;\
+      if count_pan > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Pan already exists', 'pan');\
+          \
+      END if;\
         End if;\
         \
         if length(aadhaar) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_aadhaar FROM contact_master cm\
-			WHERE cm.aadhaar = aadhaar;\
-			if count_aadhaar > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Aadhaar already exists', 'aadhaar');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_aadhaar FROM contact_master cm\
+      WHERE cm.aadhaar = aadhaar;\
+      if count_aadhaar > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Aadhaar already exists', 'aadhaar');\
+          \
+      END if;\
         End if;\
         \
         if length(email) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_email FROM contact_master cm\
-			WHERE cm.email = email;\
-			if count_email > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Email already exists', 'email');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_email FROM contact_master cm\
+      WHERE cm.email = email;\
+      if count_email > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Email already exists', 'email');\
+          \
+      END if;\
         End if;\
         \
         if length(mobile) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_mobile FROM contact_master cm\
-			WHERE cm.mobile = mobile;\
-			if count_mobile > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Mobile already exists', 'mobile');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_mobile FROM contact_master cm\
+      WHERE cm.mobile = mobile;\
+      if count_mobile > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Mobile already exists', 'mobile');\
+          \
+      END if;\
         End if;\
         \
         if length(whatsapp) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_whatsapp FROM contact_master cm\
-			WHERE cm.whatsapp = whatsapp;\
-			if count_whatsapp > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Whatsapp already exists', 'whatsapp');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_whatsapp FROM contact_master cm\
+      WHERE cm.whatsapp = whatsapp;\
+      if count_whatsapp > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Whatsapp already exists', 'whatsapp');\
+          \
+      END if;\
         End if;\
         \
-		if error = 0 then\
+    if error = 0 then\
         \
-			insert into contact_master \
-				(alias, name, print_name, group_id, pan, aadhaar, address1, address2, address3, city, state_id, area_id, pincode, country_id, email, mobile, whatsapp, created_by, created_on, dob, doa, department_id, organisation_id) \
-				values\
-				(alias, name, print_name, group_id, pan, aadhaar, address1, address2, address3, city, state_id, area_id, pincode, country_id, email, mobile, whatsapp, user_id, now(), dob, doa, dept_id, org_id);\
-				set last_insert_id = LAST_INSERT_ID();\
+      insert into contact_master \
+        (alias, name, stamp, print_name, group_id, pan, aadhaar, address1, address2, address3, city, state_id, area_id, pincode, country_id, email, mobile, whatsapp, created_by, created_on, dob, doa, department_id, organisation_id) \
+        values\
+        (alias, name, 0, print_name, group_id, pan, aadhaar, address1, address2, address3, city, state_id, area_id, pincode, country_id, email, mobile, whatsapp, user_id, now(), dob, doa, dept_id, org_id);\
+        set last_insert_id = LAST_INSERT_ID();\
         \
-		END if;\
+    END if;\
     commit;\
     \
     select * from temp_error_log;\
     select * from contact_master cm where cm.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createContactGroup`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createContactGroup`(\
     in name varchar(70),\
     in alias varchar(70),\
     in parentId int,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_name varchar(60);\
     DECLARE count_alias varchar(60);\
     DECLARE last_insert_id integer;\
@@ -1145,64 +1285,84 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-\
+  \
     start transaction;\
         \
     set error = 0;\
-	set last_insert_id = 0;\
-	\
+  set last_insert_id = 0;\
+  \
     DROP TABLE IF EXISTS error_table;\
- \
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
-\
-		SELECT COUNT(*) INTO count_name\
-		FROM contact_group_master am\
-		WHERE ( am.name = name OR am.alias = name) or length(name) = 0 or name is null;\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM contact_group_master am\
+    WHERE ( am.name = name OR am.alias = name) or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
-			END if;\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
-			END if;\
-		END if;\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
+      END if;\
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
+      END if;\
+    END if;\
         \
+        SELECT COUNT(*) INTO count_name\
+    FROM contact_group_master cm\
+    WHERE cm.alias = name;\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
         \
-		SELECT COUNT(*) INTO count_alias\
-		FROM contact_group_master am\
-		WHERE ( am.name = alias OR am.alias = alias);\
+      END if;\
         \
+    if length(alias) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_alias FROM contact_group_master cm\
+      WHERE cm.alias = alias ;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
+            SELECT COUNT(*) INTO count_alias FROM contact_group_master cm\
+        WHERE cm.name = alias;\
         if count_alias > 0 then\
-			if length(alias) > 0 or alias is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');\
-			END if;\
-		END if;\
+          set error = 1;\
+            INSERT INTO error_table (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
+    END if;\
               \
-		if error = 0 then\
-			insert into contact_group_master (name, alias, parent_id,created_by, created_on) \
-       values (name ,alias, parentId, user_id, now()) ;\
-       set last_insert_id = LAST_INSERT_ID();\
-		END if;\
+    if error = 0 then\
+      insert into contact_group_master (name, alias, stamp, parent_id,created_by, created_on) \
+      values (name ,alias, 0, parentId, user_id, now()) ;\
+      set last_insert_id = LAST_INSERT_ID();\
+    END if;\
     commit;\
     \
-	select * from error_table;\
+  select * from error_table;\
     select * from contact_group_master am where am.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createCountry`(\
-	IN name varchar(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createCountry`(\
+  IN name varchar(75),\
     IN alias varchar(45),\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     declare count_name integer;\
     declare count_alias integer;\
     declare last_insert_id integer;\
@@ -1214,62 +1374,84 @@ BEGIN\
     \
     start transaction;\
     \
-	DROP TABLE IF EXISTS temp_error_log;\
-   \
+  DROP TABLE IF EXISTS temp_error_log;\
+  \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
     \
     set error = 0;\
     set last_insert_id = 0;\
-	\
-		SELECT COUNT(*) INTO count_name\
-		FROM country_master cm\
-		WHERE cm.name = name or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM country_master cm\
+    WHERE cm.name = name or\
+    length(name)=0 or name is null;\
+  \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
                 INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('Country alreay exists', 'name');\
-			END if;\
+        VALUES ('Country alreay exists', 'name');\
+      END if;\
             if length(name) = 0 or name is null then\
-				set error = 1;\
+        set error = 1;\
                 INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('Country cannot be empty', 'name');\
-			END if;\
-		END if;\
-			SELECT COUNT(*) INTO count_alias\
-			FROM country_master cm\
-			WHERE cm.alias = alias && length(alias)!=0;\
-\
-			if count_alias > 0 then\
-				if length(alias) > 0 or alias is not null then\
-					set error = 1;\
-                    INSERT INTO temp_error_log (error_text, error_path)\
-					VALUES ('Alias Already Exists', 'alias');\
-				END if;\
-			END if;\
+        VALUES ('Country cannot be empty', 'name');\
+      END if;\
+    END if;\
+      SELECT COUNT(*) INTO count_name\
+    FROM country_master cm\
+    WHERE cm.alias = name;\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Country already exists as alias', 'name');\
+        \
+      END if;\
+        \
+    \
+        if length(alias) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_alias FROM country_master cm\
+      WHERE cm.alias = alias ;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
+            \
+        SELECT COUNT(*) INTO count_alias FROM country_master cm\
+        WHERE cm.name = alias;\
+        if count_alias > 0 then\
+          set error = 1;\
+            INSERT INTO temp_error_log (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
+            END if;\
         if error = 0 then\
-			INSERT INTO country_master (name,alias,created_by,created_on) VALUES (name,alias,user_id,now());\
+      INSERT INTO country_master (name,alias,stamp,created_by,created_on) VALUES (name,alias,0,user_id,now());\
             set last_insert_id = LAST_INSERT_ID();\
-		END if;\
-	commit;\
+    END if;\
+  commit;\
     select * from temp_error_log;\
     select * from country_master cm where cm.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createCurrency`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createCurrency`(\
     IN user_symbol VARCHAR(50),\
     IN user_name VARCHAR(75),\
     IN user_shortForm VARCHAR(100),\
     IN user_Decimal_places VARCHAR(50),\
     IN user_Currency_system VARCHAR(50)\
-)\
-BEGIN\
+  )\
+  BEGIN\
     DECLARE error INTEGER;\
     DECLARE count_name INTEGER;\
     DECLARE count_symbol INTEGER;\
@@ -1279,13 +1461,13 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-\
+  \
     START TRANSACTION;\
-\
+  \
     SET error = 0;\
-\
+  \
     DROP TEMPORARY TABLE IF EXISTS error_table;\
-\
+  \
     CREATE TEMPORARY TABLE error_table (\
         id INT AUTO_INCREMENT PRIMARY KEY,\
         error_text VARCHAR(255), \
@@ -1297,7 +1479,7 @@ BEGIN\
     WHERE cd.name = user_name\
     OR LENGTH(user_name) = 0\
     OR user_name IS NULL;\
-\
+  \
     IF count_name > 0 THEN\
         IF LENGTH(user_name) > 0 THEN\
             SET error = 1;\
@@ -1308,14 +1490,14 @@ BEGIN\
             INSERT INTO error_table (error_text, error_path) VALUES ('Name cannot be empty', 'name');\
         END IF;\
     END IF;\
-\
+  \
     \
     SELECT COUNT(*) INTO count_symbol\
     FROM currency_data cd\
     WHERE cd.symbol = user_symbol\
     OR LENGTH(user_symbol) = 0\
     OR user_symbol IS NULL;\
-\
+  \
     IF count_symbol > 0 THEN\
         IF LENGTH(user_symbol) > 0 THEN\
             SET error = 1;\
@@ -1326,28 +1508,30 @@ BEGIN\
             INSERT INTO error_table (error_text, error_path) VALUES ('Symbol cannot be empty', 'symbol');\
         END IF;\
     END IF;\
-\
+  \
     IF error = 0 THEN\
-        INSERT INTO currency_data (symbol, name, shortForm, decimal_places, currency_system) \
-        VALUES (user_symbol, user_name, user_shortForm, user_Decimal_places, user_Currency_system);\
+        INSERT INTO currency_data (symbol, name, stamp, shortForm, decimal_places, currency_system) \
+        VALUES (user_symbol, user_name, 0, user_shortForm, user_Decimal_places, user_Currency_system);\
         \
         SET last_insert_id = LAST_INSERT_ID();\
     END IF;\
-\
+  \
     COMMIT;\
-\
+  \
     SELECT * FROM error_table;\
     SELECT * FROM currency_data WHERE id = last_insert_id;\
-\
-END ;~\
-\
-CREATE  PROCEDURE `createDepartment`(\
+  \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createDepartment`(\
     IN name varchar(60),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
     DECLARE last_insert_id integer;\
@@ -1356,52 +1540,54 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-   \
+  \
     start transaction;\
-	\
-	set error = 0;\
+  \
+  set error = 0;\
     set last_insert_id = 0;\
     set error_text = '';\
-   \
-		SELECT COUNT(*) INTO count_name\
-		FROM department_master cm\
-		WHERE cm.name = name or length(name) = 0 or name is null;\
-       \
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name Already Exists';\
-			END if;\
-				\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
-       \
-             \
-		if error = 0 then\
-			insert into department_master (name, created_by, created_on)\
-			   values (name, user_id, now());\
-               \
-			set last_insert_id = LAST_INSERT_ID();\
-		END if;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM department_master cm\
+    WHERE cm.name = name or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+      \
+            \
+    if error = 0 then\
+      insert into department_master (name, stamp, created_by, created_on)\
+        values (name, 0, user_id, now());\
+              \
+      set last_insert_id = LAST_INSERT_ID();\
+    END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from department_master cm where id = last_insert_id;\
-END ;~\
-\
-CREATE PROCEDURE `createEnquiry`(\
-	IN enq_number VARCHAR(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createEnquiry`(\
+      IN enq_number VARCHAR(75),\
     IN date VARCHAR(20),\
     IN contact_id INTEGER,\
     IN received_by_id INTEGER,\
     IN category_id INTEGER,\
     IN source_id INTEGER,\
-	IN call_receipt_remark VARCHAR(5000),\
+  IN call_receipt_remark VARCHAR(5000),\
     IN allocated_to_id INTEGER,\
     IN status_id INTEGER,\
     IN sub_status_id INTEGER,\
@@ -1414,60 +1600,60 @@ CREATE PROCEDURE `createEnquiry`(\
     IN enquiry_tran_type INT,\
     IN active INT,\
     IN created_by INT,\
-    IN items_json JSON \
-)\
-BEGIN\
+    IN products_json JSON \
+  )\
+  BEGIN\
     DECLARE error_text VARCHAR(70);\
     DECLARE error INTEGER DEFAULT 0;\
     DECLARE error_path VARCHAR(20);\
     DECLARE last_insert_id INTEGER;\
     DECLARE count_name INTEGER;\
     DECLARE idx INT DEFAULT 0;\
-    DECLARE item_count INT;\
-\
+    DECLARE product_count INT;\
+  \
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
     BEGIN\
         ROLLBACK;\
         RESIGNAL;\
     END;\
-\
+  \
     START TRANSACTION;\
-\
+  \
     SET error_text = '';\
     SET last_insert_id = 0;\
-\
+  \
     SELECT COUNT(*) INTO count_name\
     FROM enquiry_header_tran eh\
     WHERE eh.enq_number = enq_number;\
-\
+  \
     IF count_name = 0 THEN\
         INSERT INTO enquiry_header_tran\
         (enq_number, date, auto_number, contact_id, received_by_id, category_id, source_id,call_receipt_remark, stamp, modified_by, modified_on, created_by, created_on  )\
         VALUES \
         (enq_number, date, 0, contact_id, received_by_id, category_id, source_id,call_receipt_remark, 0, NULL, NULL, created_by,\
         NOW());\
-\
+  \
         SET last_insert_id = LAST_INSERT_ID();\
-\
+  \
         INSERT INTO enquiry_ledger_tran\
         (enquiry_id, status_version, allocated_to, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date, \
-        suggested_action_remark, action_taken_remark, closure_remark, enquiry_tran_type_id, active)\
+        suggested_action_remark, action_taken_remark, closure_remark, enquiry_tran_type_id, active, created_by)\
         VALUES\
         (last_insert_id, 0, allocated_to_id, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date,\
-        suggested_action_remark, action_taken_remark, closure_remark, enquiry_tran_type, 1);\
+        suggested_action_remark, action_taken_remark, closure_remark, enquiry_tran_type, 1 , created_by);\
         \
-       \
-        SET item_count = JSON_LENGTH(items_json); \
-\
-        WHILE idx < item_count DO\
-            INSERT INTO enquiry_item_tran (enquiry_id,slno, item_id, quantity, unit_id, remark)  \
+      \
+        SET product_count = JSON_LENGTH(products_json); \
+  \
+        WHILE idx < product_count DO\
+            INSERT INTO enquiry_product_tran (enquiry_id,slno, product_id, quantity, unit_id, remark)  \
             VALUES (\
                 last_insert_id,\
-				JSON_UNQUOTE(JSON_EXTRACT(items_json, CONCAT('$[', idx, '].id'))),      \
-                JSON_UNQUOTE(JSON_EXTRACT(items_json, CONCAT('$[', idx, '].item_id'))),      \
-                JSON_UNQUOTE(JSON_EXTRACT(items_json, CONCAT('$[', idx, '].quantity'))),     \
-                JSON_UNQUOTE(JSON_EXTRACT(items_json, CONCAT('$[', idx, '].unit_id'))),      \
-                JSON_UNQUOTE(JSON_EXTRACT(items_json, CONCAT('$[', idx, '].remarks')))       \
+        JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].id'))),      \
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].product_id'))),      \
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].quantity'))),     \
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].unit_id'))),      \
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].remarks')))       \
             );\
             SET idx = idx + 1;  \
         END WHILE;\
@@ -1476,20 +1662,22 @@ BEGIN\
         SET error_path = 'enq_number';\
         SET error_text = 'Description already exists';\
     END IF;\
-\
+  \
     COMMIT;\
-\
+  \
     SELECT error, error_path, error_text;\
     SELECT * FROM enquiry_header_tran WHERE id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createEnquirySource`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createEnquirySource`(\
     IN name varchar(60),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
     DECLARE last_insert_id integer;\
@@ -1498,50 +1686,52 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-	\
+  \
     start transaction;\
-       \
+      \
     set error = 0;\
     set last_insert_id = 0;\
     set error_text = '';\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM enquiry_source_master cm\
-		WHERE cm.name = name or length(name) = 0 or name is null;\
-       \
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name Already Exists';\
-			END if;\
-				\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
-       \
-		if error = 0 then\
-			insert into enquiry_source_master (name, created_by, created_on)\
-			   values (name, user_id, now());\
-               \
-			set last_insert_id = LAST_INSERT_ID();\
-		END if;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM enquiry_source_master cm\
+    WHERE cm.name = name or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+      \
+    if error = 0 then\
+      insert into enquiry_source_master (name, stamp, created_by, created_on)\
+        values (name, 0, user_id, now());\
+              \
+      set last_insert_id = LAST_INSERT_ID();\
+    END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from enquiry_source_master cm where id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createEnquirySubStatusDb`(\
-	IN user_name varchar(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createEnquirySubStatusDb`(\
+  IN user_name varchar(75),\
     IN status_id integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     declare count_name integer;\
     declare last_insert_id integer;\
@@ -1550,41 +1740,43 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-   \
+  \
     start transaction;\
-\
+  \
     set error = 0;\
     set error_text = '';\
-	\
-	SELECT COUNT(*) INTO count_name\
-	FROM enquiry_sub_status_master am\
-	WHERE am.enquiry_status_id=status_id and am.name = user_name or\
-	length(user_name)=0 or user_name is null;\
-\
-	if count_name > 0 then\
-		if length(user_name) > 0 or user_name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Sub Status Name Already Exists';\
-		END if;\
-		if length(user_name) = 0 or user_name is null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Sub Status Name cannot be empty';\
-		END if;\
-	END IF;\
-	if error = 0 then\
-		INSERT INTO enquiry_sub_status_master (name,enquiry_status_id,created_by,created_on) VALUES (user_name,status_id,user_id,now());\
-		set last_insert_id = LAST_INSERT_ID();\
-	END if;\
-	commit;\
-   \
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM enquiry_sub_status_master am\
+  WHERE am.enquiry_status_id=status_id and am.name = user_name or\
+  length(user_name)=0 or user_name is null;\
+  \
+  if count_name > 0 then\
+    if length(user_name) > 0 or user_name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Sub Status Name Already Exists';\
+    END if;\
+    if length(user_name) = 0 or user_name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Sub Status Name cannot be empty';\
+    END if;\
+  END IF;\
+  if error = 0 then\
+    INSERT INTO enquiry_sub_status_master (name,stamp,enquiry_status_id,created_by,created_on) VALUES (user_name,0,status_id,user_id,now());\
+    set last_insert_id = LAST_INSERT_ID();\
+  END if;\
+  commit;\
+  \
     select error, error_path, error_text;\
     select * from enquiry_sub_status_master am where am.id = last_insert_id;\
-END ;~\
-\
-CREATE PROCEDURE `createExecutive`(\
-IN alias varchar(60),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createExecutive`(\
+  IN alias varchar(60),\
     IN name varchar(60),\
     IN address1 varchar(75),\
     IN address2 varchar(75),\
@@ -1608,8 +1800,8 @@ IN alias varchar(60),\
     IN dept_id integer,\
     IN group_id integer,\
     IN user_id integer)\
-BEGIN\
-\
+  BEGIN\
+  \
     DECLARE error integer;\
     DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
@@ -1618,6 +1810,8 @@ BEGIN\
     DECLARE dofb datetime;\
     DECLARE dofa datetime;\
     DECLARE dofj datetime;\
+    Declare count_pan integer;\
+    Declare count_aadhaar integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
     BEGIN\
         ROLLBACK;\
@@ -1628,13 +1822,13 @@ BEGIN\
     set error = 0;\
     set last_insert_id = 0;\
     DROP TABLE IF EXISTS error_table;\
- \
+  \
     create temporary table error_table (\
         id int auto_increment primary key,\
         error_text varchar(255) , \
         error_path varchar(100) \
     );\
-\
+  \
     SET dofb = CASE \
         WHEN TRIM(dob) = '' THEN NULL\
         ELSE CAST(dob AS DATETIME)\
@@ -1660,29 +1854,70 @@ BEGIN\
             set error = 1;\
             insert into error_table (error_text, error_path) values ('name already exist' , 'name');    \
         end if;\
-\
+  \
             \
             SELECT COUNT(*) INTO count_alias\
             FROM executive_master em\
             WHERE (em.name = alias or\
             em.alias = alias);\
         \
+        if length(alias) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_alias FROM executive_master em\
+      WHERE em.alias = alias ;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
+            \
+        SELECT COUNT(*) INTO count_alias FROM executive_master em\
+        WHERE em.name = alias;\
         if count_alias > 0 then\
-            set error = 1;\
-            insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');    \
-        end if;\
+          set error = 1;\
+            INSERT INTO error_table (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
+            END if;\
+            \
+            if length(pan) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_pan FROM executive_master em\
+      WHERE em.pan = pan;\
+      if count_pan > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Pan already exists', 'pan');\
+      END if;\
+        End if;\
+        \
+        if length(aadhaar) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_aadhaar FROM executive_master em\
+      WHERE em.aadhaar = aadhaar;\
+      if count_aadhaar > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Aadhaar already exists', 'aadhaar');\
+          \
+      END if;\
+        End if;\
+            \
+            \
             \
             if error = 0 then\
                 select ctm.id into var_call_type_id from call_type_master ctm where ctm.name=call_type LOCK IN SHARE MODE;\
                                 \
                 insert into executive_master \
-                (alias, name, address1, address2, address3, city, \
+                (alias, name, stamp, address1, address2, address3, city, \
                 state_id, pincode, country_id, email, \
                 mobile, whatsapp, created_by, created_on, \
                 dob, doa, doj, pan, aadhaar, area_id, call_type_id, \
                 crm_user_id, role_id, dept_id, group_id) \
                 values\
-                (alias, name, address1, address2, address3, city, \
+                (alias, name, 0, address1, address2, address3, city, \
                 state_id, pincode, country_id, email, \
                 mobile, whatsapp, user_id, now(), \
                 dofb, dofa, dofj, pan, aadhaar, area_id, var_call_type_id, \
@@ -1694,69 +1929,73 @@ BEGIN\
     \
     select * from error_table;\
     select * from executive_master em where em.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createExecutiveDept`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createExecutiveDept`(\
     IN name varchar(60),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
-	DECLARE last_insert_id integer;\
+  DECLARE last_insert_id integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-       \
-	start transaction;\
-   \
+      \
+  start transaction;\
+  \
     set last_insert_id = 0;\
     set error = 0;\
     set error_text = '';\
   \
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_dept_master cm\
-	WHERE cm.name = name or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-		if length(name) > 0 or name is not null then\
-		set error = 1;\
-		set error_path = 'name';\
-		set error_text = 'Name Already Exists';\
-		END if;\
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_dept_master cm\
+  WHERE cm.name = name or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    set error_path = 'name';\
+    set error_text = 'Name Already Exists';\
+    END if;\
             \
-		if length(name) = 0 or name is null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name cannot be empty';\
-		END if;\
-	END if;\
-       \
-             \
-	if error = 0 then\
-		insert into executive_dept_master (name, created_by, created_on) \
-        values (name, user_id, now());\
-	\
-		set last_insert_id = LAST_INSERT_ID();\
-	END if;\
+    if length(name) = 0 or name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name cannot be empty';\
+    END if;\
+  END if;\
+      \
+            \
+  if error = 0 then\
+    insert into executive_dept_master (name, stamp, created_by, created_on) \
+        values (name, 0, user_id, now());\
+  \
+    set last_insert_id = LAST_INSERT_ID();\
+  END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from executive_dept_master cm where id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createExecutiveGroup`(\
-	IN name varchar(75),\
-	IN alias varchar(75),\
-	IN parent_id varchar(75),\
-	IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-	DECLARE last_insert_id integer;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createExecutiveGroup`(\
+  IN name varchar(75),\
+  IN alias varchar(75),\
+  IN parent_id varchar(75),\
+  IN user_id integer)\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_name integer;\
     DECLARE count_alias integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
@@ -1764,147 +2003,151 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
- \
+  \
     start transaction;\
       \
     set error = 0;\
     set last_insert_id = 0;\
-   \
+  \
     DROP TABLE IF EXISTS temp_error_log;\
-   \
+  \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
-\
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_group_master egm\
-	WHERE  egm.name = name or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-		if length(name) > 0 or name is not null then\
-		set error = 1;\
-		INSERT INTO temp_error_log (error_text, error_path)\
-		VALUES ('Name alreay exists', 'name');\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_group_master egm\
+  WHERE  egm.name = name or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path)\
+    VALUES ('Name alreay exists', 'name');\
         END if;\
-	END if;\
-	if length(name) = 0 or name is null then \
-		set error = 1;\
-		INSERT INTO temp_error_log (error_text, error_path)\
-		VALUES ('Name cannot be empty', 'name');\
-		\
-	END if;\
-       \
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_group_master egm\
-	WHERE egm.alias = name;\
-	if count_name > 0 then\
-		set error = 1;\
-		INSERT INTO temp_error_log (error_text, error_path)\
-		VALUES ('Name already exists as alias', 'name');\
-		\
-	END if;\
-       \
-	if length(alias) <> 0 then\
-\
-		SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
-		WHERE egm.alias = alias ;\
-		if count_alias > 0 then\
-			set error = 1;\
-			INSERT INTO temp_error_log (error_text, error_path)\
-			VALUES ('Alias already exists', 'alias');\
-			\
-		END if;\
-           \
-		SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
-		WHERE egm.name = alias;\
-		if count_alias > 0 then\
-			set error = 1;\
-			INSERT INTO temp_error_log (error_text, error_path)\
-			VALUES ('Alias already exists as name', 'alias');\
-			\
-		END if;\
-	END if;\
-       \
-	if error = 0 then\
-		insert into executive_group_master\
-		(alias, name, parent_id, created_by, created_on)\
-		values\
-		(alias, name, parent_id, user_id, now());\
-		set last_insert_id = LAST_INSERT_ID();\
-	END if;\
+  END if;\
+  if length(name) = 0 or name is null then \
+    set error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path)\
+    VALUES ('Name cannot be empty', 'name');\
+    \
+  END if;\
+      \
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_group_master egm\
+  WHERE egm.alias = name;\
+  if count_name > 0 then\
+    set error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path)\
+    VALUES ('Name already exists as alias', 'name');\
+    \
+  END if;\
+      \
+  if length(alias) <> 0 then\
+  \
+    SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
+    WHERE egm.alias = alias ;\
+    if count_alias > 0 then\
+      set error = 1;\
+      INSERT INTO temp_error_log (error_text, error_path)\
+      VALUES ('Alias already exists', 'alias');\
+      \
+    END if;\
+          \
+    SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
+    WHERE egm.name = alias;\
+    if count_alias > 0 then\
+      set error = 1;\
+      INSERT INTO temp_error_log (error_text, error_path)\
+      VALUES ('Alias already exists as name', 'alias');\
+      \
+    END if;\
+  END if;\
+      \
+  if error = 0 then\
+    insert into executive_group_master\
+    (alias, name, stamp, parent_id, created_by, created_on)\
+    values\
+    (alias, name, 0, parent_id, user_id, now());\
+    set last_insert_id = LAST_INSERT_ID();\
+  END if;\
     commit;\
     \
     select * from temp_error_log;\
     select * from executive_group_master egm where egm.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createExecutiveRole`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createExecutiveRole`(\
     IN name varchar(60),\
     IN parentId int,\
     IN departmentId int,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
-	DECLARE last_insert_id integer;\
+  DECLARE last_insert_id integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
- \
+  \
     start transaction;\
-     \
+    \
     set error = 0;\
     set last_insert_id = 0;\
     set error_text = '';\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM executive_role_master rm\
-		WHERE rm.name = name or length(name) = 0 or name is null;\
-		   \
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name Already Exists';\
-			END if;\
-				\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
-       \
-             \
-		if error = 0 then\
-			insert into executive_role_master (name, created_by, created_on, parent, department_id)\
-		   values (name, user_id, now(), parentId, departmentId);\
-			  \
-			set last_insert_id = LAST_INSERT_ID();\
-		END if;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM executive_role_master rm\
+    WHERE rm.name = name or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+      \
+            \
+    if error = 0 then\
+      insert into executive_role_master (name, stamp, created_by, created_on, parent, department_id)\
+      values (name, 0, user_id, now(), parentId, departmentId);\
+        \
+      set last_insert_id = LAST_INSERT_ID();\
+    END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from executive_role_master rm where id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createItem`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createItem`(\
     IN name varchar(50),\
     IN group_id integer,\
     IN alias varchar(60),\
     IN unit_id integer,\
-	IN hsn_code varchar(60),\
+  IN hsn_code varchar(60),\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-	DECLARE last_insert_id integer;\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     DECLARE count_name integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
@@ -1912,96 +2155,98 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-	\
+  \
     start transaction;\
         \
     DROP TABLE IF EXISTS error_log;\
     \
     CREATE TEMPORARY TABLE error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
         error_text varchar(70),\
         error_path varchar(20)\
     );\
     \
     set error = 0;\
     set last_insert_id = 0;\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM item_master im\
-		WHERE im.name = name or length(name)=0 or name IS NULL;\
-\
-		IF count_name > 0 THEN\
-			\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM item_master im\
+    WHERE im.name = name or length(name)=0 or name IS NULL;\
+  \
+    IF count_name > 0 THEN\
+      \
             IF length(name)>0 or name IS NOT NULL THEN \
             set error = 1;\
             INSERT INTO error_log (error_text, error_path)\
             VALUES ('Name already exists', 'name');\
-		END IF;\
+    END IF;\
         \
         IF length(name) = 0 or name IS NULL THEN \
-			set error = 1;\
+      set error = 1;\
             INSERT INTO error_log (error_text, error_path)\
             VALUES ('Name cannot be empty', 'name');\
-		END IF;\
+    END IF;\
         END IF;\
-       \
-       SELECT COUNT(*) INTO count_name\
-	   FROM item_master im\
-       WHERE im.alias = name;\
-\
-	   IF count_name > 0 THEN\
-			set error = 1;\
-			INSERT INTO error_log (error_text, error_path)\
-			VALUES ('Name already exists as alias', 'name');\
-		END If;\
+      \
+      SELECT COUNT(*) INTO count_name\
+    FROM item_master im\
+      WHERE im.alias = name;\
+  \
+    IF count_name > 0 THEN\
+      set error = 1;\
+      INSERT INTO error_log (error_text, error_path)\
+      VALUES ('Name already exists as alias', 'name');\
+    END If;\
         \
         \
         IF length(alias) <> 0 THEN\
-			SELECT COUNT(*) INTO count_alias FROM item_master im\
+      SELECT COUNT(*) INTO count_alias FROM item_master im\
             WHERE im.alias = alias ;\
-		IF count_alias > 0 THEN\
-			set error = 1;\
+    IF count_alias > 0 THEN\
+      set error = 1;\
             INSERT INTO error_log (error_text, error_path)\
             VALUES ('Alias already exists', 'alias');\
-		END IF;      \
-		\
-			SELECT COUNT(*) INTO count_alias FROM item_master im\
+    END IF;      \
+    \
+      SELECT COUNT(*) INTO count_alias FROM item_master im\
             WHERE im.name = alias;\
-		IF count_alias > 0 THEN\
-			set error = 1;\
+    IF count_alias > 0 THEN\
+      set error = 1;\
             INSERT INTO error_log (error_text, error_path)\
             VALUES ('Alias already exists as name', 'alias');\
-		END IF;\
-		END IF;\
-           \
+    END IF;\
+    END IF;\
+          \
         \
-       IF error=0 THEN \
-				\
-				insert into item_master \
-				(name, stamp, group_id, alias, unit_id, hsn_code, created_by, modified_by, created_on, modified_on) \
-				values\
-				(name, 0, group_id, alias, unit_id, hsn_code, user_id, null, NOW(), null); \
-				set last_insert_id = LAST_INSERT_ID();\
-		END IF;\
+      IF error=0 THEN \
+        \
+        insert into item_master \
+        (name, stamp, group_id, alias, unit_id, hsn_code, created_by, modified_by, created_on, modified_on) \
+        values\
+        (name, 0, group_id, alias, unit_id, hsn_code, user_id, null, NOW(), null); \
+        set last_insert_id = LAST_INSERT_ID();\
+    END IF;\
             \
-	commit;\
+  commit;\
     \
     \
     select * from error_log;\
     select * from item_master where id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createItemGroup`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createItemGroup`(\
     IN name varchar(50),\
-	IN alias varchar(60),\
+  IN alias varchar(60),\
     IN parent_id integer,\
     IN is_parent integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
-	DECLARE last_insert_id integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
@@ -2013,74 +2258,93 @@ BEGIN\
     start transaction;\
     \
     set error = 0;\
-	set last_insert_id = 0;\
-	\
+  set last_insert_id = 0;\
+  \
     DROP TABLE IF EXISTS error_table;\
- \
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
-\
-		SELECT \
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
+  \
+    SELECT \
     COUNT(*)\
   INTO count_name FROM\
-      item_group_master am\
+    item_group_master am\
   WHERE\
     (am.name = name OR am.alias = name)\
         OR LENGTH(name) = 0\
         OR name IS NULL;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
-			END if;\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
-			END if;\
-		END if;\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
+      END if;\
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
+      END if;\
+    END if;\
         \
+      SELECT COUNT(*) INTO count_name\
+    FROM item_group_master am\
+    WHERE am.alias = name;\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
         \
-		SELECT \
-    COUNT(*)\
-    INTO count_alias FROM\
-    item_group_master am\
-    WHERE\
-    (am.name = alias OR am.alias = alias);\
+      END if;\
         \
+    \
+        if length(alias) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_alias FROM item_group_master am\
+      WHERE am.alias = alias ;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
+            \
+        SELECT COUNT(*) INTO count_alias FROM item_group_master am\
+        WHERE am.name = alias;\
         if count_alias > 0 then\
-			if length(alias) > 0 or alias is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');\
-			END if;\
-		END if;\
+          set error = 1;\
+            INSERT INTO error_table (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
+            END if;\
     \
     if error = 0 then\
-		insert into item_group_master \
-				(name, alias, stamp, parent_id, created_on, modified_on, created_by, modified_by, is_parent) \
-				values\
-				(name, alias, 0, parent_id, NOW(), null, user_id, null, is_parent); \
-				set last_insert_id = LAST_INSERT_ID();\
-		END if;\
+    insert into item_group_master \
+        (name, alias, stamp, parent_id, created_on, modified_on, created_by, modified_by, is_parent) \
+        values\
+        (name, alias, 0, parent_id, NOW(), null, user_id, null, is_parent); \
+        set last_insert_id = LAST_INSERT_ID();\
+    END if;\
     commit;\
     \
-	SELECT \
+  SELECT \
     *\
   FROM\
-      error_table;\
+    error_table;\
   SELECT \
-      *\
+    *\
   FROM\
-      item_group_master\
+    item_group_master\
   WHERE\
-      id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createOrganisation`(\
-		IN alias VARCHAR(75),\
+    id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createOrganisation`(\
+    IN alias VARCHAR(75),\
         IN name VARCHAR(75),\
         IN printName VARCHAR(75),\
         IN pan VARCHAR(75),\
@@ -2093,193 +2357,230 @@ CREATE  PROCEDURE `createOrganisation`(\
         IN pincode VARCHAR(75),\
         IN country_id VARCHAR(75),\
         IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-	DECLARE last_insert_id integer;\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
-	declare count_pan varchar(20);\
+  declare count_pan varchar(20);\
     declare count_gstin varchar(20);\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
     \
-	start transaction;\
+  start transaction;\
         \
-	DROP TABLE IF EXISTS temp_error_log;\
+  DROP TABLE IF EXISTS temp_error_log;\
     \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
-\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
+  \
     set error = 0;\
     set last_insert_id = 0;\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM organisation_master om\
-		WHERE  om.name = name or length(name) = 0 or name is null;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM organisation_master om\
+    WHERE  om.name = name or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name alreay exists', 'name');\
-\
-			END if;\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name alreay exists', 'name');\
+  \
+      END if;\
             if length(name) = 0 or name is null then \
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name cannot be empty', 'name');\
-			END if;\
-		END if;\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
+      END if;\
+    END if;\
         \
-		SELECT COUNT(*) INTO count_name\
-		FROM organisation_master om\
-		WHERE om.alias = name;\
-			if count_name > 0 then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name already exists as alias', 'name');\
-			END if;\
+    SELECT COUNT(*) INTO count_name\
+    FROM organisation_master om\
+    WHERE om.alias = name;\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
+      END if;\
             \
         \
-		if length(alias) <> 0 then\
-			SELECT COUNT(*) INTO count_alias FROM organisation_master om\
-			WHERE om.alias = alias;\
-			if count_alias > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Alias already exists', 'alias');\
-			END if;\
+    if length(alias) <> 0 then\
+      SELECT COUNT(*) INTO count_alias FROM organisation_master om\
+      WHERE om.alias = alias;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+      END if;\
             \
-				SELECT COUNT(*) INTO count_alias FROM organisation_master om\
-				WHERE om.name = alias;\
-				if count_alias > 0 then\
-					set error = 1;\
-						INSERT INTO temp_error_log (error_text, error_path) \
-						VALUES ('Alias already exists as name', 'alias');\
-				END if;\
-		END if;\
+        SELECT COUNT(*) INTO count_alias FROM organisation_master om\
+        WHERE om.name = alias;\
+        if count_alias > 0 then\
+          set error = 1;\
+            INSERT INTO temp_error_log (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+        END if;\
+    END if;\
         \
         \
         if length(pan) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_pan FROM organisation_master om\
-			WHERE om.pan = pan;\
-			if count_pan > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Pan already exists', 'pan');\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_pan FROM organisation_master om\
+      WHERE om.pan = pan;\
+      if count_pan > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Pan already exists', 'pan');\
+      END if;\
         End if;\
         \
         \
         if length(gstin) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_gstin FROM organisation_master om\
-			WHERE om.gstin = gstin;\
-			if count_gstin > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Gstin already exists', 'gstin');\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_gstin FROM organisation_master om\
+      WHERE om.gstin = gstin;\
+      if count_gstin > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Gstin already exists', 'gstin');\
+      END if;\
         End if;\
-		\
+    \
         if error = 0 then\
                 \
-				insert into organisation_master \
-				(alias, name, print_name, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, created_by, created_on) \
-				values\
-				(alias, name, print_name, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, user_id, now());\
-				set last_insert_id = LAST_INSERT_ID();\
+        insert into organisation_master \
+        (alias, name, stamp, print_name, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, created_by, created_on) \
+        values\
+        (alias, name, 0, printName, pan, gstin, address1, address2, address3, city, state_id, pincode, country_id, user_id, now());\
+        set last_insert_id = LAST_INSERT_ID();\
         \
-		END if;\
+    END if;\
         \
-	commit;\
+  commit;\
     \
     \
-	select * from temp_error_log;\
+  select * from temp_error_log;\
     select * from organisation_master where id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createState`(\
-	IN name varchar(75),\
-    IN alias varchar(45),\
-    IN country_id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createProduct`(\
+    IN name varchar(50),\
+    IN group_id integer,\
+    IN alias varchar(60),\
+    IN unit_id integer,\
+  IN hsn_code varchar(60),\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-    declare count_name integer;\
-    declare count_alias integer;\
-    declare last_insert_id integer;\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
+    DECLARE count_alias integer;\
+    DECLARE count_name integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
-  END;\
-    \
-	start transaction;\
+  END; \
+  \
+    start transaction;\
         \
-    DROP TABLE IF EXISTS temp_error_log;\
-   \
-    CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+    DROP TABLE IF EXISTS error_log;\
+    \
+    CREATE TEMPORARY TABLE error_log (\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+        error_text varchar(70),\
+        error_path varchar(20)\
+    );\
     \
     set error = 0;\
     set last_insert_id = 0;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM product_master im\
+    WHERE im.name = name or length(name)=0 or name IS NULL;\
   \
-		SELECT COUNT(*) INTO count_name\
-		FROM state_master sm\
-		WHERE (sm.country_id = country_id && sm.name = name) or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-                INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('State alreay exists', 'name');\
-			END if;\
-            if length(name) = 0 or name is null then\
-				set error = 1;\
-                INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('State cannot be empty', 'name');\
-			END if;\
-		END if;\
-			SELECT COUNT(*) INTO count_alias\
-			FROM state_master sm\
-			WHERE (sm.country_id = country_id && sm.alias = alias) && length(alias)!=0;\
-\
-			if count_alias > 0 then\
-				if length(alias) > 0 or alias is not null then\
-					set error = 1;\
-                    INSERT INTO temp_error_log (error_text, error_path)\
-					VALUES ('Alias Already Exists', 'alias');\
-				END if;\
-			END if;\
-        if error = 0 then\
-			INSERT INTO state_master (name,alias,created_by,created_on,country_id) VALUES (name,alias,user_id,now(),country_id);\
-            set last_insert_id = LAST_INSERT_ID();\
-		END if;\
-	commit;\
-    select * from temp_error_log;\
-    select * from state_master sm where sm.id = last_insert_id;\
-END ;~\
-\
-CREATE  PROCEDURE `createUnit`(\
+    IF count_name > 0 THEN\
+      \
+            IF length(name)>0 or name IS NOT NULL THEN \
+            set error = 1;\
+            INSERT INTO error_log (error_text, error_path)\
+            VALUES ('Name already exists', 'name');\
+    END IF;\
+        \
+        IF length(name) = 0 or name IS NULL THEN \
+      set error = 1;\
+            INSERT INTO error_log (error_text, error_path)\
+            VALUES ('Name cannot be empty', 'name');\
+    END IF;\
+        END IF;\
+      \
+      SELECT COUNT(*) INTO count_name\
+    FROM product_master im\
+      WHERE im.alias = name;\
+  \
+    IF count_name > 0 THEN\
+      set error = 1;\
+      INSERT INTO error_log (error_text, error_path)\
+      VALUES ('Name already exists as alias', 'name');\
+    END If;\
+        \
+        \
+        IF length(alias) <> 0 THEN\
+      SELECT COUNT(*) INTO count_alias FROM product_master im\
+            WHERE im.alias = alias ;\
+    IF count_alias > 0 THEN\
+      set error = 1;\
+            INSERT INTO error_log (error_text, error_path)\
+            VALUES ('Alias already exists', 'alias');\
+    END IF;      \
+    \
+      SELECT COUNT(*) INTO count_alias FROM product_master im\
+            WHERE im.name = alias;\
+    IF count_alias > 0 THEN\
+      set error = 1;\
+            INSERT INTO error_log (error_text, error_path)\
+            VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+    END IF;\
+          \
+        \
+      IF error=0 THEN \
+        \
+        insert into product_master \
+        (name, stamp, group_id, alias, unit_id, hsn_code, created_by, modified_by, created_on, modified_on) \
+        values\
+        (name, 0, group_id, alias, unit_id, hsn_code, user_id, null, NOW(), null); \
+        set last_insert_id = LAST_INSERT_ID();\
+    END IF;\
+            \
+  commit;\
+    \
+    \
+    select * from error_log;\
+    select * from product_master where id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createProductGroup`(\
     IN name varchar(50),\
+  IN alias varchar(60),\
+    IN parent_id integer,\
+    IN is_parent integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
-	DECLARE last_insert_id integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
@@ -2287,91 +2588,646 @@ BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-   \
+    \
+    start transaction;\
+    \
+    set error = 0;\
+  set last_insert_id = 0;\
+  \
+    DROP TABLE IF EXISTS error_table;\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
+  \
+    SELECT \
+    COUNT(*)\
+  INTO count_name FROM\
+    product_group_master am\
+  WHERE\
+    (am.name = name OR am.alias = name)\
+        OR LENGTH(name) = 0\
+        OR name IS NULL;\
+        \
+        if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
+      END if;\
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
+      END if;\
+    END if;\
+        \
+      SELECT COUNT(*) INTO count_name\
+    FROM product_group_master am\
+    WHERE am.alias = name;\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
+        \
+      END if;\
+        \
+    \
+        if length(alias) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_alias FROM product_group_master am\
+      WHERE am.alias = alias ;\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
+            \
+        SELECT COUNT(*) INTO count_alias FROM product_group_master am\
+        WHERE am.name = alias;\
+        if count_alias > 0 then\
+          set error = 1;\
+            INSERT INTO error_table (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
+            END if;\
+    \
+    if error = 0 then\
+    insert into product_group_master \
+        (name, alias, stamp, parent_id, created_on, modified_on, created_by, modified_by, is_parent) \
+        values\
+        (name, alias, 0, parent_id, NOW(), null, user_id, null, is_parent); \
+        set last_insert_id = LAST_INSERT_ID();\
+    END if;\
+    commit;\
+    \
+  SELECT \
+    *\
+  FROM\
+    error_table;\
+  SELECT \
+    *\
+  FROM\
+    product_group_master\
+  WHERE\
+    id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createState`(\
+  IN name varchar(75),\
+    IN alias varchar(45),\
+    IN country_id int(11) unsigned,\
+    IN user_id integer)\
+  BEGIN\
+  DECLARE error integer DEFAULT 0;\
+    DECLARE count_name integer;\
+    DECLARE count_alias integer;\
+    DECLARE last_insert_id integer;\
+  \
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    BEGIN\
+        ROLLBACK;\
+        RESIGNAL;\
+    END;\
+  \
+    START TRANSACTION;\
+  \
+    CREATE TEMPORARY TABLE IF NOT EXISTS temp_error_log (\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM state_master sm\
+    WHERE (sm.country_id = country_id AND sm.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+    IF count_name > 0 THEN\
+        IF LENGTH(name) > 0 THEN\
+            INSERT INTO temp_error_log (error_text, error_path)\
+            VALUES ('State already exists', 'name');\
+        ELSE\
+            INSERT INTO temp_error_log (error_text, error_path)\
+            VALUES ('State cannot be empty', 'name');\
+        END IF;\
+        SET error = 1;\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM state_master sm\
+    WHERE sm.country_id = country_id AND sm.alias = name;\
+  \
+    IF count_name > 0 THEN\
+        INSERT INTO temp_error_log (error_text, error_path)\
+        VALUES ('State already exists as alias', 'name');\
+        SET error = 1;\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_alias\
+    FROM state_master sm\
+    WHERE sm.country_id = country_id AND sm.alias = alias AND LENGTH(alias) > 0;\
+  \
+    IF count_alias > 0 THEN\
+        INSERT INTO temp_error_log (error_text, error_path)\
+        VALUES ('Alias already exists', 'alias');\
+        SET error = 1;\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_alias\
+    FROM state_master sm\
+    WHERE sm.country_id = country_id AND sm.name = alias AND LENGTH(alias) > 0;\
+  \
+    IF count_alias > 0 THEN\
+        INSERT INTO temp_error_log (error_text, error_path)\
+        VALUES ('Alias already exists as state', 'alias');\
+        SET error = 1;\
+    END IF;\
+  \
+    IF error = 0 THEN\
+        INSERT INTO state_master (name, stamp, alias, created_by, created_on, country_id)\
+        VALUES (name, 0, alias, user_id, NOW(), country_id);\
+        SET last_insert_id = LAST_INSERT_ID();\
+    END IF;\
+  \
+    COMMIT;\
+  \
+    SELECT * FROM temp_error_log;\
+    IF last_insert_id > 0 THEN\
+        SELECT * FROM state_master sm WHERE sm.id = last_insert_id;\
+    END IF;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createStatusBar`(\
+  IN userId integer\
+  )\
+  BEGIN\
+  DECLARE error integer;\
+    declare count_user integer;\
+    set error = 0;\
+  start transaction;\
+  \
+    SELECT COUNT(*) INTO count_user FROM status_bar sb\
+    WHERE sb.user_id = userId;\
+    \
+    if count_user > 0 then\
+    Update status_bar set data = '{\"key3\" : \"\", \"key4\": \"\", \"key5\": \"\"}' where user_id = userId;\
+    set error = 1;\
+    END if;\
+    \
+    if error = 0 then\
+    insert into status_bar (user_id) values (userId);\
+    END if;\
+    commit;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createSupportAction`(\
+    IN name varchar(75),\
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    declare count_name integer;\
+    declare last_insert_id integer;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+  \
+    start transaction;\
+    \
+    set error = 0;\
+    set error_text = '';\
+  \
+  SELECT \
+    COUNT(*)\
+  INTO count_name FROM\
+    ticket_action_master am\
+  WHERE\
+    am.name = name OR LENGTH(name) = 0\
+        OR name IS NULL;\
+  \
+  if count_name > 0 then\
+  if length(name) > 0 or name is not null then\
+  set error = 1;\
+  set error_path = 'name';\
+  set error_text = 'Action Name Already Exists';\
+  END if;\
+  \
+  if length(name) = 0 or name is null then\
+  set error = 1;\
+  set error_path = 'name';\
+  set error_text = 'Action Name cannot be empty';\
+  END if;\
+  END if;\
+  \
+        if error = 0 then\
+      INSERT INTO ticket_action_master (name,stamp,created_by,created_on) VALUES (name,0,user_id,now());\
+            set last_insert_id = LAST_INSERT_ID();\
+    END if;\
+  commit;\
+  \
+  SELECT error, error_path, error_text;\
+  SELECT \
+    *\
+  FROM\
+    ticket_action_master am\
+  WHERE\
+    am.id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createSupportCategory`(\
+    IN name varchar(60),\
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    DECLARE count_name varchar(60);\
+    DECLARE last_insert_id integer;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END;\
+  \
+    start transaction;\
+  \
+    set error = 0;\
+    set last_insert_id = 0;\
+    set error_text = '';\
+      \
+    SELECT COUNT(*) INTO count_name\
+    FROM ticket_category_master cm\
+    WHERE cm.name = name or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+      \
+    if error = 0 then\
+      insert into ticket_category_master (name, stamp, created_by, created_on)\
+        values (name, 0, user_id, now());\
+      set last_insert_id = LAST_INSERT_ID();\
+    END if;\
+    commit;\
+  \
+  select error, error_path, error_text;\
+    select * from ticket_category_master cm where id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createSupportSubStatusDb`(\
+  IN user_name varchar(75),\
+    IN status_id integer,\
+    IN user_id integer)\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    declare count_name integer;\
+    declare last_insert_id integer;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+  \
+    start transaction;\
+  \
+    set error = 0;\
+    set error_text = '';\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM ticket_sub_status_master am\
+  WHERE am.ticket_status_id=status_id and am.name = user_name or\
+  length(user_name)=0 or user_name is null;\
+  \
+  if count_name > 0 then\
+    if length(user_name) > 0 or user_name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Sub Status Name Already Exists';\
+    END if;\
+    if length(user_name) = 0 or user_name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Sub Status Name cannot be empty';\
+    END if;\
+  END IF;\
+  if error = 0 then\
+    INSERT INTO ticket_sub_status_master (name,stamp,ticket_status_id,created_by,created_on) VALUES (user_name,0,status_id,user_id,now());\
+    set last_insert_id = LAST_INSERT_ID();\
+  END if;\
+  commit;\
+  \
+    select error, error_path, error_text;\
+    select * from ticket_sub_status_master am where am.id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createSupportTicket`(\
+      IN tkt_number VARCHAR(75),\
+    IN date VARCHAR(20),\
+    IN contact_id INTEGER,\
+    IN received_by_id INTEGER,\
+    IN category_id INTEGER,\
+  IN call_receipt_remark VARCHAR(5000),\
+    IN allocated_to_id INTEGER,\
+    IN status_id INTEGER,\
+    IN sub_status_id INTEGER,\
+    IN action_taken_id INTEGER,\
+    IN next_action_id INTEGER,\
+    IN next_action_date VARCHAR(20),\
+    IN suggested_action_remark VARCHAR(5000),\
+    IN action_taken_remark VARCHAR(5000),\
+    IN closure_remark VARCHAR(5000),\
+    IN ticket_tran_type INT,\
+    IN active INT,\
+    IN created_by INT,\
+  IN products_json JSON \
+  )\
+  BEGIN\
+    DECLARE error_text VARCHAR(70);\
+    DECLARE error INTEGER DEFAULT 0;\
+    DECLARE error_path VARCHAR(20);\
+    DECLARE last_insert_id INTEGER;\
+    DECLARE count_name INTEGER;\
+  DECLARE idx INT DEFAULT 0;\
+    DECLARE product_count INT;\
+  \
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    BEGIN\
+        ROLLBACK;\
+        RESIGNAL;\
+    END;\
+  \
+    START TRANSACTION;\
+  \
+    SET error_text = '';\
+    SET last_insert_id = 0;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM ticket_header_tran th\
+    WHERE th.tkt_number = tkt_number;\
+  \
+    IF count_name = 0 THEN\
+        INSERT INTO ticket_header_tran\
+        (tkt_number, date, auto_number, contact_id, received_by_id, category_id,call_receipt_remark, stamp, modified_by, modified_on, created_by, created_on  )\
+        VALUES \
+        (tkt_number, date, 0, contact_id, received_by_id, category_id,call_receipt_remark, 0, NULL, NULL, created_by,\
+        NOW());\
+  \
+        SET last_insert_id = LAST_INSERT_ID();\
+  \
+        INSERT INTO ticket_ledger_tran\
+        (ticket_id, status_version, allocated_to, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date, \
+        suggested_action_remark, action_taken_remark, closure_remark, ticket_tran_type_id, active, created_by)\
+        VALUES\
+        (last_insert_id, 0, allocated_to_id, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date,\
+        suggested_action_remark, action_taken_remark, closure_remark, ticket_tran_type, active , created_by);\
+        \
+        SET product_count = JSON_LENGTH(products_json); \
+  \
+        WHILE idx < product_count DO\
+            INSERT INTO ticket_product_tran (ticket_id, slno, product_id)  \
+            VALUES (\
+                last_insert_id,\
+        JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].id'))),      \
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].product_id')))\
+            );\
+            SET idx = idx + 1;  \
+        END WHILE;\
+        \
+    ELSE \
+        SET error = 1;\
+        SET error_path = 'tkt_number';\
+        SET error_text = 'Description already exists';\
+    END IF;\
+  \
+    COMMIT;\
+  \
+    SELECT error, error_path, error_text;\
+    SELECT * FROM ticket_header_tran WHERE id = last_insert_id;\
+  SELECT * FROM ticket_ledger_tran WHERE id = last_insert_id;\
+  \
+  END ;~\
+  \
+  CREATE PROCEDURE `createTicket`(\
+      IN tkt_number VARCHAR(75),\
+    IN date VARCHAR(20),\
+    IN contact_id INTEGER,\
+    IN received_by_id INTEGER,\
+    IN category_id INTEGER,\
+    IN call_receipt_remark VARCHAR(5000),\
+    IN allocated_to_id INTEGER,\
+    IN status_id INTEGER,\
+    IN sub_status_id INTEGER,\
+    IN action_taken_id INTEGER,\
+    IN next_action_id INTEGER,\
+    IN next_action_date VARCHAR(20),\
+    IN suggested_action_remark VARCHAR(5000),\
+    IN action_taken_remark VARCHAR(5000),\
+    IN closure_remark VARCHAR(5000),\
+    IN ticket_tran_type INT,\
+    IN active INT,\
+    IN created_by INT,\
+    IN products_json JSON \
+  )\
+  BEGIN\
+    DECLARE error_text VARCHAR(70);\
+    DECLARE error INTEGER DEFAULT 0;\
+    DECLARE error_path VARCHAR(20);\
+    DECLARE last_insert_id INTEGER;\
+    DECLARE count_name INTEGER;\
+    DECLARE idx INT DEFAULT 0;\
+    DECLARE product_count INT;\
+  \
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    BEGIN\
+        ROLLBACK;\
+        RESIGNAL;\
+    END;\
+  \
+    START TRANSACTION;\
+  \
+    SET error_text = '';\
+    SET last_insert_id = 0;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM ticket_header_tran th\
+    WHERE th.tkt_number = tkt_number;\
+  \
+    IF count_name = 0 THEN\
+        INSERT INTO ticket_header_tran\
+        (tkt_number, date, auto_number, contact_id, received_by_id, category_id, call_receipt_remark, stamp, modified_by, modified_on, created_by, created_on)\
+        VALUES \
+        (tkt_number, date, 0, contact_id, received_by_id, category_id, call_receipt_remark, 0, NULL, NULL, created_by, NOW());\
+  \
+        SET last_insert_id = LAST_INSERT_ID();\
+  \
+        INSERT INTO ticket_ledger_tran\
+        (ticket_id, status_version, allocated_to, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date, \
+        suggested_action_remark, action_taken_remark, closure_remark, ticket_tran_type_id, active, created_by)\
+        VALUES\
+        (last_insert_id, 0, allocated_to_id, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date,\
+        suggested_action_remark, action_taken_remark, closure_remark, ticket_tran_type, 1, created_by);\
+        \
+      \
+        SET product_count = JSON_LENGTH(products_json); \
+  \
+        WHILE idx < product_count DO\
+            INSERT INTO ticket_product_tran (ticket_id, slno, product_id, quantity, unit_id, remark)  \
+            VALUES (\
+                last_insert_id,\
+        JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].id'))),      \
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].product_id')))\
+            );\
+            SET idx = idx + 1;  \
+        END WHILE;\
+    ELSE \
+        SET error = 1;\
+        SET error_path = 'tkt_number';\
+        SET error_text = 'Description already exists';\
+    END IF;\
+  \
+    COMMIT;\
+  \
+    SELECT error, error_path, error_text;\
+    SELECT * FROM ticket_header_tran WHERE id = last_insert_id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `createUnit`(\
+    IN name varchar(50),\
+    IN user_id integer)\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+  DECLARE last_insert_id integer;\
+    DECLARE count_alias integer;\
+    declare count_name integer;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+  \
     start transaction;\
     \
     set error = 0;\
     set error_text = '';\
     set last_insert_id = 0;\
-   	\
-		SELECT COUNT(*) INTO count_name\
-		FROM unit_master un\
-		WHERE un.name = name;\
-\
-		IF count_name = 0 THEN\
-                               \
-				insert into unit_master \
-				(name, stamp, created_by, modified_by, created_on, modified_on) \
-				values\
-				(name, 0, user_id, null, NOW(), null); \
-				set last_insert_id = LAST_INSERT_ID();\
-			else \
-			set error = 1;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM unit_master un\
+    WHERE un.name = name;\
+  \
+    IF count_name = 0 THEN\
+                              \
+        insert into unit_master \
+        (name, stamp, created_by, modified_by, created_on, modified_on) \
+        values\
+        (name, 0, user_id, null, NOW(), null); \
+        set last_insert_id = LAST_INSERT_ID();\
+      else \
+      set error = 1;\
             set error_path = 'name';\
-			set error_text = 'Name already exist';\
-		END IF;\
-	commit;\
+      set error_text = 'Name already exist';\
+    END IF;\
+  commit;\
     \
     select error, error_path, error_text;\
     select * from unit_master where id = last_insert_id;\
-END ;~\
-\
-CREATE PROCEDURE `getExecutiveEnquiriesData`()\
-BEGIN\
-	SELECT count(*) total, em.name FROM enquiry_ledger_tran lt\
-		left join executive_master em on em.id=lt.allocated_to\
-		WHERE lt.enquiry_id NOT IN (SELECT et.enquiry_id FROM enquiry_ledger_tran et \
-		LEFT JOIN enquiry_status_master sm ON sm.id = et.status_id \
-		WHERE sm.name = 'Closed')\
-		AND lt.id = (SELECT MAX(inner_lt.id) \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `getExecutiveEnquiriesData`()\
+  BEGIN\
+  SELECT count(*) total, em.name FROM enquiry_ledger_tran lt\
+    left join executive_master em on em.id=lt.allocated_to\
+    WHERE lt.enquiry_id NOT IN (SELECT et.enquiry_id FROM enquiry_ledger_tran et \
+    LEFT JOIN enquiry_status_master sm ON sm.id = et.status_id \
+    WHERE sm.name = 'Closed')\
+    AND lt.id = (SELECT MAX(inner_lt.id) \
         FROM enquiry_ledger_tran inner_lt \
         WHERE inner_lt.enquiry_id = lt.enquiry_id)\
-        AND lt.allocated_to IS NOT NULL group by em.name;\
-	SELECT lt.date AS date, Week(lt.date) AS week, em.name as name, COUNT(*) AS count\
-		FROM enquiry_ledger_tran lt \
-		left join executive_master em on lt.allocated_to=em.id\
-		WHERE (WEEK(lt.date)) >= WEEK(CURDATE()) - 2\
-		AND lt.enquiry_id not in (select et.enquiry_id from enquiry_ledger_tran et \
-		left join enquiry_status_master sm on sm.id=et.status_id where sm.name='Closed') AND\
-		lt.id = (SELECT MAX(inner_lt.id)\
+        AND lt.allocated_to <> 0 group by em.name;\
+  SELECT lt.date AS date, Week(lt.date) AS week, em.name as name, COUNT(*) AS count\
+    FROM enquiry_ledger_tran lt \
+    left join executive_master em on lt.allocated_to=em.id\
+    WHERE (WEEK(lt.date)) >= WEEK(CURDATE()) - 2\
+    AND lt.enquiry_id not in (select et.enquiry_id from enquiry_ledger_tran et \
+    left join enquiry_status_master sm on sm.id=et.status_id where sm.name='Closed') AND\
+    lt.id = (SELECT MAX(inner_lt.id)\
         FROM enquiry_ledger_tran inner_lt \
         WHERE inner_lt.enquiry_id = lt.enquiry_id)\
-        AND lt.allocated_to IS NOT NULL\
-		GROUP BY name, Week(lt.date) ORDER BY name, WEEK(lt.date);\
-END ;~\
-\
-CREATE PROCEDURE `getOverviewGraphData`()\
-BEGIN\
-	SELECT COUNT(distinct(enquiry_id)) totalOpen from enquiry_ledger_tran lt\
-	LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
-	WHERE sm.name = 'Open';\
+        AND lt.allocated_to <> 0\
+    GROUP BY name, Week(lt.date) ORDER BY name, WEEK(lt.date);\
+  END ;~\
+  \
+  CREATE PROCEDURE `getOverviewGraphData`()\
+  BEGIN\
+  SELECT COUNT(distinct(enquiry_id)) totalOpen from enquiry_ledger_tran lt\
+  LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
+  WHERE sm.name = 'Open';\
     \
     SELECT COUNT(*) as count, MONTH(date) as month from (select lt.date as date from enquiry_ledger_tran lt\
     LEFT JOIN enquiry_status_master sm ON sm.id = lt.status_id \
-	WHERE sm.name = 'Open' AND lt.date = (select MIN(et.date) from enquiry_ledger_tran et where et.enquiry_id=lt.enquiry_id)\
-	AND lt.date >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY lt.enquiry_id) as res\
+  WHERE sm.name = 'Open' AND lt.date = (select MIN(et.date) from enquiry_ledger_tran et where et.enquiry_id=lt.enquiry_id)\
+  AND lt.date >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY lt.enquiry_id) as res\
     group by month(date);\
     \
     SELECT COUNT(*) as count, MONTH(lt.date) as month from enquiry_ledger_tran lt left join enquiry_status_master sm \
-	ON sm.id = lt.status_id\
-	WHERE sm.name='Closed' AND lt.date > DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY month(lt.date);\
-END ;~\
-\
-CREATE PROCEDURE `mainSearchBar`(IN search_text VARCHAR(255))\
-BEGIN\
+  ON sm.id = lt.status_id\
+  WHERE sm.name='Closed' AND lt.date > DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') GROUP BY month(lt.date);\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `mainSearchBar`(IN search_text VARCHAR(255))\
+  BEGIN\
   WITH combined_results AS (\
         SELECT 'Menu Master' as table_name, name as result,href as href FROM menu_option_master WHERE name LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Menu Master' as table_name, short_name AS result, href as href FROM menu_option_master WHERE short_name LIKE CONCAT('%', search_text, '%')\
-		UNION ALL\
+    UNION ALL\
         SELECT 'Contact Master' as table_name, alias AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE alias LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Contact Master' as table_name, name AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE name LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Contact Master' as table_name, print_name AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE print_name LIKE CONCAT('%', search_text, '%')\
-         UNION ALL\
+        UNION ALL\
         SELECT 'Contact Master' as table_name, pan AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE pan LIKE CONCAT('%', search_text, '%')\
-         UNION ALL\
+        UNION ALL\
         SELECT 'Contact Master' as table_name, aadhaar AS result,'/cap/admin/lists/contactList' as href  FROM contact_master WHERE aadhaar LIKE CONCAT('%', search_text, '%')\
       UNION ALL\
         SELECT 'Organization Master' as table_name, alias AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE alias LIKE CONCAT('%', search_text, '%')\
@@ -2379,7 +3235,7 @@ BEGIN\
         SELECT 'Organization Master' as table_name, name AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE name LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Organization Master' as table_name, print_name AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE print_name LIKE CONCAT('%', search_text, '%')\
-         UNION ALL\
+        UNION ALL\
         SELECT 'Organization Master' as table_name, pan AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE pan LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Organization Master' as table_name, gstin AS result,'/cap/admin/lists/organisationList' as href FROM organisation_master WHERE gstin LIKE CONCAT('%', search_text, '%')\
@@ -2390,91 +3246,308 @@ BEGIN\
         UNION ALL\
         SELECT 'Executive Master' as table_name, name AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE name LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
-           SELECT 'Executive Master' as table_name, pincode AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE pincode LIKE CONCAT('%', search_text, '%')\
+          SELECT 'Executive Master' as table_name, pincode AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE pincode LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
           SELECT 'Executive Master' as table_name, country_id AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE country_id LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Executive Master' as table_name, name AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE email LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
-           SELECT 'Executive Master' as table_name, mobile AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE mobile LIKE CONCAT('%', search_text, '%')\
+          SELECT 'Executive Master' as table_name, mobile AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE mobile LIKE CONCAT('%', search_text, '%')\
         UNION ALL\
         SELECT 'Executive Master' as table_name, whatsapp AS result,'/cap/admin/lists/executiveList' as href FROM executive_master WHERE whatsapp LIKE CONCAT('%', search_text, '%')\
     )\
         SELECT DISTINCT * FROM combined_results;\
-\
-END ;~\
-\
-CREATE  PROCEDURE `updateAction`(\
-	IN id int(11) unsigned,\
+  \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `search_contacts`(\
+  IN search_value VARCHAR(255)\
+  )\
+  BEGIN\
+  DECLARE name BOOLEAN DEFAULT TRUE;\
+  DECLARE phone BOOLEAN DEFAULT TRUE;\
+  DECLARE whatsapp BOOLEAN DEFAULT TRUE;\
+  DECLARE alias BOOLEAN DEFAULT TRUE;\
+  DECLARE email BOOLEAN DEFAULT TRUE;\
+  DECLARE organisation BOOLEAN DEFAULT TRUE;\
+  \
+  IF organisation THEN\
+    SELECT ct.id as id , ct.name as name ,  TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+        IF(ct.name != '', ct.name, NULL), \
+      \
+    IF(ct.alias != '', ct.alias, NULL), \
+        IF(ct.mobile != '', ct.mobile, NULL), \
+        IF(ct.whatsapp != '', ct.whatsapp, NULL), \
+      IF(ct.email != '', ct.email, NULL), \
+      IF(org.name != '' , org.name , NULL)\
+    )) as detail\
+    FROM contact_master ct\
+    LEFT JOIN organisation_master org ON ct.organisation_id = org.id\
+    WHERE (name IS TRUE AND ct.name LIKE CONCAT('%', search_value, '%'))\
+      OR (phone IS TRUE AND ct.mobile LIKE CONCAT('%', search_value, '%'))\
+      OR (whatsapp IS TRUE AND ct.whatsapp LIKE CONCAT('%', search_value, '%'))\
+      OR ( email IS TRUE AND ct.email LIKE CONCAT('%', search_value, '%'))\
+      OR ( alias IS TRUE AND ct.alias LIKE CONCAT('%', search_value, '%'))\
+      OR ( organisation IS TRUE AND org.name LIKE CONCAT('%', search_value, '%'));\
+  ELSE\
+    SELECT ct.id as id , ct.name as name ,    TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+        IF(ct.name != '', ct.name, NULL), \
+      \
+    IF(ct.alias != '', ct.alias, NULL), \
+        IF(ct.mobile != '', ct.mobile, NULL), \
+        IF(ct.whatsapp != '', ct.whatsapp, NULL), \
+      IF(ct.email != '', ct.email, NULL)\
+    )) as detail\
+    FROM contact_master ct\
+    WHERE (name IS TRUE AND ct.name LIKE CONCAT('%', search_value, '%'))\
+      OR (phone IS TRUE AND ct.mobile LIKE CONCAT('%', search_value, '%'))\
+      OR (whatsapp IS TRUE AND ct.whatsapp LIKE CONCAT('%', search_value, '%'))\
+      OR ( email IS TRUE AND ct.email LIKE CONCAT('%', search_value, '%'))\
+      OR ( alias IS TRUE AND ct.alias LIKE CONCAT('%', search_value, '%'));\
+  END IF;\
+  \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `search_contact_group`(\
+    IN search_value VARCHAR(255)\
+  )\
+  BEGIN\
+    DECLARE name BOOLEAN DEFAULT TRUE;\
+    DECLARE alias BOOLEAN DEFAULT TRUE;\
+  \
+  \
+    /*\
+    SELECT name, alias\
+    INTO name, alias\
+    FROM search_table\
+    WHERE formName = 'executive'; \
+    */\
+  \
+    SELECT cgm.id AS id, \
+          cgm.name AS name, \
+          TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+              IF(cgm.name != '', cgm.name, NULL), \
+              IF(cgm.alias != '', cgm.alias, NULL)\
+          )) AS detail\
+    FROM contact_group_master cgm\
+    WHERE (name IS TRUE AND cgm.name LIKE CONCAT('%', search_value, '%'))\
+      OR (alias IS TRUE AND cgm.alias LIKE CONCAT('%', search_value, '%'));\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `search_executive`(\
+    IN search_value VARCHAR(255)\
+  )\
+  BEGIN\
+    DECLARE name BOOLEAN DEFAULT TRUE;\
+    DECLARE alias BOOLEAN DEFAULT TRUE;\
+    DECLARE phone BOOLEAN DEFAULT TRUE;\
+    DECLARE whatsapp BOOLEAN DEFAULT TRUE;\
+    DECLARE email BOOLEAN DEFAULT TRUE;\
+  \
+    /*\
+    SELECT name, alias, phone , whatsapp, email\
+    INTO name, alias,  phone , whatsapp, email\
+    FROM search_table\
+    WHERE formName = 'executive'; \
+    */\
+  \
+    SELECT em.id AS id, \
+          em.name AS name, \
+          TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+              IF(em.name != '', em.name, NULL), \
+              IF(em.alias != '', em.alias, NULL), \
+              IF(em.mobile != '', em.mobile, NULL), \
+              IF(em.whatsapp != '', em.whatsapp, NULL), \
+              IF(em.email != '', em.email, NULL)\
+          )) AS detail\
+    FROM executive_master em\
+    WHERE (name IS TRUE AND em.name LIKE CONCAT('%', search_value, '%'))\
+      OR (alias IS TRUE AND em.alias LIKE CONCAT('%', search_value, '%'))\
+      OR (phone IS TRUE AND em.mobile LIKE CONCAT('%', search_value, '%')) \
+      OR (whatsapp IS TRUE AND em.whatsapp LIKE CONCAT('%', search_value, '%')) \
+      OR (email IS TRUE AND em.email LIKE CONCAT('%', search_value, '%')); \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `search_organisation`(\
+  IN search_value VARCHAR(255)\
+  )\
+  BEGIN\
+  DECLARE name BOOLEAN DEFAULT TRUE;\
+  DECLARE alias BOOLEAN DEFAULT TRUE;\
+  DECLARE print_name BOOLEAN DEFAULT TRUE;\
+  \
+  \
+    SELECT om.id as id , om.name as name ,    TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+        IF(om.name != '', om.name, NULL), \
+  IF(om.alias != '', om.alias, NULL), \
+      IF(om.print_name != '', om.print_name, NULL)\
+    )) as detail\
+    FROM organisation_master om\
+    WHERE (name IS TRUE AND om.name LIKE CONCAT('%', search_value, '%'))\
+          OR ( alias IS TRUE AND om.alias LIKE CONCAT('%', search_value, '%'))\
+      OR (print_name IS TRUE AND om.print_name LIKE CONCAT('%', search_value, '%'))\
+  ;\
+  \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `search_product`(\
+  IN search_value VARCHAR(255)\
+  )\
+  BEGIN\
+  DECLARE name BOOLEAN DEFAULT TRUE;\
+  DECLARE alias BOOLEAN DEFAULT TRUE;\
+  DECLARE group_name BOOLEAN DEFAULT TRUE;\
+  DECLARE product_number BOOLEAN DEFAULT TRUE;\
+  DECLARE hsn_code BOOLEAN DEFAULT TRUE;\
+  \
+  \
+  IF group_name THEN\
+    SELECT \
+      pm.id AS id, \
+      pm.name AS name, \
+      TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+        IF(pm.name != '', pm.name, NULL), \
+        IF(pm.alias != '', pm.alias, NULL), \
+        IF(pm.product_number != '', pm.product_number, NULL), \
+        IF(pm.hsn_code != '', pm.hsn_code, NULL), \
+        IF(pgm.name != '', pgm.name, NULL)\
+      )) AS detail\
+    FROM \
+      product_master pm\
+      LEFT JOIN product_group_master pgm ON pm.group_id = pgm.id\
+    WHERE \
+      (name IS TRUE AND pm.name LIKE CONCAT('%', search_value, '%'))\
+      OR (alias IS TRUE AND pm.alias LIKE CONCAT('%', search_value, '%'))\
+      OR (product_number IS TRUE AND pm.product_number LIKE CONCAT('%', search_value, '%'))\
+      OR (hsn_code IS TRUE AND pm.hsn_code LIKE CONCAT('%', search_value, '%'))\
+      OR (group_name IS TRUE AND pgm.name LIKE CONCAT('%', search_value, '%'));\
+  ELSE\
+    SELECT \
+      pm.id AS id, \
+      pm.name AS name, \
+      TRIM(BOTH ' ; ' FROM CONCAT_WS(' ; ', \
+        IF(pm.name != '', pm.name, NULL), \
+        IF(pm.alias != '', pm.alias, NULL), \
+        IF(pm.product_number != '', pm.product_number, NULL), \
+        IF(pm.hsn_code != '', pm.hsn_code, NULL)\
+      )) AS detail\
+    FROM \
+      product_master pm\
+    WHERE \
+      (name IS TRUE AND pm.name LIKE CONCAT('%', search_value, '%'))\
+      OR (alias IS TRUE AND pm.alias LIKE CONCAT('%', search_value, '%'))\
+      OR (product_number IS TRUE AND pm.product_number LIKE CONCAT('%', search_value, '%'))\
+      OR (hsn_code IS TRUE AND pm.hsn_code LIKE CONCAT('%', search_value, '%'));\
+  END IF;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateAction`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    IN stamp integer,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-   \
+  \
     start transaction;\
-     \
+    \
     set error = 0;\
     set error_text = '';\
     set last_insert_id = 0;\
     \
   SELECT \
-      COUNT(*)\
+    COUNT(*)\
   INTO count_name FROM\
-      enquiry_action_master am\
+    enquiry_action_master am\
   WHERE\
     (am.id <> id AND am.name = name)\
         OR LENGTH(name) = 0\
         OR name IS NULL;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name Already Exists';\
-			END if;\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name Already Exists';\
+      END if;\
             if length(name) = 0 or name is null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM enquiry_action_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
         \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM enquiry_action_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
               \
-		if error = 0 then\
-	    update enquiry_action_master am set \
-        am.name=name, am.modified_by=(user_id), am.modified_on = now() where am.id=id;\
-	    end if;\
+    if error = 0 then\
+      update enquiry_action_master am set \
+        am.name=name, am.stamp= am.stamp+1, am.modified_by=(user_id), am.modified_on = now() where am.id=id;\
+      end if;\
     commit;\
     \
-	SELECT error, error_path, error_text;\
+  SELECT error, error_path, error_text;\
   SELECT \
-      *\
+    *\
   FROM\
-      enquiry_action_master am\
+    enquiry_action_master am\
   WHERE\
-      am.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateAllocationType`(\
-	IN name varchar(75),\
-    IN id int(11) unsigned,\
+    am.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateAllocationType`(\
+  IN id int(11) unsigned,\
+  IN name varchar(75),\
+    IN stamp integer,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     declare count_name integer;\
-     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
+  \
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
@@ -2485,44 +3558,67 @@ BEGIN\
     set error = 0;\
     set error_text = '';\
     \
-		SELECT COUNT(*) INTO count_name\
-		FROM allocation_type_master am\
-		WHERE (am.id<> id && am.name = name) or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Allocation Type Already Exists';\
-			END if;\
+    SELECT COUNT(*) INTO count_name FROM allocation_type_master am WHERE (am.id <> id && am.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Allocation Type Already Exists';\
+      END if;\
             if length(name) = 0 or name is null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Allocation Type cannot be empty';\
-			END if;\
-		END if;\
-        if error = 0 then\
-			UPDATE allocation_type_master am SET\
-             am.name=name, am.stamp=am.stamp+1, am.modified_by=(user_id), am.modified_on = now() where am.id=id;\
-		END if;\
-	commit;\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Allocation Type cannot be empty';\
+      END if;\
+    END if;\
+  \
+    SELECT COUNT(*) INTO is_deleted FROM allocation_type_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM allocation_type_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+        \
+        IF error = 0 THEN\
+      UPDATE allocation_type_master am \
+      SET \
+      am.name = name,\
+      am.stamp = am.stamp + 1,\
+      am.modified_by = user_id,\
+      am.modified_on = NOW() WHERE am.id = id;\
+    END IF;\
+    commit;\
     \
-    select error, error_path, error_text;\
-    select * from allocation_type_master am where am.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateArea`(\
-	IN name varchar(75),\
+  SELECT error, error_path, error_text;\
+  SELECT * FROM allocation_type_master am WHERE am.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateArea`(\
+  IN name varchar(75),\
     IN id int(11) unsigned,\
+    IN stamp integer,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     declare count_name integer;\
-     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  declare is_deleted INT;\
+    declare current_stamp INT;\
+  \
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
@@ -2533,59 +3629,71 @@ BEGIN\
     set error = 0;\
     set error_text = '';\
     \
-		SELECT COUNT(*) INTO count_name\
-		FROM area_master am\
-		WHERE (am.id<> id && am.name = name) or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Area Already Exists';\
-			END if;\
+    SELECT COUNT(*) INTO count_name\
+    FROM area_master am\
+    WHERE (am.id<> id && am.name = name) or\
+    length(name)=0 or name is null;\
+  \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Area Already Exists';\
+      END if;\
             if length(name) = 0 or name is null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Area cannot be empty';\
-			END if;\
-		END if;\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Area cannot be empty';\
+      END if;\
+    END if;\
+        \
+        SELECT COUNT(*) INTO is_deleted FROM area_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM area_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+        \
         if error = 0 then\
-			UPDATE area_master am SET\
-             am.name=name, am.modified_by=(user_id), am.modified_on = now() where am.id=id;\
-		END if;\
-	commit;\
+      UPDATE area_master am SET\
+            am.name=name, am.stamp=am.stamp+1, am.modified_by=(user_id), am.modified_on = now() where am.id=id;\
+    END if;\
+  commit;\
     \
     select error, error_path, error_text;\
     select * from area_master am where am.id = id;\
-END ;~\
-\
-CREATE PROCEDURE `updateCallAllocation`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateCallAllocation`(\
   IN executiveId INT,\
   IN remark TEXT,\
   IN idList VARCHAR(255),\
-  IN delimiter CHAR(1),\
+  IN comma CHAR(1),\
   IN userID INT\
-)\
-BEGIN\
-    DECLARE i INT DEFAULT 1;\
-    DECLARE idPart VARCHAR(255);\
-    DECLARE idListLen INT;\
-\
-    DROP TEMPORARY TABLE IF EXISTS tempIds;\
-    \
-    CREATE TEMPORARY TABLE tempIds (id INT);\
-\
-    SET idListLen = LENGTH(idList) - LENGTH(REPLACE(idList, delimiter,'')) + 1;\
-\
+  )\
+  BEGIN\
     START TRANSACTION;\
-\
-    WHILE i <= idListLen DO\
-        SET idPart = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(idList, delimiter, i), delimiter, -1));\
-        INSERT INTO tempIds(id) VALUES (CAST(idPart AS UNSIGNED));\
-        SET i = i + 1;\
-    END WHILE;\
-\
+  \
+    UPDATE enquiry_ledger_tran elt\
+    JOIN (\
+        SELECT enquiry_id, MAX(id) AS max_id\
+        FROM enquiry_ledger_tran\
+        WHERE FIND_IN_SET(enquiry_id, idList) > 0\
+        GROUP BY enquiry_id\
+    ) latest ON elt.id = latest.max_id\
+    SET elt.active = 0;\
+  \
     INSERT INTO enquiry_ledger_tran (\
         enquiry_id,\
         status_version,\
@@ -2618,95 +3726,188 @@ BEGIN\
         elt.action_taken_remark,\
         elt.closure_remark,\
         elt.enquiry_tran_type_id,\
-        elt.active,\
+        1,\
         userID,\
         elt.created_by        \
     FROM enquiry_ledger_tran elt\
     JOIN (\
         SELECT enquiry_id, MAX(id) as max_id\
         FROM enquiry_ledger_tran\
-        WHERE enquiry_id IN (SELECT id FROM tempIds)\
+        WHERE FIND_IN_SET(enquiry_id, idList) > 0\
         GROUP BY enquiry_id\
     ) latest ON elt.id = latest.max_id;\
-\
+  \
     COMMIT;\
-END ;~\
-\
-CREATE  PROCEDURE `updateCategory`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateCallAllocationSupport`(\
+  IN executiveId INT,\
+  IN remark TEXT,\
+  IN idList VARCHAR(255),\
+  IN comma CHAR(1),\
+  IN userID INT\
+  )\
+  BEGIN\
+  \
+    START TRANSACTION;\
+    \
+  UPDATE ticket_ledger_tran tlt\
+    JOIN (\
+        SELECT ticket_id, MAX(id) AS max_id\
+        FROM ticket_ledger_tran\
+        WHERE FIND_IN_SET(ticket_id, idList) > 0\
+        GROUP BY ticket_id\
+    ) latest ON tlt.id = latest.max_id\
+    SET tlt.active = 0;\
+    \
+    \
+    INSERT INTO ticket_ledger_tran (\
+        ticket_id,\
+        status_version,\
+        allocated_to,\
+        date,\
+        status_id,\
+        sub_status_id,\
+        action_taken_id,\
+        next_action_id,\
+        next_action_date,\
+        suggested_action_remark,\
+        action_taken_remark,\
+        closure_remark,\
+        ticket_tran_type_id,\
+        active,\
+        modified_by,\
+        created_by\
+    )\
+    SELECT \
+        tlt.ticket_id,\
+        tlt.status_version,\
+        executiveId,\
+        NOW(),\
+        tlt.status_id,\
+        tlt.sub_status_id,\
+        tlt.action_taken_id,\
+        tlt.next_action_id,\
+        tlt.next_action_date,\
+        remark,\
+        tlt.action_taken_remark,\
+        tlt.closure_remark,\
+        tlt.ticket_tran_type_id,\
+        1,\
+        userID,\
+        tlt.created_by        \
+    FROM ticket_ledger_tran tlt\
+    JOIN (\
+        SELECT ticket_id, MAX(id) as max_id\
+        FROM ticket_ledger_tran\
+        WHERE find_in_set(ticket_id, idList)>0\
+        GROUP BY ticket_id\
+    ) latest ON tlt.id = latest.max_id;\
+  \
+    COMMIT;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateCategory`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    IN stamp integer,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  declare is_deleted INT;\
+    declare current_stamp INT;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-\
+  \
     start transaction;\
-\
+  \
     set error = 0;\
     set error_text = '';\
-   \
-	SELECT COUNT(*) INTO count_name\
-	FROM enquiry_category_master cm\
-	WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-		if length(name) > 0 or name is not null then\
-		set error = 1;\
-		set error_path = 'name';\
-		set error_text = 'Name Already Exists';\
-		END if;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM enquiry_category_master cm\
+  WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    set error_path = 'name';\
+    set error_text = 'Name Already Exists';\
+    END if;\
             \
-		if length(name) = 0 or name is null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name cannot be empty';\
-		END if;\
-	END if;\
-             \
-if error = 0 then\
-   update enquiry_category_master cm set\
-        cm.name=name, cm.modified_by=(user_id), cm.modified_on = now() where cm.id=id;\
-END if;\
+    if length(name) = 0 or name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name cannot be empty';\
+    END if;\
+  END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM enquiry_category_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM enquiry_category_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+            \
+  if error = 0 then\
+  update enquiry_category_master cm set\
+        cm.name=name, cm.stamp=cm.stamp+1, cm.modified_by=(user_id), cm.modified_on = now() where cm.id=id;\
+  END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from enquiry_category_master cm where cm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateContact`(\
-	IN id int(11) unsigned,\
-	IN alias varchar(60),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateContact`(\
+  IN id int(11) unsigned,\
+  IN alias varchar(60),\
     IN name varchar(60),\
-	IN print_name varchar(60),\
-	IN group_id  int(11),\
-	IN pan  varchar(20),\
-	IN aadhaar  varchar(20),\
-	IN address1 varchar(75),\
-	IN address2 varchar(75),\
-	IN address3 varchar(75),\
-	IN city varchar(75),\
-	IN state_id  int(11),\
-	IN area_id  int(11),\
-	IN pincode varchar(15),\
-	IN country_id  int(11),\
-	IN email varchar(100),\
-	IN mobile varchar(20),\
-	IN whatsapp varchar(20),\
-	IN dob datetime,\
-	IN doa datetime,\
-	IN dept_id  int(11),\
-	IN org_id  int(11),\
+    IN stamp int,\
+  IN print_name varchar(60),\
+  IN group_id  int(11),\
+  IN pan  varchar(20),\
+  IN aadhaar  varchar(20),\
+  IN address1 varchar(75),\
+  IN address2 varchar(75),\
+  IN address3 varchar(75),\
+  IN city varchar(75),\
+  IN state_id  int(11),\
+  IN area_id  int(11),\
+  IN pincode varchar(15),\
+  IN country_id  int(11),\
+  IN email varchar(100),\
+  IN mobile varchar(20),\
+  IN whatsapp varchar(20),\
+  IN dob datetime,\
+  IN doa datetime,\
+  IN dept_id  int(11),\
+  IN org_id  int(11),\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_name varchar(60);\
     declare count_alias varchar(60);\
     declare count_pan varchar(20);\
@@ -2714,6 +3915,8 @@ BEGIN\
     declare count_email varchar(100);\
     declare count_mobile varchar(20);\
     declare count_whatsapp varchar(20);\
+  declare is_deleted INT;\
+    declare current_stamp INT;  \
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
@@ -2726,149 +3929,170 @@ BEGIN\
     \
     DROP TABLE IF EXISTS temp_error_log;\
     \
-	CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+  CREATE TEMPORARY TABLE temp_error_log (\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
     \
-		SELECT COUNT(*) INTO count_name\
-		FROM contact_master cm\
-		WHERE (cm.id <> id AND cm.name = name) or length(name) = 0 or name is null;\
+    SELECT COUNT(*) INTO count_name\
+    FROM contact_master cm\
+    WHERE (cm.id <> id AND cm.name = name) or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name alreay exists', 'name');\
-				\
-			END if;\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name alreay exists', 'name');\
+        \
+      END if;\
             if length(name) = 0 or name is null then \
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name cannot be empty', 'name');\
-				\
-			END if;\
-		END if;\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
         \
-		SELECT COUNT(*) INTO count_name\
-		FROM contact_master cm\
-		WHERE (cm.id <> id AND cm.alias = name);\
-			if count_name > 0 then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name already exists as alias', 'name');\
-				\
-			END if;\
+      END if;\
+    END if;\
         \
-		\
+    SELECT COUNT(*) INTO count_name\
+    FROM contact_master cm\
+    WHERE (cm.id <> id AND cm.alias = name);\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
+        \
+      END if;\
+        \
+    \
         if length(alias) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_alias FROM contact_master cm\
-			WHERE (cm.id <> id AND cm.alias = alias );\
-			if count_alias > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Alias already exists', 'alias');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_alias FROM contact_master cm\
+      WHERE (cm.id <> id AND cm.alias = alias );\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
             \
-				SELECT COUNT(*) INTO count_alias FROM contact_master cm\
-				WHERE (cm.id <> id AND cm.name = alias );\
-				if count_alias > 0 then\
-					set error = 1;\
-						INSERT INTO temp_error_log (error_text, error_path) \
-						VALUES ('Alias already exists as name', 'alias');\
-				END if;\
+        SELECT COUNT(*) INTO count_alias FROM contact_master cm\
+        WHERE (cm.id <> id AND cm.name = alias );\
+        if count_alias > 0 then\
+          set error = 1;\
+            INSERT INTO temp_error_log (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+        END if;\
             END if;\
             \
         if length(pan) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_pan FROM contact_master cm\
-			WHERE (cm.id <> id AND cm.pan = pan);\
-			if count_pan > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Pan already exists', 'pan');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_pan FROM contact_master cm\
+      WHERE (cm.id <> id AND cm.pan = pan);\
+      if count_pan > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Pan already exists', 'pan');\
+          \
+      END if;\
         End if;\
         \
         if length(aadhaar) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_aadhaar FROM contact_master cm\
-			WHERE (cm.id <> id AND cm.aadhaar = aadhaar);\
-			if count_aadhaar > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Aadhaar already exists', 'aadhaar');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_aadhaar FROM contact_master cm\
+      WHERE (cm.id <> id AND cm.aadhaar = aadhaar);\
+      if count_aadhaar > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Aadhaar already exists', 'aadhaar');\
+          \
+      END if;\
         End if;\
         \
         if length(email) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_email FROM contact_master cm\
-			WHERE (cm.id <> id AND cm.email = email);\
-			if count_email > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Email already exists', 'email');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_email FROM contact_master cm\
+      WHERE (cm.id <> id AND cm.email = email);\
+      if count_email > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Email already exists', 'email');\
+          \
+      END if;\
         End if;\
         \
         if length(mobile) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_mobile FROM contact_master cm\
-			WHERE (cm.id <> id AND cm.mobile = mobile);\
-			if count_mobile > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Mobile already exists', 'mobile');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_mobile FROM contact_master cm\
+      WHERE (cm.id <> id AND cm.mobile = mobile);\
+      if count_mobile > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Mobile already exists', 'mobile');\
+          \
+      END if;\
         End if;\
         \
         if length(whatsapp) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_whatsapp FROM contact_master cm\
-			WHERE (cm.id <> id AND cm.whatsapp = whatsapp);\
-			if count_whatsapp > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Whatsapp already exists', 'whatsapp');\
-					\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_whatsapp FROM contact_master cm\
+      WHERE (cm.id <> id AND cm.whatsapp = whatsapp);\
+      if count_whatsapp > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Whatsapp already exists', 'whatsapp');\
+          \
+      END if;\
         End if;\
         \
-		if error = 0 then\
+        SELECT COUNT(*) INTO is_deleted FROM contact_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
         \
-			UPDATE contact_master cm SET  cm.name= name, cm.alias  = alias, cm.print_name  = print_name,\
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM contact_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+        \
+    if error = 0 then\
+        \
+      UPDATE contact_master cm SET  cm.name= name, cm.stamp=cm.stamp+1, cm.alias  = alias, cm.print_name  = print_name,\
             cm.group_id  = group_id,cm.pan  = pan,cm.aadhaar  = aadhaar, cm.address1  = address1,cm.address2  = address2,\
             cm.address3  = address3,cm.city  = city,cm.state_id  = state_id, cm.area_id  = area_id, cm.pincode  = pincode,cm.country_id  = country_id,\
-            cm.email  = email,cm.mobile  = mobile,cm.whatsapp = whatsapp,cm.modified_by = user_id, cm.modified_on = now(),cm.department_id  = department_id,\
-            cm.organisation_id  = organisation_id\
-			WHERE cm.id=id;\
-		END if;\
+            cm.email  = email,cm.mobile  = mobile,cm.whatsapp = whatsapp,cm.modified_by = user_id, cm.modified_on = now(),cm.department_id  = dept_id,\
+            cm.organisation_id  = org_id\
+      WHERE cm.id=id;\
+    END if;\
     commit;\
     \
     select * from temp_error_log;\
     select * from contact_master cm where cm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateContactGroup`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateContactGroup`(\
+  IN id int(11) unsigned,\
     in name varchar(70),\
+    In stamp int,\
     in alias varchar(70),\
     in parentId int,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_name varchar(60);\
     DECLARE count_alias varchar(60);\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
@@ -2879,59 +4103,97 @@ BEGIN\
     set error = 0;\
       \
     DROP TABLE IF EXISTS error_table;\
- \
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM contact_group_master am\
-		WHERE (am.id <> id and (am.name = name OR am.alias = name)) or length(name) = 0 or name is null;\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
+    \
+    SELECT COUNT(*) INTO count_name\
+  FROM contact_group_master am\
+  WHERE (am.id <> id AND am.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+  IF count_name > 0 THEN\
+    IF LENGTH(name) > 0 OR name IS NOT NULL THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name already exists', 'name');\
+    END IF;\
+    IF LENGTH(name) = 0 OR name IS NULL THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM contact_group_master am\
+  WHERE (am.id <> id AND am.alias = name);\
+  IF count_name > 0 THEN\
+    SET error = 1;\
+    INSERT INTO error_table (error_text, error_path) \
+    VALUES ('Name already exists as alias', 'name');\
+  END IF;\
+  \
+  IF LENGTH(alias) <> 0 THEN\
+    SELECT COUNT(*) INTO count_alias FROM contact_group_master am\
+    WHERE (am.id <> id AND am.alias = alias);\
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Alias already exists', 'alias');\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_alias FROM contact_group_master am\
+    WHERE (am.id <> id AND am.name = alias);\
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO is_deleted FROM contact_group_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
         \
-        if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
-			END if;\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
-			END if;\
-		END if;\
-        \
-        \
-		SELECT COUNT(*) INTO count_alias\
-		FROM contact_group_master am\
-		WHERE (am.id <> id and (am.name = alias OR am.alias = alias));\
-        \
-        if count_alias > 0 then\
-			if length(alias) > 0 or alias is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');\
-			END if;\
-		END if;\
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM contact_group_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
               \
-		if error = 0 then\
-			update contact_group_master am set \
-			am.name=name, am.alias=alias ,am.parent_id=parentId, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
-		END if;\
+    if error = 0 then\
+      update contact_group_master am set \
+      am.name=name, am.stamp=am.stamp+1, am.alias=alias ,am.parent_id=parentId, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
     commit;\
     \
-	select * from error_table;\
+  select * from error_table;\
     select * from contact_group_master am where am.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateCountry`(\
-	IN name varchar(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateCountry`(\
+  IN name varchar(75),\
+    In stamp int,\
     IN id int(11) unsigned,\
     IN alias varchar(45),\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     declare count_name integer;\
     declare count_alias integer;\
+    declare is_deleted INT;\
+    declare current_stamp INT;    \
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
@@ -2940,77 +4202,119 @@ BEGIN\
     \
     start transaction;\
     \
-	 DROP TABLE IF EXISTS temp_error_log;\
-   \
+  DROP TABLE IF EXISTS temp_error_log;\
+  \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
     \
     set error = 0;\
-	\
-		SELECT COUNT(*) INTO count_name\
-		FROM country_master cm\
-		WHERE (cm.id <> id && cm.name = name) or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-                INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('Country alreay exists', 'name');\
-			END if;\
-            if length(name) = 0 or name is null then\
-				set error = 1;\
-                INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('Country cannot be empty', 'name');\
-			END if;\
-		END if;\
-			SELECT COUNT(*) INTO count_alias\
-			FROM country_master cm\
-			WHERE (cm.id <> id && cm.alias = alias && length(alias)!=0);\
-\
-			if count_alias > 0 then\
-				if length(alias) > 0 or alias is not null then\
-					set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path)\
-					VALUES ('Alias Already Exists', 'alias');\
-				END if;\
-			END if;\
+  \
+    SELECT COUNT(*) INTO count_name\
+  FROM country_master cm\
+  WHERE (cm.id <> id AND cm.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+  IF count_name > 0 THEN\
+    IF LENGTH(name) > 0 OR name IS NOT NULL THEN\
+        SET error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Country already exists', 'name');\
+    END IF;\
+    IF LENGTH(name) = 0 OR name IS NULL THEN\
+        SET error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Country cannot be empty', 'name');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM country_master cm\
+  WHERE (cm.id <> id AND cm.alias = name);\
+  \
+  IF count_name > 0 THEN\
+    SET error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path) \
+    VALUES ('Country already exists as alias', 'name');\
+  END IF;\
+  \
+  IF LENGTH(alias) <> 0 THEN\
+    SELECT COUNT(*) INTO count_alias \
+    FROM country_master cm\
+    WHERE (cm.id <> id AND cm.alias = alias);\
+  \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Alias already exists', 'alias');\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_alias \
+    FROM country_master cm\
+    WHERE (cm.id <> id AND cm.name = alias);\
+  \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+  END IF;\
+  \
+    SELECT COUNT(*) INTO is_deleted FROM country_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM country_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+  \
         if error = 0 then\
-			UPDATE country_master cm SET cm.name = name,cm.alias = alias,cm.modified_by = user_id,cm.modified_on = now() where cm.id = id;\
-		END if;\
-	commit;\
+      UPDATE country_master cm SET cm.name = name, cm.stamp=cm.stamp+1, cm.alias = alias,cm.modified_by = user_id,cm.modified_on = now() where cm.id = id;\
+    END if;\
+  commit;\
     select * from temp_error_log;\
     select * from country_master cm where cm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateCurrency`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateCurrency`(\
     IN id int(11) unsigned,\
-    IN user_symbol VARCHAR(50),\
+    IN user_symbol VARCHAR(60),\
     IN user_name VARCHAR(75),\
+    In stamp integer,\
     IN user_shortForm VARCHAR(100),\
     IN user_Decimal_places VARCHAR(50),\
     IN user_Currency_system VARCHAR(50)\
-)\
-BEGIN\
+  )\
+  BEGIN\
     DECLARE error INTEGER;\
     DECLARE count_name INTEGER;\
     DECLARE count_symbol INTEGER;\
     DECLARE last_insert_id INTEGER;\
+    declare is_deleted INT;\
+    declare current_stamp INT;  \
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-\
+  \
     START TRANSACTION;\
-\
+  \
     SET error = 0;\
-\
+  \
     DROP TEMPORARY TABLE IF EXISTS error_table;\
-\
+  \
     CREATE TEMPORARY TABLE error_table (\
         id INT AUTO_INCREMENT PRIMARY KEY,\
         error_text VARCHAR(255), \
@@ -3019,10 +4323,8 @@ BEGIN\
     \
     SELECT COUNT(*) INTO count_name\
     FROM currency_data cd\
-    WHERE cd.name = user_name\
-    OR LENGTH(user_name) = 0\
-    OR user_name IS NULL;\
-\
+    WHERE (cd.id<>id and cd.name = user_name) OR LENGTH(user_name) = 0 OR user_name IS NULL;\
+  \
     IF count_name > 0 THEN\
         IF LENGTH(user_name) > 0 THEN\
             SET error = 1;\
@@ -3033,14 +4335,12 @@ BEGIN\
             INSERT INTO error_table (error_text, error_path) VALUES ('Name cannot be empty', 'name');\
         END IF;\
     END IF;\
-\
+  \
     \
     SELECT COUNT(*) INTO count_symbol\
     FROM currency_data cd\
-    WHERE cd.symbol = user_symbol\
-    OR LENGTH(user_symbol) = 0\
-    OR user_symbol IS NULL;\
-\
+    WHERE (cd.id<>id and cd.symbol = user_symbol) OR LENGTH(user_symbol) = 0 OR user_symbol IS NULL;\
+  \
     IF count_symbol > 0 THEN\
         IF LENGTH(user_symbol) > 0 THEN\
             SET error = 1;\
@@ -3051,133 +4351,195 @@ BEGIN\
             INSERT INTO error_table (error_text, error_path) VALUES ('Symbol cannot be empty', 'symbol');\
         END IF;\
     END IF;\
-\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM currency_data cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM currency_data cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+  \
     IF error = 0 THEN\
-               \
+              \
         update currency_data am set \
-			am.name=user_name, \
+      am.name=user_name, \
             am.symbol=user_symbol, \
+            am.stamp=am.stamp+1,\
             am.shortForm=user_shortForm, \
             am.decimal_places=user_Decimal_places, \
             am.currency_system=user_Currency_system \
             where am.id=id;\
         \
     END IF;\
-\
+  \
     COMMIT;\
-\
+  \
     SELECT * FROM error_table;\
     SELECT * FROM currency_data cd WHERE cd.id = id;\
-\
-END ;~\
-\
-CREATE  PROCEDURE `updateDepartment`(\
-	IN id int(11) unsigned,\
+  \
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateDepartment`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    In stamp integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  declare is_deleted INT;\
+    declare current_stamp INT;  \
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-   \
+  \
     start transaction;\
-	\
-	set error = 0;\
+  \
+  set error = 0;\
     set error_text = '';\
-   \
-		SELECT COUNT(*) INTO count_name\
-		FROM department_master cm\
-		WHERE cm.name = name or length(name) = 0 or name is null;\
-       \
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name Already Exists';\
-			END if;\
-				\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
-       \
-             \
-		if error = 0 then\
-			update department_master cm set\
-			cm.name=name, cm.modified_by=user_id, cm.modified_on = now() where cm.id=id;\
-		END if;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM department_master cm\
+    WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+      \
+      SELECT COUNT(*) INTO is_deleted FROM department_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM department_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+            \
+    if error = 0 then\
+      update department_master cm set\
+      cm.name=name, cm.stamp=cm.stamp+1, cm.modified_by=user_id, cm.modified_on = now() where cm.id=id;\
+    END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from department_master cm where cm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateEnquirySource`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateEnquirySource`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    IN stamp int,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-	\
+  \
     start transaction;\
-   \
+  \
     set error = 0;\
     set error_text = '';\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM enquiry_source_master cm\
-		WHERE cm.name = name or length(name) = 0 or name is null;\
-       \
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name Already Exists';\
-			END if;\
-				\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
- \
-		if error = 0 then\
-			update enquiry_source_master cm set\
-			cm.name=name, cm.modified_by= user_id, cm.modified_on = now() where cm.id=id;\
-		END if;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM enquiry_source_master cm\
+    WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
+      \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name Already Exists';\
+      END if;\
+        \
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+        \
+        SELECT COUNT(*) INTO is_deleted FROM enquiry_source_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM enquiry_source_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+  \
+    if error = 0 then\
+      update enquiry_source_master cm set\
+      cm.name=name, cm.stamp=cm.stamp+1, cm.modified_by= user_id, cm.modified_on = now() where cm.id=id;\
+    END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from enquiry_source_master cm where cm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `UpdateEnquirySubStatus`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `UpdateEnquirySubStatus`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    In stamp int, \
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
@@ -3185,50 +4547,70 @@ BEGIN\
   END; \
     \
     start transaction;\
-\
+  \
     set error = 0;\
     set error_text = '';\
     set last_insert_id = 0;\
- \
-		SELECT COUNT(*) INTO count_name\
-		FROM enquiry_sub_status_master am\
-		WHERE (am.id <> id and am.name = name) or length(name) = 0 or name is null;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM enquiry_sub_status_master am\
+    WHERE (am.id <> id and am.name = name) or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name Already Exists';\
-			END if;\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name Already Exists';\
+      END if;\
             if length(name) = 0 or name is null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
         \
+            SELECT COUNT(*) INTO is_deleted FROM enquiry_sub_status_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM enquiry_sub_status_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
               \
-		if error = 0 then\
-	    update enquiry_sub_status_master am set \
-        am.name=name, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
-		END if;\
+    if error = 0 then\
+      update enquiry_sub_status_master am set \
+        am.name=name, am.stamp=am.stamp+1, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
     commit;\
     \
-	select error, error_path, error_text;\
+  select error, error_path, error_text;\
     select * from enquiry_sub_status_master am where am.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `UpdateEnquirySubStatusList`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `UpdateEnquirySubStatusList`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    In stamp int, \
     IN status_id int(11),\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
@@ -3236,56 +4618,74 @@ BEGIN\
   END; \
     \
     start transaction;\
-\
+  \
     set error = 0;\
     set error_text = '';\
     set last_insert_id = 0;\
- \
-		SELECT COUNT(*) INTO count_name\
-		FROM enquiry_sub_status_master am\
-		WHERE (am.id <> id and am.name = name) or length(name) = 0 or name is null;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM enquiry_sub_status_master am\
+    WHERE (am.id <> id and am.name = name) or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name Already Exists';\
-			END if;\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name Already Exists';\
+      END if;\
             if length(name) = 0 or name is null then\
-			set error = 1;\
-				set error_path = 'name';\
-				set error_text = 'Name cannot be empty';\
-			END if;\
-		END if;\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
         \
+            SELECT COUNT(*) INTO is_deleted FROM enquiry_sub_status_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM enquiry_sub_status_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
               \
-		if error = 0 then\
-	    update enquiry_sub_status_master am set \
-        am.name=name, am.enquiry_status_id=status_id, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
-		END if;\
+    if error = 0 then\
+      update enquiry_sub_status_master am set \
+        am.name=name, am.stamp=am.stamp+1, am.enquiry_status_id=status_id, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
     commit;\
     \
-	select error, error_path, error_text;\
+  select error, error_path, error_text;\
     select * from enquiry_sub_status_master am where am.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateExecutive`(\
-	IN id integer,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateExecutive`(\
+  IN id integer,\
     IN alias varchar(60),\
     IN name varchar(60),\
-	IN address1 varchar(75),\
-	IN address2 varchar(75),\
-	IN address3 varchar(75),\
-	IN city varchar(75),\
-	IN state_id integer,\
-	IN pincode varchar(15),\
-	IN country_id integer,\
-	IN email varchar(100),\
-	IN mobile varchar(20),\
-	IN whatsapp varchar(20),\
-	IN dob varchar(100),\
-	IN doa varchar(100),\
-	IN doj varchar(100),\
+    IN stamp integer,\
+  IN address1 varchar(75),\
+  IN address2 varchar(75),\
+  IN address3 varchar(75),\
+  IN city varchar(75),\
+  IN state_id integer,\
+  IN pincode varchar(15),\
+  IN country_id integer,\
+  IN email varchar(100),\
+  IN mobile varchar(20),\
+  IN whatsapp varchar(20),\
+  IN dob varchar(100),\
+  IN doa varchar(100),\
+  IN doj varchar(100),\
     IN pan varchar(45),\
     IN aadhaar varchar(45),\
     IN area_id integer,\
@@ -3295,8 +4695,8 @@ CREATE  PROCEDURE `updateExecutive`(\
     IN dept_id integer,\
     IN group_id integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
     declare var_group_id integer;\
@@ -3307,233 +4707,336 @@ BEGIN\
     declare var_executive_id integer;\
     declare var_call_type_id integer;\
     declare var_role_id integer;\
-	DECLARE dofb datetime;\
-	DECLARE dofa datetime;\
+  DECLARE dofb datetime;\
+  DECLARE dofa datetime;\
     DECLARE dofj datetime;\
+    Declare count_pan integer;\
+    Declare count_aadhaar integer;\
+  declare is_deleted INT;\
+    declare current_stamp INT;      \
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-\
-	start transaction;\
+  \
+  start transaction;\
         \
     set error = 0;\
     \
     DROP TABLE IF EXISTS error_table;\
- \
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
     \
-	SET dofb = CASE \
-		WHEN TRIM(dob) = '' THEN NULL\
-		ELSE CAST(dob AS DATETIME)\
-	END;\
-\
-	SET dofa = CASE \
-		WHEN TRIM(doa) = '' THEN NULL\
-		ELSE CAST(doa AS DATETIME)\
-	END;\
+  SET dofb = CASE \
+    WHEN TRIM(dob) = '' THEN NULL\
+    ELSE CAST(dob AS DATETIME)\
+  END;\
+  \
+  SET dofa = CASE \
+    WHEN TRIM(doa) = '' THEN NULL\
+    ELSE CAST(doa AS DATETIME)\
+  END;\
     \
-	SET dofj = CASE \
-		WHEN TRIM(doj) = '' THEN NULL\
-		ELSE CAST(doj AS DATETIME)\
-	END;    \
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM executive_master em\
-		WHERE (em.id <> id AND (em.name = name or\
-		em.alias = name));\
+  SET dofj = CASE \
+    WHEN TRIM(doj) = '' THEN NULL\
+    ELSE CAST(doj AS DATETIME)\
+  END;    \
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM executive_master em\
+    WHERE (em.id <> id AND (em.name = name or\
+    em.alias = name));\
         \
         if count_name > 0 then\
-			set error = 1;\
-			insert into error_table (error_text, error_path) values ('name already exist' , 'name');	\
-		end if;\
-\
-			\
-			SELECT COUNT(*) INTO count_alias\
-			FROM executive_master em\
-			WHERE (em.id <> id AND (em.name = alias or\
-			em.alias = alias));\
-		\
+      set error = 1;\
+      insert into error_table (error_text, error_path) values ('name already exist' , 'name');	\
+    end if;\
+  \
+      \
+      SELECT COUNT(*) INTO count_alias\
+      FROM executive_master em\
+      WHERE (em.id <> id AND (em.name = alias or\
+      em.alias = alias));\
+    \
+        if length(alias) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_alias FROM executive_master em\
+      WHERE (em.id <> id AND em.alias = alias );\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+          \
+      END if;\
+            \
+        SELECT COUNT(*) INTO count_alias FROM executive_master em\
+        WHERE (em.id <> id  AND em.name = alias);\
         if count_alias > 0 then\
-			set error = 1;\
-			insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');	\
-		end if;\
-			\
-			if error = 0 then\
-				select ctm.id into var_call_type_id from call_type_master ctm where ctm.name=call_type LOCK IN SHARE MODE;\
+          set error = 1;\
+            INSERT INTO error_table (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+            \
+        END if;\
+            END if;\
+            \
+      if length(pan) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_pan FROM executive_master em\
+      WHERE (em.id <> id AND em.pan = pan);\
+      if count_pan > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Pan already exists', 'pan');\
+      END if;\
+        End if;\
+        \
+        if length(aadhaar) <> 0 then\
+      \
+      SELECT COUNT(*) INTO count_aadhaar FROM executive_master em\
+      WHERE (em.id <> id AND em.aadhaar = aadhaar);\
+      if count_aadhaar > 0 then\
+        set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Aadhaar already exists', 'aadhaar');\
+          \
+      END if;\
+        End if;\
+        \
+        SELECT COUNT(*) INTO is_deleted FROM executive_master em WHERE em.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT em.stamp INTO current_stamp FROM executive_master em WHERE em.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;  \
+        \
+      if error = 0 then\
+        select ctm.id into var_call_type_id from call_type_master ctm where ctm.name=call_type LOCK IN SHARE MODE;\
                                 \
-				update executive_master em set\
-				em.alias=alias, em.name=name, em.address1=address1, em.address2=address2, em.address3=address3, \
+        update executive_master em set\
+        em.alias=alias, em.name=name, em.stamp=em.stamp+1, em.address1=address1, em.address2=address2, em.address3=address3, \
                 em.city=city, em.state_id=state_id, em.pincode=pincode, em.country_id=country_id, em.email=email,\
                 em.mobile=mobile, em.whatsapp=whatsapp, em.modified_by=user_id, em.modified_on=now(), em.dob=dofb,\
                 em.doa=dofa, em.doj=dofj, em.pan=pan, em.aadhaar=aadhaar, em.area_id=area_id, em.call_type_id=var_call_type_id, em.crm_user_id = crm_user_id,\
                 em.role_id=role_id, em.dept_id=dept_id, em.group_id=group_id where em.id = id;\
-		END IF;\
-	commit;\
-	select * from error_table;\
+    END IF;\
+  commit;\
+  select * from error_table;\
     select * from executive_master em where em.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateExecutiveDept`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateExecutiveDept`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    In stamp integer,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
+  declare is_deleted INT;\
+    declare current_stamp INT;  \
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-   \
+  \
     start transaction;\
-   \
+  \
     set error = 0;\
     set error_text = '';\
-   \
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_dept_master cm\
-	WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-		if length(name) > 0 or name is not null then\
-		set error = 1;\
-		set error_path = 'name';\
-		set error_text = 'Name Already Exists';\
-		END if;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_dept_master cm\
+  WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    set error_path = 'name';\
+    set error_text = 'Name Already Exists';\
+    END if;\
             \
-		if length(name) = 0 or name is null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name cannot be empty';\
-		END if;\
-	END if;\
-       \
-             \
-	if error = 0 then\
-	   update executive_dept_master cm set\
-			cm.name=name, cm.modified_by=user_id, cm.modified_on = now() where cm.id=id;\
-	END if;\
+    if length(name) = 0 or name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name cannot be empty';\
+    END if;\
+  END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM executive_dept_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM executive_dept_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if; \
+      \
+            \
+  if error = 0 then\
+    update executive_dept_master cm set\
+      cm.name=name, cm.stamp=cm.stamp+1, cm.modified_by=user_id, cm.modified_on = now() where cm.id=id;\
+  END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from executive_dept_master cm where cm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateExecutiveGroup`(\
-	IN name varchar(75),\
-	IN alias varchar(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateExecutiveGroup`(\
+  IN name varchar(75),\
+    In stamp integer, \
+  IN alias varchar(75),\
     IN id int(11) unsigned,\
-	IN parent_id varchar(75),\
-	IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  IN parent_id varchar(75),\
+  IN user_id integer)\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_name integer;\
     DECLARE count_alias integer;\
+    declare is_deleted integer;\
+    declare current_stamp int;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-   \
+  \
     start transaction;\
     \
     set error = 0;\
     set last_insert_id = 0;\
-   \
+  \
     DROP TABLE IF EXISTS temp_error_log;\
-   \
+  \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
         \
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_group_master egm\
-	WHERE  (egm.id <> id && egm.name = name) or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-		if length(name) > 0 or name is not null then\
-		set error = 1;\
-		INSERT INTO temp_error_log (error_text, error_path)\
-		VALUES ('Name alreay exists', 'name');\
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_group_master egm\
+  WHERE  (egm.id <> id && egm.name = name) or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path)\
+    VALUES ('Name alreay exists', 'name');\
         END if;\
-	END if;\
-	if length(name) = 0 or name is null then \
-		set error = 1;\
-		INSERT INTO temp_error_log (error_text, error_path)\
-		VALUES ('Name cannot be empty', 'name');\
-		\
-	END if;\
-       \
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_group_master egm\
-	WHERE (egm.id <> id && egm.alias = name);\
-	if count_name > 0 then\
-		set error = 1;\
-		INSERT INTO temp_error_log (error_text, error_path)\
-		VALUES ('Name already exists as alias', 'name');\
-		\
-	END if;\
-       \
-\
-	if length(alias) <> 0 then\
-\
-		SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
-		WHERE egm.id <> id && egm.alias = alias ;\
-		if count_alias > 0 then\
-			set error = 1;\
-			INSERT INTO temp_error_log (error_text, error_path)\
-			VALUES ('Alias already exists', 'alias');\
-			\
-		END if;\
-           \
-		SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
-		WHERE egm.id <> id && egm.name = alias;\
-		if count_alias > 0 then\
-			set error = 1;\
-			INSERT INTO temp_error_log (error_text, error_path)\
-			VALUES ('Alias already exists as name', 'alias');\
-			\
-		END if;\
-	END if;\
-       \
-	if error = 0 then\
-		UPDATE executive_group_master egm set egm.name = name, egm.alias = alias, egm.parent_id = parent_id,egm.modified_by = user_id,egm.modified_on = now() where egm.id = id;\
-	END if;\
+  END if;\
+  if length(name) = 0 or name is null then \
+    set error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path)\
+    VALUES ('Name cannot be empty', 'name');\
+    \
+  END if;\
+      \
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_group_master egm\
+  WHERE (egm.id <> id && egm.alias = name);\
+  if count_name > 0 then\
+    set error = 1;\
+    INSERT INTO temp_error_log (error_text, error_path)\
+    VALUES ('Name already exists as alias', 'name');\
+    \
+  END if;\
+      \
+  \
+  if length(alias) <> 0 then\
+  \
+    SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
+    WHERE egm.id <> id && egm.alias = alias ;\
+    if count_alias > 0 then\
+      set error = 1;\
+      INSERT INTO temp_error_log (error_text, error_path)\
+      VALUES ('Alias already exists', 'alias');\
+      \
+    END if;\
+          \
+    SELECT COUNT(*) INTO count_alias FROM executive_group_master egm\
+    WHERE egm.id <> id && egm.name = alias;\
+    if count_alias > 0 then\
+      set error = 1;\
+      INSERT INTO temp_error_log (error_text, error_path)\
+      VALUES ('Alias already exists as name', 'alias');\
+      \
+    END if;\
+  END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM executive_group_master egm WHERE egm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT egm.stamp INTO current_stamp FROM executive_group_master egm WHERE egm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+      \
+  if error = 0 then\
+    UPDATE executive_group_master egm set egm.name = name, egm.stamp=egm.stamp+1, egm.alias = alias, egm.parent_id = parent_id,egm.modified_by = user_id,egm.modified_on = now() where egm.id = id;\
+  END if;\
     commit;\
     \
     select * from temp_error_log;\
     select * from executive_group_master egm where egm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateExecutivePrev`(\
-	IN id integer,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateExecutivePrev`(\
+  IN id integer,\
     IN alias varchar(60),\
     IN name varchar(60),\
-	IN address1 varchar(75),\
-	IN address2 varchar(75),\
-	IN address3 varchar(75),\
-	IN city varchar(75),\
-	IN state_id integer,\
-	IN pincode varchar(15),\
-	IN country_id integer,\
-	IN email varchar(100),\
-	IN mobile varchar(20),\
-	IN whatsapp varchar(20),\
-	IN dob varchar(100),\
-	IN doa varchar(100),\
-	IN doj varchar(100),\
+  IN address1 varchar(75),\
+  IN address2 varchar(75),\
+  IN address3 varchar(75),\
+  IN city varchar(75),\
+  IN state_id integer,\
+  IN pincode varchar(15),\
+  IN country_id integer,\
+  IN email varchar(100),\
+  IN mobile varchar(20),\
+  IN whatsapp varchar(20),\
+  IN dob varchar(100),\
+  IN doa varchar(100),\
+  IN doj varchar(100),\
     IN area_id integer,\
     IN call_type varchar(50),\
     IN crm_user_id integer,\
@@ -3541,8 +5044,8 @@ CREATE  PROCEDURE `updateExecutivePrev`(\
     IN dept_id integer,\
     IN group_id integer,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
     declare var_group_id integer;\
@@ -3553,154 +5056,179 @@ BEGIN\
     declare var_executive_id integer;\
     declare var_call_type_id integer;\
     declare var_role_id integer;\
-	DECLARE dofb datetime;\
-	DECLARE dofa datetime;\
+  DECLARE dofb datetime;\
+  DECLARE dofa datetime;\
     DECLARE dofj datetime;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, sqlwarning\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
-\
-	start transaction;\
-	select 'transaction started';\
+  \
+  start transaction;\
+  select 'transaction started';\
     set error = 0;\
     \
     DROP TABLE IF EXISTS error_table;\
- select 'table dropped';\
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
+  select 'table dropped';\
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
     \
-	SET dofb = CASE \
-		WHEN TRIM(dob) = '' THEN NULL\
-		ELSE CAST(dob AS DATETIME)\
-	END;\
-select 'dofb', dofb;\
-	SET dofa = CASE \
-		WHEN TRIM(doa) = '' THEN NULL\
-		ELSE CAST(doa AS DATETIME)\
-	END;\
+  SET dofb = CASE \
+    WHEN TRIM(dob) = '' THEN NULL\
+    ELSE CAST(dob AS DATETIME)\
+  END;\
+  select 'dofb', dofb;\
+  SET dofa = CASE \
+    WHEN TRIM(doa) = '' THEN NULL\
+    ELSE CAST(doa AS DATETIME)\
+  END;\
     select 'dofa', dofa;\
-	SET dofj = CASE \
-		WHEN TRIM(doj) = '' THEN NULL\
-		ELSE CAST(doj AS DATETIME)\
-	END;    \
-		select 'dofj', dofj;\
-		SELECT COUNT(*) INTO count_name\
-		FROM executive_master em\
-		WHERE (em.id <> id AND (em.name = name or\
-		em.alias = name));\
+  SET dofj = CASE \
+    WHEN TRIM(doj) = '' THEN NULL\
+    ELSE CAST(doj AS DATETIME)\
+  END;    \
+    select 'dofj', dofj;\
+    SELECT COUNT(*) INTO count_name\
+    FROM executive_master em\
+    WHERE (em.id <> id AND (em.name = name or\
+    em.alias = name));\
         \
         if count_name > 0 then\
-			set error = 1;\
-			insert into error_table (error_text, error_path) values ('name already exist' , 'name');	\
-		end if;\
-\
-			\
-			SELECT COUNT(*) INTO count_alias\
-			FROM executive_master em\
-			WHERE (em.id <> id AND (em.name = alias or\
-			em.alias = alias));\
-		\
+      set error = 1;\
+      insert into error_table (error_text, error_path) values ('name already exist' , 'name');	\
+    end if;\
+  \
+      \
+      SELECT COUNT(*) INTO count_alias\
+      FROM executive_master em\
+      WHERE (em.id <> id AND (em.name = alias or\
+      em.alias = alias));\
+    \
         if count_alias > 0 then\
-			set error = 1;\
-			insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');	\
-		end if;\
-			\
-			if error = 0 then\
-				select id into var_call_type_id from call_type_master where name=call_type LOCK IN SHARE MODE;\
+      set error = 1;\
+      insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');	\
+    end if;\
+      \
+      if error = 0 then\
+        select id into var_call_type_id from call_type_master where name=call_type LOCK IN SHARE MODE;\
                                 \
-				update executive_master em set\
-				em.alias=alias, em.name=name, em.address1=address1, em.address2=address2, em.address3=address3, \
+        update executive_master em set\
+        em.alias=alias, em.name=name, em.address1=address1, em.address2=address2, em.address3=address3, \
                 em.city=city, em.state_id=state_id, em.pincode=pincode, em.country_id=country_id, em.email=email,\
                 em.mobile=mobile, em.whatsapp=whatsapp, em.modified_by=user_id, em.modified_on=now(), em.dob=dofb,\
                 em.doa=dofa, em.doj=dofj, em.area_id=area_id, em.call_type_id=var_call_type_id, em.crm_user_id = crm_user_id,\
                 em.role_id=role_id, em.dept_id=dept_id, em.group_id=group_id where em.id = id;\
-		END IF;\
-	commit;\
-	select * from error_table;\
+    END IF;\
+  commit;\
+  select * from error_table;\
     select * from executive_master em where em.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateExecutiveRole`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateExecutiveRole`(\
+  IN id int(11) unsigned,\
     IN name varchar(60),\
+    In stamp integer, \
     IN parentId int,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error_text varchar(70);\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
     declare error_path varchar(20);\
     DECLARE count_name varchar(60);\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-\
+  \
     start transaction;\
       \
     set error = 0;\
     set error_text = '';\
-   \
-	SELECT COUNT(*) INTO count_name\
-	FROM executive_role_master rm\
-	WHERE (rm.id <> id and rm.name = name) or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-		if length(name) > 0 or name is not null then\
-		set error = 1;\
-		set error_path = 'name';\
-		set error_text = 'Name Already Exists';\
-		END if;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM executive_role_master rm\
+  WHERE (rm.id <> id and rm.name = name) or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    set error_path = 'name';\
+    set error_text = 'Name Already Exists';\
+    END if;\
             \
-		if length(name) = 0 or name is null then\
-			set error = 1;\
-			set error_path = 'name';\
-			set error_text = 'Name cannot be empty';\
-		END if;\
-	END if;\
-       \
-             \
-	if error = 0 then\
-	   update executive_role_master rm set\
-			rm.name = name, rm.parent = parentId, rm.modified_by = user_id, rm.modified_on = now() where rm.id=id;\
-	END if;\
+    if length(name) = 0 or name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name cannot be empty';\
+    END if;\
+  END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM executive_role_master rm WHERE rm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT rm.stamp INTO current_stamp FROM executive_role_master rm WHERE rm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+            \
+  if error = 0 then\
+    update executive_role_master rm set\
+      rm.name = name, rm.stamp=rm.stamp+1, rm.parent = parentId, rm.modified_by = user_id, rm.modified_on = now() where rm.id=id;\
+  END if;\
     commit;\
-   \
-	select error, error_path, error_text;\
+  \
+  select error, error_path, error_text;\
     select * from executive_role_master rm where rm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateItem`(\
-	IN id integer,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateItem`(\
+  IN id integer,\
     IN name varchar(50),\
+    In stamp integer,\
     IN group_id integer,\
     IN alias varchar(60),\
     IN unit_id integer,\
-	IN hsn_code varchar(60),\
+  IN hsn_code varchar(60),\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-	DECLARE last_insert_id integer;\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     DECLARE count_name integer;\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-	    \
-	start transaction;\
-   \
-   DROP TABLE IF EXISTS error_log;\
-   \
-     CREATE TEMPORARY TABLE error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
+      \
+  start transaction;\
+  \
+  DROP TABLE IF EXISTS error_log;\
+  \
+    CREATE TEMPORARY TABLE error_log (\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
         error_text varchar(70),\
         error_path varchar(20)\
     );\
@@ -3710,60 +5238,78 @@ BEGIN\
     \
     start transaction;\
     \
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM item_master im\
-		WHERE (im.id<>id AND im.name = name) or length(name)=0 or name IS NULL;\
-\
-		IF count_name > 0 THEN\
-			\
-            IF length(name)>0 or name IS NOT NULL THEN \
-            set error = 1;\
-            INSERT INTO error_log (error_text, error_path)\
-            VALUES ('Name already exists', 'name');\
-		END IF;\
+    \
+    SELECT COUNT(*) INTO count_name\
+  FROM item_master im\
+  WHERE (im.id <> id AND im.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+  IF count_name > 0 THEN\
+    IF LENGTH(name) > 0 OR name IS NOT NULL THEN \
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Name already exists', 'name');\
+    END IF;\
+    \
+    IF LENGTH(name) = 0 OR name IS NULL THEN \
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Name cannot be empty', 'name');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM item_master im\
+  WHERE (im.id <> id AND im.alias = name);\
+  \
+  IF count_name > 0 THEN\
+    SET error = 1;\
+    INSERT INTO error_log (error_text, error_path)\
+    VALUES ('Name already exists as alias', 'name');\
+  END IF;\
+  \
+  IF LENGTH(alias) <> 0 THEN\
+    SELECT COUNT(*) INTO count_alias \
+    FROM item_master im\
+    WHERE (im.id <> id AND im.alias = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Alias already exists', 'alias');\
+    END IF;      \
+  \
+    SELECT COUNT(*) INTO count_alias \
+    FROM item_master im\
+    WHERE (im.id <> id AND im.name = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO is_deleted FROM item_master im WHERE im.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
         \
-        IF length(name) = 0 or name IS NULL THEN \
-			set error = 1;\
-            INSERT INTO error_log (error_text, error_path)\
-            VALUES ('Name cannot be empty', 'name');\
-		END IF;\
-        END IF;\
-       \
-       SELECT COUNT(*) INTO count_name\
-	   FROM item_master im\
-       WHERE (im.id<>id AND im.alias = name);\
-\
-	   IF count_name > 0 THEN\
-			set error = 1;\
-			INSERT INTO error_log (error_text, error_path)\
-			VALUES ('Name already exists as alias', 'name');\
-		END If;\
-        \
-        \
-        IF length(alias) <> 0 THEN\
-			SELECT COUNT(*) INTO count_alias FROM item_master im\
-            WHERE (im.id<>id AND im.alias = alias );\
-		IF count_alias > 0 THEN\
-			set error = 1;\
-            INSERT INTO error_log (error_text, error_path)\
-            VALUES ('Alias already exists', 'alias');\
-		END IF;      \
-		\
-			SELECT COUNT(*) INTO count_alias FROM item_master im\
-            WHERE (im.id<>id AND im.name = alias);\
-		IF count_alias > 0 THEN\
-			set error = 1;\
-            INSERT INTO error_log (error_text, error_path)\
-            VALUES ('Alias already exists as name', 'alias');\
-		END IF;\
-		END IF;\
-               \
-if error = 0 then\
- UPDATE item_master im\
+        If error = 0 then\
+    SELECT im.stamp INTO current_stamp FROM item_master im WHERE im.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+              \
+  if error = 0 then\
+  UPDATE item_master im\
     SET \
         im.name = name,\
-        im.stamp = 0, \
+        im.stamp = im.stamp + 1, \
         im.group_id = group_id,\
         im.alias = alias,\
         im.unit_id = unit_id,\
@@ -3771,118 +5317,167 @@ if error = 0 then\
         im.modified_by = user_id,\
         im.modified_on = NOW()\
     WHERE im.id = id;\
-	\
-       IF ROW_COUNT() = 0 THEN\
+  \
+      IF ROW_COUNT() = 0 THEN\
             SET error = 1;\
             INSERT INTO error_log (error_text, error_path)\
             VALUES ('Item not found or no changes made', 'id');\
         END IF;\
-END if;\
+  END if;\
       \
     commit;\
-   \
+  \
     \
   SELECT \
-      *\
+    *\
   FROM\
-      error_log;\
-      \
+    error_log;\
+    \
   SELECT \
-      *\
+    *\
   FROM\
-      item_master im\
+    item_master im\
   WHERE\
     im.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateItemGroup`(\
-	IN id int(11) unsigned,\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateItemGroup`(\
+  IN id int(11) unsigned,\
     in name varchar(70),\
+    in stamp int,\
     in alias varchar(70),\
     in parentId int,\
     IN user_id integer\
     )\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_name varchar(60);\
     DECLARE count_alias varchar(60);\
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    DECLARE is_deleted integer;\
+    DECLARE current_stamp integer;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END; \
-   \
+  \
     start transaction;\
-     \
+    \
     set error = 0;\
     \
     DROP TABLE IF EXISTS error_table;\
- \
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM item_group_master am\
-		WHERE (am.id <> id and (am.name = name OR am.alias = name)) or length(name) = 0 or name is null;\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
+    \
+  SELECT COUNT(*) INTO count_name\
+  FROM item_group_master am\
+  WHERE (am.id <> id AND am.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+  IF count_name > 0 THEN\
+    IF LENGTH(name) > 0 OR name IS NOT NULL THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name already exists', 'name');\
+    END IF;\
+  \
+    IF LENGTH(name) = 0 OR name IS NULL THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM item_group_master am\
+  WHERE (am.id <> id AND am.alias = name);\
+  \
+  IF count_name > 0 THEN\
+    SET error = 1;\
+    INSERT INTO error_table (error_text, error_path) \
+    VALUES ('Name already exists as alias', 'name');\
+  END IF;\
+  \
+  IF LENGTH(alias) <> 0 THEN\
+    SELECT COUNT(*) INTO count_alias \
+    FROM item_group_master am\
+    WHERE (am.id <> id AND am.alias = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Alias already exists', 'alias');\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_alias \
+    FROM item_group_master am\
+    WHERE (am.id <> id AND am.name = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO is_deleted FROM item_group_master im WHERE im.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
         \
-        if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
-			END if;\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
-			END if;\
-		END if;\
-        \
-        \
-		SELECT COUNT(*) INTO count_alias\
-		FROM item_group_master am\
-		WHERE (am.id <> id and (am.name = alias OR am.alias = alias));\
-        \
-        if count_alias > 0 then\
-			if length(alias) > 0 or alias is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('alias already exist' , 'alias');\
-			END if;\
-		END if;\
+        If error = 0 then\
+    SELECT im.stamp INTO current_stamp FROM item_group_master im WHERE im.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
               \
-		if error = 0 then\
-			update item_group_master am set \
-			am.name=name, am.alias=alias ,am.parent_id=parentId, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
-		END if;\
+    if error = 0 then\
+      update item_group_master am set \
+      am.name=name, am.stamp=am.stamp+1, am.alias=alias ,am.parent_id=parentId, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
     commit;\
     \
-	select * from error_table;\
+  select * from error_table;\
     select * from item_group_master am where am.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateOrganisation`(\
-	IN id int(11) unsigned,\
-	IN alias VARCHAR(75),\
-	IN name VARCHAR(75),\
-	IN printName VARCHAR(75),\
-	IN pan VARCHAR(75),\
-	IN gstin VARCHAR(75),\
-	IN address1 VARCHAR(75),\
-	IN address2 VARCHAR(75),\
-	IN address3 VARCHAR(75),\
-	IN city VARCHAR(75),\
-	IN state_id VARCHAR(75),\
-	IN pincode VARCHAR(75),\
-	IN country_id VARCHAR(75),\
-	IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
-	DECLARE last_insert_id integer;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateOrganisation`(\
+  IN id int(11) unsigned,\
+  IN alias VARCHAR(75),\
+  IN name VARCHAR(75),\
+    In stamp integer,\
+  IN printName VARCHAR(75),\
+  IN pan VARCHAR(75),\
+  IN gstin VARCHAR(75),\
+  IN address1 VARCHAR(75),\
+  IN address2 VARCHAR(75),\
+  IN address3 VARCHAR(75),\
+  IN city VARCHAR(75),\
+  IN state_id VARCHAR(75),\
+  IN pincode VARCHAR(75),\
+  IN country_id VARCHAR(75),\
+  IN user_id integer)\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
     DECLARE count_alias integer;\
     declare count_name integer;\
-	declare count_pan varchar(20);\
+  declare count_pan varchar(20);\
     declare count_gstin varchar(20);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
@@ -3893,169 +5488,880 @@ BEGIN\
     \
     DROP TABLE IF EXISTS temp_error_log;\
         \
-	CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+  CREATE TEMPORARY TABLE temp_error_log (\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
     \
     set error = 0;  \
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM organisation_master om\
-		WHERE  (om.id <> id AND om.name = name) or length(name) = 0 or name is null;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM organisation_master om\
+    WHERE  (om.id <> id AND om.name = name) or length(name) = 0 or name is null;\
         \
         if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name alreay exists', 'name');\
-\
-			END if;\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name alreay exists', 'name');\
+  \
+      END if;\
             if length(name) = 0 or name is null then \
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name cannot be empty', 'name');\
-			END if;\
-		END if;\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
+      END if;\
+    END if;\
         \
-		SELECT COUNT(*) INTO count_name\
-		FROM organisation_master om\
-		WHERE (om.id <> id AND om.alias = name);\
-			if count_name > 0 then\
-				set error = 1;\
-				INSERT INTO temp_error_log (error_text, error_path) \
-				VALUES ('Name already exists as alias', 'name');\
-			END if;\
+    SELECT COUNT(*) INTO count_name\
+    FROM organisation_master om\
+    WHERE (om.id <> id AND om.alias = name);\
+      if count_name > 0 then\
+        set error = 1;\
+        INSERT INTO temp_error_log (error_text, error_path) \
+        VALUES ('Name already exists as alias', 'name');\
+      END if;\
             \
         \
-		if length(alias) <> 0 then\
-			SELECT COUNT(*) INTO count_alias FROM organisation_master om\
-			WHERE (om.id <> id AND om.alias = alias);\
-			if count_alias > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Alias already exists', 'alias');\
-			END if;\
+    if length(alias) <> 0 then\
+      SELECT COUNT(*) INTO count_alias FROM organisation_master om\
+      WHERE (om.id <> id AND om.alias = alias);\
+      if count_alias > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Alias already exists', 'alias');\
+      END if;\
             \
-				SELECT COUNT(*) INTO count_alias FROM organisation_master om\
-				WHERE (om.id <> id AND om.name = alias);\
-				if count_alias > 0 then\
-					set error = 1;\
-						INSERT INTO temp_error_log (error_text, error_path) \
-						VALUES ('Alias already exists as name', 'alias');\
-				END if;\
-		END if;\
+        SELECT COUNT(*) INTO count_alias FROM organisation_master om\
+        WHERE (om.id <> id AND om.name = alias);\
+        if count_alias > 0 then\
+          set error = 1;\
+            INSERT INTO temp_error_log (error_text, error_path) \
+            VALUES ('Alias already exists as name', 'alias');\
+        END if;\
+    END if;\
         \
         \
         if length(pan) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_pan FROM organisation_master om\
-			WHERE (om.id <> id AND om.pan = pan);\
-			if count_pan > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Pan already exists', 'pan');\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_pan FROM organisation_master om\
+      WHERE (om.id <> id AND om.pan = pan);\
+      if count_pan > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Pan already exists', 'pan');\
+      END if;\
         End if;\
         \
         \
         if length(gstin) <> 0 then\
-			\
-			SELECT COUNT(*) INTO count_gstin FROM organisation_master om\
-			WHERE (om.id <> id AND om.gstin = gstin);\
-			if count_gstin > 0 then\
-				set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path) \
-					VALUES ('Gstin already exists', 'gstin');\
-			END if;\
+      \
+      SELECT COUNT(*) INTO count_gstin FROM organisation_master om\
+      WHERE (om.id <> id AND om.gstin = gstin);\
+      if count_gstin > 0 then\
+        set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Gstin already exists', 'gstin');\
+      END if;\
         End if;\
         \
-		if error = 0 then\
-       \
-			UPDATE organisation_master om SET  om.name= name, om.alias  = alias, om.print_name  = printName,\
+        SELECT COUNT(*) INTO is_deleted FROM organisation_master om WHERE om.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT om.stamp INTO current_stamp FROM organisation_master om WHERE om.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+        \
+    if error = 0 then\
+      \
+      UPDATE organisation_master om SET  om.name= name, om.stamp=om.stamp+1, om.alias  = alias, om.print_name  = printName,\
             om.pan  = pan,om.gstin  = gstin, om.address1  = address1,om.address2  = address2,om.address3  = address3,\
             om.city  = city,om.state_id  = state_id, om.pincode  = pincode,om.country_id  = country_id,\
             om.modified_by = user_id, om.modified_on = now()\
-			WHERE om.id=id;\
-		END if;\
+      WHERE om.id=id;\
+    END if;\
     commit;\
     \
     select * from temp_error_log;\
     select * from organisation_master om where om.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateState`(\
-	IN name varchar(75),\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateProduct`(\
+  IN id integer,\
+    IN name varchar(50),\
+    In stamp integer,\
+    IN group_id integer,\
+    IN alias varchar(60),\
+    IN unit_id integer,\
+  IN hsn_code varchar(60),\
+    IN user_id integer)\
+  BEGIN\
+  DECLARE error integer;\
+  DECLARE last_insert_id integer;\
+    DECLARE count_alias integer;\
+    DECLARE count_name integer;\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+      \
+  start transaction;\
+  \
+  DROP TABLE IF EXISTS error_log;\
+  \
+    CREATE TEMPORARY TABLE error_log (\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+        error_text varchar(70),\
+        error_path varchar(20)\
+    );\
+    \
+    set error = 0;\
+    set last_insert_id = 0;\
+    \
+    start transaction;\
+    \
+    \
+    SELECT COUNT(*) INTO count_name\
+  FROM product_master im\
+  WHERE (im.id <> id AND im.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+  IF count_name > 0 THEN\
+    IF LENGTH(name) > 0 OR name IS NOT NULL THEN \
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Name already exists', 'name');\
+    END IF;\
+    \
+    IF LENGTH(name) = 0 OR name IS NULL THEN \
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Name cannot be empty', 'name');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM product_master im\
+  WHERE (im.id <> id AND im.alias = name);\
+  \
+  IF count_name > 0 THEN\
+    SET error = 1;\
+    INSERT INTO error_log (error_text, error_path)\
+    VALUES ('Name already exists as alias', 'name');\
+  END IF;\
+  \
+  IF LENGTH(alias) <> 0 THEN\
+    SELECT COUNT(*) INTO count_alias \
+    FROM product_master im\
+    WHERE (im.id <> id AND im.alias = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Alias already exists', 'alias');\
+    END IF;      \
+  \
+    SELECT COUNT(*) INTO count_alias \
+    FROM product_master im\
+    WHERE (im.id <> id AND im.name = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_log (error_text, error_path)\
+        VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO is_deleted FROM product_master im WHERE im.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT im.stamp INTO current_stamp FROM product_master im WHERE im.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+              \
+  if error = 0 then\
+  UPDATE product_master im\
+    SET \
+        im.name = name,\
+        im.stamp = im.stamp + 1, \
+        im.group_id = group_id,\
+        im.alias = alias,\
+        im.unit_id = unit_id,\
+        im.hsn_code = hsn_code,\
+        im.modified_by = user_id,\
+        im.modified_on = NOW()\
+    WHERE im.id = id;\
+  \
+      IF ROW_COUNT() = 0 THEN\
+            SET error = 1;\
+            INSERT INTO error_log (error_text, error_path)\
+            VALUES ('Product not found or no changes made', 'id');\
+        END IF;\
+  END if;\
+      \
+    commit;\
+  \
+    \
+  SELECT \
+    *\
+  FROM\
+    error_log;\
+    \
+  SELECT \
+    *\
+  FROM\
+    product_master im\
+  WHERE\
+    im.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateProductGroup`(\
+  IN id int(11) unsigned,\
+    in name varchar(70),\
+    in stamp int,\
+    in alias varchar(70),\
+    in parentId int,\
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error integer;\
+    DECLARE count_name varchar(60);\
+    DECLARE count_alias varchar(60);\
+    DECLARE is_deleted integer;\
+    DECLARE current_stamp integer;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+  \
+    start transaction;\
+    \
+    set error = 0;\
+    \
+    DROP TABLE IF EXISTS error_table;\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
+    \
+  SELECT COUNT(*) INTO count_name\
+  FROM product_group_master am\
+  WHERE (am.id <> id AND am.name = name) OR LENGTH(name) = 0 OR name IS NULL;\
+  \
+  IF count_name > 0 THEN\
+    IF LENGTH(name) > 0 OR name IS NOT NULL THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name already exists', 'name');\
+    END IF;\
+  \
+    IF LENGTH(name) = 0 OR name IS NULL THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Name cannot be empty', 'name');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM product_group_master am\
+  WHERE (am.id <> id AND am.alias = name);\
+  \
+  IF count_name > 0 THEN\
+    SET error = 1;\
+    INSERT INTO error_table (error_text, error_path) \
+    VALUES ('Name already exists as alias', 'name');\
+  END IF;\
+  \
+  IF LENGTH(alias) <> 0 THEN\
+    SELECT COUNT(*) INTO count_alias \
+    FROM product_group_master am\
+    WHERE (am.id <> id AND am.alias = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Alias already exists', 'alias');\
+    END IF;\
+  \
+    SELECT COUNT(*) INTO count_alias \
+    FROM product_group_master am\
+    WHERE (am.id <> id AND am.name = alias);\
+    \
+    IF count_alias > 0 THEN\
+        SET error = 1;\
+        INSERT INTO error_table (error_text, error_path) \
+        VALUES ('Alias already exists as name', 'alias');\
+    END IF;\
+  END IF;\
+  \
+  SELECT COUNT(*) INTO is_deleted FROM product_group_master im WHERE im.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT im.stamp INTO current_stamp FROM product_group_master im WHERE im.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+              \
+    if error = 0 then\
+      update product_group_master am set \
+      am.name=name, am.stamp=am.stamp+1, am.alias=alias ,am.parent_id=parentId, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
+    commit;\
+    \
+  select * from error_table;\
+    select * from product_group_master am where am.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateState`(\
+  IN name varchar(75),\
+    In stamp integer,\
     IN id int(11) unsigned,\
     IN alias varchar(45),\
     IN country_id int(11) unsigned,\
     IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+  BEGIN\
+  DECLARE error integer;\
     declare count_name integer;\
     declare count_alias integer;\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
     RESIGNAL;\
   END;\
   \
-	start transaction;\
+  start transaction;\
     \
     DROP TABLE IF EXISTS temp_error_log;\
-   \
+  \
     CREATE TEMPORARY TABLE temp_error_log (\
-		id INT AUTO_INCREMENT PRIMARY KEY,\
-		error_text VARCHAR(255),\
-		error_path VARCHAR(100)\
-	);\
+    id INT AUTO_INCREMENT PRIMARY KEY,\
+    error_text VARCHAR(255),\
+    error_path VARCHAR(100)\
+  );\
     \
     set error = 0;\
-		\
-		SELECT COUNT(*) INTO count_name\
-		FROM state_master sm\
-		WHERE (sm.country_id = country_id && sm.id <> id && sm.name = name) or\
-		length(name)=0 or name is null;\
-\
-		if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
+    \
+    SELECT COUNT(*) INTO count_name\
+    FROM state_master sm\
+    WHERE (sm.country_id = country_id && sm.id <> id && sm.name = name) or\
+    length(name)=0 or name is null;\
+  \
+    if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
                 INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('State alreay exists', 'name');\
-			END if;\
+        VALUES ('State alreay exists', 'name');\
+      END if;\
             if length(name) = 0 or name is null then\
-				set error = 1;\
+        set error = 1;\
                 INSERT INTO temp_error_log (error_text, error_path)\
-				VALUES ('State cannot be empty', 'name');\
-			END if;\
-		END if;\
-			SELECT COUNT(*) INTO count_alias\
-			FROM state_master sm\
-			WHERE (sm.country_id = country_id && sm.id <> id && sm.alias = alias && length(alias)!=0);\
-\
-			if count_alias > 0 then\
-				if length(alias) > 0 or alias is not null then\
-					set error = 1;\
-					INSERT INTO temp_error_log (error_text, error_path)\
-					VALUES ('Alias Already Exists', 'alias');\
-				END if;\
-			END if;\
+        VALUES ('State cannot be empty', 'name');\
+      END if;\
+    END if;\
+      SELECT COUNT(*) INTO count_alias\
+      FROM state_master sm\
+      WHERE (sm.country_id = country_id && sm.id <> id && sm.alias = alias && length(alias)!=0);\
+  \
+      if count_alias > 0 then\
+        if length(alias) > 0 or alias is not null then\
+          set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path)\
+          VALUES ('Alias Already Exists', 'alias');\
+        END if;\
+      END if;\
+            \
+            SELECT COUNT(*) INTO is_deleted FROM state_master sm WHERE sm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT sm.stamp INTO current_stamp FROM state_master sm WHERE sm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO temp_error_log (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
+        \
         if error = 0 then\
-			UPDATE state_master sm SET sm.name = name, sm.alias = alias,sm.modified_by = user_id,sm.modified_on = now(), sm.country_id = country_id where sm.id = id;\
-		END if;\
-	commit;\
+      UPDATE state_master sm SET sm.name = name, sm.stamp = sm.stamp +1, sm.alias = alias,sm.modified_by = user_id,sm.modified_on = now(), sm.country_id = country_id where sm.id = id;\
+    END if;\
+  commit;\
     select * from temp_error_log;\
     select * from state_master sm where sm.id = id;\
-END ;~\
-\
-CREATE  PROCEDURE `updateUnit`(\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateSupportAction`(\
+  IN id int(11) unsigned,\
+    IN name varchar(60),\
+    IN stamp integer,\
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    DECLARE count_name varchar(60);\
+    declare is_deleted INT;\
+    declare current_stamp INT;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+  \
+    start transaction;\
+    \
+    set error = 0;\
+    set error_text = '';\
+    set last_insert_id = 0;\
+    \
+  SELECT \
+    COUNT(*)\
+  INTO count_name FROM\
+    ticket_action_master am\
+  WHERE\
+    (am.id <> id AND am.name = name)\
+        OR LENGTH(name) = 0\
+        OR name IS NULL;\
+        \
+        if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name Already Exists';\
+      END if;\
+            if length(name) = 0 or name is null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM ticket_action_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM ticket_action_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+              \
+    if error = 0 then\
+      update ticket_action_master am set \
+        am.name=name, am.stamp= am.stamp+1, am.modified_by=(user_id), am.modified_on = now() where am.id=id;\
+      end if;\
+    commit;\
+    \
+  SELECT error, error_path, error_text;\
+  SELECT \
+    *\
+  FROM\
+    ticket_action_master am\
+  WHERE\
+    am.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateSupportCategory`(\
+  IN id int(11) unsigned,\
+    IN name varchar(60),\
+    IN stamp integer,\
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    DECLARE count_name varchar(60);\
+  declare is_deleted INT;\
+    declare current_stamp INT;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+  \
+    start transaction;\
+  \
+    set error = 0;\
+    set error_text = '';\
+  \
+  SELECT COUNT(*) INTO count_name\
+  FROM ticket_category_master cm\
+  WHERE (cm.id <> id and cm.name = name) or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+    if length(name) > 0 or name is not null then\
+    set error = 1;\
+    set error_path = 'name';\
+    set error_text = 'Name Already Exists';\
+    END if;\
+            \
+    if length(name) = 0 or name is null then\
+      set error = 1;\
+      set error_path = 'name';\
+      set error_text = 'Name cannot be empty';\
+    END if;\
+  END if;\
+    \
+    SELECT COUNT(*) INTO is_deleted FROM ticket_category_master cm WHERE cm.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT cm.stamp INTO current_stamp FROM ticket_category_master cm WHERE cm.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+            \
+  if error = 0 then\
+  update ticket_category_master cm set\
+        cm.name=name, cm.stamp=cm.stamp+1, cm.modified_by=(user_id), cm.modified_on = now() where cm.id=id;\
+  END if;\
+    commit;\
+  \
+  select error, error_path, error_text;\
+    select * from ticket_category_master cm where cm.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `UpdateSupportSubStatus`(\
+  IN id int(11) unsigned,\
+    IN name varchar(60),\
+    In stamp int, \
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    DECLARE count_name varchar(60);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+    \
+    start transaction;\
+  \
+    set error = 0;\
+    set error_text = '';\
+    set last_insert_id = 0;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM ticket_sub_status_master am\
+    WHERE (am.id <> id and am.name = name) or length(name) = 0 or name is null;\
+        \
+        if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name Already Exists';\
+      END if;\
+            if length(name) = 0 or name is null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+        \
+            SELECT COUNT(*) INTO is_deleted FROM ticket_sub_status_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM ticket_sub_status_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+              \
+    if error = 0 then\
+      update ticket_sub_status_master am set \
+        am.name=name, am.stamp=am.stamp+1, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
+    commit;\
+    \
+  select error, error_path, error_text;\
+    select * from ticket_sub_status_master am where am.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `UpdateSupportSubStatusList`(\
+  IN id int(11) unsigned,\
+    IN name varchar(60),\
+    In stamp int, \
+    IN status_id int(11),\
+    IN user_id integer\
+    )\
+  BEGIN\
+  DECLARE error_text varchar(70);\
+  DECLARE error integer;\
+    declare error_path varchar(20);\
+    DECLARE count_name varchar(60);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END; \
+    \
+    start transaction;\
+  \
+    set error = 0;\
+    set error_text = '';\
+    set last_insert_id = 0;\
+  \
+    SELECT COUNT(*) INTO count_name\
+    FROM ticket_sub_status_master am\
+    WHERE (am.id <> id and am.name = name) or length(name) = 0 or name is null;\
+        \
+        if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name Already Exists';\
+      END if;\
+            if length(name) = 0 or name is null then\
+      set error = 1;\
+        set error_path = 'name';\
+        set error_text = 'Name cannot be empty';\
+      END if;\
+    END if;\
+        \
+            SELECT COUNT(*) INTO is_deleted FROM ticket_sub_status_master am WHERE am.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+      set error_path = 'refresh';\
+      set error_text = 'Record not found';\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT am.stamp INTO current_stamp FROM ticket_sub_status_master am WHERE am.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+            set error_path = 'refresh';\
+            set error_text = 'Data is updated, Please refresh the Page!';\
+    end if;\
+        End if;\
+              \
+    if error = 0 then\
+      update ticket_sub_status_master am set \
+        am.name=name, am.stamp=am.stamp+1, am.ticket_status_id=status_id, am.modified_by=user_id, am.modified_on = now() where am.id=id;\
+    END if;\
+    commit;\
+    \
+  select error, error_path, error_text;\
+    select * from ticket_sub_status_master am where am.id = id;\
+  END ;~\
+  \
+  \
+  \
+  CREATE PROCEDURE `updateSupportTicket`(\
+    IN header_id INTEGER,\
+    IN tkt_number VARCHAR(75),\
+    IN date VARCHAR(20),\
+    IN contact_id INTEGER,\
+    IN received_by_id INTEGER,\
+    IN category_id INTEGER,\
+    IN call_receipt_remark VARCHAR(5000),\
+    IN allocated_to_id INTEGER,\
+    IN status_id INTEGER,\
+    IN sub_status_id INTEGER,\
+    IN action_taken_id INTEGER,\
+    IN next_action_id INTEGER,\
+    IN next_action_date VARCHAR(20),\
+    IN suggested_action_remark VARCHAR(5000),\
+    IN action_taken_remark VARCHAR(5000),\
+    IN closure_remark VARCHAR(5000),\
+    IN ticket_tran_type INT,\
+    IN created_by INT,\
+    IN modified_by INT,\
+    IN products_json JSON,\
+    IN stamp INTEGER\
+  )\
+  BEGIN\
+    DECLARE error INTEGER DEFAULT 0;\
+    DECLARE error_text VARCHAR(70);\
+    DECLARE error_path VARCHAR(20);\
+    DECLARE product_count INT;\
+    DECLARE idx INT DEFAULT 0;\
+    DECLARE current_stamp INT;\
+    DECLARE ledger_insert_id INT;\
+    DECLARE count_h INT;\
+  \
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+    BEGIN\
+        ROLLBACK;\
+        RESIGNAL;\
+    END;\
+  \
+    START TRANSACTION;\
+  \
+    DROP TABLE IF EXISTS error_log;\
+    CREATE TEMPORARY TABLE error_log (\
+        id INT AUTO_INCREMENT PRIMARY KEY,\
+        error_text VARCHAR(70),\
+        error_path VARCHAR(20)\
+    );\
+    SET error =0;\
+    SET count_h =0;\
+    IF error = 0 THEN\
+        SELECT COUNT(*) INTO count_h\
+        FROM ticket_header_tran \
+        WHERE id = header_id;\
+  \
+        IF count_h = 0 THEN\
+          SET error=1;\
+            SET error_text = 'Record not found';\
+            SET error_path = 'refresh';\
+            INSERT INTO error_log (error_text, error_path) VALUES (error_text, error_path);\
+        END IF;\
+    END IF;\
+  \
+    IF error = 0 THEN\
+        SELECT tht.stamp INTO current_stamp \
+        FROM ticket_header_tran tht \
+        WHERE tht.id = header_id;\
+        IF current_stamp <> stamp THEN\
+            SET error = 1;\
+            SET error_text = 'Data is updated, please refresh the page!';\
+            SET error_path = 'refresh';\
+            INSERT INTO error_log (error_text, error_path) VALUES (error_text, error_path);\
+        END IF;\
+    END IF;\
+  \
+    IF error = 0 THEN\
+        UPDATE ticket_header_tran\
+        SET\
+            tkt_number = tkt_number,\
+            date = date,\
+            contact_id = contact_id,\
+            received_by_id = received_by_id,\
+            category_id = category_id,\
+            call_receipt_remark = call_receipt_remark,\
+            modified_by = modified_by,\
+            modified_on = NOW(),\
+            created_by = created_by,\
+            stamp = current_stamp + 1 \
+        WHERE id = header_id;\
+    END IF;\
+  \
+    IF error = 0 THEN\
+        INSERT INTO ticket_ledger_tran\
+        (ticket_id, status_version, allocated_to, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date, \
+        suggested_action_remark, action_taken_remark, closure_remark, ticket_tran_type_id, created_by, active, modified_by)\
+        VALUES\
+        (header_id, 0, allocated_to_id, date, status_id, sub_status_id, action_taken_id, next_action_id, next_action_date,\
+        suggested_action_remark, action_taken_remark, closure_remark, ticket_tran_type, created_by, 1, modified_by);\
+        \
+        SET ledger_insert_id = LAST_INSERT_ID();\
+    END IF;\
+  \
+    IF error = 0 THEN\
+        SET product_count = JSON_LENGTH(products_json);\
+        SET SQL_SAFE_UPDATES = 0;\
+  \
+        DELETE FROM ticket_product_tran WHERE ticket_id = header_id;\
+    SET SQL_SAFE_UPDATES = 1;\
+  \
+        WHILE idx < product_count DO\
+            INSERT INTO ticket_product_tran (ticket_id, slno, product_id)\
+            VALUES (\
+                header_id,\
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].id'))),\
+                JSON_UNQUOTE(JSON_EXTRACT(products_json, CONCAT('$[', idx, '].product_id')))\
+            );\
+            SET idx = idx + 1;\
+        END WHILE;\
+    END IF;\
+    commit;\
+  \
+    SELECT * FROM error_log;\
+    SELECT * FROM ticket_header_tran h WHERE h.id = header_id;\
+    SELECT * FROM ticket_ledger_tran WHERE id = ledger_insert_id; \
+  END ;~\
+  \
+  CREATE PROCEDURE `updateUnit`(\
     IN id int(11) unsigned,\
     IN name varchar(50),\
-	IN user_id integer)\
-BEGIN\
-	DECLARE error integer;\
+    In stamp integer,\
+  IN user_id integer)\
+  BEGIN\
+  DECLARE error integer;\
     DECLARE count_name varchar(60);\
+    declare is_deleted integer;\
+    declare current_stamp integer;\
     DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
   BEGIN\
     ROLLBACK;\
@@ -4065,36 +6371,52 @@ BEGIN\
     start transaction;\
     \
     set error = 0;\
-       \
+      \
     DROP TABLE IF EXISTS error_table;\
- \
-	create temporary table error_table (\
-		id int auto_increment primary key,\
-		error_text varchar(255) , \
-		error_path varchar(100) \
-	);\
+  \
+  create temporary table error_table (\
+    id int auto_increment primary key,\
+    error_text varchar(255) , \
+    error_path varchar(100) \
+  );\
     \
     SELECT COUNT(*) INTO count_name\
-	FROM unit_master um\
-	WHERE  (um.id <> id AND um.name = name) or length(name) = 0 or name is null;\
-       \
-	if count_name > 0 then\
-			if length(name) > 0 or name is not null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
-			END if;\
-			if length(name) = 0 or name is null then\
-				set error = 1;\
-				insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
-			END if;\
-		END if;\
+  FROM unit_master um\
+  WHERE  (um.id <> id AND um.name = name) or length(name) = 0 or name is null;\
+      \
+  if count_name > 0 then\
+      if length(name) > 0 or name is not null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name already exist' , 'name');\
+      END if;\
+      if length(name) = 0 or name is null then\
+        set error = 1;\
+        insert into error_table (error_text, error_path) values ('name cannot be empty' , 'name');\
+      END if;\
+    END if;\
+        \
+        SELECT COUNT(*) INTO is_deleted FROM unit_master um WHERE um.id = id;\
+    if is_deleted < 1 then\
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Record not found', 'refresh');\
+        end if;\
+        \
+        If error = 0 then\
+    SELECT um.stamp INTO current_stamp FROM unit_master um WHERE um.id = id;\
+        if current_stamp != stamp then \
+      set error = 1;\
+          INSERT INTO error_table (error_text, error_path) \
+          VALUES ('Data is updated, Please refresh the Page!', 'refresh');\
+    end if;\
+        End if;\
     \
     if error = 0 then\
-			update unit_master um set \
-			um.name=name, um.modified_by=user_id, um.modified_on = now() where um.id=id;\
-		END if;\
+      update unit_master um set \
+      um.name=name, um.stamp=um.stamp+1, um.modified_by=user_id, um.modified_on = now() where um.id=id;\
+    END if;\
     commit;\
     \
-	select * from error_table;\
+  select * from error_table;\
     select * from unit_master um where um.id = id;\
 END ;";

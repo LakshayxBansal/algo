@@ -15,16 +15,20 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import CountryForm from "./countryForm";
 import {
+  docDescriptionSchemaT,
   masterFormPropsT,
   optionsDataT,
   organisationSchemaT,
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton, Snackbar } from "@mui/material";
+import { Badge, Collapse, IconButton, Snackbar, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import StateForm from "./stateForm";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { AddDialog } from "../addDialog";
+import DocModal from "@/app/utils/docs/DocModal";
 
 export default function OrganisationForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -32,7 +36,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const entityData: organisationSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
@@ -103,11 +108,12 @@ export default function OrganisationForm(props: masterFormPropsT) {
 
   async function persistEntity(data: organisationSchemaT) {
     let result;
+    const newDocsData = docData.filter((row : any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
-      result = await updateOrganisation(data);
+      result = await updateOrganisation(data,newDocsData);
     } else {
-      result = await createOrganisation(data);
+      result = await createOrganisation(data,newDocsData);
     }
     return result;
   }
@@ -188,6 +194,30 @@ export default function OrganisationForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Tooltip
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", paddingRight: 0}}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+     </Tooltip>
       <Box id="sourceForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Box
@@ -440,6 +470,15 @@ export default function OrganisationForm(props: masterFormPropsT) {
               Submit
             </Button>
           </Box>
+          {dialogOpen && (
+          <AddDialog
+            title=""
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
+          </AddDialog>
+        )}
         </form>
         <Snackbar
           open={snackOpen}

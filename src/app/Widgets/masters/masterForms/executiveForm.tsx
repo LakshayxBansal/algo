@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import { getInviteDetailByContact } from "@/app/controllers/user.controller";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -36,24 +36,29 @@ import {
   updateExecutive,
 } from "@/app/controllers/executive.controller";
 import {
+  docDescriptionSchemaT,
   executiveSchemaT,
-  masterFormPropsT,
   masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
-import { Collapse, IconButton } from "@mui/material";
+import { Badge, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
+import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
+import DocModal from "@/app/utils/docs/DocModal";
+
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
@@ -69,7 +74,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [roleKey, setRoleKey] = useState(0);
   const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
   const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
- 
+
+
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
@@ -112,12 +118,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
       //   inviteId = invite.id;
       // }
+
       const result = await persistEntity(data as executiveSchemaT);
-      if (result.status) {
+      if (result?.status) {
         const newVal = {
-          id: result.data[0].id,
-          name: result.data[0].name,
-          stamp: result.data[0].stamp,
+          id: result?.data[0].id,
+          name: result?.data[0].name,
         };
         // if(inviteId){
         //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
@@ -129,7 +135,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
-        const issues = result.data;
+        const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Error encountered", error: true };
@@ -152,38 +158,38 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-      ? entityData.executive_group_id
-      : 0;
+        ? entityData.executive_group_id
+        : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-      ? entityData.role_id
-      : 0;
+        ? entityData.role_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-      ? entityData.crm_user_id
-      : 0;
+        ? entityData.crm_user_id
+        : 0;
     data.executive_dept_id = selectValues.department
       ? selectValues.department.id
       : entityData.executive_dept_id
-      ? entityData.executive_dept_id
-      : 0;
+        ? entityData.executive_dept_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
     data.role = selectValues.role
@@ -214,7 +220,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     name: string
   ) {
     let values = { ...selectValues };
-    values[name] = val? val : { id: 0, name: ""};
+    values[name] = val ? val : { id: 0, name: "" };
     if (name === "country") {
       values["state"] = {};
       setDefaultState(undefined);
@@ -222,7 +228,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       else setStateDisable(false);
       setStateKey(prev => 1-prev);
     }
-    if(name === "department") {
+    if (name === "department") {
       values["role"] = {};
       setDefaultRole(undefined);
       if(values.department.id === 0) setRoleDisable(true);
@@ -234,12 +240,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;
-      result = await updateExecutive(data);
+      result = await updateExecutive(data,newDocsData);
     } else {
-      result = await createExecutive(data);
+      result = await createExecutive(data,newDocsData);
     }
     return result;
   }
@@ -252,7 +259,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   };
 
 
-  
+
   return (
     <Box>
       <Box
@@ -265,7 +272,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         }}
       >
         {
-          props.parentData ? (<></>) : (
+          props.parentData ? (<></>) : (<>
             <Seperator>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               {props.data ? "Update Executive" : "Add Executive"}
@@ -274,6 +281,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               </IconButton>
             </Box>
           </Seperator>
+        </>
           )
         }
       </Box>
@@ -295,6 +303,30 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Tooltip 
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", m:1 }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+     </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
@@ -366,7 +398,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   name: entityData.executive_dept,
                 } as optionsDataT
               }
-              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
               onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
               fetchDataFn={getExecutiveDept}
               fnFetchDataByID={getDeptById}
@@ -390,7 +422,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               }
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={defaultRole}
-              
+
               onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
               required
               disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (roleDisable) ? true : false}
@@ -410,7 +442,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               label={"Executive Group"}
               width={210}
               dialogTitle={"Add Executive Group"}
-              disable={(props?.parentData === "profile" && entityData.role_id!==1) ? true : false}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
               defaultValue={
                 {
                   id: entityData.executive_group_id,
@@ -470,7 +502,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
                   data={data}
-                  // isExecutive={true}
+                // isExecutive={true}
                 />
               )}
             />
@@ -664,7 +696,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 />
               )}
             />
-            
+
             <InputControl
               inputType={InputType.TEXT}
               name="city"
@@ -707,6 +739,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               Submit
             </Button>
           </Box>
+          {dialogOpen && (
+          <AddDialog
+            title=""
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
+          </AddDialog>
+        )}
         </form>
         <Snackbar
           open={snackOpen}
