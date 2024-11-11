@@ -14,14 +14,17 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AddIcon from "@mui/icons-material/Add";
 import AddDocsForm from "./AddDocsForm";
 import { deleteExecutiveDoc, updateExecutiveDoc, viewExecutiveDoc } from "@/app/controllers/document.controller";
+import { docDescriptionSchemaT } from "@/app/models/models";
 
-type ModifiedRowT = {
-    id?: number;
-    description?: string;
-    document?: string;
-    file?: string | ArrayBuffer | null;
-    fileType?: string;
-};
+// type ModifiedRowT = {
+//     id?: number;
+//     description?: string;
+//     objectId?: number;
+//     objectTypeId?: number;
+//     document?: string;
+//     file?: string | ArrayBuffer | null;
+//     fileType?: string;
+// };
 
 
 
@@ -79,13 +82,13 @@ function CustomNoRowsOverlay() {
 }
 
 
-export default function DocModal({ docData, setDocData, setDialogOpen }: { docData: any, setDocData: any, setDialogOpen: any }) {
+export default function DocModal({ docData, setDocData, setDialogOpen }: { docData: docDescriptionSchemaT[], setDocData: any, setDialogOpen: any }) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
     const [editMode, setEditMode] = useState<GridRowId | null>();
     const [openAddDocDialog, setOpenAddDocDialog] = useState(false);
-    const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
+    const [modifiedRowData, setModifiedRowData] = useState<docDescriptionSchemaT>();
 
     function EditToolbar() {
 
@@ -136,46 +139,33 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
             },
         },
         {
-            field: "document",
+            field: "fileName",
             headerName: "Document",
             width: 150,
             renderCell: (params) => {
                 if (editMode === params.row.id) {
-                    return (
-                        <>
-                            {modifiedRowData?.document}
-                            {/* {modifiedRowData?.file ? modifiedRowData?.document : 
-                <Button
-                  component="label"
-                  role={undefined}
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload files
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={handleFileChange}
-                    multiple
-                  />
-                </Button>} */}
-                        </>
-                    );
+                    if (params.row.type === "db") {
+                        return (
+                            <>
+                                <IconButton onClick={() => { handleViewClickDB(params.row) }} aria-label="file">
+                                    <AttachFileIcon />
+                                </IconButton>
+                            </>
+                        );
+                    }else{
+                        return (
+                            <>
+                                {modifiedRowData?.fileName}
+                            </>
+                        );
+                    }
                 }
                 if (params.row.type === "db") {
                     return (
                         <>
-                            {/* <Button
-                  component="label"
-                  role={undefined}
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                > */}
                             <IconButton onClick={() => { handleViewClickDB(params.row) }} aria-label="file">
                                 <AttachFileIcon />
                             </IconButton>
-                            {/* </Button> */}
                         </>
                     );
                 }
@@ -234,7 +224,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleSaveClick = () => {
         //save the data from modifiedRowData state into rows of data grid
         if (docData.length > 0) {
-            const updatedRows = docData.map((row: any) =>
+            const updatedRows = docData.map((row) =>
                 row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
             );
             setDocData(updatedRows);
@@ -245,7 +235,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleSaveClickDB = async () => {
         try {
             await updateExecutiveDoc(modifiedRowData?.description as string, modifiedRowData?.id as number);
-            const updatedRows = docData.map((row: any) =>
+            const updatedRows = docData.map((row) =>
                 row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
             );
             setDocData(updatedRows);
@@ -258,8 +248,8 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleDeleteClickDB = async (data: any) => {
         try {
             if (docData.length > 0) {
-                const updatedRows = docData.filter((row: any) => row.id !== data.id);
-                await deleteExecutiveDoc(data.id,data.doc_id);
+                const updatedRows = docData.filter((row) => row.id !== data.id);
+                await deleteExecutiveDoc(data.id,data.docId);
                 setDocData(updatedRows);
             }
         } catch (error) {
@@ -268,9 +258,9 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     }
 
 
-    const handleViewClickDB = async (data: any) => {
+    const handleViewClickDB = async (data : docDescriptionSchemaT) => {
         try {
-            const result = await viewExecutiveDoc(data.doc_id);
+            const result = await viewExecutiveDoc(data.docId as string);
 
             if (result?.buffer && result?.contentType && result?.fileName) {
                 const { buffer, contentType, fileName } = result;
@@ -285,7 +275,6 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
 
                     // Create a Blob from the binary data
                     const blob = new Blob([bufferArray], { type: contentType });
-                    console.log('BLOB : ', blob);
 
                     // Create object URL from Blob
                     const url = window.URL.createObjectURL(blob);
@@ -311,7 +300,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleDeleteClick = (id: GridRowId) => () => {
         // Filter out the row with the matching id
         if (docData.length > 0) {
-            const updatedRows = docData.filter((row: any) => row.id !== id);
+            const updatedRows = docData.filter((row) => row.id !== id);
 
             // Update the data state with the filtered rows
             setDocData(updatedRows);
@@ -324,12 +313,8 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
 
     const handleEditClick = (id: GridRowId) => () => {
         setEditMode(id);
-        const selectedRowData = docData.find((row: any) => row.id === id); // Find the corresponding row data
+        const selectedRowData = docData.find((row) => row.id === id); // Find the corresponding row data
         setModifiedRowData(selectedRowData); //Setting selected row data in modifiedRowData state
-        setModifiedRowData((prevState) => ({
-            ...prevState,
-            file: undefined,
-        }));
     };
 
     return (

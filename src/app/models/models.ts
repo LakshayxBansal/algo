@@ -244,3 +244,4 @@ export type iconCompT = {
   delete:any;
   modify:any;
 };
+export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;

@@ -287,6 +287,29 @@ export async function updateCallAllocationDb(
   return null;
 }
 
+export async function updateSupportCallAllocationDb(
+  dbName: string,
+  userid: number,
+  data: any
+) {
+  try {
+    // Convert the array of IDs into a comma-delimited string
+    const idList = data.id.join(",");
+    // Define the stored procedure query
+    let query = "CALL updateCallAllocationSupport(?, ?, ?, ?, ?)";
+    // Execute the query, passing in the required parameters
+    // console.log("data from sp",query);
+    return excuteQuery({
+      host: dbName,
+      query: query,
+      values: [data.executiveId, data.remark, idList, ",", userid],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
 export async function getCallSupportTicketsDb(
   crmDb: string,
   filterValueState: any,

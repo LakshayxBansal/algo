@@ -36,6 +36,7 @@ import {
   updateExecutive,
 } from "@/app/controllers/executive.controller";
 import {
+  docDescriptionSchemaT,
   executiveSchemaT,
   masterFormPropsWithDataT,
   optionsDataT,
@@ -56,7 +57,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});

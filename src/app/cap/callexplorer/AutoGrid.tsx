@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from "@mui/material";
+import { Checkbox, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from "@mui/material";
 import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
 import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -82,6 +82,12 @@ export default function AutoGrid(props: any) {
       "getCallData": getCallSupportEnquiries
     }
   ]
+
+  React.useLayoutEffect(() => {
+    if (apiRef.current) {
+      apiRef.current.setRowSelectionModel([]); 
+    }
+  }, [value]); 
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -718,6 +724,38 @@ export default function AutoGrid(props: any) {
                   value={value}
                   onChange={handleChange}
                   aria-label="tabs for different content"
+                  variant="fullWidth"
+        sx={{
+          position: 'relative',
+          '& .MuiTab-root': {
+            marginRight: '2px',
+            padding: '8px 16px',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            border: '1px solid #d3d3d3', 
+            backgroundColor: '#f1f1f1', 
+            boxShadow: '0px 6px 6px rgba(0, 0, 0, 0.1)', 
+            transition: 'box-shadow 0.3s, transform 0.3s, background-color 0.3s',
+            '&:hover': {
+              backgroundColor: '#e0e0e0', 
+              boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.2)', 
+              transform: 'translateY(-2px)', 
+            },
+            '&.Mui-selected': {
+              backgroundColor: '#ffffff', // White background for the selected tab
+              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.3)', // Stronger shadow for active tab
+              borderBottom: '3px solid #1976d2', // Chrome-like selected tab indicator
+              fontWeight: 'bold', // Make selected tab text bold
+            },
+            '&:not(.Mui-selected)': {
+              opacity: 0.6, 
+              boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)', 
+            },
+          },
+          '& .MuiTabs-indicator': {
+            display: 'none', 
+          },
+        }}
                 >
                   <Tab label="Enquiry" />
                   <Tab label="Support" />
@@ -863,11 +901,13 @@ export default function AutoGrid(props: any) {
                   {details ? "Hide Details" : "Show Details"}
                 </ContainedButton>
                 <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
-                  <Link href="/cap/enquiry" style={{
+               {/* <Link href={`/cap/${tabOptions[value].name}` } style={{
                     textDecoration: "none",
-                  }}>
+                  }}> */}
+                  <Box>
                     New Call Receipt
-                  </Link>
+                    </Box>
+                  {/* </Link> */}
                 </ContainedButton>
               </Box>
             </Grid>
@@ -973,7 +1013,7 @@ export default function AutoGrid(props: any) {
           dialogOpen && <AddDialog title={"Allocate Executive"}
             open={dialogOpen}
             setDialogOpen={setDialogOpen}>
-            <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} setRefresh={setRefresh} />
+              <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} setRefresh={setRefresh} formName={tabOptions[value].name} />
           </AddDialog>
         }
       </Box>
