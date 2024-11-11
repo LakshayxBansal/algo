@@ -42,6 +42,7 @@ type selectMasterWrapperT = {
   disable?: boolean;
   defaultOptions?: optionsDataT[]
   showDetails?: boolean;
+  autoFocus?: boolean;
 };
 
 enum dialogMode {
