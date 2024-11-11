@@ -63,8 +63,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
   const [valueChange, setvalueChange] = useState(true);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
   const [defaultValue, setDefaultValue] = useState<optionsDataT | undefined>(props.defaultValue);
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [isTabbingOut, setIsTabbingOut] = useState(false);
+  let hltIndex = -1;
+  let isTabbingOut = 0;
   // const [selectDefault, setSelectDefault] = useState(
     // Boolean(props.defaultValue? true: false)
   // );
@@ -133,15 +133,13 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Tab') {
-      setIsTabbingOut(true);
+      isTabbingOut = 1;
     }
   }
 
   function onHighlightChange(event: SyntheticEvent, option: optionsDataT | null, reason: string) {
-    let index;
     if (option) {
-      index = options.indexOf(option);
-      setHighlightedIndex(index);
+        hltIndex = options.indexOf(option);
     }  
     const text = document.getElementById(
       "popper_textid_temp_5276"
@@ -159,7 +157,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       options={options}
       // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
-      // autoHighlight
+      autoHighlight
       onKeyDown={handleKeyDown}
       filterOptions={(options, { inputValue }) => 
         options.filter(option => 
@@ -232,12 +230,13 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setAutoSelect(props.notEmpty)
 
         if (isTabbingOut) {
-          if (highlightedIndex >= 0 && options.length > 0) {
-            setInputValue(options[highlightedIndex].name); 
-            props.setDialogVal(options[highlightedIndex]);
+          console.log("index ---:", hltIndex);
+          if (hltIndex >= 0 && options.length > 0) {
+            setInputValue(options[hltIndex].name); 
+            props.setDialogVal(options[hltIndex]);
           }
-          setIsTabbingOut(false);
-          setHighlightedIndex(0);
+          isTabbingOut = 0;
+          hltIndex = -1
         } 
       }}
       onOpen={(e) => {

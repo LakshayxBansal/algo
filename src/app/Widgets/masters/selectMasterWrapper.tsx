@@ -145,7 +145,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
                     fontSize="small"
                   />
                 </Tooltip>
-                {(dialogValue.id ?? false) && (
+                {(dialogValue.id ? true : false) && (
                   <Tooltip
                     title={
                       allowModify ? "Click to modify" : "Not allowed to modify"
