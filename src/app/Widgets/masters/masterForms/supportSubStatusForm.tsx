@@ -71,7 +71,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
+      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(()=>{
@@ -95,6 +95,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
   };
 
   async function persistEntity(data: enquirySubStatusMasterT) {
+    data["enquiry_status_id"] = Number(props.parentData);
     let result;
     if (props.data) {
       data["id"] = entityData.id;
@@ -130,7 +131,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {(props.data ? "Update " : "Add ") +
               "Sub-Status for " +
-              (props.parentData === 1 ? "Open" : "Closed")}{" "}
+              (props.parentData === '1' ? "Open" : "Closed")}{" "}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
