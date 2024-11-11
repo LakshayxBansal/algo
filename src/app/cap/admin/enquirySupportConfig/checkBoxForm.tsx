@@ -29,7 +29,6 @@ const handleChange = (
   isParent: boolean,
   onChange: any
 ) => {
-  console.log("CHEKK : ", e.target.checked);
 
   if (isParent) {
     onChange((prev: any) => {
@@ -64,7 +63,7 @@ const handleChange = (
   }
 };
 
-export default function CheckBoxForm(props: CheckboxFormProps) {
+export default function CheckBoxForm(props: CheckboxFormProps) {  
   return (
     <Box sx={{}}>
       <FormGroup>

@@ -885,7 +885,7 @@ export const inviteUserSchema = z
     { message: "Please provide email", path: ["email"] }
   );
 
-  const configBaseSchema = z.object({
+export const configBaseSchema = z.object({
     reqd: z.boolean().optional(),
     closeCall: z.boolean().optional(),
     maintainProducts: z.boolean().optional(),

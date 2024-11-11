@@ -12,19 +12,19 @@ interface DynamicProps {
 }
 
 export default function Voucher(props: DynamicProps) {
-  const { config, setConfig, configName } = props;
+  const { setConfig, configName } = props;
 
   const getDisplayValue = () => {
-    const numLength = Number(config.Length.value);
+    const numLength = Number(props.config.Length.value);
 
     if (numLength && numLength && !isNaN(numLength)) {
-      const zeros = config.PrefillWithZero.value ? "0".repeat(numLength) : "";
-      return `${config.Prefix.value}${zeros}${config.Suffix.value}`;
+      const zeros = props.config.PrefillWithZero.value ? "0".repeat(numLength) : "";
+      return `${props.config.Prefix.value}${zeros}${props.config.Suffix.value}`;
     }
     return "";
   };
 
-   const handleChange = (configName: string, inputName: string, value: any)=>{
+   const handleChange = (configName: string, inputName: string, value: any)=>{    
     setConfig((prev: any)=>{
       const updatedConfig = { ...prev[configName][inputName] }; 
       return {
@@ -42,42 +42,42 @@ export default function Voucher(props: DynamicProps) {
        <Box style={{ display: "grid", width:"31.25rem", gap: "8px", columnGap: 3, gridTemplateColumns: "repeat(2, 2fr)" }}>
          <InputControl
           inputType={InputType.TEXT}
-          id={config.Prefix.id}
-          name={config.Prefix.name}
+          id={props.config.Prefix.id}
+          name={props.config.Prefix.name}
           label="Prefix"
-          defaultValue={config.Prefix.value}
+          defaultValue={props.config.Prefix.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             handleChange(configName, "Prefix", e.target.value);
           }}
         />
         <InputControl
           inputType={InputType.TEXT}
-          id={config.Suffix.id}
-          name={config.Suffix.name}
+          id={props.config.Suffix.id}
+          name={props.config.Suffix.name}
           label="Suffix"
-          defaultValue={config.Suffix.value}
+          defaultValue={props.config.Suffix.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             handleChange(configName, "Suffix", e.target.value);
           }}
           />
         <InputControl
           inputType={InputType.TEXT}
-          id={config.Length.id}
-          name={config.Length.name}
+          id={props.config.Length.id}
+          name={props.config.Length.name}
           label="Digit Length"
-          defaultValue={config.Length.value}
+          defaultValue={props.config.Length.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             handleChange(configName, "Length", e.target.value);
           }}
         />
         <InputControl
           inputType={InputType.CHECKBOX}
-          id={config.PrefillWithZero.id}
-          name={config.PrefillWithZero.name}
+          id={props.config.PrefillWithZero.id}
+          name={props.config.PrefillWithZero.name}
           custLabel="Prefill with Zero"
-          checked={config.PrefillWithZero.value}
+          checked={props.config.PrefillWithZero.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            handleChange(configName, "PrefillWithZero", e.target.value);
+            handleChange(configName, "PrefillWithZero", e.target.checked);
           }}
         />
         <InputControl

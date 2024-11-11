@@ -1,14 +1,12 @@
 "use client";
 import {
   optionsDataT,
-  regionalSettingSchemaT,
   selectKeyValueT,
 } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Seperator from "@/app/Widgets/seperator";
-import { Autocomplete, Box, Button, Paper, Snackbar } from "@mui/material";
-import Link from "next/link";
+import { Autocomplete, Box, Paper, Snackbar } from "@mui/material";
 import { useState } from "react";
 import {
   getCountryWithCurrency,
@@ -17,7 +15,6 @@ import {
   getCurrencySubString,
   getCurrencySymbol,
   getDateFormat,
-  updateRegionalSetting,
 } from "@/app/controllers/config.controller";
 import { getStates } from "@/app/controllers/masters.controller";
 
@@ -25,7 +22,6 @@ const decimalPlacesList = ["Two Digits", "Three Digits"];
 const timeFormatList = ["12 Hours", "24 Hours"];
 
 export default function RegionalInfo(props: {
-  data: any;
   selectValues: selectKeyValueT;
   setSelectValues: any;
   entityData: any;
@@ -34,51 +30,10 @@ export default function RegionalInfo(props: {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  // const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [displayNumber, setDisplayNumber] = useState<string>("9,99,99,999.99");
-  // const [entityData, setEntityData] = useState(props.data.config);
-  const [snackOpen, setSnackOpen] = useState(false);
-
-  const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    for (const [key, value] of formData.entries()) {
-      data[key] = value;
-    }
-    data = updateFormData(data as regionalSettingSchemaT);
-
-    const result = await persistEntity(data as regionalSettingSchemaT);
-    if (result.status) {
-      setFormError({});
-      setSnackOpen(true);
-    } else {
-      const errorState: Record<string, { msg: string; error: boolean }> = {};
-      errorState["form"] = { msg: "Error encountered", error: true };
-      setFormError(errorState);
-    }
-  };
-
-  const updateFormData = (data: regionalSettingSchemaT) => {
-    data.country_id =  props.entityData.country_id
-      ?  props.entityData.country_id
-      : props.selectValues.country
-      ? props.selectValues.country.id
-      : 0;
-    data.state_id =  props.entityData.state_id
-      ?  props.entityData.state_id
-      : props.selectValues.state
-      ? props.selectValues.state.id
-      : 0;
-
-    return data;
-  };
-
-  async function persistEntity(data: regionalSettingSchemaT) {
-    console.log(props.data);
-
-    let result = await updateRegionalSetting(data, props.data.config_type_id);
-    return result;
-  }
+  const [displayNumber, setDisplayNumber] = useState<string>(props.entityData.decimalPlaces === "Two Digits" ? "9,99,99,999.99" : "9,99,99,999.999");
+  const [decimalPlaces, setDecimalPlaces] = useState(props.entityData?.decimalPlaces);
+  const [timeFormat, setTimeFormat] = useState(props.entityData?.timeFormat);
+  const [snackOpen, setSnackOpen] = useState(false);  
 
   const handleCountryChange = (
     event: React.SyntheticEvent,
@@ -102,6 +57,15 @@ export default function RegionalInfo(props: {
     }
   };
 
+  const handleDecimalPlacesChange = (e: any, newValue: string) => {
+    setDecimalPlaces(newValue);
+    if (newValue === "Two Digits") {
+      setDisplayNumber("9,99,99,999.99");
+    } else {
+      setDisplayNumber("9,99,99,999.999");
+    }
+  };
+
   return (
     <>
       <Paper sx={{  padding: "1%" }}>
@@ -109,7 +73,6 @@ export default function RegionalInfo(props: {
           <Seperator>Regional Settings</Seperator>
         </Box>
         <Box sx={{ width: "90%" }}>
-          {/* <form action={handleSubmit}> */}
           <Box
             sx={{
               display: "grid",
@@ -196,22 +159,22 @@ export default function RegionalInfo(props: {
               onChange={(e, val, s) => {
                 props.setSelectValues({
                   ...props.selectValues,
-                  dateformat: val,
+                  dateFormat: val,
                 });
               }}
               fetchDataFn={(stateStr: string) => {
                 return getDateFormat(stateStr);
               }}
               diaglogVal={
-                props.selectValues.dateformat
+                props.selectValues.dateFormat
                   ? {
-                      id: props.selectValues.dateformat?.id,
-                      name: props.selectValues.dateformat?.name ?? "",
+                      id: props.selectValues.dateFormat?.id,
+                      name: props.selectValues.dateFormat?.name ?? "",
                       detail: undefined,
                     }
                   : {
                       id:  props.entityData?.country_id,
-                      name:  props.entityData?.dateformat,
+                      name:  props.entityData?.dateFormat,
                     }
               }
               setDialogVal={function (
@@ -220,7 +183,10 @@ export default function RegionalInfo(props: {
               fnSetModifyMode={function (id: string): void {}}
             />
             <Autocomplete
-              defaultValue={ props.entityData?.timeFormat}
+              value={timeFormat}
+              onChange={(e: any, value)=>{
+                setTimeFormat(value);
+              }}
               options={timeFormatList}
               id="timeFormat"
               sx={{ maxWidth: 400 }}
@@ -370,16 +336,10 @@ export default function RegionalInfo(props: {
               fnSetModifyMode={function (id: string): void {}}
             />
             <Autocomplete
-              defaultValue={ props.entityData?.decimalPaces}
+              value={decimalPlaces}
               options={decimalPlacesList}
               sx={{ maxWidth: 400 }}
-              onChange={(event: any, newValue) => {
-                if (newValue === "Two Digits") {
-                  setDisplayNumber("9,99,99,999.99");
-                } else {
-                  setDisplayNumber("9,99,99,999.999");
-                }
-              }}
+              onChange={handleDecimalPlacesChange}
               renderInput={(params) => (
                 <InputControl
                   {...params}
@@ -400,40 +360,10 @@ export default function RegionalInfo(props: {
               label="Format for displaying numbers"
               disabled
               value={
-                ((props.selectValues.currencyCharacter?.name ||
-                   props.entityData.currencyCharacter) ??
-                  "") +
-                " " +
-                displayNumber
+                ((props.selectValues.currencyCharacter?.name || props.entityData.currencyCharacter) ?? "") + " " + displayNumber
               }
             />
           </Box>
-          {/* <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 2,
-              }}
-            >
-              <Button sx={{ width: "10%", marginLeft: "5%" }}>
-                <Link
-                  href="/cap"
-                  style={{
-                    textDecoration: "none",
-                  }}
-                >
-                  Quit
-                </Link>
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
-            </Box> */}
-          {/* </form> */}
         </Box>
       </Paper>
       <Snackbar
