@@ -14,8 +14,10 @@ export async function enquiryDataFormat({
   };
 
   const date = formatDate(formData.get("date") as string);
-  const nextActionDate = formatDate(formData.get("next_action_date") as string);
-
+  const nextActionDate = formData.get("next_action_date")
+    ? formatDate(formData.get("next_action_date") as string)
+    : null;
+  // console.log(nextActionDate);
   const headerData = {
     enq_number: formData.get("enq_number") as string,
     date,

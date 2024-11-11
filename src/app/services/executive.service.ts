@@ -1,7 +1,7 @@
 "use server";
 
 import excuteQuery from "../utils/db/db";
-import { executiveSchemaT } from "../models/models";
+import { docDescriptionSchemaT, executiveSchemaT } from "../models/models";
 import { Session } from "next-auth";
 import { logger } from "../utils/logger.utils";
 
@@ -155,16 +155,13 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
-         s.name state, co.name country, us.name as crm_user,eccm.c_col1,eccm.c_col2,eccm.c_col3,\
-         eccm.c_col4,eccm.c_col5,eccm.c_col6,eccm.c_col7,eccm.c_col8,eccm.c_col9,eccm.c_col10\
+         s.name state, co.name country , '' as crm_user \
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
-         left outer join userDb.user us on em.crm_user_id=us.id\
-         left outer join executive_custom_column_master eccm on eccm.executive_id=em.id\
          where em.id=?",
       values: [id],
     });
@@ -354,4 +351,3 @@ export async function getExecutiveColumnsDb(crmDb:string){
     logger.error(e);
   }
 }
-

@@ -10,34 +10,27 @@ import {
 import { getSession } from "../services/session.service";
 import {
   enquiryDataSchemaT,
-  enquiryHeaderSchemaT,
   enquiryProductSchemaT,
   enquiryLedgerSchemaT,
-  selectKeyValueT,
+  docDescriptionSchemaT,
 } from "@/app/models/models";
 import {
   enquiryDataSchema,
-  enquiryHeaderSchema,
   enquiryLedgerSchema,
   productToListFormArraySchema,
-  productToListFormSchema,
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
-import { Session } from "next-auth";
-import { getScreenDescription } from "./object.controller";
-
-// type enqData = {
-//   head: enquiryHeaderSchemaT;
-//   ledger: enquiryLedgerSchemaT;
-//   product: enquiryProductSchemaT[];
-// };
+import { getObjectByName } from "./rights.controller";
+import { uploadDocument } from "./document.controller";
 
 export async function createEnquiry({
   enqData,
   product,
+  docData,
 }: {
   enqData: enquiryDataSchemaT;
   product: enquiryProductSchemaT[];
+  docData: docDescriptionSchemaT[]
 }) {
   let result;
   try {
@@ -62,6 +55,12 @@ export async function createEnquiry({
         const dbResult = await createEnquiryDB(session, enqActionData);
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Enquiry");
+          await uploadDocument(
+            docData,
+            dbResult[1][0].id,
+            objectDetails[0].object_id
+          );
         } else {
           result = {
             status: false,

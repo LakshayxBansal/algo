@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import { getInviteDetailByContact } from "@/app/controllers/user.controller";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -36,25 +36,29 @@ import {
   updateExecutive,
 } from "@/app/controllers/executive.controller";
 import {
+  docDescriptionSchemaT,
   executiveSchemaT,
-  masterFormPropsT,
   masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
-import { Collapse, IconButton } from "@mui/material";
+import { Badge, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
-import CustomField from "@/app/cap/enquiry/CustomFields";
+import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
+import DocModal from "@/app/utils/docs/DocModal";
+
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
@@ -72,6 +76,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [roleKey, setRoleKey] = useState(0);
   const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
   const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
+
 
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
@@ -121,12 +126,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
       //   inviteId = invite.id;
       // }
+
       const result = await persistEntity(data as executiveSchemaT);
-      if (result.status) {
+      if (result?.status) {
         const newVal = {
-          id: result.data[0].id,
-          name: result.data[0].name,
-          stamp: result.data[0].stamp,
+          id: result?.data[0].id,
+          name: result?.data[0].name,
         };
         // if(inviteId){
         //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
@@ -138,7 +143,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
-        const issues = result.data;
+        const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Error encountered", error: true };
@@ -243,12 +248,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;
-      result = await updateExecutive(data);
+      result = await updateExecutive(data,newDocsData);
     } else {
-      result = await createExecutive(data);
+      result = await createExecutive(data,newDocsData);
     }
     return result;
   }
@@ -259,438 +265,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       return rest;
     });
   };
-
-  let fieldArr: React.ReactNode[] = [];
-
-  const fieldPropertiesById = (id: string) => {
-    console.log("field properties by id", props.desc);
-    console.log("id", id);
-
-
-    const field = props.desc.find((item: any) => item.column_name_id === id);
-    console.log("field", field);
-
-    if (field) {
-      return {
-        label: field.column_label,
-        required: field.is_mandatory === 1 // True if mandatory, otherwise false
-      };
-    }
-    return { label: 'hehe', required: false }; // Default if no match is found
-  };
-
-
-  const defaultComponentMap = new Map<string, React.ReactNode>([
-    [
-      "name",
-      <InputControl
-        inputType={InputType.TEXT}
-        id="name"
-        label={fieldPropertiesById("name").label}
-        name="name"
-        error={formError?.name?.error}
-        helperText={formError?.name?.msg}
-        defaultValue={entityData.name}
-      />,
-    ],
-    [
-      "alias",
-      <InputControl
-        inputType={InputType.TEXT}
-        id="alias"
-        label="Alias"
-        name="alias"
-        error={formError?.alias?.error}
-        helperText={formError?.alias?.msg}
-        defaultValue={entityData.alias}
-      />,
-    ],
-    [
-      "area",
-      <SelectMasterWrapper
-        name={"area"}
-        id={"area"}
-        label={"Area"}
-        width={210}
-        dialogTitle={"Add Area"}
-        defaultValue={
-          {
-            id: entityData.area_id,
-            name: entityData.area,
-          } as optionsDataT
-        }
-        onChange={(e, v, s) => onSelectChange(e, v, s, "area")}
-        fetchDataFn={getArea}
-        fnFetchDataByID={getAreaById}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <AreaForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-      />,
-    ],
-    [
-      "executive_dept",
-      <SelectMasterWrapper
-        name={"executive_dept"}
-        id={"department"}
-        label={"Department"}
-        width={210}
-        required
-        dialogTitle={"Add Department"}
-        defaultValue={
-          {
-            id: entityData.executive_dept_id,
-            name: entityData.executive_dept,
-          } as optionsDataT
-        }
-        disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
-        fetchDataFn={getExecutiveDept}
-        fnFetchDataByID={getDeptById}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <ExecutiveDeptForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-      />
-    ],
-    [
-      "role",
-      <SelectMasterWrapper
-        key={roleKey}
-        name={"role"}
-        id={"role"}
-        label={"Role"}
-        width={210}
-        dialogTitle={"Add Role"}
-        fetchDataFn={(roleStr: string) =>
-          getExecutiveRole(roleStr, selectValues.department?.id)
-        }
-        fnFetchDataByID={getExecutiveRoleById}
-        defaultValue={defaultRole}
-
-        onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
-        required
-        disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (selectValues.department || entityData.executive_dept_id) ? false : true}
-        formError={formError?.role ?? formError.role}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <ExecutiveRoleForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-            parentData={selectValues.department.id}
-          />
-        )}
-      />
-    ],
-    [
-      "group",
-      <SelectMasterWrapper
-        name={"executive_group"}
-        id={"group"}
-        label={"Executive Group"}
-        width={210}
-        dialogTitle={"Add Executive Group"}
-        disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
-        defaultValue={
-          {
-            id: entityData.executive_group_id,
-            name: entityData.executive_group,
-          } as optionsDataT
-        }
-        onChange={(e, val, s) =>
-          setSelectValues({ ...selectValues, executive_group: val ? val : { id: 0, name: "" } })
-        }
-        fetchDataFn={getExecutiveGroup}
-        fnFetchDataByID={getExecutiveGroupById}
-        renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-          <ExecutiveGroupForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-      />
-    ],
-    [
-      "pan",
-      <InputControl
-        inputType={InputType.TEXT}
-        id="pan"
-        label="PAN"
-        name="pan"
-        error={formError?.pan?.error}
-        helperText={formError?.pan?.msg}
-        defaultValue={entityData.pan}
-      />,
-    ],
-    [
-      "aadhaar",
-      <InputControl
-        inputType={InputType.TEXT}
-        id="aadhaar"
-        label="AADHAAR"
-        name="aadhaar"
-        error={formError?.aadhaar?.error}
-        helperText={formError?.aadhaar?.msg}
-        defaultValue={entityData.aadhaar}
-      />
-    ],
-    [
-      "crm_user",
-      <SelectMasterWrapper
-        name={"crm_user"}
-        id={"crm_user"}
-        label={"Map to App User"}
-        width={210}
-        dialogTitle={"Add App User"}
-        defaultValue={
-          {
-            id: entityData.crm_user_id,
-            name: entityData.crm_user,
-          } as optionsDataT
-        }
-        onChange={(e, val, s) =>
-          setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
-        }
-        fetchDataFn={getApplicationUser}
-        formError={formError.crm_user}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <InviteUserForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          // isExecutive={true}
-          />
-        )}
-      />
-    ],
-    [
-      "email",
-      <InputControl
-        inputType={InputType.EMAIL}
-        id="email"
-        label="Email"
-        name="email"
-        error={formError?.email?.error}
-        helperText={formError?.email?.msg}
-        defaultValue={entityData.email}
-      />,
-    ],
-    [
-      "mobile",
-      <InputControl
-        inputType={InputType.PHONE}
-        id="mobile"
-        label="Phone No"
-        name="mobile"
-        error={formError?.mobile?.error}
-        helperText={formError?.mobile?.msg}
-        defaultValue={entityData.mobile}
-      />,
-    ],
-    [
-      "whatsapp",
-      <InputControl
-        inputType={InputType.PHONE}
-        id="whatsapp"
-        label="Whatsapp No"
-        name="whatsapp"
-        error={formError?.whatsapp?.error}
-        helperText={formError?.whatsapp?.msg}
-        defaultValue={entityData.whatsapp}
-      />,
-    ],
-    [
-      "dob",
-      <InputControl
-        inputType={InputType.DATEINPUT}
-        id="dob"
-        label="Date of Birth"
-        name="dob"
-        defaultValue={entityData.dob ? dayjs(entityData.dob) : null}
-        slotProps={{
-          textField: {
-            error: formError?.dob?.error,
-            helperText: formError?.dob?.msg,
-          },
-        }}
-      />,
-    ],
-    [
-      "doa",
-      <InputControl
-        inputType={InputType.DATEINPUT}
-        id="doa"
-        label="Anniversary Date"
-        name="doa"
-        // defaultValue={entityData.doa}
-        defaultValue={entityData.doa ? dayjs(entityData.doa) : null}
-        slotProps={{
-          textField: {
-            error: formError?.doa?.error,
-            helperText: formError?.doa?.msg,
-          },
-        }}
-      />,
-    ],
-    [
-      "doj",
-      <InputControl
-        inputType={InputType.DATEINPUT}
-        id="doj"
-        label="Joining Date"
-        name="doj"
-        // defaultValue={entityData.doj}
-        defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
-        slotProps={{
-          textField: {
-            error: formError?.doj?.error,
-            helperText: formError?.doj?.msg,
-          },
-        }}
-      />,
-    ],
-    [
-      "address1",
-      <InputControl
-        inputType={InputType.TEXT}
-        label="Address Line 1"
-        name="address1"
-        id="address1"
-        defaultValue={entityData.address1}
-        error={formError?.address1?.error}
-        helperText={formError?.address1?.msg}
-        fullWidth
-      />,
-    ],
-    [
-      "address2",
-      <InputControl
-        inputType={InputType.TEXT}
-        label="Address Line 2"
-        name="address2"
-        id="address2"
-        defaultValue={entityData.address2}
-        error={formError?.address2?.error}
-        helperText={formError?.address2?.msg}
-        fullWidth
-      />,
-    ],
-    ["address3",
-      <InputControl
-        inputType={InputType.TEXT}
-        label="Address Line 3"
-        name="address3"
-        id="address3"
-        defaultValue={entityData.address3}
-        error={formError?.address3?.error}
-        helperText={formError?.address3?.msg}
-        fullWidth
-      />
-    ],
-    ["city",
-      <InputControl
-        inputType={InputType.TEXT}
-        name="city"
-        id="city"
-        label="City"
-        defaultValue={entityData.city}
-        error={formError?.city?.error}
-        helperText={formError?.city?.msg}
-      />
-    ],
-    [
-      "country",
-      <SelectMasterWrapper
-        name={"country"}
-        id={"country"}
-        label={"Country"}
-        width={210}
-        dialogTitle={"Add country"}
-        defaultValue={
-          {
-            id: entityData.country_id,
-            name: entityData.country,
-          } as optionsDataT
-        }
-        onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-        fetchDataFn={getCountries}
-        renderForm={(fnDialogOpen, fnDialogValue) => (
-          <CountryForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-          />
-        )}
-      />
-    ],
-    [
-      "state",
-      <SelectMasterWrapper
-        key={stateKey}
-        name={"state"}
-        id={"state"}
-        label={"State"}
-        width={210}
-        dialogTitle={"Add State"}
-        disable={selectValues.country || entityData.country_id ? false : true}
-        defaultValue={defaultState}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        fetchDataFn={getStatesforCountry}
-        fnFetchDataByID={getStateById}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <StateForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-            parentData={selectValues.country?.id || entityData.country_id}
-          />
-        )}
-      />
-    ],
-    [
-      "pincode",
-      <InputControl
-        inputType={InputType.TEXT}
-        name="pincode"
-        id="pincode"
-        label="Pin Code"
-        defaultValue={entityData.pincode}
-        error={formError?.pincode?.error}
-        helperText={formError?.pincode?.msg}
-      />
-    ],
-  ]);
-
-
-  const CustomFields = props.desc.filter((row: any) => row.is_default_column == 0);
-  console.log("CustomFields", CustomFields);
-
-
-  const CustomComponentMap = new Map<string, React.ReactNode>(
-    CustomFields.map((field: any) => [
-      field.column_name_id, // Use `id` as the key
-      <CustomField key={field.id} desc={field} defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]} /> // React element as value
-    ])
-  );
-
-  console.log("customComponentMap", CustomComponentMap);
-
-  props.desc.map((field: any) => {
-    if (field.is_default_column) {
-      fieldArr.push(defaultComponentMap.get(field.column_name_id) as React.ReactNode)
-    }
-    else {
-      fieldArr.push(CustomComponentMap.get(field.column_name_id) as React.ReactNode)
-    }
-  })
-
-  console.log("fieldArr", fieldArr);
 
 
 
@@ -705,14 +279,19 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           bgcolor: "white",
         }}
       >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
-            <IconButton onClick={handleCancel}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
+        {
+          props.parentData ? (<></>) : (<>
+            <Seperator>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              {props.data ? "Update Executive" : "Add Executive"}
+              <IconButton onClick={handleCancel} tabIndex={-1}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Seperator>
+        </>
+          )
+        }
       </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
@@ -732,13 +311,35 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Tooltip 
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", m:1 }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+     </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )} */}
         <form action={handleSubmit} noValidate>
-
-          <h1>BACKEND RENDERED FIELDS</h1>
           <Box
             sx={{
               display: "grid",
@@ -747,11 +348,382 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               gridTemplateColumns: "repeat(3, 1fr)",
             }}
           >
-            {fieldArr.map((field, index) => (
-              <div key={index}>
-                {field}
-              </div>
-            ))}
+            <InputControl
+              inputType={InputType.TEXT}
+              autoFocus
+              id="name"
+              label="Name"
+              name="name"
+              required
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              id="alias"
+              label="Alias"
+              name="alias"
+              error={formError?.alias?.error}
+              helperText={formError?.alias?.msg}
+              defaultValue={entityData.alias}
+            />
+            <SelectMasterWrapper
+              name={"area"}
+              id={"area"}
+              label={"Area"}
+              width={210}
+              dialogTitle={"Add Area"}
+              defaultValue={
+                {
+                  id: entityData.area_id,
+                  name: entityData.area,
+                } as optionsDataT
+              }
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, area: val ? val : { id: 0, name: "" } })
+              }
+              fetchDataFn={getArea}
+              fnFetchDataByID={getAreaById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <AreaForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+            <SelectMasterWrapper
+              name={"executive_dept"}
+              id={"department"}
+              label={"Department"}
+              width={210}
+              required
+              dialogTitle={"Add Department"}
+              defaultValue={
+                {
+                  id: entityData.executive_dept_id,
+                  name: entityData.executive_dept,
+                } as optionsDataT
+              }
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
+              fetchDataFn={getExecutiveDept}
+              fnFetchDataByID={getDeptById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <ExecutiveDeptForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+            <SelectMasterWrapper
+              key={roleKey}
+              name={"role"}
+              id={"role"}
+              label={"Role"}
+              width={210}
+              dialogTitle={"Add Role"}
+              fetchDataFn={(roleStr: string) =>
+                getExecutiveRole(roleStr, selectValues.department?.id)
+              }
+              fnFetchDataByID={getExecutiveRoleById}
+              defaultValue={defaultRole}
+
+              onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
+              required
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : (roleDisable) ? true : false}
+              formError={formError?.role ?? formError.role}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <ExecutiveRoleForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.department?.id || entityData.executive_dept_id}
+                />
+              )}
+            />
+            <SelectMasterWrapper
+              name={"executive_group"}
+              id={"group"}
+              label={"Executive Group"}
+              width={210}
+              dialogTitle={"Add Executive Group"}
+              disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
+              defaultValue={
+                {
+                  id: entityData.executive_group_id,
+                  name: entityData.executive_group,
+                } as optionsDataT
+              }
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, executive_group: val ? val : { id: 0, name: "" } })
+              }
+              fetchDataFn={getExecutiveGroup}
+              fnFetchDataByID={getExecutiveGroupById}
+              renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+                <ExecutiveGroupForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              id="pan"
+              label="PAN"
+              name="pan"
+              error={formError?.pan?.error}
+              helperText={formError?.pan?.msg}
+              defaultValue={entityData.pan}
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              id="aadhaar"
+              label="AADHAAR"
+              name="aadhaar"
+              error={formError?.aadhaar?.error}
+              helperText={formError?.aadhaar?.msg}
+              defaultValue={entityData.aadhaar}
+            />
+            <SelectMasterWrapper
+              name={"crm_user"}
+              id={"crm_user"}
+              label={"Map to App User"}
+              width={210}
+              dialogTitle={"Add App User"}
+              defaultValue={
+                {
+                  id: entityData.crm_user_id,
+                  name: entityData.crm_user,
+                } as optionsDataT
+              }
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
+              }
+              fetchDataFn={getApplicationUser}
+              formError={formError.crm_user}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <InviteUserForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                // isExecutive={true}
+                />
+              )}
+            />
+            <InputControl
+              inputType={InputType.EMAIL}
+              id="email"
+              label="Email"
+              name="email"
+              placeholder="Email address"
+              error={formError?.email?.error}
+              helperText={formError?.email?.msg}
+              defaultValue={entityData.email}
+            />
+            <InputControl
+                inputType={InputType.PHONE}
+                id="mobile"
+                label="Phone No"
+                name="mobile"
+                error={formError?.mobile?.error}
+                helperText={formError?.mobile?.msg}
+                defaultValue={entityData.mobile}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { mobile, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+           <InputControl
+                inputType={InputType.PHONE}
+                id="whatsapp"
+                label="Whatsapp No"
+                name="whatsapp"
+                // defaultCountry="FR"
+                error={formError?.whatsapp?.error}
+                helperText={formError?.whatsapp?.msg}
+                defaultValue={entityData.whatsapp}
+                slotProps={{
+                  flagButton : {
+                    tabIndex: -1
+                  },
+                }}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { whatsapp, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+
+            <InputControl
+              inputType={InputType.DATEINPUT}
+              id="dob"
+              label="Date of Birth"
+              name="dob"
+              defaultValue={entityData.dob ? dayjs(entityData.dob) : null}
+              slotProps={{
+                textField: {
+                  error: formError?.dob?.error,
+                  helperText: formError?.dob?.msg,
+                },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
+              }}
+            />
+            <InputControl
+              inputType={InputType.DATEINPUT}
+              id="doa"
+              label="Anniversary Date"
+              name="doa"
+              // defaultValue={entityData.doa}
+              defaultValue={entityData.doa ? dayjs(entityData.doa) : null}
+              slotProps={{
+                textField: {
+                  error: formError?.doa?.error,
+                  helperText: formError?.doa?.msg,
+                },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
+              }}
+            />
+            <InputControl
+              inputType={InputType.DATEINPUT}
+              id="doj"
+              label="Joining Date"
+              name="doj"
+              // defaultValue={entityData.doj}
+              defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
+              slotProps={{
+                textField: {
+                  error: formError?.doj?.error,
+                  helperText: formError?.doj?.msg,
+                },
+                openPickerButton: {
+                  tabIndex: -1,
+                }
+              }}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "grid",
+              columnGap: 3,
+              rowGap: 1,
+              gridTemplateColumns: "repeat(2, 1fr)",
+            }}
+          >
+            <InputControl
+              inputType={InputType.TEXT}
+              label="Address Line 1"
+              name="address1"
+              id="address1"
+              defaultValue={entityData.address1}
+              error={formError?.address1?.error}
+              helperText={formError?.address1?.msg}
+              fullWidth
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              label="Address Line 2"
+              name="address2"
+              id="address2"
+              defaultValue={entityData.address2}
+              error={formError?.address2?.error}
+              helperText={formError?.address2?.msg}
+              fullWidth
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              label="Address Line 3"
+              name="address3"
+              id="address3"
+              defaultValue={entityData.address3}
+              error={formError?.address3?.error}
+              helperText={formError?.address3?.msg}
+              fullWidth
+            />
+            <SelectMasterWrapper
+              name={"country"}
+              id={"country"}
+              label={"Country"}
+              width={350}
+              dialogTitle={"Add country"}
+              defaultValue={
+                {
+                  id: entityData.country_id,
+                  name: entityData.country,
+                } as optionsDataT
+              }
+              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+              fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <CountryForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "grid",
+              columnGap: 3,
+              rowGap: 1,
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+          >
+            <SelectMasterWrapper
+              key={stateKey}
+              name={"state"}
+              id={"state"}
+              label={"State"}
+              width={210}
+              dialogTitle={"Add State"}
+              // disable={selectValues.country || entityData.country_id ? false : true}
+              disable={stateDisable}
+              defaultValue={defaultState}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+              fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <StateForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.country?.id || entityData.country_id}
+                />
+              )}
+            />
+
+            <InputControl
+              inputType={InputType.TEXT}
+              name="city"
+              id="city"
+              label="City"
+              defaultValue={entityData.city}
+              error={formError?.city?.error}
+              helperText={formError?.city?.msg}
+            />
+
+            <InputControl
+              inputType={InputType.TEXT}
+              name="pincode"
+              id="pincode"
+              label="Pin Code"
+              defaultValue={entityData.pincode}
+              error={formError?.pincode?.error}
+              helperText={formError?.pincode?.msg}
+            />
           </Box>
           <Box
             sx={{
@@ -775,6 +747,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               Submit
             </Button>
           </Box>
+          {dialogOpen && (
+          <AddDialog
+            title=""
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
+          </AddDialog>
+        )}
         </form>
         <Snackbar
           open={snackOpen}

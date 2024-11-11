@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -10,9 +10,22 @@ import HomeIcon from '@mui/icons-material/Home';
 
 const NextBreadcrumb = () => {
   const paths = usePathname();
+  const [history, setHistory] = useState([]);
+
   const pathNames = paths.split("/").filter((path) => path);
 
   const hiddenSegments = ['cap','admin',];
+
+  // useEffect(()=>{
+  //   const fullPath = paths.map((_, index) => `/${paths.slice(0, index + 1).join('/')}`);
+  //   if (fullPath[fullPath.length - 1] !== history[history.length - 1]) {
+  //     setHistory((prev:any) => [...prev, fullPath[fullPath.length - 1]]);
+  // }
+  
+  // },[pathname, history])
+
+
+  
 
   return (
     <div>

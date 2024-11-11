@@ -47,6 +47,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
+
     const parsed = zs.productToListFormSchema.safeParse(data);
     let prevDataPresent = false;
     if (parsed.success) {
@@ -107,6 +108,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
   ) {
     let values = { ...selectValues };
     values[name] = val;
+
     if (name === "product" && val?.id) {
       try {
         const res = await getProductById(val.id);
@@ -123,9 +125,14 @@ export default function AddProductToListForm(props: masterFormPropsT) {
       } catch (error) {
         console.error("Error in getProductById:", error);
       }
+    } else if (name === "unit" && val?.id) {
+      setDefaultValueForUnitUsingProduct({ id: val.id, name: val.name });
+      values["unit"] = { id: val.id, name: val.name };
     } else {
-      console.warn("Invalid value for name or missing val.id:", name, val);
+      setDefaultValueForUnitUsingProduct({ id: 0, name: "" });
+      values["unit"] = {};
     }
+
     setSelectValues(values);
   }
 
@@ -135,7 +142,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
       return rest;
     });
   };
-
   return (
     <>
       <Box
@@ -150,7 +156,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             Add Product To Product List
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -203,17 +209,25 @@ export default function AddProductToListForm(props: masterFormPropsT) {
                 />
               )}
             />
+
             <InputControl
               required
               inputType={InputType.TEXT}
               type="number"
-              decPlaces={0}
-              min={0}
-              max={10}
-              // style= { textAlign: "right" },
-              name="quantity"
               id="quantity"
               label="Quantity"
+              name="quantity"
+              inputProps={{
+                min: 0,
+                max: 10000000,
+                style: { textAlign: "right" },
+                onKeyDown: (e: any) => {
+                  // Prevent 'e' character
+                  if (e.key === "e" || e.key === "E") {
+                    e.preventDefault();
+                  }
+                },
+              }}
               error={formError?.quantity?.error}
               helperText={formError?.quantity?.msg}
             />
@@ -259,7 +273,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

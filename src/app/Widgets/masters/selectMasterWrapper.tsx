@@ -53,7 +53,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [dialogValue, setDialogValue] = useState<optionsDataT>(
-    {} as optionsDataT
+    // {} as optionsDataT
+    props.defaultValue ?? {} as optionsDataT
   );
   const [desc, setDesc] = useState();
   const [modData, setModData] = useState({});

@@ -401,6 +401,7 @@ export default function SignupForm1(props: any) {
                       type="button"
                       sx={{ marginLeft: "-65px", marginTop: "12px" }}
                       onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
                     >
                       {showPassword ? (
                         <VisibilityOffIcon />
@@ -489,7 +490,7 @@ export default function SignupForm1(props: any) {
                 md={12}
                 sx={{ display: "flex", justifyContent: "center", mt: "5%" }}
               >
-                <Link href="\signin" variant="body2">
+                <Link href="\signin" variant="body2" tabIndex={-1}>
                   Already have an account? Sign in
                 </Link>
               </Grid>

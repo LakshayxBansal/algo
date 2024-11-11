@@ -69,8 +69,8 @@ const Drawer = styled(MuiDrawer, {
     position: "relative",
     whiteSpace: "nowrap",
     width: open ? 290 : 72,
-    height:"97vh",
-    overflowY: 'auto',
+    // height:"100vh",
+    // overflowY: 'auto',
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -343,7 +343,6 @@ export default function MenuBar(props: propsType) {
               companyName={props.companyName}
             />
           </Toolbar>
-        {/* <SecondNavbar title={"secondnav"}/> */}
         </AppBar>
         <Box sx={{ display: "flex" }}>
           <Drawer variant="permanent" anchor="left" open={open} sx={{display:{xs:"none",sm:"flex"}}}>

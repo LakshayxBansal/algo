@@ -1,13 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Badge,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Radio,
   RadioGroup,
   Snackbar,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -28,6 +32,8 @@ import {
   getCategoryById,
   getEnquiryCategory,
 } from "@/app/controllers/enquiryCategory.controller";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DocModal from "@/app/utils/docs/DocModal";
 
 import {
   getExecutive,
@@ -57,7 +63,11 @@ import { AddDialog } from "@/app/Widgets/masters/addDialog";
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
-import { optionsDataT, selectKeyValueT } from "@/app/models/models";
+import {
+  docDescriptionSchemaT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
 export interface IformData {
@@ -87,6 +97,9 @@ export default function InputForm(props: { baseData: IformData }) {
   const [data, setData] = React.useState(rows);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
+  const [docDialogOpen, setDocDialogOpen] = useState(false);
+  const [subStatus, setSubStatus] = useState<optionsDataT>();
 
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
@@ -117,6 +130,15 @@ export default function InputForm(props: { baseData: IformData }) {
         error={formError?.date?.error}
         helperText={formError?.date?.msg}
         sx={{ display: "flex", flexGrow: 1 }}
+        slotProps={{
+          textField: {
+            error: formError?.data?.error,
+            helperText: formError?.date?.msg,
+          },
+          openPickerButton: {
+            tabIndex: -1,
+          },
+        }}
       />,
     ],
     [
@@ -133,11 +155,12 @@ export default function InputForm(props: { baseData: IformData }) {
         fnFetchDataByID={getContactById}
         required={false}
         formError={formError?.contact ?? formError.contact}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, desc, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
             data={data}
+            desc={desc}
           />
         )}
       />,
@@ -271,6 +294,7 @@ export default function InputForm(props: { baseData: IformData }) {
           />
         )}
         allowNewAdd={status === "1"}
+        defaultValue={subStatus}
       />,
     ],
     [
@@ -326,6 +350,16 @@ export default function InputForm(props: { baseData: IformData }) {
         id="next_action_date"
         name="next_action_date"
         defaultValue={dayjs(new Date())}
+        disabled={status === "2"}
+        slotProps={{
+          textField: {
+            error: formError?.next_action_date?.error,
+            helperText: formError?.next_action_date?.msg,
+          },
+          openPickerButton: {
+            tabIndex: -1,
+          },
+        }}
       />,
     ],
     [
@@ -341,6 +375,13 @@ export default function InputForm(props: { baseData: IformData }) {
         rows={1}
         fullWidth
         disabled={status === "1"}
+        error={formError?.closure_remark?.error}
+        helperText={formError?.closure_remark?.msg}
+        sx={{
+          "& .MuiFormHelperText-root": {
+            margin: 0,
+          },
+        }}
       />,
     ],
   ]);
@@ -354,6 +395,7 @@ export default function InputForm(props: { baseData: IformData }) {
     result = await createEnquiry({
       enqData: formatedData,
       product: data,
+      docData: docData,
     });
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -410,6 +452,7 @@ export default function InputForm(props: { baseData: IformData }) {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
+    setSubStatus({ id: 0, name: "" });
   }
 
   function onSelectChange(
@@ -509,6 +552,13 @@ export default function InputForm(props: { baseData: IformData }) {
                     rows={6}
                     fullWidth
                     required={propsForCallReceiptField.required}
+                    error={formError?.call_receipt_remark?.error}
+                    helperText={formError?.call_receipt_remark?.msg}
+                    sx={{
+                      "& .MuiFormHelperText-root": {
+                        margin: 0,
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid
@@ -527,6 +577,13 @@ export default function InputForm(props: { baseData: IformData }) {
                     rows={6}
                     fullWidth
                     required={propsForSugActionField.required}
+                    error={formError?.suggested_action_remark?.error}
+                    helperText={formError?.suggested_action_remark?.msg}
+                    sx={{
+                      "& .MuiFormHelperText-root": {
+                        margin: 0,
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -565,7 +622,36 @@ export default function InputForm(props: { baseData: IformData }) {
     <Box>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid item xs={12}>
-          <Seperator>Enquiry Details</Seperator>
+          <Seperator>
+            <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+              Enquiry Details
+            </div>
+          </Seperator>
+          <Tooltip
+            title={
+              docData.length > 0 ? (
+                docData.map((file: any, index: any) => (
+                  <Typography variant="body2" key={index}>
+                    {file.description}
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2" color="white">
+                  No files available
+                </Typography>
+              )
+            }
+          >
+            <IconButton
+              sx={{ float: "right", position: "relative", paddingRight: 0 }}
+              onClick={() => setDocDialogOpen(true)}
+              aria-label="file"
+            >
+              <Badge badgeContent={docData.length} color="primary">
+                <AttachFileIcon></AttachFileIcon>
+              </Badge>
+            </IconButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
@@ -575,7 +661,11 @@ export default function InputForm(props: { baseData: IformData }) {
               if (fieldKey.includes("field-default-status")) {
                 return (
                   <Grid item xs={12} key={`status-container-${index}`}>
-                    <Seperator>Final Status</Seperator>
+                    <Seperator>
+                      <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+                        Final Status
+                      </div>
+                    </Seperator>  
                     {field}
                   </Grid>
                 );
@@ -612,7 +702,7 @@ export default function InputForm(props: { baseData: IformData }) {
                 alignItems="flex-end"
                 my={2}
               >
-                <Button>Cancel</Button>
+                <Button tabIndex={-1}>Cancel</Button>
                 <Button type="submit" variant="contained">
                   Submit
                 </Button>
@@ -630,6 +720,19 @@ export default function InputForm(props: { baseData: IformData }) {
             <AddProductToListForm
               setDialogOpen={setDialogOpen}
               setData={setData}
+            />
+          </AddDialog>
+        )}
+        {docDialogOpen && (
+          <AddDialog
+            title=""
+            open={docDialogOpen}
+            setDialogOpen={setDocDialogOpen}
+          >
+            <DocModal
+              docData={docData}
+              setDocData={setDocData}
+              setDialogOpen={setDocDialogOpen}
             />
           </AddDialog>
         )}

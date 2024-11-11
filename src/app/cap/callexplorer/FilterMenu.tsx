@@ -68,7 +68,7 @@ export default function FilterMenu(props: customprop,) {
                 {props.children}
                 <MenuItem>
                     <ContainedButton
-                        onClick={() => handleCloseFilter("date")}
+                        onClick={() => handleCloseFilter(props.field)}
                         fullWidth
                         variant="contained"
                     >

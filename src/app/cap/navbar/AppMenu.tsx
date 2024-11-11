@@ -6,7 +6,6 @@ import {getSession} from '../../services/session.service';
 import { redirect } from 'next/navigation';
 import { getMenuOptions } from '../../controllers/masters.controller';
 import { getExecutiveProfileImageByCrmUserId } from '@/app/controllers/executive.controller';
-import Footer from './Footer';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },

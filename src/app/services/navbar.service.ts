@@ -32,10 +32,11 @@ export async function getStatusDataDB(crmDb : string, userId : number) {
             query:"select * from status_bar where user_id = ?;",
             values:[userId]
         })
-        if(result[0]){
+        if(result.length > 0){
             return {id : result[0].id,data : result[0].data};
-        }
-        // return result;
+        }else{
+            return null;
+       }
     }catch(e){
         logger.error(e);
     }
