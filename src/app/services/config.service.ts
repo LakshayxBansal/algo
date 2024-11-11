@@ -15,7 +15,7 @@ export async function createRegionalSettingDb(dbName: string, data: any) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "INSERT INTO app_config (config_type_id, config) VALUES (?, ?) returning *;",
+        "INSERT INTO app_config_new (config_type_id, config) VALUES (?, ?) returning *;",
       values: [configResult[0].id, JSON.stringify(data)],
     });
 

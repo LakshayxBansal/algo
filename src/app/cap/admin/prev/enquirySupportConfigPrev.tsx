@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import FormGroup from "@mui/material/FormGroup";
 import Snackbar from "@mui/material/Snackbar";
 import Seperator from "../../../Widgets/seperator";
-import { updateEnquirySupportConfig } from "../../../controllers/confiig.controller";
+import { updateEnquirySupportConfig } from "../../../controllers/configData.controller";
 import { enquirySupportConfig } from "../../../zodschema/zodschema";
 import { enquiryConfigSchemaT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";

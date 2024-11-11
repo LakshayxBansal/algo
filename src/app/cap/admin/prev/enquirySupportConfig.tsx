@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Snackbar from "@mui/material/Snackbar";
-import { updateEnquirySupportConfig } from "../../../controllers/confiig.controller";
+import { updateEnquirySupportConfig } from "../../../controllers/configData.controller";
 import {
   enquiryConfigSchemaT,
   regionalSettingSchemaT,

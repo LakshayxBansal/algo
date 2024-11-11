@@ -1,6 +1,6 @@
 "use server";
 import { configSchemaT, enquiryConfigSchemaT } from "../models/models";
-import { getConfigDB, updateConfigDB } from "../services/confiig.service";
+import { getConfigDB, updateConfigDB } from "../services/configData.service";
 import { getSession } from "../services/session.service";
 import { enquirySupportConfig } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
@@ -76,6 +76,8 @@ export async function updateConfigData(configData: configSchemaT) {
     const session = await getSession();
     
     if (session) {
+      console.log('update', configData);
+      
       const data = convertData(configData);
       const parsed = enquirySupportConfig.safeParse(data);
       
