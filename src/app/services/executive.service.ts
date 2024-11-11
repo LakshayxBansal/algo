@@ -155,15 +155,15 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
-         s.name state, co.name country , '' as crm_user ,eccm.c_col1,eccm.c_col2,eccm.c_col3,\
-         eccm.c_col4,eccm.c_col5,eccm.c_col6,eccm.c_col7,eccm.c_col8,eccm.c_col9,eccm.c_col10\
+         s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
+         cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
-         left outer join executive_custom_column_master eccm on eccm.executive_id=em.id\
+         left outer join custom_fields_data cfd on cfd.object_id=em.id and cfd.object_type_id=11\
          where em.id=?",
       values: [id],
     });

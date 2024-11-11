@@ -227,7 +227,7 @@ export async function getExecutiveById(id: number) {
         executiveDetails[0].docData = [];
       }
         return[
-          executiveDetails,
+          executiveDetails[0],
           desc
         ]
       }
@@ -290,7 +290,7 @@ export async function delExecutiveById(id: number) {
         return "Can't Be DELETED!";
       } else {
         const mappedUser = await getExecutiveById(id);
-        if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
+        if (mappedUser!== undefined && mappedUser.length > 0 && mappedUser[0].crm_user_id) {
           await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
         }
         const result = await delExecutiveDetailsById(
