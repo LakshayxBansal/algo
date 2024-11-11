@@ -7,14 +7,12 @@ import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { docDescriptionSchemaT, masterFormPropsT, masterFormPropsWithDataT, selectKeyValueT } from "@/app/models/models";
-import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
-import UnitForm from "@/app/Widgets/masters/masterForms/unitForm";
-import { Collapse, IconButton, TextField } from "@mui/material";
+import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { docDescriptionSchemaT } from "@/app/models/models";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -44,13 +42,12 @@ export default function AddDocsForm(props: any) {
         let data: { [key: string]: any } = {}; // Initialize an empty object
 
         data["description"] = formData.get("description");
-        data["document"] = selectedFileName;
+        data["fileName"] = selectedFileName;
         data["file"] = file;
-        data["fileType"] = 
+        data["fileType"] = fileType;
         data["type"] = "state";
-        console.log("data : ",data);
         props.setData
-            ? props.setData((prevData: any) => [
+            ? props.setData((prevData : docDescriptionSchemaT[]) => [
                 ...prevData,
                 { id: (0-prevData.length-1), ...data },
             ])
@@ -130,7 +127,8 @@ export default function AddDocsForm(props: any) {
                             display: "grid",
                             columnGap: 2,
                             rowGap: 1,
-                            gridTemplateColumns: "repeat(2, 1fr)",
+                            gridTemplateColumns: "1fr auto",
+                            alignItems: "center"
                         }}
                     >
                         <InputControl
@@ -162,6 +160,7 @@ export default function AddDocsForm(props: any) {
                         sx={{
                             display: "flex",
                             justifyContent: "flex-end",
+                            m: 1
                         }}
                     >
                         <Button onClick={handleCancel}>Cancel</Button>

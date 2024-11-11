@@ -21,7 +21,7 @@ export default function enquirySource() {
   return (
     <>
       <EntityList
-        title="Source List"
+        title="Source Master"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SourceForm
             setDialogOpen={fnDialogOpen}

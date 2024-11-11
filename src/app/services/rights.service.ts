@@ -35,6 +35,20 @@ export async function getRightsDb(crmDb : string) {
     }
 }
 
+export async function getObjectByNameDb(crmDb : string,name : string) {
+
+    try{
+        const result = await excuteQuery({
+            host: crmDb,
+            query: "select om.name as object_name, om.id as object_id, om.type as object_type from object_type_master om where om.name = ?",
+            values : [name]
+        })
+        return result;
+    }catch(error){
+        console.log(error);
+    }
+}
+
 export async function getObjectsDb(crmDb : string) {
 
     try{

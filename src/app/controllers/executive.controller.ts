@@ -2,8 +2,7 @@
 
 import * as zs from "../zodschema/zodschema";
 import { executiveSchemaT } from "../models/models";
-import { join } from 'path';
-import { writeFile } from 'fs/promises';
+
 import {
   createExecutiveDB,
   getExecutiveByPageDb,
@@ -16,11 +15,6 @@ import {
   checkIfUsed,
   getProfileDetailsById,
   getExecutiveColumnsDb,
-  addDocumentDB,
-  updateDocumentDB,
-  getExecutiveDocsDB,
-  updateExecutiveDocDB,
-  deleteExecutiveDocDB,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -29,14 +23,14 @@ import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 import { modifyPhone } from "../utils/phoneUtils";
 import { logger } from "../utils/logger.utils";
-import axios from "axios";
-import FormData from 'form-data';
-import { Buffer } from "buffer";
 import { getUserDetailsById } from "./user.controller";
+import { revalidatePage } from "../company/SelectCompany";
+import { getDocs, uploadDocument } from "./document.controller";
+import { getObjectByName } from "./rights.controller";
 
 const inviteSring = "Send Invite...";
 
-export async function createExecutive(data: executiveSchemaT, docData : any) {
+export async function createExecutive(data: executiveSchemaT, docData: mdl.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -44,9 +38,9 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
-  
+
       if (parsed.success) {
-        
+
         const dbResult = await createExecutiveDB(
           session,
           data as executiveSchemaT
@@ -55,28 +49,8 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          for(const doc of docData){
-            const formData = new FormData();
-
-            formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
-            formData.append('meta_data', `{"name": "${doc.description}"}`);
-
-            const base64Data = doc.file.replace(/^data:.*;base64,/, "");
-            const contentType = "application/pdf";
-            const buffer = Buffer.from(base64Data, 'base64');
-            formData.append('file_data', buffer, {filename: doc.document, contentType: contentType});
-            
-            const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
-              headers : {
-                ...formData.getHeaders(),
-                "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
-                "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-              }}
-            )
-            doc["docId"] = docInfo.data.document_id;
-            doc["executiveId"] = dbResult[1][0].id;
-            await addDocument(doc);
-          }
+          const objectDetails = await getObjectByName("Executive");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
             await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
           }
@@ -121,7 +95,7 @@ export async function createExecutive(data: executiveSchemaT, docData : any) {
   return result;
 }
 
-export async function updateExecutive(data: executiveSchemaT, docData : any) {
+export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -138,28 +112,8 @@ export async function updateExecutive(data: executiveSchemaT, docData : any) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          for(const doc of docData){
-            const formData = new FormData();
-
-            formData.append('app_id', 'e2fda9ab-7b36-4461-839e-ab6ed3545e76');
-            formData.append('meta_data', `{"name": "${doc.description}"}`);
-
-            const base64Data = doc.file.replace(/^data:.*;base64,/, "");
-            const contentType = "application/pdf";
-            const buffer = Buffer.from(base64Data, 'base64');
-            formData.append('file_data', buffer, {filename: doc.document, contentType: 'application/text'})
-            
-            const docInfo = await axios.post("http://192.168.1.200:3000/api/document",formData,{
-              headers : {
-                ...formData.getHeaders(),
-                "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
-                "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-              }}
-            )
-            doc["docId"] = docInfo.data.document_id;
-            doc["executiveId"] = dbResult[1][0].id;
-            await addDocument(doc);
-          }
+          const objectDetails = await getObjectByName("Executive");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
             await mapUser(true, dbResult[1][0].crm_user_id, dbResult[1][0].role_id, session.user.dbInfo.id);
           }
@@ -197,6 +151,7 @@ export async function updateExecutive(data: executiveSchemaT, docData : any) {
         data: [{ path: ["form"], message: "Error: Server Error" }],
       };
     }
+    revalidatePage('/cap/admin/profile');
     return result;
   } catch (e: any) {
     console.log(e);
@@ -254,16 +209,17 @@ export async function getExecutiveById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
-      if(executiveDetails.length>0 && executiveDetails[0].crm_user_id){
+      if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
         const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
-        if(crm_user){
+        if (crm_user) {
           executiveDetails[0].crm_user = crm_user.name;
         }
       }
-      const docData = await getExecutiveDocs(id);
-      if(executiveDetails.length > 0 && docData.length > 0){
+      const objectDetails = await getObjectByName("Executive");
+      const docData = await getDocs(id,objectDetails[0].object_id);
+      if (executiveDetails.length > 0 && docData.length > 0) {
         executiveDetails[0].docData = docData;
-      }else{
+      } else {
         executiveDetails[0].docData = [];
       }
       return executiveDetails;
@@ -278,16 +234,17 @@ export async function getProfileById(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const executiveDetails = await getProfileDetailsById(session.user.dbInfo.dbName, id);
-      if(executiveDetails.length>0 && executiveDetails[0].crm_user_id){
+      if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
         const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
-        if(crm_user){
+        if (crm_user) {
           executiveDetails[0].crm_user = crm_user.name;
         }
       }
-      const docData = await getExecutiveDocs(id);
-      if(executiveDetails.length > 0 && docData.length > 0){
+      const objectDetails = await getObjectByName("Executive");
+      const docData = await getDocs(id,objectDetails[0].object_id);
+      if (executiveDetails.length > 0 && docData.length > 0) {
         executiveDetails[0].docData = docData;
-      }else{
+      } else {
         executiveDetails[0].docData = [];
       }
       return executiveDetails;
@@ -420,82 +377,5 @@ export async function getExecutiveColumns() {
     }
   } catch (e) {
     logger.error(e);
-  }
-}
-
-export async function addDocument(data: mdl.docDescriptionSchemaT) {
-  let result;
-  try {
-    const session = await getSession();
-    if (session) {
-      const parsed = zs.docDescriptionSchema.safeParse(data);
-      if (parsed.success) {
-        result = await addDocumentDB(
-          session.user.dbInfo.dbName,
-          data as mdl.docDescriptionSchemaT
-        );
-      }
-    }
-    return result;
-  } catch (e: any) {
-    console.log(e);
-  }
-  return result;
-}
-
-export async function getExecutiveDocs(executiveId : number){
-  try{
-    const session = await getSession();
-    if(session){
-      const result = await getExecutiveDocsDB(session.user.dbInfo.dbName,executiveId);
-      return result;
-    }
-  }catch(error){
-    logger.error(error);
-  }
-}
-
-export async function updateExecutiveDoc(description : string,id : number){
-  try{
-    const session = await getSession();
-    if(session){
-      await updateExecutiveDocDB(session.user.dbInfo.dbName,description,id);
-    }
-  }catch(error){
-    logger.error(error);
-  }
-}
-
-export async function deleteExecutiveDoc(id : number){
-  try{
-    const session = await getSession();
-    if(session){
-      await deleteExecutiveDocDB(session.user.dbInfo.dbName,id);
-      // api to delete doc
-    }
-  }catch(error){
-    logger.error(error);
-  }
-}
-
-
-export async function viewExecutiveDoc(documentId : string){
-  try{
-    const session = await getSession();
-    if(session){
-      const result = await axios.get(`http://192.168.1.200:3000/api/document?document_id=${documentId}&app_id=e2fda9ab-7b36-4461-839e-ab6ed3545e76`,{
-        headers : {
-          "client_id" : "ca9bf1a2-3132-4db9-8d82-5e6c353e2b31",
-          "access_key" : "b3a539eb3148637e9758386b9d073b189050da1330c953ea6896022950230e54" 
-        },
-        responseType : "arraybuffer"
-      });
-      const base64Data = Buffer.from(result.data, "binary").toString("base64");
-      // const contentType = detectMimeType(base64Data);
-      return {base64Data, contentType : "application/pdf"};
-
-    }
-  }catch(error){
-    logger.error(error);
   }
 }

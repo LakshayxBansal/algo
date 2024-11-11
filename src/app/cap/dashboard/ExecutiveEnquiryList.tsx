@@ -35,9 +35,9 @@ const createTableData = (data: any) => {
     obj["id"] = result.length + 1;
     obj["name"] = key;
     obj["total"] = data[key][1];
-    obj["since1w"] = data[key][2];
-    obj["since2w"] = data[key][3] + obj["since1w"];
-    obj["since3w"] = data[key][4] + obj["since2w"];
+    obj["since3w"] = data[key][4];
+    obj["since2w"] = data[key][3] + obj["since3w"];
+    obj["since1w"] = data[key][2] + obj["since2w"];
 
     result.push(obj);
   }

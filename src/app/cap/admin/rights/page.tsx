@@ -1,7 +1,7 @@
 import { logger } from "@/app/utils/logger.utils";
 import { getSession } from "@/app/services/session.service";
 import { getRightsData } from "@/app/controllers/rights.controller";
-import RightPage from "./RightPage";
+// import RightPage from "./RightPage";
 import { Typography } from "@mui/material";
 import { redirect } from "next/navigation";
 import { getAllRole } from "@/app/controllers/executiveRole.controller";
@@ -176,7 +176,7 @@ export default async function Rights() {
 
             return (
                 <>
-                    <RightPage rightData={data} category={category} children={children}/>
+                    {/* <RightPage rightData={data} category={category} children={children}/> */}
                 </>
             )
 

@@ -10,22 +10,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AddIcon from "@mui/icons-material/Add";
 import AddDocsForm from "./AddDocsForm";
-import { join } from 'path';
-import { writeFile } from 'fs/promises';
-// import { fileTypeFromBuffer } from 'file-type';
-import { deleteExecutiveDoc, updateExecutiveDoc, viewExecutiveDoc } from "@/app/controllers/executive.controller";
+import { deleteExecutiveDoc, updateExecutiveDoc, viewExecutiveDoc } from "@/app/controllers/document.controller";
+import { docDescriptionSchemaT } from "@/app/models/models";
 
-type ModifiedRowT = {
-    id?: number;
-    description?: string;
-    document?: string;
-    file?: string | ArrayBuffer | null;
-    fileType?: string;
-};
+// type ModifiedRowT = {
+//     id?: number;
+//     description?: string;
+//     objectId?: number;
+//     objectTypeId?: number;
+//     document?: string;
+//     file?: string | ArrayBuffer | null;
+//     fileType?: string;
+// };
 
 
 
@@ -83,13 +82,13 @@ function CustomNoRowsOverlay() {
 }
 
 
-export default function DocModal({ docData, setDocData, setDialogOpen }: { docData: any, setDocData: any, setDialogOpen: any }) {
+export default function DocModal({ docData, setDocData, setDialogOpen }: { docData: docDescriptionSchemaT[], setDocData: any, setDialogOpen: any }) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
     const [editMode, setEditMode] = useState<GridRowId | null>();
     const [openAddDocDialog, setOpenAddDocDialog] = useState(false);
-    const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
+    const [modifiedRowData, setModifiedRowData] = useState<docDescriptionSchemaT>();
 
     function EditToolbar() {
 
@@ -140,46 +139,33 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
             },
         },
         {
-            field: "document",
+            field: "fileName",
             headerName: "Document",
             width: 150,
             renderCell: (params) => {
                 if (editMode === params.row.id) {
-                    return (
-                        <>
-                            {modifiedRowData?.document}
-                            {/* {modifiedRowData?.file ? modifiedRowData?.document : 
-                <Button
-                  component="label"
-                  role={undefined}
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload files
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={handleFileChange}
-                    multiple
-                  />
-                </Button>} */}
-                        </>
-                    );
+                    if (params.row.type === "db") {
+                        return (
+                            <>
+                                <IconButton onClick={() => { handleViewClickDB(params.row) }} aria-label="file">
+                                    <AttachFileIcon />
+                                </IconButton>
+                            </>
+                        );
+                    }else{
+                        return (
+                            <>
+                                {modifiedRowData?.fileName}
+                            </>
+                        );
+                    }
                 }
                 if (params.row.type === "db") {
                     return (
                         <>
-                            {/* <Button
-                  component="label"
-                  role={undefined}
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                > */}
                             <IconButton onClick={() => { handleViewClickDB(params.row) }} aria-label="file">
                                 <AttachFileIcon />
                             </IconButton>
-                            {/* </Button> */}
                         </>
                     );
                 }
@@ -238,7 +224,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleSaveClick = () => {
         //save the data from modifiedRowData state into rows of data grid
         if (docData.length > 0) {
-            const updatedRows = docData.map((row: any) =>
+            const updatedRows = docData.map((row) =>
                 row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
             );
             setDocData(updatedRows);
@@ -249,7 +235,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleSaveClickDB = async () => {
         try {
             await updateExecutiveDoc(modifiedRowData?.description as string, modifiedRowData?.id as number);
-            const updatedRows = docData.map((row: any) =>
+            const updatedRows = docData.map((row) =>
                 row.id === modifiedRowData?.id ? { ...row, ...modifiedRowData } : row
             );
             setDocData(updatedRows);
@@ -262,8 +248,8 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleDeleteClickDB = async (data: any) => {
         try {
             if (docData.length > 0) {
-                const updatedRows = docData.filter((row: any) => row.id !== data.id);
-                await deleteExecutiveDoc(data.id);
+                const updatedRows = docData.filter((row) => row.id !== data.id);
+                await deleteExecutiveDoc(data.id,data.docId);
                 setDocData(updatedRows);
             }
         } catch (error) {
@@ -272,44 +258,40 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     }
 
 
-    const handleViewClickDB = async (data: any) => {
+    const handleViewClickDB = async (data : docDescriptionSchemaT) => {
         try {
-            const result = await viewExecutiveDoc(data.doc_id);
-            
-            if(result?.base64Data && result?.contentType){
-                const { base64Data, contentType } = result;
-            
-            
-            if(base64Data){
-                const binary = atob(base64Data);
-            const len = binary.length;
-            const buffer = new Uint8Array(len);
+            const result = await viewExecutiveDoc(data.docId as string);
 
-            for (let i = 0; i < len; i++) {
-                buffer[i] = binary.charCodeAt(i);
+            if (result?.buffer && result?.contentType && result?.fileName) {
+                const { buffer, contentType, fileName } = result;
+
+                    const binary = atob(buffer);
+                    const len = binary.length;
+                    const bufferArray = new Uint8Array(len);
+
+                    for (let i = 0; i < len; i++) {
+                        bufferArray[i] = binary.charCodeAt(i);
+                    }
+
+                    // Create a Blob from the binary data
+                    const blob = new Blob([bufferArray], { type: contentType });
+
+                    // Create object URL from Blob
+                    const url = window.URL.createObjectURL(blob);
+
+                    // Download logic
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = fileName || data.description;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Revoke the object URL to free memory
+                    window.URL.revokeObjectURL(url);
             }
 
-            // Create a Blob from the binary data
-            const blob = new Blob([buffer], { type: contentType });
-            console.log('BLOB : ', blob);
 
-            // Create object URL from Blob
-            const url = window.URL.createObjectURL(blob);
-
-            // Download logic
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = data.description || 'download.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Revoke the object URL to free memory
-            window.URL.revokeObjectURL(url);
-            }
-        }
-
-            
         } catch (error) {
             throw error;
         }
@@ -318,7 +300,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
     const handleDeleteClick = (id: GridRowId) => () => {
         // Filter out the row with the matching id
         if (docData.length > 0) {
-            const updatedRows = docData.filter((row: any) => row.id !== id);
+            const updatedRows = docData.filter((row) => row.id !== id);
 
             // Update the data state with the filtered rows
             setDocData(updatedRows);
@@ -331,17 +313,13 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
 
     const handleEditClick = (id: GridRowId) => () => {
         setEditMode(id);
-        const selectedRowData = docData.find((row: any) => row.id === id); // Find the corresponding row data
+        const selectedRowData = docData.find((row) => row.id === id); // Find the corresponding row data
         setModifiedRowData(selectedRowData); //Setting selected row data in modifiedRowData state
-        setModifiedRowData((prevState) => ({
-            ...prevState,
-            file: undefined,
-        }));
     };
 
     return (
         <>
-            <Box sx={{ height: "500px", width: "800px" }}>
+            <Box sx={{ height: "500px", width: "800px", p: 2, m: 2 }}>
                 <DataGrid
                     columns={columns}
                     rows={docData ? docData : []}
@@ -356,6 +334,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                                 fontWeight: "bold",
                             },
                         },
+                        boxShadow : 1
                     }}
                 />
             </Box>
@@ -366,7 +345,9 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                 }}
             >
                 <Button onClick={() => {
+                    setDocData((prevData : any) => prevData.filter((doc : any) => doc.id >= 0));
                     setDialogOpen(false)
+
                 }} tabIndex={-1}>Cancel</Button>
                 <Button
                     variant="contained"
@@ -375,7 +356,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                         setDialogOpen(false)
                     }}
                 >
-                    Submit
+                    Done
                 </Button>
             </Box>
             {openAddDocDialog && (

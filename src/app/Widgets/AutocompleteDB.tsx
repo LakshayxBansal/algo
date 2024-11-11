@@ -15,7 +15,7 @@ import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
 import { optionsDataT } from '@/app/models/models';
 import { CustomStyledDiv } from "../utils/styledComponents";
-import { inputStyles } from "../utils/theme.util";
+import { autocompleteTextfieldSx } from "../utils/theme.util";
 
 type OnChangeFunction = (
   event: any,
@@ -183,7 +183,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
               defaultValue={"Please select from Options"}
               InputProps={{
                 style: {
-                  ...inputStyles, 
+                  ...autocompleteTextfieldSx, 
                   height: "100%"
                 },
               }}
@@ -214,7 +214,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
-        console.log(newValue);
+        // console.log(newValue);
 
         if (reason != "blur") {
           props.setDialogVal(

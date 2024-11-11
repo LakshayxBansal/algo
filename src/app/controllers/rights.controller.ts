@@ -96,6 +96,20 @@ export async function getObjects() {
     }
 }
 
+export async function getObjectByName(name : string) {
+    try{
+        const session = await getSession();
+        if(session){
+            const objects = await getObjectByNameDb(session.user.dbInfo.dbName, name);
+            return objects;
+        }
+    }catch(error){
+        logger.error(error);
+    }
+}
+
+
+
 // export async function getMasterObjects() {
 //     try{
 //         const session = await getSession();

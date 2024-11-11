@@ -7,8 +7,15 @@ import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT, selectKeyValueT } from "@/app/models/models";
-import { getProduct, getProductById } from "@/app/controllers/product.controller";
+import {
+  masterFormPropsT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
+import {
+  getProduct,
+  getProductById,
+} from "@/app/controllers/product.controller";
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import UnitForm from "../../Widgets/masters/masterForms/unitForm";
 import { Collapse, IconButton, TextField } from "@mui/material";
@@ -22,7 +29,8 @@ export default function AddProductToListForm(props: masterFormPropsT) {
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-
+  const [defaultValueForUnitUsingProduct, setDefaultValueForUnitUsingProduct] =
+    useState<selectKeyValueT>({});
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
@@ -39,14 +47,36 @@ export default function AddProductToListForm(props: masterFormPropsT) {
     }
 
     formData = updateFormData(data);
+
     const parsed = zs.productToListFormSchema.safeParse(data);
+    let prevDataPresent = false;
     if (parsed.success) {
       props.setData
-        ? props.setData((prevData: any) => [
-            ...prevData,
-            { id: prevData.length + 1, ...data },
-          ])
+        ? props.setData((prevData: any) => {
+            prevDataPresent = prevData.some(
+              (item: any) => item.product_id === data.product_id
+            );
+            if (prevDataPresent) {
+              const errorState: Record<
+                string,
+                { msg: string; error: boolean }
+              > = {};
+              errorState["form"] = {
+                msg: "Product already exists in the list",
+                error: true,
+              };
+              setFormError((curr: any) => {
+                return { ...curr, ...errorState };
+              });
+              return prevData;
+            } else {
+              return [...prevData, { id: prevData.length + 1, ...data }];
+            }
+          })
         : null;
+
+      if (prevDataPresent) return;
+
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
@@ -70,7 +100,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
     return data;
   };
 
-  function onSelectChange(
+  async function onSelectChange(
     event: React.SyntheticEvent,
     val: any,
     setDialogValue: any,
@@ -78,6 +108,31 @@ export default function AddProductToListForm(props: masterFormPropsT) {
   ) {
     let values = { ...selectValues };
     values[name] = val;
+
+    if (name === "product" && val?.id) {
+      try {
+        const res = await getProductById(val.id);
+        if (res[0].id !== 0) {
+          setDefaultValueForUnitUsingProduct({
+            id: res[0].unit_id,
+            name: res[0].unit_name,
+          });
+          values["unit"] = {
+            id: res[0].unit_id,
+            name: res[0].unit_name,
+          };
+        }
+      } catch (error) {
+        console.error("Error in getProductById:", error);
+      }
+    } else if (name === "unit" && val?.id) {
+      setDefaultValueForUnitUsingProduct({ id: val.id, name: val.name });
+      values["unit"] = { id: val.id, name: val.name };
+    } else {
+      setDefaultValueForUnitUsingProduct({ id: 0, name: "" });
+      values["unit"] = {};
+    }
+
     setSelectValues(values);
   }
 
@@ -87,7 +142,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
       return rest;
     });
   };
-
   return (
     <>
       <Box
@@ -102,7 +156,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             Add Product To Product List
-            <IconButton onClick={handleCancel}>
+            <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -155,21 +209,30 @@ export default function AddProductToListForm(props: masterFormPropsT) {
                 />
               )}
             />
+
             <InputControl
               required
               inputType={InputType.TEXT}
               type="number"
-              decPlaces={0}
-              min={0}
-              max={10}
-              // style= { textAlign: "right" },
-              name="quantity"
               id="quantity"
               label="Quantity"
+              name="quantity"
+              inputProps={{
+                min: 0,
+                max: 10000000,
+                style: { textAlign: "right" },
+                onKeyDown: (e: any) => {
+                  // Prevent 'e' character
+                  if (e.key === "e" || e.key === "E") {
+                    e.preventDefault();
+                  }
+                },
+              }}
               error={formError?.quantity?.error}
               helperText={formError?.quantity?.msg}
             />
             <SelectMasterWrapper
+              key={defaultValueForUnitUsingProduct.id}
               name={"unit"}
               id={"unit"}
               label={"Unit Name"}
@@ -186,6 +249,12 @@ export default function AddProductToListForm(props: masterFormPropsT) {
                   data={data}
                 />
               )}
+              defaultValue={
+                {
+                  id: defaultValueForUnitUsingProduct.id,
+                  name: defaultValueForUnitUsingProduct.name,
+                } as optionsDataT
+              }
             />
           </Box>
           <TextField
@@ -204,7 +273,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"

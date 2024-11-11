@@ -1,37 +1,33 @@
-import * as React from 'react';
-import { useEffect, useState, useRef  } from 'react';
-import ListSubheader from '@mui/material/ListSubheader';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '@mui/material/Tooltip';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-
-import {menuTreeT} from '../../models/models';
-import {nameIconArr} from '../../utils/iconmap.utils';
-import { Popper, Grow, Popover, Paper } from '@mui/material';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import * as React from "react";
+import { useEffect, useState, useRef } from "react";
+import { Popper, Grow,Paper } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
+import Collapse from "@mui/material/Collapse";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { menuTreeT } from "../../models/models";
+import { nameIconArr } from "../../utils/iconmap.utils";
 
 
-export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boolean,setOpenDrawer?: any}) {
+export default function LeftMenuTree(props: {
+  pages: menuTreeT[];
+  openDrawer: boolean;
+  setOpenDrawer?: any;
+}) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
-  const [openPop, setOpenPop] = React.useState<Map<number, HTMLElement|null>>();
-  const [hoverOpen, setHoverOpen] = React.useState< boolean>(false);
-  const [hoverId, setHoverId] = React.useState<number>();
-  const [selectedId, setSelectedId] = React.useState<number | null>(null); // Track selected item
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const [isReturning, setIsReturning] = useState(false);
-
-  const anchorRef = React.useRef()
-
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-  const idToOpenPop = React.useRef(new Map(openPop))
+  const [selectedId, setSelectedId] = React.useState<number | null>(null);
+  const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
+  // const [hoverId, setHoverId] = React.useState<number | null>(null);
+  
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
+  let arra1 = [0, 2, 5, 9, 12, 51, 54];
   const pages = props.pages;
-
 
   useEffect(() => {
     if (!props.openDrawer) {
@@ -39,242 +35,310 @@ export default function LeftMenuTree(props: {pages:menuTreeT[], openDrawer:boole
       for (let key of collapsedMap.keys()) {
         collapsedMap.set(key, false);
       }
-      setOpen(collapsedMap);      
-    }else{
+      setOpen(collapsedMap);
+    } else {
       const idToOpenMap: Map<number, boolean> = new Map([]);
-      pages.forEach(page => {
-      if (page.children.length > 0) {
-        idToOpenMap.set(page.id, false)
-      }
-    });
-    setOpen(idToOpenMap);
-    const str = ShowMenu({pages: pages, level:0, menuLevel:0});
-  }
-  return () => {
-    clearTimeout(timeoutRef.current);
-};
-  }, [props.openDrawer,idToOpenPop,hoverId]);
-
+      pages.forEach((page) => {
+        if (page.children.length > 0) {
+          idToOpenMap.set(page.id, false);
+        }
+      });
+      setOpen(idToOpenMap);
+      ShowMenu({ pages: pages, level: 0, menuLevel: 0 });
+    }
+    return () => {
+      clearTimeout(timeoutRef.current);
+    };
+  }, [props.openDrawer, openPopper]);
 
   function handleHeaderMenuClick(id: number) {
     const idToOpenMap: Map<number, boolean> = new Map(open);
-      idToOpenMap.set(id, !idToOpenMap.get(id));
-      props.setOpenDrawer(true);
-      setOpen(idToOpenMap);
-      setSelectedId(id);
+    idToOpenMap.set(id, !idToOpenMap.get(id));
+    props.setOpenDrawer(true);
+    setOpen(idToOpenMap);
+    setSelectedId(id);
   }
 
-
-  function handleSubMenuHover( event: React.MouseEvent<HTMLElement>, page: menuTreeT) { 
-      clearTimeout(timeoutRef.current);
-      setIsReturning(true);
-      if(page.children.length>0){
-          idToOpenPop.current.set(page.id, event.currentTarget);
-          setHoverId(page.id);
-        }
-        // console.log("enter", idToOpenPop.current);
-        setHoverOpen(true);
-  }
-
-  const handleMouseLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT) => {
-    // setHoverOpen(false);
+  function handleSubMenuHover(
+    event: React.MouseEvent<HTMLElement>,
+    page: menuTreeT
+  ) {
     clearTimeout(timeoutRef.current);
-    // console.log("returning", isReturning);
-    // if (hoverOpen){
-      setHoverId(page.id);
-      timeoutRef.current =  setTimeout(() => {
-        setIsReturning(false);
-          // if(!isReturning){
-            let greatestKey = null;
-            for (const key of idToOpenPop.current.keys()) {
-              if (greatestKey === null || key > greatestKey) {
-                greatestKey = key;
-              }
-            }
-            if (greatestKey !== null) {
-              idToOpenPop.current.delete(greatestKey);
-            }
-            // console.log("working")
-          // }
-        }, 100);
-        // console.log(id);
-        // setTimeoutId(id);
-  // }
-  };
-
-  const handleOnPopperLeave = (event :React.MouseEvent<HTMLElement>,page:menuTreeT)=>{
-    setHoverOpen(false);
-    let greatestKey = null;
-    for (const key of idToOpenPop.current.keys()) {
-      if (greatestKey === null || key > greatestKey) {
-        greatestKey = key;
+    timeoutRef.current = undefined;
+    // setHoverId(page.id);
+    if (arra1.includes(page.parent_id)) {
+      idToOpenPop.current.set(page.id, event.currentTarget);
+      if (page.parent_id == 0) {
+        openPopper.clear();
+        setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
+      } else if (page.parent_id == 5) {
+        openPopper.clear();
+        setOpenPopper((prevState) => new Map(prevState.set(5, true)));
+        setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
+      } else if (page.parent_id == 9) {
+        openPopper.clear();
+        setOpenPopper((prevState) => new Map(prevState.set(5, true)));
+        setOpenPopper((prevState) => new Map(prevState.set(9, true)));
+        setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
       }
     }
-    if (greatestKey !== null) {
-      idToOpenPop.current.delete(greatestKey);
+  }
+
+  const handleMouseLeave = (
+    event: React.MouseEvent<HTMLElement>,
+    page: menuTreeT
+  ) => {
+    if (timeoutRef.current == undefined) {
+      timeoutRef.current = setTimeout(() => {
+        // setHoverId(page.id);
+        idToOpenPop.current.clear();
+        setOpenPopper((prevState) => new Map());
+      }, 100);
     }
-    // console.log("working popper")
+  };
+
+  const handleMousePopper = (
+    event: React.MouseEvent<HTMLElement>,
+    page: menuTreeT
+  )=>{
+    // setHoverId(page.id);
+    idToOpenPop.current.clear();
+    // setOpenPopper((prevState) => new Map(prevState.clear()));
+    openPopper.clear();
   }
 
   function handleCollapse(id: number): boolean {
     return props.openDrawer ? open?.get(id) ?? false : false;
   }
 
-  function generateHref(optionName : string){
+  function generateHref(optionName: string) {
     let href = "#";
-    if(optionName==="Add User"){
+    if (optionName === "Add User") {
       href = "/cap/admin/adduser";
     }
     return href;
   }
 
-  function ShowMenu(levelData: {pages: menuTreeT[], level: number, menuLevel: number}) {
+  function ShowMenu(levelData: {
+    pages: menuTreeT[];
+    level: number;
+    menuLevel: number;
+  }) {
     const level = levelData.level;
     const pages = levelData.pages;
-    const indent =  levelData.menuLevel;
-    
+    const indent = levelData.menuLevel;
 
     function ShowIcon(key: String) {
-      const icon = nameIconArr.find((obj)=> obj.name === 'DashboardIcon')?.icon;  
+      const icon = nameIconArr.find(
+        (obj) => obj.name === "DashboardIcon"
+      )?.icon;
 
-      return ({icon});
+      return { icon };
     }
-    
+
     return (
       <div>
         {pages.map((page, index) => (
           <div key={index}>
-            {page.parent_id === level && 
-            <>
-              <Tooltip title={page.name} placement="right">
-                <ListItemButton sx={{ pl: indent }} onClick={(e) => handleHeaderMenuClick(page.id)}  component="a" href={page.href!=="#" ? page.href : generateHref(page.name)} selected={selectedId === page.id} >
-                  <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
-                    {SelectIcon({Page: page, selected:selectedId === page.id})}
-                  </ListItemIcon>
-                  <ListItemText primary={page.name} />
-                  {page.children.length ? open?.get(page.id) ? <ExpandLess/> : <ExpandMore /> : <></>}
-                </ListItemButton>
-              </Tooltip>
-              <Collapse in={handleCollapse(page.id)} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {ShowMenu({pages: page.children, level:page.id, menuLevel: indent+2})}
-                </List>
-              </Collapse>
-
-            </>
-            }
+            {page.parent_id === level && (
+              <>
+                <Tooltip title={page.name} placement="right">
+                  <ListItemButton
+                    sx={{ pl: indent }}
+                    onClick={(e) => handleHeaderMenuClick(page.id)}
+                    component="a"
+                    href={
+                      page.href !== "#" ? page.href : generateHref(page.name)
+                    }
+                    selected={selectedId === page.id}
+                  >
+                    <ListItemIcon
+                      style={{
+                        minWidth: "30px",
+                        marginRight: 12,
+                        marginLeft: 13,
+                      }}
+                    >
+                      {SelectIcon({
+                        Page: page,
+                        selected: selectedId === page.id,
+                      })}
+                    </ListItemIcon>
+                    <ListItemText primary={page.name} />
+                    {page.children.length ? (
+                      open?.get(page.id) ? (
+                        <ExpandLess />
+                      ) : (
+                        <ExpandMore />
+                      )
+                    ) : (
+                      <></>
+                    )}
+                  </ListItemButton>
+                </Tooltip>
+                <Collapse
+                  in={handleCollapse(page.id)}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    {ShowMenu({
+                      pages: page.children,
+                      level: page.id,
+                      menuLevel: indent + 2,
+                    })}
+                  </List>
+                </Collapse>
+              </>
+            )}
           </div>
         ))}
-    </div>
+      </div>
     );
   }
 
-  function ShowPopper(levelData: {pages: menuTreeT[], level: number, menuLevel: number}) {
+  function ShowPopper(levelData: {
+    pages: menuTreeT[];
+    level: number;
+    menuLevel: number;
+  }) {
     const level = levelData.level;
     const pages = levelData.pages;
-    const indent =  levelData.menuLevel;
+    const indent = levelData.menuLevel;
 
     function ShowIcon(key: String) {
-      const icon = nameIconArr.find((obj)=> obj.name === 'DashboardIcon')?.icon;  
+      const icon = nameIconArr.find(
+        (obj) => obj.name === "DashboardIcon"
+      )?.icon;
 
-      return ({icon});
+      return { icon };
     }
-    
+
     return (
       <div>
         {pages.map((page, index) => (
           <div key={index}>
-            {page.parent_id === level &&
-            <>
-              {/* <Tooltip title={page.name} placement="left"> */}
-                <ListItemButton sx={{ pl: indent }} 
-                             onMouseEnter={ (e) => {  
-                              // page.children.length  > 0 &&
-                              handleSubMenuHover(e, page)           
-                            }
-                            }
-                             onMouseLeave={(e) =>{page.children.length  > 0 && handleMouseLeave(e,page)}}  
-                 component="a" href={page.href} selected={selectedId === page.id} >
-                  <ListItemIcon style={{minWidth: '30px', marginRight:12, marginLeft:13}}>
-                    {SelectIcon({Page: page, selected:selectedId === page.id})}
+            {page.parent_id === level && (
+              <div>
+                {/* <Tooltip title={page.name} placement="right-start"> */}
+                <ListItemButton
+                  sx={{ pl: indent }}
+                  onMouseEnter={(e) => {
+                    handleSubMenuHover(e, page);
+                  }}
+                  onMouseLeave={(e) => {
+                    handleMouseLeave(e, page);
+                  }}
+                  component="a"
+                  href={page.href}
+                  selected={selectedId === page.id}
+                >
+                  <ListItemIcon
+                    style={{
+                      minWidth: "30px",
+                      marginRight: 12,
+                      marginLeft: 13,
+                    }}
+                  >
+                    {SelectIcon({
+                      Page: page,
+                      selected: selectedId === page.id,
+                    })}
                   </ListItemIcon>
                   <ListItemText primary={page.name} />
-                  {page.children.length ? openPop?.get(page.id) ? <ChevronRightIcon/> : <ExpandMore /> : <></>}
+                  {page.children.length ? (
+                    openPopper?.get(page.id) ? (
+                      <ChevronRightIcon />
+                    ) : (
+                      <ExpandMore />
+                    )
+                  ) : (
+                    <></>
+                  )}
                 </ListItemButton>
-              {/* </Tooltip> */}
-              { (
-                <Paper>
-                  {/*Boolean(hoverId) &&  (page.parent_id===0 && hoverId===page.id)|| */}
-              <Popper   open={(idToOpenPop.current.get(page.id)?true:false)}
-              anchorEl={idToOpenPop.current.get(page.id)}   transition placement='right-start'
-              onMouseEnter={(e) => {
-                setHoverOpen(true);
-                }}
-              onMouseLeave={(e)=>{
-                handleOnPopperLeave(e,page)
-              }}
-         
-               
-               >
-                  {({ TransitionProps }) => (
-                <Grow {...TransitionProps}>
-                   {/* <List component="div"  disablePadding sx={{bgcolor:'white'}} > */}
-                    <Paper elevation={3} style={{ maxHeight:"20em", overflowY: 'auto' }}>
+                {/* </Tooltip> */}
+                {
+                  <>
+                    {/*Boolean(hoverId) &&  (page.parent_id===0 && hoverId===page.id)|| */}
+                    <Popper
+                      // open={idToOpenPop.current.has(page.id)}
+                      // open={hoverId === page.id || hoverId === page.parent_id}
+                      open={openPopper.get(page.id)?true:false}
+                      anchorEl={idToOpenPop.current.get(page.id)}
+                      transition
+                      placement="right-start"
+                    >
+                      {({ TransitionProps }) => (
+                        <Grow {...TransitionProps}>
+                            <Paper
+                              elevation={8}
+                              style={{ maxHeight: "20em", overflowY: "auto" }}
+                            >
+                              {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
 
-                   { idToOpenPop.current.get(page.id)?ShowPopper({pages: page.children, level:page.id, menuLevel: 0}):''}
-                   {/* {ShowPopper({pages: page.children, level:page.id, menuLevel: 0})} */}
-                    </Paper>
-
-                  {/* </List> */}
-                </Grow>
-              )}
-            </Popper></Paper>)
-              }
-            </>
-            }
+                              {ShowPopper({
+                                pages: page.children,
+                                level: page.id,
+                                menuLevel: 0,
+                              })}
+                              {/* </div> */}
+                            </Paper>
+                        </Grow>
+                      )}
+                    </Popper>
+                  </>
+                }
+              </div>
+            )}
           </div>
         ))}
-    </div>
+      </div>
     );
   }
 
   // this is the main component
   return (
-    <List
-      sx={{ width: '100%', maxWidth: 560, bgcolor: 'background.paper' }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-    >
-
-      {props.openDrawer ?
-      ShowMenu({pages: props.pages, level:0, menuLevel: 0})
-     :
-     ShowPopper({pages: props.pages, level:0, menuLevel: 0})
-    }
-    </List>
+    <div>
+      <List
+        sx={{ width: "100%", maxWidth: 560, bgcolor: "background.paper" }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+      >
+        {props.openDrawer
+          ? ShowMenu({ pages: props.pages, level: 0, menuLevel: 0 })
+          : ShowPopper({ pages: props.pages, level: 0, menuLevel: 0 })}
+      </List>
+    </div>
   );
 }
 
-
-const SelectIcon: React.FC<{ Page: menuTreeT ,selected: boolean }> = ({ Page,selected }) => {
+const SelectIcon: React.FC<{ Page: menuTreeT; selected: boolean }> = ({
+  Page,
+  selected,
+}) => {
   // Find the corresponding icon component based on user selection
   const selectedIcon = nameIconArr.find((item) => item.name === Page.icon);
 
   return (
     <>
-        {selectedIcon && (
-             <div
-             style={{
-               display: 'inline-block',
-               transition: 'color 0.3s',
-              //  color: selected ? 'primary.main' : (Page.children.length > 0 ? 'secondary' : 'info'), // Change color if selected
-               color: selected ? 'primary.main' : (Page.children.length > 0 ? 'secondary' : 'info'),
-             }}
-           >
-          <selectedIcon.icon color={Page.children.length> 0 ? "secondary": "info"}/>
-          </div>
-        )}
+      {selectedIcon && (
+        <div
+          style={{
+            display: "inline-block",
+            transition: "color 0.3s",
+            //  color: selected ? 'primary.main' : (Page.children.length > 0 ? 'secondary' : 'info'), // Change color if selected
+            color: selected
+              ? "primary.main"
+              : Page.children.length > 0
+              ? "secondary"
+              : "info",
+          }}
+        >
+          <selectedIcon.icon
+            color={Page.children.length > 0 ? "secondary" : "info"}
+          />
+        </div>
+      )}
     </>
   );
 };
-

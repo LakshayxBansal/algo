@@ -36,19 +36,20 @@ import {
   updateExecutive,
 } from "@/app/controllers/executive.controller";
 import {
+  docDescriptionSchemaT,
   executiveSchemaT,
   masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
-import { Collapse, IconButton, Typography } from "@mui/material";
+import { Badge, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
-import DocModal from "@/app/cap/admin/lists/executiveList/DocModal";
+import DocModal from "@/app/utils/docs/DocModal";
 
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
@@ -56,12 +57,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
-  console.log("props : ",entityData);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -192,6 +192,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
+    data.role = selectValues.role
+      ? selectValues.role.name
+      : entityData.role
+      ? entityData.role
+      : "";
     return data;
   };
 
@@ -235,9 +240,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
-    console.log("doc data : ",docData)
     const newDocsData = docData.filter((row: any) => row.type !== "db");
-    console.log("new doc data : ",newDocsData)
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;
@@ -300,12 +303,30 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box>
-        <IconButton sx={{float : "right"}} onClick={()=>{setDialogOpen(true)}} aria-label="file">
-          <AttachFileIcon/>
+      <Tooltip 
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", m:1 }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
         </IconButton>
-        <Typography sx={{float : "right"}}>{props?.data ? props?.data?.docData?.length > 0 ? props?.data?.docData?.length : "" : ""}</Typography>
-        </Box>
+     </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>

@@ -14,6 +14,7 @@ import {
   enquiryProductSchemaT,
   enquiryLedgerSchemaT,
   selectKeyValueT,
+  docDescriptionSchemaT,
 } from "@/app/models/models";
 import {
   enquiryDataSchema,
@@ -24,6 +25,8 @@ import {
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
 import { Session } from "next-auth";
+import { getObjectByName } from "./rights.controller";
+import { uploadDocument } from "./document.controller";
 
 // type enqData = {
 //   head: enquiryHeaderSchemaT;
@@ -34,9 +37,11 @@ import { Session } from "next-auth";
 export async function createEnquiry({
   enqData,
   product,
+  docData,
 }: {
   enqData: enquiryDataSchemaT;
   product: enquiryProductSchemaT[];
+  docData: docDescriptionSchemaT[]
 }) {
   let result;
   try {
@@ -61,6 +66,12 @@ export async function createEnquiry({
         const dbResult = await createEnquiryDB(session, enqActionData);
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Enquiry");
+          await uploadDocument(
+            docData,
+            dbResult[1][0].id,
+            objectDetails[0].object_id
+          );
         } else {
           result = {
             status: false,
@@ -89,8 +100,6 @@ export async function createEnquiry({
           ],
         };
       }
-      console.log("result ", result);
-      
     } else {
       result = {
         status: false,
@@ -132,7 +141,10 @@ export async function getLoggedInUserDetails() {
   try {
     const session = await getSession();
     if (session) {
-      const dbResult = await getLoggedInUserDetailsDB(session.user.dbInfo.dbName, session.user.userId);
+      const dbResult = await getLoggedInUserDetailsDB(
+        session.user.dbInfo.dbName,
+        session.user.userId
+      );
       if (dbResult) {
         result = { status: true, data: dbResult[0] };
       }
@@ -174,4 +186,3 @@ export async function updateEnquiryById({
     logger.error(error);
   }
 }
-

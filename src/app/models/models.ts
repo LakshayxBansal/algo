@@ -100,6 +100,13 @@ export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryProductSchemaT = z.infer<typeof zs.productToListFormSchema>;
 export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
 
+//Support ticket schemas
+export type supportTicketSchemaT = z.infer<typeof zs.supportTicketSchema>;
+export type supportHeaderSchemaT = z.infer<typeof zs.supportHeaderSchema>;
+export type supportLedgerSchemaT = z.infer<typeof zs.supportLedgerSchema>;
+export type supportProductSchemaT= z.infer<typeof zs.supportProductSchema>;
+export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArraySchema>;
+
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
@@ -206,6 +213,7 @@ export type deleteCompT={
 
 export type  entitiyCompT = {
   title?: string;
+  // setTitlee:(props: any) => void;
   renderForm?: RenderFormFunctionT;
   fileUploadFeatureReqd?: boolean;
   // fnFileUpad: () => {}
@@ -236,3 +244,4 @@ export type iconCompT = {
   delete:any;
   modify:any;
 };
+export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
