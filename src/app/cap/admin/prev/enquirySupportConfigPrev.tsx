@@ -7,15 +7,11 @@ import Paper from "@mui/material/Paper";
 import FormGroup from "@mui/material/FormGroup";
 import Snackbar from "@mui/material/Snackbar";
 import Seperator from "../../../Widgets/seperator";
-import { updateEnquirySupportConfig } from "../../../controllers/enquirySupportConfig.controller";
+import { updateEnquirySupportConfig } from "../../../controllers/confiig.controller";
 import { enquirySupportConfig } from "../../../zodschema/zodschema";
 import { enquiryConfigSchemaT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Dynamic from "./prevGenericForm";
 
@@ -48,7 +44,8 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
 
     contractVoucherNumber: props.contractVoucherNumber ?? false,
 
-    enquiryGenerationVoucherNumber: props.enquiryGenerationVoucherNumber ?? false,
+    enquiryGenerationVoucherNumber:
+      props.enquiryGenerationVoucherNumber ?? false,
 
     regionalSettingVoucherNumber: props.regionalSettingVoucherNumber ?? false,
 
@@ -64,7 +61,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     prefillWithZero: false,
     parent: "enquiry",
   });
-  
+
   const [supportVoucherSettings, setSupportVoucherSettings] = useState({
     prefix: "",
     suffix: "",
@@ -72,16 +69,19 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
     prefillWithZero: false,
     parent: "support",
   });
-  
+
   const [contractVoucherSettings, setContractVoucherSettings] = useState({
     prefix: "",
     suffix: "",
     length: 0,
     prefillWithZero: false,
     parent: "contract",
-  });  
+  });
 
-  const [enquiryGenerationVoucherSettings, setEnquiryGenerationVoucherSettings] = useState({
+  const [
+    enquiryGenerationVoucherSettings,
+    setEnquiryGenerationVoucherSettings,
+  ] = useState({
     prefix: "",
     suffix: "",
     length: 0,
@@ -98,13 +98,13 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
   });
 
   const handleSubmit = async (formData: FormData) => {
-    console.log("formData : ",formData);
+    console.log("formData : ", formData);
     let data: { [key: string]: any } = {};
 
     for (const [key, value] of formData.entries()) {
       data[key] = value === "on" ? true : value;
     }
-    console.log("data : ",data);
+    console.log("data : ", data);
     const result = await persistEntity(data as enquiryConfigSchemaT);
 
     if (result.status) {
@@ -132,7 +132,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
   const handleCancel = () => {
     // Handle cancel action if necessary
   };
-  
+
   const handleCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     name: keyof enquiryConfigSchemaT
@@ -160,7 +160,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
               supportSaveFAQ: false,
               supportMaintainAction: false,
             };
-          } 
+          }
           // else if (name === "contractReqd") {
           //   updatedState = {
           //     ...updatedState,
@@ -185,7 +185,7 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
           //     supportSaveFAQ: false,
           //     supportMaintainAction: false,
           //   };
-          // } 
+          // }
         }
 
         return updatedState;
@@ -297,15 +297,15 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     !formState.enquiryReqd
                   )}
                   {/* {formState.enquiryVoucherNumber && (  */}
-                    {/* // <Dynamic /> */}
-                    {formState.enquiryVoucherNumber && (
-                      <Dynamic
-                        settings={enquiryVoucherSettings}
-                        setSettings={setEnquiryVoucherSettings}
-                        label="Enquiry Voucher Details"
-                        parent="enquiry"
-                      />
-                    )}
+                  {/* // <Dynamic /> */}
+                  {formState.enquiryVoucherNumber && (
+                    <Dynamic
+                      settings={enquiryVoucherSettings}
+                      setSettings={setEnquiryVoucherSettings}
+                      label="Enquiry Voucher Details"
+                      parent="enquiry"
+                    />
+                  )}
                   {/* )} */}
                 </FormGroup>
               </AccordionDetails>
@@ -376,13 +376,13 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     "supportVoucherNumber",
                     !formState.supportReqd
                   )}
-                  {formState.supportVoucherNumber && ( 
+                  {formState.supportVoucherNumber && (
                     <Dynamic
-                    settings={supportVoucherSettings}
-                    setSettings={setSupportVoucherSettings}
-                    label="Support Voucher Details"
-                    parent="support"
-                  />
+                      settings={supportVoucherSettings}
+                      setSettings={setSupportVoucherSettings}
+                      label="Support Voucher Details"
+                      parent="support"
+                    />
                   )}
                 </FormGroup>
               </AccordionDetails>
@@ -404,21 +404,21 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
               </AccordionSummary>
               <AccordionDetails>
                 {createCheckBox(
-                    "contractReqdVoucherNumber",
-                    "contractReqdVoucherNumber",
-                    "Do you want to keep Voucher Number?",
-                    formState.contractVoucherNumber as boolean,
-                    "contractVoucherNumber",
-                    !formState.contractReqd
-                  )}
-                  {formState.contractVoucherNumber && ( 
-                    <Dynamic
+                  "contractReqdVoucherNumber",
+                  "contractReqdVoucherNumber",
+                  "Do you want to keep Voucher Number?",
+                  formState.contractVoucherNumber as boolean,
+                  "contractVoucherNumber",
+                  !formState.contractReqd
+                )}
+                {formState.contractVoucherNumber && (
+                  <Dynamic
                     settings={contractVoucherSettings}
                     setSettings={setContractVoucherSettings}
                     label="Contract Voucher Details"
                     parent="contract"
                   />
-                  )}
+                )}
               </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -438,21 +438,21 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
               </AccordionSummary>
               <AccordionDetails>
                 {createCheckBox(
-                    "enquiryGenerationReqdVoucherNumber",
-                    "enquiryGenerationReqdVoucherNumber",
-                    "Do you want to keep Voucher Number?",
-                    formState.enquiryGenerationVoucherNumber as boolean,
-                    "enquiryGenerationVoucherNumber",
-                    !formState.enquiryGenerationReqd
-                  )}
-                  {formState.enquiryGenerationVoucherNumber && ( 
-                    <Dynamic
+                  "enquiryGenerationReqdVoucherNumber",
+                  "enquiryGenerationReqdVoucherNumber",
+                  "Do you want to keep Voucher Number?",
+                  formState.enquiryGenerationVoucherNumber as boolean,
+                  "enquiryGenerationVoucherNumber",
+                  !formState.enquiryGenerationReqd
+                )}
+                {formState.enquiryGenerationVoucherNumber && (
+                  <Dynamic
                     settings={enquiryGenerationVoucherSettings}
                     setSettings={setEnquiryGenerationVoucherSettings}
                     label="Enquiry Generation Voucher Details"
                     parent="enquiryGeneration"
                   />
-                  )}
+                )}
               </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -511,13 +511,13 @@ export default function EnquiryConfigForm(props: enquiryConfigSchemaT) {
                     "appVoucherNumber",
                     !formState.regional_settingReqd
                   )}
-                  {formState.appVoucherNumber && ( 
-                     <Dynamic
-                     settings={appVoucherSettings}
-                     setSettings={setappVoucherSettings}
-                     label="App Voucher Details"
-                     parent="app"
-                   />
+                  {formState.appVoucherNumber && (
+                    <Dynamic
+                      settings={appVoucherSettings}
+                      setSettings={setappVoucherSettings}
+                      label="App Voucher Details"
+                      parent="app"
+                    />
                   )}
                 </FormGroup>
               </AccordionDetails>

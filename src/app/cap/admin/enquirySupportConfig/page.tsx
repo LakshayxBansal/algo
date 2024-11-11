@@ -1,13 +1,13 @@
-import { loadEnquirySupportConfig } from "@/app/controllers/enquirySupportConfig.controller";
 import { getSession } from "@/app/services/session.service";
 import { redirect } from "next/navigation";
-import EnquiryConfigForm from "./enquirySupportConfig";
+import { fetchConfigData } from "@/app/controllers/confiig.controller";
+import ConfigForm from "./enquirySupportConfig";
 
 const EnquiryConfigPage = async () => {
   const session = await getSession();
   if (session) {
-    const enquiryConfig = await loadEnquirySupportConfig();
-    return <EnquiryConfigForm {...enquiryConfig}  />;
+    const config = await fetchConfigData();
+    return <ConfigForm {...config} />
   } else {
     redirect("/signin");
   }

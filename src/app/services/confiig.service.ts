@@ -27,7 +27,7 @@ export async function getConfigTypeId(
   }
 }
 
-export async function getEnquirySupportConfigDB(crmDb: string) {
+export async function getConfigDB(crmDb: string) {
   try {
 
     const configQuery = `SELECT ac.*, cm.config_type FROM app_config_new ac JOIN config_meta_data cm ON ac.object_id = cm.id`;
@@ -41,14 +41,14 @@ export async function getEnquirySupportConfigDB(crmDb: string) {
       return configResult;
     }
 
-    return initEnquiryConfigSchema();
+    return initConfigSchema();
   } catch (e) {
     console.error("Error fetching config data:", e);
     return null;
   }
 }
 
-export async function updateEnquirySupportConfigDB(
+export async function updateConfigDB(
   session: Session,
   data: enquiryConfigSchemaT
 ) {
@@ -64,7 +64,7 @@ export async function updateEnquirySupportConfigDB(
 
     let isTrue = data.isEnabled ? 1 : 0;
     delete data.isEnabled;
-    let jsonData = isTrue ? JSON.stringify(data) : "";
+    let jsonData = JSON.stringify(data);
 
     const values = [
       configTypeId,
@@ -85,7 +85,7 @@ export async function updateEnquirySupportConfigDB(
   }
 }
 
-export async function initEnquiryConfigSchema(): Promise<enquiryConfigSchemaT> {
+export async function initConfigSchema(): Promise<enquiryConfigSchemaT> {
     return {
         enquiryReqd: false,
         supportReqd: false,
@@ -97,8 +97,8 @@ export async function initEnquiryConfigSchema(): Promise<enquiryConfigSchemaT> {
         supportMaintainProducts: false,
         supportSaveFAQ: false,
         supportMaintainAction: false,
-        generalMaintainArea: false,
-        generalMaintainImage: false,
-        generalShowList: false,
+        // generalMaintainArea: false,
+        // generalMaintainImage: false,
+        // generalShowList: false,
     };
 }

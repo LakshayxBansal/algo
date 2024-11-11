@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Snackbar from "@mui/material/Snackbar";
-import { updateEnquirySupportConfig } from "../../../controllers/enquirySupportConfig.controller";
+import { updateConfigData } from "../../../controllers/confiig.controller";
 import { configSchemaT, enquiryConfigSchemaT, selectKeyValueT } from "@/app/models/models";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -95,9 +95,11 @@ export default function EnquiryConfigForm(props: configSchemaT) {
 
 const handleSubmit = async (formData: FormData) => {
   let data: { [key: string]: any } = {};
+  // console.log("Line at 99: ", formData);
+  
   
   for (const [key, value] of formData.entries()) {
-    data[key] = value === "on" ? true : value;
+    data[key] = value === "on" ? true : false;
   }
 
   data = updateFormData(data); 
@@ -129,7 +131,7 @@ const updateFormData = (data: enquiryConfigSchemaT) => {
 
 async function persistEntity(data: configSchemaT) {
   let result;
-  result = await updateEnquirySupportConfig(data);
+  result = await updateConfigData(data);
   return result;
 } 
 
