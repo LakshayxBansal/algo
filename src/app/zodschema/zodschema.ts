@@ -989,7 +989,7 @@ export const configBaseSchema = z.object({
     currencySymbol: z.string().optional(),
     currencySubString: z.string().optional(),
     currencyCharacter: z.string().optional(),
-    dateformat: z.string().optional(),
+    dateFormat: z.string().optional(),
     ...voucherSchema.shape
   });
   
