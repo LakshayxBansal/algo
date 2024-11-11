@@ -16,8 +16,10 @@ import { getOrganisationList } from "@/app/services/organisation.service";
 import { SqlError } from "mariadb";
 import * as mdl from "../models/models";
 import { bigIntToNum } from "../utils/db/types";
+import { getObjectByName } from "./rights.controller";
+import { getDocs, uploadDocument } from "./document.controller";
 
-export async function createOrganisation(data: zm.organisationSchemaT) {
+export async function createOrganisation(data: zm.organisationSchemaT,docData : zm.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -31,6 +33,8 @@ export async function createOrganisation(data: zm.organisationSchemaT) {
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Organisation");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           dbResult[0].forEach((error: any) => {
@@ -75,7 +79,7 @@ export async function createOrganisation(data: zm.organisationSchemaT) {
   return result;
 }
 
-export async function updateOrganisation(data: zm.organisationSchemaT) {
+export async function updateOrganisation(data: zm.organisationSchemaT, docData : zm.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -88,6 +92,8 @@ export async function updateOrganisation(data: zm.organisationSchemaT) {
         );
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          const objectDetails = await getObjectByName("Organisation");
+          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           dbResult[0].forEach((error: any) => {
@@ -152,7 +158,17 @@ export async function getOrganisationById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getOrganisationDetailsById(session.user.dbInfo.dbName, id);
+      const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
+      if(organisationDetails.length>0){
+        const objectDetails = await getObjectByName("Organisation");
+        const docData = await getDocs(id,objectDetails[0].object_id);
+        if (organisationDetails.length > 0 && docData.length > 0) {
+          organisationDetails[0].docData = docData;
+        } else {
+          organisationDetails[0].docData = [];
+        }
+        return organisationDetails;
+      }
     }
   } catch (error) {
     throw error;

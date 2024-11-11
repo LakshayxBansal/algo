@@ -1,13 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Badge,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Radio,
   RadioGroup,
   Snackbar,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 
 import { createEnquiry } from "@/app/controllers/enquiry.controller";
@@ -35,6 +39,8 @@ import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DocModal from "@/app/utils/docs/DocModal";
 
 import {
   getExecutive,
@@ -51,23 +57,16 @@ import {
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
-import { optionsDataT, selectKeyValueT } from "@/app/models/models";
+import { docDescriptionSchemaT, optionsDataT, selectKeyValueT } from "@/app/models/models";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
-const strA = "custom_script.js";
-const scrA = require("./" + strA);
-
 export interface IformData {
   userName: string;
 }
-
-const formConfig = {
-  showProducts: false,
-};
 
 const rows: any = [];
 
@@ -77,7 +76,12 @@ export default function InputForm(props: {
   loggedInUserData: any;
 }) {
   const [status, setStatus] = useState("1");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({"received_by":{id:props.loggedInUserData.id, name:props.loggedInUserData.name}});
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({
+    received_by: {
+      id: props.loggedInUserData.id,
+      name: props.loggedInUserData.name,
+    },
+  });
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -87,6 +91,10 @@ export default function InputForm(props: {
   const [data, setData] = React.useState(rows);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
+  const [docDialogOpen, setDocDialogOpen] = useState(false);
+  const [subStatus, setSubStatus] = useState<optionsDataT>();
+
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await enquiryDataFormat({ formData, selectValues });
@@ -97,6 +105,7 @@ export default function InputForm(props: {
     result = await createEnquiry({
       enqData: formatedData,
       product: data,
+      docData: docData,
     });
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -139,17 +148,9 @@ export default function InputForm(props: {
           // Add or update the field's error message
           temp[key][field] = { msg: row.message, error: true };
         });
-        console.log("Product Issues", temp);
         setProductFormError(temp);
       }
     }
-  };
-
-  const handleButtonClick = async () => {
-    scrA.makeInputReadOnly("ticket_description");
-
-    // Append the script element to the head
-    //document.head.appendChild(script);
   };
 
   async function getSubStatusforStatus(stateStr: string) {
@@ -161,6 +162,7 @@ export default function InputForm(props: {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
+    setSubStatus({ id: 0, name: "" });
   }
 
   function onSelectChange(
@@ -181,7 +183,36 @@ export default function InputForm(props: {
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid container>
           <Grid item xs={12}>
-            <Seperator>Enquiry Details</Seperator>
+            <Seperator>
+              <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+                Enquiry Details
+              </div>
+            </Seperator>
+            <Tooltip
+              title={
+                docData.length > 0 ? (
+                  docData.map((file: any, index: any) => (
+                    <Typography variant="body2" key={index}>
+                      {file.description}
+                    </Typography>
+                  ))
+                ) : (
+                  <Typography variant="body2" color="white">
+                    No files available
+                  </Typography>
+                )
+              }
+            >
+              <IconButton
+                sx={{ float: "right", position: "relative", paddingRight: 0 }}
+                onClick={() => setDocDialogOpen(true)}
+                aria-label="file"
+              >
+                <Badge badgeContent={docData.length} color="primary">
+                  <AttachFileIcon></AttachFileIcon>
+                </Badge>
+              </IconButton>
+            </Tooltip>
           </Grid>
           <Grid item xs={12}>
             <Grid container>
@@ -189,6 +220,7 @@ export default function InputForm(props: {
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6} md={6}>
                     <InputControl
+                      autoFocus
                       label="Enquiry Description"
                       id="enq_number"
                       inputType={InputType.TEXT}
@@ -207,9 +239,16 @@ export default function InputForm(props: {
                       name="date"
                       defaultValue={dayjs(new Date())}
                       required
-                      error={formError?.date?.error}
-                      helperText={formError?.date?.msg}
                       sx={{ display: "flex", flexGrow: 1 }}
+                      slotProps={{
+                        textField: {
+                          error: formError?.data?.error,
+                          helperText: formError?.date?.msg,
+                        },
+                        openPickerButton: {
+                          tabIndex: -1,
+                        },
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={3} md={3}>
@@ -223,6 +262,7 @@ export default function InputForm(props: {
                       fetchDataFn={getContact}
                       fnFetchDataByID={getContactById}
                       required
+                      autoFocus
                       formError={formError?.contact ?? formError.contact}
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <ContactForm
@@ -357,6 +397,13 @@ export default function InputForm(props: {
                     id="call_receipt_remark"
                     rows={6}
                     fullWidth
+                    error={formError?.call_receipt_remark?.error}
+                    helperText={formError?.call_receipt_remark?.msg}
+                    sx={{
+                      "& .MuiFormHelperText-root": {
+                        margin: 0,
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -368,13 +415,24 @@ export default function InputForm(props: {
                     id="suggested_action_remark"
                     rows={6}
                     fullWidth
+                    error={formError?.suggested_action_remark?.error}
+                    helperText={formError?.suggested_action_remark?.msg}
+                    sx={{
+                      "& .MuiFormHelperText-root": {
+                        margin: 0,
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
             </Grid>
 
             <Grid item xs={12}>
-              <Seperator>Final Status</Seperator>
+              <Seperator>
+                <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+                  Final Status
+                </div>
+              </Seperator>
             </Grid>
             <Box
               sx={{
@@ -411,6 +469,7 @@ export default function InputForm(props: {
                 </RadioGroup>
               </FormControl>
               <SelectMasterWrapper
+                // key={subStatus.id}
                 name={"sub_status"}
                 id={"sub_status"}
                 label={"Call Sub-Status"}
@@ -418,6 +477,7 @@ export default function InputForm(props: {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getEnquirySubSatusById}
+                defaultValue={subStatus}
                 required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -454,6 +514,7 @@ export default function InputForm(props: {
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getEnquiryAction}
+                fnFetchDataByID={getActionById}
                 formError={formError?.next_action ?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm
@@ -470,6 +531,16 @@ export default function InputForm(props: {
                 id="next_action_date"
                 name="next_action_date"
                 defaultValue={dayjs(new Date())}
+                disabled={status === "2"}
+                slotProps={{
+                  textField: {
+                    error: formError?.next_action_date?.error,
+                    helperText: formError?.next_action_date?.msg,
+                  },
+                  openPickerButton: {
+                    tabIndex: -1,
+                  },
+                }}
               />
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
@@ -479,9 +550,16 @@ export default function InputForm(props: {
                     multiline
                     name="closure_remark"
                     id="closure_remark"
-                    rows={2}
+                    rows={1}
                     fullWidth
                     disabled={status === "1"}
+                    error={formError?.closure_remark?.error}
+                    helperText={formError?.closure_remark?.msg}
+                    sx={{
+                      "& .MuiFormHelperText-root": {
+                        margin: 0,
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -499,7 +577,7 @@ export default function InputForm(props: {
                   alignItems="flex-end"
                   m={1}
                 >
-                  <Button>Cancel</Button>
+                  <Button tabIndex={-1}>Cancel</Button>
                   <Button type="submit" variant="contained">
                     Submit
                   </Button>
@@ -520,13 +598,26 @@ export default function InputForm(props: {
             />
           </AddDialog>
         )}
+        {docDialogOpen && (
+          <AddDialog
+            title=""
+            open={docDialogOpen}
+            setDialogOpen={setDocDialogOpen}
+          >
+            <DocModal
+              docData={docData}
+              setDocData={setDocData}
+              setDialogOpen={setDocDialogOpen}
+            />
+          </AddDialog>
+        )}
       </form>
       <Snackbar
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
         message={"Enquiry saved successfully!"}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center"}}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
   );

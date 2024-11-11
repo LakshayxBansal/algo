@@ -15,7 +15,7 @@ import React from "react";
 export default function CompanyEntityList() {
 
   const columns: GridColDef[] = [
-    { field: "RowID", headerName: "ID", width: 90 },
+    { field: "RowID", headerName: "S.no", width: 90 },
     {
       field: "companyName",
       headerName: "Name",

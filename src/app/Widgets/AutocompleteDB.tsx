@@ -16,6 +16,7 @@ import { InputControl, InputType } from "./input/InputControl";
 import { optionsDataT } from '@/app/models/models';
 import { CustomStyledDiv } from "../utils/styledComponents";
 import { autocompleteTextfieldSx } from "../utils/theme.util";
+import { propagateServerField } from "next/dist/server/lib/render-server";
 
 type OnChangeFunction = (
   event: any,
@@ -45,6 +46,7 @@ type autocompleteDBT = {
   disable?: boolean;
   defaultOptions?: optionsDataT[]
   showDetails?: boolean
+  autoFocus?: boolean
   //children: React.FunctionComponentElements
 };
 
@@ -54,26 +56,36 @@ export function AutocompleteDB(props: autocompleteDBT) {
   }
 
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
+
   const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(props.defaultOptions ? props.defaultOptions : []);
   const [options, setOptions] = useState<optionsDataT[]>(defaultOpts);
   const width = props.width ? props.width : 300;
   const [valueChange, setvalueChange] = useState(true);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
-  const [selectDefault, setSelectDefault] = useState(
-    Boolean(props.defaultValue)
-  );
+  const [defaultValue, setDefaultValue] = useState<optionsDataT | undefined>(props.defaultValue);
+  let hltIndex = -1;
+  let isTabbingOut = 0;
+  // const [selectDefault, setSelectDefault] = useState(
+  // Boolean(props.defaultValue? true: false)
+  // );
   // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
   const showDetails = props.showDetails ? props.showDetails : false;
 
+  if (defaultValue !== props.defaultValue) {
+    props.setDialogVal(props.defaultValue as optionsDataT);
+  }
+
+  // useEffect(() => {
+
+  // }, [props.defaultValue]);
 
   useEffect(() => {
+
     const getData = debounce(async (input) => {
       let results
-
       if (!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
-        results = (await props.fetchDataFn(props.defaultOptions ? '' : input)) as optionsDataT[]
+        results = (await props.fetchDataFn(props.defaultOptions ? '' : input)) as optionsDataT[];
         if (props.diaglogVal.reloadOpts) {
           setDefaultOpts(results)
           props.setDialogVal({ ...props.diaglogVal, reloadOpts: false })
@@ -93,18 +105,21 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setOptions(results);
       }
     }, 400);
+    if (defaultValue !== props.defaultValue) {
+      setvalueChange(true);
+      props.setDialogVal(props.defaultValue as optionsDataT);
+      setDefaultValue(props.defaultValue);
+      setOptions(defaultOpts);
+    }
+
     if (valueChange || autoSelect) {
-      if (selectDefault) {
-        props.setDialogVal(props.defaultValue as optionsDataT)
-        setSelectDefault(false)
-      } else {
+      if (open) {
         // setLoading(true)
         getData(inputValue);
       }
     }
   }, [inputValue, autoSelect, open]);
 
-  // console.log("autocompletedb",options)
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
@@ -116,7 +131,16 @@ export function AutocompleteDB(props: autocompleteDBT) {
     return "";
   }
 
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === 'Tab') {
+      isTabbingOut = 1;
+    }
+  }
+
   function onHighlightChange(event: SyntheticEvent, option: optionsDataT | null, reason: string) {
+    if (option) {
+      hltIndex = options.indexOf(option);
+    }
     const text = document.getElementById(
       "popper_textid_temp_5276"
     ) as HTMLInputElement;
@@ -133,7 +157,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
       options={options}
       // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
-
+      autoHighlight
+      onKeyDown={handleKeyDown}
       filterOptions={(options, { inputValue }) =>
         options.filter(option =>
           option.detail ? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -201,7 +226,19 @@ export function AutocompleteDB(props: autocompleteDBT) {
           </Popper>
         )
       }
-      onBlur={(e) => setAutoSelect(props.notEmpty)}
+      onBlur={(e) => {
+        setAutoSelect(props.notEmpty)
+
+        if (isTabbingOut) {
+          console.log("index ---:", hltIndex);
+          if (hltIndex >= 0 && options.length > 0) {
+            setInputValue(options[hltIndex].name);
+            props.setDialogVal(options[hltIndex]);
+          }
+          isTabbingOut = 0;
+          hltIndex = -1
+        }
+      }}
       onOpen={(e) => {
         setOpen(true);
         setvalueChange(true);
@@ -212,8 +249,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
-        console.log(newValue);
-
         if (reason != "blur") {
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)

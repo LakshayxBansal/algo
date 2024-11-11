@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import { getInviteDetailByContact } from "@/app/controllers/user.controller";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -36,25 +36,30 @@ import {
   updateExecutive,
 } from "@/app/controllers/executive.controller";
 import {
+  docDescriptionSchemaT,
   executiveSchemaT,
-  masterFormPropsT,
   masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
-import { Collapse, IconButton } from "@mui/material";
+import { Badge, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
+import { AddDialog } from "../addDialog";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 import { useRouter } from "next/navigation";
+import DocModal from "@/app/utils/docs/DocModal";
+
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {};
@@ -119,12 +124,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
       //   inviteId = invite.id;
       // }
+
       const result = await persistEntity(data as executiveSchemaT);
-      if (result.status) {
+      if (result?.status) {
         const newVal = {
-          id: result.data[0].id,
-          name: result.data[0].name,
-          stamp: result.data[0].stamp,
+          id: result?.data[0].id,
+          name: result?.data[0].name,
         };
         // if(inviteId){
         //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
@@ -136,7 +141,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
-        const issues = result.data;
+        const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Error encountered", error: true };
@@ -241,12 +246,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   async function persistEntity(data: executiveSchemaT) {
     let result;
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;
-      result = await updateExecutive(data);
+      result = await updateExecutive(data, newDocsData);
     } else {
-      result = await createExecutive(data);
+      result = await createExecutive(data, newDocsData);
     }
     return result;
   }
@@ -784,6 +790,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               Submit
             </Button>
           </Box>
+          {dialogOpen && (
+            <AddDialog
+              title=""
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
+              <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+            </AddDialog>
+          )}
         </form>
         <Snackbar
           open={snackOpen}

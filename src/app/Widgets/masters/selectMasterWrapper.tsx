@@ -42,6 +42,7 @@ type selectMasterWrapperT = {
   disable?: boolean;
   defaultOptions?: optionsDataT[]
   showDetails?: boolean;
+  autoFocus?: boolean;
 };
 
 enum dialogMode {
@@ -53,7 +54,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [dialogValue, setDialogValue] = useState<optionsDataT>(
-    {} as optionsDataT
+    // {} as optionsDataT
+    props.defaultValue ?? {} as optionsDataT
   );
   const [desc, setDesc] = useState();
   const [modData, setModData] = useState({});
@@ -144,7 +146,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
                     fontSize="small"
                   />
                 </Tooltip>
-                {(dialogValue.id ?? false) && (
+                {(dialogValue.id ? true : false) && (
                   <Tooltip
                     title={
                       allowModify ? "Click to modify" : "Not allowed to modify"

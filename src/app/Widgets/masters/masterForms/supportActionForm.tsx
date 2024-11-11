@@ -160,7 +160,6 @@ export default function SupportActionForm(props: masterFormPropsT) {
               inputType={InputType.TEXT}
               name="name"
               defaultValue={props.data?.name}
-              onChange
               fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
