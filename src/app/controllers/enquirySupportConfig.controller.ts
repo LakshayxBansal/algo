@@ -72,6 +72,21 @@ const convertData = (data1: any): configSchemaT => {
   };
 };
 
+function createConfigData(data: any, configType: string){
+  return {
+    isEnabled: true,
+    ...(data[configType].voucherNumber && {
+      VoucherNumber: data[configType].voucherNumber,
+    }),
+    ...(data[configType].prefix && { prefix: data[configType].prefix }),
+    ...(data[configType].suffix && { suffix: data[configType].suffix }),
+    ...(data[configType].length && { length: data[configType].length }),
+    ...(data[configType].prefillWithZero !== undefined && {
+      prefillWithZero: data[configType].prefillWithZero,
+    }),
+  };
+}
+
 export async function updateEnquirySupportConfig(configData: configSchemaT) {
   let result;
   
@@ -88,7 +103,6 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
         if (data.enquiryConfig?.reqd) {
           const enquiryEntry = {
             category: "enquiry",
-            isEnabled: true,
             ...(data.enquiryConfig.closeCall && { CloseCall: data.enquiryConfig.closeCall }),
             ...(data.enquiryConfig.maintainProducts && {
               MaintainProducts: data.enquiryConfig.maintainProducts,
@@ -97,15 +111,7 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
             ...(data.enquiryConfig.maintainAction && {
               MaintainAction: data.enquiryConfig.maintainAction,
             }),
-            ...(data.enquiryConfig.voucherNumber && {
-              VoucherNumber: data.enquiryConfig.voucherNumber,
-            }),
-            ...(data.enquiryConfig.prefix && { prefix: data.enquiryConfig.prefix }),
-            ...(data.enquiryConfig.suffix && { suffix: data.enquiryConfig.suffix }),
-            ...(data.enquiryConfig.length && { length: data.enquiryConfig.length }),
-            ...(data.enquiryConfig.prefillWithZero !== undefined && {
-              prefillWithZero: data.enquiryConfig.prefillWithZero,
-            }),
+            ...createConfigData(data, 'enquiryConfig')
           };
           entries.push(enquiryEntry);
         } else {
@@ -119,7 +125,6 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
         if (data.supportConfig?.reqd) {
           const supportEntry = {
             category: "support",
-            isEnabled: true,
             ...(data.supportConfig.closeCall && { CloseCall: data.supportConfig.closeCall }),
             ...(data.supportConfig.maintainProducts && {
               MaintainProducts: data.supportConfig.maintainProducts,
@@ -128,15 +133,7 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
             ...(data.supportConfig.maintainAction && {
               MaintainAction: data.supportConfig.maintainAction,
             }),
-            ...(data.supportConfig.voucherNumber && {
-              VoucherNumber: data.supportConfig.voucherNumber,
-            }),
-            ...(data.supportConfig.prefix && { prefix: data.supportConfig.prefix }),
-            ...(data.supportConfig.suffix && { suffix: data.supportConfig.suffix }),
-            ...(data.supportConfig.length && { length: data.supportConfig.length }),
-            ...(data.supportConfig.prefillWithZero !== undefined && {
-              prefillWithZero: data.supportConfig.prefillWithZero,
-            }),
+            ...createConfigData(data, 'supportConfig')
           };
           entries.push(supportEntry);
         } else {
@@ -150,16 +147,7 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
         if (data.contractConfig?.reqd) {
           const contractEntry = {
             category: "contract",
-            isEnabled: true,
-            ...(data.contractConfig.voucherNumber && {
-              VoucherNumber: data.contractConfig.voucherNumber,
-            }),
-            ...(data.contractConfig.prefix && { prefix: data.contractConfig.prefix }),
-            ...(data.contractConfig.suffix && { suffix: data.contractConfig.suffix }),
-            ...(data.contractConfig.length && { length: data.contractConfig.length }),
-            ...(data.contractConfig.prefillWithZero !== undefined && {
-              prefillWithZero: data.contractConfig.prefillWithZero,
-            }),
+            ...createConfigData(data, 'contractConfig')
            };
           entries.push(contractEntry);
         } else {
@@ -174,9 +162,6 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
           const appEntry = {
             category: "regional_setting",
             isEnabled: true,
-            ...(data.regionalSettingConfig.voucherNumber && {
-              VoucherNumber: data.regionalSettingConfig.voucherNumber,
-            }),
             country: data.regionalSettingConfig.country,
             state: data.regionalSettingConfig.state,
             country_id: data.regionalSettingConfig.country_id,
@@ -188,12 +173,7 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
             currencySubString: data.regionalSettingConfig.currencySubString,
             currencyCharacter: data.regionalSettingConfig.currencyCharacter,
             decimalPlaces: data.regionalSettingConfig.decimalPlaces,
-            ...(data.regionalSettingConfig.prefix && { prefix: data.regionalSettingConfig.prefix }),
-            ...(data.regionalSettingConfig.suffix && { suffix: data.regionalSettingConfig.suffix }),
-            ...(data.regionalSettingConfig.length && { length: data.regionalSettingConfig.length }),
-            ...(data.regionalSettingConfig.prefillWithZero !== undefined && {
-              prefillWithZero: data.regionalSettingConfig.prefillWithZero,
-            }),
+            ...createConfigData(data, 'regionalSettingConfig')
           };
           entries.push(appEntry);
         } 
@@ -201,22 +181,7 @@ export async function updateEnquirySupportConfig(configData: configSchemaT) {
         if (data.enquiryGenerationConfig?.reqd) {
           const enquiryGenEntry = {
             category: "enquiryGeneration",
-            isEnabled: true,
-            ...(data.enquiryGenerationConfig.voucherNumber && {
-              VoucherNumber: data.enquiryGenerationConfig.voucherNumber,
-            }),
-            ...(data.enquiryGenerationConfig.prefix && {
-              prefix: data.enquiryGenerationConfig.prefix,
-            }),
-            ...(data.enquiryGenerationConfig.suffix && {
-              suffix: data.enquiryGenerationConfig.suffix,
-            }),
-            ...(data.enquiryGenerationConfig.length && {
-              length: data.enquiryGenerationConfig.length,
-            }),
-            ...(data.enquiryGenerationConfig.prefillWithZero !== undefined && {
-              prefillWithZero: data.enquiryGenerationConfig.prefillWithZero,
-            }), 
+            ...createConfigData(data, 'enquiryGenerationConfig')
           };
           entries.push(enquiryGenEntry);
         } else {
