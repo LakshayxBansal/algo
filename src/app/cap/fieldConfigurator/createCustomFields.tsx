@@ -24,6 +24,9 @@ import {
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
 import CloseIcon from "@mui/icons-material/Close";
+import { ErrorOutline as ErrorOutlineIcon } from "@mui/icons-material";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+
 
 
 type FieldItem = {
@@ -58,6 +61,7 @@ const FieldConfigurator = () => {
     const [selectedFormValue, setSelectedFormValue] = useState("");
     const [selectedFormModeValue, setSelectedFormModeValue] = useState("");
 
+    const dateFormat = "DD.MM.YYYY";
 
     const options = {
         Form: [
@@ -123,6 +127,7 @@ const FieldConfigurator = () => {
     const handleChange = (index: number, field: keyof FieldItem, value: any) => {
         const updatedFields: any = [...fields];
         updatedFields[index][field] = value;
+        updatedFields[index]["column_format"] = null;
         setFields(updatedFields);
     };
 
@@ -182,38 +187,66 @@ const FieldConfigurator = () => {
             <Typography variant="h6" gutterBottom>
                 Configure Form Fields :
             </Typography>
-            <Box sx={{ display: "flex", gap: 2 }}>
-                <FormControl sx={{ width: 200 }} size="small" variant="outlined">
-                    <InputLabel>Select the Form</InputLabel>
-                    <Select
-                        value={selectedFormValue}
-                        onChange={handleFormChange}
-                        label="Select the Form"
-                    >
-                        {options.Form.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center", justifyContent: "space-between" }}>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                    <FormControl sx={{ width: 200 }} size="small" variant="outlined">
+                        <InputLabel>Select the Form</InputLabel>
+                        <Select
+                            value={selectedFormValue}
+                            onChange={handleFormChange}
+                            label="Select the Form"
+                        >
+                            {options.Form.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                <FormControl sx={{ width: 200 }} size="small" variant="outlined">
-                    <InputLabel>Select Form Mode</InputLabel>
-                    <Select
-                        value={selectedFormModeValue}
-                        onChange={handleFormModeChange}
-                        label="Select Form Mode"
-                    >
-                        {options.Mode.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                    <FormControl sx={{ width: 200 }} size="small" variant="outlined">
+                        <InputLabel>Select Form Mode</InputLabel>
+                        <Select
+                            value={selectedFormModeValue}
+                            onChange={handleFormModeChange}
+                            label="Select Form Mode"
+                        >
+                            {options.Mode.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                {/* Add the note at the rightmost end */}
+                {fields.length > 0 && <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
+                    * denotes default fields
+                </Typography>}
             </Box>
 
+            {fields.length === 0 && (
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "60vh", // Adjust the top position so that it starts below the dropdowns
+                        left: 0,
+                        right: 0,
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1,
+                        flexDirection: "column",
+                    }}
+                >
+                    <ErrorOutlineIcon sx={{ fontSize: 40, color: "gray", mb: 1 }} />
+                    <Typography variant="h6" color="textSecondary">
+                        No field found
+                    </Typography>
+                </Box>
+            )}
             <Stack spacing={1}>
                 {fields.map((item, index) => (
                     <Paper
@@ -251,6 +284,13 @@ const FieldConfigurator = () => {
                                         <ArrowDownwardIcon fontSize="small" />
                                     </IconButton>
                                 </Stack>
+                                {item.is_default_column == 1 &&
+                                    <Box>
+                                        <Typography variant="h5" >
+                                            *
+                                        </Typography>
+                                    </Box>
+                                }
                             </Box>
 
                             <TextField
@@ -281,11 +321,17 @@ const FieldConfigurator = () => {
 
                             {item.is_default_column !== 1 && (
                                 <TextField
-                                    label="Format"
+                                    label={item.column_type_id !== 4 ? "Format" : dateFormat}
                                     value={item.column_format || ""}
                                     onChange={(e) => handleChange(index, "column_format", e.target.value)}
                                     size="small"
-                                    sx={{ width: 200 }}
+                                    sx={{ width: 300 }}
+                                    disabled={item.column_type_id !== 1 && item.column_type_id !== 3 && item.column_type_id !== 4 ? false : true}
+                                    placeholder={item.column_type_id === 6
+                                        ? "Number of decimal places"
+                                        : item.column_type_id === 5
+                                            ? "Enter comma separated list items"
+                                            : item.column_type_id === 2 ? "Enter comma seperated options" : ""}
                                 />
                             )}
 
