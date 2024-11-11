@@ -41,6 +41,7 @@ type selectMasterWrapperT = {
   disable?: boolean;
   defaultOptions?:optionsDataT[]
   showDetails?: boolean ;
+  autoFocus?: boolean;
 };
 
 enum dialogMode {
@@ -52,11 +53,16 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [dialogValue, setDialogValue] = useState<optionsDataT>(
-    {} as optionsDataT
+    // {} as optionsDataT
+    props.defaultValue ?? {} as optionsDataT
   );
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
+
+  if (props.name === "sub_status") {
+    console.log("Default Value in selectMasterWrapper-----:", props.defaultValue);
+  }
 
   function openDialog() {
     if (allowNewAdd) {
