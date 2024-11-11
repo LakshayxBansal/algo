@@ -4,35 +4,24 @@ import {
   getHeaderDataAction,
   getProductDataAction,
   getLedgerDataAction,
-  showProductGridDB,
+  getConfigDataDB,
   getLoggedInUserDetailsDB,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
   enquiryDataSchemaT,
-  enquiryHeaderSchemaT,
   enquiryProductSchemaT,
   enquiryLedgerSchemaT,
-  selectKeyValueT,
   docDescriptionSchemaT,
 } from "@/app/models/models";
 import {
   enquiryDataSchema,
-  enquiryHeaderSchema,
   enquiryLedgerSchema,
   productToListFormArraySchema,
-  productToListFormSchema,
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
-import { Session } from "next-auth";
 import { getObjectByName } from "./rights.controller";
 import { uploadDocument } from "./document.controller";
-
-// type enqData = {
-//   head: enquiryHeaderSchemaT;
-//   ledger: enquiryLedgerSchemaT;
-//   product: enquiryProductSchemaT[];
-// };
 
 export async function createEnquiry({
   enqData,
@@ -118,13 +107,13 @@ export async function createEnquiry({
   return result;
 }
 
-export async function showProductGrid() {
+export async function getConfigData() {
   let result;
 
   try {
     const session = await getSession();
     if (session) {
-      const dbResult = await showProductGridDB(session.user.dbInfo.dbName);
+      const dbResult = await getConfigDataDB(session.user.dbInfo.dbName);
       if (dbResult) {
         result = { status: true, config: dbResult[0].config };
       }
@@ -155,7 +144,7 @@ export async function getLoggedInUserDetails() {
   }
 }
 
-export async function getEnquiryById(id: number) {
+export async function getEnquiryById(id: number | undefined) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {

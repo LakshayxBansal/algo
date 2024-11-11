@@ -720,14 +720,19 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           bgcolor: "white",
         }}
       >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.parentData ? "Profile" : props.data ? "Update Executive" : "Add Executive"}
-            <IconButton onClick={handleCancel}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
+        {
+          props.parentData ? (<></>) : (<>
+            <Seperator>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                {props.data ? "Update Executive" : "Add Executive"}
+                <IconButton onClick={handleCancel} tabIndex={-1}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </Seperator>
+          </>
+          )
+        }
       </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
@@ -752,8 +757,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )} */}
         <form action={handleSubmit} noValidate>
-
-          <h1>BACKEND RENDERED FIELDS</h1>
           <Box
             sx={{
               display: "grid",

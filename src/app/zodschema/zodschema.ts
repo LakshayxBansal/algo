@@ -277,11 +277,8 @@ export const contactSchema = z.object({
   state_id: z.number().optional(),
   country_id: z.number().optional(),
   country: z.string().optional(),
-  city: z
-    .string()
-    .max(75, "Field must contain at most 75 character(s)")
-    .optional(),
-  stamp: z.number().optional(),
+  city: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
+  stamp: z.number().optional()
 });
 
 export const areaSchema = z.object({
@@ -402,9 +399,8 @@ export const executiveSchema = z
     c_col7: z.string().optional(),
     c_col8: z.string().optional(),
     c_col9: z.string().optional(),
-    c_col10: z.string().optional()
-  }
-)
+    c_col10: z.string().optional(),
+  })
   .refine(
     (schema) => {
       return !(schema.email === "" && schema.mobile === "");
@@ -484,6 +480,16 @@ export const enquiryLedgerSchema = z.object({
   enquiry_tran_type: z.number().optional(),
   id: z.number().optional(),
   active: z.number().optional(),
+  c_col1: z.string(),
+  c_col2: z.string(),
+  c_col3: z.string(),
+  c_col4: z.string(),
+  c_col5: z.string(),
+  c_col6: z.string(),
+  c_col7: z.string(),
+  c_col8: z.string(),
+  c_col9: z.string(),
+  c_col10: z.string(),
 });
 
 export const enquiryDataSchema = enquiryHeaderSchema.merge(enquiryLedgerSchema);
@@ -563,6 +569,7 @@ export const supportProductSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
 });
