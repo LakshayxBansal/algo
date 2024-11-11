@@ -160,7 +160,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       options={options}
       // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
-      autoHighlight
+      // autoHighlight
       onKeyDown={handleKeyDown}
       filterOptions={(options, { inputValue }) => 
         options.filter(option => 
