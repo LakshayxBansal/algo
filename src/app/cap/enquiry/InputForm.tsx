@@ -93,6 +93,8 @@ export default function InputForm(props: {
   const [snackOpen, setSnackOpen] = useState(false);
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
+  const [subStatus, setSubStatus] = useState<optionsDataT>();
+
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await enquiryDataFormat({ formData, selectValues });
@@ -160,6 +162,7 @@ export default function InputForm(props: {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
+    setSubStatus({id:0, name:""});
   }
 
   function onSelectChange(
@@ -259,6 +262,7 @@ export default function InputForm(props: {
                       fetchDataFn={getContact}
                       fnFetchDataByID={getContactById}
                       required
+                      autoFocus
                       formError={formError?.contact ?? formError.contact}
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <ContactForm
@@ -464,6 +468,7 @@ export default function InputForm(props: {
                 </RadioGroup>
               </FormControl>
               <SelectMasterWrapper
+                // key={subStatus.id}
                 name={"sub_status"}
                 id={"sub_status"}
                 label={"Call Sub-Status"}
@@ -471,6 +476,7 @@ export default function InputForm(props: {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getEnquirySubSatusById}
+                defaultValue={subStatus}
                 required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
