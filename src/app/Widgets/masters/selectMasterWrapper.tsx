@@ -60,10 +60,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
 
-  if (props.name === "sub_status") {
-    console.log("Default Value in selectMasterWrapper-----:", props.defaultValue);
-  }
-
   function openDialog() {
     if (allowNewAdd) {
       setDialogOpen(true);
