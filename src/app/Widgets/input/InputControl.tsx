@@ -107,7 +107,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
               position === currValue.length &&
               currentKey !== "Backspace")
           ) {
-            const newChar = currValue.charAt(currValue.length - 1).toUpperCase();
+            const newChar = currValue
+              .charAt(currValue.length - 1)
+              .toUpperCase();
             event.target.value = currValue.slice(0, -1) + newChar;
           }
         }
@@ -191,13 +193,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <CustomTextField {...textFieldProps}   
-      InputLabelProps={{
-        style: {
-          zIndex: 0, // Adjust this value as needed
-        },
-      }}
-      onChange={onChange} />;
+      return (
+        <CustomTextField
+          {...textFieldProps}
+          onChange={onChange}
+          onKeyDown={handleKeyDown}
+        />
+      );
       break;
     }
     case InputType.CHECKBOX: {

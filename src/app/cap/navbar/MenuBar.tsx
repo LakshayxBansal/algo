@@ -46,6 +46,7 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
+  height:60,
   // backgroundColor: "#005a9f",
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
@@ -101,15 +102,15 @@ const GroupHeader = styled("div")(({ theme }) => ({
   }),
 }));
 
-const StyledLink = styled('a')(({ theme }) => ({
-  textDecoration: 'none',
-  color: 'inherit',
-  padding: '10px',
-  display: 'block', // Make it behave like a block element
+const StyledLink = styled("a")(({ theme }) => ({
+  textDecoration: "none",
+  color: "inherit",
+  padding: "10px",
+  display: "block", // Make it behave like a block element
   "&:hover": {
     backgroundColor: theme.palette.action.hover, // Change background on hover
     color: theme.palette.primary.main, // Change text color on hover
-    cursor: 'pointer', 
+    cursor: "pointer",
   },
 }));
 
@@ -138,19 +139,19 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 }));
 
 interface propsType {
-  pages: menuTreeT[],
-  username: string,
-  companyName: string,
-  profileImg?: string,
-  userId: number,
-  companyId : number,
-  children: React.ReactNode,
-  params?:{searchData:string}
+  pages: menuTreeT[];
+  username: string;
+  companyName: string;
+  profileImg?: string;
+  userId: number;
+  companyId: number;
+  children: React.ReactNode;
+  params?: { searchData: string };
 }
 
 export default function MenuBar(props: propsType) {
   const pages = props.pages;
-  const children = props.children;
+  const children:React.ReactNode = props.children;
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const [searchIcon, setSearchIcon] = useState<boolean>(false);
@@ -159,7 +160,7 @@ export default function MenuBar(props: propsType) {
   const [searchData, setSearchData] = useState("");
   const router = useRouter();
 
-  const holdValue=  useRef("newValue");
+  const holdValue = useRef("newValue");
 
   useEffect(() => {
     const maindata = debounce(async (searchText: string) => {
@@ -171,13 +172,12 @@ export default function MenuBar(props: propsType) {
 
     if (search.length > 0) {
       maindata(search);
-
     }
   }, [search]);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
 
-  if(Array.isArray(data) && data.length > 0){
+  if (Array.isArray(data) && data.length > 0) {
     groupedData = data.reduce((acc: any, item: any) => {
       if (!acc[item.table_name]) {
         acc[item.table_name] = [];
@@ -186,7 +186,6 @@ export default function MenuBar(props: propsType) {
       return acc;
     }, {});
   }
-  
 
   const options = Object.entries(groupedData).flatMap(([tableName, results]) =>
     results.map(({ result, href }) => ({
@@ -204,14 +203,14 @@ export default function MenuBar(props: propsType) {
     setOpen(val);
   };
 
-  const handleMasterSearch = (searchDataParam: string,href:any)=> {
-    data.forEach(page=>{
-      if(page.tableName = "Menu Master"){
-        router.push(href +`?searchText=${searchDataParam}`);
-      }else{
+  const handleMasterSearch = (searchDataParam: string, href: any) => {
+    data.forEach((page) => {
+      if ((page.tableName = "Menu Master")) {
+        router.push(href + `?searchText=${searchDataParam}`);
+      } else {
         router.push(href);
       }
-    })
+    });
   };
 
   if (!menuOpen) {
@@ -221,7 +220,7 @@ export default function MenuBar(props: propsType) {
       <>
         <CssBaseline />
         <AppBar open={open}>
-          <Toolbar sx={{ pr: "24px" }}>
+          <Toolbar sx={{ pr: "24px", height:55 }}>
             <IconButton
               edge="start"
               color="inherit"
@@ -345,7 +344,12 @@ export default function MenuBar(props: propsType) {
           </Toolbar>
         </AppBar>
         <Box sx={{ display: "flex" }}>
-          <Drawer variant="permanent" anchor="left" open={open} sx={{display:{xs:"none",sm:"flex"}}}>
+          <Drawer
+            variant="permanent"
+            anchor="left"
+            open={open}
+            sx={{ display: { xs: "none", sm: "flex" } }}
+          >
             {/* need to work on this as on xs it should be at the top */}
             <Toolbar
               sx={{
@@ -365,9 +369,7 @@ export default function MenuBar(props: propsType) {
               setOpenDrawer={setOpenDrawer}
             />
           </Drawer>
-          <Box style={{ width: "96vw"}}>
-                        {children}
-            </Box>
+          <Box style={{ width: "96vw" }}>{children}</Box>
         </Box>
       </>
     );
