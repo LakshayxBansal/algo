@@ -192,11 +192,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
       return <CustomTextField {...textFieldProps}   
-      InputLabelProps={{
-        style: {
-          zIndex: 0, // Adjust this value as needed
-        },
-      }}
       onChange={onChange} />;
       break;
     }

@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Badge,
   FormControl,
@@ -57,7 +59,11 @@ import {
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
-import { docDescriptionSchemaT, optionsDataT, selectKeyValueT } from "@/app/models/models";
+import {
+  docDescriptionSchemaT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
@@ -95,6 +101,7 @@ export default function InputForm(props: {
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [subStatus, setSubStatus] = useState<optionsDataT>();
 
+  const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await enquiryDataFormat({ formData, selectValues });
@@ -153,6 +160,9 @@ export default function InputForm(props: {
     }
   };
 
+  const handleCancel = () => {
+    router.back();
+  };
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getEnquirySubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -162,7 +172,7 @@ export default function InputForm(props: {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
-    setSubStatus({id:0, name:""});
+    setSubStatus({ id: 0, name: "" });
   }
 
   function onSelectChange(
@@ -559,6 +569,8 @@ export default function InputForm(props: {
                         margin: 0,
                       },
                     }}
+                    key={status === "1" ? 0 : 1}
+                    defaultValue={status === "1" && ""}
                   />
                 </Grid>
               </Grid>
@@ -576,7 +588,9 @@ export default function InputForm(props: {
                   alignItems="flex-end"
                   m={1}
                 >
-                  <Button tabIndex={-1}>Cancel</Button>
+                  <Button onClick={handleCancel} tabIndex={-1}>
+                    Cancel
+                  </Button>
                   <Button type="submit" variant="contained">
                     Submit
                   </Button>
