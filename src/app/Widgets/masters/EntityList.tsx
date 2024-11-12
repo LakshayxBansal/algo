@@ -88,6 +88,8 @@ export default function EntityList(props: entitiyCompT) {
         pgSize as number
       );
 
+      
+
       const roleId = await getRoleID();
       if (rows.data) {
         setData(rows.data);
@@ -111,6 +113,7 @@ export default function EntityList(props: entitiyCompT) {
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
+                editReDirect = {props.editReDirect ? props.editReDirect : false}
               />
             );
           },

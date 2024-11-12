@@ -5,12 +5,15 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import { StyledMenu } from "@/app/utils/styledComponents";
 import { iconCompT } from "@/app/models/models";
+import { useRouter } from "next/navigation";
 
 function IconComponent(props: iconCompT) {
     console.log(props);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+    const router = useRouter();
     async function onModifyDialog(modId: number) {
-        if (props.fnFetchDataByID && modId) {
+        if (props.fnFetchDataByID && modId && !props.editReDirect) {
           const data = await props.fnFetchDataByID(modId);
           console.log(data);
           
@@ -18,6 +21,9 @@ function IconComponent(props: iconCompT) {
           props.setDialogOpen(true);
           props.setDlgMode(props.modify); //dialogMode.Modify
           setAnchorEl(null);
+        }
+        else if(modId && props.editReDirect){
+          router.push(`/cap/support?id=${modId}`);
         }
       }
 

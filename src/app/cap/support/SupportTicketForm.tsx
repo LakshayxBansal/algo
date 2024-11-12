@@ -106,7 +106,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
 
   const router = useRouter();
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await supportDataFormat({ formData, selectValues });
+    const formatedData = await supportDataFormat({ formData, selectValues , otherData : props?.data});
 
     let result:any;
 
@@ -202,9 +202,14 @@ const SupportTicketForm = (props: masterFormPropsT) => {
         sub_status: {id:0,name:""},
         next_action:{id:0,name:""},
       }
-      // console.log("newValues",newValues)
-      // return newValues;
     )
+    setSelectValues((prev)=>{
+      return { ...prev, 
+       next_action:{id:0, name:""},
+       sub_status :{id:0,name: ""}
+      }
+     })
+     
     setStatus(value);
 
   }
@@ -276,6 +281,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           data={data}
                         />
                       )}
+                      disable= {props?.data?.tkt_number ? true : false}
                     />
                   </Grid>
 
@@ -297,6 +303,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           tabIndex: -1,
                         }
                       }}
+                      disabled = {props?.data?.tkt_number? true : false}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={12}>
@@ -316,6 +323,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           alignItems: "start",
                         },
                       }}
+                      disabled = {props?.data?.tkt_number ? true : false}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={6}>
@@ -341,6 +349,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           data={data}
                         />
                       )}
+                      disable= {props?.data?.tkt_number ? true : false}
                     />
                   </Grid>
 
@@ -370,6 +379,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           data={data}
                         />
                       )}
+                      disable= {props?.data?.tkt_number ? true : false}
                     />
                   </Grid>
                   {/* <Grid item xs={12} sm={6} md={12}>
@@ -407,6 +417,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     dgFormError={formError}
                     setdgFormError={setFormError}
                     dgProductFormError={productFormError}
+                    isDisable = {props?.data?.tkt_number? true : false}
                   />
                 </Box>
               </Grid>
@@ -431,6 +442,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     defaultValue={props.data?.call_receipt_remark}
                     rows={6}
                     fullWidth
+                    disabled = {props?.data?.tkt_number ? true : false}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -445,6 +457,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       helperText={formError?.suggested_action_remark?.msg}
                     rows={6}
                     fullWidth
+                    disabled = {props?.data?.tkt_number? true : false}
                   />
                 </Grid>
               </Grid>
@@ -531,7 +544,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
             
                 formError={formError?.action_taken ?? formError.action_taken}
                 defaultValue={
-                  masterData.action_taken
+                  masterData.action
                 }
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportActionForm

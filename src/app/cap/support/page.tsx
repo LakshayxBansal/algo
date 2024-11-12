@@ -59,6 +59,8 @@ export default async function Support({ searchParams }: searchParamsProps) {
             category_id,
             category,
             date,
+            created_on,
+            modified_on,
             ...remainingHeaderData
          },
          productData

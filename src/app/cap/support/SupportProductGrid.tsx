@@ -48,6 +48,7 @@ type ProductGridProps = {
   dgFormError: any;
   setdgFormError: any;
   dgProductFormError: any;
+  isDisable : boolean;
   // Add other props here as needed
 };
 
@@ -126,7 +127,8 @@ export default function SupportProductGrid({
   setdgDialogOpen,
   dgFormError,
   setdgFormError,
-  dgProductFormError
+  dgProductFormError,
+  isDisable
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -144,11 +146,6 @@ export default function SupportProductGrid({
   }
 
   //Setting editmode with selected row id and then setting selected row data in modifiedRowData state
-  const handleEditClick = (id: GridRowId) => () => {
-    setEditMode(id);
-    const selectedRowData = dgData.find((row: any) => row.id === id); // Find the corresponding row data
-    setModifiedRowData(selectedRowData);
-  };
 
   const handleDeleteClick = (id: GridRowId) => () => {
     if (dgData.length > 0) {
@@ -193,6 +190,7 @@ export default function SupportProductGrid({
           icon={<DeleteIcon />}
           label="Delete"
           onClick={handleDeleteClick(params.row.id)}
+          disabled={isDisable}
           color="inherit"
         />,
       ],
@@ -210,7 +208,7 @@ export default function SupportProductGrid({
         sx={{ display: "flex", justifyContent: "space-between" }}
       >
         <Seperator>Product List</Seperator>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick} disabled={isDisable}>
           Add Product
         </Button>
       </GridToolbarContainer>
