@@ -513,6 +513,7 @@ export default function InputForm(props: {
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getEnquiryAction}
+                fnFetchDataByID={getActionById}
                 formError={formError?.next_action ?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm

@@ -117,7 +117,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
               <span
                 style={{
                   display: "flex",
-                  flexDirection: "column",
+                  flexDirection: "row",
                   justifyContent: "Center",
                   alignItems: "Center",
                   marginLeft: "3px",
@@ -136,7 +136,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
                     fontSize="small"
                   />
                 </Tooltip>
-                {(dialogValue.id ?? false) && (
+                {(dialogValue.id ? true : false) && (
                   <Tooltip
                     title={
                       allowModify ? "Click to modify" : "Not allowed to modify"
