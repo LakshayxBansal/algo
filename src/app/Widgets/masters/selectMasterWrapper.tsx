@@ -127,7 +127,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
               <span
                 style={{
                   display: "flex",
-                  flexDirection: "column",
+                  flexDirection: "row",
                   justifyContent: "Center",
                   alignItems: "Center",
                   marginLeft: "3px",

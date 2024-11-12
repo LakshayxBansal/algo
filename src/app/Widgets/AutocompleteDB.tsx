@@ -105,7 +105,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setOptions(results);
       }
     }, 400);
-    if (defaultValue !== props.defaultValue) {
+    if (defaultValue?.name !== props.defaultValue?.name) {
+      console.log("in the defaultvalue condition ------", defaultValue, "- ", props.defaultValue);
       setvalueChange(true);
       props.setDialogVal(props.defaultValue as optionsDataT);
       setDefaultValue(props.defaultValue);
@@ -234,6 +235,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
           if (hltIndex >= 0 && options.length > 0) {
             setInputValue(options[hltIndex].name);
             props.setDialogVal(options[hltIndex]);
+            if (props.onChange) {
+              props.onChange(e, options[hltIndex], props.setDialogVal)
+            }
           }
           isTabbingOut = 0;
           hltIndex = -1
@@ -257,6 +261,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             ? props.onChange(event, newValue, props.setDialogVal)
             : null;
         }
+        console.log("change---!!!");
       }}
       onInputChange={(event, newInputValue, reason) => {
         setAutoSelect(false);
