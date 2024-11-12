@@ -15,6 +15,7 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import CountryForm from "./countryForm";
 import {
+  docDescriptionSchemaT,
   masterFormPropsT,
   optionsDataT,
   organisationSchemaT,
@@ -35,7 +36,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const entityData: organisationSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
@@ -107,7 +108,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
 
   async function persistEntity(data: organisationSchemaT) {
     let result;
-    const newDocsData = docData.filter((row: any) => row.type !== "db");
+    const newDocsData = docData.filter((row : any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
       result = await updateOrganisation(data,newDocsData);

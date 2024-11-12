@@ -30,7 +30,7 @@ import { getObjectByName } from "./rights.controller";
 
 const inviteSring = "Send Invite...";
 
-export async function createExecutive(data: executiveSchemaT, docData: any) {
+export async function createExecutive(data: executiveSchemaT, docData: mdl.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -95,7 +95,7 @@ export async function createExecutive(data: executiveSchemaT, docData: any) {
   return result;
 }
 
-export async function updateExecutive(data: executiveSchemaT, docData: any) {
+export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDescriptionSchemaT[]) {
   let result;
   try {
     const session = await getSession();
@@ -241,7 +241,7 @@ export async function getProfileById(id: number) {
         }
       }
       const objectDetails = await getObjectByName("Executive");
-      const docData = await getDocs(id,objectDetails[0].id);
+      const docData = await getDocs(id,objectDetails[0].object_id);
       if (executiveDetails.length > 0 && docData.length > 0) {
         executiveDetails[0].docData = docData;
       } else {

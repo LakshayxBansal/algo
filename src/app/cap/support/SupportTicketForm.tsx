@@ -38,6 +38,7 @@ import dayjs from "dayjs";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import {
+  docDescriptionSchemaT,
   masterFormPropsT,
   selectKeyValueT,
   supportHeaderSchemaT,
@@ -75,10 +76,12 @@ import { ZodIssue } from "zod";
 import DocModal from "@/app/utils/docs/DocModal";
 import { update } from "lodash";
 import { format } from "path";
+import { useRouter } from "next/navigation";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
 
 const SupportTicketForm = (props: masterFormPropsT) => {
 
-  const masterData = props.data.masterData ?? {};
+  const masterData = props?.data?.masterData ?? {};
 
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -86,18 +89,22 @@ const SupportTicketForm = (props: masterFormPropsT) => {
 
   const [snackOpen, setSnackOpen] = useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>(masterData);
-  const [status, setStatus] = useState(masterData.status.id!= null ? masterData.status.id.toString() : "1");
+  const [status, setStatus] = useState(masterData?.status?.id!= null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data?.docData ?? []);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
 
-  
-  const [data, setData] = useState<suppportProductArraySchemaT>(props.data.productData ?? []);
+  const [defaultValues, setDefaultValues] = useState({
+    sub_status: masterData?.sub_status,
+    next_action: masterData?.next_action
+  });
+  const [data, setData] = useState<suppportProductArraySchemaT>(props?.data?.productData ?? []);
 
 
+  const router = useRouter();
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await supportDataFormat({ formData, selectValues });
 
@@ -105,7 +112,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
 
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      // const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
       setTimeout(function () {
         setFormError;
@@ -178,6 +185,10 @@ const SupportTicketForm = (props: masterFormPropsT) => {
     return result;
   }
 
+  const handleCancel = () => {
+    router.back();
+  }
+
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getSupportSubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -186,7 +197,16 @@ const SupportTicketForm = (props: masterFormPropsT) => {
   }
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
+
+    setDefaultValues({
+        sub_status: {id:0,name:""},
+        next_action:{id:0,name:""},
+      }
+      // console.log("newValues",newValues)
+      // return newValues;
+    )
     setStatus(value);
+
   }
 
   function onSelectChange(
@@ -265,12 +285,18 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       inputType={InputType.DATETIMEINPUT}
                       id="date"
                       name="date"
-                      // defaultValue={headerData?.date ?? dayjs(new Date())}
-                      defaultValue={dayjs(props?.data?.date)?? dayjs(new Date())}
+                      defaultValue={masterData?.date ?
+                       adjustToLocal(masterData.date)
+                      : dayjs()}
                       required
                       error={formError?.date?.error}
                       helperText={formError?.date?.msg}
                       sx={{ display: "flex", flexGrow: 1 }}
+                      slotProps={{
+                        openPickerButton: {
+                          tabIndex: -1,
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={12}>
@@ -400,6 +426,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     multiline
                     name="call_receipt_remark"
                     id="call_receipt_remark"
+                    error={formError?.call_receipt_remark?.error}
+                      helperText={formError?.call_receipt_remark?.msg}
                     defaultValue={props.data?.call_receipt_remark}
                     rows={6}
                     fullWidth
@@ -413,6 +441,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     name="suggested_action_remark"
                     defaultValue={props.data?.suggested_action_remark}
                     id="suggested_action_remark"
+                    error={formError?.suggested_action_remark?.error}
+                      helperText={formError?.suggested_action_remark?.msg}
                     rows={6}
                     fullWidth
                   />
@@ -473,10 +503,12 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getSupportSubSatusById}
                 required
+                // key={status==='1' ? 0 : 1}
                 formError={formError?.sub_status ?? formError.sub_status}
                 defaultValue={
-                 masterData.sub_status
+                 defaultValues.sub_status
                 }
+                // key={status==='1' ? 23 : 24}
                 allowNewAdd={status === '1'}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportSubStatusForm
@@ -519,8 +551,10 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 fetchDataFn={getSupportAction}
                 formError={formError?.next_action ?? formError.next_action}
                 defaultValue={
-                  masterData.next_action
+                  defaultValues.next_action
                 }
+                key={status==="1"?0:1}
+               
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportActionForm
                     setDialogOpen={fnDialogOpen}
@@ -537,7 +571,16 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 id="next_action_date"
                 name="next_action_date"
                 // defaultValue={ledgerData?.next_action_date ?? dayjs(new Date())}
-                defaultValue={dayjs(props.data?.next_action_date ) ?? dayjs(new Date())}
+                error={formError?.next_action_date?.error}
+                      helperText={formError?.next_action_date?.msg}
+                      defaultValue={masterData?.next_action_date ?
+                        adjustToLocal(masterData.next_action_date)
+                       : dayjs()}
+                slotProps={{
+                  openPickerButton: {
+                    tabIndex: -1,
+                  }
+                }}
               />
 
               <Grid item xs={12} md={12}>
@@ -551,7 +594,10 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     rows={2}
                     fullWidth
                     disabled={status === "1"}
-                    defaultValue={props.data?.closure_remark}
+                    error={formError?.closure_remark?.error}
+                      helperText={formError?.closure_remark?.msg}
+                    key={status==="1"?0:1}
+                    defaultValue={status === "1"? "":props.data?.closure_remark}
                   />
                 </Grid>
               </Grid>
@@ -569,7 +615,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                   alignItems="flex-end"
                   m={1}
                 >
-                  <Button>Cancel</Button>
+                  <Button onClick = {handleCancel} tabIndex={-1}>Cancel</Button>
                   <Button type="submit" variant="contained">
                     Submit
                   </Button>

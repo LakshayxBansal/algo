@@ -1,5 +1,6 @@
 "use server";
 import {
+  docDescriptionSchemaT,
   enquiryDataSchemaT,
   supportProductSchemaT,
   supportTicketSchemaT,
@@ -29,7 +30,7 @@ export async function createSupportTicket({
 }: {
   supportData: supportTicketSchemaT;
   productData: suppportProductArraySchemaT;
-  docData : any
+  docData : docDescriptionSchemaT[]
 }) {
   let result;
   try {

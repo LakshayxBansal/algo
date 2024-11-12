@@ -29,6 +29,7 @@ import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import {
   contactSchemaT,
+  docDescriptionSchemaT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -54,7 +55,7 @@ export default function ContactForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [docData, setDocData] = React.useState(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
@@ -120,7 +121,7 @@ export default function ContactForm(props: masterFormPropsT) {
       const newVal = {
         id: result.data[0].id,
         name: result.data[0].name,
-        reloadOpts: true,
+        // reloadOpts: true,
       };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
@@ -285,12 +286,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
                 onChange={handlePrintNameChange}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
               <InputControl
                 inputType={InputType.TEXT}
