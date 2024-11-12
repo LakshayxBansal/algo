@@ -570,7 +570,7 @@ export default function InputForm(props: {
                       },
                     }}
                     key={status === "1" ? 0 : 1}
-                    defaultValue={status === "1" && ""}
+                    defaultValue={""}
                   />
                 </Grid>
               </Grid>

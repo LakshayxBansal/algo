@@ -151,9 +151,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     }
   }
 
-
-
-
   function onTimeChange(
     value: Dayjs | null,
     context: PickerChangeHandlerContext<TimeValidationError>
