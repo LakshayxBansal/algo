@@ -4,13 +4,13 @@ import * as zm from "../models/models";
 import { Session } from "next-auth";
 import excuteQuery from "../utils/db/db";
 
-export async function getAllRoleDB(
+export async function getAllRolesDB(
   crmDb: string
 ) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select id as id, name as name, parent as parent from executive_role_master;",
+      query: "select id as id, name as name from executive_role_master;",
       values: [],
     });
 
