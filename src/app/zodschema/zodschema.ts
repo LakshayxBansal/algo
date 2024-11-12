@@ -190,7 +190,6 @@ export const productToListFormSchema = z.object({
     .string()
     .min(1)
     .max(60)
-    .optional()
     .refine((val) => val !== undefined && val.length !== 0, {
       message: "Product Name Empty !",
       path: ["product"],
@@ -203,7 +202,6 @@ export const productToListFormSchema = z.object({
   unit: z
     .string()
     .min(1)
-    .optional()
     .refine((val) => val !== undefined && val.length !== 0, {
       message: "Unit Name Empty !",
       path: ["unit"],
