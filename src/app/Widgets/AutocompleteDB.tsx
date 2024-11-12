@@ -72,8 +72,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
   const [open, setOpen] = useState(false);
   const showDetails = props.showDetails ? props.showDetails : false;
 
-  if (defaultValue !== props.defaultValue) {
+  if (defaultValue?.name !== props.defaultValue?.name) {
     props.setDialogVal(props.defaultValue as optionsDataT);
+    console.log("set the default value!");
   }
 
   // useEffect(() => {
