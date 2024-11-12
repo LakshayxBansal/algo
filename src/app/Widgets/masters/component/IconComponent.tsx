@@ -7,13 +7,10 @@ import { StyledMenu } from "@/app/utils/styledComponents";
 import { iconCompT } from "@/app/models/models";
 
 function IconComponent(props: iconCompT) {
-    console.log(props);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     async function onModifyDialog(modId: number) {
         if (props.fnFetchDataByID && modId) {
-          const data = await props.fnFetchDataByID(modId);
-          console.log(data);
-          
+          const data = await props.fnFetchDataByID(modId);          
           props.setModData(data[0]);
           props.setDialogOpen(true);
           props.setDlgMode(props.modify); //dialogMode.Modify
