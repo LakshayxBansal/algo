@@ -196,10 +196,13 @@ export const productToListFormSchema = z.object({
       path: ["product"],
     }),
   product_id: z.number().min(1),
-  quantity: z.number()
-  .min(1, { message: "Quantity cannot be empty or zero!" })
-  .refine((val) => val >= 0, { message: "Quantity cannot be negative!" })
-  .refine((val) => val <= 10000000, { message: "Quantity cannot exceed 10000000!" }),
+  quantity: z
+    .number()
+    .min(1, { message: "Quantity cannot be empty or zero!" })
+    .refine((val) => val >= 0, { message: "Quantity cannot be negative!" })
+    .refine((val) => val <= 10000000, {
+      message: "Quantity cannot exceed 10000000!",
+    }),
   unit: z
     .string()
     .min(1)
@@ -500,7 +503,10 @@ export const supportHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
-  call_receipt_remark: z.string().max(5000,"Call receipt remark must contain at most 5000 character(s)").optional(),
+  call_receipt_remark: z
+    .string()
+    .max(5000, "Call receipt remark must contain at most 5000 character(s)")
+    .optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
 });
@@ -512,14 +518,17 @@ export const supportLedgerSchema = z.object({
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1,"Sub status must not be empty").max(50),
-  sub_status_id: z.number().min(1,"Sub status must not be empty"),
-  action_taken_id: z.number().min(1,"Action must not be empty"),
+  sub_status: z.string().min(1, "Sub status must not be empty").max(50),
+  sub_status_id: z.number().min(1, "Sub status must not be empty"),
+  action_taken_id: z.number().min(0).optional(),
   action_taken: z.string().min(0).max(60).optional(),
-  next_action_id: z.number().min(1).nullable().optional(),
+  next_action_id: z.number().min(0).nullable().optional(),
   next_action: z.string().max(60).optional(),
   next_action_date: z.string().min(1).max(20),
-  suggested_action_remark: z.string().max(5000,"Remark must contain at most 5000 character(s)").optional(),
+  suggested_action_remark: z
+    .string()
+    .max(5000, "Remark must contain at most 5000 character(s)")
+    .optional(),
   action_taken_remark: z.string().max(5000).optional(),
   closure_remark: z.string().max(5000).optional(),
   ticket_tran_type: z.number().optional(),
@@ -907,28 +916,28 @@ export const inviteUserSchema = z
     { message: "Please provide email", path: ["email"] }
   );
 
-  export const regionalSettingSchema = z.object({
-    id: z.number().optional(),
-    country_id: z.number(),
-    state_id: z.number(),
-    country: z.string().optional(),
-    state: z.string().optional(),
-    decimalPaces: z.string().optional(),
-    timeFormat: z.string().optional(),
-    currencyString: z.string().optional(),
-    currencySymbol: z.string().optional(),
-    currencySubString: z.string().optional(),
-    currencyCharacter: z.string().optional(),
-    dateformat: z.string().optional(),
-  });
+export const regionalSettingSchema = z.object({
+  id: z.number().optional(),
+  country_id: z.number(),
+  state_id: z.number(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  decimalPaces: z.string().optional(),
+  timeFormat: z.string().optional(),
+  currencyString: z.string().optional(),
+  currencySymbol: z.string().optional(),
+  currencySubString: z.string().optional(),
+  currencyCharacter: z.string().optional(),
+  dateformat: z.string().optional(),
+});
 
-  export const docDescriptionSchema = z.object({
-    id : z.number().optional(),
-    description : z.string().min(1).max(255),
-    fileName : z.string().optional(),
-    objectId : z.number().optional(),
-    objectTypeId : z.number().optional(),
-    file : z.string().optional(),
-    fileType : z.string().optional(),
-    docId : z.string().optional()
-  }) 
+export const docDescriptionSchema = z.object({
+  id: z.number().optional(),
+  description: z.string().min(1).max(255),
+  fileName: z.string().optional(),
+  objectId: z.number().optional(),
+  objectTypeId: z.number().optional(),
+  file: z.string().optional(),
+  fileType: z.string().optional(),
+  docId: z.string().optional(),
+});
