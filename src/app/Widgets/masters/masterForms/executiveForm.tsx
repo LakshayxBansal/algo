@@ -54,6 +54,7 @@ import DocModal from "@/app/utils/docs/DocModal";
 
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
+  console.log("props : ", props);
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -268,7 +269,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
 
   const fieldPropertiesById = (id: string) => {
 
-    const field = props.desc.find((item: any) => item.column_name_id === id);
+    const field = props.masterData.fields.find((item: any) => item.column_name_id === id);
 
     if (field) {
       return {
@@ -287,6 +288,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         inputType={InputType.TEXT}
         key="name"
         id="name"
+        fullWidth
         label={fieldPropertiesById("name").label}
         name="name"
         error={formError?.name?.error}
@@ -299,6 +301,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       <InputControl
         inputType={InputType.TEXT}
         id="alias"
+        fullWidth
         key="alias"
         label="Alias"
         name="alias"
@@ -314,7 +317,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id={"area"}
         key="area"
         label={"Area"}
-        width={210}
         dialogTitle={"Add Area"}
         defaultValue={
           {
@@ -341,7 +343,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id={"department"}
         key="department"
         label={"Department"}
-        width={210}
         required
         dialogTitle={"Add Department"}
         defaultValue={
@@ -370,7 +371,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         name={"role"}
         id={"role"}
         label={"Role"}
-        width={210}
         dialogTitle={"Add Role"}
         fetchDataFn={(roleStr: string) =>
           getExecutiveRole(roleStr, selectValues.department?.id)
@@ -399,7 +399,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id={"group"}
         key="group"
         label={"Executive Group"}
-        width={210}
         dialogTitle={"Add Executive Group"}
         disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
         defaultValue={
@@ -429,6 +428,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id="pan"
         key="pan"
         label="PAN"
+        fullWidth
         name="pan"
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
@@ -441,6 +441,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         inputType={InputType.TEXT}
         id="aadhaar"
         key="aadhaar"
+        fullWidth
         label="AADHAAR"
         name="aadhaar"
         error={formError?.aadhaar?.error}
@@ -455,7 +456,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id={"crm_user"}
         key="crm_user"
         label={"Map to App User"}
-        width={210}
         dialogTitle={"Add App User"}
         defaultValue={
           {
@@ -484,6 +484,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         inputType={InputType.EMAIL}
         id="email"
         key="email"
+        fullWidth
         label="Email"
         name="email"
         error={formError?.email?.error}
@@ -497,6 +498,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         inputType={InputType.PHONE}
         id="mobile"
         key="mobile"
+        fullWidth
         label="Phone No"
         name="mobile"
         error={formError?.mobile?.error}
@@ -510,6 +512,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         inputType={InputType.PHONE}
         id="whatsapp"
         key="whatsapp"
+        fullWidth
         label="Whatsapp No"
         name="whatsapp"
         error={formError?.whatsapp?.error}
@@ -525,11 +528,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         key="dob"
         label="Date of Birth"
         name="dob"
+        fullWidth
         defaultValue={entityData.dob ? dayjs(entityData.dob) : null}
         slotProps={{
           textField: {
             error: formError?.dob?.error,
             helperText: formError?.dob?.msg,
+            fullWidth: true,
           },
         }}
       />,
@@ -542,12 +547,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         key="doa"
         label="Anniversary Date"
         name="doa"
+        fullWidth
         // defaultValue={entityData.doa}
         defaultValue={entityData.doa ? dayjs(entityData.doa) : null}
         slotProps={{
           textField: {
             error: formError?.doa?.error,
             helperText: formError?.doa?.msg,
+            fullWidth: true,
           },
         }}
       />,
@@ -566,6 +573,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           textField: {
             error: formError?.doj?.error,
             helperText: formError?.doj?.msg,
+            fullWidth: true,
           },
         }}
       />,
@@ -577,11 +585,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         label="Address Line 1"
         name="address1"
         id="address1"
+        fullWidth
         key="address1"
         defaultValue={entityData.address1}
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
-        fullWidth
       />,
     ],
     [
@@ -618,6 +626,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id="city"
         key="city"
         label="City"
+        fullWidth
         defaultValue={entityData.city}
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
@@ -630,7 +639,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id={"country"}
         key="country"
         label={"Country"}
-        width={210}
         dialogTitle={"Add country"}
         defaultValue={
           {
@@ -655,7 +663,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         name={"state"}
         id={"state"}
         label={"State"}
-        width={210}
         dialogTitle={"Add State"}
         disable={selectValues.country || entityData.country_id ? false : true}
         defaultValue={defaultState}
@@ -680,6 +687,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         id="pincode"
         key="pincode"
         label="Pin Code"
+        fullWidth
         defaultValue={entityData.pincode}
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
@@ -688,7 +696,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   ]);
 
 
-  const CustomFields = props.desc.filter((row: any) => row.is_default_column == 0);
+  const CustomFields = props.masterData.fields.filter((row: any) => row.is_default_column == 0);
 
 
   const CustomComponentMap = new Map<string, React.ReactElement>(
@@ -699,7 +707,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   );
 
 
-  props.desc.map((field: any) => {
+  props.masterData.fields.map((field: any) => {
     if (field.is_default_column) {
       fieldArr.push(defaultComponentMap.get(field.column_name_id) as React.ReactNode)
     }

@@ -28,6 +28,7 @@ import { getUserDetailsById } from "./user.controller";
 import { revalidatePage } from "../company/SelectCompany";
 import { getDocs, uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
+import { getRegionalSettings } from "./config.controller";
 
 const inviteSring = "Send Invite...";
 
@@ -210,6 +211,8 @@ export async function getExecutiveById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
+      const rights={};
+      const config_data=await getRegionalSettings();
       const desc = await getScreenDescription(11,1);
       if(id){
         const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
@@ -226,15 +229,27 @@ export async function getExecutiveById(id: number) {
       } else {
         executiveDetails[0].docData = [];
       }
+      const result=[
+        desc,
+        executiveDetails[0],
+        rights,
+        config_data,
+        session
+      ]
         return[
-          executiveDetails[0],
-          desc
+          result
         ]
       }
-      return[
-        desc
+       const result=[
+        desc,
+        rights,
+        config_data,
+        session
       ]
-    }
+      return[
+        result
+      ]
+  }
   } catch (error) {
     throw error;
   }
@@ -290,8 +305,8 @@ export async function delExecutiveById(id: number) {
         return "Can't Be DELETED!";
       } else {
         const mappedUser = await getExecutiveById(id);
-        if (mappedUser!== undefined && mappedUser.length > 0 && mappedUser[0].crm_user_id) {
-          await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
+        if (mappedUser!== undefined && mappedUser.length > 0 && mappedUser[1][0].crm_user_id) {
+          await mapUser(false, mappedUser[1][0].crm_user_id, 0, session.user.dbInfo.id);
         }
         const result = await delExecutiveDetailsById(
           session.user.dbInfo.dbName,

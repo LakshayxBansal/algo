@@ -93,6 +93,7 @@ export type masterFormPropsWithDataT = {
   data?: any;
   parentData?: any;
   desc?: any;
+  masterData?: any
 };
 
 //Enquiry Schemas
@@ -246,6 +247,7 @@ export type iconCompT = {
   fnFetchDataByID?: (id: number) => Promise<any>;
   fnDeleteDataByID?: (id: number) => Promise<any>;
   setModData:(props: any) => void;
+  setMasterData:(props: any) => void;
   setDlgMode:(props: any) => void;
   setDialogOpen:(props: any) => void;
   setIds:(props: any) => void;

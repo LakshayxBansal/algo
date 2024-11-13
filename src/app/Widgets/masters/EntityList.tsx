@@ -50,6 +50,14 @@ enum dialogMode {
   FileUpload,
 }
 
+type masterDataprop = {
+  fields: {},
+  data?: {},
+  rights: {},
+  config_data: {},
+  loggedInUserData: {}
+}
+
 export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [data, setData] = useState([]);
@@ -63,17 +71,20 @@ export default function EntityList(props: entitiyCompT) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] =useState<GridColumnVisibilityModel>({});
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [masterData, setMasterData] = useState<masterDataprop>({
+    fields: {},
+    data: {},
+    rights: {},
+    config_data: {},
+    loggedInUserData: {}
+  });
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
   const router = useRouter();
-  const url  = usePathname();
+  const url = usePathname();
   let searchText;
-  
- 
-
-
 
   //for navbar search
   const searchParams = useSearchParams();
@@ -93,6 +104,8 @@ export default function EntityList(props: entitiyCompT) {
         setData(rows.data);
         setNRows(rows.count as number);
       }
+
+
       const optionsColumn: GridColDef[] = [
         {
           field: "Icon menu",
@@ -108,6 +121,7 @@ export default function EntityList(props: entitiyCompT) {
                 setDlgMode={setDlgMode}
                 setDialogOpen={setDialogOpen}
                 setModData={setModData}
+                setMasterData={setMasterData}
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
@@ -126,7 +140,7 @@ export default function EntityList(props: entitiyCompT) {
       //   allDfltCols = props.customCols;
       // }
       //if roleid is 1(admin) show options columns
-      
+
       allDfltCols = optionsColumn.concat(props.customCols);
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
       if (props.fnFetchColumns) {
@@ -164,9 +178,9 @@ export default function EntityList(props: entitiyCompT) {
       // }
       // router.push(newUrl);
       //for title
-      
+
     }, 400);
-    
+
     if (searchData) {
       fetchData(searchData);
     } else {
@@ -198,9 +212,22 @@ export default function EntityList(props: entitiyCompT) {
     setSearch(e.target.value);
   };
 
-  const handleAddBtn = () => {
+  const handleAddBtn = async () => {
     setDialogOpen(true);
     setDlgMode(dialogMode.Add);
+    if (props.fnFetchDataByID) {
+      console.log('Hello');
+      const masterData = await props.fnFetchDataByID(0);
+      console.log("maserForm", masterData);
+      setMasterData({
+        fields: masterData[0][0] || {},
+        rights: masterData[0][1] || {},
+        config_data: masterData[0][2] || {},
+        loggedInUserData: masterData[0][3] || {}
+      });
+    }
+
+
   };
 
   const handleDropDownBtn = () => {
@@ -227,16 +254,16 @@ export default function EntityList(props: entitiyCompT) {
         {dialogOpen && (
           <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.fileUploadFeatureReqd &&
-            dlgMode === dialogMode.FileUpload ? (
+              dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
                 setDialogOpen={setDialogOpen}
                 fnFileUpad={props.fnFileUpad}
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => {})
+              props.renderForm(setDialogOpen, (arg) => { }, masterData)
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => {}, modData)
+              props.renderForm(setDialogOpen, (arg) => { }, masterData, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}
@@ -469,7 +496,7 @@ export default function EntityList(props: entitiyCompT) {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
