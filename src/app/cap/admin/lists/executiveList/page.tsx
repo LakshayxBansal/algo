@@ -35,7 +35,8 @@ const columns: GridColDef[] = [
 ];
 
 
-export default function executive() {
+export default async function executive() {
+
 
   return (
     <>
@@ -55,8 +56,9 @@ export default function executive() {
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );
 }
+
