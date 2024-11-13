@@ -282,6 +282,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 label="Name"
                 name="name"
                 required
+                titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}

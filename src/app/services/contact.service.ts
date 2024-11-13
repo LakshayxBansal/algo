@@ -95,14 +95,14 @@ export async function updateContactDB(
  */
 export async function getContactList(crmDb: string, searchString: string) {
   try {
-    const search_value = searchString ? searchString : '';
-    
+    const search_value = searchString ? searchString : "";
+
     const result = await excuteQuery({
       host: crmDb,
       query: "call search_contacts(?);",
-      values: [search_value]
-    })
-    return result[0];  
+      values: [search_value],
+    });
+    return result[0];
   } catch (e) {
     console.log(e);
   }
@@ -152,7 +152,8 @@ export async function getContactByPageDb(
 
     return excuteQuery({
       host: crmDb,
-      query: "SELECT *, RowNum AS RowID \
+      query:
+        "SELECT *, RowNum AS RowID \
       FROM (select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
         g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation, ROW_NUMBER() OVER () AS RowNum  \
         from contact_master c left outer join contact_group_master g on c.group_id = g.id \
@@ -160,14 +161,14 @@ export async function getContactByPageDb(
         left outer join area_master a on c.area_id =  a.id \
         left outer join country_master co on c.country_id = co.id \
         left outer join department_master d on c.department_id = d.id \
-        left outer join  organisation_master o on c.organisation_id = o.id " + 
-     (filter ? "WHERE c.name LIKE CONCAT('%', ?, '%') " : "") + 
-    "ORDER BY c.name \
+        left outer join  organisation_master o on c.organisation_id = o.id " +
+        (filter ? "WHERE c.name LIKE CONCAT('%', ?, '%') " : "") +
+        "ORDER BY c.name \
 ) AS NumberedRows \
     WHERE RowNum > ?*? \
     ORDER BY RowNum \
-    LIMIT ?;", 
-    values: vals,
+    LIMIT ?;",
+      values: vals,
     });
   } catch (e) {
     console.log(e);
@@ -199,7 +200,7 @@ export async function DeleteContactList(crmDb: string, id: number) {
       values: values,
     });
 
-    return result
+    return result;
   } catch (e) {
     console.log(e);
   }
@@ -209,7 +210,7 @@ export async function delContactByIdDB(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from contact_master where id=?;",
+      query: "call deleteContact(?)",
       values: [id],
     });
 

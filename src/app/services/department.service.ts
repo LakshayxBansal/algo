@@ -55,11 +55,9 @@ export async function checkIfUsed(crmDb: string, id: number) {
 }
 export async function delDepartmentDetailsById(session: Session, id: number) {
   try {
-    console.log("id", id);
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call deleteDepartment(?)",
-      
+      query: "call deleteDepartment(?)", 
       values: [id],
     });
   } catch (e) {
@@ -67,32 +65,6 @@ export async function delDepartmentDetailsById(session: Session, id: number) {
   }
   return null;
 }
-  // try {
-  //   const result = await excuteQuery({
-  //     host: crmDb,
-  //     query: "delete from department_master where id=?;",
-  //     values: [id],
-  //   });
-
-  //   return result;
-  // } catch (e) {
-  //   console.log(e);
-  // }
-// }
-
-// export async function delDepartmentDetailsById(crmDb: string, id: number) {
-//   try {
-//     const result = await excuteQuery({
-//       host: crmDb,
-//       query: "delete from department_master where id=?;",
-//       values: [id],
-//     });
-
-//     return result;
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
 
 /**
  *

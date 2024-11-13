@@ -135,6 +135,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
             name="name"
             fullWidth
             required
+            titleCase={true}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
             defaultValue={entityData.name}

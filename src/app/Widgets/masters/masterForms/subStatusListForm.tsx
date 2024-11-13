@@ -191,6 +191,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
               name="name"
               fullWidth
               required
+              titleCase={true}
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}

@@ -130,6 +130,7 @@ export default function DepartmentForm(props: masterFormPropsT) {
               name="name"
               fullWidth
               required
+              titleCase={true}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}

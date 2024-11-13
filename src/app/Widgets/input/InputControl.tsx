@@ -197,7 +197,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           zIndex: 0, // Adjust this value as needed
         },
       }}
-      onChange={onChange} />;
+      onChange={onChange} 
+      onKeyDown={handleKeyDown}
+      />;
       break;
     }
     case InputType.CHECKBOX: {

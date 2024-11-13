@@ -195,6 +195,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
               name="symbol"
               fullWidth
               required
+              titleCase={true}
               defaultValue={entityData.symbol}
               error={formError?.symbol?.error}
               helperText={formError?.symbol?.msg}

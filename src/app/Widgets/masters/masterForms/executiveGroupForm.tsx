@@ -25,6 +25,7 @@ import StateForm from "./stateForm";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import AutocompleteDB from "../../AutocompleteDB";
 
 export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -150,6 +151,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
             name="name"
             fullWidth
             required
+            titleCase={true}
             defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
@@ -176,32 +178,25 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
               });
             }}
           />
-          {/* <AutocompleteDB<optionsDataT>
-          name={"parentgroup"}
-          id={"parentgroup"}
-          label={"Parent Executive Group"}
-          defaultValue={entityData.parent}
-          width={210}
-          fnSetModifyMode={randomFunction}
-          fetchDataFn={getExecutiveGroup}
-        /> */}
           <SelectMasterWrapper
             name={"parent"}
             id={"parent"}
             label={"Parent Executive Group"}
             width={210}
+            defaultValue={
+              {
+                id: entityData.parent_id,
+                name: entityData.parent,
+              } as optionsDataT
+            }
             onChange={(e, val, s) =>
               setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
             }
             dialogTitle={"Parent Executive Group"}
             fetchDataFn={getExecutiveGroup}
-            // fnFetchDataByID={getStateById}
             formError={formError?.parentgroup}
             allowModify={false}
             allowNewAdd={false}
-            defaultValue={
-              { id: entityData.id, name: entityData.parent } as optionsDataT
-            }
             // disable={selectValues.country ? false : true}
             // renderForm={(fnDialogOpen, fnDialogValue, data, parentData) =>
             //   <StateForm

@@ -130,6 +130,7 @@ export default function AreaForm(props: masterFormPropsT) {
             id="name"
             label="Area Name"
             required
+            titleCase={true}
             defaultValue={entityData.name}
             inputType={InputType.TEXT}
             name="name"

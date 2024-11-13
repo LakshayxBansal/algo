@@ -129,6 +129,7 @@ export default function CountryForm(props: masterFormPropsT) {
             name="name"
             required
             fullWidth
+            titleCase={true}
             defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}

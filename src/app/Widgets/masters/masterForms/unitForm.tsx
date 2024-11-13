@@ -142,6 +142,7 @@ export default function UnitForm(props: masterFormPropsT) {
               name="name"
               required
               fullWidth
+              titleCase={true}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}

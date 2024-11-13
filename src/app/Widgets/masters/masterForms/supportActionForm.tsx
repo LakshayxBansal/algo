@@ -159,6 +159,7 @@ export default function SupportActionForm(props: masterFormPropsT) {
               label="Action Name"
               inputType={InputType.TEXT}
               name="name"
+              titleCase={true}
               defaultValue={props.data?.name}
               fullWidth
               error={formError?.name?.error}

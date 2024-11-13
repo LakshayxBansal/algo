@@ -135,7 +135,7 @@ export async function delProductGroupDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from product_group_master where id=?;",
+      query: "call deleteProductGroup(?)",
       values: [id],
     });
 

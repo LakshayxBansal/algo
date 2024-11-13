@@ -9,7 +9,6 @@ import {
   getDepartmentCount,
   getDepartmentByPageDb,
   delDepartmentDetailsById,
-  checkIfUsed,
   getDepartmentColumnsDb
 } from "../services/department.service";
 import { getSession } from "../services/session.service";
@@ -42,9 +41,7 @@ export async function getDepartmentById(id: number) {
 }
 
 export async function delDepartmentById(id: number) {
-  let data: nameMasterDataT;
   let result;
-  // let errorResult = { status: false, error: {} };
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -75,36 +72,6 @@ catch (error:any) {
       throw error;
     }
   }
-
-// export async function delDepartmentById(id: number) {
-//   let errorResult = { status: false, error: {} };
-//   try {
-//     const session = await getSession();
-//     if (session?.user.dbInfo) {
-//       const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-//       if(check[0].count>0){
-//         return ("Can't Be DELETED!");
-//       }
-//       else{
-//         const result = await delDepartmentDetailsById(session.user.dbInfo.dbName, id);
-//         return ("Record Deleted");
-//       }
-//       //   if ((result.affectedRows = 1)) {
-//       //   errorResult = { status: true, error: {} };
-//       // } else if ((result.affectedRows = 0)) {
-//       //   errorResult = {
-//       //     ...errorResult,
-//       //     error: "Record Can't Be DELETED!",
-//       //   };
-//       // }
-//       // return ("Record Deleted");
-//     }
-//   } catch (error:any) {
-//     throw error;
-//     errorResult= { status: false, error: error };
-//   }
-//   return errorResult;
-// }
 
 export async function createDepartment(data: nameMasterDataT) {
   let result;

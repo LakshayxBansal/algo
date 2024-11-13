@@ -222,7 +222,7 @@ export async function delOrganisationDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from organisation_master where id=?;",
+      query: "call deleteOrganisation(?)",
       values: [id],
     });
 

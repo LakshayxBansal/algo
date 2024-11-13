@@ -180,6 +180,7 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             autoFocus
             id="name"
             label="State Name"
+            titleCase={true}
             inputType={InputType.TEXT}
             defaultValue={entityData.name}
             name="name"

@@ -18,7 +18,7 @@ import {
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { Autocomplete, Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -158,6 +158,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               id="name"
               label="Group Name"
               name="name"
+              titleCase={true}
               required
               defaultValue={entityData.name}
               error={formError?.name?.error}
@@ -191,7 +192,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               width={210}
               defaultValue={
                 {
-                  id: entityData.id,
+                  id: entityData.parent_id,
                   name: entityData.parent,
                 } as optionsDataT
               }
@@ -200,16 +201,10 @@ export default function ContactGroupForm(props: masterFormPropsT) {
               }
               dialogTitle={"Add Parent Group"}
               fetchDataFn={getContactGroup}
-              // fnFetchDataByID={getContactGroupById}
+              fnFetchDataByID={getContactGroupById}
               formError={formError?.parentgroup}
               allowNewAdd={false}
               allowModify={false}
-              // renderForm={(fnDialogOpen, fnDialogValue) => (
-              //   <ContactGroupForm
-              //     setDialogOpen={fnDialogOpen}
-              //     setDialogValue={fnDialogValue}
-              //   />
-              // )}
             />
           </Box>
           <Box

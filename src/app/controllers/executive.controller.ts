@@ -270,39 +270,41 @@ export async function insertUserIdInExecutive(
 }
 
 export async function delExecutiveById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if (check[0].count > 0) {
-        return "Can't Be DELETED!";
-      } else {
-        const mappedUser = await getExecutiveById(id);
+      const mappedUser = await getExecutiveById(id);
+      const dbResult = await delExecutiveDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
         if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
           await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
         }
-        const result = await delExecutiveDetailsById(
-          session.user.dbInfo.dbName,
-          id
-        );
-        return "Record Deleted";
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getExecutiveByPage(
   page: number,

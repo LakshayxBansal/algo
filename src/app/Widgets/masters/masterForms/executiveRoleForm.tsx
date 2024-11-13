@@ -21,6 +21,7 @@ import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import AutocompleteDB from "../../AutocompleteDB";
 
 export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
   const [formError, setFormError] = useState<
@@ -181,6 +182,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               name="name"
               required
               fullWidth
+              titleCase={true}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={entityData.name}
@@ -200,7 +202,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
               fnFetchDataByID={getExecutiveRoleById}
               defaultValue={
                 {
-                  id: entityData.id,
+                  id: entityData.parent_id,
                   name: entityData.parentRole,
                 } as optionsDataT
               }

@@ -135,6 +135,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
               name="name"
               required
               fullWidth
+              titleCase={true}
               defaultValue={props.data?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}

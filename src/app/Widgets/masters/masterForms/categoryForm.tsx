@@ -133,6 +133,7 @@ export default function CategoryForm(props: masterFormPropsT) {
               name="name"
               fullWidth
               required
+              titleCase={true}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={props.data?.name}
