@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { getCallEnquiryDetails, getCallSupportDetails } from "../../controllers/callExplorer.controller";
 import { StripedDataGrid } from "../../utils/styledComponents";
 import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
 
 export default function CallDetailList({ selectedRow, refresh , callType }: { selectedRow: any, refresh: any, callType:number }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
@@ -43,36 +44,37 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
         return text;
     };
 
-    const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, content: string) => {
-        setAnchorEl(event.currentTarget);
-        setPopoverContent(content);
-        setOpen(true);
-    };
+    // const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, content: string) => {
+    //     setAnchorEl(event.currentTarget);
+    //     setPopoverContent(content);
+    //     setOpen(true);
+    // };
 
-    const handlePopoverClose = () => {
-        setOpen(false);
-        setAnchorEl(null);
-    };
+    // const handlePopoverClose = () => {
+    //     setOpen(false);
+    //     setAnchorEl(null);
+    // };
 
-    const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
-        const relatedTarget = event.relatedTarget as Node;
-        if (popoverRef.current && !popoverRef.current.contains(relatedTarget) && anchorEl && !anchorEl.contains(relatedTarget)) {
-            handlePopoverClose();
-        }
-    };
+    // const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
+    //     const relatedTarget = event.relatedTarget as Node;
+    //     if (popoverRef.current && !popoverRef.current.contains(relatedTarget)) {
+    //         handlePopoverClose();
+    //     }
+    // };
 
 
     const column2: GridColDef[] = [
-        { field: "type", headerName: "Type", width: 70 },
+        { field: "type", headerName: "Type", width: 70
+        },
         {
             field: "date", headerName: "Date", width: 130, renderCell: (params) => {
-                return params.row.date.toDateString();
+                return adjustToLocal(params.row.date).toDate().toString().slice(0, 15);
             },
         },
         {
             field: "time", headerName: "Time", width: 100,
             renderCell: (params) => {
-                return params.row.date.toLocaleString('en-IN', options);
+                return adjustToLocal(params.row.date).format("hh:mm A");
             },
         },
         {
@@ -87,11 +89,14 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
             field: "actionDate",
             headerName: "Action Date",
             width: 130,
+            renderCell: (params) => {
+                return adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15);
+            },
         },
         {
             field: "actionTime", headerName: "Action Time", width: 100,
             renderCell: (params) => {
-                return params.row.actionDate.toLocaleString('en-IN', options);
+                return adjustToLocal(params.row.actionDate).format("hh:mm A");
             },
         },
         {
@@ -103,13 +108,26 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
 
                 const truncatedRemark = truncateText(fullRemark, 120); // Limit to 120 characters
 
-                return (
-                    <Box onMouseEnter={(event) => handlePopoverOpen(event, fullRemark)}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        {truncatedRemark}
-                    </Box>
-                );
+                
+                    return (
+                        <Tooltip 
+                        title={
+                            <Box sx={{
+                                maxHeight: 150, 
+                                overflowY: 'auto', 
+                                whiteSpace: 'pre-wrap', 
+                            }}>
+                                {fullRemark}
+                            </Box>
+                        }
+                            arrow 
+                            placement="bottom-start"
+                        >
+                            <Box>
+                                {truncatedRemark}
+                            </Box>
+                        </Tooltip>
+                    );
             },
         }
     ];
@@ -150,8 +168,9 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                     minHeight: '28px',
                 },
             }}
+           
         />
-        <Popover
+        {/* <Popover
             open={open}
             anchorEl={anchorEl}
             onClose={handlePopoverClose}
@@ -188,7 +207,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                     {popoverContent}
                 </Typography>
             </Box>
-        </Popover>
+        </Popover> */}
     </>
     )
 }

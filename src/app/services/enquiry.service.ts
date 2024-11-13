@@ -14,7 +14,7 @@ export async function createEnquiryDB(
   enqData: { headerLedger: enquiryDataSchemaT; product: any }
 ) {
   try {
-    return excuteQuery({
+   const result = excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
         "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
@@ -41,6 +41,7 @@ export async function createEnquiryDB(
         enqData.product,
       ],
     });
+    return result ;
   } catch (e) {
     console.log(e);
   }
