@@ -72,10 +72,10 @@ export function AutocompleteDB(props: autocompleteDBT) {
   const [open, setOpen] = useState(false);
   const showDetails= props.showDetails ? props.showDetails : false;
 
-  // if (defaultValue !== props.defaultValue) {
-  //   props.setDialogVal(props.defaultValue as optionsDataT);
-  //   console.log("set the default value!");
-  // } 
+  if (defaultValue?.name !== props.defaultValue?.name) {
+    props.setDialogVal(props.defaultValue as optionsDataT);
+    console.log("set the default value!");
+  } 
 
   // useEffect(() => {
 
@@ -206,7 +206,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             <TextField
               id="popper_textid_temp_5276"
               variant="standard"
-              defaultValue={"Please select from Options"}
+              defaultValue={" "}
               InputProps={{
                 style: {
                   ...autocompleteTextfieldSx, 
@@ -274,6 +274,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }}
       forcePopupIcon={true}
       // autoHighlight
+      noOptionsText={" "}
       autoComplete
       includeInputInList
       disableClearable={

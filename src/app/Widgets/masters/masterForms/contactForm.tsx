@@ -287,12 +287,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
                 onChange={handlePrintNameChange}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
               <InputControl
                 inputType={InputType.TEXT}

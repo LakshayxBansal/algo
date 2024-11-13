@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Box, Typography, Button, Snackbar, Collapse, Alert, IconButton } from "@mui/material";
 import { deleteCompT } from "@/app/models/models";
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 import CloseIcon from "@mui/icons-material/Close";
 
 const DeleteComponent = (props: deleteCompT) => {
@@ -71,13 +73,13 @@ const DeleteComponent = (props: deleteCompT) => {
           justifyContent="flex-end"
           alignItems="flex-end"
           m={1}
-        >
+          >
           <Button
             style={{ paddingRight: "20px" }}
             onClick={() => {
               props.setDialogOpen(false);
             }}
-          >
+            >
             Cancel
           </Button>
           <Button
@@ -85,7 +87,7 @@ const DeleteComponent = (props: deleteCompT) => {
               onDeleteDialog(props.modId);
             }}
             variant="contained"
-          >
+            >
             Delete
           </Button>
         </Box>
@@ -96,7 +98,7 @@ const DeleteComponent = (props: deleteCompT) => {
         onClose={() => setSnackOpen(false)}
         message={"Record Deleted Successfully"}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        />
     </Box>
   );
 };
