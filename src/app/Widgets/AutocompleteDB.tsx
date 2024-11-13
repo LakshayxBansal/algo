@@ -206,7 +206,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             <TextField
               id="popper_textid_temp_5276"
               variant="standard"
-              defaultValue={"Please select from Options"}
+              defaultValue={" "}
               InputProps={{
                 style: {
                   ...autocompleteTextfieldSx, 
@@ -274,6 +274,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }}
       forcePopupIcon={true}
       // autoHighlight
+      noOptionsText={" "}
       autoComplete
       includeInputInList
       disableClearable={
