@@ -16,311 +16,314 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckBoxForm from "./checkBoxForm";
 import Voucher from "./voucherNumberForm";
 import RegionalInfo from "../regional/regionalInfoForm";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 
-export default function ConfigForm(props: configSchemaT) {
-  const {
-    enquiryConfig,
-    supportConfig,
-    contractConfig,
-    enquiryGenerationConfig,
-    regionalSettingConfig,
-  } = props;
+export default function ConfigForm(data: any) {
+  // const {
+  //   enquiryConfig,
+  //   supportConfig,
+  //   contractConfig,
+  //   enquiryGenerationConfig,
+  //   regionalSettingConfig,
+  // } = props;
 
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
-  const [entityData, setEntityData] = useState(props.regionalSettingConfig);
+  // const [entityData, setEntityData] = useState(props.regionalSettingConfig);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
 
-  const [config, setConfig] = useState({
-    enquiryConfig: {
-      enquiry: [
-        {
-          id: "enquiryReqd",
-          name: "enquiryReqd",
-          custLabel: "Enquiry Management (Pre Sales)",
-          checked: (props.enquiryConfig?.reqd as boolean) ?? false,
-          group: "enquiryReqd",
-          disable: false,
-        },
-      ],
-      checkBoxData: [
-        {
-          id: "enquiryCloseCall",
-          name: "enquiryCloseCall",
-          custLabel: "Can Close Call at the time of Call Receipt",
-          checked: (props.enquiryConfig?.closeCall as boolean) ?? false,
-          group: "enquiryCloseCall",
-          disable: !props.enquiryConfig?.reqd,
-        },
-        {
-          id: "enquiryMaintainProducts",
-          name: "enquiryMaintainProducts",
-          custLabel: "Maintain Products in Call Receipt",
-          checked: (props.enquiryConfig?.maintainProducts as boolean) ?? false,
-          group: "enquiryMaintainProducts",
-          disable: !props.enquiryConfig?.reqd,
-        },
-        {
-          id: "enquirySaveFAQ",
-          name: "enquirySaveFAQ",
-          custLabel: "Ask to Save FAQ on Call Receipt and Report Saving",
-          checked: (props.enquiryConfig?.saveFAQ as boolean) ?? false,
-          group: "enquirySaveFAQ",
-          disable: !props.enquiryConfig?.reqd,
-        },
-        {
-          id: "enquiryMaintainAction",
-          name: "enquiryMaintainAction",
-          custLabel: "Maintain Action Taken for Call Receipt",
-          checked: (props.enquiryConfig?.maintainAction as boolean) ?? false,
-          group: "enquiryMaintainAction",
-          disable: !props.enquiryConfig?.reqd,
-        },
-        {
-          id: "enquiryVoucherNumber",
-          name: "enquiryVoucherNumber",
-          custLabel: "Do you want to keep Voucher Number?",
-          checked: (props.enquiryConfig?.voucherNumber as boolean) ?? false,
-          group: "enquiryVoucherNumber",
-          disable: !props.enquiryConfig?.reqd,
-        },
-      ],
-      Prefix: {
-        id: "enquiryPrefix",
-        name: "enquiryPrefix",
-        value: props.enquiryConfig?.prefix,
-      },
-      Suffix: {
-        id: "enquirySuffix",
-        name: "enquirySuffix",
-        value: props.enquiryConfig?.suffix,
-      },
-      Length: {
-        id: "enquiryLength",
-        name: "enquiryLength",
-        value: props.enquiryConfig?.length,
-      },
-      PrefillWithZero: {
-        id: "enquiryPrefillWithZero",
-        name: "enquiryPrefillWithZero",
-        value: props.enquiryConfig?.prefillWithZero,
-      },
-    },
-    supportConfig: {
-      support: [
-        {
-          id: "supportReqd",
-          name: "supportReqd",
-          custLabel: "Support Management (Post Sales)",
-          checked: (props.supportConfig?.reqd as boolean) ?? false,
-          group: "supportReqd",
-          disable: false,
-        },
-      ],
-      checkBoxData: [
-        {
-          id: "supportCloseCall",
-          name: "supportCloseCall",
-          custLabel: "Can Close Call at the time of Call Receipt",
-          checked: (props.supportConfig?.closeCall as boolean) ?? false,
-          group: "supportCloseCall",
-          disable: !props.supportConfig?.reqd,
-        },
-        {
-          id: "supportMaintainProducts",
-          name: "supportMaintainProducts",
-          custLabel: "Maintain Products in Call Receipt",
-          checked: (props.supportConfig?.maintainProducts as boolean) ?? false,
-          group: "supportMaintainProducts",
-          disable: !props.supportConfig?.reqd,
-        },
-        {
-          id: "supportSaveFAQ",
-          name: "supportSaveFAQ",
-          custLabel: "Ask to Save FAQ on Call Receipt and Report Saving",
-          checked: (props.supportConfig?.saveFAQ as boolean) ?? false,
-          group: "supportSaveFAQ",
-          disable: !props.supportConfig?.reqd,
-        },
-        {
-          id: "supportMaintainAction",
-          name: "supportMaintainAction",
-          custLabel: "Maintain Action Taken for Call Receipt",
-          checked: (props.supportConfig?.maintainAction as boolean) ?? false,
-          group: "supportMaintainAction",
-          disable: !props.supportConfig?.reqd,
-        },
-        {
-          id: "supportVoucherNumber",
-          name: "supportVoucherNumber",
-          custLabel: "Do you want to keep Voucher Number?",
-          checked: (props.supportConfig?.voucherNumber as boolean) ?? false,
-          group: "supportVoucherNumber",
-          disable: !props.supportConfig?.reqd,
-        },
-      ],
-      Prefix: {
-        id: "supportPrefix",
-        name: "supportPrefix",
-        value: props.supportConfig?.prefix,
-      },
-      Suffix: {
-        id: "supportSuffix",
-        name: "supportSuffix",
-        value: props.supportConfig?.suffix,
-      },
-      Length: {
-        id: "supportLength",
-        name: "supportLength",
-        value: props.supportConfig?.length,
-      },
-      PrefillWithZero: {
-        id: "supportPrefillWithZero",
-        name: "supportPrefillWithZero",
-        value: props.supportConfig?.prefillWithZero,
-      },
-    },
-    contractConfig: {
-      contract: [
-        {
-          id: "contractReqd",
-          name: "contractReqd",
-          custLabel: "Contract Management",
-          checked: (props.contractConfig?.reqd as boolean) ?? false,
-          group: "contractReqd",
-          disable: false,
-        },
-      ],
-      checkBoxData: [
-        {
-          id: "contractVoucherNumber",
-          name: "contractVoucherNumber",
-          custLabel: "Do you want to keep Voucher Number?",
-          checked: (props.contractConfig?.voucherNumber as boolean) ?? false,
-          group: "contractVoucherNumber",
-          disable: !props.contractConfig?.reqd,
-        },
-      ],
-      Prefix: {
-        id: "contractPrefix",
-        name: "contractPrefix",
-        value: props.contractConfig?.prefix,
-      },
-      Suffix: {
-        id: "contractSuffix",
-        name: "contractSuffix",
-        value: props.contractConfig?.suffix,
-      },
-      Length: {
-        id: "contractLength",
-        name: "contractLength",
-        value: props.contractConfig?.length,
-      },
-      PrefillWithZero: {
-        id: "contractPrefillWithZero",
-        name: "contractPrefillWithZero",
-        value: props.contractConfig?.prefillWithZero,
-      },
-    },
-    enquiryGenerationConfig: {
-      enquiryGeneration: [
-        {
-          id: "enquiryGenerationReqd",
-          name: "enquiryGenerationReqd",
-          custLabel: "Enquiry Generation",
-          checked: (props.enquiryGenerationConfig?.reqd as boolean) ?? false,
-          group: "enquiryGenerationReqd",
-          disable: false,
-        },
-      ],
-      checkBoxData: [
-        {
-          id: "enquiryGenerationVoucherNumber",
-          name: "enquiryGenerationVoucherNumber",
-          custLabel: "Do you want to keep Voucher Number?",
-          checked:
-            (props.enquiryGenerationConfig?.voucherNumber as boolean) ?? false,
-          group: "enquiryGenerationVoucherNumber",
-          disable: !props.enquiryGenerationConfig?.reqd,
-        },
-      ],
-      Prefix: {
-        id: "enquiryGenerationPrefix",
-        name: "enquiryGenerationPrefix",
-        value: props.enquiryGenerationConfig?.prefix,
-      },
-      Suffix: {
-        id: "enquiryGenerationSuffix",
-        name: "enquiryGenerationSuffix",
-        value: props.enquiryGenerationConfig?.suffix,
-      },
-      Length: {
-        id: "enquiryGenerationLength",
-        name: "enquiryGenerationLength",
-        value: props.enquiryGenerationConfig?.length,
-      },
-      PrefillWithZero: {
-        id: "enquiryGenerationPrefillWithZero",
-        name: "enquiryGenerationPrefillWithZero",
-        value: props.enquiryGenerationConfig?.prefillWithZero,
-      },
-    },
-    regionalSettingConfig: {
-      regionalSetting: [
-        {
-          id: "regionalSettingReqd",
-          name: "regionalSettingReqd",
-          custLabel: "Regional Settings",
-          checked: (props.regionalSettingConfig?.reqd as boolean) ?? false,
-          group: "regionalSettingReqd",
-          disable: false,
-        },
-      ],
-      checkBoxData: [
-        {
-          id: "regionalSettingVoucherNumber",
-          name: "regionalSettingVoucherNumber",
-          custLabel: "Do you want to keep Voucher Number?",
-          checked:
-            (props.regionalSettingConfig?.voucherNumber as boolean) ?? false,
-          group: "regionalSettingVoucherNumber",
-          disable: !props.regionalSettingConfig?.reqd,
-        },
-      ],
-      Prefix: {
-        id: "regionalSettingPrefix",
-        name: "regionalSettingPrefix",
-        value: props.regionalSettingConfig?.prefix ?? "",
-      },
-      Suffix: {
-        id: "regionalSettingSuffix",
-        name: "regionalSettingSuffix",
-        value: props.regionalSettingConfig?.suffix ?? "",
-      },
-      Length: {
-        id: "regionalSettingLength",
-        name: "regionalSettingLength",
-        value: props.regionalSettingConfig?.length,
-      },
-      PrefillWithZero: {
-        id: "regionalSettingPrefillWithZero",
-        name: "regionalSettingPrefillWithZero",
-        value: props.regionalSettingConfig?.prefillWithZero ?? false,
-      },
-      country_id: props.regionalSettingConfig?.country_id,
-      state_id: props.regionalSettingConfig?.state_id,
-      dateFormat: props.regionalSettingConfig?.dateFormat,
-      timeFormat: props.regionalSettingConfig?.timeFormat,
-      currencySymbol: props.regionalSettingConfig?.currencySymbol,
-      currencyString: props.regionalSettingConfig?.currencyString,
-      currencySubString: props.regionalSettingConfig?.currencySubString,
-      currencyCharacter: props.regionalSettingConfig?.currencyCharacter,
-      decimalPlaces: props.regionalSettingConfig?.decimalPlaces,
-    },
-  });
+  // const [config, setConfig] = useState({
+  //   enquiryConfig: {
+  //     enquiry: [
+  //       {
+  //         id: "enquiryReqd",
+  //         name: "enquiryReqd",
+  //         custLabel: "Enquiry Management (Pre Sales)",
+  //         checked: (props.enquiryConfig?.reqd as boolean) ?? false,
+  //         group: "enquiryReqd",
+  //         disable: false,
+  //       },
+  //     ],
+  //     checkBoxData: [
+  //       {
+  //         id: "enquiryCloseCall",
+  //         name: "enquiryCloseCall",
+  //         custLabel: "Can Close Call at the time of Call Receipt",
+  //         checked: (props.enquiryConfig?.closeCall as boolean) ?? false,
+  //         group: "enquiryCloseCall",
+  //         disable: !props.enquiryConfig?.reqd,
+  //       },
+  //       {
+  //         id: "enquiryMaintainProducts",
+  //         name: "enquiryMaintainProducts",
+  //         custLabel: "Maintain Products in Call Receipt",
+  //         checked: (props.enquiryConfig?.maintainProducts as boolean) ?? false,
+  //         group: "enquiryMaintainProducts",
+  //         disable: !props.enquiryConfig?.reqd,
+  //       },
+  //       {
+  //         id: "enquirySaveFAQ",
+  //         name: "enquirySaveFAQ",
+  //         custLabel: "Ask to Save FAQ on Call Receipt and Report Saving",
+  //         checked: (props.enquiryConfig?.saveFAQ as boolean) ?? false,
+  //         group: "enquirySaveFAQ",
+  //         disable: !props.enquiryConfig?.reqd,
+  //       },
+  //       {
+  //         id: "enquiryMaintainAction",
+  //         name: "enquiryMaintainAction",
+  //         custLabel: "Maintain Action Taken for Call Receipt",
+  //         checked: (props.enquiryConfig?.maintainAction as boolean) ?? false,
+  //         group: "enquiryMaintainAction",
+  //         disable: !props.enquiryConfig?.reqd,
+  //       },
+  //       {
+  //         id: "enquiryVoucherNumber",
+  //         name: "enquiryVoucherNumber",
+  //         custLabel: "Do you want to keep Voucher Number?",
+  //         checked: (props.enquiryConfig?.voucherNumber as boolean) ?? false,
+  //         group: "enquiryVoucherNumber",
+  //         disable: !props.enquiryConfig?.reqd,
+  //       },
+  //     ],
+  //     Prefix: {
+  //       id: "enquiryPrefix",
+  //       name: "enquiryPrefix",
+  //       value: props.enquiryConfig?.prefix,
+  //     },
+  //     Suffix: {
+  //       id: "enquirySuffix",
+  //       name: "enquirySuffix",
+  //       value: props.enquiryConfig?.suffix,
+  //     },
+  //     Length: {
+  //       id: "enquiryLength",
+  //       name: "enquiryLength",
+  //       value: props.enquiryConfig?.length,
+  //     },
+  //     PrefillWithZero: {
+  //       id: "enquiryPrefillWithZero",
+  //       name: "enquiryPrefillWithZero",
+  //       value: props.enquiryConfig?.prefillWithZero,
+  //     },
+  //   },
+  //   supportConfig: {
+  //     support: [
+  //       {
+  //         id: "supportReqd",
+  //         name: "supportReqd",
+  //         custLabel: "Support Management (Post Sales)",
+  //         checked: (props.supportConfig?.reqd as boolean) ?? false,
+  //         group: "supportReqd",
+  //         disable: false,
+  //       },
+  //     ],
+  //     checkBoxData: [
+  //       {
+  //         id: "supportCloseCall",
+  //         name: "supportCloseCall",
+  //         custLabel: "Can Close Call at the time of Call Receipt",
+  //         checked: (props.supportConfig?.closeCall as boolean) ?? false,
+  //         group: "supportCloseCall",
+  //         disable: !props.supportConfig?.reqd,
+  //       },
+  //       {
+  //         id: "supportMaintainProducts",
+  //         name: "supportMaintainProducts",
+  //         custLabel: "Maintain Products in Call Receipt",
+  //         checked: (props.supportConfig?.maintainProducts as boolean) ?? false,
+  //         group: "supportMaintainProducts",
+  //         disable: !props.supportConfig?.reqd,
+  //       },
+  //       {
+  //         id: "supportSaveFAQ",
+  //         name: "supportSaveFAQ",
+  //         custLabel: "Ask to Save FAQ on Call Receipt and Report Saving",
+  //         checked: (props.supportConfig?.saveFAQ as boolean) ?? false,
+  //         group: "supportSaveFAQ",
+  //         disable: !props.supportConfig?.reqd,
+  //       },
+  //       {
+  //         id: "supportMaintainAction",
+  //         name: "supportMaintainAction",
+  //         custLabel: "Maintain Action Taken for Call Receipt",
+  //         checked: (props.supportConfig?.maintainAction as boolean) ?? false,
+  //         group: "supportMaintainAction",
+  //         disable: !props.supportConfig?.reqd,
+  //       },
+  //       {
+  //         id: "supportVoucherNumber",
+  //         name: "supportVoucherNumber",
+  //         custLabel: "Do you want to keep Voucher Number?",
+  //         checked: (props.supportConfig?.voucherNumber as boolean) ?? false,
+  //         group: "supportVoucherNumber",
+  //         disable: !props.supportConfig?.reqd,
+  //       },
+  //     ],
+  //     Prefix: {
+  //       id: "supportPrefix",
+  //       name: "supportPrefix",
+  //       value: props.supportConfig?.prefix,
+  //     },
+  //     Suffix: {
+  //       id: "supportSuffix",
+  //       name: "supportSuffix",
+  //       value: props.supportConfig?.suffix,
+  //     },
+  //     Length: {
+  //       id: "supportLength",
+  //       name: "supportLength",
+  //       value: props.supportConfig?.length,
+  //     },
+  //     PrefillWithZero: {
+  //       id: "supportPrefillWithZero",
+  //       name: "supportPrefillWithZero",
+  //       value: props.supportConfig?.prefillWithZero,
+  //     },
+  //   },
+  //   contractConfig: {
+  //     contract: [
+  //       {
+  //         id: "contractReqd",
+  //         name: "contractReqd",
+  //         custLabel: "Contract Management",
+  //         checked: (props.contractConfig?.reqd as boolean) ?? false,
+  //         group: "contractReqd",
+  //         disable: false,
+  //       },
+  //     ],
+  //     checkBoxData: [
+  //       {
+  //         id: "contractVoucherNumber",
+  //         name: "contractVoucherNumber",
+  //         custLabel: "Do you want to keep Voucher Number?",
+  //         checked: (props.contractConfig?.voucherNumber as boolean) ?? false,
+  //         group: "contractVoucherNumber",
+  //         disable: !props.contractConfig?.reqd,
+  //       },
+  //     ],
+  //     Prefix: {
+  //       id: "contractPrefix",
+  //       name: "contractPrefix",
+  //       value: props.contractConfig?.prefix,
+  //     },
+  //     Suffix: {
+  //       id: "contractSuffix",
+  //       name: "contractSuffix",
+  //       value: props.contractConfig?.suffix,
+  //     },
+  //     Length: {
+  //       id: "contractLength",
+  //       name: "contractLength",
+  //       value: props.contractConfig?.length,
+  //     },
+  //     PrefillWithZero: {
+  //       id: "contractPrefillWithZero",
+  //       name: "contractPrefillWithZero",
+  //       value: props.contractConfig?.prefillWithZero,
+  //     },
+  //   },
+  //   enquiryGenerationConfig: {
+  //     enquiryGeneration: [
+  //       {
+  //         id: "enquiryGenerationReqd",
+  //         name: "enquiryGenerationReqd",
+  //         custLabel: "Enquiry Generation",
+  //         checked: (props.enquiryGenerationConfig?.reqd as boolean) ?? false,
+  //         group: "enquiryGenerationReqd",
+  //         disable: false,
+  //       },
+  //     ],
+  //     checkBoxData: [
+  //       {
+  //         id: "enquiryGenerationVoucherNumber",
+  //         name: "enquiryGenerationVoucherNumber",
+  //         custLabel: "Do you want to keep Voucher Number?",
+  //         checked:
+  //           (props.enquiryGenerationConfig?.voucherNumber as boolean) ?? false,
+  //         group: "enquiryGenerationVoucherNumber",
+  //         disable: !props.enquiryGenerationConfig?.reqd,
+  //       },
+  //     ],
+  //     Prefix: {
+  //       id: "enquiryGenerationPrefix",
+  //       name: "enquiryGenerationPrefix",
+  //       value: props.enquiryGenerationConfig?.prefix,
+  //     },
+  //     Suffix: {
+  //       id: "enquiryGenerationSuffix",
+  //       name: "enquiryGenerationSuffix",
+  //       value: props.enquiryGenerationConfig?.suffix,
+  //     },
+  //     Length: {
+  //       id: "enquiryGenerationLength",
+  //       name: "enquiryGenerationLength",
+  //       value: props.enquiryGenerationConfig?.length,
+  //     },
+  //     PrefillWithZero: {
+  //       id: "enquiryGenerationPrefillWithZero",
+  //       name: "enquiryGenerationPrefillWithZero",
+  //       value: props.enquiryGenerationConfig?.prefillWithZero,
+  //     },
+  //   },
+  //   regionalSettingConfig: {
+  //     regionalSetting: [
+  //       {
+  //         id: "regionalSettingReqd",
+  //         name: "regionalSettingReqd",
+  //         custLabel: "Regional Settings",
+  //         checked: (props.regionalSettingConfig?.reqd as boolean) ?? false,
+  //         group: "regionalSettingReqd",
+  //         disable: false,
+  //       },
+  //     ],
+  //     checkBoxData: [
+  //       {
+  //         id: "regionalSettingVoucherNumber",
+  //         name: "regionalSettingVoucherNumber",
+  //         custLabel: "Do you want to keep Voucher Number?",
+  //         checked:
+  //           (props.regionalSettingConfig?.voucherNumber as boolean) ?? false,
+  //         group: "regionalSettingVoucherNumber",
+  //         disable: !props.regionalSettingConfig?.reqd,
+  //       },
+  //     ],
+  //     Prefix: {
+  //       id: "regionalSettingPrefix",
+  //       name: "regionalSettingPrefix",
+  //       value: props.regionalSettingConfig?.prefix ?? "",
+  //     },
+  //     Suffix: {
+  //       id: "regionalSettingSuffix",
+  //       name: "regionalSettingSuffix",
+  //       value: props.regionalSettingConfig?.suffix ?? "",
+  //     },
+  //     Length: {
+  //       id: "regionalSettingLength",
+  //       name: "regionalSettingLength",
+  //       value: props.regionalSettingConfig?.length,
+  //     },
+  //     PrefillWithZero: {
+  //       id: "regionalSettingPrefillWithZero",
+  //       name: "regionalSettingPrefillWithZero",
+  //       value: props.regionalSettingConfig?.prefillWithZero ?? false,
+  //     },
+  //     country_id: props.regionalSettingConfig?.country_id,
+  //     state_id: props.regionalSettingConfig?.state_id,
+  //     dateFormat: props.regionalSettingConfig?.dateFormat,
+  //     timeFormat: props.regionalSettingConfig?.timeFormat,
+  //     currencySymbol: props.regionalSettingConfig?.currencySymbol,
+  //     currencyString: props.regionalSettingConfig?.currencyString,
+  //     currencySubString: props.regionalSettingConfig?.currencySubString,
+  //     currencyCharacter: props.regionalSettingConfig?.currencyCharacter,
+  //     decimalPlaces: props.regionalSettingConfig?.decimalPlaces,
+  //   },
+  // });
 
+  const [config, setConfig] = useState(data.data);
+  console.log("config : ", config);
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
 
@@ -328,7 +331,7 @@ export default function ConfigForm(props: configSchemaT) {
       data[key] = value === "on" ? true : value;
     }
 
-    data = updateFormData(data);
+    // data = updateFormData(data);
     const result = await persistEntity(data as configSchemaT);
 
     if (result.status) {
@@ -348,20 +351,20 @@ export default function ConfigForm(props: configSchemaT) {
     }
   };
 
-  const updateFormData = (data: enquiryConfigSchemaT) => {
-    data.country_id = entityData?.country_id
-      ? entityData.country_id
-      : selectValues.country
-      ? selectValues.country.id
-      : 0;
-    data.state_id = entityData?.state_id
-      ? entityData.state_id
-      : selectValues.state
-      ? selectValues.state.id
-      : 0;
+  // const updateFormData = (data: enquiryConfigSchemaT) => {
+  //   data.country_id = entityData?.country_id
+  //     ? entityData.country_id
+  //     : selectValues.country
+  //     ? selectValues.country.id
+  //     : 0;
+  //   data.state_id = entityData?.state_id
+  //     ? entityData.state_id
+  //     : selectValues.state
+  //     ? selectValues.state.id
+  //     : 0;
 
-    return data;
-  };
+  //   return data;
+  // };
 
   async function persistEntity(data: configSchemaT) {
     let result;
@@ -369,7 +372,7 @@ export default function ConfigForm(props: configSchemaT) {
     return result;
   }
 
-  const handleCancel = () => {};
+  const handleCancel = () => { };
 
   return (
     <Paper>
@@ -385,29 +388,77 @@ export default function ConfigForm(props: configSchemaT) {
           }}
         >
           <div>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-              >
-                <CheckBoxForm
+            {Object.keys({ ...config }).map((key, index) => (
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <InputControl
+                    key={index}
+                    inputType={InputType.CHECKBOX}
+                    id={"field.name"}
+                    name={"field.name"}
+                    custLabel={key}
+                    checked={config[key]["reqd"] || false}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setConfig({ ...config, [key]: { ...config[key], ["reqd"]: e.target.checked } })
+
+                    }
+                  // disabled={field.disable}
+                  />
+                  {/* <h1>{key}</h1> */}
+                  {/* <CheckBoxForm
                   config={config}
                   onChange={setConfig}
                   configName={"enquiryConfig"}
                   parentName={"enquiry"}
                   isParent={true}
-                />
-              </AccordionSummary>
-              <AccordionDetails style={{ marginLeft: "1.3rem" }}>
-                <CheckBoxForm
+                /> */}
+
+                </AccordionSummary>
+                <AccordionDetails style={{ marginLeft: "1.3rem" }}>
+                  {Object.keys({ ...config[key] }).map((k, index) => {
+                    if (k!== "reqd" && typeof (config[key][k]) === "boolean") {
+                      return (
+                        <InputControl
+                          key={index}
+                          inputType={InputType.CHECKBOX}
+                          id={`${key}${k}`}
+                          name={`${key}${k}`}
+                          custLabel={`${key}${k}`}
+                          checked={config[key][k] || false}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setConfig({ ...config, [key]: { ...config[key], [k]: e.target.checked } })
+                          }
+                        // disabled={field.disable}
+                        />
+                      )
+                    } else if(k!=="reqd"){
+                      return (
+                        <InputControl
+                          inputType={InputType.TEXT}
+                          id={`${key}${k}`}
+                          name={`${key}${k}`}
+                          label={k}
+                          defaultValue={config[key][k]}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setConfig({ ...config, [key]: { ...config[key], [k]: e.target.value } })
+                          }}
+                        />
+                      )
+                    }
+
+                  })}
+                  {/* <CheckBoxForm
                   config={config}
                   onChange={setConfig}
                   configName={"enquiryConfig"}
                   parentName={"checkBoxData"}
                   isParent={false}
-                />
-                {config.enquiryConfig.checkBoxData[
+                /> */}
+                  {/* {config.enquiryConfig.checkBoxData[
                   config.enquiryConfig.checkBoxData.length - 1
                 ].checked && (
                   <Voucher
@@ -415,10 +466,12 @@ export default function ConfigForm(props: configSchemaT) {
                     setConfig={setConfig}
                     configName={"enquiryConfig"}
                   />
-                )}
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
+                )} */}
+                </AccordionDetails>
+              </Accordion>
+            ))
+            }
+            {/* <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -516,8 +569,8 @@ export default function ConfigForm(props: configSchemaT) {
                   />
                 )}
               </AccordionDetails>
-            </Accordion>
-            <Accordion>
+            </Accordion> */}
+            {/* <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -555,7 +608,7 @@ export default function ConfigForm(props: configSchemaT) {
                   />
                 )}
               </AccordionDetails>
-            </Accordion>
+            </Accordion> */}
           </div>
           <Box
             sx={{
