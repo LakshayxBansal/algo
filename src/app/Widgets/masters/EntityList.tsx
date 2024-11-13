@@ -216,9 +216,7 @@ export default function EntityList(props: entitiyCompT) {
     setDialogOpen(true);
     setDlgMode(dialogMode.Add);
     if (props.fnFetchDataByID) {
-      console.log('Hello');
       const masterData = await props.fnFetchDataByID(0);
-      console.log("maserForm", masterData);
       setMasterData({
         fields: masterData[0][0] || {},
         rights: masterData[0][1] || {},

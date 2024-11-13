@@ -223,11 +223,11 @@ export default function InputForm(props: { baseData: IformData }) {
         fnFetchDataByID={getExecutiveById}
         required={false}
         formError={formError?.received_by ?? formError.received_by}
-        renderForm={(fnDialogOpen, fnDialogValue, desc, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            desc={desc}
+            masterData={masterData}
             data={data}
           />
         )}
@@ -665,7 +665,7 @@ export default function InputForm(props: { baseData: IformData }) {
                       <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
                         Final Status
                       </div>
-                    </Seperator>  
+                    </Seperator>
                     {field}
                   </Grid>
                 );
