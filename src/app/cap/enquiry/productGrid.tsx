@@ -338,14 +338,12 @@ export default function ProductGrid({
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
-            <InputControl
-              inputType={InputType.TEXT}
+            <TextField
               name="remarks"
               id="remarks"
               defaultValue={params.row.remarks}
               error={dgFormError?.remarks ?? dgFormError.remark}
               helperText={dgFormError?.remarks?.msg}
-              sx={{ width: "100%" }}
               onChange={(e: any) => {
                 setModifiedRowData((prevState) => ({
                   ...prevState,
