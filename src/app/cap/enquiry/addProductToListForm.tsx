@@ -223,7 +223,12 @@ export default function AddProductToListForm(props: masterFormPropsT) {
                 style: { textAlign: "right" },
                 onKeyDown: (e: any) => {
                   // Prevent 'e' character
-                  if (e.key === "e" || e.key === "E") {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
                     e.preventDefault();
                   }
                 },
@@ -273,7 +278,9 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
