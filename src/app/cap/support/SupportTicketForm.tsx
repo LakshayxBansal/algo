@@ -516,12 +516,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getSupportSubSatusById}
                 required
-                // key={status==='1' ? 0 : 1}
+                key={`sub_status_${status}`}
                 formError={formError?.sub_status ?? formError.sub_status}
                 defaultValue={
                  defaultValues.sub_status
                 }
-                // key={status==='1' ? 23 : 24}
                 allowNewAdd={status === '1'}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportSubStatusForm
@@ -556,6 +555,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
               />
 
               <SelectMasterWrapper
+                key={`next_action_${status}`}
                 name={"next_action"}
                 id={"next_action"}
                 label={"Next Action"}
@@ -566,7 +566,6 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 defaultValue={
                   defaultValues.next_action
                 }
-                key={status==="1"?0:1}
                
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <SupportActionForm
@@ -599,6 +598,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
                   <TextField
+                    key={`closure_remark_${status}`}
                     placeholder="Closure remarks"
                     label="Closure remarks"
                     multiline
@@ -609,7 +609,6 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     disabled={status === "1"}
                     error={formError?.closure_remark?.error}
                       helperText={formError?.closure_remark?.msg}
-                    key={status==="1"?0:1}
                     defaultValue={status === "1"? "":props.data?.closure_remark}
                   />
                 </Grid>
