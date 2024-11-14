@@ -12,7 +12,7 @@ import {
 
 import { darken, lighten, styled, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -115,7 +115,7 @@ const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
 });
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
-  '.MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal': {
+  ".MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal": {
     zIndex: 0,
   },
   "& .super-app-theme--Rejected": {
@@ -211,7 +211,7 @@ export default function ProductGrid({
     {
       field: "product",
       headerName: "Product Name",
-      width: 180,
+      width: editMode ? 190 : 117,
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
@@ -249,7 +249,7 @@ export default function ProductGrid({
       field: "quantity",
       headerName: "Quantity",
       type: "number",
-      width: 130,
+      width: editMode ? 219 : 78,
       align: "left",
       headerAlign: "left",
       renderCell: (params) => {
@@ -265,7 +265,12 @@ export default function ProductGrid({
                 style: { textAlign: "right" },
                 onKeyDown: (e: any) => {
                   // Prevent 'e' character
-                  if (e.key === "e" || e.key === "E") {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
                     e.preventDefault();
                   }
                 },
@@ -290,7 +295,7 @@ export default function ProductGrid({
       field: "unit",
       headerName: "Unit Name",
       type: "number",
-      width: 180,
+      width: editMode ? 180 : 91,
       align: "left",
       headerAlign: "left",
       renderCell: (params) => {
@@ -329,24 +334,35 @@ export default function ProductGrid({
     {
       field: "remarks",
       headerName: "Remarks",
-      width: 150,
+      width: editMode ? 200 : 91,
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
-            <InputControl
-              required
-              inputType={InputType.TEXT}
+            <TextField
               name="remarks"
               id="remarks"
               defaultValue={params.row.remarks}
               error={dgFormError?.remarks ?? dgFormError.remark}
               helperText={dgFormError?.remarks?.msg}
-              sx={{ width: "100%" }}
               onChange={(e: any) => {
                 setModifiedRowData((prevState) => ({
                   ...prevState,
                   remarks: e.target.value,
                 }));
+              }}
+              onKeyDown={(e: any) => {
+                // Stop propagation for specific keys
+                if (
+                  [
+                    " ",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "ArrowUp",
+                    "ArrowDown",
+                  ].includes(e.key)
+                ) {
+                  e.stopPropagation();
+                }
               }}
             />
           );

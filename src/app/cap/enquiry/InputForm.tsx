@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Badge,
   FormControl,
@@ -57,7 +59,11 @@ import {
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
-import { docDescriptionSchemaT, optionsDataT, selectKeyValueT } from "@/app/models/models";
+import {
+  docDescriptionSchemaT,
+  optionsDataT,
+  selectKeyValueT,
+} from "@/app/models/models";
 
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
@@ -94,7 +100,9 @@ export default function InputForm(props: {
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [subStatus, setSubStatus] = useState<optionsDataT>();
+  const [nextAction, setNextAction] = useState<optionsDataT>();
 
+  const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await enquiryDataFormat({ formData, selectValues });
@@ -153,6 +161,9 @@ export default function InputForm(props: {
     }
   };
 
+  const handleCancel = () => {
+    router.back();
+  };
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getEnquirySubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -162,7 +173,9 @@ export default function InputForm(props: {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
-    setSubStatus({id:0, name:""});
+    setSubStatus({ id: 0, name: "" });
+    setNextAction({ id: 0, name: "" });
+    setSelectValues({ ...selectValues, sub_status: null, next_action: null });
   }
 
   function onSelectChange(
@@ -177,6 +190,8 @@ export default function InputForm(props: {
   }
 
   const enquiryMaintainProducts = props.config.enquiryMaintainProducts;
+
+  console.log(selectValues);
 
   return (
     <Box>
@@ -468,7 +483,8 @@ export default function InputForm(props: {
                 </RadioGroup>
               </FormControl>
               <SelectMasterWrapper
-                // key={subStatus.id}
+                key={`sub-status-${status}`}
+                defaultValue={subStatus}
                 name={"sub_status"}
                 id={"sub_status"}
                 label={"Call Sub-Status"}
@@ -476,7 +492,6 @@ export default function InputForm(props: {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getEnquirySubSatusById}
-                defaultValue={subStatus}
                 required
                 formError={formError?.sub_status ?? formError.sub_status}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -507,12 +522,15 @@ export default function InputForm(props: {
                 )}
               />
               <SelectMasterWrapper
+                key={`next-action-${status}`}
+                defaultValue={nextAction}
                 name={"next_action"}
                 id={"next_action"}
                 label={"Next Action"}
                 dialogTitle={"Add Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getEnquiryAction}
+                fnFetchDataByID={getActionById}
                 formError={formError?.next_action ?? formError.next_action}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <ActionForm
@@ -524,11 +542,12 @@ export default function InputForm(props: {
                 disable={status === "2"}
               />
               <InputControl
+                key={`next-action-date-${status}`}
+                defaultValue={status === "2" ? null : dayjs(new Date())}
                 label="When"
                 inputType={InputType.DATETIMEINPUT}
                 id="next_action_date"
                 name="next_action_date"
-                defaultValue={dayjs(new Date())}
                 disabled={status === "2"}
                 slotProps={{
                   textField: {
@@ -543,6 +562,8 @@ export default function InputForm(props: {
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
                   <TextField
+                    key={`closure-remark-${status}`}
+                    defaultValue={""}
                     placeholder="Closure remarks"
                     label="Closure remarks"
                     multiline
@@ -575,7 +596,9 @@ export default function InputForm(props: {
                   alignItems="flex-end"
                   m={1}
                 >
-                  <Button tabIndex={-1}>Cancel</Button>
+                  <Button onClick={handleCancel} tabIndex={-1}>
+                    Cancel
+                  </Button>
                   <Button type="submit" variant="contained">
                     Submit
                   </Button>

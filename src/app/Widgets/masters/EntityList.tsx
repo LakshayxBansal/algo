@@ -63,21 +63,18 @@ export default function EntityList(props: entitiyCompT) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] =useState<GridColumnVisibilityModel>({});
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
   const router = useRouter();
-  const url  = usePathname();
+  const url = usePathname();
   let searchText;
-  
- 
-
-
 
   //for navbar search
   const searchParams = useSearchParams();
   const searchData: string | null = searchParams.get("searchText");
+  // console.log("url",url);
   //for navbar search
 
   useEffect(() => {
@@ -129,7 +126,7 @@ export default function EntityList(props: entitiyCompT) {
       //   allDfltCols = props.customCols;
       // }
       //if roleid is 1(admin) show options columns
-      
+
       allDfltCols = optionsColumn.concat(props.customCols);
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
       if (props.fnFetchColumns) {
@@ -158,18 +155,20 @@ export default function EntityList(props: entitiyCompT) {
         setAllColumns(allDfltCols);
       }
       //for title
-      // let newUrl : string;
-      // console.log(url);
-      // if(url.includes("?")){
-      //   newUrl = url+`&pgTitle=${props.title}`
-      // }else{
-      //   newUrl = url+`?pgTitle=${props.title}`
-      // }
-      // router.push(newUrl);
+      let newUrl: string;
+      if (searchParams.size > 0) {
+        // newUrl = url+`&pgTitle=${props.title}`
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.set("pgTitle", props.title);
+        // router.push(url+`?${newSearchParams.toString()}`);
+        newUrl = url + `?${newSearchParams.toString()}`;
+      } else {
+        newUrl = url + `?pgTitle=${props.title}`;
+      }
+      router.push(newUrl);
       //for title
-      
     }, 400);
-    
+
     if (searchData) {
       fetchData(searchData);
     } else {
@@ -183,7 +182,7 @@ export default function EntityList(props: entitiyCompT) {
     dialogOpen,
     searchData,
     apiRef,
-    props
+    props,
   ]);
 
   const toggleColBtn = () => {
@@ -289,7 +288,7 @@ export default function EntityList(props: entitiyCompT) {
                       backgroundColor: "#f5f5f5",
                     },
                   }}
-                  sx={{ marginLeft: '1.1em' }}
+                  sx={{ marginLeft: "1.1em" }}
                 />
               </Box>
             </Grid>
@@ -441,7 +440,7 @@ export default function EntityList(props: entitiyCompT) {
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
-            pageSizeOptions={[pgSize]}
+            pageSizeOptions={[5,pgSize,20]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}

@@ -72,8 +72,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
   const [open, setOpen] = useState(false);
   const showDetails= props.showDetails ? props.showDetails : false;
 
-  if (defaultValue !== props.defaultValue) {
+  if (defaultValue?.name !== props.defaultValue?.name) {
     props.setDialogVal(props.defaultValue as optionsDataT);
+    console.log("set the default value!");
   } 
 
   // useEffect(() => {
@@ -106,7 +107,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setOptions(results);
       }
     }, 400);
-    if (defaultValue !== props.defaultValue) {
+    if (defaultValue?.name !== props.defaultValue?.name) {
+      console.log("in the defaultvalue condition ------", defaultValue, "- ", props.defaultValue);
       setvalueChange(true);
       props.setDialogVal(props.defaultValue as optionsDataT);
       setDefaultValue(props.defaultValue);  
@@ -140,7 +142,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
   function onHighlightChange(event: SyntheticEvent, option: optionsDataT | null, reason: string) {
     if (option) {
-        hltIndex = options.indexOf(option);
+      hltIndex = options.indexOf(option);
     }  
     const text = document.getElementById(
       "popper_textid_temp_5276"
@@ -204,7 +206,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             <TextField
               id="popper_textid_temp_5276"
               variant="standard"
-              defaultValue={"Please select from Options"}
+              defaultValue={" "}
               InputProps={{
                 style: {
                   ...autocompleteTextfieldSx, 
@@ -235,6 +237,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
           if (hltIndex >= 0 && options.length > 0) {
             setInputValue(options[hltIndex].name); 
             props.setDialogVal(options[hltIndex]);
+            if (props.onChange) {
+              props.onChange(e, options[hltIndex], props.setDialogVal)
+            }
           }
           isTabbingOut = 0;
           hltIndex = -1
@@ -258,6 +263,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             ? props.onChange(event, newValue, props.setDialogVal)
             : null;
         }
+        console.log("change---!!!");
       }}
       onInputChange={(event, newInputValue, reason) => {
         setAutoSelect(false);
@@ -268,6 +274,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }}
       forcePopupIcon={true}
       // autoHighlight
+      noOptionsText={" "}
       autoComplete
       includeInputInList
       disableClearable={

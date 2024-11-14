@@ -8,7 +8,6 @@ import { iconCompT } from "@/app/models/models";
 import { useRouter } from "next/navigation";
 
 function IconComponent(props: iconCompT) {
-    console.log(props);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const router = useRouter();
