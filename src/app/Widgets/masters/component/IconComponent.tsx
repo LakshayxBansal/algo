@@ -16,10 +16,10 @@ function IconComponent(props: iconCompT) {
 
       props.setModData(data[0][1]);
       props.setMasterData({
-        fields: data[0][0] || {},
-        data: data[0][1] || {},
+        fields: data[0][0] || [],
+        data: data[0][1] || [],
         rights: data[0][2] || {},
-        config_data: data[0][3] || {},
+        config_data: data[0][3] || [],
         loggedInUserData: data[0][4] || {}
       });
       props.setDialogOpen(true);

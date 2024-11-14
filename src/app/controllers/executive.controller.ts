@@ -236,6 +236,8 @@ export async function getExecutiveById(id: number) {
         config_data,
         session
       ]
+      console.log("executive controller",result);
+      
         return[
           result
         ]
@@ -246,6 +248,8 @@ export async function getExecutiveById(id: number) {
         config_data,
         session
       ]
+      console.log("executive controller",result);
+
       return[
         result
       ]

@@ -54,7 +54,7 @@ type masterDataprop = {
   fields: {},
   data?: {},
   rights: {},
-  config_data: {},
+  config_data: [],
   loggedInUserData: {}
 }
 
@@ -73,10 +73,10 @@ export default function EntityList(props: entitiyCompT) {
   const [open, setOpen] = useState<boolean>(false);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
   const [masterData, setMasterData] = useState<masterDataprop>({
-    fields: {},
+    fields: [],
     data: {},
     rights: {},
-    config_data: {},
+    config_data: [],
     loggedInUserData: {}
   });
 
@@ -217,10 +217,12 @@ export default function EntityList(props: entitiyCompT) {
     setDlgMode(dialogMode.Add);
     if (props.fnFetchDataByID) {
       const masterData = await props.fnFetchDataByID(0);
+      console.log("entitylist", masterData);
+
       setMasterData({
-        fields: masterData[0][0] || {},
+        fields: masterData[0][0] || [],
         rights: masterData[0][1] || {},
-        config_data: masterData[0][2] || {},
+        config_data: masterData[0][2] || [],
         loggedInUserData: masterData[0][3] || {}
       });
     }
