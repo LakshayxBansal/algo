@@ -257,7 +257,7 @@ export default function AutoGrid(props: any) {
         return <CustomColor row={params.row} />;
       },
     },
-    { field: "id", headerName: "Call No.", hideable: false, width: 70, sortable: false },
+    { field: "description", headerName: "Call Description", hideable: false, width: 130, sortable: false },
     { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
       field: "date", width: 130, headerName: "Date", hideable: false,
@@ -602,7 +602,7 @@ export default function AutoGrid(props: any) {
     {
       field: "actionDate", width: 100, headerName: "Action Date",
       renderCell: (params) => {
-        return adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15);
+        return params.row.actionDate?adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
       },
       renderHeader: () => (
         <FilterMenu
@@ -673,7 +673,7 @@ export default function AutoGrid(props: any) {
       field: "actionTime",
       headerName: "Action Time",
       renderCell: (params) => {
-        return adjustToLocal(params.row.actionDate).format("hh:mm A");
+        return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
       },
     },
   ]

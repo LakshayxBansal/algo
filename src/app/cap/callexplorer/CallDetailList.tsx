@@ -90,13 +90,13 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
             headerName: "Action Date",
             width: 130,
             renderCell: (params) => {
-                return adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15);
+                return params.row.actionDate ? adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
             },
         },
         {
             field: "actionTime", headerName: "Action Time", width: 100,
             renderCell: (params) => {
-                return adjustToLocal(params.row.actionDate).format("hh:mm A");
+                return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
             },
         },
         {
