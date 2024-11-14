@@ -168,6 +168,7 @@ export default function ActionForm(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
             />
+            {/* <input type="datetime-local" value={new Date().toString().slice(0, 16)} /> */}
           </Box>
           <Box
             sx={{
