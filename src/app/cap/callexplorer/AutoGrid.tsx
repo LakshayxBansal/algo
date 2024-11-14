@@ -26,6 +26,7 @@ import FilterMenu from "./FilterMenu";
 import { getSupportCategory } from "@/app/controllers/supportCategory.controller";
 import { getSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
 import { getSupportAction } from "@/app/controllers/supportAction.controller";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
 export let handleRefresh: any;
 
 export default function AutoGrid(props: any) {
@@ -261,7 +262,7 @@ export default function AutoGrid(props: any) {
     {
       field: "date", width: 130, headerName: "Date", hideable: false,
       renderCell: (params) => {
-        return params.row.date.toDateString();
+        return adjustToLocal(params.row.date).toDate().toString().slice(0, 15);
       },
       renderHeader: () => (
         <FilterMenu
@@ -300,7 +301,7 @@ export default function AutoGrid(props: any) {
     {
       field: "time", headerName: "Time", width: 100,
       renderCell: (params) => {
-        return params.row.date.toLocaleString('en-IN', options);
+        return adjustToLocal(params.row.date).format("hh:mm A");
       },
     },
     {
@@ -601,7 +602,7 @@ export default function AutoGrid(props: any) {
     {
       field: "actionDate", width: 100, headerName: "Action Date",
       renderCell: (params) => {
-        return params.row.actionDate.toDateString();
+        return adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15);
       },
       renderHeader: () => (
         <FilterMenu
@@ -645,7 +646,7 @@ export default function AutoGrid(props: any) {
                   label="Initial Date"
                   name="initialActionDate"
                   size="small"
-                  defaultValue={filterValueState.actionDate ? filterValueState.actionDate.initial : null}
+                  defaultValue={filterValueState.actionDate ? filterValueState.actionDate?.initial : null}
                   value={filterValueState?.actionDate?.initial}
                   onChange={(val: any) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "initial": val })}
                 />
@@ -658,7 +659,7 @@ export default function AutoGrid(props: any) {
                   id="final_action_date"
                   label="Final Date"
                   name="finalActionDate"
-                  defaultValue={filterValueState.actionDate ? filterValueState.actionDate.final : null}
+                  defaultValue={filterValueState.actionDate ? filterValueState.actionDate?.final : null}
                   value={filterValueState?.actionDate?.final}
                   onChange={(val: any) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "final": val })}
                 />
@@ -672,7 +673,7 @@ export default function AutoGrid(props: any) {
       field: "actionTime",
       headerName: "Action Time",
       renderCell: (params) => {
-        return params.row.actionDate.toLocaleString('en-IN', options);
+        return adjustToLocal(params.row.actionDate).format("hh:mm A");
       },
     },
   ]
@@ -757,7 +758,7 @@ export default function AutoGrid(props: any) {
           },
         }}
                 >
-                  <Tab label="Enquiry" />
+                  <Tab label="Enquiry" autoFocus />
                   <Tab label="Support" />
                 </Tabs>
 
@@ -793,7 +794,7 @@ export default function AutoGrid(props: any) {
             </Box>
           </Grid>
         </Seperator>
-        <Paper elevation={1}
+        <Paper elevation={1} sx={{ mb: 1 }}
         >
           <MinimizedDataGrid
             disableColumnMenu
@@ -878,8 +879,8 @@ export default function AutoGrid(props: any) {
         </Paper>
 
 
-        {selectedRow && details && (<Box sx={{ mt: 2, fontSize: "14px" }}> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
-        {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white", mt: 2 }}>
+        {selectedRow && details && (<Box sx={{ mt: 1, fontSize: "11px" }}> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
+        {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white", mt: 0 }} tabIndex={-1}>
           <CallDetailList selectedRow={selectedRow} refresh={refresh} callType={value} />
         </Paper>}
         <Box
@@ -947,7 +948,10 @@ export default function AutoGrid(props: any) {
                 >
                   <Link href={`/cap/${tabOptions[value].name}?id=${selectedRow?.id}`} style={{
                     textDecoration: "none",
-                  }}>
+                    
+                  }}
+                  tabIndex={-1}
+                  >
                     Status Update
                   </Link>
                 </ContainedButton>
@@ -998,7 +1002,7 @@ export default function AutoGrid(props: any) {
                     textTransform: "none"
                   }}
                 >
-                  <Link href={`/cap`} style={{
+                  <Link href={`/cap`} tabIndex= {-1}style={{
                     textDecoration: "none",
                   }}>
                     Quit
