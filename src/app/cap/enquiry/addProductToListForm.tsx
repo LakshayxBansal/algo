@@ -220,7 +220,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               inputProps={{
                 min: 0,
                 max: 10000000,
-                style: { textAlign: "right" },
+                // style: { textAlign: "right" },
                 onKeyDown: (e: any) => {
                   // Prevent 'e' character
                   if (
