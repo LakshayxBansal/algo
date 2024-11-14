@@ -25,8 +25,6 @@ import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
 import CloseIcon from "@mui/icons-material/Close";
 import { ErrorOutline as ErrorOutlineIcon } from "@mui/icons-material";
-import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-
 
 
 type FieldItem = {
@@ -73,6 +71,7 @@ const FieldConfigurator = () => {
             { label: 'Source', value: 2 },
             { label: 'Executive Group', value: 12 },
             { label: 'Contact Group', value: 6 },
+            { label: 'Executive Department', value: 10 }
         ],
         Mode: [
             { label: 'Create', value: 1 },

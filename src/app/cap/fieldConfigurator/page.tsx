@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { logger } from '@/app/utils/logger.utils';
 import FieldConfigurator from './createCustomFields';
 
-export default async function callExplorer() {
+export default async function formFieldsConfiguration() {
   try {
     const session = await getSession();
     if (session) {
