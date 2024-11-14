@@ -3,7 +3,6 @@ import { Box, Typography, Button, Snackbar, Collapse, Alert, IconButton } from "
 import { deleteCompT } from "@/app/models/models";
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import CloseIcon from "@mui/icons-material/Close";
 
 const DeleteComponent = (props: deleteCompT) => {
   const [formError, setFormError] = useState<
