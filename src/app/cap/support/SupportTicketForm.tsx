@@ -578,21 +578,27 @@ const SupportTicketForm = (props: masterFormPropsT) => {
               />
 
               <InputControl
+                key = {`next_action_date_${status}`}
                 label="When"
                 inputType={InputType.DATETIMEINPUT}
                 id="next_action_date"
                 name="next_action_date"
                 // defaultValue={ledgerData?.next_action_date ?? dayjs(new Date())}
                 error={formError?.next_action_date?.error}
-                      helperText={formError?.next_action_date?.msg}
-                      defaultValue={masterData?.next_action_date ?
-                        adjustToLocal(masterData.next_action_date)
-                       : dayjs()}
+                helperText={formError?.next_action_date?.msg}
+                 defaultValue={status === '1' 
+                  ? masterData?.next_action_date 
+                      ? adjustToLocal(masterData.next_action_date) 
+                      : dayjs() 
+                  : null
+              }
+              
                 slotProps={{
                   openPickerButton: {
                     tabIndex: -1,
                   }
                 }}
+                disabled={status === "2"}
               />
 
               <Grid item xs={12} md={12}>

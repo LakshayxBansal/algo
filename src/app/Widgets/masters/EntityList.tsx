@@ -110,7 +110,7 @@ export default function EntityList(props: entitiyCompT) {
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
-                editReDirect = {props.editReDirect ? props.editReDirect : false}
+                link ={props.link}
               />
             );
           },
@@ -200,9 +200,14 @@ export default function EntityList(props: entitiyCompT) {
     setSearch(e.target.value);
   };
 
-  const handleAddBtn = () => {
+  const handleAddBtn = async() => {
+    if(props.link){
+      router.push(props.link);
+    }
+    else{
     setDialogOpen(true);
     setDlgMode(dialogMode.Add);
+    }
   };
 
   const handleDropDownBtn = () => {

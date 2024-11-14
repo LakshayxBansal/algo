@@ -27,6 +27,9 @@ import { getSupportCategory } from "@/app/controllers/supportCategory.controller
 import { getSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
 import { getSupportAction } from "@/app/controllers/supportAction.controller";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
+import { encrypt } from "@/app/utils/encrypt.utils";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 export let handleRefresh: any;
 
 export default function AutoGrid(props: any) {
@@ -55,6 +58,8 @@ export default function AutoGrid(props: any) {
   const [value, setValue] = React.useState(0);
 
   const apiRef = useGridApiRef();
+
+  const router = useRouter();
 
   const ITEM_HEIGHT = 30;
   const ITEM_PADDING_TOP = 8;
@@ -106,7 +111,11 @@ export default function AutoGrid(props: any) {
     const value = Number(event.target.value);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
-
+const handleStatusClick= async ()=>{
+  const encyptedId= await encrypt(selectedRow?.id);
+  const path = `/cap/${tabOptions[value].name}?id=${encyptedId}`;
+  router.push(path);
+}
 
   const handleFilterChange = (field: string, value: any) => {
     setFilterValueState((prevState) => ({
@@ -116,7 +125,6 @@ export default function AutoGrid(props: any) {
   };
 
   useEffect(() => {
-    console.log("chal raa hai");
 
     setLoading(true)
     async function getEnquiries() {
@@ -257,7 +265,9 @@ export default function AutoGrid(props: any) {
         return <CustomColor row={params.row} />;
       },
     },
-    { field: "id", headerName: "Call No.", hideable: false, width: 70, sortable: false },
+    { field: "description", headerName: "Description", hideable: false, width: 130, sortable: false },
+    { field: "id", headerName: "id", hideable: false, width: 0, sortable: false },
+
     { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
       field: "date", width: 130, headerName: "Date", hideable: false,
@@ -1015,15 +1025,11 @@ export default function AutoGrid(props: any) {
                   size="small"
                   sx={{ textTransform: "none" }}
                   disabled={!selectedRow}
+                  onClick={handleStatusClick}
                 >
-                  <Link href={`/cap/${tabOptions[value].name}?id=${encodeURIComponent(selectedRow?.id)}`} style={{
-                    textDecoration: "none",
-                    
-                  }}
-                  tabIndex={-1}
-                  >
+                 
                     Status Update
-                  </Link>
+                  
                 </ContainedButton>
               </Box>
             </Grid>

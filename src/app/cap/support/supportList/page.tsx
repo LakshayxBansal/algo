@@ -1,4 +1,4 @@
-
+"use client";
 import * as React from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
@@ -11,6 +11,7 @@ import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
 import { delSupportDataById, getSupportDataById, getSupportDataByPage } from "@/app/controllers/supportTicket.controller";
+import SupportTicketForm from "../SupportTicketForm";
 
 const columns: GridColDef[] = [
   {
@@ -61,7 +62,7 @@ export default function Action() {
       <EntityList
         title="Support Ticket List"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <ActionForm
+          <SupportTicketForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
             data={data}
@@ -77,7 +78,7 @@ export default function Action() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
-        editReDirect={true}
+        link="/cap/support"
       ></EntityList>
     </>
   );

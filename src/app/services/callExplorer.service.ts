@@ -13,7 +13,7 @@ export async function getCallEnquiriesDb(
 ) {
   try {
     let query: string =
-      "select eh.id, ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
+      "select eh.id,eh.enq_number as description , ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
                 essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate\
                 from enquiry_header_tran eh \
                 left join enquiry_ledger_tran el on el.enquiry_id=eh.id \
@@ -322,7 +322,7 @@ export async function getCallSupportTicketsDb(
 ) {
   try {
     let query: string =
-      "SELECT th.id, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
+      "SELECT th.id , th.tkt_number as description, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
        tssm.name AS subStatus, tam.name AS actionTaken, taxm.name AS nextAction, am.name AS area, tl.next_action_date AS actionDate \
 FROM ticket_header_tran th \
 LEFT JOIN ticket_ledger_tran tl ON tl.ticket_id = th.id \

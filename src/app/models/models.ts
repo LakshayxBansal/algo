@@ -231,7 +231,7 @@ export type  entitiyCompT = {
   AddAllowed?: boolean;
   uploadAllowed?:boolean;
   height?: string;
-  editReDirect?:boolean | string ;
+  link ?:string;
 };
 
 export type iconCompT = {
@@ -244,6 +244,6 @@ export type iconCompT = {
   setIds:(props: any) => void;
   delete:any;
   modify:any;
-  editReDirect: boolean | string
+ link ?:string;
 };
 export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;

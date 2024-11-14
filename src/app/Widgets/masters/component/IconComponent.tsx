@@ -6,13 +6,18 @@ import EditIcon from "@mui/icons-material/Edit";
 import { StyledMenu } from "@/app/utils/styledComponents";
 import { iconCompT } from "@/app/models/models";
 import { useRouter } from "next/navigation";
+import { encrypt } from "@/app/utils/encrypt.utils";
 
 function IconComponent(props: iconCompT) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const router = useRouter();
     async function onModifyDialog(modId: number) {
-        if (props.fnFetchDataByID && modId && !props.editReDirect) {
+      if(modId && props.link){
+        const encryptedId = await encrypt(modId);
+        router.push(`${props.link}?id=${encryptedId}`);
+      }
+      else  if (props.fnFetchDataByID && modId ) {
           const data = await props.fnFetchDataByID(modId);
           console.log(data);
           
@@ -21,9 +26,7 @@ function IconComponent(props: iconCompT) {
           props.setDlgMode(props.modify); //dialogMode.Modify
           setAnchorEl(null);
         }
-        else if(modId && props.editReDirect){
-          router.push(`/cap/support?id=${modId}`);
-        }
+        
       }
 
   function handleDeleteDialog(modId: number) {

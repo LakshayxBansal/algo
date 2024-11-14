@@ -121,7 +121,7 @@ export async function getSupportDataById(id: number) {
       let ledgerData = await getLedgerDataAction(session, id);
       const productData = await getProductDataAction(session, id);
       
-      let suggested_action_remark = `${ledgerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
+      let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
 
       for (let i = 1; i < ledgerData.length; i++) {
         if (ledgerData[i].suggested_action_remark) {
@@ -218,7 +218,7 @@ export async function getSupportDataByPage(
         filter,
         limit as number
   )
-  console.log("conts",conts);
+
   
   const rowCount = await getSupportDataCount(
     session.user.dbInfo.dbName as string,
