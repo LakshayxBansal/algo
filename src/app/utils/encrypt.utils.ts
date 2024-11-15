@@ -60,12 +60,16 @@ export async function hashCompare(plainText: any, hash: any){
 
 export async function encrypt(data: string | number) {
   const orgData= data.toString();
+  
   const result = CryptoJS.AES.encrypt(orgData, secretKey).toString();
-  return result ;
+  const urlSafe =encodeURIComponent(result);
+  return urlSafe ;
 }
 
 export async function decrypt(data: any) {
-  const decrypt= CryptoJS.AES.decrypt(data, secretKey)
-  return decrypt.toString(CryptoJS.enc.Utf8);
+  const decodedEncryptedId = decodeURIComponent(data);
+  const decryptedBytes = CryptoJS.AES.decrypt(decodedEncryptedId, secretKey);
+  const originalId = decryptedBytes.toString(CryptoJS.enc.Utf8);
+  return originalId;
   
 }

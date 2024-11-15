@@ -610,7 +610,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     multiline
                     name="closure_remark"
                     id="closure_remark"
-                    rows={2}
+                    rows={1}
                     fullWidth
                     disabled={status === "1"}
                     error={formError?.closure_remark?.error}
