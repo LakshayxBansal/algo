@@ -612,7 +612,7 @@ const handleStatusClick= async ()=>{
     {
       field: "actionDate", width: 100, headerName: "Action Date",
       renderCell: (params) => {
-        return adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15);
+        return params.row.actionDate?adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
       },
       renderHeader: () => (
         <FilterMenu
@@ -683,7 +683,7 @@ const handleStatusClick= async ()=>{
       field: "actionTime",
       headerName: "Action Time",
       renderCell: (params) => {
-        return adjustToLocal(params.row.actionDate).format("hh:mm A");
+        return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
       },
     },
   ]
