@@ -49,6 +49,7 @@ export enum InputType {
   DATETIMEINPUT,
   EMAIL,
   PHONE,
+  TEXTFIELD
 }
 // Define the additional props for the base control
 interface BaseControlProps {
@@ -78,6 +79,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
 
   let prevKey = "",
     currentKey = "";
+    let first = true;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
@@ -138,6 +140,16 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         }
         break;
       }
+     
+        case InputType.TEXTFIELD: {
+          
+          const inputProps = props as TextFieldProps;
+          
+          if(event.target.value.length===1 && first){
+            event.target.value= event.target.value.toUpperCase();
+            first= false;
+          }
+      }
     }
   }
 
@@ -177,6 +189,18 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     setValue(newValue);
     if (props.onChange) {
       props.onChange(newValue);
+    }
+  }
+
+  function handleFocus() {
+    
+    const inputElement = inputRef.current?.querySelector('input');
+    if (inputElement) {
+      const value = inputElement.value;
+      const countryCodeLength = value.indexOf(' ') + 1; 
+      if (countryCodeLength > 0) {
+        inputElement.setSelectionRange(countryCodeLength, value.length); 
+      }
     }
   }
 
@@ -255,8 +279,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           {...props}
           value={value}
           onChange={onPhoneChange}
+          onFocus= {handleFocus}
         />
       );
+      break;
+    }
+    case InputType.TEXTFIELD: {
+      // It's a TextField
+      const textFieldProps = props as TextFieldProps;
+      return <TextField {...textFieldProps} onChange={onChange} />;
       break;
     }
   }

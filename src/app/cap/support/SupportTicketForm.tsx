@@ -431,10 +431,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 sx={{ display: "flex", flexDirection: "column" }}
               >
                 <Grid item xs={12} md={12}>
-                  <TextField
+                  <InputControl
                     placeholder="Call receipt remarks"
                     label="Call receipt remarks"
                     multiline
+                    inputType={InputType.TEXTFIELD}
                     name="call_receipt_remark"
                     id="call_receipt_remark"
                     error={formError?.call_receipt_remark?.error}
@@ -446,10 +447,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <TextField
+                  <InputControl
                     placeholder="Suggested Action Remarks"
                     label="Suggested Action Remarks"
                     multiline
+                    inputType={InputType.TEXTFIELD}
                     name="suggested_action_remark"
                     defaultValue={props.data?.suggested_action_remark}
                     id="suggested_action_remark"
