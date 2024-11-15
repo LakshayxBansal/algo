@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
 import SupportTicketForm from './SupportTicketForm';
 import { getSupportDataById } from '@/app/controllers/supportTicket.controller';
+import { decrypt } from '@/app/utils/encrypt.utils';
 
 interface searchParamsProps {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -20,9 +21,11 @@ export default async function Support({ searchParams }: searchParamsProps) {
             const id= searchParams.id;
             let supportData:any={};
             let formatedSupportData:any;
-            if(id){
-           supportData = await getSupportDataById(Number(id) );
-           formatedSupportData =  await formatedData(supportData);
+            if (id) {
+              const decryptedId = await decrypt(id);
+
+              supportData = await getSupportDataById(Number(decryptedId));
+              formatedSupportData = await formatedData(supportData);
             }
            
 
@@ -59,6 +62,8 @@ export default async function Support({ searchParams }: searchParamsProps) {
             category_id,
             category,
             date,
+            created_on,
+            modified_on,
             ...remainingHeaderData
          },
          productData

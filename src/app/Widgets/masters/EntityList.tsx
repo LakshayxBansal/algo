@@ -85,6 +85,8 @@ export default function EntityList(props: entitiyCompT) {
         pgSize as number
       );
 
+      
+
       const roleId = await getRoleID();
       if (rows.data) {
         setData(rows.data);
@@ -108,6 +110,7 @@ export default function EntityList(props: entitiyCompT) {
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
+                link ={props.link}
               />
             );
           },
@@ -197,9 +200,14 @@ export default function EntityList(props: entitiyCompT) {
     setSearch(e.target.value);
   };
 
-  const handleAddBtn = () => {
+  const handleAddBtn = async() => {
+    if(props.link){
+      router.push(props.link);
+    }
+    else{
     setDialogOpen(true);
     setDlgMode(dialogMode.Add);
+    }
   };
 
   const handleDropDownBtn = () => {

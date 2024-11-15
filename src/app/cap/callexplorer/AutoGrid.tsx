@@ -27,6 +27,9 @@ import { getSupportCategory } from "@/app/controllers/supportCategory.controller
 import { getSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
 import { getSupportAction } from "@/app/controllers/supportAction.controller";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
+import { encrypt } from "@/app/utils/encrypt.utils";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 export let handleRefresh: any;
 
 export default function AutoGrid(props: any) {
@@ -55,6 +58,8 @@ export default function AutoGrid(props: any) {
   const [value, setValue] = React.useState(0);
 
   const apiRef = useGridApiRef();
+
+  const router = useRouter();
 
   const ITEM_HEIGHT = 30;
   const ITEM_PADDING_TOP = 8;
@@ -106,7 +111,11 @@ export default function AutoGrid(props: any) {
     const value = Number(event.target.value);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
-
+const handleStatusClick= async ()=>{
+  const encyptedId= await encrypt(selectedRow?.id);
+  const path = `/cap/${tabOptions[value].name}?id=${encyptedId}`;
+  router.push(path);
+}
 
   const handleFilterChange = (field: string, value: any) => {
     setFilterValueState((prevState) => ({
@@ -116,7 +125,6 @@ export default function AutoGrid(props: any) {
   };
 
   useEffect(() => {
-    console.log("chal raa hai");
 
     setLoading(true)
     async function getEnquiries() {
@@ -257,7 +265,9 @@ export default function AutoGrid(props: any) {
         return <CustomColor row={params.row} />;
       },
     },
-    { field: "description", headerName: "Call Description", hideable: false, width: 130, sortable: false },
+    { field: "description", headerName: "Description", hideable: false, width: 130, sortable: false },
+    { field: "id", headerName: "id", hideable: false, width: 0, sortable: false },
+
     { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
       field: "date", width: 130, headerName: "Date", hideable: false,
@@ -714,84 +724,140 @@ export default function AutoGrid(props: any) {
   }
 
   return (
-    <Box sx={{ bgcolor: "#f3f1f17d", minHeight: '85vh', p: 3, maxWidth: { lg: "100%", sm: "98%", xs: "98%", paddingTop: 2 } }}>
-      <Box sx={{ maxWidth: "92vw" }} >
-        <Seperator >
-          <Grid sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-
+    <Box
+      sx={{
+        bgcolor: "#f3f1f17d",
+        minHeight: "85vh",
+        p: 3,
+        maxWidth: { lg: "100%", sm: "98%", xs: "98%", paddingTop: 2 },
+      }}
+    >
+      <Box sx={{ maxWidth: "92vw" }}>
+        <Seperator>
+          <Grid
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
             <Box>
-              <Box sx={{ width: '100%' }}>
+              <Box sx={{ width: "100%" }}>
                 <Tabs
                   value={value}
                   onChange={handleChange}
                   aria-label="tabs for different content"
                   variant="fullWidth"
-        sx={{
-          position: 'relative',
-          '& .MuiTab-root': {
-            marginRight: '2px',
-            padding: '8px 16px',
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
-            border: '1px solid #d3d3d3', 
-            backgroundColor: '#f1f1f1', 
-            boxShadow: '0px 6px 6px rgba(0, 0, 0, 0.1)', 
-            transition: 'box-shadow 0.3s, transform 0.3s, background-color 0.3s',
-            '&:hover': {
-              backgroundColor: '#e0e0e0', 
-              boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.2)', 
-              transform: 'translateY(-2px)', 
-            },
-            '&.Mui-selected': {
-              backgroundColor: '#ffffff', // White background for the selected tab
-              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.3)', // Stronger shadow for active tab
-              borderBottom: '3px solid #1976d2', // Chrome-like selected tab indicator
-              fontWeight: 'bold', // Make selected tab text bold
-            },
-            '&:not(.Mui-selected)': {
-              opacity: 0.6, 
-              boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)', 
-            },
-          },
-          '& .MuiTabs-indicator': {
-            display: 'none', 
-          },
-        }}
+                  sx={{
+                    position: "relative",
+                    "& .MuiTab-root": {
+                      marginRight: "2px",
+                      padding: "8px 16px",
+                      borderTopLeftRadius: "8px",
+                      borderTopRightRadius: "8px",
+                      border: "1px solid #d3d3d3",
+                      backgroundColor: "#f1f1f1",
+                      boxShadow: "0px 6px 6px rgba(0, 0, 0, 0.1)",
+                      transition:
+                        "box-shadow 0.3s, transform 0.3s, background-color 0.3s",
+                      "&:hover": {
+                        backgroundColor: "#e0e0e0",
+                        boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.2)",
+                        transform: "translateY(-2px)",
+                      },
+                      "&.Mui-selected": {
+                        backgroundColor: "#ffffff", // White background for the selected tab
+                        boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.3)", // Stronger shadow for active tab
+                        borderBottom: "3px solid #1976d2", // Chrome-like selected tab indicator
+                        fontWeight: "bold", // Make selected tab text bold
+                      },
+                      "&:not(.Mui-selected)": {
+                        opacity: 0.6,
+                        boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                      },
+                    },
+                    "& .MuiTabs-indicator": {
+                      display: "none",
+                    },
+                  }}
                 >
                   <Tab label="Enquiry" autoFocus />
                   <Tab label="Support" />
                 </Tabs>
-
               </Box>
             </Box>
 
             <Box
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "center", md: "center", lg: "flex-end" }, // Center on small and medium screens, align right on large screens
+                justifyContent: {
+                  xs: "center",
+                  sm: "center",
+                  md: "center",
+                  lg: "flex-end",
+                }, // Center on small and medium screens, align right on large screens
                 alignItems: "center", // Vertically center the CallTypes
                 flexWrap: "nowrap", // Prevent wrapping of call types
               }}
             >
-              <Grid container spacing={2} sx={{ flex: 1, justifyContent: { xs: 'center', sm: 'center', md: 'center', lg: 'flex-end' }, alignItems: "center" }}>
-                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  flex: 1,
+                  justifyContent: {
+                    xs: "center",
+                    sm: "center",
+                    md: "center",
+                    lg: "flex-end",
+                  },
+                  alignItems: "center",
+                }}
+              >
+                <Grid
+                  item
+                  xs="auto"
+                  sx={{
+                    marginRight: "1vw",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <CallType text="Open-Unallocated" color="blue" />
                 </Grid>
-                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                <Grid
+                  item
+                  xs="auto"
+                  sx={{
+                    marginRight: "1vw",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <CallType text="Open-Allocated" color="purple" />
                 </Grid>
-                <Grid item xs="auto" sx={{ marginRight: '1vw', display: 'flex', alignItems: 'center' }}>
+                <Grid
+                  item
+                  xs="auto"
+                  sx={{
+                    marginRight: "1vw",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <CallType text="Closed-Failure" color="red" />
                 </Grid>
-                <Grid item xs="auto" sx={{ display: 'flex', alignItems: 'center' }}>
+                <Grid
+                  item
+                  xs="auto"
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
                   <CallType text="Closed-Success" color="green" />
                 </Grid>
               </Grid>
             </Box>
 
-            <Box>
-              {handleColumnVisibility()}
-            </Box>
+            <Box>{handleColumnVisibility()}</Box>
           </Grid>
         </Seperator>
         <Paper elevation={1} sx={{ mb: 1 }}
@@ -804,7 +870,9 @@ export default function AutoGrid(props: any) {
             rows={data ? data : []}
             columns={column1}
             columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+            onColumnVisibilityModelChange={(newModel: any) =>
+              setColumnVisibilityModel(newModel)
+            }
             onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
             rowSelectionModel={rowSelectionModel}
             paginationMode="server"
@@ -822,7 +890,7 @@ export default function AutoGrid(props: any) {
                   //   display: "none"
                   // },
                   ".MuiDataGrid-columnsManagementRow:first-child": {
-                    display: "none"
+                    display: "none",
                   },
                   ".MuiDataGrid-columnsManagementHeader": {
                     display: "none",
@@ -836,7 +904,7 @@ export default function AutoGrid(props: any) {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                    GridPreferencePanelsValue.columns &&
+                      GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
@@ -856,21 +924,23 @@ export default function AutoGrid(props: any) {
             sx={{
               // height: "10em",
               mt: "1%",
-              overflowY: 'auto',
+              overflowY: "auto",
               minHeight: "30px", // Set a minimum height of 30px
-              height: details ? {
-                xs: "32vh",
-                sm: "32vh",
-                '@media (min-height: 645px)': {
-                  height: '50vh',
-                },
-              } : {
-                xs: "60vh",
-                sm: "60vh",
-                '@media (min-height: 645px)': {
-                  height: '65vh',
-                },
-              },
+              height: details
+                ? {
+                    xs: "32vh",
+                    sm: "32vh",
+                    "@media (min-height: 645px)": {
+                      height: "50vh",
+                    },
+                  }
+                : {
+                    xs: "60vh",
+                    sm: "60vh",
+                    "@media (min-height: 645px)": {
+                      height: "65vh",
+                    },
+                  },
               // '& .MuiDataGrid-virtualScroller': {
               //   overflowY: 'auto',
               // },
@@ -901,29 +971,39 @@ export default function AutoGrid(props: any) {
                 >
                   {details ? "Hide Details" : "Show Details"}
                 </ContainedButton>
-                <ContainedButton variant="contained" size="small" sx={{ textTransform: "none" }}>
-               {/* <Link href={`/cap/${tabOptions[value].name}` } style={{
-                    textDecoration: "none",
-                  }}> */}
-                  <Box>
+                <ContainedButton
+                  variant="contained"
+                  size="small"
+                  sx={{ textTransform: "none" }}
+                >
+                  <Link
+                    href={`/cap/${tabOptions[value].name}`}
+                    style={{
+                      textDecoration: "none",
+                    }}
+                  >
                     New Call Receipt
-                    </Box>
-                  {/* </Link> */}
+                  </Link>
                 </ContainedButton>
               </Box>
             </Grid>
             <Grid item xs={8.5} sm={5} md={3}>
-
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center", // Center vertically on small screens
                   gap: "1vw",
-                  justifyContent: { xs: "center" }
+                  justifyContent: { xs: "center" },
                 }}
               >
                 <Tooltip
-                  title={rowSelectionModel?.length == 0 ? "Please select a row first" : enableAllocate ? "" : "Deselect Closed enquiries first"}
+                  title={
+                    rowSelectionModel?.length == 0
+                      ? "Please select a row first"
+                      : enableAllocate
+                      ? ""
+                      : "Deselect Closed enquiries first"
+                  }
                   placement="top"
                 >
                   <span>
@@ -945,15 +1025,11 @@ export default function AutoGrid(props: any) {
                   size="small"
                   sx={{ textTransform: "none" }}
                   disabled={!selectedRow}
+                  onClick={handleStatusClick}
                 >
-                  <Link href={`/cap/${tabOptions[value].name}?id=${selectedRow?.id}`} style={{
-                    textDecoration: "none",
-                    
-                  }}
-                  tabIndex={-1}
-                  >
+                 
                     Status Update
-                  </Link>
+                  
                 </ContainedButton>
               </Box>
             </Grid>
@@ -962,13 +1038,10 @@ export default function AutoGrid(props: any) {
                 sx={{
                   display: "flex",
                   alignItems: "center", // Vertically center on small screens
-                  justifyContent: { xs: "center" }
+                  justifyContent: { xs: "center" },
                 }}
               >
-                <IconButton
-                  aria-label="refresh"
-                  onClick={handleRefresh}
-                >
+                <IconButton aria-label="refresh" onClick={handleRefresh}>
                   <RefreshIcon />
                 </IconButton>
                 <Typography variant="body2" component="span" sx={{ ml: 1 }}>
@@ -980,15 +1053,17 @@ export default function AutoGrid(props: any) {
                   variant="standard"
                   size="small"
                   type="number"
-                  inputProps={{ min: 1, style: { width: '35px', textAlign: 'center' } }}
-                  sx={{ mx: 1, width: 'auto' }} // Fixed width for TextField
+                  inputProps={{
+                    min: 1,
+                    style: { width: "35px", textAlign: "center" },
+                  }}
+                  sx={{ mx: 1, width: "auto" }} // Fixed width for TextField
                 />
                 <Typography variant="body2" component="span">
                   mins.
                 </Typography>
               </Box>
             </Grid>
-
 
             <Grid item xs={10} sm={1} md={3}>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -998,8 +1073,8 @@ export default function AutoGrid(props: any) {
                   sx={{
                     marginLeft: { xs: 0, sm: -1.5 }, // Aligns right from small screens (600px) and up
                     marginTop: { xs: 2, sm: 1 }, // Adds margin on small screens for spacing
-                    width: { xs: '100%', sm: 'auto' }, // Makes full width on extra small screens
-                    textTransform: "none"
+                    width: { xs: "100%", sm: "auto" }, // Makes full width on extra small screens
+                    textTransform: "none",
                   }}
                 >
                   <Link href={`/cap`} tabIndex= {-1}style={{
@@ -1007,21 +1082,27 @@ export default function AutoGrid(props: any) {
                   }}>
                     Quit
                   </Link>
-
                 </ContainedButton>
               </Box>
             </Grid>
           </Grid>
         </Box>
-        {
-          dialogOpen && <AddDialog title={"Allocate Executive"}
+        {dialogOpen && (
+          <AddDialog
+            title={"Allocate Executive"}
             open={dialogOpen}
-            setDialogOpen={setDialogOpen}>
-              <AllocateCall setDialogOpen={setDialogOpen} data={rowSelectionModel} setRefresh={setRefresh} formName={tabOptions[value].name} />
+            setDialogOpen={setDialogOpen}
+          >
+            <AllocateCall
+              setDialogOpen={setDialogOpen}
+              data={rowSelectionModel}
+              setRefresh={setRefresh}
+              formName={tabOptions[value].name}
+            />
           </AddDialog>
-        }
+        )}
       </Box>
-    </Box >
+    </Box>
   );
 }
 
