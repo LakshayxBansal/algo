@@ -49,8 +49,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
+import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ContactForm(props: masterFormPropsT) {
+  console.log("Contact Props : ",props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -110,6 +112,10 @@ export default function ContactForm(props: masterFormPropsT) {
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (let i=1; i<=10; ++i) {
+      data[`c_col${i}`] = "";
+    }
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -183,7 +189,7 @@ export default function ContactForm(props: masterFormPropsT) {
 
   async function persistEntity(data: contactSchemaT) {
     let result;
-    const newDocsData = docData.filter((row: any) => row.type !== "db");
+    const newDocsData = docData?.filter((row: any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
       result = await updateContact(data,newDocsData);
@@ -199,6 +205,481 @@ export default function ContactForm(props: masterFormPropsT) {
       return rest;
     });
   };
+
+  function fieldPropertiesById(id : string) {
+    const field = props.desc.find(
+      (item: any) => item.column_name_id === id
+    );
+
+    if(field) {
+      return {
+        label: field.column_label,
+        required: field.is_mandatory === 1
+      };
+    }
+    return { label: "default label", required: false };
+  }
+
+  const defaultComponentMap = new Map<string, React.ReactNode> ([
+    [
+      "name",
+      <InputControl
+        inputType={InputType.TEXT}
+        autoFocus
+        id="name"
+        label="Name"
+        name="name"
+        required
+        error={formError?.name?.error}
+        helperText={formError?.name?.msg}
+        defaultValue={entityData.name}
+        fullWidth
+        onChange={handlePrintNameChange}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { name, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "alias",
+      <InputControl
+        inputType={InputType.TEXT}
+        id="alias"
+        key="alias"
+        label="Alias"
+        name="alias"
+        error={formError?.alias?.error}
+        helperText={formError?.alias?.msg}
+        defaultValue={entityData.alias}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { alias, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "print_name",
+      <InputControl
+        inputType={InputType.TEXT}
+        id="print_name"
+        key="print_name"
+        label="Print Name"
+        name="print_name"
+        error={formError?.print_name?.error}
+        helperText={formError?.print_name?.msg}
+        defaultValue={printNameFn}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { print_name, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "organisation",
+      <SelectMasterWrapper
+        name={"organisation"}
+        id={"organisation"}
+        label={"Organisation"}
+        showDetails={true}
+        onChange={(e, val, s) =>
+          setSelectValues({
+            ...selectValues,
+            organisation: val ? val : { id: 0, name: "" },
+          })
+        }
+        dialogTitle={"Organisation"}
+        fetchDataFn={getOrganisation}
+        fnFetchDataByID={getOrganisationById}
+        defaultValue={
+          {
+            id: entityData.organisation_id,
+            name: entityData.organisation,
+          } as optionsDataT
+        }
+        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+          <OrganisationForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            masterData={masterData}
+            data={data}
+          />
+        )}
+      />
+    ],
+    [
+      "pan",
+      <InputControl
+        inputType={InputType.TEXT}
+        id="pan"
+        label="PAN"
+        name="pan"
+        error={formError?.pan?.error}
+        helperText={formError?.pan?.msg}
+        defaultValue={entityData.pan}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { pan, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "aadhaar",
+      <InputControl
+        inputType={InputType.TEXT}
+        id="aadhaar"
+        label="AADHAAR"
+        name="aadhaar"
+        error={formError?.aadhaar?.error}
+        helperText={formError?.aadhaar?.msg}
+        defaultValue={entityData.aadhaar}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { aadhaar, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "contactGroup",
+      <SelectMasterWrapper
+        name={"contactGroup"}
+        id={"contactGroup"}
+        label={"Group"}
+        showDetails={true}
+        dialogTitle={"Group"}
+        fetchDataFn={getContactGroup}
+        fnFetchDataByID={getContactGroupById}
+        defaultValue={
+          {
+            id: entityData.contactGroup_id,
+            name: entityData.contactGroup,
+          } as optionsDataT
+        }
+        onChange={(e, val, s) =>
+          setSelectValues({
+            ...selectValues,
+            contactGroup: val ? val : { id: 0, name: "" },
+          })
+        }
+        renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+          <ContactGroupForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
+      />
+    ],
+    [
+      "department",
+      <SelectMasterWrapper
+        name={"department"}
+        id={"department"}
+        label={"Department"}
+        dialogTitle={"Department"}
+        defaultValue={
+          {
+            id: entityData.department_id,
+            name: entityData.department,
+          } as optionsDataT
+        }
+        onChange={(e, val, s) =>
+          setSelectValues({
+            ...selectValues,
+            department: val ? val : { id: 0, name: "" },
+          })
+        }
+        fetchDataFn={getDepartment}
+        fnFetchDataByID={getDepartmentById}
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+          <DepartmentForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
+      />
+    ],
+    [
+      "area",
+      <SelectMasterWrapper
+        name={"area"}
+        id={"area"}
+        label={"Area"}
+        dialogTitle={"Area"}
+        fetchDataFn={getArea}
+        fnFetchDataByID={getAreaById}
+        defaultValue={
+          {
+            id: entityData.area_id,
+            name: entityData.area,
+          } as optionsDataT
+        }
+        onChange={(e, val, s) =>
+          setSelectValues({
+            ...selectValues,
+            area: val ? val : { id: 0, name: "" },
+          })
+        }
+        // formError={formE}
+        renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+          <AreaForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
+      />
+    ],
+    [
+      "email",
+      <InputControl
+        inputType={InputType.EMAIL}
+        id="email"
+        label="Email"
+        name="email"
+        placeholder="Email address"
+        error={formError?.email?.error}
+        helperText={formError?.email?.msg}
+        defaultValue={entityData.email}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { email, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "mobile",
+      <InputControl
+        inputType={InputType.PHONE}
+        id="mobile"
+        label="Phone No"
+        name="mobile"
+        error={formError?.mobile?.error}
+        helperText={formError?.mobile?.msg}
+        defaultValue={entityData.mobile}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { mobile, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "whatsapp",
+      <InputControl
+        inputType={InputType.PHONE}
+        id="whatsapp"
+        label="Whatsapp No"
+        name="whatsapp"
+        // defaultCountry="FR"
+        error={formError?.whatsapp?.error}
+        helperText={formError?.whatsapp?.msg}
+        defaultValue={entityData.whatsapp}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { whatsapp, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "address1",
+      <InputControl
+        inputType={InputType.TEXT}
+        label="Address Line 1"
+        name="address1"
+        id="address1"
+        error={formError?.address1?.error}
+        helperText={formError?.address1?.msg}
+        defaultValue={entityData.address1}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { address1, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "address2",
+      <InputControl
+        inputType={InputType.TEXT}
+        label="Address Line 2"
+        name="address2"
+        id="address2"
+        error={formError?.address2?.error}
+        helperText={formError?.address2?.msg}
+        defaultValue={entityData.address2}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { address2, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "address3",
+      <InputControl
+        inputType={InputType.TEXT}
+        label="Address Line 3"
+        name="address3"
+        id="address3"
+        error={formError?.address3?.error}
+        helperText={formError?.address3?.msg}
+        defaultValue={entityData.address3}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { address3, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "country",
+      <SelectMasterWrapper
+        name={"country"}
+        id={"country"}
+        label={"Country"}
+        dialogTitle={"Add country"}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+        fetchDataFn={getCountries}
+        fnFetchDataByID={getCountryById}
+        defaultValue={
+          {
+            id: entityData.country_id,
+            name: entityData.country,
+          } as optionsDataT
+        }
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+          <CountryForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+          />
+        )}
+      />
+    ],
+    [
+      "state",
+      <SelectMasterWrapper
+        key={stateKey}
+        name={"state"}
+        id={"state"}
+        label={"State"}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+        disable={stateDisable}
+        dialogTitle={"Add State"}
+        fetchDataFn={getStatesforCountry}
+        fnFetchDataByID={getStateById}
+        defaultValue={defaultState}
+        allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+          <StateForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            data={data}
+            parentData={
+              selectValues.country?.id || entityData.country_id
+            }
+          />
+        )}
+      />
+    ],
+    [
+      "city",
+      <InputControl
+        inputType={InputType.TEXT}
+        name="city"
+        id="city"
+        label="City"
+        error={formError?.city?.error}
+        helperText={formError?.city?.msg}
+        defaultValue={entityData.city}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { city, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ],
+    [
+      "pincode",
+      <InputControl
+        inputType={InputType.TEXT}
+        name="pincode"
+        id="pincode"
+        label="Pin Code"
+        error={formError?.pincode?.error}
+        helperText={formError?.pincode?.msg}
+        defaultValue={entityData.pincode}
+        fullWidth
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { pincode, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ]
+  ])
+ 
+  let fieldArr: React.ReactElement[] = [];
+
+  props.masterData.fields.map((field: any) => {
+    if(field.is_default_column){
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-default-${field.column_name_id}`,
+      });
+
+      fieldArr.push(fld);
+    } else {
+      const fld = (
+        <CustomField 
+          key={`field-custom-${field.column_name_id}`}
+          desc={field}
+          defaultValue={entityData[field.column_name_id as keyof contactSchemaT]}
+        />
+      );
+      fieldArr.push(fld);
+    }
+    return null;
+  })
 
   return (
     <>
@@ -239,7 +720,7 @@ export default function ContactForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Tooltip
-      title={docData.length > 0 ? (
+      title={docData?.length > 0 ? (
         docData.map((file: any, index: any) => (
           <Typography variant="body2" key={index}>
             {file.description}
@@ -256,7 +737,7 @@ export default function ContactForm(props: masterFormPropsT) {
           onClick={() => setDialogOpen(true)}
           aria-label="file"
         >
-          <Badge badgeContent={docData.length} color="primary">
+          <Badge badgeContent={docData?.length} color="primary">
             <AttachFileIcon></AttachFileIcon>
           </Badge>
 
@@ -275,418 +756,13 @@ export default function ContactForm(props: masterFormPropsT) {
                 p: 2,
               }}
             >
-              <InputControl
-                inputType={InputType.TEXT}
-                autoFocus
-                id="name"
-                label="Name"
-                name="name"
-                required
-                error={formError?.name?.error}
-                helperText={formError?.name?.msg}
-                defaultValue={entityData.name}
-                onChange={handlePrintNameChange}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                id="alias"
-                label="Alias"
-                name="alias"
-                error={formError?.alias?.error}
-                helperText={formError?.alias?.msg}
-                defaultValue={entityData.alias}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { alias, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                id="print_name"
-                label="Print Name"
-                name="print_name"
-                error={formError?.print_name?.error}
-                helperText={formError?.print_name?.msg}
-                defaultValue={printNameFn}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { print_name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <SelectMasterWrapper
-                name={"organisation"}
-                id={"organisation"}
-                label={"Organisation"}
-                showDetails={true}
-                width={210}
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    organisation: val ? val : { id: 0, name: "" },
-                  })
-                }
-                dialogTitle={"Organisation"}
-                fetchDataFn={getOrganisation}
-                fnFetchDataByID={getOrganisationById}
-                defaultValue={
-                  {
-                    id: entityData.organisation_id,
-                    name: entityData.organisation,
-                  } as optionsDataT
-                }
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <OrganisationForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                id="pan"
-                label="PAN"
-                name="pan"
-                error={formError?.pan?.error}
-                helperText={formError?.pan?.msg}
-                defaultValue={entityData.pan}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { pan, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                id="aadhaar"
-                label="AADHAAR"
-                name="aadhaar"
-                error={formError?.aadhaar?.error}
-                helperText={formError?.aadhaar?.msg}
-                defaultValue={entityData.aadhaar}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { aadhaar, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
+            {fieldArr.map((field, index) => (
+              <div key={index}>
+                {field}
+              </div>
+            ))}
             </Box>
           </Paper>
-
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
-            <Seperator>Team Allocation</Seperator>
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
-              }}
-            >
-              <SelectMasterWrapper
-                name={"contactGroup"}
-                id={"contactGroup"}
-                label={"Group"}
-                width={210}
-                showDetails={true}
-                dialogTitle={"Group"}
-                fetchDataFn={getContactGroup}
-                fnFetchDataByID={getContactGroupById}
-                defaultValue={
-                  {
-                    id: entityData.contactGroup_id,
-                    name: entityData.contactGroup,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    contactGroup: val ? val : { id: 0, name: "" },
-                  })
-                }
-                renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                  <ContactGroupForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-
-              <SelectMasterWrapper
-                name={"department"}
-                id={"department"}
-                label={"Department"}
-                width={210}
-                dialogTitle={"Department"}
-                defaultValue={
-                  {
-                    id: entityData.department_id,
-                    name: entityData.department,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    department: val ? val : { id: 0, name: "" },
-                  })
-                }
-                fetchDataFn={getDepartment}
-                fnFetchDataByID={getDepartmentById}
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <DepartmentForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-
-              <SelectMasterWrapper
-                name={"area"}
-                id={"area"}
-                label={"Area"}
-                width={210}
-                dialogTitle={"Area"}
-                fetchDataFn={getArea}
-                fnFetchDataByID={getAreaById}
-                defaultValue={
-                  {
-                    id: entityData.area_id,
-                    name: entityData.area,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    area: val ? val : { id: 0, name: "" },
-                  })
-                }
-                // formError={formE}
-                renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                  <AreaForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-            </Box>
-          </Paper>
-
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
-            <Seperator>Correspondance Details</Seperator>
-
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
-              }}
-            >
-              <InputControl
-                inputType={InputType.EMAIL}
-                id="email"
-                label="Email"
-                name="email"
-                placeholder="Email address"
-                error={formError?.email?.error}
-                helperText={formError?.email?.msg}
-                defaultValue={entityData.email}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { email, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <InputControl
-                inputType={InputType.PHONE}
-                id="mobile"
-                label="Phone No"
-                name="mobile"
-                error={formError?.mobile?.error}
-                helperText={formError?.mobile?.msg}
-                defaultValue={entityData.mobile}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { mobile, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <InputControl
-                inputType={InputType.PHONE}
-                id="whatsapp"
-                label="Whatsapp No"
-                name="whatsapp"
-                // defaultCountry="FR"
-                error={formError?.whatsapp?.error}
-                helperText={formError?.whatsapp?.msg}
-                defaultValue={entityData.whatsapp}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { whatsapp, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-            </Box>
-          </Paper>
-
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
-            <Seperator>Address</Seperator>
-
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
-              }}
-            >
-              <InputControl
-                inputType={InputType.TEXT}
-                label="Address Line 1"
-                name="address1"
-                id="address1"
-                error={formError?.address1?.error}
-                helperText={formError?.address1?.msg}
-                defaultValue={entityData.address1}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { address1, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-                fullWidth
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                label="Address Line 2"
-                name="address2"
-                id="address2"
-                error={formError?.address2?.error}
-                helperText={formError?.address2?.msg}
-                defaultValue={entityData.address2}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { address2, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-                fullWidth
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                label="Address Line 3"
-                name="address3"
-                id="address3"
-                error={formError?.address3?.error}
-                helperText={formError?.address3?.msg}
-                defaultValue={entityData.address3}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { address3, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-                fullWidth
-              />
-              <SelectMasterWrapper
-                name={"country"}
-                id={"country"}
-                label={"Country"}
-                dialogTitle={"Add country"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-                fetchDataFn={getCountries}
-                fnFetchDataByID={getCountryById}
-                defaultValue={
-                  {
-                    id: entityData.country_id,
-                    name: entityData.country,
-                  } as optionsDataT
-                }
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <CountryForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-              <SelectMasterWrapper
-                key={stateKey}
-                name={"state"}
-                id={"state"}
-                label={"State"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-                disable={stateDisable}
-                dialogTitle={"Add State"}
-                fetchDataFn={getStatesforCountry}
-                fnFetchDataByID={getStateById}
-                defaultValue={defaultState}
-                allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <StateForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                    parentData={
-                      selectValues.country?.id || entityData.country_id
-                    }
-                  />
-                )}
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                name="city"
-                id="city"
-                label="City"
-                error={formError?.city?.error}
-                helperText={formError?.city?.msg}
-                defaultValue={entityData.city}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { city, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-              <InputControl
-                inputType={InputType.TEXT}
-                name="pincode"
-                id="pincode"
-                label="Pin Code"
-                error={formError?.pincode?.error}
-                helperText={formError?.pincode?.msg}
-                defaultValue={entityData.pincode}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { pincode, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-            </Box>
-          </Paper>
-
           <Box
             sx={{
               display: "flex",

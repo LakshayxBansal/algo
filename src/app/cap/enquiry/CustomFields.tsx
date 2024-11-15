@@ -92,16 +92,16 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
             case 2:
                 const option = props.desc.column_format?.split(",") || [];
                 return (
-                    <FormControl>
+                    <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
                         <RadioGroup
                             row
                             name={props.desc.column_name}
                             id={props.desc.column_name_id}
                             onChange={onStatusChange}
-                            defaultValue={props.defaultValue}
+                            defaultValue={props.defaultValue ? props.defaultValue : 0}
+                            value={status || 0}
                         >
                             <FormControlLabel
-                                value={0}
                                 control={<label />}
                                 label={props.desc.column_label + " :"}
                             />

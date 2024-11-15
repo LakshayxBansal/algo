@@ -35,16 +35,18 @@ const columns: GridColDef[] = [
 ];
 
 
-export default function executive() {
+export default async function executive() {
+
 
   return (
     <>
       <EntityList
         title="Executive List Master"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            masterData={masterData}
             data={data}
           />
         )}
@@ -55,8 +57,9 @@ export default function executive() {
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );
 }
+

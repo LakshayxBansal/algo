@@ -16,6 +16,8 @@ import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
 
 export async function getExecutiveDept(searchString: string) {
   try {
@@ -149,8 +151,33 @@ export async function getDeptById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getDeptDetailsById(session.user.dbInfo.dbName, id);
+      const rights={};
+      const config_data = await getRegionalSettings();
+      const desc = await getScreenDescription(10,1);
+      if(id){
+        const executiveDeptDetails = getDeptDetailsById(session.user.dbInfo.dbName, id);
+      
+        const result = [
+          desc,
+          executiveDeptDetails,
+          rights,
+          config_data,
+          session
+        ]
+        return[
+          result
+        ]
     }
+      const result=[
+        desc,
+        rights,
+        config_data,
+        session
+      ]
+      return[
+        result
+      ]
+  }
   } catch (error) {
     throw error;
   }

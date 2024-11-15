@@ -13,7 +13,7 @@ export async function createContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -37,6 +37,16 @@ export async function createContactDB(
         data.department_id,
         data.organisation_id,
         session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
   } catch (e) {
@@ -53,7 +63,7 @@ export async function updateContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -79,6 +89,17 @@ export async function updateContactDB(
         data.department_id,
         data.organisation_id,
         session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
+
       ],
     });
   } catch (e) {
@@ -120,13 +141,16 @@ export async function getContactDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
-        g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation \
+        g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation, \
+        cfd.c_col1,cfd.c_col2,cfd.c_col3,\
+        cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
         from contact_master c left outer join contact_group_master g on c.group_id = g.id \
         left outer join state_master s on c.state_id = s.id \
         left outer join area_master a on c.area_id =  a.id \
         left outer join country_master co on c.country_id = co.id \
         left outer join department_master d on c.department_id = d.id \
         left outer join  organisation_master o on c.organisation_id = o.id \
+        left outer join custom_fields_data cfd on cfd.object_id=c.id and cfd.object_type_id=5\
         where c.id=?;",
       values: [id],
     });
