@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -137,6 +137,20 @@ export default function ProductGrid({
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
 
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const headers = document.querySelectorAll(
+        ".MuiDataGrid-columnHeader.MuiDataGrid-withBorderColor"
+      );
+      headers.forEach((header) => header.setAttribute("tabindex", "-1"));
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Clean up the observer on unmount
+    return () => observer.disconnect();
+  }, []);
+
   function onSelectDataGridRowStateChange(
     event: React.SyntheticEvent,
     val: any,
@@ -262,7 +276,7 @@ export default function ProductGrid({
               inputProps={{
                 min: 0,
                 max: 10000000,
-                style: { textAlign: "right" },
+                // style: { textAlign: "right" },
                 onKeyDown: (e: any) => {
                   // Prevent 'e' character
                   if (
@@ -451,6 +465,9 @@ export default function ProductGrid({
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: "bold",
             },
+          },
+          "& .MuiDataGrid-footerContainer": {
+            display: "none",
           },
         }}
         rowHeight={
