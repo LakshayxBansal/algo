@@ -11,7 +11,7 @@ export async function createOrganisationDB(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      query: "call createOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       values: [
         data.alias,
         data.name,
@@ -26,6 +26,16 @@ export async function createOrganisationDB(
         data.pincode,
         data.country_id,
         session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
   } catch (e) {
@@ -42,7 +52,7 @@ export async function updateOrganisationDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -59,6 +69,16 @@ export async function updateOrganisationDB(
         data.pincode,
         data.country_id,
         session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
   } catch (e) {
@@ -140,9 +160,12 @@ export async function getOrganisationDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.address3, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
-        s.name state, co.name country \
+        s.name state, co.name country, \
+        cfd.c_col1,cfd.c_col2,cfd.c_col3,\
+        cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
         from organisation_master o left outer join state_master s on o.state_id = s.id \
         left outer join country_master co on o.country_id = co.id \
+        left outer join custom_fields_data cfd on cfd.object_id=o.id and cfd.object_type_id=19\
         where o.id=?;",
       values: [id],
     });

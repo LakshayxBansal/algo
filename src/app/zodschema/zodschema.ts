@@ -131,6 +131,16 @@ export const organisationSchema = z.object({
   modified_by: z.number().optional(),
   created_on: z.date().optional(),
   modified_on: z.date().optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 export const deptSchema = z.object({
@@ -276,7 +286,17 @@ export const contactSchema = z.object({
   country_id: z.number().optional(),
   country: z.string().optional(),
   city: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
-  stamp: z.number().optional()
+  stamp: z.number().optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 export const areaSchema = z.object({
@@ -703,6 +723,16 @@ export const executiveDeptSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.number().optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 /**

@@ -70,10 +70,10 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
   const [masterData, setMasterData] = useState<masterDataprop>({
-    fields: {},
+    fields: [],
     data: {},
     rights: {},
-    config_data: {},
+    config_data: [],
     loggedInUserData: {}
   });
 
@@ -87,12 +87,13 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
       if (props.fnFetchDataByID) {
-        const masterData = await props.fnFetchDataByID(0);
+        const data = await props.fnFetchDataByID(0);
+
         setMasterData({
-          fields: masterData[0][0] || {},
-          rights: masterData[0][1] || {},
-          config_data: masterData[0][2] || {},
-          loggedInUserData: masterData[0][3] || {}
+          fields: data[0][0] || [],
+          rights: data[0][1] || {},
+          config_data: data[0][2] || [],
+          loggedInUserData: data[0][3] || {}
         });
       }
     }
