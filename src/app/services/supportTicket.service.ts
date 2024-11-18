@@ -25,7 +25,7 @@ export async function createSupportTicketDB(
           supportData.sub_status_id,
           supportData.action_taken_id,
           supportData.next_action_id,
-          supportData.next_action_date,
+          supportData.next_action_date || null ,
           supportData.suggested_action_remark,
           supportData.action_taken_remark,
           supportData.closure_remark,
