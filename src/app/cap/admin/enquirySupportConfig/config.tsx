@@ -140,33 +140,6 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                 <AccordionDetails style={{ marginLeft: "1.3rem" }} >
                   {key === "regionalSetting" ? <>
                     <RegionalInfo config={config} setConfig={setConfig} />
-                    <InputControl
-                      key={index}
-                      inputType={InputType.CHECKBOX}
-                      id={`${key} Voucher`}
-                      name={`${key} Voucher`}
-                      custLabel={`${camelCaseToNormal(key)} Voucher`}
-                      checked={config[key]["voucher"]["voucherNumber"]}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setConfig({
-                          ...config, [key]: {
-                            ...config[key], ["voucher"]:
-                              { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked }
-                          }
-                        })
-                        if (e.target.checked === false) {
-                          setConfig({
-                            ...config, [key]: {
-                              ...config[key], ["voucher"]:
-                                { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked, ["prefix"]: "", ["suffix"]: "", ["length"]: "0", ["prefillWithZero"]: false }
-                            }
-                          })
-                        }
-                      }
-                      }
-                      disabled={!config[key]["reqd"]}
-                    />
-                    {config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
                   </>
                     :
                     <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
