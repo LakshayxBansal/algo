@@ -88,7 +88,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
   >({});
 
   const [snackOpen, setSnackOpen] = useState(false);
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>(masterData);
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>(props?.data?.tkt_number?masterData: { received_by:props?.userDetails });
   const [status, setStatus] = useState(masterData?.status?.id!= null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data?.docData ?? []);
@@ -370,7 +370,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                         formError?.received_by ?? formError.received_by
                       }
                       defaultValue={
-                        masterData.received_by
+                        props?.data?.tkt_number?masterData.received_by: props.userDetails
                       }
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <ExecutiveForm
@@ -431,10 +431,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                 sx={{ display: "flex", flexDirection: "column" }}
               >
                 <Grid item xs={12} md={12}>
-                  <TextField
+                  <InputControl
                     placeholder="Call receipt remarks"
                     label="Call receipt remarks"
                     multiline
+                    inputType={InputType.TEXTFIELD}
                     name="call_receipt_remark"
                     id="call_receipt_remark"
                     error={formError?.call_receipt_remark?.error}
@@ -446,10 +447,11 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <TextField
+                  <InputControl
                     placeholder="Suggested Action Remarks"
                     label="Suggested Action Remarks"
                     multiline
+                    inputType={InputType.TEXTFIELD}
                     name="suggested_action_remark"
                     defaultValue={props.data?.suggested_action_remark}
                     id="suggested_action_remark"
@@ -460,6 +462,24 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     disabled = {props?.data?.tkt_number? true : false}
                   />
                 </Grid>
+                {props?.data?.tkt_number && 
+                <Grid item xs={12} md={12}>
+                  <InputControl
+                    placeholder=" Action Taken Remarks"
+                    label=" Action Taken Remarks"
+                    multiline
+                    inputType={InputType.TEXTFIELD}
+                    name="action_taken_remark"
+                    defaultValue={props.data?.action_taken_remark}
+                    id="action_taken_remark"
+                    error={formError?.action_taken_remark?.error}
+                      helperText={formError?.action_taken_remark?.msg}
+                    rows={6}
+                    fullWidth
+                    
+                  />
+                </Grid>
+}
               </Grid>
             </Grid>
 

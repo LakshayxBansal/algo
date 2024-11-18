@@ -266,7 +266,7 @@ const handleStatusClick= async ()=>{
       },
     },
     { field: "description", headerName: "Description", hideable: false, width: 130, sortable: false },
-    { field: "id", headerName: "id", hideable: false, width: 0, sortable: false },
+    
 
     { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {

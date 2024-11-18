@@ -49,6 +49,7 @@ export enum InputType {
   DATETIMEINPUT,
   EMAIL,
   PHONE,
+  TEXTFIELD
 }
 // Define the additional props for the base control
 interface BaseControlProps {
@@ -77,7 +78,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   let prevKey = "",
-    currentKey = "";
+    currentKey = "", first=true;
+    
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
@@ -138,6 +140,16 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         }
         break;
       }
+     
+        case InputType.TEXTFIELD: {
+          
+          const inputProps = props as TextFieldProps;
+          
+          if(event.target.value.length===1 && first){
+            event.target.value= event.target.value.toUpperCase();
+            first = false;
+          }
+      }
     }
   }
 
@@ -177,6 +189,28 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     setValue(newValue);
     if (props.onChange) {
       props.onChange(newValue);
+    }
+  }
+
+  function handleFocus() {
+    switch (inputType) {
+      case InputType.PHONE: {
+        const inputElement = inputRef.current?.querySelector("input");
+        if (inputElement) {
+          const value = inputElement.value;
+          const countryCodeLength = value.indexOf(" ") + 1;
+          if (countryCodeLength > 0) {
+            inputElement.setSelectionRange(countryCodeLength, value.length);
+          }
+        }
+        break;
+      }
+      case InputType.TEXTFIELD: {
+        console.log("I was here");
+        first= true;   
+        break;
+         }
+        
     }
   }
 
@@ -255,8 +289,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           {...props}
           value={value}
           onChange={onPhoneChange}
+          onFocus= {handleFocus}
         />
       );
+      break;
+    }
+    case InputType.TEXTFIELD: {
+      // It's a TextField
+      const textFieldProps = props as TextFieldProps;
+      return <TextField {...textFieldProps} onChange={onChange} onFocus={handleFocus} />;
       break;
     }
   }
