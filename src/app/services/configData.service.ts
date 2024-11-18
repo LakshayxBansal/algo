@@ -4,6 +4,7 @@
 import { enquiryConfigSchemaT } from "../models/models";
 import { Session } from "next-auth";
 import executeQuery from "../utils/db/db";
+import { logger } from "../utils/logger.utils";
 
 export async function getConfigTypeId(
   crmDb: string,
@@ -28,6 +29,53 @@ export async function getConfigTypeId(
   }
 }
 
+export async function getConfigTypeDB(
+  crmDb: string
+){
+  try {
+    const query = `SELECT * FROM config_meta_data;`;
+    const result = await executeQuery({
+      host: crmDb,
+      query: query,
+      values: [],
+    });
+
+    return result;
+
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+export async function updateConfigDataDB(crmDb:string,configId : number, enabled : number, data : string) {
+  try{
+    await executeQuery({
+      host: crmDb,
+      query: "update app_config_new set enabled = ?, config = ? where object_id = ?",
+      values: [enabled, data, configId],
+    });
+  }catch(error){
+    logger.error(error);
+  }
+}
+
+export async function updateConfigDeptDB(crmDb:string,query:string) {
+  try{
+    await executeQuery({
+      host: crmDb,
+      query: "TRUNCATE TABLE config_dept_mapping;",
+      values: []
+    })
+    await executeQuery({
+      host: crmDb,
+      query: query,
+      values: [],
+    });
+  }catch(error){
+    logger.error(error);
+  }
+}
+
 export async function getConfigDB(crmDb: string) {
   try {
 
@@ -38,11 +86,26 @@ export async function getConfigDB(crmDb: string) {
       values: [],
     });
 
-    if (configResult && configResult.length > 0) {
-      return configResult;
-    }
+    return configResult;
+  
+  } catch (e) {
+    console.error("Error fetching config data:", e);
+    return null;
+  }
+}
 
-    return initConfigSchema();
+export async function getConfigDeptMappingDB(crmDb: string) {
+  try {
+
+    const configQuery = `SELECT ac.*, cm.config_type FROM config_dept_mapping ac JOIN config_meta_data cm ON ac.config_id = cm.id`;
+    const configDeptMapResult = await executeQuery({
+      host: crmDb,
+      query: configQuery,
+      values: [],
+    });
+
+    return configDeptMapResult;
+  
   } catch (e) {
     console.error("Error fetching config data:", e);
     return null;
@@ -86,20 +149,3 @@ export async function updateConfigDB(
   }
 }
 
-export async function initConfigSchema(): Promise<enquiryConfigSchemaT> {
-    return {
-        enquiryReqd: false,
-        supportReqd: false,
-        enquiryCloseCall: false,
-        enquiryMaintainProducts: false,
-        enquirySaveFAQ: false,
-        enquiryMaintainAction: false,
-        supportCloseCall: false,
-        supportMaintainProducts: false,
-        supportSaveFAQ: false,
-        supportMaintainAction: false,
-        // generalMaintainArea: false,
-        // generalMaintainImage: false,
-        // generalShowList: false,
-    };
-}

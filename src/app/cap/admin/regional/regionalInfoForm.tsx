@@ -21,18 +21,13 @@ import { getStates } from "@/app/controllers/masters.controller";
 const decimalPlacesList = ["Two Digits", "Three Digits"];
 const timeFormatList = ["12 Hours", "24 Hours"];
 
-export default function RegionalInfo(props: {
-  selectValues: selectKeyValueT;
-  setSelectValues: any;
-  entityData: any;
-  setEntityData: any;
-}) {
-  const [formError, setFormError] = useState<
-    Record<string, { msg: string; error: boolean }>
-  >({});
-  const [displayNumber, setDisplayNumber] = useState<string>(props.entityData.decimalPlaces === "Two Digits" ? "9,99,99,999.99" : "9,99,99,999.999");
-  const [decimalPlaces, setDecimalPlaces] = useState(props.entityData?.decimalPlaces);
-  const [timeFormat, setTimeFormat] = useState(props.entityData?.timeFormat);
+export default function RegionalInfo({config,setConfig}:{config:any,setConfig:any}) {
+  // const [formError, setFormError] = useState<
+  //   Record<string, { msg: string; error: boolean }>
+  // >({});
+  const [displayNumber, setDisplayNumber] = useState<string>(config.regionalSetting.decimalPlaces === "Two Digits" ? "9,99,99,999.99" : "9,99,99,999.999");
+  const [decimalPlaces, setDecimalPlaces] = useState(config.regionalSetting?.decimalPlaces);
+  const [timeFormat, setTimeFormat] = useState(config.regionalSetting?.timeFormat);
   const [snackOpen, setSnackOpen] = useState(false);  
 
   const handleCountryChange = (
@@ -41,24 +36,22 @@ export default function RegionalInfo(props: {
     setDialogValue: any
   ) => {
     if (val) {
-      props.setEntityData({});
-      props.setSelectValues({
-        country: { id: val.id, name: val.name },
-        state: null,
-        currencyString: { id: val.id, name: val.currencyString },
-        currencySubString: {
-          id: val.id,
-          name: val.currencySubString,
-        },
-        currencySymbol: { id: val.id, name: val.currencySymbol },
-        currencyCharacter: { id: val.id, name: val.currencyCharacter },
-        dateformat: { id: val.id, name: val.date_format },
-      });
+      setConfig({
+        ...config, ["regionalSetting"] : {
+          ...config["regionalSetting"], ["country"] : val.name, ["country_id"] : val.id, ["state"] : null, ["state_id"] : null, ["currencyString"] : val.currencyString,
+          ["currencySubString"] : val.currencySubString, ["currencySymbol"] : val.currencySymbol, ["currencyCharacter"] : val.currencyCharacter,
+          ["dateFormat"] : val.date_format
+        }
+      })
     }
   };
 
   const handleDecimalPlacesChange = (e: any, newValue: string) => {
-    setDecimalPlaces(newValue);
+    setConfig({
+      ...config, ["regionalSetting"] : {
+        ...config["regionalSetting"], ["decimalPlaces"] : newValue
+      }
+    })
     if (newValue === "Two Digits") {
       setDisplayNumber("9,99,99,999.99");
     } else {
@@ -89,17 +82,11 @@ export default function RegionalInfo(props: {
               onChange={(e, val, s) => handleCountryChange(e, val, s)}
               width={400}
               fetchDataFn={getCountryWithCurrency}
-              diaglogVal={
-                props.selectValues.country
-                  ? {
-                      id: props.selectValues.country?.id,
-                      name: props.selectValues.country?.name ?? "",
+              diaglogVal={{
+                      id: config.regionalSetting.country?.id,
+                      name: config.regionalSetting.country,
                       detail: undefined,
                     }
-                  : ({
-                      id:  props.entityData?.country_id,
-                      name:  props.entityData?.country,
-                    } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
@@ -112,29 +99,26 @@ export default function RegionalInfo(props: {
               label={"State"}
               width={400}
               onChange={(e, val, s) => {
-                props.setSelectValues({ ...props.selectValues, state: val });
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["state"] : val.name, ["state_id"] : val.id
+                  }
+                })
               }}
               fetchDataFn={(stateStr: string) => {
                 const country =
-                  props.selectValues.country?.name ||  props.entityData.country;
+                  config.regionalSetting.country;
                 return getStates(stateStr, country);
               }}
               disable={
-                props.selectValues.country ||  props.entityData?.country_id !== 0
+                config.regionalSetting.country ||  config.regionalSetting.country_id !== 0
                   ? false
                   : true
               }
-              diaglogVal={
-                props.selectValues.state
-                  ? {
-                      id: props.selectValues.state?.id,
-                      name: props.selectValues.state?.name ?? "",
-                      detail: undefined,
+              diaglogVal={{
+                      id: config.regionalSetting.state_id,
+                      name: config.regionalSetting.state
                     }
-                  : ({
-                      id:  props.entityData?.state_id,
-                      name:  props.entityData?.state,
-                    } as optionsDataT)
               }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
@@ -157,24 +141,19 @@ export default function RegionalInfo(props: {
               label={"Date Format"}
               width={400}
               onChange={(e, val, s) => {
-                props.setSelectValues({
-                  ...props.selectValues,
-                  dateFormat: val,
-                });
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["dateFormat"] : val.name
+                  }
+                })
               }}
               fetchDataFn={(stateStr: string) => {
                 return getDateFormat(stateStr);
               }}
-              diaglogVal={
-                props.selectValues.dateFormat
-                  ? {
-                      id: props.selectValues.dateFormat?.id,
-                      name: props.selectValues.dateFormat?.name ?? "",
+              diaglogVal={{
+                      id: config.regionalSetting.dateFormat?.id,
+                      name: config.regionalSetting.dateFormat,
                       detail: undefined,
-                    }
-                  : {
-                      id:  props.entityData?.country_id,
-                      name:  props.entityData?.dateFormat,
                     }
               }
               setDialogVal={function (
@@ -185,7 +164,11 @@ export default function RegionalInfo(props: {
             <Autocomplete
               value={timeFormat}
               onChange={(e: any, value)=>{
-                setTimeFormat(value);
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["timeFormat"] : value
+                  }
+                })
               }}
               options={timeFormatList}
               id="timeFormat"
@@ -196,8 +179,8 @@ export default function RegionalInfo(props: {
                   inputType={InputType.TEXT}
                   name="timeFormat"
                   label="Time Format"
-                  error={formError?.timeFormat?.error}
-                  helperText={formError?.timeFormat?.msg}
+                  // error={formError?.timeFormat?.error}
+                  // helperText={formError?.timeFormat?.msg}
                 />
               )}
             />
@@ -217,24 +200,18 @@ export default function RegionalInfo(props: {
               label={"Currency Symbol"}
               width={400}
               onChange={(e, val, s) => {
-                props.setSelectValues({
-                  ...props.selectValues,
-                  currencySymbol: val,
-                });
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["currencySymbol"] : val.name
+                  }
+                })
               }}
               fetchDataFn={(stateStr: string) => {
                 return getCurrencySymbol(stateStr);
               }}
-              diaglogVal={
-                props.selectValues.currencySymbol
-                  ? {
-                      id: props.selectValues.currencySymbol?.id,
-                      name: props.selectValues.currencySymbol?.name ?? "",
-                      detail: undefined,
-                    }
-                  : {
-                      id:  props.entityData?.country_id,
-                      name:  props.entityData?.currencySymbol,
+              diaglogVal={{
+                      id: config.regionalSetting.currencySymbol?.id,
+                      name: config.regionalSetting.currencySymbol
                     }
               }
               setDialogVal={function (
@@ -248,24 +225,19 @@ export default function RegionalInfo(props: {
               label={"Currency String"}
               width={400}
               onChange={(e, val, s) => {
-                props.setSelectValues({
-                  ...props.selectValues,
-                  currencyString: val,
-                });
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["currencyString"] : val.name
+                  }
+                })
               }}
               fetchDataFn={(stateStr: string) => {
                 return getCurrencyString(stateStr);
               }}
-              diaglogVal={
-                props.selectValues.currencyString
-                  ? {
-                      id: props.selectValues.currencyString?.id,
-                      name: props.selectValues.currencyString?.name ?? "",
+              diaglogVal={{
+                      id: config.regionalSetting.currencyString?.id,
+                      name: config.regionalSetting.currencyString,
                       detail: undefined,
-                    }
-                  : {
-                      id:  props.entityData?.country_id,
-                      name:  props.entityData?.currencyString,
                     }
               }
               setDialogVal={function (
@@ -279,24 +251,19 @@ export default function RegionalInfo(props: {
               label={"Currency Sub String"}
               width={400}
               onChange={(e, val, s) => {
-                props.setSelectValues({
-                  ...props.selectValues,
-                  currencySubString: val,
-                });
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["currencySubString"] : val.name
+                  }
+                })
               }}
               fetchDataFn={(stateStr: string) => {
                 return getCurrencySubString(stateStr);
               }}
-              diaglogVal={
-                props.selectValues.currencySubString
-                  ? {
-                      id: props.selectValues.currencySubString?.id,
-                      name: props.selectValues.currencySubString?.name ?? "",
+              diaglogVal={{
+                      id: config.regionalSetting.currencySubString?.id,
+                      name: config.regionalSetting.currencySubString,
                       detail: undefined,
-                    }
-                  : {
-                      id:  props.entityData?.country_id,
-                      name:  props.entityData?.currencySubString,
                     }
               }
               setDialogVal={function (
@@ -310,24 +277,19 @@ export default function RegionalInfo(props: {
               label={"Currency Character"}
               width={400}
               onChange={(e, val, s) => {
-                props.setSelectValues({
-                  ...props.selectValues,
-                  currencyCharacter: val,
-                });
+                setConfig({
+                  ...config, ["regionalSetting"] : {
+                    ...config["regionalSetting"], ["currencyCharacter"] : val.name
+                  }
+                })
               }}
               fetchDataFn={(stateStr: string) => {
                 return getCurrencyCharacter(stateStr);
               }}
-              diaglogVal={
-                props.selectValues.currencyCharacter
-                  ? {
-                      id: props.selectValues.currencyCharacter?.id,
-                      name: props.selectValues.currencyCharacter?.name ?? "",
+              diaglogVal={{
+                      id: config.regionalSetting.currencyCharacter?.id,
+                      name: config.regionalSetting.currencyCharacter,
                       detail: undefined,
-                    }
-                  : {
-                      id:  props.entityData?.country_id,
-                      name:  props.entityData?.currencyCharacter,
                     }
               }
               setDialogVal={function (
@@ -346,8 +308,8 @@ export default function RegionalInfo(props: {
                   inputType={InputType.TEXT}
                   name="decimalPlaces"
                   label="Decimal Places"
-                  error={formError?.decimalPlaces?.error}
-                  helperText={formError?.decimalPlaces?.msg}
+                  // error={formError?.decimalPlaces?.error}
+                  // helperText={formError?.decimalPlaces?.msg}
                 />
               )}
             />
@@ -360,7 +322,7 @@ export default function RegionalInfo(props: {
               label="Format for displaying numbers"
               disabled
               value={
-                ((props.selectValues.currencyCharacter?.name || props.entityData.currencyCharacter) ?? "") + " " + displayNumber
+                config.regionalSetting.currencyCharacter + " " + displayNumber
               }
             />
           </Box>

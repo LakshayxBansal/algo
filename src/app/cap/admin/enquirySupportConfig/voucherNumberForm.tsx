@@ -5,79 +5,79 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import FormGroup from "@mui/material/FormGroup";
 import { Box } from "@mui/material";
 
-interface DynamicProps {
-  config: any;  
-  setConfig: any;
-  configName: string; 
-}
-
-export default function Voucher(props: DynamicProps) {
-  const { setConfig, configName } = props;
+export default function Voucher({config,setConfig,parentKey}:{config:any,setConfig:any,parentKey:string}) {
 
   const getDisplayValue = () => {
-    const numLength = Number(props.config.Length.value);
+    const numLength = Number(config[parentKey]["voucher"]["length"]);
 
     if (numLength && numLength && !isNaN(numLength)) {
-      const zeros = props.config.PrefillWithZero.value ? "0".repeat(numLength) : "";
-      return `${props.config.Prefix.value}${zeros}${props.config.Suffix.value}`;
+      const zeros = config[parentKey]["voucher"]["prefillWithZero"] ? "0".repeat(numLength) : "";
+      return `${config[parentKey]["voucher"]["prefix"]}${zeros}${config[parentKey]["voucher"]["suffix"]}`;
     }
     return "";
   };
-
-   const handleChange = (configName: string, inputName: string, value: any)=>{    
-    setConfig((prev: any)=>{
-      const updatedConfig = { ...prev[configName][inputName] }; 
-      return {
-        ...prev,
-        [configName]: {
-          ...prev[configName],
-          [inputName]: {...prev[configName][inputName], value: value}
-        }
-      }
-    })
-  }
 
   return (
     <FormGroup>
        <Box style={{ display: "grid", width:"31.25rem", gap: "8px", columnGap: 3, gridTemplateColumns: "repeat(2, 2fr)" }}>
          <InputControl
           inputType={InputType.TEXT}
-          id={props.config.Prefix.id}
-          name={props.config.Prefix.name}
+          id="Prefix"
+          name="Prefix"
           label="Prefix"
-          defaultValue={props.config.Prefix.value}
+          defaultValue={config[parentKey]["voucher"]["prefix"]}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            handleChange(configName, "Prefix", e.target.value);
+            setConfig({
+              ...config, [parentKey]: {
+                ...config[parentKey], ["voucher"]:
+                  { ...config[parentKey]["voucher"], ["prefix"]: e.target.value }
+              }
+            })
           }}
         />
         <InputControl
           inputType={InputType.TEXT}
-          id={props.config.Suffix.id}
-          name={props.config.Suffix.name}
+          id="Suffix"
+          name="Suffix"
           label="Suffix"
-          defaultValue={props.config.Suffix.value}
+          defaultValue={config[parentKey]["voucher"]["suffix"]}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            handleChange(configName, "Suffix", e.target.value);
+            setConfig({
+              ...config, [parentKey]: {
+                ...config[parentKey], ["voucher"]:
+                  { ...config[parentKey]["voucher"], ["suffix"]: e.target.value }
+              }
+            })
           }}
           />
         <InputControl
           inputType={InputType.TEXT}
-          id={props.config.Length.id}
-          name={props.config.Length.name}
+          id="Length"
+          name="Length"
           label="Digit Length"
-          defaultValue={props.config.Length.value}
+          defaultValue={config[parentKey]["voucher"]["length"]}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            handleChange(configName, "Length", e.target.value);
+            setConfig({
+              ...config, [parentKey]: {
+                ...config[parentKey], ["voucher"]:
+                  { ...config[parentKey]["voucher"], ["length"]: e.target.value }
+              }
+            })
           }}
         />
         <InputControl
           inputType={InputType.CHECKBOX}
-          id={props.config.PrefillWithZero.id}
-          name={props.config.PrefillWithZero.name}
+          id="PrefillWithZero"
+          name="PrefillWithZero"
           custLabel="Prefill with Zero"
-          checked={props.config.PrefillWithZero.value}
+          checked={config[parentKey]["voucher"]["prefillWithZero"]}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            handleChange(configName, "PrefillWithZero", e.target.checked);
+            setConfig({
+              ...config, [parentKey]: {
+                ...config[parentKey], ["voucher"]:
+                { ...config[parentKey]["voucher"], ["prefillWithZero"]: e.target.checked}
+              }
+            })
           }}
         />
         <InputControl
