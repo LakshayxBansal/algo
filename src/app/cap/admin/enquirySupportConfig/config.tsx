@@ -30,6 +30,15 @@ const MenuProps = {
   },
 };
 
+function camelCaseToNormal(camelCaseStr: string) {
+  return camelCaseStr
+      .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle cases like "HTMLParser"
+      .trim()
+      .toLowerCase()
+      .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
+}
+
 // function getStyles(id: number, configDept: readonly number[], theme: Theme) {
 //   // console.log("style id : ", id);
 //   // console.log("style array : ", configDept);
@@ -108,7 +117,7 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                     inputType={InputType.CHECKBOX}
                     id={"field.name"}
                     name={"field.name"}
-                    custLabel={key}
+                    custLabel={camelCaseToNormal(key)}
                     checked={config[key]["reqd"]}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setConfig({ ...config, [key]: { ...config[key], ["reqd"]: e.target.checked } })
@@ -126,7 +135,7 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                       inputType={InputType.CHECKBOX}
                       id={`${key} Voucher`}
                       name={`${key} Voucher`}
-                      custLabel={`${key} Voucher`}
+                      custLabel={`${camelCaseToNormal(key)} Voucher`}
                       checked={config[key]["voucher"]["voucherNumber"]}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setConfig({
@@ -152,7 +161,7 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                                   inputType={InputType.CHECKBOX}
                                   id={`${key}${k}`}
                                   name={`${key}${k}`}
-                                  custLabel={`${key}${k}`}
+                                  custLabel={`${camelCaseToNormal(k)}`}
                                   checked={config[key][k]}
                                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setConfig({ ...config, [key]: { ...config[key], [k]: e.target.checked } })
@@ -166,7 +175,7 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                         </Box>
                         {["enquiry","support","contract","enquiryGeneration"].includes(key) && 
                         <Box>
-                          <Typography>Select Department to Allocate : </Typography>
+                          <Typography>Select Department to Allocate</Typography>
                           <FormControl sx={{ m: 1, width: 300 }}>
                             <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
                             <Select
@@ -206,7 +215,7 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                         inputType={InputType.CHECKBOX}
                         id={`${key} Voucher`}
                         name={`${key} Voucher`}
-                        custLabel={`${key} Voucher`}
+                        custLabel={`${camelCaseToNormal(key)} Voucher`}
                         checked={config[key]["voucher"]["voucherNumber"]}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setConfig({
