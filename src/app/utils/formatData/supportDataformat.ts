@@ -1,5 +1,7 @@
+'use server'
 import Category from "@/app/cap/admin/lists/categoryList/page";
 import { selectKeyValueT } from "@/app/models/models";
+import { adjustToLocal } from "../utcToLocal";
 
 export async function supportDataFormat({
   formData,
@@ -10,17 +12,18 @@ export async function supportDataFormat({
   selectValues: selectKeyValueT;
   otherData?: any
 }) {
-  const formatDate = (dateStr: string ): string => {
+  const formatDate = (dateStr: string | null | undefined ): string => {
+    if (!dateStr || dateStr === "") return "";
     const dt = new Date(dateStr);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
 
-  const date = formatDate(formData.get("date") as string);
+  const date= formatDate(  otherData?.masterData.date ? adjustToLocal(otherData?.masterData.date).toString() :formData.get("date") as string);
   const nextActionDate = formatDate(formData.get("next_action_date") as string);
 
   const headerData = {
     tkt_number: formData.get("tkt_number") as string ?? otherData?.tkt_number,
-    date,
+    date: date,
     contact_id: selectValues.contact?.id,
     received_by_id: selectValues.received_by?.id,
     category_id: selectValues.category?.id,
