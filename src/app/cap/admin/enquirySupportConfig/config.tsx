@@ -32,11 +32,11 @@ const MenuProps = {
 
 function camelCaseToNormal(camelCaseStr: string) {
   return camelCaseStr
-      .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
-      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle cases like "HTMLParser"
-      .trim()
-      .toLowerCase()
-      .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle cases like "HTMLParser"
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
 }
 
 // function getStyles(id: number, configDept: readonly number[], theme: Theme) {
@@ -50,7 +50,7 @@ function camelCaseToNormal(camelCaseStr: string) {
 // }
 
 
-export default function ConfigForm({configData,allDepts,configDeptMap}:{configData: any,allDepts : any, configDeptMap : any}) {
+export default function ConfigForm({ configData, allDepts, configDeptMap }: { configData: any, allDepts: any, configDeptMap: any }) {
   const theme = useTheme();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -62,7 +62,7 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
     const {
       target: { value },
     } = event;
-    console.log("value : ",value);
+    console.log("value : ", value);
     setConfigDept(
       typeof value === 'string' ? value.split(',') : value,
     );
@@ -71,24 +71,21 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
   const [config, setConfig] = useState(configData);
   console.log("configDept : ", configDept);
   const handleSubmit = async (formData: FormData) => {
-    
-    const result = await updateConfigData(config,configDept);
-    if(result){
+
+    const result = await updateConfigData(config, configDept);
+    if (result) {
       setSnackOpen(true);
-    }else{
+    } else {
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   };
 
-  // async function persistEntity(data: any) {
-  //   let result;
-  //   result = await updateConfigData(data);
-  //   return result;
-  // }
-
-  const handleCancel = () => { };
+  const handleCancel = () => {
+    setConfig(configData);
+    setConfigDept(configDeptMap);
+  };
 
   return (
     <Paper>
@@ -115,19 +112,49 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                   <InputControl
                     key={index}
                     inputType={InputType.CHECKBOX}
-                    id={"field.name"}
-                    name={"field.name"}
+                    id={`${key}`}
+                    name={`${key}`}
                     custLabel={camelCaseToNormal(key)}
                     checked={config[key]["reqd"]}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setConfig({ ...config, [key]: { ...config[key], ["reqd"]: e.target.checked } })
+                      if (e.target.checked === false) {
+                        let updatedKeyValues = { ...config[key] };
+                        Object.keys({ ...config[key] }).forEach((k, index) => {
+                        
+                          if (typeof (config[key][k]) === "boolean") {
+                            updatedKeyValues[k] = false;
+                          }
+                          else if (typeof (config[key][k]) === "string") {
+                            updatedKeyValues[k] = "";
+                          }else if(typeof (config[key][k]) === "number"){
+                            updatedKeyValues[k] = 0;
+                          }
+                        });
+                        if (config[key]["voucher"] !== undefined) {
+                          updatedKeyValues["voucher"]["voucherNumber"] = false;
+                          updatedKeyValues["voucher"]["prefix"] = "";
+                          updatedKeyValues["voucher"]["suffix"] = "";
+                          updatedKeyValues["voucher"]["length"] = "0";
+                          updatedKeyValues["voucher"]["prefillWithZero"] = false;
+                        }
+                        setConfig({
+                          ...config,
+                          [key] : updatedKeyValues
+                        })
+                        setConfigDept({
+                          ...configDept,
+                          [key] : []
+                        })
+                      }
+                    }
 
                     }
                   // disabled={field.disable}
                   />
                   {/* </Box> */}
                 </AccordionSummary>
-                <AccordionDetails style={{ marginLeft: "1.3rem" }}>
+                <AccordionDetails style={{ marginLeft: "1.3rem" }} >
                   {key === "regionalSetting" ? <>
                     <RegionalInfo config={config} setConfig={setConfig} />
                     <InputControl
@@ -137,13 +164,22 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                       name={`${key} Voucher`}
                       custLabel={`${camelCaseToNormal(key)} Voucher`}
                       checked={config[key]["voucher"]["voucherNumber"]}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setConfig({
                           ...config, [key]: {
                             ...config[key], ["voucher"]:
                               { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked }
                           }
                         })
+                        if (e.target.checked === false) {
+                          setConfig({
+                            ...config, [key]: {
+                              ...config[key], ["voucher"]:
+                                { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked, ["prefix"]: "", ["suffix"]: "", ["length"]: "0", ["prefillWithZero"]: false }
+                            }
+                          })
+                        }
+                      }
                       }
                       disabled={!config[key]["reqd"]}
                     />
@@ -173,41 +209,41 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
 
                           })}
                         </Box>
-                        {["enquiry","support","contract","enquiryGeneration"].includes(key) && 
-                        <Box>
-                          <Typography>Select Department to Allocate</Typography>
-                          <FormControl sx={{ m: 1, width: 300 }}>
-                            <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
-                            <Select
-                              labelId="demo-multiple-chip-label"
-                              id="demo-multiple-chip"
-                              multiple
-                              value={configDept[key]}
-                              onChange={(e: SelectChangeEvent<typeof configDept>) =>
-                                setConfigDept({...configDept, [key] : e.target.value})
-                              }
-                              input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
-                              renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                  {selected.map((value : any) => (
-                                    <Chip key={value} label={allDepts.filter((dept:any)=>dept.id === value)[0].name} />
-                                  ))}
-                                </Box>
-                              )}
-                              MenuProps={MenuProps}
-                            >
-                              {allDepts.map((dept : any) => (
-                                <MenuItem
-                                  key={dept.name}
-                                  value={dept.id}
+                        {["enquiry", "support", "contract", "enquiryGeneration"].includes(key) &&
+                          <Box>
+                            <Typography>Select Department to Allocate</Typography>
+                            <FormControl sx={{ m: 1, width: 300 }}>
+                              <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
+                              <Select
+                                labelId="demo-multiple-chip-label"
+                                id="demo-multiple-chip"
+                                multiple
+                                value={configDept[key]}
+                                onChange={(e: SelectChangeEvent<typeof configDept>) =>
+                                  setConfigDept({ ...configDept, [key]: e.target.value })
+                                }
+                                input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
+                                renderValue={(selected) => (
+                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value: any) => (
+                                      <Chip key={value} label={allDepts.filter((dept: any) => dept.id === value)[0].name} />
+                                    ))}
+                                  </Box>
+                                )}
+                                MenuProps={MenuProps}
+                              >
+                                {allDepts.map((dept: any) => (
+                                  <MenuItem
+                                    key={dept.name}
+                                    value={dept.id}
                                   // style={getStyles(dept.id, configDept[key], theme)}
-                                >
-                                  {dept.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Box>
+                                  >
+                                    {dept.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Box>
                         }
                       </Box>
                       {config[key]["voucher"] !== undefined && <InputControl
@@ -217,13 +253,22 @@ export default function ConfigForm({configData,allDepts,configDeptMap}:{configDa
                         name={`${key} Voucher`}
                         custLabel={`${camelCaseToNormal(key)} Voucher`}
                         checked={config[key]["voucher"]["voucherNumber"]}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setConfig({
                             ...config, [key]: {
                               ...config[key], ["voucher"]:
                                 { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked }
                             }
                           })
+                          if(e.target.checked === false) {
+                            setConfig({
+                              ...config, [key]: {
+                                ...config[key], ["voucher"]:
+                                  { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked, ["prefix"]: "", ["suffix"]: "", ["length"]: "0", ["prefillWithZero"]: false }
+                              }
+                            })
+                          }
+                        }
                         }
                         disabled={!config[key]["reqd"]}
                       />}
