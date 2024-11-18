@@ -24,7 +24,6 @@ export async function updateConfigData(config: any, configDept : any) {
     const session = await getSession();
     if(session){
       const configType = await getConfigType();
-      let configArray = [];
       Object.keys({...config}).map(async(key,index)=>{
         const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
         const enabled = config[key].reqd ? 1 : 0;
@@ -82,7 +81,7 @@ export async function fetchConfigDeptMapData(): Promise<configSchemaT | null> {
     const configArray = await getConfigDeptMappingDB(session.user.dbInfo.dbName); 
 
     const configObj : any = {};
-    ["enquiry","support","contract","enquiryGeneration"].map((configType : string)=>{
+    ["enquiry","support","contract"].map((configType : string)=>{
       configObj[configType] = [];
     })
     configArray.map((i : any)=>{

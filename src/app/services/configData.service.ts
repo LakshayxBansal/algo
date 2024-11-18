@@ -51,7 +51,7 @@ export async function updateConfigDataDB(crmDb:string,configId : number, enabled
   try{
     await executeQuery({
       host: crmDb,
-      query: "update app_config_new set enabled = ?, config = ? where object_id = ?",
+      query: "update app_config set enabled = ?, config = ? where config_type_id = ?",
       values: [enabled, data, configId],
     });
   }catch(error){
@@ -79,7 +79,7 @@ export async function updateConfigDeptDB(crmDb:string,query:string) {
 export async function getConfigDB(crmDb: string) {
   try {
 
-    const configQuery = `SELECT ac.*, cm.config_type FROM app_config_new ac JOIN config_meta_data cm ON ac.object_id = cm.id`;
+    const configQuery = `SELECT ac.*, cm.config_type FROM app_config ac JOIN config_meta_data cm ON ac.config_type_id = cm.id`;
     const configResult = await executeQuery({
       host: crmDb,
       query: configQuery,

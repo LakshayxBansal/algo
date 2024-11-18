@@ -89,52 +89,53 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1-content"
                   id="panel1-header"
+                  sx={{height: "50px"}}
                 >
-                  {/* <Box> */}
-                  <InputControl
-                    key={index}
-                    inputType={InputType.CHECKBOX}
-                    id={`${key}`}
-                    name={`${key}`}
-                    custLabel={camelCaseToNormal(key)}
-                    checked={config[key]["reqd"]}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setConfig({ ...config, [key]: { ...config[key], ["reqd"]: e.target.checked } })
-                      if (e.target.checked === false) {
-                        let updatedKeyValues = { ...config[key] };
-                        Object.keys({ ...config[key] }).forEach((k, index) => {
-                        
-                          if (typeof (config[key][k]) === "boolean") {
-                            updatedKeyValues[k] = false;
-                          }
-                          else if (typeof (config[key][k]) === "string") {
-                            updatedKeyValues[k] = "";
-                          }else if(typeof (config[key][k]) === "number"){
-                            updatedKeyValues[k] = 0;
-                          }
-                        });
-                        if (config[key]["voucher"] !== undefined) {
-                          updatedKeyValues["voucher"]["voucherNumber"] = false;
-                          updatedKeyValues["voucher"]["prefix"] = "";
-                          updatedKeyValues["voucher"]["suffix"] = "";
-                          updatedKeyValues["voucher"]["length"] = "0";
-                          updatedKeyValues["voucher"]["prefillWithZero"] = false;
-                        }
-                        setConfig({
-                          ...config,
-                          [key] : updatedKeyValues
-                        })
-                        setConfigDept({
-                          ...configDept,
-                          [key] : []
-                        })
-                      }
-                    }
+                  {["enquiry","support","contract"].includes(key) ?
+                    <InputControl
+                      key={index}
+                      inputType={InputType.CHECKBOX}
+                      id={`${key}`}
+                      name={`${key}`}
+                      custLabel={camelCaseToNormal(key)}
+                      checked={config[key]["reqd"]}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setConfig({ ...config, [key]: { ...config[key], ["reqd"]: e.target.checked } })
+                        if (e.target.checked === false) {
+                          let updatedKeyValues = { ...config[key] };
+                          Object.keys({ ...config[key] }).forEach((k, index) => {
 
-                    }
-                  // disabled={field.disable}
-                  />
-                  {/* </Box> */}
+                            if (typeof (config[key][k]) === "boolean") {
+                              updatedKeyValues[k] = false;
+                            }
+                            else if (typeof (config[key][k]) === "string") {
+                              updatedKeyValues[k] = "";
+                            } else if (typeof (config[key][k]) === "number") {
+                              updatedKeyValues[k] = 0;
+                            }
+                          });
+                          if (config[key]["voucher"] !== undefined) {
+                            updatedKeyValues["voucher"]["voucherNumber"] = false;
+                            updatedKeyValues["voucher"]["prefix"] = "";
+                            updatedKeyValues["voucher"]["suffix"] = "";
+                            updatedKeyValues["voucher"]["length"] = "0";
+                            updatedKeyValues["voucher"]["prefillWithZero"] = false;
+                          }
+                          setConfig({
+                            ...config,
+                            [key]: updatedKeyValues
+                          })
+                          setConfigDept({
+                            ...configDept,
+                            [key]: []
+                          })
+                        }
+                      }
+
+                      }
+                    /> : 
+                    <Typography sx={{marginLeft: "30px"}}>{camelCaseToNormal(key)}</Typography>
+                  }
                 </AccordionSummary>
                 <AccordionDetails style={{ marginLeft: "1.3rem" }} >
                   {key === "regionalSetting" ? <>
@@ -168,7 +169,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                     {config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
                   </>
                     :
-                    <Box sx={{ display: "flex", flexDirection: "row" , justifyContent: "space-between" }}>
+                    <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                       <Box sx={{ display: "flex", flexDirection: "column" }}>
                         {
                           Object.keys({ ...config[key] }).map((k, index) => {
@@ -190,71 +191,71 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                             }
 
                           })}
-                      
-                      {config[key]["voucher"] !== undefined && <InputControl
-                        key={index}
-                        inputType={InputType.CHECKBOX}
-                        id={`${key} Voucher`}
-                        name={`${key} Voucher`}
-                        custLabel={`${camelCaseToNormal(key)} Voucher`}
-                        checked={config[key]["voucher"]["voucherNumber"]}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setConfig({
-                            ...config, [key]: {
-                              ...config[key], ["voucher"]:
-                                { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked }
-                            }
-                          })
-                          if(e.target.checked === false) {
+
+                        {config[key]["voucher"] !== undefined && <InputControl
+                          key={index}
+                          inputType={InputType.CHECKBOX}
+                          id={`${key} Voucher`}
+                          name={`${key} Voucher`}
+                          custLabel={`${camelCaseToNormal(key)} Voucher`}
+                          checked={config[key]["voucher"]["voucherNumber"]}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             setConfig({
                               ...config, [key]: {
                                 ...config[key], ["voucher"]:
-                                  { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked, ["prefix"]: "", ["suffix"]: "", ["length"]: "0", ["prefillWithZero"]: false }
+                                  { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked }
                               }
                             })
+                            if (e.target.checked === false) {
+                              setConfig({
+                                ...config, [key]: {
+                                  ...config[key], ["voucher"]:
+                                    { ...config[key]["voucher"], ["voucherNumber"]: e.target.checked, ["prefix"]: "", ["suffix"]: "", ["length"]: "0", ["prefillWithZero"]: false }
+                                }
+                              })
+                            }
                           }
-                        }
-                        }
-                        disabled={!config[key]["reqd"]}
-                      />}
-                      {key !== undefined && config[key]["voucher"] !== undefined && config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
+                          }
+                          disabled={!config[key]["reqd"]}
+                        />}
+                        {key !== undefined && config[key]["voucher"] !== undefined && config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
                       </Box>
                       {["enquiry", "support", "contract", "enquiryGeneration"].includes(key) &&
-                          <Box>
-                            <Typography>Select Department to Allocate</Typography>
-                            <FormControl sx={{ m: 1, width: 300 }}>
-                              <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
-                              <Select
-                                labelId="demo-multiple-chip-label"
-                                id="demo-multiple-chip"
-                                multiple
-                                value={configDept[key]}
-                                onChange={(e: SelectChangeEvent<typeof configDept>) =>
-                                  setConfigDept({ ...configDept, [key]: e.target.value })
-                                }
-                                input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
-                                renderValue={(selected) => (
-                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value: any) => (
-                                      <Chip key={value} label={allDepts.filter((dept: any) => dept.id === value)[0].name} />
-                                    ))}
-                                  </Box>
-                                )}
-                                MenuProps={MenuProps}
-                              >
-                                {allDepts.map((dept: any) => (
-                                  <MenuItem
-                                    key={dept.name}
-                                    value={dept.id}
+                        <Box>
+                          <Typography>Select Department to Allocate</Typography>
+                          <FormControl sx={{ m: 1, width: 300 }}>
+                            <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
+                            <Select
+                              labelId="demo-multiple-chip-label"
+                              id="demo-multiple-chip"
+                              multiple
+                              value={configDept[key]}
+                              onChange={(e: SelectChangeEvent<typeof configDept>) =>
+                                setConfigDept({ ...configDept, [key]: e.target.value })
+                              }
+                              input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
+                              renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                  {selected.map((value: any) => (
+                                    <Chip key={value} label={allDepts.filter((dept: any) => dept.id === value)[0].name} />
+                                  ))}
+                                </Box>
+                              )}
+                              MenuProps={MenuProps}
+                            >
+                              {allDepts.map((dept: any) => (
+                                <MenuItem
+                                  key={dept.name}
+                                  value={dept.id}
                                   style={getStyles(dept.id, configDept[key], theme)}
-                                  >
-                                    {dept.name}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        }
+                                >
+                                  {dept.name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Box>
+                      }
                     </Box>
                   }
                 </AccordionDetails>
