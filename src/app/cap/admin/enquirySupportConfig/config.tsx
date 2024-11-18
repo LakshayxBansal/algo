@@ -6,14 +6,8 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Snackbar from "@mui/material/Snackbar";
 import { updateConfigData } from "../../../controllers/configData.controller";
-import {
-  configSchemaT,
-  enquiryConfigSchemaT,
-  selectKeyValueT,
-} from "@/app/models/models";
 import { Accordion, AccordionDetails, AccordionSummary, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CheckBoxForm from "./checkBoxForm";
 import Voucher from "./voucherNumberForm";
 import RegionalInfo from "../regional/regionalInfoForm";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -32,22 +26,20 @@ const MenuProps = {
 
 function camelCaseToNormal(camelCaseStr: string) {
   return camelCaseStr
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle cases like "HTMLParser"
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
     .trim()
     .toLowerCase()
     .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
 }
 
-// function getStyles(id: number, configDept: readonly number[], theme: Theme) {
-//   // console.log("style id : ", id);
-//   // console.log("style array : ", configDept);
-//   return {
-//     fontWeight: configDept.includes(id)
-//       ? theme.typography.fontWeightMedium
-//       : theme.typography.fontWeightRegular,
-//   };
-// }
+function getStyles(id: number, configDept: readonly number[], theme: Theme) {
+  return {
+    fontWeight: configDept.includes(id)
+      ? theme.typography.fontWeightMedium
+      : theme.typography.fontWeightRegular,
+  };
+}
 
 
 export default function ConfigForm({ configData, allDepts, configDeptMap }: { configData: any, allDepts: any, configDeptMap: any }) {
@@ -58,18 +50,8 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
   const [snackOpen, setSnackOpen] = useState(false);
   const [configDept, setConfigDept] = React.useState(configDeptMap);
 
-  const handleChange = (event: SelectChangeEvent<typeof configDept>) => {
-    const {
-      target: { value },
-    } = event;
-    console.log("value : ", value);
-    setConfigDept(
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
   const [config, setConfig] = useState(configData);
-  console.log("configDept : ", configDept);
+
   const handleSubmit = async (formData: FormData) => {
 
     const result = await updateConfigData(config, configDept);
@@ -186,9 +168,9 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                     {config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
                   </>
                     :
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                        <Box sx={{ display: "flex", flexDirection: "column" }}>{
+                    <Box sx={{ display: "flex", flexDirection: "row" , justifyContent: "space-between" }}>
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        {
                           Object.keys({ ...config[key] }).map((k, index) => {
                             if (k !== "reqd" && typeof (config[key][k]) === "boolean") {
                               return (
@@ -208,44 +190,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                             }
 
                           })}
-                        </Box>
-                        {["enquiry", "support", "contract", "enquiryGeneration"].includes(key) &&
-                          <Box>
-                            <Typography>Select Department to Allocate</Typography>
-                            <FormControl sx={{ m: 1, width: 300 }}>
-                              <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
-                              <Select
-                                labelId="demo-multiple-chip-label"
-                                id="demo-multiple-chip"
-                                multiple
-                                value={configDept[key]}
-                                onChange={(e: SelectChangeEvent<typeof configDept>) =>
-                                  setConfigDept({ ...configDept, [key]: e.target.value })
-                                }
-                                input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
-                                renderValue={(selected) => (
-                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value: any) => (
-                                      <Chip key={value} label={allDepts.filter((dept: any) => dept.id === value)[0].name} />
-                                    ))}
-                                  </Box>
-                                )}
-                                MenuProps={MenuProps}
-                              >
-                                {allDepts.map((dept: any) => (
-                                  <MenuItem
-                                    key={dept.name}
-                                    value={dept.id}
-                                  // style={getStyles(dept.id, configDept[key], theme)}
-                                  >
-                                    {dept.name}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        }
-                      </Box>
+                      
                       {config[key]["voucher"] !== undefined && <InputControl
                         key={index}
                         inputType={InputType.CHECKBOX}
@@ -273,6 +218,43 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         disabled={!config[key]["reqd"]}
                       />}
                       {key !== undefined && config[key]["voucher"] !== undefined && config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
+                      </Box>
+                      {["enquiry", "support", "contract", "enquiryGeneration"].includes(key) &&
+                          <Box>
+                            <Typography>Select Department to Allocate</Typography>
+                            <FormControl sx={{ m: 1, width: 300 }}>
+                              <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
+                              <Select
+                                labelId="demo-multiple-chip-label"
+                                id="demo-multiple-chip"
+                                multiple
+                                value={configDept[key]}
+                                onChange={(e: SelectChangeEvent<typeof configDept>) =>
+                                  setConfigDept({ ...configDept, [key]: e.target.value })
+                                }
+                                input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
+                                renderValue={(selected) => (
+                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value: any) => (
+                                      <Chip key={value} label={allDepts.filter((dept: any) => dept.id === value)[0].name} />
+                                    ))}
+                                  </Box>
+                                )}
+                                MenuProps={MenuProps}
+                              >
+                                {allDepts.map((dept: any) => (
+                                  <MenuItem
+                                    key={dept.name}
+                                    value={dept.id}
+                                  style={getStyles(dept.id, configDept[key], theme)}
+                                  >
+                                    {dept.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Box>
+                        }
                     </Box>
                   }
                 </AccordionDetails>
@@ -296,7 +278,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
         </form>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={6000}
+          autoHideDuration={3000}
           onClose={() => setSnackOpen(false)}
           message={"Configuration saved successfully!"}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
