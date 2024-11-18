@@ -78,8 +78,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   let prevKey = "",
-    currentKey = "";
-    let first = true;
+    currentKey = "", first=true;
+    
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
@@ -147,7 +147,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           
           if(event.target.value.length===1 && first){
             event.target.value= event.target.value.toUpperCase();
-            first= false;
+            first = false;
           }
       }
     }
@@ -193,14 +193,24 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   }
 
   function handleFocus() {
-    
-    const inputElement = inputRef.current?.querySelector('input');
-    if (inputElement) {
-      const value = inputElement.value;
-      const countryCodeLength = value.indexOf(' ') + 1; 
-      if (countryCodeLength > 0) {
-        inputElement.setSelectionRange(countryCodeLength, value.length); 
+    switch (inputType) {
+      case InputType.PHONE: {
+        const inputElement = inputRef.current?.querySelector("input");
+        if (inputElement) {
+          const value = inputElement.value;
+          const countryCodeLength = value.indexOf(" ") + 1;
+          if (countryCodeLength > 0) {
+            inputElement.setSelectionRange(countryCodeLength, value.length);
+          }
+        }
+        break;
       }
+      case InputType.TEXTFIELD: {
+        console.log("I was here");
+        first= true;   
+        break;
+         }
+        
     }
   }
 
@@ -287,7 +297,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.TEXTFIELD: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <TextField {...textFieldProps} onChange={onChange} />;
+      return <TextField {...textFieldProps} onChange={onChange} onFocus={handleFocus} />;
       break;
     }
   }
