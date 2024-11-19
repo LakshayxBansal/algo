@@ -8,7 +8,7 @@ import {
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
 import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
-import { Snackbar } from "@mui/material";
+import { Grid, Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -119,14 +119,8 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-        <Box
-          sx={{
-            display: "grid",
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: "repeat(1, 1fr)",
-          }}
-        >
+       <Grid container>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
           <InputControl
             inputType={InputType.TEXT}
             autoFocus
@@ -146,23 +140,29 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
               });
             }}
           />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            mt: 2
-          }}
-        >
-          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
+        </Grid>
+        <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 1,
+            }}
           >
-            Submit
-          </Button>
-        </Box>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </form>
 
       <Snackbar

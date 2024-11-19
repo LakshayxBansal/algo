@@ -107,7 +107,7 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
     if (session) {
       data.mobile = modifyPhone(data.mobile);
       data.whatsapp = modifyPhone(data.whatsapp);
-
+      
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
@@ -130,7 +130,7 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
+        for (const issue of parsed.error.issues) {          
           errorState.push({ path: issue.path, message: issue.message });
         }
         result = { status: false, data: errorState };
@@ -164,8 +164,8 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data.mobile);
-      data.whatsapp = modifyPhone(data.whatsapp);
+      data.mobile = modifyPhone(data?.mobile);
+      data.whatsapp = modifyPhone(data?.whatsapp);
 
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {

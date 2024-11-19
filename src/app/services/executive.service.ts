@@ -20,13 +20,12 @@ export async function createExecutiveDB(
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.pincode,
@@ -70,7 +69,7 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -78,7 +77,6 @@ export async function updateExecutiveDB(
         data.stamp,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.pincode,

@@ -15,7 +15,7 @@ import {
   stateListSchemaT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton, Snackbar } from "@mui/material";
+import { Collapse, Grid, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectMasterWrapper } from "../selectMasterWrapper";
@@ -138,14 +138,8 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-        <Box
-          sx={{
-            display: "grid",
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: "repeat(3, 0.70fr)",
-          }}
-        >
+       <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
           <SelectMasterWrapper
             name={"country"}
             id={"country"}
@@ -175,7 +169,10 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
               />
             )}
             required
+            width={350}
           />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
           <InputControl
             autoFocus
             id="name"
@@ -187,7 +184,10 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
             required
+            style={{width: "100%"}}
           />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
           <InputControl
             id="alias"
             label="Alias"
@@ -196,23 +196,31 @@ export default function StateFormList(props: masterFormPropsWithParentT) {
             name="alias"
             error={formError?.alias?.error}
             helperText={formError?.alias?.msg}
+            style={{width: "100%"}}
           />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
+        </Grid>
+        <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 1,
+            }}
           >
-            Submit
-          </Button>
-        </Box>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </form>
       <Snackbar
           open={snackOpen}

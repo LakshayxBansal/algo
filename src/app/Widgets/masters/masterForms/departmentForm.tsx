@@ -11,7 +11,7 @@ import { nameMasterDataT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -112,16 +112,10 @@ export default function DepartmentForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="departmentForm" sx={{  mt: 2, mb: 1, p: 1 }}>
+      <Box id="departmentForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
+         <Grid container>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               inputType={InputType.TEXT}
@@ -141,23 +135,29 @@ export default function DepartmentForm(props: masterFormPropsT) {
                 });
               }}
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2
+              mt: 1,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
+          </Grid>
+        </Grid>
         </form>
         <Snackbar
           open={snackOpen}

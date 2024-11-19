@@ -16,7 +16,7 @@ import {
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { Snackbar } from "@mui/material";
+import { Grid, Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
@@ -166,14 +166,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
       </Collapse>
       <Box id="executiveRole">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
             <InputControl
               autoFocus
               inputType={InputType.TEXT}
@@ -193,6 +187,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                 });
               }}
             />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
             <SelectMasterWrapper
               name={"parentrole"}
               id={"parentrole"}
@@ -223,12 +219,14 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                 />
               )}
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2,
+              mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
@@ -237,11 +235,13 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
+          </Grid>
+        </Grid>
         </form>
         <Snackbar
           open={snackOpen}

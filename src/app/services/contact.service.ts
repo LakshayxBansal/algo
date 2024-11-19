@@ -13,7 +13,7 @@ export async function createContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -23,7 +23,6 @@ export async function createContactDB(
         data.aadhaar,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.area_id,
@@ -53,7 +52,7 @@ export async function updateContactDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateContact(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -65,7 +64,6 @@ export async function updateContactDB(
         data.aadhaar,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.area_id,
@@ -119,7 +117,7 @@ export async function getContactDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
+        "select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
         g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation \
         from contact_master c left outer join contact_group_master g on c.group_id = g.id \
         left outer join state_master s on c.state_id = s.id \
@@ -154,7 +152,7 @@ export async function getContactByPageDb(
       host: crmDb,
       query:
         "SELECT *, RowNum AS RowID \
-      FROM (select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.address3, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
+      FROM (select c.id, c.alias, c.name, c.print_name, c.group_id contactGroup_id, c.pan, c.aadhaar, c.address1, c.address2, c.city, c.state_id state_id, c.area_id area_id, c.pincode, c.country_id country_id, c.email, c.mobile, c.whatsapp, c.created_by, c.created_on, c.modified_by, c.modified_on, c.stamp, c.dob, c.doa, c.department_id, c.organisation_id organisation_id, \
         g.name contactGroup, s.name state, a.name area, co.name country, d.name department, o.name organisation, ROW_NUMBER() OVER () AS RowNum  \
         from contact_master c left outer join contact_group_master g on c.group_id = g.id \
         left outer join state_master s on c.state_id = s.id \

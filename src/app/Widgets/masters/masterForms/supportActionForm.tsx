@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { createSupportAction, updateSupportAction } from "@/app/controllers/supportAction.controller";
@@ -106,7 +106,7 @@ export default function SupportActionForm(props: masterFormPropsT) {
   }
 
   return (
-    <Paper>
+    <>
       <Box
         sx={{
           position: "sticky",
@@ -143,16 +143,10 @@ export default function SupportActionForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
+      <Box>
         <form action={handleSubmit}>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               id="name"
@@ -165,22 +159,29 @@ export default function SupportActionForm(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              mt: 1,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
+          </Grid>
+        </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -190,6 +191,6 @@ export default function SupportActionForm(props: masterFormPropsT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+    </>
   );
 }

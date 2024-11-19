@@ -66,12 +66,22 @@ export default function ContactForm(props: masterFormPropsT) {
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setPrintNameFn(event.target.value);
+  };
+
+  const handleWhatsappChange = (
+    val : string
+    // event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setWhatsappFn(val);    
+    // console.log("VALEEEE: ", whatsappFn);
+    
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -130,7 +140,7 @@ export default function ContactForm(props: masterFormPropsT) {
       }, 1000);
       setFormError({});
     } else {
-      const issues = result.data;
+      const issues = result.data;      
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       errorState["form"] = { msg: "Error encountered", error: true };
@@ -262,17 +272,18 @@ export default function ContactForm(props: masterFormPropsT) {
 
         </IconButton>
      </Tooltip>
-      <Box id="contactForm" sx={{ p: 3 }}>
+      <Box id="contactForm" sx={{ p: 1 }}>
         <form action={handleSubmit} noValidate>
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
-            <Seperator>Contact Details</Seperator>
             <Box
               sx={{
                 display: "grid",
-                columnGap: 3,
+                columnGap: "3px",
                 rowGap: 1,
                 gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
+                pt: 2,
+                pb: 1,
+                pr: 2,
+                pl: 2,
               }}
             >
               <InputControl
@@ -281,24 +292,30 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="name"
                 label="Name"
                 name="name"
+                sx={
+                  {width:"210"}
+                }
                 required
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
                 onChange={handlePrintNameChange}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
               />
               <InputControl
                 inputType={InputType.TEXT}
                 id="alias"
                 label="Alias"
                 name="alias"
+                sx={
+                  {width:"210"}
+                }
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
                 defaultValue={entityData.alias}
@@ -314,6 +331,9 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="print_name"
                 label="Print Name"
                 name="print_name"
+                sx={
+                  {width:"210"}
+                }
                 error={formError?.print_name?.error}
                 helperText={formError?.print_name?.msg}
                 defaultValue={printNameFn}
@@ -329,7 +349,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 id={"organisation"}
                 label={"Organisation"}
                 showDetails={true}
-                width={210}
+                width={240}
                 onChange={(e, val, s) =>
                   setSelectValues({
                     ...selectValues,
@@ -358,6 +378,9 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="pan"
                 label="PAN"
                 name="pan"
+                sx={
+                  {width:"210"}
+                }
                 error={formError?.pan?.error}
                 helperText={formError?.pan?.msg}
                 defaultValue={entityData.pan}
@@ -373,6 +396,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="aadhaar"
                 label="AADHAAR"
                 name="aadhaar"
+                width={210}
                 error={formError?.aadhaar?.error}
                 helperText={formError?.aadhaar?.msg}
                 defaultValue={entityData.aadhaar}
@@ -383,27 +407,15 @@ export default function ContactForm(props: masterFormPropsT) {
                   });
                 }}
               />
-            </Box>
-          </Paper>
-
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
-            <Seperator>Team Allocation</Seperator>
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
-              }}
-            >
               <SelectMasterWrapper
                 name={"contactGroup"}
                 id={"contactGroup"}
                 label={"Group"}
-                width={210}
+                width={240}
+                required
                 showDetails={true}
                 dialogTitle={"Group"}
+                formError={formError.contactGroup}
                 fetchDataFn={getContactGroup}
                 fnFetchDataByID={getContactGroupById}
                 defaultValue={
@@ -431,7 +443,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name={"department"}
                 id={"department"}
                 label={"Department"}
-                width={210}
+                width={240}
                 dialogTitle={"Department"}
                 defaultValue={
                   {
@@ -460,7 +472,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name={"area"}
                 id={"area"}
                 label={"Area"}
-                width={210}
+                width={240}
                 dialogTitle={"Area"}
                 fetchDataFn={getArea}
                 fnFetchDataByID={getAreaById}
@@ -476,7 +488,6 @@ export default function ContactForm(props: masterFormPropsT) {
                     area: val ? val : { id: 0, name: "" },
                   })
                 }
-                // formError={formE}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <AreaForm
                     setDialogOpen={fnDialogOpen}
@@ -485,27 +496,13 @@ export default function ContactForm(props: masterFormPropsT) {
                   />
                 )}
               />
-            </Box>
-          </Paper>
-
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
-            <Seperator>Correspondance Details</Seperator>
-
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
-              }}
-            >
-              <InputControl
+               <InputControl
                 inputType={InputType.EMAIL}
                 id="email"
                 label="Email"
                 name="email"
                 placeholder="Email address"
+                width={210}
                 error={formError?.email?.error}
                 helperText={formError?.email?.msg}
                 defaultValue={entityData.email}
@@ -521,9 +518,11 @@ export default function ContactForm(props: masterFormPropsT) {
                 id="mobile"
                 label="Phone No"
                 name="mobile"
+                width={210}
                 error={formError?.mobile?.error}
                 helperText={formError?.mobile?.msg}
                 defaultValue={entityData.mobile}
+                onChange={handleWhatsappChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { mobile, ...rest } = curr;
@@ -537,9 +536,10 @@ export default function ContactForm(props: masterFormPropsT) {
                 label="Whatsapp No"
                 name="whatsapp"
                 // defaultCountry="FR"
+                width={210}
                 error={formError?.whatsapp?.error}
                 helperText={formError?.whatsapp?.msg}
-                defaultValue={entityData.whatsapp}
+                defaultValue={whatsappFn}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { whatsapp, ...rest } = curr;
@@ -548,18 +548,15 @@ export default function ContactForm(props: masterFormPropsT) {
                 }}
               />
             </Box>
-          </Paper>
-
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
-            <Seperator>Address</Seperator>
-
             <Box
               sx={{
                 display: "grid",
-                columnGap: 3,
+                columnGap: "10px",
                 rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
+                gridTemplateColumns: "repeat(2, 1fr)",
+                pl: 2,
+                pr: 5,
+                pb: 1
               }}
             >
               <InputControl
@@ -567,6 +564,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 label="Address Line 1"
                 name="address1"
                 id="address1"
+                width={180}
                 error={formError?.address1?.error}
                 helperText={formError?.address1?.msg}
                 defaultValue={entityData.address1}
@@ -576,13 +574,13 @@ export default function ContactForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
-                fullWidth
               />
               <InputControl
                 inputType={InputType.TEXT}
                 label="Address Line 2"
                 name="address2"
                 id="address2"
+                width={180}
                 error={formError?.address2?.error}
                 helperText={formError?.address2?.msg}
                 defaultValue={entityData.address2}
@@ -592,24 +590,19 @@ export default function ContactForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
-                fullWidth
               />
-              <InputControl
-                inputType={InputType.TEXT}
-                label="Address Line 3"
-                name="address3"
-                id="address3"
-                error={formError?.address3?.error}
-                helperText={formError?.address3?.msg}
-                defaultValue={entityData.address3}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { address3, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-                fullWidth
-              />
+                </Box>
+              <Box
+              sx={{
+                display: "grid",
+                columnGap: "3px",
+                rowGap: 1,
+                gridTemplateColumns: "repeat(4, 1fr)",
+                pl: 2,
+                pr: 5,
+                pb: 2
+              }}
+            >
               <SelectMasterWrapper
                 name={"country"}
                 id={"country"}
@@ -618,6 +611,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
                 fetchDataFn={getCountries}
                 fnFetchDataByID={getCountryById}
+                width={170}
                 defaultValue={
                   {
                     id: entityData.country_id,
@@ -637,6 +631,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name={"state"}
                 id={"state"}
                 label={"State"}
+                width={170}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
                 disable={stateDisable}
                 dialogTitle={"Add State"}
@@ -663,6 +658,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 error={formError?.city?.error}
                 helperText={formError?.city?.msg}
                 defaultValue={entityData.city}
+                width={160}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { city, ...rest } = curr;
@@ -675,6 +671,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 name="pincode"
                 id="pincode"
                 label="Pin Code"
+                width={160}
                 error={formError?.pincode?.error}
                 helperText={formError?.pincode?.msg}
                 defaultValue={entityData.pincode}
@@ -686,7 +683,6 @@ export default function ContactForm(props: masterFormPropsT) {
                 }}
               />
             </Box>
-          </Paper>
 
           <Box
             sx={{
