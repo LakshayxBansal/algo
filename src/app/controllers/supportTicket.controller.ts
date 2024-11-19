@@ -1,4 +1,5 @@
 "use server";
+import dayjs from "dayjs";
 import {
   docDescriptionSchemaT,
   enquiryDataSchemaT,
@@ -9,9 +10,12 @@ import {
 import { getSession } from "../services/session.service";
 import {
   createSupportTicketDB,
+  delSupportDataByIdDb,
   getHeaderDataAction,
   getLedgerDataAction,
   getProductDataAction,
+  getSupportDataByPageDb,
+  getSupportDataCount,
   updateSupportDataDb,
 } from "../services/supportTicket.service";
 import { logger } from "../utils/logger.utils";
@@ -22,6 +26,8 @@ import {
 } from "../zodschema/zodschema";
 import { uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
+import { adjustToLocal } from "../utils/utcToLocal";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function createSupportTicket({
   supportData,
@@ -104,6 +110,9 @@ export async function createSupportTicket({
   return result;
 }
 
+
+
+
 export async function getSupportDataById(id: number) {
   try {
     const session = await getSession();
@@ -111,7 +120,17 @@ export async function getSupportDataById(id: number) {
       let headerData = await getHeaderDataAction(session, id);
       let ledgerData = await getLedgerDataAction(session, id);
       const productData = await getProductDataAction(session, id);
+      
+      let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
+
+      for (let i = 1; i < ledgerData.length; i++) {
+        if (ledgerData[i].suggested_action_remark) {
+          suggested_action_remark += `${ledgerData[i].modified_by_name} ; ${adjustToLocal(ledgerData[i].modified_on).toDate()} ; ${ledgerData[i].suggested_action_remark} \n`;
+        }
+      }
       ledgerData = ledgerData[ledgerData.length - 1];
+
+      ledgerData.suggested_action_remark = suggested_action_remark;
       headerData = headerData[0];
 
       return { headerData, ledgerData, productData };
@@ -177,4 +196,68 @@ export async function updateSupportData(
   } catch (error) {
     logger.error(error);
   }
+}
+
+export async function getSupportDataByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+){
+  let result={
+    status: false,
+    data: {} ,
+    count: 0,
+    error: {},
+  };
+
+  try {
+    const session = await getSession();
+    if(session?.user.dbInfo){
+      const conts= await getSupportDataByPageDb(session,
+        page as number,
+        filter,
+        limit as number
+  )
+
+  
+  const rowCount = await getSupportDataCount(
+    session.user.dbInfo.dbName as string,
+    filter
+  );
+ result = {
+    status: true,
+    data: conts.map(bigIntToNum) ,
+    count: Number(rowCount[0]["rowCount"]),
+    error: {},
+  };
+
+    }
+  } catch (error) {
+    let err = "Executive Admin, E-Code:369";
+
+    result = {
+      ...result,
+      status: false,
+      data: {} ,
+      error: err,
+    };
+  }
+  return result
+}
+
+export async function delSupportDataById(ticketId: number) { 
+  let result;
+  try {
+    const session= await getSession();
+    if(session?.user.dbInfo){
+       result = await delSupportDataByIdDb(session, ticketId);
+      
+    }
+    return "Record Deleted";
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+
 }
