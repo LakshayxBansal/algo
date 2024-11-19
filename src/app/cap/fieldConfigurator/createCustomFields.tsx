@@ -25,6 +25,7 @@ import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
 import CloseIcon from "@mui/icons-material/Close";
 import { ErrorOutline as ErrorOutlineIcon } from "@mui/icons-material";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 
 
 type FieldItem = {
@@ -90,7 +91,6 @@ const FieldConfigurator = () => {
     // const handleFormModeChange = (event: any) => {
     //     setSelectedFormModeValue(event.target.value);
     // };
-
 
     useEffect(() => {
         async function getFieldData() {
@@ -391,7 +391,7 @@ const FieldConfigurator = () => {
                                 }
                             </Box>
 
-                            <TextField
+                            {/* <TextField
                                 label="Label"
                                 value={item.column_label}
                                 onChange={(e) => handleChange(index, "column_label", e.target.value)}
@@ -399,6 +399,17 @@ const FieldConfigurator = () => {
                                 sx={{ width: 200 }}
                                 error={!!formError[item.column_name_id]} // Show error state if there's an error
                                 helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
+                            /> */}
+                            <InputControl
+                                inputType={InputType.TEXT}
+                                id="label"
+                                key="label"
+                                label="Label"
+                                name="label"
+                                error={!!formError[item.column_name_id]} // Show error state if there's an error       
+                                helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
+                                defaultValue={item.column_label}
+                                onChange={(e: any) => handleChange(index, "column_label", e.target.value)}
                             />
 
                             {item.is_default_column !== 1 && (
