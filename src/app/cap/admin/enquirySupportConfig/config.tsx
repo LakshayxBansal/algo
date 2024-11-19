@@ -84,7 +84,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
         >
           <Box>
             {Object.keys({ ...config }).map((key, index) => (
-              <Accordion>
+              <Accordion key={key}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1-content"
@@ -193,7 +193,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         />}
                         {key !== undefined && config[key]["voucher"] !== undefined && config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
                       </Box>
-                      {["enquiry", "support", "contract", "enquiryGeneration"].includes(key) &&
+                      {["enquiry", "support", "contract"].includes(key) &&
                         <Box>
                           <Typography>Select Department to Allocate</Typography>
                           <FormControl sx={{ m: 1, width: 300 }}>
