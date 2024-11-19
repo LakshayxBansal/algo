@@ -104,7 +104,8 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
   };
 
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: 2,width: "500px" }} square={false}>
+    // <Paper elevation={3} sx={{ mt: 2, p: 2,width: "500px" }} square={false}>
+    <>
       <Box
         sx={{
           position: "sticky",
@@ -116,7 +117,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Add Invite User
+            Send Invite
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -236,7 +237,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
                 </Link>
               </Grid>
           </Grid>
-          <Grid item xs={12} sm={12} md={12} sx={{ mt: 3 }}>
+          <Grid item xs={12} sm={12} md={12} sx={{ mt: 1 }}>
                 <Grid container>
                 <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
@@ -258,6 +259,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+      </>
+    // </Paper>
   );
 }

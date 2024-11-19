@@ -54,25 +54,38 @@ export async function updateConfigDataDB(crmDb:string,configId : number, enabled
       query: "update app_config set enabled = ?, config = ? where config_type_id = ?",
       values: [enabled, data, configId],
     });
+    return true;
   }catch(error){
     logger.error(error);
+    return false;
   }
 }
 
-export async function updateConfigDeptDB(crmDb:string,query:string) {
+export async function updateConfigDeptDB(crmDb:string,configDept : any, configType : any) {
   try{
     await executeQuery({
       host: crmDb,
       query: "TRUNCATE TABLE config_dept_mapping;",
       values: []
     })
+    let query = "insert into config_dept_mapping (config_id,dept_id) values "
+      Object.keys({...configDept}).map((key,index)=>{
+        const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
+        configDept[key].map((dept:any)=>{
+          query += `(${configId},${dept}),`
+        })
+      })
+      query = query.slice(0, -1);
+      query += ";";
     await executeQuery({
       host: crmDb,
       query: query,
       values: [],
     });
+    return true;
   }catch(error){
     logger.error(error);
+    return false;
   }
 }
 

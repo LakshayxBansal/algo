@@ -20,6 +20,7 @@ export async function getConfigType() {
 
 
 export async function updateConfigData(config: any, configDept : any) {
+  let result;
   try {
     const session = await getSession();
     if(session){
@@ -28,19 +29,11 @@ export async function updateConfigData(config: any, configDept : any) {
         const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
         const enabled = config[key].reqd ? 1 : 0;
         const data = JSON.stringify(config[key]);
-        await updateConfigDataDB(session.user.dbInfo.dbName,configId,enabled,data);
+        result = await updateConfigDataDB(session.user.dbInfo.dbName,configId,enabled,data);
       });
-      let query = "insert into config_dept_mapping (config_id,dept_id) values "
-      Object.keys({...configDept}).map((key,index)=>{
-        const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
-        configDept[key].map((dept:any)=>{
-          query += `(${configId},${dept}),`
-        })
-      })
-      query = query.slice(0, -1);
-      query += ";";
-      await updateConfigDeptDB(session.user.dbInfo.dbName,query);
-    return true;
+      
+      result = await updateConfigDeptDB(session.user.dbInfo.dbName,configDept,configType);
+    return result;
     }
   } catch (e: any) {
     logger.error(e);
