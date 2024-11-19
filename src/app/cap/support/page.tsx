@@ -88,6 +88,11 @@ async function formatedData(supportData: any) {
       status_id,
       status,
       next_action_date,
+      allocated_to:ledger_allocated_to,
+      created_on: ledger_created_on,
+      modified_on: ledger_modified_on,
+      modified_by : ledger_modified_by,
+      created_by : ledger_created_by,
       ...remainingLedgerData
     },
     headerData: {
@@ -100,6 +105,7 @@ async function formatedData(supportData: any) {
       date,
       created_on,
       modified_on,
+     
       ...remainingHeaderData
     },
     productData,
@@ -139,10 +145,16 @@ async function formatedData(supportData: any) {
     next_action_date,
   };
 
-  return {
+  const result= {
     masterData,
+    ledger_allocated_to,
+    ledger_created_on,
+    ledger_modified_on,
+    ledger_modified_by,
+    ledger_created_by,
     ...remainingLedgerData,
     ...remainingHeaderData,
     productData,
   };
+  return result;
 }

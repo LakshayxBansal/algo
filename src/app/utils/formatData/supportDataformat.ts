@@ -46,6 +46,7 @@ export async function supportDataFormat({
     suggested_action_remark: (formData.get("suggested_action_remark")?? "" ) as string ?? otherData?.suggested_action_remark,
     action_taken_remark: (formData.get("action_taken_remark" )?? "") as string ,
     closure_remark: (formData.get("closure_remark") ?? "") as string ?? otherData?.closure_remark,
+    allocated_to_id: otherData?.ledger_allocated_to
   };
 
   return { ...headerData, ...ledgerData};
