@@ -292,6 +292,7 @@ export default function SupportProductGrid({
             className="textPrimary"
             onClick={handleEditClick(params.row.id)}
             color="inherit"
+            disabled={isDisable}
           />,
           <GridActionsCellItem
             key={params.row.id}
@@ -299,6 +300,7 @@ export default function SupportProductGrid({
             label="Delete"
             onClick={handleDeleteClick(params.row.id)}
             color="inherit"
+            disabled={isDisable}
           />,
         ];
       },

@@ -18,7 +18,7 @@ export async function supportDataFormat({
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
 
-  const date= formatDate(  otherData?.masterData.date ? adjustToLocal(otherData?.masterData.date).toString() :formData.get("date") as string);
+  const date= formatDate(  formData.get("date") ? formData.get("date") as string: adjustToLocal(otherData?.masterData.date).toString() );
   const nextActionDate = formatDate(formData.get("next_action_date") as string);
 
   const headerData = {

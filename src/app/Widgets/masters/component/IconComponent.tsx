@@ -15,7 +15,7 @@ function IconComponent(props: iconCompT) {
     async function onModifyDialog(modId: number) {
       if(modId && props.link){
         const encryptedId = await encrypt(modId);
-        router.push(`${props.link}?id=${encryptedId}`);
+        router.push(`${props.link}?id=${encryptedId}&status=false`);
       }
       else  if (props.fnFetchDataByID && modId ) {
           const data = await props.fnFetchDataByID(modId);
@@ -28,6 +28,12 @@ function IconComponent(props: iconCompT) {
         }
         
       }
+   async function handleStatusUpdate(modId:number){
+    if(modId && props.link){
+      const encryptedId = await encrypt(modId);
+      router.push(`${props.link}?id=${encryptedId}&status=true`);
+    }
+  }
 
   function handleDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
@@ -66,17 +72,28 @@ function IconComponent(props: iconCompT) {
             onModifyDialog(props.id);
           }}
         >
-          <EditIcon fontSize="large" />
-          <Typography variant="h6">Edit</Typography>
+          <EditIcon fontSize="small" />
+          <Typography variant="body2">Edit</Typography>
         </MenuItem>
         <MenuItem
           onClick={() => {
             handleDeleteDialog(props.id);
           }}
         >
-          <DeleteIcon />
-          <Typography variant="h6">Delete</Typography>
+          <DeleteIcon  fontSize="small"/>
+          <Typography variant="body2">Delete</Typography>
         </MenuItem>
+        {props.link && (
+          <MenuItem
+            onClick={() => {
+              handleStatusUpdate(props.id);
+            }}
+          >
+             <EditIcon fontSize="small" />
+
+            <Typography variant="body2">Update Status</Typography>
+          </MenuItem>
+        )}
       </StyledMenu>
     </Box>
   );

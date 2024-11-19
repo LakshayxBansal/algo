@@ -6,6 +6,7 @@ import SupportTicketForm from "./SupportTicketForm";
 import { getSupportDataById } from "@/app/controllers/supportTicket.controller";
 import { decrypt } from "@/app/utils/encrypt.utils";
 import { getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
 
 interface searchParamsProps {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -21,13 +22,15 @@ export default async function Support({ searchParams }: searchParamsProps) {
       };
       const userDetails = await getLoggedInUserDetails();
       const id = searchParams.id;
+      const status = searchParams.status;
       let supportData: any = {};
       let formatedSupportData: any;
       if (id) {
         const decryptedId = await decrypt(id);
 
         supportData = await getSupportDataById(Number(decryptedId));
-        formatedSupportData = await formatedData(supportData);
+        const updatedWithSuggestedRemark = await getSuggestedRemark(supportData, status);
+        formatedSupportData = await formatedData(updatedWithSuggestedRemark);
       }
 
       return (
@@ -37,6 +40,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
             id: userDetails?.data.id,
             name: userDetails?.data.name,
           }}
+          status ={status}
         />
       );
     }
@@ -45,6 +49,31 @@ export default async function Support({ searchParams }: searchParamsProps) {
     logger.error(e);
   }
   redirect("/signin");
+}
+
+async function getSuggestedRemark(data :any ,status :any){
+  let length = data.length;
+  let ledgerData= data.ledgerData;
+  const headerData= data.headerData;
+  if(status==="true"){
+    let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).format("MM-DD-YYYY hh:mm A")} ; ${ledgerData[0].suggested_action_remark} \n`;
+
+      for (let i = 1; i < ledgerData.length; i++) {
+        if (ledgerData[i].suggested_action_remark) {
+          suggested_action_remark += `${ledgerData[i].modified_by_name} ; ${adjustToLocal(ledgerData[i].modified_on).format("MM-DD-YYYY hh:mm A")} ; ${ledgerData[i].suggested_action_remark} \n`;
+        }
+      }
+      ledgerData = ledgerData[ledgerData.length - 1];
+
+      ledgerData.suggested_action_remark = suggested_action_remark;
+      
+  }
+  else{
+    ledgerData = ledgerData[ledgerData.length - 1];
+  }
+  data.ledgerData = ledgerData;
+  data.headerData = headerData[0];
+  return data;
 }
 
 async function formatedData(supportData: any) {

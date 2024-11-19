@@ -121,17 +121,17 @@ export async function getSupportDataById(id: number) {
       let ledgerData = await getLedgerDataAction(session, id);
       const productData = await getProductDataAction(session, id);
       
-      let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
+      // let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
 
-      for (let i = 1; i < ledgerData.length; i++) {
-        if (ledgerData[i].suggested_action_remark) {
-          suggested_action_remark += `${ledgerData[i].modified_by_name} ; ${adjustToLocal(ledgerData[i].modified_on).toDate()} ; ${ledgerData[i].suggested_action_remark} \n`;
-        }
-      }
-      ledgerData = ledgerData[ledgerData.length - 1];
+      // for (let i = 1; i < ledgerData.length; i++) {
+      //   if (ledgerData[i].suggested_action_remark) {
+      //     suggested_action_remark += `${ledgerData[i].modified_by_name} ; ${adjustToLocal(ledgerData[i].modified_on).toDate()} ; ${ledgerData[i].suggested_action_remark} \n`;
+      //   }
+      // }
+      // ledgerData = ledgerData[ledgerData.length - 1];
 
-      ledgerData.suggested_action_remark = suggested_action_remark;
-      headerData = headerData[0];
+      // ledgerData.suggested_action_remark = suggested_action_remark;
+      // headerData = headerData[0];
 
       return { headerData, ledgerData, productData };
     }
@@ -245,19 +245,33 @@ export async function getSupportDataByPage(
   return result
 }
 
-export async function delSupportDataById(ticketId: number) { 
+export async function delSupportDataById(ticketId: number) {
   let result;
   try {
-    const session= await getSession();
-    if(session?.user.dbInfo){
-       result = await delSupportDataByIdDb(session, ticketId);
-      
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await delSupportDataByIdDb(session, ticketId);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
     }
-    return "Record Deleted";
-    
-  } catch (error) {
-    console.log(error);
-    
+    return result;
+  } catch (error: any) {
+    throw error;
   }
-
 }
