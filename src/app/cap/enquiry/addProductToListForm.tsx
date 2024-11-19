@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../Widgets/seperator";
-import Snackbar from "@mui/material/Snackbar";
+// import Snackbar from "@mui/material/Snackbar";
 import {
   masterFormPropsT,
   optionsDataT,
@@ -28,7 +28,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [snackOpen, setSnackOpen] = React.useState(false);
   const [defaultValueForUnitUsingProduct, setDefaultValueForUnitUsingProduct] =
     useState<selectKeyValueT>({});
   const handleCancel = () => {
@@ -77,11 +76,8 @@ export default function AddProductToListForm(props: masterFormPropsT) {
 
       if (prevDataPresent) return;
 
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
-      setSnackOpen(true);
     } else {
       const issues = parsed.error.issues;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -182,6 +178,27 @@ export default function AddProductToListForm(props: masterFormPropsT) {
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit} noValidate>
+          <SelectMasterWrapper
+            name={"product"}
+            id={"product"}
+            label={"Product Name"}
+            showDetails={true}
+            dialogTitle={"Add Product"}
+            fetchDataFn={getProduct}
+            fnFetchDataByID={getProductById}
+            required
+            formError={formError?.product ?? formError.product}
+            onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
+            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              <ProductForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+                data={data}
+              />
+            )}
+            width={649}
+          />
+
           <Box
             sx={{
               display: "grid",
@@ -190,26 +207,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            <SelectMasterWrapper
-              name={"product"}
-              id={"product"}
-              label={"Product Name"}
-              showDetails={true}
-              dialogTitle={"Add Product"}
-              fetchDataFn={getProduct}
-              fnFetchDataByID={getProductById}
-              required
-              formError={formError?.product ?? formError.product}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <ProductForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-
             <InputControl
               required
               inputType={InputType.TEXT}
@@ -290,13 +287,7 @@ export default function AddProductToListForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Product Added (See the end of the list)!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+
       </Box>
     </>
   );
