@@ -77,11 +77,13 @@ export async function updateConfigDeptDB(crmDb:string,configDept : any, configTy
       })
       query = query.slice(0, -1);
       query += ";";
-    await executeQuery({
-      host: crmDb,
-      query: query,
-      values: [],
-    });
+      if(query!=="insert into config_dept_mapping (config_id,dept_id) values;"){
+        await executeQuery({
+          host: crmDb,
+          query: query,
+          values: [],
+        });
+      }
     return true;
   }catch(error){
     logger.error(error);
