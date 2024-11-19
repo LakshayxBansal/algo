@@ -91,10 +91,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [roleDisable, setRoleDisable] = useState<boolean>(
     !entityData.executive_dept
   );
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
 
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
+  
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
+  };
 
   async function getApplicationUser(searchStr: string) {
     let dbResult = await getBizAppUser(searchStr, true, true, false, false);
@@ -583,6 +588,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.mobile?.error}
                 helperText={formError?.mobile?.msg}
                 defaultValue={entityData.mobile}
+                onChange={handleWhatsappChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { mobile, ...rest } = curr;
@@ -601,7 +607,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 // defaultCountry="FR"
                 error={formError?.whatsapp?.error}
                 helperText={formError?.whatsapp?.msg}
-                defaultValue={entityData.whatsapp}
+                defaultValue={whatsappFn}
+                key={whatsappFn}
                 slotProps={{
                   flagButton: {
                     tabIndex: -1,
