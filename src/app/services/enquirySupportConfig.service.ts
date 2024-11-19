@@ -29,7 +29,7 @@ export async function getConfigTypeId(crmDb: string, configType: string): Promis
 
 export async function getEnquirySupportConfigDB(
     crmDb: string,
-    configType: string = 'enquiry_support'
+    configType: string = 'enquiry'
 ): Promise<enquiryConfigSchemaT | null> {
     try {
         const configTypeId = await getConfigTypeId(crmDb, configType);

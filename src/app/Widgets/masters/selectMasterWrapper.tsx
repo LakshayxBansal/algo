@@ -88,13 +88,14 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       setDlgMode(dialogMode.Add);
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-
-        setMasterData({
-          fields: data[0][0] || [],
-          rights: data[0][1] || {},
-          config_data: data[0][2] || [],
-          loggedInUserData: data[0][3] || {}
-        });
+        if (data.length > 0) {
+          setMasterData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            config_data: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
+        }
       }
     }
     // getDescriptionData();

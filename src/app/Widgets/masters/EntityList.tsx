@@ -74,10 +74,8 @@ export default function EntityList(props: entitiyCompT) {
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
   const [masterData, setMasterData] = useState<masterDataprop>({
     fields: [],
-    fields: [],
     data: {},
     rights: {},
-    config_data: [],
     config_data: [],
     loggedInUserData: {}
   });
