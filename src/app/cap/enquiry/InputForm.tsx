@@ -11,7 +11,6 @@ import {
   Radio,
   RadioGroup,
   Snackbar,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -71,21 +70,21 @@ import ProductGrid from "./productGrid";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
 export interface IformData {
-  userName: string;
+  // fields: Array<any>;
+  enqData: Record<string, any>;
+  rights: Record<string, any>;
+  config_data: Record<string, any>;
+  loggedInUserData: Record<string, any>;
 }
 
 const rows: any = [];
 
-export default function InputForm(props: {
-  baseData: IformData;
-  config: any;
-  loggedInUserData: any;
-}) {
+export default function InputForm(props: { baseData: IformData }) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({
     received_by: {
-      id: props.loggedInUserData.id,
-      name: props.loggedInUserData.name,
+      id: props.baseData.loggedInUserData.id,
+      name: props.baseData.loggedInUserData.name,
     },
   });
   const [formError, setFormError] = useState<
@@ -189,7 +188,7 @@ export default function InputForm(props: {
     setSelectValues(values);
   }
 
-  const enquiryMaintainProducts = props.config.enquiryMaintainProducts;
+  const enquiryMaintainProducts = props.baseData.config_data.maintainProducts;
 
   return (
     <Box>
@@ -364,8 +363,8 @@ export default function InputForm(props: {
                       )}
                       defaultValue={
                         {
-                          id: props.loggedInUserData?.id,
-                          name: props.loggedInUserData?.name,
+                          id: props.baseData.loggedInUserData?.id,
+                          name: props.baseData.loggedInUserData?.name,
                         } as optionsDataT
                       }
                     />
@@ -379,13 +378,12 @@ export default function InputForm(props: {
                 <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
                   <Box
                     sx={{
-                      height: 300,
+                      height: 260,
                     }}
                   >
                     <ProductGrid
                       dgData={data}
                       setdgData={setData}
-                      dgDialogOpen={dialogOpen}
                       setdgDialogOpen={setDialogOpen}
                       dgFormError={formError}
                       setdgFormError={setFormError}
@@ -402,7 +400,8 @@ export default function InputForm(props: {
                 sx={{ display: "flex", flexDirection: "column" }}
               >
                 <Grid item xs={12} md={12}>
-                  <TextField
+                  <InputControl
+                    inputType={InputType.TEXTFIELD}
                     placeholder="Call Receipt Remarks"
                     label="Call Receipt Remarks"
                     multiline
@@ -420,7 +419,8 @@ export default function InputForm(props: {
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <TextField
+                  <InputControl
+                    inputType={InputType.TEXTFIELD}
                     placeholder="Suggested Action Remarks"
                     label="Suggested Action Remarks"
                     multiline
@@ -560,7 +560,8 @@ export default function InputForm(props: {
               />
               <Grid item xs={12} md={12}>
                 <Grid item xs={6} md={12}>
-                  <TextField
+                  <InputControl
+                    inputType={InputType.TEXTFIELD}
                     key={`closure-remark-${status}`}
                     defaultValue={""}
                     placeholder="Closure Remarks"
