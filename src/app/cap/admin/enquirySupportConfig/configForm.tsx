@@ -13,7 +13,9 @@ import RegionalInfo from "../regional/regionalInfoForm";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { Theme, useTheme } from '@mui/material/styles';
 
-const ITEM_HEIGHT = 48;
+
+// menu props for the multi-select control for choosing depts
+const ITEM_HEIGHT = 48;             
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   PaperProps: {
@@ -24,6 +26,7 @@ const MenuProps = {
   },
 };
 
+// convert camelcase json keys to label
 function camelCaseToNormal(camelCaseStr: string) {
   return camelCaseStr
     .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -33,6 +36,7 @@ function camelCaseToNormal(camelCaseStr: string) {
     .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
 }
 
+// styling for dept select
 function getStyles(id: number, configDept: readonly number[], theme: Theme) {
   return {
     fontWeight: configDept.includes(id)
@@ -84,7 +88,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
         >
           <Box>
             {Object.keys({ ...config }).map((key, index) => (
-              <Accordion>
+              <Accordion key={key}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1-content"
