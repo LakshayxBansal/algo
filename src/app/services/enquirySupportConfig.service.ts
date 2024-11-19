@@ -29,7 +29,7 @@ export async function getConfigTypeId(crmDb: string, configType: string): Promis
 
 export async function getEnquirySupportConfigDB(
     crmDb: string,
-    configType: string = 'enquiry_support'
+    configType: string = 'enquiry'
 ): Promise<enquiryConfigSchemaT | null> {
     try {
         const configTypeId = await getConfigTypeId(crmDb, configType);
@@ -68,10 +68,10 @@ export async function updateEnquirySupportConfigDB(
 ) {
     try {
         const crmDb = session.user.dbInfo.dbName;
-        const configTypeId = await getConfigTypeId(crmDb, 'enquiry_support');
+        const configTypeId = await getConfigTypeId(crmDb, 'enquiry');
 
         if (!configTypeId) {
-            throw new Error(`No config type found for enquiry_support`);
+            throw new Error(`No config type found for enquiry`);
         }
 
         const query = `

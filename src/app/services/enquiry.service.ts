@@ -72,10 +72,10 @@ export async function getEnquiryStatusList(
   }
 }
 
-export async function showProductGridDB(crmDb: string) {
+export async function getConfigDataDB(crmDb: string) {
   try {
     let query =
-      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type="enquiry_support"';
+      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type="enquiry"';
     let values: any[] = [];
 
     const result = await excuteQuery({

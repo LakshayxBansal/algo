@@ -49,7 +49,7 @@ export enum InputType {
   DATETIMEINPUT,
   EMAIL,
   PHONE,
-  TEXTFIELD
+  TEXTFIELD,
 }
 // Define the additional props for the base control
 interface BaseControlProps {
@@ -78,8 +78,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   let prevKey = "",
-    currentKey = "", first=true;
-    
+    currentKey = "",
+    first = true;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
@@ -140,15 +140,14 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         }
         break;
       }
-     
-        case InputType.TEXTFIELD: {
-          
-          const inputProps = props as TextFieldProps;
-          
-          if(event.target.value.length===1 && first){
-            event.target.value= event.target.value.toUpperCase();
-            first = false;
-          }
+
+      case InputType.TEXTFIELD: {
+        const inputProps = props as TextFieldProps;
+
+        if (event.target.value.length === 1 && first) {
+          event.target.value = event.target.value.toUpperCase();
+          first = false;
+        }
       }
     }
   }
@@ -157,8 +156,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
-    console.log("datechange");
-    console.log(value);
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -206,11 +203,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         break;
       }
       case InputType.TEXTFIELD: {
-        console.log("I was here");
-        first= true;   
+        first = true;
         break;
-         }
-        
+      }
     }
   }
 
@@ -289,7 +284,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           {...props}
           value={value}
           onChange={onPhoneChange}
-          onFocus= {handleFocus}
+          onFocus={handleFocus}
         />
       );
       break;
@@ -297,7 +292,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.TEXTFIELD: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <TextField {...textFieldProps} onChange={onChange} onFocus={handleFocus} />;
+      return (
+        <TextField
+          {...textFieldProps}
+          onChange={onChange}
+          onFocus={handleFocus}
+        />
+      );
       break;
     }
   }
