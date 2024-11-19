@@ -57,7 +57,6 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
   const [config, setConfig] = useState(configData);
 
   const handleSubmit = async (formData: FormData) => {
-
     const result = await updateConfigData(config, configDept);
     if (result) {
       setSnackOpen(true);
@@ -87,6 +86,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
           }}
         >
           <Box>
+            {/* iterate object keys to make accordion for each config type */}
             {Object.keys({ ...config }).map((key, index) => (
               <Accordion key={key}>
                 <AccordionSummary
@@ -95,6 +95,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                   id="panel1-header"
                   sx={{height: "50px"}}
                 >
+                  {/* check out only visible for non mandatory config type */}
                   {["enquiry","support","contract"].includes(key) ?
                     <InputControl
                       key={index}
@@ -105,6 +106,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                       checked={config[key]["reqd"]}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setConfig({ ...config, [key]: { ...config[key], ["reqd"]: e.target.checked } })
+                        // empty config data for that particular config type while unchecking "reqd"
                         if (e.target.checked === false) {
                           let updatedKeyValues = { ...config[key] };
                           Object.keys({ ...config[key] }).forEach((k, index) => {
@@ -149,6 +151,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                     <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                       <Box sx={{ display: "flex", flexDirection: "column" }}>
                         {
+                          // iterate object keys to make keys for each config type
                           Object.keys({ ...config[key] }).map((k, index) => {
                             if (k !== "reqd" && typeof (config[key][k]) === "boolean") {
                               return (
@@ -168,7 +171,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                             }
 
                           })}
-
+                        {/* show voucher checkbox and voucher form only if voucher key is present */}
                         {config[key]["voucher"] !== undefined && <InputControl
                           key={index}
                           inputType={InputType.CHECKBOX}
@@ -197,6 +200,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         />}
                         {key !== undefined && config[key]["voucher"] !== undefined && config[key]["voucher"]["voucherNumber"] && <Voucher config={config} setConfig={setConfig} parentKey={key} />}
                       </Box>
+                      {/* select department is only for these config */}
                       {["enquiry", "support", "contract"].includes(key) &&
                         <Box>
                           <Typography>Select Department to Allocate</Typography>
