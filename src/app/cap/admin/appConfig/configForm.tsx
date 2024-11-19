@@ -46,7 +46,7 @@ function getStyles(id: number, configDept: readonly number[], theme: Theme) {
 }
 
 
-export default function ConfigForm({ configData, allDepts, configDeptMap }: { configData: any, allDepts: any, configDeptMap: any }) {
+export default function ConfigForm({ configData, allDepts, configDeptMap }: { configData: any, allDepts: Array<{name:string,id:number}>, configDeptMap: any }) {
   const theme = useTheme();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>

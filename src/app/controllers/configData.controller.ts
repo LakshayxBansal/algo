@@ -1,6 +1,6 @@
 "use server";
 import { configSchemaT, enquiryConfigSchemaT } from "../models/models";
-import { getConfigDB, getConfigDeptMappingDB, getConfigTypeDB, updateConfigDataDB, updateConfigDB, updateConfigDeptDB } from "../services/configData.service";
+import { getConfigDB, getConfigDeptMappingDB, getConfigTypeDB, updateConfigDataDB, updateConfigDeptDB } from "../services/configData.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
 import { enquirySupportConfig } from "../zodschema/zodschema";
@@ -19,7 +19,7 @@ export async function getConfigType() {
 }
 
 
-export async function updateConfigData(config: any, configDept : any) {
+export async function updateConfigData(config: any, configDept : {[key : string] : number[]}) {
   let result;
   try {
     const session = await getSession();

@@ -61,7 +61,7 @@ export async function updateConfigDataDB(crmDb:string,configId : number, enabled
   }
 }
 
-export async function updateConfigDeptDB(crmDb:string,configDept : any, configType : any) {
+export async function updateConfigDeptDB(crmDb:string,configDept : {[key : string] : number[]}, configType : Array<{config_type : string,id:number}>) {
   try{
     await executeQuery({
       host: crmDb,
@@ -127,40 +127,4 @@ export async function getConfigDeptMappingDB(crmDb: string) {
   }
 }
 
-export async function updateConfigDB(
-  session: Session,
-  data: enquiryConfigSchemaT
-) {
-  try {
-    const crmDb = session.user.dbInfo.dbName;
-    const configTypeId = await getConfigTypeId(crmDb, data.category as string);
-
-    if (!configTypeId) {
-      throw new Error(`No config type found for ${data.category}`);
-    }
-
-    delete data.category;
-
-    let isTrue = data.isEnabled ? 1 : 0;
-    delete data.isEnabled;
-    let jsonData = JSON.stringify(data);
-
-    const values = [
-      configTypeId,
-      isTrue,
-      jsonData,
-    ];
-
-    const result = await executeQuery({
-      host: crmDb,
-      query: "call appConfig(?, ?, ?)",
-      values: values,
-    });
-
-    return result;
-  } catch (e) {
-    console.error("Error updating config data:", e);
-    return null;
-  }
-}
 
