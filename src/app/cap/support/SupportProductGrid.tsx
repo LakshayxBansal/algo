@@ -28,7 +28,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { productToListFormSchema } from "@/app/zodschema/zodschema";
+import { productToListFormSchema, supportProductSchema } from "@/app/zodschema/zodschema";
 
 type ModifiedRowT = {
   id?: number;
@@ -48,6 +48,7 @@ type ProductGridProps = {
   dgFormError: any;
   setdgFormError: any;
   dgProductFormError: any;
+  isDisable : boolean;
   // Add other props here as needed
 };
 
@@ -126,7 +127,8 @@ export default function SupportProductGrid({
   setdgDialogOpen,
   dgFormError,
   setdgFormError,
-  dgProductFormError
+  dgProductFormError,
+  isDisable
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -144,11 +146,6 @@ export default function SupportProductGrid({
   }
 
   //Setting editmode with selected row id and then setting selected row data in modifiedRowData state
-  const handleEditClick = (id: GridRowId) => () => {
-    setEditMode(id);
-    const selectedRowData = dgData.find((row: any) => row.id === id); // Find the corresponding row data
-    setModifiedRowData(selectedRowData);
-  };
 
   const handleDeleteClick = (id: GridRowId) => () => {
     if (dgData.length > 0) {
@@ -159,13 +156,90 @@ export default function SupportProductGrid({
     }
   };
 
+  const handleEditClick = (id: GridRowId) => () => {
+    setEditMode(id);
+    const selectedRowData = dgData.find((row: any) => row.id === id); // Find the corresponding row data
+    setModifiedRowData(selectedRowData);
+  };
+
+  const handleCancelClick = () => {
+    setEditMode(null);
+    setdgFormError((curr: any) => {
+      const { product, quantity, unit, remark, ...rest } = curr;
+      return rest;
+    });
+  };
+
+  const handleSaveClick = () => {
+    const parsedData = supportProductSchema.safeParse(modifiedRowData); //Validating on saving
+    if (parsedData.success) {
+      const updatedData = dgData.map((row: any) =>
+        row.id === modifiedRowData?.id ? modifiedRowData : row
+      );
+      setdgData(updatedData);
+      setModifiedRowData(undefined);
+      setEditMode(null);
+      //Removing field erros on successful validation
+      setdgFormError((curr: any) => {
+        const { product, ...rest } = curr;
+        return rest;
+      });
+    } else {
+      const issues = parsedData.error.issues;
+      const errorState: Record<string, { msg: string; error: boolean }> = {};
+      for (const issue of issues) {
+        for (const path of issue.path) {
+          errorState[path] = { msg: issue.message, error: true };
+        }
+      }
+      setdgFormError((curr: any) => {
+        return {
+          ...curr,
+          ...errorState,
+        };
+      });
+    }
+  };
+
 
 
   const columns: GridColDef[] = [
     {
       field: "product",
       headerName: "Product Name",
-      width: 180,
+      width: 300,
+      renderCell: (params) => {
+        if (editMode === params.row.id) {
+          return (
+            <SelectMasterWrapper
+              name={"product"}
+              id={"product"}
+              label={""}
+              dialogTitle={"Add Product"}
+              fetchDataFn={getProduct}
+              fnFetchDataByID={getProductById}
+              required
+              formError={dgFormError?.product ?? dgFormError.product}
+              onChange={(e, v, s) =>
+                onSelectDataGridRowStateChange(e, v, s, "product")
+              }
+              defaultValue={
+                {
+                  id: params.row.product_id,
+                  name: params.row.product,
+                } as optionsDataT
+              }
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <ProductForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+            />
+          );
+        }
+      },
       
     },
     {
@@ -187,15 +261,47 @@ export default function SupportProductGrid({
       type: "actions",
       headerName: "Actions",
       width: 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          key={params.row.id}
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={handleDeleteClick(params.row.id)}
-          color="inherit"
-        />,
-      ],
+      getActions: (params) => {
+        if (editMode === params.row.id) {
+          return [
+            <GridActionsCellItem
+              key={params.row.id}
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={handleSaveClick}
+            />,
+            <GridActionsCellItem
+              key={params.row.id}
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            key={params.row.id}
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(params.row.id)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            key={params.row.id}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(params.row.id)}
+            color="inherit"
+          />,
+        ];
+      },
     },
   ];
   
@@ -210,7 +316,7 @@ export default function SupportProductGrid({
         sx={{ display: "flex", justifyContent: "space-between" }}
       >
         <Seperator>Product List</Seperator>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick} disabled={isDisable}>
           Add Product
         </Button>
       </GridToolbarContainer>

@@ -515,7 +515,7 @@ export const supportLedgerSchema = z.object({
   action_taken: z.string().min(0).max(60).optional(),
   next_action_id: z.number().min(0).nullable().optional(),
   next_action: z.string().max(60).optional(),
-  next_action_date: z.string().min(1).max(20),
+  next_action_date: z.string().min(0).max(20).optional(),
   suggested_action_remark: z
     .string()
     .max(5000, "Remark must contain at most 5000 character(s)")

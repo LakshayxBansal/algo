@@ -13,7 +13,7 @@ export async function getCallEnquiriesDb(
 ) {
   try {
     let query: string =
-      "select eh.id, ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
+      "select eh.id,eh.enq_number as description , ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
                 essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate\
                 from enquiry_header_tran eh \
                 left join enquiry_ledger_tran el on el.enquiry_id=eh.id \
@@ -166,8 +166,9 @@ export async function getCallEnquiriesCountDb(
       LEFT JOIN enquiry_action_master eam ON el.action_taken_id=eam.id \
       LEFT JOIN enquiry_action_master eaxm ON el.action_taken_id=eaxm.id \
       LEFT JOIN area_master am ON am.id=cm.area_id \
-      LEFT JOIN executive_master em ON em.id=el.allocated_to where el.date = (SELECT MAX(lt.date) from enquiry_ledger_tran lt\
-      where lt.enquiry_id=el.enquiry_id) ";
+      LEFT JOIN executive_master em ON em.id=el.allocated_to \
+      where el.id = (SELECT MAX(lt.id) from enquiry_ledger_tran lt\
+                where lt.enquiry_id=el.enquiry_id)  ";
 
     const whereConditions: string[] = [];
     let values = [];
@@ -270,17 +271,16 @@ export async function updateCallAllocationDb(
   try {
     // Convert the array of IDs into a comma-delimited string
     const idList = data.id.join(",");
-
     // Define the stored procedure query
     let query = "CALL updateCallAllocation(?, ?, ?, ?, ?)";
-
     // Execute the query, passing in the required parameters
     // console.log("data from sp",query);
-    return excuteQuery({
+    const result = await  excuteQuery({
       host: dbName,
       query: query,
       values: [data.executiveId, data.remark, idList, ",", userid],
     });
+    return result ;
   } catch (e) {
     console.log(e);
   }
@@ -322,7 +322,7 @@ export async function getCallSupportTicketsDb(
 ) {
   try {
     let query: string =
-      "SELECT th.id, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
+      "SELECT th.id , th.tkt_number as description, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
        tssm.name AS subStatus, tam.name AS actionTaken, taxm.name AS nextAction, am.name AS area, tl.next_action_date AS actionDate \
 FROM ticket_header_tran th \
 LEFT JOIN ticket_ledger_tran tl ON tl.ticket_id = th.id \
@@ -448,8 +448,9 @@ export async function getCallSupportTicketsCountDb(
       LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
       LEFT JOIN area_master am ON am.id = cm.area_id \
       LEFT JOIN executive_master em ON em.id = tl.allocated_to \
-      WHERE tl.date = (SELECT MAX(lt.date) FROM ticket_ledger_tran lt \
-                       WHERE lt.ticket_id = tl.ticket_id)";
+     WHERE tl.id = (SELECT MAX(lt.id) \
+               FROM ticket_ledger_tran lt \
+               WHERE lt.ticket_id = tl.ticket_id)";
 
     const whereConditions: string[] = [];
     let values = [];

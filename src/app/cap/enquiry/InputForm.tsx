@@ -191,8 +191,6 @@ export default function InputForm(props: {
 
   const enquiryMaintainProducts = props.config.enquiryMaintainProducts;
 
-  console.log(selectValues);
-
   return (
     <Box>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
@@ -248,7 +246,7 @@ export default function InputForm(props: {
                   </Grid>
                   <Grid item xs={12} sm={3} md={3}>
                     <InputControl
-                      label="Received on"
+                      label="Received On"
                       inputType={InputType.DATETIMEINPUT}
                       id="date"
                       name="date"
@@ -387,6 +385,7 @@ export default function InputForm(props: {
                     <ProductGrid
                       dgData={data}
                       setdgData={setData}
+                      dgDialogOpen={dialogOpen}
                       setdgDialogOpen={setDialogOpen}
                       dgFormError={formError}
                       setdgFormError={setFormError}
@@ -404,8 +403,8 @@ export default function InputForm(props: {
               >
                 <Grid item xs={12} md={12}>
                   <TextField
-                    placeholder="Call receipt remarks"
-                    label="Call receipt remarks"
+                    placeholder="Call Receipt Remarks"
+                    label="Call Receipt Remarks"
                     multiline
                     name="call_receipt_remark"
                     id="call_receipt_remark"
@@ -564,8 +563,8 @@ export default function InputForm(props: {
                   <TextField
                     key={`closure-remark-${status}`}
                     defaultValue={""}
-                    placeholder="Closure remarks"
-                    label="Closure remarks"
+                    placeholder="Closure Remarks"
+                    label="Closure Remarks"
                     multiline
                     name="closure_remark"
                     id="closure_remark"
