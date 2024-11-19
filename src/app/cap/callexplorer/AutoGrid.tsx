@@ -113,7 +113,7 @@ export default function AutoGrid(props: any) {
   };
 const handleStatusClick= async ()=>{
   const encyptedId= await encrypt(selectedRow?.id);
-  const path = `/cap/${tabOptions[value].name}?id=${encyptedId}`;
+  const path = `/cap/${tabOptions[value].name}?id=${encyptedId}&status=true`;
   router.push(path);
 }
 

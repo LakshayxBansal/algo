@@ -131,7 +131,7 @@ export async function createSupportTicketDB(
           supportData.sub_status_id,
           supportData.action_taken_id,
           supportData.next_action_id,
-          supportData.next_action_date,
+          supportData.next_action_date || null,
           supportData.suggested_action_remark,
           supportData.action_taken_remark,
           supportData.closure_remark,
@@ -220,28 +220,13 @@ export async function createSupportTicketDB(
     
     export async function delSupportDataByIdDb(session: Session, ticketId: number) {
       try {
-        // Delete from ticket_product_tran first to maintain referential integrity
-        await excuteQuery({
+        const result = await excuteQuery({
           host: session.user.dbInfo.dbName,
-          query: "DELETE FROM ticket_product_tran WHERE ticket_id = ?;",
+          query: "call deleteSupportTicket(?);",
           values: [ticketId],
         });
     
-        // Delete from ticket_ledger_tran
-        await excuteQuery({
-          host: session.user.dbInfo.dbName,
-          query: "DELETE FROM ticket_ledger_tran WHERE ticket_id = ?;",
-          values: [ticketId],
-        });
-    
-        // Finally, delete from ticket_header_tran
-        await excuteQuery({
-          host: session.user.dbInfo.dbName,
-          query: "DELETE FROM ticket_header_tran WHERE id = ?;",
-          values: [ticketId],
-        });
-    
-        return { success: true };
+        return result;
       } catch (error:any) {
         console.log(error);
         return { success: false, error: error.message };
