@@ -121,7 +121,7 @@ const FieldConfigurator = () => {
             is_mandatory: 1,
             modified_by: null,
             modified_on: null,
-            object_type_id: 11
+            object_type_id: parseInt(selectedFormValue)
         };
         setFields([...fields, newField]);
         customCount++;

@@ -74,8 +74,10 @@ export default function EntityList(props: entitiyCompT) {
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
   const [masterData, setMasterData] = useState<masterDataprop>({
     fields: [],
+    fields: [],
     data: {},
     rights: {},
+    config_data: [],
     config_data: [],
     loggedInUserData: {}
   });
@@ -216,15 +218,15 @@ export default function EntityList(props: entitiyCompT) {
     setDialogOpen(true);
     setDlgMode(dialogMode.Add);
     if (props.fnFetchDataByID) {
-      const masterData = await props.fnFetchDataByID(0);
-      console.log("entitylist", masterData);
-
+      const data = await props.fnFetchDataByID(0);
+      console.log("!12 : ", data[0]);
       setMasterData({
-        fields: masterData[0][0] || [],
-        rights: masterData[0][1] || {},
-        config_data: masterData[0][2] || [],
-        loggedInUserData: masterData[0][3] || {}
+        fields: data[0][0] || [],
+        rights: data[0][1] || {},
+        config_data: data[0][2] || [],
+        loggedInUserData: data[0][3] || {}
       });
+      // console.log("dialogmode.ADD",masterData);
     }
 
 
@@ -247,6 +249,7 @@ export default function EntityList(props: entitiyCompT) {
   const hideUploadBtn = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setOpen(false);
   };
+
 
   return (
     <Box>

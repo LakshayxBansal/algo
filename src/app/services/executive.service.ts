@@ -88,7 +88,6 @@ export async function updateExecutiveDB(
         data.alias,
         data.name,
         data.stamp,
-        data.stamp,
         data.address1,
         data.address2,
         data.address3,
