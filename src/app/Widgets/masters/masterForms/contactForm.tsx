@@ -572,7 +572,39 @@ export default function ContactForm(props: masterFormPropsT) {
               pb: 2,
             }}
           >
-            <SelectMasterWrapper
+            <InputControl
+              inputType={InputType.TEXT}
+              name="city"
+              id="city"
+              label="City"
+              error={formError?.city?.error}
+              helperText={formError?.city?.msg}
+              defaultValue={entityData.city}
+              width={160}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { city, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            <InputControl
+              inputType={InputType.TEXT}
+              name="pincode"
+              id="pincode"
+              label="Pin Code"
+              width={160}
+              error={formError?.pincode?.error}
+              helperText={formError?.pincode?.msg}
+              defaultValue={entityData.pincode}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { pincode, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+              <SelectMasterWrapper
               name={"country"}
               id={"country"}
               label={"Country"}
@@ -624,38 +656,6 @@ export default function ContactForm(props: masterFormPropsT) {
                   parentData={selectValues.country?.id || entityData.country_id}
                 />
               )}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="city"
-              id="city"
-              label="City"
-              error={formError?.city?.error}
-              helperText={formError?.city?.msg}
-              defaultValue={entityData.city}
-              width={160}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { city, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="pincode"
-              id="pincode"
-              label="Pin Code"
-              width={160}
-              error={formError?.pincode?.error}
-              helperText={formError?.pincode?.msg}
-              defaultValue={entityData.pincode}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { pincode, ...rest } = curr;
-                  return rest;
-                });
-              }}
             />
           </Box>
           <Box>
