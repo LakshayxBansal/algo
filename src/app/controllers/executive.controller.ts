@@ -283,13 +283,13 @@ export async function delExecutiveById(id: number) {
         return "Can't Be DELETED!";
       } else {
         const mappedUser = await getExecutiveById(id);
-        if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
-          await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
-        }
         const result = await delExecutiveDetailsById(
           session.user.dbInfo.dbName,
           id
         );
+        if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
+          await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
+        }
         return "Record Deleted";
       }
       // if ((result.affectedRows = 1)) {
