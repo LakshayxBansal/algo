@@ -66,8 +66,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
-        if(issue.path==='refresh'){
-          errorState["form"] = { msg: issue.message, error: true};
+        if (issue.path === 'refresh') {
+          errorState["form"] = { msg: issue.message, error: true };
         }
       }
       setFormError(errorState);

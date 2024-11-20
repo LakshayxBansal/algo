@@ -42,6 +42,9 @@ type ModifiedRowT = {
 };
 
 type ProductGridProps = {
+  label: string;
+  id?: string;
+  name?: string;
   dgData: any;
   setdgData: any;
   setdgDialogOpen: any;
@@ -59,6 +62,7 @@ const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
 });
 
 export default function ProductGrid({
+  label,
   dgData,
   setdgData,
   setdgDialogOpen,
@@ -428,9 +432,9 @@ export default function ProductGrid({
         }}
         rowHeight={
           dgFormError.product ||
-          dgFormError.quantity ||
-          dgFormError.unit ||
-          dgFormError.remark
+            dgFormError.quantity ||
+            dgFormError.unit ||
+            dgFormError.remark
             ? 70
             : 50
         }

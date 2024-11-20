@@ -131,6 +131,16 @@ export const organisationSchema = z.object({
   modified_by: z.number().optional(),
   created_on: z.date().optional(),
   modified_on: z.date().optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 export const deptSchema = z.object({
@@ -190,7 +200,6 @@ export const productToListFormSchema = z.object({
     .string()
     .min(1)
     .max(60)
-    .optional()
     .refine((val) => val !== undefined && val.length !== 0, {
       message: "Product Name Empty !",
       path: ["product"],
@@ -206,7 +215,6 @@ export const productToListFormSchema = z.object({
   unit: z
     .string()
     .min(1)
-    .optional()
     .refine((val) => val !== undefined && val.length !== 0, {
       message: "Unit Name Empty !",
       path: ["unit"],
@@ -280,11 +288,18 @@ export const contactSchema = z.object({
   state_id: z.number().optional(),
   country_id: z.number().optional(),
   country: z.string().optional(),
-  city: z
-    .string()
-    .max(75, "Field must contain at most 75 character(s)")
-    .optional(),
+  city: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
   stamp: z.number().optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 export const areaSchema = z.object({
@@ -396,6 +411,16 @@ export const executiveSchema = z
     ]),
     // aadhaar: z.union([z.literal(""), z.string().max(20)]),
     aadhaar: z.union([z.literal(""), z.string().optional()]),
+    c_col1: z.string().optional(),
+    c_col2: z.string().optional(),
+    c_col3: z.string().optional(),
+    c_col4: z.string().optional(),
+    c_col5: z.string().optional(),
+    c_col6: z.string().optional(),
+    c_col7: z.string().optional(),
+    c_col8: z.string().optional(),
+    c_col9: z.string().optional(),
+    c_col10: z.string().optional(),
   })
   .refine(
     (schema) => {
@@ -476,6 +501,16 @@ export const enquiryLedgerSchema = z.object({
   enquiry_tran_type: z.number().optional(),
   id: z.number().optional(),
   active: z.number().optional(),
+  c_col1: z.string(),
+  c_col2: z.string(),
+  c_col3: z.string(),
+  c_col4: z.string(),
+  c_col5: z.string(),
+  c_col6: z.string(),
+  c_col7: z.string(),
+  c_col8: z.string(),
+  c_col9: z.string(),
+  c_col10: z.string(),
 });
 
 export const enquiryDataSchema = enquiryHeaderSchema.merge(enquiryLedgerSchema);
@@ -561,6 +596,7 @@ export const supportProductSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
 });
@@ -696,6 +732,16 @@ export const executiveDeptSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.number().optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 /**

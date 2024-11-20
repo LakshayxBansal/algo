@@ -49,8 +49,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
+import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ContactForm(props: masterFormPropsT) {
+  console.log("Contact Props : ", props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -96,7 +98,7 @@ export default function ContactForm(props: masterFormPropsT) {
       setStateDisable(false);
       values["state"] = {};
       setDefaultState(undefined);
-      if(values.country.id===0){
+      if (values.country.id === 0) {
         setStateDisable(true);
       }
       setStateKey((prev) => 1 - prev);
@@ -110,6 +112,10 @@ export default function ContactForm(props: masterFormPropsT) {
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (let i = 1; i <= 10; ++i) {
+      data[`c_col${i}`] = "";
+    }
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -137,8 +143,8 @@ export default function ContactForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = { msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -150,45 +156,45 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-      ? entityData.contactGroup_id
-      : 0;
+        ? entityData.contactGroup_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-      ? entityData.organisation_id
-      : 0;
+        ? entityData.organisation_id
+        : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-      ? entityData.department_id
-      : 0;
+        ? entityData.department_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
 
   async function persistEntity(data: contactSchemaT) {
     let result;
-    const newDocsData = docData.filter((row: any) => row.type !== "db");
+    const newDocsData = docData?.filter((row: any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
-      result = await updateContact(data,newDocsData);
+      result = await updateContact(data, newDocsData);
     } else {
-      result = await createContact(data,newDocsData);
+      result = await createContact(data, newDocsData);
     }
     return result;
   }
@@ -239,20 +245,20 @@ export default function ContactForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Tooltip
-      title={docData.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
+        title={docData.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
           </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
+        )}
       >
         <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0}}
+          sx={{ float: "right", position: "relative", paddingRight: 0 }}
           onClick={() => setDialogOpen(true)}
           aria-label="file"
         >
@@ -261,7 +267,7 @@ export default function ContactForm(props: masterFormPropsT) {
           </Badge>
 
         </IconButton>
-     </Tooltip>
+      </Tooltip>
       <Box id="contactForm" sx={{ p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
@@ -286,12 +292,12 @@ export default function ContactForm(props: masterFormPropsT) {
                 helperText={formError?.name?.msg}
                 defaultValue={entityData.name}
                 onChange={handlePrintNameChange}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
               />
               <InputControl
                 inputType={InputType.TEXT}
@@ -642,7 +648,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 fetchDataFn={getStatesforCountry}
                 fnFetchDataByID={getStateById}
                 defaultValue={defaultState}
-                allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
+                allowNewAdd={selectValues.country ? true : entityData.country_id ? true : false}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <StateForm
                     setDialogOpen={fnDialogOpen}
@@ -686,7 +692,6 @@ export default function ContactForm(props: masterFormPropsT) {
               />
             </Box>
           </Paper>
-
           <Box
             sx={{
               display: "flex",
@@ -705,14 +710,14 @@ export default function ContactForm(props: masterFormPropsT) {
             </Button>
           </Box>
           {dialogOpen && (
-          <AddDialog
-            title=""
-            open={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          >
-            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
-          </AddDialog>
-        )}
+            <AddDialog
+              title=""
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
+              <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+            </AddDialog>
+          )}
         </form>
         <Snackbar
           open={snackOpen}

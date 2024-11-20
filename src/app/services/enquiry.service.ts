@@ -17,7 +17,7 @@ export async function createEnquiryDB(
    const result = excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -39,6 +39,16 @@ export async function createEnquiryDB(
         enqData.headerLedger.active,
         session.user.userId,
         enqData.product,
+        enqData.headerLedger.c_col1,
+        enqData.headerLedger.c_col2,
+        enqData.headerLedger.c_col3,
+        enqData.headerLedger.c_col4,
+        enqData.headerLedger.c_col5,
+        enqData.headerLedger.c_col6,
+        enqData.headerLedger.c_col7,
+        enqData.headerLedger.c_col8,
+        enqData.headerLedger.c_col9,
+        enqData.headerLedger.c_col10,
       ],
     });
     return result ;

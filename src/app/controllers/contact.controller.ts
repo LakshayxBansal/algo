@@ -21,6 +21,8 @@ import { modifyPhone } from "../utils/phoneUtils";
 import { convertData } from "../utils/validateType.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
+import { getScreenDescription } from "./object.controller";
+import { getRegionalSetting, getRegionalSettings } from "./config.controller";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -243,17 +245,40 @@ export async function getContactById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
-      if(contactDetails.length>0){
-        const objectDetails = await getObjectByName("Contact");
-        const docData = await getDocs(id,objectDetails[0].object_id);
-      if (contactDetails.length > 0 && docData.length > 0) {
-        contactDetails[0].docData = docData;
-      } else {
-        contactDetails[0].docData = [];
+      const rights={};
+      const config_data=await getRegionalSettings();
+      const desc = await getScreenDescription(5,1);
+      if(id){
+        const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
+        if(contactDetails?.length>0){
+          const objectDetails = await getObjectByName("Contact");
+          const docData = await getDocs(id,objectDetails[0].object_id);
+        if (contactDetails.length > 0 && docData.length > 0) {
+          contactDetails[0].docData = docData;
+        } else {
+          contactDetails[0].docData = [];
+        }
       }
-      return contactDetails;
+      const result = [
+        desc,
+        contactDetails[0],
+        rights,
+        config_data,
+        session
+      ]
+        return[
+          result
+        ]
       }
+      const result=[
+        desc,
+        rights,
+        config_data,
+        session
+      ]
+      return[
+        result
+      ]
     }
   } catch (error) {
     throw error;

@@ -83,10 +83,11 @@ export default function ManageContacts() {
     <>
       <EntityList
         title="Contact Master"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            masterData={masterData}
             data={data}
           />
         )}
@@ -99,7 +100,7 @@ export default function ManageContacts() {
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
         uploadAllowed={true}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );

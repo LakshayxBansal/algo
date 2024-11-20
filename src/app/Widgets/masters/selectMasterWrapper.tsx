@@ -10,6 +10,7 @@ import { formErrorT } from "../../models/models";
 import EditIcon from "@mui/icons-material/Edit";
 import { optionsDataT } from "@/app/models/models";
 import { RenderFormFunctionT } from "@/app/models/models";
+import { getScreenDescription } from "@/app/controllers/object.controller";
 
 type OnChangeFunction = (
   event: any,
@@ -39,10 +40,18 @@ type selectMasterWrapperT = {
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
   disable?: boolean;
-  defaultOptions?:optionsDataT[]
-  showDetails?: boolean ;
+  defaultOptions?: optionsDataT[]
+  showDetails?: boolean;
   autoFocus?: boolean;
 };
+
+type masterDataprop = {
+  fields: {},
+  data?: {},
+  rights: {},
+  config_data: {},
+  loggedInUserData: {}
+}
 
 enum dialogMode {
   Add,
@@ -56,15 +65,40 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     // {} as optionsDataT
     props.defaultValue ?? {} as optionsDataT
   );
+  const [desc, setDesc] = useState();
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
+  const [masterData, setMasterData] = useState<masterDataprop>({
+    fields: [],
+    data: {},
+    rights: {},
+    config_data: [],
+    loggedInUserData: {}
+  });
 
-  function openDialog() {
+
+  async function openDialog() {
     if (allowNewAdd) {
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        setDesc(data[0]);
+      }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        if (data.length > 0) {
+          setMasterData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            config_data: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
+        }
+      }
     }
+    // getDescriptionData();
   }
 
   // this is a wrapper function to enable a call the the parent controls onchange
@@ -80,11 +114,19 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     if (allowModify) {
       if (props.fnFetchDataByID && dialogValue.id) {
         const data = await props.fnFetchDataByID(dialogValue.id);
-        setModData(data[0]);
+        setModData(data[0][1]);
+        setMasterData({
+          fields: data[0][0] || {},
+          data: data[0][1] || {},
+          rights: data[0][2] || {},
+          config_data: data[0][3] || {},
+          loggedInUserData: data[0][4] || {}
+        });
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
     }
+    // getDescriptionData();
   }
 
   return (
@@ -110,7 +152,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             fnSetModifyMode={onModifyDialog}
             disable={props.disable}
             defaultOptions={props.defaultOptions}
-            showDetails = {props.showDetails? props.showDetails : false}
+            showDetails={props.showDetails ? props.showDetails : false}
           />
           {!props.disable && (
             <IconButton tabIndex={-1} size="small">
@@ -165,8 +207,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
         >
           {props.renderForm
             ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, changeDialogValue)
-              : props.renderForm(setDialogOpen, changeDialogValue, modData)
+              ? props.renderForm(setDialogOpen, changeDialogValue, masterData)
+              : props.renderForm(setDialogOpen, changeDialogValue, masterData, modData)
             : 1}
         </AddDialog>
       )}
