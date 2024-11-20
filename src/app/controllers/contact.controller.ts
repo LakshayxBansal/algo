@@ -105,8 +105,8 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data.mobile);
-      data.whatsapp = modifyPhone(data.whatsapp);
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
       
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
@@ -164,8 +164,8 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data?.mobile);
-      data.whatsapp = modifyPhone(data?.whatsapp);
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
 
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
