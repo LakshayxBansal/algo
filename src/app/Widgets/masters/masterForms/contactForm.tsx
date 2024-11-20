@@ -238,30 +238,6 @@ export default function ContactForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
-      title={docData.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
-          </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0}}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-
-        </IconButton>
-     </Tooltip>
       <Box id="contactForm" sx={{ p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
@@ -686,7 +662,31 @@ export default function ContactForm(props: masterFormPropsT) {
               />
             </Box>
           </Paper>
+          <Box>
+          <Tooltip
+      title={docData.length > 0 ? (
+        docData.map((file: any, index: any) => (
+          <Typography variant="body2" key={index}>
+            {file.description}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2" color="white">
+          No files available
+        </Typography>
+      )}
+      >
+        <IconButton
+          sx={{ float: "left", position: "relative"}}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
 
+        </IconButton>
+     </Tooltip>
           <Box
             sx={{
               display: "flex",
@@ -703,6 +703,7 @@ export default function ContactForm(props: masterFormPropsT) {
             >
               Submit
             </Button>
+          </Box>
           </Box>
           {dialogOpen && (
           <AddDialog

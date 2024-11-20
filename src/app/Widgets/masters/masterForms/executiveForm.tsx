@@ -142,7 +142,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
-            if(path==="refresh"){
+            if (path === "refresh") {
               errorState["form"] = { msg: issue.message, error: true };
             }
           }
@@ -195,8 +195,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     data.role = selectValues.role
       ? selectValues.role.name
       : entityData.role
-      ? entityData.role
-      : "";
+        ? entityData.role
+        : "";
     return data;
   };
 
@@ -224,16 +224,16 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     if (name === "country") {
       values["state"] = {};
       setDefaultState(undefined);
-      if(values.country.id === 0) setStateDisable(true);
+      if (values.country.id === 0) setStateDisable(true);
       else setStateDisable(false);
-      setStateKey(prev => 1-prev);
+      setStateKey(prev => 1 - prev);
     }
     if (name === "department") {
       values["role"] = {};
       setDefaultRole(undefined);
-      if(values.department.id === 0) setRoleDisable(true);
+      if (values.department.id === 0) setRoleDisable(true);
       else setRoleDisable(false);
-      setRoleKey(prev => 1-prev);
+      setRoleKey(prev => 1 - prev);
     }
     setSelectValues(values);
   }
@@ -244,9 +244,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     if (props.data) {
       data["id"] = entityData.id;
       data["stamp"] = entityData.stamp;
-      result = await updateExecutive(data,newDocsData);
+      result = await updateExecutive(data, newDocsData);
     } else {
-      result = await createExecutive(data,newDocsData);
+      result = await createExecutive(data, newDocsData);
     }
     return result;
   }
@@ -274,14 +274,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         {
           props.parentData ? (<></>) : (<>
             <Seperator>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              {props.data ? "Update Executive" : "Add Executive"}
-              <IconButton onClick={handleCancel} tabIndex={-1}>
-                <CloseIcon />
-              </IconButton>
-            </Box>
-          </Seperator>
-        </>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                {props.data ? "Update Executive" : "Add Executive"}
+                <IconButton onClick={handleCancel} tabIndex={-1}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </Seperator>
+          </>
           )
         }
       </Box>
@@ -303,30 +303,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip 
-      title={docData.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
-          </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", m:1 }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-
-        </IconButton>
-     </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
@@ -517,41 +493,41 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               defaultValue={entityData.email}
             />
             <InputControl
-                inputType={InputType.PHONE}
-                id="mobile"
-                label="Phone No"
-                name="mobile"
-                error={formError?.mobile?.error}
-                helperText={formError?.mobile?.msg}
-                defaultValue={entityData.mobile}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { mobile, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-           <InputControl
-                inputType={InputType.PHONE}
-                id="whatsapp"
-                label="Whatsapp No"
-                name="whatsapp"
-                // defaultCountry="FR"
-                error={formError?.whatsapp?.error}
-                helperText={formError?.whatsapp?.msg}
-                defaultValue={entityData.whatsapp}
-                slotProps={{
-                  flagButton : {
-                    tabIndex: -1
-                  },
-                }}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { whatsapp, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
+              inputType={InputType.PHONE}
+              id="mobile"
+              label="Phone No"
+              name="mobile"
+              error={formError?.mobile?.error}
+              helperText={formError?.mobile?.msg}
+              defaultValue={entityData.mobile}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { mobile, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            <InputControl
+              inputType={InputType.PHONE}
+              id="whatsapp"
+              label="Whatsapp No"
+              name="whatsapp"
+              // defaultCountry="FR"
+              error={formError?.whatsapp?.error}
+              helperText={formError?.whatsapp?.msg}
+              defaultValue={entityData.whatsapp}
+              slotProps={{
+                flagButton: {
+                  tabIndex: -1
+                },
+              }}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { whatsapp, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
 
             <InputControl
               inputType={InputType.DATEINPUT}
@@ -717,37 +693,63 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               helperText={formError?.pincode?.msg}
             />
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
+          <Box sx={{mt: 1}}>
+          <Tooltip
+            title={docData.length > 0 ? (
+              docData.map((file: any, index: any) => (
+                <Typography variant="body2" key={index}>
+                  {file.description}
+                </Typography>
+              ))
+            ) : (
+              <Typography variant="body2" color="white">
+                No files available
+              </Typography>
+            )}
           >
-            <Button onClick={()=>{
-              if(props.parentData === 'profile'){
-                router.push('/cap');
-              }
-              else{
-                handleCancel();
-              }
-            }} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
+            <IconButton
+              sx={{ float: "left", position: "relative" }}
+              onClick={() => setDialogOpen(true)}
+              aria-label="file"
             >
-              Submit
-            </Button>
+              <Badge badgeContent={docData.length} color="primary">
+                <AttachFileIcon></AttachFileIcon>
+              </Badge>
+
+            </IconButton>
+          </Tooltip>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button onClick={() => {
+                if (props.parentData === 'profile') {
+                  router.push('/cap');
+                }
+                else {
+                  handleCancel();
+                }
+              }} tabIndex={-1}>Cancel</Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
           </Box>
           {dialogOpen && (
-          <AddDialog
-            title=""
-            open={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          >
-            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
-          </AddDialog>
-        )}
+            <AddDialog
+              title=""
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
+              <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+            </AddDialog>
+          )}
         </form>
         <Snackbar
           open={snackOpen}
