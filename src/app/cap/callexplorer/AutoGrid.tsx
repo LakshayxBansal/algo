@@ -56,6 +56,12 @@ export default function AutoGrid(props: any) {
   const [enableAllocate, setEnableAllocate] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [value, setValue] = React.useState(0);
+  const [selectedStatuses, setSelectedStatuses] = React.useState({
+    "Open-Unallocated": false,
+    "Open-Allocated": false,
+    "Closed-Failure": false,
+    "Closed-Success": false,
+  });
 
   const apiRef = useGridApiRef();
 
@@ -231,40 +237,149 @@ const handleStatusClick= async ()=>{
 
 
 
-  const CustomColor = (props: { row: any; }) => {
-    let color;
-    if (props.row.callStatus === "Open") {
-      if (props.row.executive === null) { color = "blue" }
-      else { color = "purple" }
-    }
-    else {
-      if (props.row.subStatus === "Success") { color = "green" }
-      else { color = "red" }
-    }
-    return (
-      <div>
-        <Box
-          sx={{
-            width: "7px",
-            height: "7px",
-            bgcolor: color,
-            margin: "10px",
-          }}
-        />
-      </div>
-    );
-  };
+  // const CustomColor = (props: { row: any; }) => {
+  //   let color;
+  //   if (props.row.callStatus === "Open") {
+  //     if (props.row.executive === null) { color = "blue" }
+  //     else { color = "purple" }
+  //   }
+  //   else {
+  //     if (props.row.subStatus === "Success") { color = "green" }
+  //     else { color = "red" }
+  //   }
+  //   return (
+  //     <div>
+  //       <Box
+  //         sx={{
+  //           width: "7px",
+  //           height: "7px",
+  //           bgcolor: color,
+  //           margin: "10px",
+  //         }}
+  //       />
+  //     </div>
+  //   );
+  // };
+  // const CustomColor = (props: { row: any; onChange: (id: any) => void; selected: boolean }) => {
+  //   let color;
+  //   if (props.row.callStatus === "Open") {
+  //     color = props.row.executive === null ? "blue" : "purple";
+  //   } else {
+  //     color = props.row.subStatus === "Success" ? "green" : "red";
+  //   }
+  
+  //   return (
+  //     <Checkbox
+  //       checked={props.selected}
+  //       onChange={() => props.onChange(props.row.id)}
+  //       sx={{
+  //         color: color,
+  //         "&.Mui-checked": {
+  //           color: color,
+  //         },
+  //       }}
+  //     />
+  //   );
+  // };
 
+  const checkboxSelectionWithColor = (params: any) => {
+    let color;
+    if (params.row.callStatus === "Open") {
+      color = params.row.executive === null ? "blue" : "purple";
+    } else {
+      color = params.row.subStatus === "Success" ? "green" : "red";
+    }
+    return {
+      color: color,
+      "&.Mui-checked": {
+        color: color, // Change the checked color
+      },
+    };
+  };
   const column1: GridColDef[] = [
+    // {
+    //   field: "Type",
+    //   headerName: "Status",
+    //   width: 50,
+    //   hideable: false,
+    //   renderCell: (params) => {
+    //     return <CustomColor row={params.row} />;
+    //   },
+    // },
+
+    // {
+    //   field: "statusColor",
+    //   headerName: "Select",
+    //   width: 100,
+    //   renderCell: (params) => (
+    //     <CustomColor
+    //       row={params.row}
+    //       selected={selectionModel.includes(params.row.id)}
+    //       onChange={handleRowSelection}
+    //     />
+    //   ),
+    // },
+    // {
+    //   field: "statusColor",
+    //   headerName: "Select",
+    //   width: 80,
+    //   renderCell: (params) => {
+    //     let color;
+    //     if (params.row.callStatus === "Open") {
+    //       color = params.row.executive === null ? "blue" : "purple";
+    //     } else {
+    //       color = params.row.subStatus === "Success" ? "green" : "red";
+    //     }
+  
+    //     return (
+    //       <Checkbox
+    //         checked={params.row.selected}
+    //         size="small"
+    //         sx={{
+    //           color: color,
+    //           '&.Mui-checked': {
+    //             color: color,
+    //           },
+    //         }}
+    //       />
+    //     );
+    //   },
+    // },
     {
-      field: "Type",
+      field: "statusColor",
       headerName: "Status",
-      width: 50,
-      hideable: false,
+      width: 80,  
       renderCell: (params) => {
-        return <CustomColor row={params.row} />;
+        let color;
+        if (params.row.callStatus === "Open") {
+          color = params.row.executive === null ? "blue" : "purple";
+        } else {
+          color = params.row.subStatus === "Success" ? "green" : "red";
+        }
+    
+        return (
+          <Checkbox
+            checked={params.row.selected}
+            size="small" // Smaller checkbox size
+            sx={{
+              color: color,
+              '&.Mui-checked': {
+                color: color,
+              },
+              transform: 'scale(0.75)',
+              padding: 0,  // Remove padding to make it fit better
+              // // width: 20,   // Adjust width
+              // // height: 20,  // Adjust height
+              margin: 0,   // Remove margin if any
+              display: "flex", // Ensure proper alignment
+              alignItems: "center", // Center the checkbox within the row
+              justifyContent: "center", // Center the checkbox in the cell
+            }}
+          />
+        );
       },
     },
+    
     { field: "description", headerName: "Description", hideable: false, width: 130, sortable: false },
     
 
@@ -862,9 +977,9 @@ const handleStatusClick= async ()=>{
         </Seperator>
         <Paper elevation={1} sx={{ mb: 1 }}
         >
-          <MinimizedDataGrid
+          {/* <MinimizedDataGrid
             disableColumnMenu
-            rowHeight={30}
+            rowHeight={25}
             columnHeaderHeight={30}
             keepNonExistentRowsSelected
             rows={data ? data : []}
@@ -945,7 +1060,173 @@ const handleStatusClick= async ()=>{
               //   overflowY: 'auto',
               // },
             }}
-          />
+          /> */}
+          {/* <MinimizedDataGrid
+  disableColumnMenu
+  rowHeight={25}
+  columnHeaderHeight={30}
+  keepNonExistentRowsSelected
+  rows={data ? data : []}
+  columns={column1}
+  columnVisibilityModel={columnVisibilityModel}
+  onColumnVisibilityModelChange={(newModel: any) =>
+    setColumnVisibilityModel(newModel)
+  }
+  checkboxSelection
+  apiRef={apiRef}
+  onRowSelectionModelChange={handleRowSelection}
+  rowSelectionModel={rowSelectionModel}
+  paginationMode="server"
+  pageSizeOptions={[5, 10, 20]}
+  paginationModel={pageModel}
+  onPaginationModelChange={setPageModel}
+  rowCount={totalRowCount}
+  loading={loading}
+  slotProps={{
+    columnsPanel: {
+      sx: {
+        ".MuiDataGrid-columnsManagementRow:first-child": {
+          display: "none",
+        },
+        ".MuiDataGrid-columnsManagementHeader": {
+          display: "none",
+        },
+      },
+    },
+    panel: {
+      anchorEl: () => {
+        const preferencePanelState = gridPreferencePanelStateSelector(
+          apiRef.current.state
+        );
+        if (
+          preferencePanelState.openedPanelValue ===
+            GridPreferencePanelsValue.columns &&
+          anchorEl
+        ) {
+          return anchorEl;
+        }
+        const columnHeadersElement =
+          apiRef.current.rootElementRef?.current?.querySelector(
+            `.${gridClasses.columnHeaders}`
+          )!;
+        return columnHeadersElement;
+      },
+    },
+  }}
+  sx={{
+    mt: "1%",
+    overflowY: "auto",
+    minHeight: "30px",
+    height: details
+      ? {
+          xs: "32vh",
+          sm: "32vh",
+          "@media (min-height: 645px)": {
+            height: "50vh",
+          },
+        }
+      : {
+          xs: "60vh",
+          sm: "60vh",
+          "@media (min-height: 645px)": {
+            height: "65vh",
+          },
+        },
+    // Hide the default checkboxes in rows and header
+    "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox": {
+      display: "none",
+    },
+  }}
+/> */}
+
+<MinimizedDataGrid
+  disableColumnMenu
+  rowHeight={25} // Compact row height
+  columnHeaderHeight={30} // Header height remains compact
+  keepNonExistentRowsSelected
+  rows={data ? data : []}
+  columns={column1}
+  columnVisibilityModel={columnVisibilityModel}
+  onColumnVisibilityModelChange={(newModel: any) =>
+    setColumnVisibilityModel(newModel)
+  }
+  onRowSelectionModelChange={handleRowSelection}
+  rowSelectionModel={rowSelectionModel}
+  paginationMode="server"
+  pageSizeOptions={[10, 20, 50]} // Updated to allow more rows per page
+  paginationModel={pageModel}
+  onPaginationModelChange={setPageModel}
+  rowCount={totalRowCount}
+  checkboxSelection
+  apiRef={apiRef}
+  loading={loading}
+  slotProps={{
+    columnsPanel: {
+      sx: {
+        ".MuiDataGrid-columnsManagementRow:first-child": {
+          display: "none",
+        },
+        ".MuiDataGrid-columnsManagementHeader": {
+          display: "none",
+        },
+      },
+    },
+    panel: {
+      anchorEl: () => {
+        const preferencePanelState = gridPreferencePanelStateSelector(
+          apiRef.current.state
+        );
+        if (
+          preferencePanelState.openedPanelValue ===
+            GridPreferencePanelsValue.columns &&
+          anchorEl
+        ) {
+          return anchorEl;
+        }
+
+        const columnHeadersElement =
+          apiRef.current.rootElementRef?.current?.querySelector(
+            `.${gridClasses.columnHeaders}`
+          )!;
+        return columnHeadersElement;
+      },
+    },
+  }}
+  sx={{
+    mt: "1%",
+    overflowY: "auto",
+    height: {
+      xs: "50vh", 
+      sm: "50vh",
+      "@media (min-height: 800px)": {
+        height: "60vh", // Maximum height for larger screens
+      },
+    },
+    "& .MuiDataGrid-root": {
+      fontSize: "12px", // Keep row font size compact
+    },
+    "& .MuiDataGrid-columnHeaders": {
+      fontSize: "inherit", // Keep header font size unchanged
+      fontWeight: "bold",
+    },
+    "& .MuiDataGrid-row": {
+      fontSize: "12px", // Compact font for rows
+    },
+    "& .MuiTablePagination-root": {
+      fontSize: "10px", // Compact pagination font
+    },
+    "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox": {
+      display: "none",
+    },
+  }}
+/>
+
+
+
+
+
+
+
         </Paper>
 
 

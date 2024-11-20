@@ -133,7 +133,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
     ];
 
     return (<>
-        <StripedDataGrid
+        {/* <StripedDataGrid
             disableColumnMenu
             rows={data ? data : []}
             rowHeight={30}
@@ -157,6 +157,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                 '& .MuiDataGrid-footerContainer': {
                     height: '28px', // Force footer container to 30px
                     minHeight: '28px', // Override any minimum height constraints
+                    display: "none",
                 },
                 '& .MuiTablePagination-root': {
                     height: '28px', // Ensure pagination component also respects 30px height
@@ -169,7 +170,38 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                 },
             }}
            
-        />
+        /> */}
+        <StripedDataGrid
+  disableColumnMenu
+  rows={data ? data : []}
+  rowHeight={25} 
+  columnHeaderHeight={30} 
+  columns={column2}
+  getRowId={(row) => row.id}
+  columnVisibilityModel={columnVisibilityModel}
+  onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+ 
+  sx={{
+    height: '140px',
+    minHeight: '140px',
+    overflowY: 'auto',
+    fontSize: '12px', 
+    '& .MuiDataGrid-row': {
+      fontSize: '12px', 
+    },
+    '& .MuiDataGrid-columnHeaders': {
+      fontSize: 'inherit', 
+      fontWeight: 'bold', 
+    },
+    '& .MuiDataGrid-footerContainer': {
+      display: 'none', // Hide footer container
+    },
+    '& .MuiTablePagination-root': {
+      display: 'none', // Ensure pagination is completely hidden
+    },
+  }}
+/>
+
         {/* <Popover
             open={open}
             anchorEl={anchorEl}

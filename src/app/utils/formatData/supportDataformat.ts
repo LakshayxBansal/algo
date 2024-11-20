@@ -13,7 +13,7 @@ export async function supportDataFormat({
   otherData?: any
 }) {
   const formatDate = (dateStr: string | null | undefined ): string => {
-    if (!dateStr || dateStr === "") return "";
+    if (!dateStr || dateStr === "" || dateStr === "Invalid Date") return "";
     const dt = new Date(dateStr);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
