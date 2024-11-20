@@ -105,10 +105,6 @@ export const organisationSchema = z.object({
     .string()
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
-  address3: z
-    .string()
-    .max(75, "Field must contain at most 75 character(s)")
-    .optional(),
   city: z
     .string()
     .max(75, "Field must contain at most 75 character(s)")
@@ -255,21 +251,20 @@ export const contactSchema = z.object({
   aadhaar: z.union([z.literal(""), z.string().optional()]),
   address1: z.string().max(75, "Field must contain at most 75 character(s)"),
   address2: z.string().max(75, "Field must contain at most 75 character(s)"),
-  address3: z.string().max(75, "Field must contain at most 75 character(s)"),
   pincode: z.string().max(15, "Field must contain at most 15 character(s)"),
   email: z.union([z.literal(""), z.string().email().max(100)]),
   mobile: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Phone No",
     path: ["mobile"],
-  }),
+  }).optional(),
   whatsapp: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Whatsapp No",
     path: ["whatsapp"],
-  }),
+  }).optional(),
   dob: z.date().optional(),
   doa: z.date().optional(),
-  contactGroup_id: z.number().optional(),
-  contactGroup: z.string().optional(),
+  contactGroup_id: z.number(),
+  contactGroup: z.string().min(1, 'Enter contact group'),
   state: z.string().optional(),
   area: z.string().optional(),
   area_id: z.number().optional(),
@@ -323,10 +318,6 @@ export const executiveSchema = z
       .max(75, "Field must contain atmost 60 character(s)")
       .optional(),
     address2: z
-      .string()
-      .max(75, "Field must contain atmost 60 character(s)")
-      .optional(),
-    address3: z
       .string()
       .max(75, "Field must contain atmost 60 character(s)")
       .optional(),
@@ -984,20 +975,51 @@ export const inviteUserSchema = z
     { message: "Please provide email", path: ["email"] }
   );
 
-export const regionalSettingSchema = z.object({
-  id: z.number().optional(),
-  country_id: z.number(),
-  state_id: z.number(),
-  country: z.string().optional(),
-  state: z.string().optional(),
-  decimalPaces: z.string().optional(),
-  timeFormat: z.string().optional(),
-  currencyString: z.string().optional(),
-  currencySymbol: z.string().optional(),
-  currencySubString: z.string().optional(),
-  currencyCharacter: z.string().optional(),
-  dateformat: z.string().optional(),
-});
+export const configBaseSchema = z.object({
+    reqd: z.boolean().optional(),
+    closeCall: z.boolean().optional(),
+    maintainProducts: z.boolean().optional(),
+    saveFAQ: z.boolean().optional(),
+    maintainAction: z.boolean().optional(),
+    voucherNumber: z.boolean().optional(),
+    prefix: z.string().optional(),
+    suffix: z.string().optional(),
+    length: z.string().optional(),
+    prefillWithZero: z.boolean().optional(),
+  });
+  
+   const voucherSchema = z.object({
+    reqd: z.boolean().optional(),
+    voucherNumber: z.boolean().optional(),
+    prefix: z.string().optional(),
+    suffix: z.string().optional(),
+    length: z.string().optional(),
+    prefillWithZero: z.boolean().optional(),
+  });
+  
+  export const regionalSettingSchema = z.object({
+    id: z.number().optional(),
+    country_id: z.number(),
+    state_id: z.number(),
+    country: z.string().optional(),
+    state: z.string().optional(),
+    decimalPlaces: z.string().optional(),
+    timeFormat: z.string().optional(),
+    currencyString: z.string().optional(),
+    currencySymbol: z.string().optional(),
+    currencySubString: z.string().optional(),
+    currencyCharacter: z.string().optional(),
+    dateFormat: z.string().optional(),
+    ...voucherSchema.shape
+  });
+  
+export const configSchema = z.object({
+    enquiryConfig: configBaseSchema.optional(),
+    supportConfig: configBaseSchema.optional(),
+    contractConfig: voucherSchema.optional(),
+    regionalSettingConfig: regionalSettingSchema.optional(),
+    enquiryGenerationConfig: voucherSchema.optional(),
+  });
 
 export const docDescriptionSchema = z.object({
   id: z.number().optional(),

@@ -117,7 +117,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
   };
 
   return (
-    <Paper>
+    <>
       <Box
         sx={{
           position: "sticky",
@@ -156,16 +156,10 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               inputType={InputType.TEXT}
@@ -174,6 +168,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
               name="name"
               required
               fullWidth
+              titleCase={true}
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
@@ -184,23 +179,29 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
                 });
               }} 
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt:2
+              mt: 1,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
+          </Grid>
+        </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -210,6 +211,6 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+    </>
   );
 }

@@ -119,24 +119,22 @@ export default function StateForm(props: masterFormPropsWithParentT) {
         </Alert>
       </Collapse>
       <form action={handleSubmit}>
-        <Box
-          sx={{
-            display: "grid",
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: "repeat(2, 1fr)",
-          }}
-        >
+        <Grid container>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <InputControl
             autoFocus
             id="name"
             label="State Name"
+            titleCase={true}
             inputType={InputType.TEXT}
             defaultValue={entityData.name}
             name="name"
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+            style={{width: "100%"}}
           />
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <InputControl
             id="alias"
             label="Alias"
@@ -145,23 +143,31 @@ export default function StateForm(props: masterFormPropsWithParentT) {
             name="alias"
             error={formError?.alias?.error}
             helperText={formError?.alias?.msg}
+            style={{width: "100%"}}
           />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
+        </Grid>
+        <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 1,
+            }}
           >
-            Submit
-          </Button>
-        </Box>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </form>
       <Snackbar
           open={snackOpen}

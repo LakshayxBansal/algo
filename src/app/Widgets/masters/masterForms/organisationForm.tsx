@@ -22,11 +22,19 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Badge, Collapse, IconButton, Snackbar, Tooltip, Typography } from "@mui/material";
+import {
+  Badge,
+  Collapse,
+  Grid,
+  IconButton,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import StateForm from "./stateForm";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 
@@ -36,7 +44,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
+    props?.data ? props?.data?.docData : []
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const entityData: organisationSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
@@ -82,11 +92,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
+          if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
+      console.log("ERIRB I: ", errorState);
+
       setFormError(errorState);
     }
   };
@@ -108,12 +120,12 @@ export default function OrganisationForm(props: masterFormPropsT) {
 
   async function persistEntity(data: organisationSchemaT) {
     let result;
-    const newDocsData = docData.filter((row : any) => row.type !== "db");
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
-      result = await updateOrganisation(data,newDocsData);
+      result = await updateOrganisation(data, newDocsData);
     } else {
-      result = await createOrganisation(data,newDocsData);
+      result = await createOrganisation(data, newDocsData);
     }
     return result;
   }
@@ -140,7 +152,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
       setStateDisable(false);
       values["state"] = {};
       setDefaultState(undefined);
-      if(values.country.id===0){
+      if (values.country.id === 0) {
         setStateDisable(true);
       }
       setStateKey((prev) => 1 - prev);
@@ -160,7 +172,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
       <Box
         sx={{
           position: "sticky",
-          top: "0px",
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
@@ -194,293 +205,291 @@ export default function OrganisationForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+
       <Box id="sourceForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "2fr 1fr",
-            }}
-          >
-            <InputControl
-              inputType={InputType.TEXT}
-              autoFocus
-              id="name"
-              label="Name"
-              name="name"
-              required
-              fullWidth
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
-              onChange={handlePrintNameChange}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="alias"
-              label="Alias"
-              name="alias"
-              fullWidth
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
-              defaultValue={entityData.alias}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { alias, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          >
-            <InputControl
-              inputType={InputType.TEXT}
-              id="printName"
-              label="Print Name"
-              name="printName"
-              fullWidth
-              error={formError?.printName?.error}
-              helperText={formError?.printName?.msg}
-              defaultValue={printNameFn}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { printName, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="pan"
-              label="PAN"
-              name="pan"
-              fullWidth
-              error={formError?.pan?.error}
-              helperText={formError?.pan?.msg}
-              defaultValue={entityData.pan}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { pan, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="gstin"
-              label="GSTIN"
-              name="gstin"
-              fullWidth
-              error={formError?.gstin?.error}
-              helperText={formError?.gstin?.msg}
-              defaultValue={entityData.gstin}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { gstin, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-          </Box>
-          <InputControl
-            inputType={InputType.TEXT}
-            label="Address Line 1"
-            name="address1"
-            id="address1"
-            fullWidth
-            error={formError?.address1?.error}
-            helperText={formError?.address1?.msg}
-            defaultValue={entityData.address1}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { address1, ...rest } = curr;
-                return rest;
-              });
-            }}
-          />
-          <InputControl
-            inputType={InputType.TEXT}
-            label="Address Line 2"
-            name="address2"
-            id="address2"
-            fullWidth
-            error={formError?.address2?.error}
-            helperText={formError?.address2?.msg}
-            defaultValue={entityData.address2}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { address2, ...rest } = curr;
-                return rest;
-              });
-            }}
-          />
-          <InputControl
-            inputType={InputType.TEXT}
-            label="Address Line 3"
-            name="address3"
-            id="address3"
-            fullWidth
-            error={formError?.address3?.error}
-            helperText={formError?.address3?.msg}
-            defaultValue={entityData.address3}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { address3, ...rest } = curr;
-                return rest;
-              });
-            }}
-          />
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <SelectMasterWrapper
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              dialogTitle={"Add country"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-              fetchDataFn={getCountries}
-              fnFetchDataByID={getCountryById}
-              defaultValue={
-                {
-                  id: entityData.country_id,
-                  name: entityData.country,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <CountryForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-            <SelectMasterWrapper
-              key={stateKey}
-              name={"state"}
-              id={"state"}
-              label={"State"}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-              disable={stateDisable}
-              dialogTitle={"Add State"}
-              fetchDataFn={getStatesforCountry}
-              fnFetchDataByID={getStateById}
-              defaultValue={defaultState}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <StateForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                  parentData={selectValues.country?.id || entityData.country_id}
-                />
-              )}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="city"
-              id="city"
-              label="City"
-              fullWidth
-              error={formError?.city?.error}
-              helperText={formError?.city?.msg}
-              defaultValue={entityData.city}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { city, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="pincode"
-              id="pincode"
-              label="Pin Code"
-              fullWidth
-              error={formError?.pincode?.error}
-              helperText={formError?.pincode?.msg}
-              defaultValue={entityData.pincode}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { pincode, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-          </Box>
-          <Box>
-          <Tooltip
-      title={docData.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
-          </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
-      >
-        <IconButton
-          sx={{ float: "left", position: "relative"}}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              <InputControl
+                inputType={InputType.TEXT}
+                autoFocus
+                id="name"
+                label="Name"
+                name="name"
+                required
+                titleCase={true}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                defaultValue={entityData.name}
+                onChange={handlePrintNameChange}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="alias"
+                label="Alias"
+                name="alias"
+                error={formError?.alias?.error}
+                helperText={formError?.alias?.msg}
+                defaultValue={entityData.alias}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { alias, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="printName"
+                label="Print Name"
+                name="printName"
+                error={formError?.printName?.error}
+                helperText={formError?.printName?.msg}
+                defaultValue={printNameFn}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { printName, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="pan"
+                label="PAN"
+                name="pan"
+                error={formError?.pan?.error}
+                helperText={formError?.pan?.msg}
+                defaultValue={entityData.pan}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { pan, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="gstin"
+                label="GSTIN"
+                name="gstin"
+                error={formError?.gstin?.error}
+                helperText={formError?.gstin?.msg}
+                defaultValue={entityData.gstin}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { gstin, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              <InputControl
+                inputType={InputType.TEXT}
+                label="Address Line 1"
+                name="address1"
+                id="address1"
+                error={formError?.address1?.error}
+                helperText={formError?.address1?.msg}
+                defaultValue={entityData.address1}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { address1, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              <InputControl
+                inputType={InputType.TEXT}
+                label="Address Line 2"
+                name="address2"
+                id="address2"
+                error={formError?.address2?.error}
+                helperText={formError?.address2?.msg}
+                defaultValue={entityData.address2}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { address2, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
+              <InputControl
+                inputType={InputType.TEXT}
+                name="city"
+                id="city"
+                label="City"
+                error={formError?.city?.error}
+                helperText={formError?.city?.msg}
+                defaultValue={entityData.city}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { city, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
+              <InputControl
+                inputType={InputType.TEXT}
+                name="pincode"
+                id="pincode"
+                label="Pin Code"
+                error={formError?.pincode?.error}
+                helperText={formError?.pincode?.msg}
+                defaultValue={entityData.pincode}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { pincode, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
 
-        </IconButton>
-     </Tooltip>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
+            <Grid item xs={12} sm={3} md={3} lg={3}>
+              <SelectMasterWrapper
+                name={"country"}
+                id={"country"}
+                label={"Country"}
+                dialogTitle={"Add country"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+                fetchDataFn={getCountries}
+                width={352}
+                fnFetchDataByID={getCountryById}
+                formError={formError.country}
+                defaultValue={
+                  {
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT
+                }
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <CountryForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
+              <SelectMasterWrapper
+                key={stateKey}
+                name={"state"}
+                id={"state"}
+                label={"State"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+                disable={stateDisable}
+                dialogTitle={"Add State"}
+                fetchDataFn={getStatesforCountry}
+                fnFetchDataByID={getStateById}
+                defaultValue={defaultState}
+                formError={formError.state}
+                width={352}
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <StateForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                    parentData={
+                      selectValues.country?.id || entityData.country_id
+                    }
+                  />
+                )}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 2,
+              }}
             >
-              Submit
-            </Button>
-          </Box>
-          </Box>
-          {dialogOpen && (
-          <AddDialog
-            title=""
-            open={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          >
-            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
-          </AddDialog>
-        )}
+              <Box>
+                <Tooltip
+                  title={
+                    docData.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
+                      </Typography>
+                    )
+                  }
+                >
+                  <IconButton
+                    sx={{ float: "left", position: "relative" }}
+                    onClick={() => setDialogOpen(true)}
+                    aria-label="file"
+                  >
+                    <Badge badgeContent={docData.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Button onClick={handleCancel} tabIndex={-1}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Grid>
+            {dialogOpen && (
+              <AddDialog
+                title=""
+                open={dialogOpen}
+                setDialogOpen={setDialogOpen}
+              >
+                <DocModal
+                  docData={docData}
+                  setDocData={setDocData}
+                  setDialogOpen={setDialogOpen}
+                />
+              </AddDialog>
+            )}
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}
