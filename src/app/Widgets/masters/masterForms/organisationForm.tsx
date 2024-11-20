@@ -97,6 +97,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
           }
         }
       }
+      console.log("ERIRB I: ", errorState);
+      
       setFormError(errorState);
     }
   };
@@ -362,56 +364,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
               />
             </Grid>
             <Grid item xs={12} sm={3} md={3} lg={3}>
-              <SelectMasterWrapper
-                name={"country"}
-                id={"country"}
-                label={"Country"}
-                dialogTitle={"Add country"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-                fetchDataFn={getCountries}
-                width={352}
-                fnFetchDataByID={getCountryById}
-                defaultValue={
-                  {
-                    id: entityData.country_id,
-                    name: entityData.country,
-                  } as optionsDataT
-                }
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <CountryForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3} md={3} lg={3}>
-              <SelectMasterWrapper
-                key={stateKey}
-                name={"state"}
-                id={"state"}
-                label={"State"}
-                onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-                disable={stateDisable}
-                dialogTitle={"Add State"}
-                fetchDataFn={getStatesforCountry}
-                fnFetchDataByID={getStateById}
-                defaultValue={defaultState}
-                width={352}
-                renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                  <StateForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                    parentData={
-                      selectValues.country?.id || entityData.country_id
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3} md={3} lg={3}>
               <InputControl
                 inputType={InputType.TEXT}
                 name="city"
@@ -445,6 +397,59 @@ export default function OrganisationForm(props: masterFormPropsT) {
                   });
                 }}
                 style={{ width: "100%" }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={3} md={3} lg={3}>
+              <SelectMasterWrapper
+                name={"country"}
+                id={"country"}
+                label={"Country"}
+                dialogTitle={"Add country"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+                fetchDataFn={getCountries}
+                width={352}
+                fnFetchDataByID={getCountryById}
+                formError={formError.country}
+                defaultValue={
+                  {
+                    id: entityData.country_id,
+                    name: entityData.country,
+                  } as optionsDataT
+                }
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <CountryForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
+              <SelectMasterWrapper
+                key={stateKey}
+                name={"state"}
+                id={"state"}
+                label={"State"}
+                onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+                disable={stateDisable}
+                dialogTitle={"Add State"}
+                fetchDataFn={getStatesforCountry}
+                fnFetchDataByID={getStateById}
+                defaultValue={defaultState}
+                formError={formError.state}
+                width={352}
+                renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                  <StateForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                    parentData={
+                      selectValues.country?.id || entityData.country_id
+                    }
+                  />
+                )}
               />
             </Grid>
             <Grid

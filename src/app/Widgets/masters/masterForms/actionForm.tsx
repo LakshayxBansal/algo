@@ -110,7 +110,7 @@ export default function ActionForm(props: masterFormPropsT) {
 
   return (
     <>
-    <Box sx={{width: "70%"}}>
+    <Box>
       <Box
         sx={{
           position: "sticky",

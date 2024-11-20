@@ -400,6 +400,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 }
                 fetchDataFn={getArea}
                 fnFetchDataByID={getAreaById}
+                formError={formError.area}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <AreaForm
                     setDialogOpen={fnDialogOpen}
@@ -417,6 +418,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 width={352}
                 required
                 dialogTitle={"Add Department"}
+                formError={formError.executive_dept}
                 defaultValue={
                   {
                     id: entityData.executive_dept_id,
@@ -502,6 +504,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 }
                 fetchDataFn={getExecutiveGroup}
                 fnFetchDataByID={getExecutiveGroupById}
+                formError={formError.group}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <ExecutiveGroupForm
                     setDialogOpen={fnDialogOpen}
@@ -726,6 +729,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
                 fetchDataFn={getCountries}
                 fnFetchDataByID={getCountryById}
+                formError={formError.country}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <CountryForm
                     setDialogOpen={fnDialogOpen}
@@ -749,6 +753,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
                 fetchDataFn={getStatesforCountry}
                 fnFetchDataByID={getStateById}
+                formError={formError.state}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
                   <StateForm
                     setDialogOpen={fnDialogOpen}

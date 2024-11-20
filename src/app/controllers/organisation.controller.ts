@@ -31,6 +31,9 @@ export async function createOrganisation(data: zm.organisationSchemaT,docData : 
           data as zm.organisationSchemaT
         );
 
+        console.log("RESULT ROU O: ", dbResult);
+
+
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           const objectDetails = await getObjectByName("Organisation");
@@ -90,6 +93,7 @@ export async function updateOrganisation(data: zm.organisationSchemaT, docData :
           session,
           data as zm.organisationSchemaT
         );
+        
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           const objectDetails = await getObjectByName("Organisation");

@@ -351,6 +351,7 @@ export default function ContactForm(props: masterFormPropsT) {
               dialogTitle={"Organisation"}
               fetchDataFn={getOrganisation}
               fnFetchDataByID={getOrganisationById}
+              formError={formError.organisation}
               defaultValue={
                 {
                   id: entityData.organisation_id,
@@ -449,6 +450,7 @@ export default function ContactForm(props: masterFormPropsT) {
               }
               fetchDataFn={getDepartment}
               fnFetchDataByID={getDepartmentById}
+              formError={formError.department}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <DepartmentForm
                   setDialogOpen={fnDialogOpen}
@@ -466,6 +468,7 @@ export default function ContactForm(props: masterFormPropsT) {
               dialogTitle={"Area"}
               fetchDataFn={getArea}
               fnFetchDataByID={getAreaById}
+              formError={formError.area}
               defaultValue={
                 {
                   id: entityData.area_id,
@@ -601,6 +604,7 @@ export default function ContactForm(props: masterFormPropsT) {
               dialogTitle={"Add country"}
               onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
               fetchDataFn={getCountries}
+              formError={formError.country}
               fnFetchDataByID={getCountryById}
               width={170}
               defaultValue={
@@ -626,6 +630,7 @@ export default function ContactForm(props: masterFormPropsT) {
               onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
               disable={stateDisable}
               dialogTitle={"Add State"}
+              formError={formError.state}
               fetchDataFn={getStatesforCountry}
               fnFetchDataByID={getStateById}
               defaultValue={defaultState}
