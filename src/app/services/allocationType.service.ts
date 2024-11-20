@@ -83,7 +83,7 @@ export async function delAllocationDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from allocation_type_master where id=?;",
+      query: "call deleteAllocationType(?)",
       values: [id],
     });
 

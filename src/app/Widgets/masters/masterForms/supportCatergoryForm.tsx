@@ -8,7 +8,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { createSupportCategory, updateSupportCategory } from "@/app/controllers/supportCategory.controller";
@@ -76,7 +76,7 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper>
+    <>
       <Box
         sx={{
           position: "sticky",
@@ -113,16 +113,9 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ mt: 2, mb: 1, p: 1 }}>
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               id="category_master"
@@ -131,6 +124,7 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
               name="name"
               fullWidth
               required
+              titleCase={true}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               defaultValue={props.data?.name}
@@ -141,23 +135,29 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
                 });
               }}
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2,
+              mt: 1,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
+          </Grid>
+        </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -166,7 +166,6 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
           message="Record Saved!!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
-      </Box>
-    </Paper>
+    </>
   );
 }

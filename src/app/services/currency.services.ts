@@ -152,7 +152,7 @@ export async function delCurrencyByIdDB(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from currency_data where id=?;",
+      query: "call deleteCurrency(?)",
       values: [id],
     });
 

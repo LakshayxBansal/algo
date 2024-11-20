@@ -11,7 +11,7 @@ export async function createOrganisationDB(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      query: "call createOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       values: [
         data.alias,
         data.name,
@@ -20,7 +20,6 @@ export async function createOrganisationDB(
         data.gstin,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.pincode,
@@ -52,7 +51,7 @@ export async function updateOrganisationDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateOrganisation(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -63,7 +62,6 @@ export async function updateOrganisationDB(
         data.gstin,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.pincode,
@@ -159,10 +157,8 @@ export async function getOrganisationDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.address3, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
-        s.name state, co.name country, \
-        cfd.c_col1,cfd.c_col2,cfd.c_col3,\
-        cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
+        "select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
+        s.name state, co.name country \
         from organisation_master o left outer join state_master s on o.state_id = s.id \
         left outer join country_master co on o.country_id = co.id \
         left outer join custom_fields_data cfd on cfd.object_id=o.id and cfd.object_type_id=19\
@@ -193,7 +189,7 @@ export async function getOrganisationByPageDb(
       host: crmDb,
       query:
         "SELECT *, RowNum as RowID \
-       FROM (select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.address3, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
+       FROM (select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
         s.name state, co.name country, ROW_NUMBER() OVER () AS RowNum  \
         from organisation_master o left outer join state_master s on o.state_id = s.id \
         left outer join country_master co on o.country_id = co.id " +
@@ -245,7 +241,7 @@ export async function delOrganisationDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from organisation_master where id=?;",
+      query: "call deleteOrganisation(?)",
       values: [id],
     });
 

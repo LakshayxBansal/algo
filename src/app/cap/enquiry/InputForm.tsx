@@ -204,31 +204,6 @@ export default function InputForm(props: { baseData: IformData }) {
                 Enquiry Details
               </div>
             </Seperator>
-            <Tooltip
-              title={
-                docData.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
-                    </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )
-              }
-            >
-              <IconButton
-                sx={{ float: "right", position: "relative", paddingRight: 0 }}
-                onClick={() => setDocDialogOpen(true)}
-                aria-label="file"
-              >
-                <Badge badgeContent={docData.length} color="primary">
-                  <AttachFileIcon></AttachFileIcon>
-                </Badge>
-              </IconButton>
-            </Tooltip>
           </Grid>
           <Grid item xs={12}>
             <Grid container>
@@ -593,6 +568,32 @@ export default function InputForm(props: { baseData: IformData }) {
           </Grid>
           <Grid container>
             <Grid item xs={12} md={12}>
+              <Box>
+              <Tooltip
+              title={
+                docData.length > 0 ? (
+                  docData.map((file: any, index: any) => (
+                    <Typography variant="body2" key={index}>
+                      {file.description}
+                    </Typography>
+                  ))
+                ) : (
+                  <Typography variant="body2" color="white">
+                    No files available
+                  </Typography>
+                )
+              }
+            >
+              <IconButton
+                sx={{ float: "left", position: "relative"}}
+                onClick={() => setDocDialogOpen(true)}
+                aria-label="file"
+              >
+                <Badge badgeContent={docData.length} color="primary">
+                  <AttachFileIcon></AttachFileIcon>
+                </Badge>
+              </IconButton>
+            </Tooltip>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Box
                   display="flex"
@@ -607,6 +608,7 @@ export default function InputForm(props: { baseData: IformData }) {
                     Submit
                   </Button>
                 </Box>
+              </Box>
               </Box>
             </Grid>
           </Grid>
