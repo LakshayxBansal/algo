@@ -1,8 +1,10 @@
+
 "use server";
 
 import { enquiryConfigSchemaT } from "../models/models";
 import { Session } from "next-auth";
 import executeQuery from "../utils/db/db";
+import { logger } from "../utils/logger.utils";
 
 export async function getConfigTypeId(
   crmDb: string,
@@ -27,78 +29,102 @@ export async function getConfigTypeId(
   }
 }
 
+export async function getConfigTypeDB(
+  crmDb: string
+){
+  try {
+    const query = `SELECT * FROM config_meta_data;`;
+    const result = await executeQuery({
+      host: crmDb,
+      query: query,
+      values: [],
+    });
+
+    return result;
+
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+export async function updateConfigDataDB(crmDb:string,configId : number, enabled : number, data : string) {
+  try{
+    await executeQuery({
+      host: crmDb,
+      query: "update app_config set enabled = ?, config = ? where config_type_id = ?",
+      values: [enabled, data, configId],
+    });
+    return true;
+  }catch(error){
+    logger.error(error);
+    return false;
+  }
+}
+
+export async function updateConfigDeptDB(crmDb:string,configDept : {[key : string] : number[]}, configType : Array<{config_type : string,id:number}>) {
+  try{
+    await executeQuery({
+      host: crmDb,
+      query: "TRUNCATE TABLE config_dept_mapping;",
+      values: []
+    })
+    let query = "insert into config_dept_mapping (config_id,dept_id) values "
+      Object.keys({...configDept}).map((key,index)=>{
+        const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
+        configDept[key].map((dept:any)=>{
+          query += `(${configId},${dept}),`
+        })
+      })
+      query = query.slice(0, -1);
+      query += ";";
+      if(query!=="insert into config_dept_mapping (config_id,dept_id) values;"){
+        await executeQuery({
+          host: crmDb,
+          query: query,
+          values: [],
+        });
+      }
+    return true;
+  }catch(error){
+    logger.error(error);
+    return false;
+  }
+}
+
 export async function getConfigDB(crmDb: string) {
   try {
 
-    const configQuery = `SELECT ac.*, cm.config_type FROM app_config_new ac JOIN config_meta_data cm ON ac.object_id = cm.id`;
+    const configQuery = `SELECT ac.*, cm.config_type FROM app_config ac JOIN config_meta_data cm ON ac.config_type_id = cm.id`;
     const configResult = await executeQuery({
       host: crmDb,
       query: configQuery,
       values: [],
     });
 
-    if (configResult && configResult.length > 0) {
-      return configResult;
-    }
-
-    return initConfigSchema();
+    return configResult;
+  
   } catch (e) {
     console.error("Error fetching config data:", e);
     return null;
   }
 }
 
-export async function updateConfigDB(
-  session: Session,
-  data: enquiryConfigSchemaT
-) {
+export async function getConfigDeptMappingDB(crmDb: string) {
   try {
-    const crmDb = session.user.dbInfo.dbName;
-    const configTypeId = await getConfigTypeId(crmDb, data.category as string);
 
-    if (!configTypeId) {
-      throw new Error(`No config type found for ${data.category}`);
-    }
-
-    delete data.category;
-
-    let isTrue = data.isEnabled ? 1 : 0;
-    delete data.isEnabled;
-    let jsonData = JSON.stringify(data);
-
-    const values = [
-      configTypeId,
-      isTrue,
-      jsonData,
-    ];
-
-    const result = await executeQuery({
+    const configQuery = `SELECT ac.*, cm.config_type FROM config_dept_mapping ac JOIN config_meta_data cm ON ac.config_id = cm.id`;
+    const configDeptMapResult = await executeQuery({
       host: crmDb,
-      query: "call appConfig(?, ?, ?)",
-      values: values,
+      query: configQuery,
+      values: [],
     });
 
-    return result;
+    return configDeptMapResult;
+  
   } catch (e) {
-    console.error("Error updating config data:", e);
+    console.error("Error fetching config data:", e);
     return null;
   }
 }
 
-export async function initConfigSchema(): Promise<enquiryConfigSchemaT> {
-    return {
-        enquiryReqd: false,
-        supportReqd: false,
-        enquiryCloseCall: false,
-        enquiryMaintainProducts: false,
-        enquirySaveFAQ: false,
-        enquiryMaintainAction: false,
-        supportCloseCall: false,
-        supportMaintainProducts: false,
-        supportSaveFAQ: false,
-        supportMaintainAction: false,
-        // generalMaintainArea: false,
-        // generalMaintainImage: false,
-        // generalShowList: false,
-    };
-}
+

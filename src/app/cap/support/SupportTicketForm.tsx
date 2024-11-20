@@ -102,7 +102,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
     next_action: masterData?.next_action
   });
   const [data, setData] = useState<suppportProductArraySchemaT>(props?.data?.productData ?? []);
-
+ 
+  
 
   const router = useRouter();
   const handleSubmit = async (formData: FormData) => {
@@ -231,30 +232,6 @@ const SupportTicketForm = (props: masterFormPropsT) => {
         <Grid container>
           <Grid item xs={12}>
             <Seperator>Support Ticket Details </Seperator>
-            <Tooltip
-              title={docData.length > 0 ? (
-                docData.map((file: any, index: any) => (
-                  <Typography variant="body2" key={index}>
-                    {file.description}
-                  </Typography>
-                ))
-              ) : (
-                <Typography variant="body2" color="white">
-                  No files available
-                </Typography>
-              )}
-            >
-              <IconButton
-                sx={{ float: "right", position: "relative", paddingRight: 0 }}
-                onClick={() => setDocDialogOpen(true)}
-                aria-label="file"
-              >
-                <Badge badgeContent={docData.length} color="primary">
-                  <AttachFileIcon></AttachFileIcon>
-                </Badge>
-
-              </IconButton>
-            </Tooltip>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
@@ -281,7 +258,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           data={data}
                         />
                       )}
-                      disable= {props?.data?.tkt_number ? true : false}
+                      disable= {props?.status === "true" ? true : false }
                     />
                   </Grid>
 
@@ -303,7 +280,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           tabIndex: -1,
                         }
                       }}
-                      disabled = {props?.data?.tkt_number? true : false}
+                      disabled= {props?.status === "true" ? true : false }
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={12}>
@@ -323,7 +300,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           alignItems: "start",
                         },
                       }}
-                      disabled = {props?.data?.tkt_number ? true : false}
+                      disabled= {props?.status === "true" ? true : false }
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={6}>
@@ -349,7 +326,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           data={data}
                         />
                       )}
-                      disable= {props?.data?.tkt_number ? true : false}
+                      disable = {props?.status === "true" ? true : false }
                     />
                   </Grid>
 
@@ -379,7 +356,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                           data={data}
                         />
                       )}
-                      disable= {props?.data?.tkt_number ? true : false}
+                      disable= {props?.status === "true" ? true : false }
                     />
                   </Grid>
                   {/* <Grid item xs={12} sm={6} md={12}>
@@ -417,8 +394,8 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     dgFormError={formError}
                     setdgFormError={setFormError}
                     dgProductFormError={productFormError}
-                    isDisable = {props?.data?.tkt_number? true : false}
-                  />
+                    isDisable= {props?.status === "true" ? true : false }
+                    />
                 </Box>
               </Grid>
             </Grid>
@@ -443,7 +420,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     defaultValue={props.data?.call_receipt_remark}
                     rows={6}
                     fullWidth
-                    disabled = {props?.data?.tkt_number ? true : false}
+                    disabled = {props?.status === "true" ? true : false }
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -459,10 +436,10 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                       helperText={formError?.suggested_action_remark?.msg}
                     rows={6}
                     fullWidth
-                    disabled = {props?.data?.tkt_number? true : false}
+                    disabled = {props?.status === "true" ? true : false }
                   />
                 </Grid>
-                {props?.data?.tkt_number && 
+                {props?.status === "true" && 
                 <Grid item xs={12} md={12}>
                   <InputControl
                     placeholder=" Action Taken Remarks"
@@ -646,6 +623,31 @@ const SupportTicketForm = (props: masterFormPropsT) => {
           </Grid>
           <Grid container>
             <Grid item xs={12} md={12}>
+              <Box>
+              <Tooltip
+              title={docData.length > 0 ? (
+                docData.map((file: any, index: any) => (
+                  <Typography variant="body2" key={index}>
+                    {file.description}
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2" color="white">
+                  No files available
+                </Typography>
+              )}
+            >
+              <IconButton
+                sx={{ float: "right", position: "relative", paddingRight: 0 }}
+                onClick={() => setDocDialogOpen(true)}
+                aria-label="file"
+              >
+                <Badge badgeContent={docData.length} color="primary">
+                  <AttachFileIcon></AttachFileIcon>
+                </Badge>
+
+              </IconButton>
+            </Tooltip>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Box
                   display="flex"
@@ -658,6 +660,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
                     Submit
                   </Button>
                 </Box>
+              </Box>
               </Box>
             </Grid>
           </Grid>

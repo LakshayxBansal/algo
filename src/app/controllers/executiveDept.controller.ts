@@ -11,6 +11,7 @@ import {
   getExecutiveDeptByPageDb,
   delExecutiveDeptByIdDB,
   checkIfUsed,
+  getAllDeptsDB,
 } from "../services/executiveDept.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -231,4 +232,15 @@ export async function getExecutiveDeptByPage(
     };
   }
   return getExecutiveDept;
+}
+
+export async function getAllDepts() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getAllDeptsDB(session.user.dbInfo.dbName);
+    }
+  } catch (error) {
+    throw error;
+  }
 }

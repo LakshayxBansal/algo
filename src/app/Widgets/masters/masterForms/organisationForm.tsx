@@ -98,7 +98,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
         }
       }
       console.log("ERIRB I: ", errorState);
-      
+
       setFormError(errorState);
     }
   };
@@ -205,31 +205,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
-        title={
-          docData.length > 0 ? (
-            docData.map((file: any, index: any) => (
-              <Typography variant="body2" key={index}>
-                {file.description}
-              </Typography>
-            ))
-          ) : (
-            <Typography variant="body2" color="white">
-              No files available
-            </Typography>
-          )
-        }
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0 }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-        </IconButton>
-      </Tooltip>
+
       <Box id="sourceForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Grid container spacing={2}>
@@ -461,17 +437,44 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 mt: 2,
               }}
             >
-              <Button onClick={handleCancel} tabIndex={-1}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
+              <Box>
+                <Tooltip
+                  title={
+                    docData.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
+                      </Typography>
+                    )
+                  }
+                >
+                  <IconButton
+                    sx={{ float: "left", position: "relative" }}
+                    onClick={() => setDialogOpen(true)}
+                    aria-label="file"
+                  >
+                    <Badge badgeContent={docData.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Button onClick={handleCancel} tabIndex={-1}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
+              </Box>
             </Grid>
             {dialogOpen && (
               <AddDialog

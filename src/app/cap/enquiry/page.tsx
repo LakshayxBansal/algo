@@ -5,39 +5,42 @@ import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
 import {
   getLoggedInUserDetails,
-  showProductGrid,
+  getConfigData,
+  getEnquiryById,
 } from "@/app/controllers/enquiry.controller";
-import { useParams } from 'next/navigation';
+import { getRightsData } from "@/app/controllers/rights.controller";
+// import { getScreenDescription } from "@/app/controllers/object.controller";
 
+interface SearchParams {
+  id?: string;
+}
 
+export default async function MyForm({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const enquiryId = searchParams.id ? parseInt(searchParams.id, 10) : undefined;
 
-
-export default async function MyForm({ searchParams }: { searchParams: any }) {
-  // const params = useParams();
-  const id = searchParams.id; // `id` is the route parameter here
   try {
     const session = await getSession();
 
     if (session) {
+      // const fields = await getScreenDescription(26, 1);
+      const enqData = await getEnquiryById(enquiryId);
+      const rights = await getRightsData();
+      const config_data = await getConfigData();
+      const loggedInUserData = await getLoggedInUserDetails();
+
       const masterData = {
-        userName: session.user?.name as string,
+        // fields: fields as Array<any>,
+        enqData: enqData as Record<string, any>,
+        rights: rights as Record<string, any>,
+        config_data: JSON.parse(config_data?.config) as Record<string, any>,
+        loggedInUserData: loggedInUserData?.data as Record<string, any>,
       };
 
-      const data = await getLoggedInUserDetails();
-      const config_data = await showProductGrid();
-      const config = JSON.parse(config_data?.config);
-      if (config_data?.status) {
-        console.log("Config Data is present->", config);
-      } else {
-        console.log("Config Data is not present->", config);
-      }
-      return (
-        <InputForm
-          baseData={masterData}
-          config={config}
-          loggedInUserData={data?.data}
-        ></InputForm>
-      );
+      return <InputForm baseData={masterData}></InputForm>;
     }
   } catch (e) {
     // show error page

@@ -156,3 +156,19 @@ export async function getExecutiveDeptCount(
     console.log(e);
   }
 }
+
+export async function getAllDeptsDB(
+  crmDb: string
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select id as id, name as name from executive_dept_master;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

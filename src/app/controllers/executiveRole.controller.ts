@@ -11,6 +11,7 @@ import {
   getExecutiveRoleByPageDb,
   delExecutiveRoleDetailsById,
   checkIfUsed,
+  getAllRolesDB,
 } from "../services/executiveRole.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -29,6 +30,17 @@ export async function getExecutiveRole(
         searchString,
         department
       );
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllRoles() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getAllRolesDB(session.user.dbInfo.dbName);
     }
   } catch (error) {
     throw error;

@@ -479,8 +479,8 @@ export const supportHeaderSchema = z.object({
   id: z.number().optional(),
   tkt_number: z
     .string()
-    .min(1, "Ticket must not be empty")
-    .max(75, "Ticket must contain at most 75 character(s)"),
+    .min(1, "Ticket description must not be empty")
+    .max(75, "Ticket description must contain at most 75 character(s)"),
   date: z.string().min(1).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1, "Contact must not be empty"),
@@ -825,6 +825,26 @@ export const nameAliasData = z.object({
   name: z.string().min(1).max(45),
   alias: z.string().max(45),
 });
+
+// export const enquirySupportConfig = z.object({
+//   enquiryReqd: z.boolean().optional(),
+//   supportReqd: z.boolean().optional(),
+
+//   enquiryCloseCall: z.boolean().optional(),
+//   enquiryMaintainProducts: z.boolean().optional(),
+//   enquirySaveFAQ: z.boolean().optional(),
+//   enquiryMaintainAction: z.boolean().optional(),
+
+//   supportCloseCall: z.boolean().optional(),
+//   supportMaintainProducts: z.boolean().optional(),
+//   supportSaveFAQ: z.boolean().optional(),
+//   supportMaintainAction: z.boolean().optional(),
+//   supportMaintainContract: z.boolean().optional(),
+
+//   generalMaintainArea: z.boolean().optional(),
+//   generalMaintainImage: z.boolean().optional(),
+//   generalShowList: z.boolean().optional(),
+// });
 
 export const enquirySupportConfig = z.object({
   enquiryReqd: z.boolean().optional(),

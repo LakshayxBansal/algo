@@ -325,3 +325,27 @@ export async function getExecutiveColumnsDb(crmDb:string){
     logger.error(e);
   }
 }
+
+export async function mapExecutiveToDeptDb(crmDb:string, executiveId: number, deptsArray : number[]){
+  try{
+    await excuteQuery({
+      host:crmDb,
+      query:"delete from executive_dept_relation where executive_id = ?;",
+      values: [executiveId]
+    });
+    let insertQuery : string = "insert into executive_dept_relation (executive_id, executive_dept_id) values ";
+    for(const dept of deptsArray){
+      insertQuery += `(${executiveId}, ${dept}),`
+    }
+    insertQuery = insertQuery.slice(0, -1);
+    insertQuery += ";"
+    await excuteQuery({
+      host:crmDb,
+      query: insertQuery,
+      values: []
+    });
+
+  }catch(e){
+    logger.error(e);
+  }
+}

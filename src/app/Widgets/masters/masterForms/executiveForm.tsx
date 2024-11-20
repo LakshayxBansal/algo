@@ -96,7 +96,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   entityData.executive_dept_id = props.data?.dept_id;
   entityData.executive_group = props.data?.group_name;
   entityData.executive_group_id = props.data?.group_id;
-  
+
   const handleWhatsappChange = (val: string) => {
     setWhatsappFn(val);
   };
@@ -321,31 +321,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
-        title={
-          docData.length > 0 ? (
-            docData.map((file: any, index: any) => (
-              <Typography variant="body2" key={index}>
-                {file.description}
-              </Typography>
-            ))
-          ) : (
-            <Typography variant="body2" color="white">
-              No files available
-            </Typography>
-          )
-        }
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", m: 1 }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-        </IconButton>
-      </Tooltip>
       <Box id="sourceForm">
         {/* {formError?.form?.error && (
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
@@ -799,25 +774,54 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 mt: 1,
               }}
             >
-              <Button
-                onClick={() => {
-                  if (props.parentData === "profile") {
-                    router.push("/cap");
-                  } else {
-                    handleCancel();
+              <Box>
+                <Tooltip
+                  title={
+                    docData.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
+                      </Typography>
+                    )
                   }
-                }}
-                tabIndex={-1}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
+                >
+                  <IconButton
+                    sx={{ float: "left", position: "relative", m: 1 }}
+                    onClick={() => setDialogOpen(true)}
+                    aria-label="file"
+                  >
+                    <Badge badgeContent={docData.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                {/* <Box> */}
+                  <Button
+                    onClick={() => {
+                      if (props.parentData === "profile") {
+                        router.push("/cap");
+                      } else {
+                        handleCancel();
+                      }
+                    }}
+                    tabIndex={-1}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{ width: "15%", marginLeft: "5%" }}
+                  >
+                    Submit
+                  </Button>
+                {/* </Box> */}
+              </Box>
             </Grid>
             {dialogOpen && (
               <AddDialog
