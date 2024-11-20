@@ -1,9 +1,9 @@
 "use server";
-import { configSchemaT, enquiryConfigSchemaT } from "../models/models";
+// import { configSchemaT, enquiryConfigSchemaT } from "../models/models";
 import { getConfigDB, getConfigDeptMappingDB, getConfigTypeDB, updateConfigDataDB, updateConfigDeptDB } from "../services/configData.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
-import { enquirySupportConfig } from "../zodschema/zodschema";
+// import { enquirySupportConfig } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
 
 export async function getConfigType() {
@@ -41,7 +41,7 @@ export async function updateConfigData(config: any, configDept : {[key : string]
   }
 }
 
-export async function fetchConfigData(): Promise<configSchemaT | null> {
+export async function fetchConfigData(){
   try {
     const session = await getSession();
 
@@ -63,7 +63,7 @@ export async function fetchConfigData(): Promise<configSchemaT | null> {
   }
 }
 
-export async function fetchConfigDeptMapData(): Promise<configSchemaT | null> {
+export async function fetchConfigDeptMapData() {
   try {
     const session = await getSession();
 

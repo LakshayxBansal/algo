@@ -9,7 +9,7 @@ import { updateConfigData } from "../../../controllers/configData.controller";
 import { Accordion, AccordionDetails, AccordionSummary, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Voucher from "./voucherNumberForm";
-import RegionalInfo from "../regional/regionalInfoForm";
+import RegionalInfo from "./regionalInfoForm";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { Theme, useTheme } from '@mui/material/styles';
 

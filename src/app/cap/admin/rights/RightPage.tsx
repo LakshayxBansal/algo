@@ -48,6 +48,7 @@ function Child({ object, handleChange, data, role, dept, parentName }: { object:
                                 <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                     {["createRight", "readRight", "updateRight", "deleteRight"].map((right) => (
                                         <Checkbox
+                                            key={right}
                                             checked={data[`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`]}
                                             onChange={handleChange(`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`, parentName, object.length)}
                                             inputProps={{ 'aria-label': 'controlled' }}
@@ -176,7 +177,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                                         onChange={handleRoleSelectChange}
                                     >
                                         {roles.map((role) => (
-                                            <MenuItem value={role.name}>{role.name}</MenuItem>
+                                            <MenuItem key={role.id} value={role.name}>{role.name}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -195,7 +196,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                                         onChange={handleDeptSelectChange}
                                     >
                                         {depts.map((dept) => (
-                                            <MenuItem value={dept.name}>{dept.name}</MenuItem>
+                                            <MenuItem key={dept.id} value={dept.name}>{dept.name}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -229,7 +230,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                     </Grid>
                 </Box>
                 {categorys.map((category) => (
-                    <Box>
+                    <Box key={category.id}>
                         <Grid container sx={{ alignItems: "center", padding: "0 2%" }}>
                             <Grid item xs={4}>
                                 <Box onClick={() => setParentKeyActive(category.name)}>
@@ -244,6 +245,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                                     <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                         {["createRight", "readRight", "updateRight", "deleteRight"].map((right) => (
                                             <Checkbox
+                                                key={right}
                                                 checked={parentData[`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`]}
                                                 onChange={handleParentChange(`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`, objects.filter((obj) => obj.type === category.id))}
                                                 inputProps={{ 'aria-label': 'controlled' }}
