@@ -42,7 +42,6 @@ type ModifiedRowT = {
 };
 
 type ProductGridProps = {
-  label: string;
   id?: string;
   name?: string;
   dgData: any;
@@ -62,7 +61,6 @@ const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
 });
 
 export default function ProductGrid({
-  label,
   dgData,
   setdgData,
   setdgDialogOpen,

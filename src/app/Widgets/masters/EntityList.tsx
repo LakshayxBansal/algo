@@ -117,7 +117,6 @@ export default function EntityList(props: entitiyCompT) {
                 setDlgMode={setDlgMode}
                 setDialogOpen={setDialogOpen}
                 setModData={setModData}
-                setMasterData={setMasterData}
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
@@ -253,9 +252,9 @@ export default function EntityList(props: entitiyCompT) {
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => { }, masterData)
+              props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => { }, masterData, modData)
+              props.renderForm(setDialogOpen, (arg) => { }, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}

@@ -262,9 +262,15 @@ const FieldConfigurator = () => {
 
         // Proceed with form submission if there are no errors
         try {
-            // Example: await createCustomFields(Number(selectedFormValue), 1, fields);
-            console.log("FIELDS", fields);
-            alert("Field configuration saved!");
+            const result = await createCustomFields(Number(selectedFormValue), 1, fields);
+            if (result.status) {
+                console.log("FIELDS", fields);
+                alert("Field configuration saved!");
+            }
+            else {
+                console.error("Error saving configuration:");
+                alert("Failed to save configuration. Please try again.");
+            }
         } catch (error) {
             console.error("Error saving configuration:", error);
             alert("Failed to save configuration. Please try again.");
