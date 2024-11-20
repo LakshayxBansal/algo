@@ -207,7 +207,7 @@ export async function getRegionalSettingsDb(
 ) {
   try {
     let query =
-    "select config from app_config_new acn join config_meta_data cmd where acn.object_id=cmd.id and cmd.config_type='regionalSetting'";
+    "select config from app_config acn join config_meta_data cmd where acn.object_id=cmd.id and cmd.config_type='regionalSetting'";
         let values: any[] = [];
 
     const result = await excuteQuery({

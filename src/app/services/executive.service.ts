@@ -20,7 +20,7 @@ export async function createExecutiveDB(
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -46,20 +46,8 @@ export async function createExecutiveDB(
         data.executive_dept_id,
         data.executive_group_id,
         session.user.userId,
-        data.c_col1,
-        data.c_col2,
-        data.c_col3,
-        data.c_col4,
-        data.c_col5,
-        data.c_col6,
-        data.c_col7,
-        data.c_col8,
-        data.c_col9,
-        data.c_col10
       ],
     });
-    console.log('session.user.userId')
-    console.log("services : ",result);
     return result;
   } catch (e) {
     logger.error(e);
@@ -82,7 +70,7 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-      "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -110,16 +98,6 @@ export async function updateExecutiveDB(
         data.executive_dept_id,
         data.executive_group_id,
         session.user.userId,
-        data.c_col1,
-        data.c_col2,
-        data.c_col3,
-        data.c_col4,
-        data.c_col5,
-        data.c_col6,
-        data.c_col7,
-        data.c_col8,
-        data.c_col9,
-        data.c_col10
       ],
     });
   } catch (e) {
@@ -154,15 +132,13 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
       host: crmDb,
       query:
         "select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
-         s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
-         cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
+         s.name state, co.name country , '' as crm_user \
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
-         left outer join custom_fields_data cfd on cfd.object_id=em.id and cfd.object_type_id=11\
          where em.id=?",
       values: [id],
     });
@@ -172,7 +148,6 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
     console.log(e);
   }
 }
-
 export async function getProfileDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({

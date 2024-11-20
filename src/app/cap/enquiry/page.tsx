@@ -6,7 +6,7 @@ import { logger } from "@/app/utils/logger.utils";
 import {
   getLoggedInUserDetails,
   getConfigData,
-  getEnquiryById
+  getEnquiryById,
 } from "@/app/controllers/enquiry.controller";
 import { getRightsData } from "@/app/controllers/rights.controller";
 // import { getScreenDescription } from "@/app/controllers/object.controller";

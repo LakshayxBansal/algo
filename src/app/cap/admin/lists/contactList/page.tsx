@@ -83,11 +83,10 @@ export default function ManageContacts() {
     <>
       <EntityList
         title="Contact Master"
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
             data={data}
           />
         )}

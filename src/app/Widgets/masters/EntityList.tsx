@@ -50,14 +50,6 @@ enum dialogMode {
   FileUpload,
 }
 
-type masterDataprop = {
-  fields: {},
-  data?: {},
-  rights: {},
-  config_data: [],
-  loggedInUserData: {}
-}
-
 export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [data, setData] = useState([]);
@@ -100,8 +92,6 @@ export default function EntityList(props: entitiyCompT) {
         setData(rows.data);
         setNRows(rows.count as number);
       }
-
-
       const optionsColumn: GridColDef[] = [
         {
           field: "Icon menu",
@@ -237,7 +227,6 @@ export default function EntityList(props: entitiyCompT) {
   const hideUploadBtn = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setOpen(false);
   };
-
 
   return (
     <Box>

@@ -9,7 +9,6 @@ import {
   getExecutiveByPage,
   getExecutiveColumns,
 } from "@/app/controllers/executive.controller";
-import { getScreenDescription } from "@/app/controllers/object.controller";
 
 const columns: GridColDef[] = [
   {
@@ -35,18 +34,15 @@ const columns: GridColDef[] = [
 ];
 
 
-export default async function executive() {
-
-
+export default function executive() {
   return (
     <>
       <EntityList
         title="Executive List Master"
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
             data={data}
           />
         )}
@@ -62,4 +58,3 @@ export default async function executive() {
     </>
   );
 }
-
