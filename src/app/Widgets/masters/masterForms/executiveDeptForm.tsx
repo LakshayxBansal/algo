@@ -8,7 +8,7 @@ import {
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
 import { executiveDeptSchemaT, masterFormPropsT, masterFormPropsWithDataT } from "@/app/models/models";
-import { Snackbar } from "@mui/material";
+import { Grid, Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,10 +23,40 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
 
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveDeptSchemaT = props.data ? props.data : {};
+  const defaultComponentMap = new Map<string, React.ReactNode>([
+    [
+      "name",
+      <InputControl
+        key='name'
+        autoFocus
+        inputType={InputType.TEXT}
+        id="name"
+        label="Department Name"
+        name="name"
+        fullWidth
+        required
+        error={formError?.name?.error}
+        helperText={formError?.name?.msg}
+        defaultValue={entityData.name}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { name, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ]
+  ])
+
+  let fieldArr: React.ReactElement[] = [];
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (let i = 1; i <= 10; ++i) {
+      data[`c_col${i}`] = "";
+    }
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -82,30 +112,6 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     });
   };
 
-  const defaultComponentMap = new Map<string, React.ReactNode>([
-    [
-      "name",
-      <InputControl
-        autoFocus
-        inputType={InputType.TEXT}
-        id="name"
-        label="Department Name"
-        name="name"
-        fullWidth
-        required
-        error={formError?.name?.error}
-        helperText={formError?.name?.msg}
-        defaultValue={entityData.name}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
-      />
-    ]
-  ])
-
   function fieldPropertiesById(id : string) {
     const field = props.baseData?.fields.find(
       (item: any) => item.column_name_id === id
@@ -120,7 +126,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     return { label: "default label", required: false };
   }
 
-  let fieldArr: React.ReactElement[] = [];
+ 
 
   props.masterData.fields.map((field: any) => {
     if(field.is_default_column){
@@ -187,21 +193,26 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
       <form action={handleSubmit} noValidate>
-        <Box
-          sx={{
-            display: "grid",
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: "repeat(1, 1fr)",
-          }}
-        >
-         {fieldArr.map((field, index) => (
-              <div key={index}>
-                {field}
-              </div>
-          ))}
-        </Box>
+        <Grid container spacing={2}>
+          {
+            fieldArr.map((field, index) => {
+              return (
+                <Grid 
+                  item 
+                  xs={12}   
+                  sm={6}   
+                  md={6} 
+                >
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
+            })
+          }
+        </Grid>
         <Box
           sx={{
             display: "flex",
@@ -227,6 +238,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
         message="Record Saved!"
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
+      </Box>
     </>
   );
 }
