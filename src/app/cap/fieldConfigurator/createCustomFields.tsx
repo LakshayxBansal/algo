@@ -263,7 +263,7 @@ const FieldConfigurator = () => {
         // Proceed with form submission if there are no errors
         try {
             const result = await createCustomFields(Number(selectedFormValue), 1, fields);
-            if (result.status) {
+            if (result) {
                 console.log("FIELDS", fields);
                 alert("Field configuration saved!");
             }
