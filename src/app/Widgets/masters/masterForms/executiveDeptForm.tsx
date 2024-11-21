@@ -13,10 +13,8 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
-import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ExecutiveDeptForm(props: masterFormPropsT) {
-  console.log("Ex Props : ", props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -81,73 +79,6 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       return rest;
     });
   };
-
-  const defaultComponentMap = new Map<string, React.ReactNode>([
-    [
-      "name",
-      <InputControl
-        autoFocus
-        inputType={InputType.TEXT}
-        id="name"
-        label="Department Name"
-        name="name"
-        fullWidth
-        required
-        error={formError?.name?.error}
-        helperText={formError?.name?.msg}
-        defaultValue={entityData.name}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
-      />
-    ]
-  ])
-
-  function fieldPropertiesById(id: string) {
-    const field = props.baseData?.fields.find(
-      (item: any) => item.column_name_id === id
-    );
-
-    if (field) {
-      return {
-        label: field.column_label,
-        required: field.is_mandatory === 1
-      };
-    }
-    return { label: "default label", required: false };
-  }
-
-  let fieldArr: React.ReactElement[] = [];
-
-  props.masterData.fields.map((field: any) => {
-    if (field.is_default_column) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
-
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
-      });
-
-      fieldArr.push(fld);
-    } else {
-      const fld = (
-        <CustomField
-          key={`field-custom-${field.column_name_id}`}
-          desc={field}
-          defaultValue={entityData[field.column_name_id as keyof executiveDeptSchemaT]}
-        />
-      );
-      fieldArr.push(fld);
-    }
-    return null;
-  })
 
   return (
     <>

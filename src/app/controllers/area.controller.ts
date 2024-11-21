@@ -33,13 +33,7 @@ export async function getAreaById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      if(id){
       return getAreaByIDList(session.user.dbInfo.dbName, id);
-      }
-      else 
-      {
-        return [];
-      }
     }
   } catch (error) {
     throw error;

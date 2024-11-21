@@ -1,3 +1,4 @@
+
 "use server";
 
 import excuteQuery from "../utils/db/db";
@@ -25,16 +26,6 @@ export async function createOrganisationDB(
         data.pincode,
         data.country_id,
         session.user.userId,
-        data.c_col1,
-        data.c_col2,
-        data.c_col3,
-        data.c_col4,
-        data.c_col5,
-        data.c_col6,
-        data.c_col7,
-        data.c_col8,
-        data.c_col9,
-        data.c_col10
       ],
     });
   } catch (e) {
@@ -67,16 +58,6 @@ export async function updateOrganisationDB(
         data.pincode,
         data.country_id,
         session.user.userId,
-        data.c_col1,
-        data.c_col2,
-        data.c_col3,
-        data.c_col4,
-        data.c_col5,
-        data.c_col6,
-        data.c_col7,
-        data.c_col8,
-        data.c_col9,
-        data.c_col10
       ],
     });
   } catch (e) {
@@ -161,7 +142,6 @@ export async function getOrganisationDetailsById(crmDb: string, id: number) {
         s.name state, co.name country \
         from organisation_master o left outer join state_master s on o.state_id = s.id \
         left outer join country_master co on o.country_id = co.id \
-        left outer join custom_fields_data cfd on cfd.object_id=o.id and cfd.object_type_id=19\
         where o.id=?;",
       values: [id],
     });

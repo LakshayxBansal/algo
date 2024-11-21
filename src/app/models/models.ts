@@ -1,3 +1,4 @@
+
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
 import { GridColDef } from "@mui/x-data-grid";
@@ -30,8 +31,8 @@ export type optionsDataT = {
 
 export type searchDataT = {
   result: string;
-  tableName: string;
-  href: string;
+  tableName: string,
+  href:string,
 };
 
 export type addEntityDlgT = z.infer<typeof zs.addEntityDlg>;
@@ -68,7 +69,6 @@ export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;
-  desc?: any;
 };
 
 export type masterFormPropsWithParentT = masterFormPropsT & {
@@ -92,8 +92,6 @@ export type masterFormPropsWithDataT = {
   setDialogValue?: (props: any) => void;
   data?: any;
   parentData?: any;
-  desc?: any;
-  masterData?: any
 };
 
 //Enquiry Schemas
@@ -113,23 +111,17 @@ export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArrayS
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
-export type getDeptsT = [
-  {
+export type getDeptsT = [{
     id: number;
     name: string;
     rowID: number;
-    stamp: number;
-  }
-];
-//jp mail files
-export type getDeptT = [
-  {
-    id: number;
-    name: string;
-    stamp: number;
-  }
-];
-//jp_dev
+    stamp: number }]
+    //jp mail files
+    export type getDeptT = [{
+        id: number;
+        name: string;
+        stamp: number }]
+    //jp_dev
 
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;
@@ -248,7 +240,6 @@ export type iconCompT = {
   fnFetchDataByID?: (id: number) => Promise<any>;
   fnDeleteDataByID?: (id: number) => Promise<any>;
   setModData:(props: any) => void;
-  setMasterData?:(props: any) => void;
   setDlgMode:(props: any) => void;
   setDialogOpen:(props: any) => void;
   setIds:(props: any) => void;
