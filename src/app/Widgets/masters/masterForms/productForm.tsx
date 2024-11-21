@@ -242,6 +242,7 @@ export default function ProductForm(props: masterFormPropsT) {
                 }
                 fetchDataFn={getUnit}
                 fnFetchDataByID={getUnitById}
+                formError={formError.unit}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <UnitForm
                     setDialogOpen={fnDialogOpen}
