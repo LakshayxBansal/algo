@@ -73,22 +73,25 @@ import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
 import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 
-export interface IformData {
-  // fields: Array<any>;
-  enqData: Record<string, any>;
-  rights: Record<string, any>;
-  config_data: Record<string, any>;
-  loggedInUserData: Record<string, any>;
+export interface InputFormProps {
+  baseData: {
+    // fields: Array<any>;
+    enqData: Record<string, any>;
+    // rights: Record<string, any>;
+    config_data: Record<string, any>;
+    regional_setting: Record<string, any>;
+    loggedInUserData: Record<string, any>;
+  };
 }
 
 const rows: any = [];
 
-export default function InputForm(props: { baseData: IformData }) {
+export default function InputForm({ baseData }: InputFormProps) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({
     received_by: {
-      id: props.baseData.loggedInUserData.id,
-      name: props.baseData.loggedInUserData.name,
+      id: baseData.loggedInUserData.id,
+      name: baseData.loggedInUserData.name,
     },
   });
   const [formError, setFormError] = useState<
@@ -106,6 +109,10 @@ export default function InputForm(props: { baseData: IformData }) {
   const [nextAction, setNextAction] = useState<optionsDataT>();
 
   const router = useRouter();
+
+  const { dateFormat, timeFormat } = baseData.regional_setting;
+  const timeFormatString = timeFormat === "12 Hours" ? "hh:mm A" : "HH:mm";
+  const dateTimeFormat = `${dateFormat} ${timeFormatString}`;
 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await enquiryDataFormat({ formData, selectValues });
@@ -192,8 +199,7 @@ export default function InputForm(props: { baseData: IformData }) {
     setSelectValues(values);
   }
 
-  const enquiryMaintainProducts = props.baseData.config_data.maintainProducts;
-
+  const enquiryMaintainProducts = baseData.config_data.maintainProducts;
   return (
     <Box>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
@@ -224,6 +230,7 @@ export default function InputForm(props: { baseData: IformData }) {
                   </Grid>
                   <Grid item xs={12} sm={3} md={3}>
                     <InputControl
+                      format={dateTimeFormat}
                       label="Received On"
                       inputType={InputType.DATETIMEINPUT}
                       id="date"
@@ -342,8 +349,8 @@ export default function InputForm(props: { baseData: IformData }) {
                       )}
                       defaultValue={
                         {
-                          id: props.baseData.loggedInUserData?.id,
-                          name: props.baseData.loggedInUserData?.name,
+                          id: baseData.loggedInUserData?.id,
+                          name: baseData.loggedInUserData?.name,
                         } as optionsDataT
                       }
                     />
@@ -520,6 +527,7 @@ export default function InputForm(props: { baseData: IformData }) {
                 disable={status === "2"}
               />
               <InputControl
+                format={dateTimeFormat}
                 key={`next-action-date-${status}`}
                 defaultValue={status === "2" ? null : dayjs(new Date())}
                 label="When"
@@ -569,46 +577,46 @@ export default function InputForm(props: { baseData: IformData }) {
           <Grid container>
             <Grid item xs={12} md={12}>
               <Box>
-              <Tooltip
-              title={
-                docData.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
-                    </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )
-              }
-            >
-              <IconButton
-                sx={{ float: "left", position: "relative"}}
-                onClick={() => setDocDialogOpen(true)}
-                aria-label="file"
-              >
-                <Badge badgeContent={docData.length} color="primary">
-                  <AttachFileIcon></AttachFileIcon>
-                </Badge>
-              </IconButton>
-            </Tooltip>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  m={1}
+                <Tooltip
+                  title={
+                    docData.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
+                      </Typography>
+                    )
+                  }
                 >
-                  <Button onClick={handleCancel} tabIndex={-1}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" variant="contained">
-                    Submit
-                  </Button>
+                  <IconButton
+                    sx={{ float: "left", position: "relative" }}
+                    onClick={() => setDocDialogOpen(true)}
+                    aria-label="file"
+                  >
+                    <Badge badgeContent={docData.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                    m={1}
+                  >
+                    <Button onClick={handleCancel} tabIndex={-1}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" variant="contained">
+                      Submit
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
               </Box>
             </Grid>
           </Grid>
