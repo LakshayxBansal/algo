@@ -434,7 +434,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
-                justifyContent: "space-between",
                 mt: 2,
               }}
             >

@@ -62,6 +62,7 @@ const FieldConfigurator = () => {
     const [autoScrolling, setAutoScrolling] = useState(false);
     const scrollIntervalRef = useRef<number | null>(null);
     const [formError, setFormError] = useState<Record<string, { label_msg: string }>>({});
+    // const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
 
 
     const dateFormat = "DD.MM.YYYY";
@@ -246,6 +247,8 @@ const FieldConfigurator = () => {
         //     }
         // })
         const errors: Record<string, { label_msg: string }> = {};
+        // const error: Record<string, { label_msg: string }> = {};
+
 
         // Validate each field to ensure labels are not empty
         fields.forEach((item) => {
