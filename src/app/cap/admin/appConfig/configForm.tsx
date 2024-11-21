@@ -14,13 +14,6 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { Theme, useTheme } from '@mui/material/styles';
 import { useRouter } from "next/navigation";
 import { configDeptMapSchemaT, configSchemaT } from "@/app/models/models";
-import { configSchema } from "@/app/zodschema/zodschema";
-
-// type configKeys = 'enquiry' | 'support' | 'contract' | 'regionalSetting' | 'searchNavbar' | 'searchContact' | 'searchExecutive' | 'searchOrganisation';
-// type configDeptKey = 'enquiry' | 'support' | 'contract';
-// type configDeptType = {
-//   [key in configDeptKey]: number[];
-// };
 
 const customLabel : any = {
   enquiry : "Enquiry Management",
@@ -29,6 +22,7 @@ const customLabel : any = {
   closeCall : "Can Close Call at the time of Call Receipt",
   maintainProducts : "Maintain Products in Call Receipt",
   saveFAQ : "Ask to Save FAQ on Call Receipt and Report Saving",
+  allowReallocation : "Allow Re-allocation to Executive",
   maintainAction : "Maintain Action Taken for Call Receipt",
   voucher : "Do you want to keep Voucher Number?"
 }
@@ -133,27 +127,27 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         //     if (typeof (config[key as keyof configSchemaT][k as keyof typeof configDataObj]) === "boolean") {
                         //       updatedKeyValues[k as keyof typeof configDataObj] = false;
                         //     }
-                            // else if (typeof (configDataObj[k as keyof typeof configDataObj]) === "string") {
-                            //   updatedKeyValues[k as keyof typeof configDataObj] = "";
-                            // } else if (typeof (configDataObj[k as keyof typeof configDataObj]) === "number") {
-                            //   updatedKeyValues[k as keyof typeof configDataObj] = 0;
-                            // }
-                          // });
-                          // if (config[key as keyof configSchemaT]["voucher"] !== undefined) {
-                          //   updatedKeyValues["voucher"]["voucherNumber"] = false;
-                          //   updatedKeyValues["voucher"]["prefix"] = "";
-                          //   updatedKeyValues["voucher"]["suffix"] = "";
-                          //   updatedKeyValues["voucher"]["length"] = "0";
-                          //   updatedKeyValues["voucher"]["prefillWithZero"] = false;
-                          // }
-                          // setConfig({
-                          //   ...config,
-                          //   [key]: updatedKeyValues
-                          // })
-                          // setConfigDept({
-                          //   ...configDept,
-                          //   [key]: []
-                          // })
+                        //     else if (typeof (configDataObj[k as keyof typeof configDataObj]) === "string") {
+                        //       updatedKeyValues[k as keyof typeof configDataObj] = "";
+                        //     } else if (typeof (configDataObj[k as keyof typeof configDataObj]) === "number") {
+                        //       updatedKeyValues[k as keyof typeof configDataObj] = 0;
+                        //     }
+                        //   });
+                        //   if (config[key as keyof configSchemaT]["voucher"] !== undefined) {
+                        //     updatedKeyValues["voucher"]["voucherNumber"] = false;
+                        //     updatedKeyValues["voucher"]["prefix"] = "";
+                        //     updatedKeyValues["voucher"]["suffix"] = "";
+                        //     updatedKeyValues["voucher"]["length"] = "0";
+                        //     updatedKeyValues["voucher"]["prefillWithZero"] = false;
+                        //   }
+                        //   setConfig({
+                        //     ...config,
+                        //     [key]: updatedKeyValues
+                        //   })
+                        //   setConfigDept({
+                        //     ...configDept,
+                        //     [key]: []
+                        //   })
                         // }
                       }
                       }
