@@ -286,6 +286,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
+          pb: 2,
+          mb:2
         }}
       >
         {props.parentData ? (
@@ -326,7 +328,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )} */}
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2} rowGap={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
                 inputType={InputType.TEXT}
@@ -604,6 +606,26 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
                 inputType={InputType.DATEINPUT}
+                id="doj"
+                label="Joining Date"
+                name="doj"
+                // defaultValue={entityData.doj}
+                defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
+                slotProps={{
+                  textField: {
+                    error: formError?.doj?.error,
+                    helperText: formError?.doj?.msg,
+                  },
+                  openPickerButton: {
+                    tabIndex: -1,
+                  },
+                }}
+                sx={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.DATEINPUT}
                 id="dob"
                 label="Date of Birth"
                 name="dob"
@@ -642,26 +664,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 sx={{ width: "100%" }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <InputControl
-                inputType={InputType.DATEINPUT}
-                id="doj"
-                label="Joining Date"
-                name="doj"
-                // defaultValue={entityData.doj}
-                defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
-                slotProps={{
-                  textField: {
-                    error: formError?.doj?.error,
-                    helperText: formError?.doj?.msg,
-                  },
-                  openPickerButton: {
-                    tabIndex: -1,
-                  },
-                }}
-                sx={{ width: "100%" }}
-              />
-            </Grid>
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 inputType={InputType.TEXT}
@@ -686,6 +688,30 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 helperText={formError?.address2?.msg}
                 style={{ width: "100%" }}
                 // fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} lg={3}>
+              <InputControl
+                inputType={InputType.TEXT}
+                name="city"
+                id="city"
+                label="City"
+                defaultValue={entityData.city}
+                error={formError?.city?.error}
+                helperText={formError?.city?.msg}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} lg={3}>
+              <InputControl
+                inputType={InputType.TEXT}
+                name="pincode"
+                id="pincode"
+                label="Pin Code"
+                defaultValue={entityData.pincode}
+                error={formError?.pincode?.error}
+                helperText={formError?.pincode?.msg}
+                style={{ width: "100%" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3} lg={3}>
@@ -741,36 +767,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3} lg={3}>
-              <InputControl
-                inputType={InputType.TEXT}
-                name="city"
-                id="city"
-                label="City"
-                defaultValue={entityData.city}
-                error={formError?.city?.error}
-                helperText={formError?.city?.msg}
-                style={{ width: "100%" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} lg={3}>
-              <InputControl
-                inputType={InputType.TEXT}
-                name="pincode"
-                id="pincode"
-                label="Pin Code"
-                defaultValue={entityData.pincode}
-                error={formError?.pincode?.error}
-                helperText={formError?.pincode?.msg}
-                style={{ width: "100%" }}
-              />
-            </Grid>
             <Grid
               item
               xs={12}
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 mt: 1,
               }}
             >
@@ -791,7 +793,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   }
                 >
                   <IconButton
-                    sx={{ float: "left", position: "relative", m: 1 }}
+                    sx={{ float: "left", position: "relative" }}
                     onClick={() => setDialogOpen(true)}
                     aria-label="file"
                   >
@@ -800,40 +802,40 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                {/* <Box> */}
-                  <Button
-                    onClick={() => {
-                      if (props.parentData === "profile") {
-                        router.push("/cap");
-                      } else {
-                        handleCancel();
-                      }
-                    }}
-                    tabIndex={-1}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ width: "15%", marginLeft: "5%" }}
-                  >
-                    Submit
-                  </Button>
-                {/* </Box> */}
+                </Box>
+                <Box>
+                <Button
+                  onClick={() => {
+                    if (props.parentData === "profile") {
+                      router.push("/cap");
+                    } else {
+                      handleCancel();
+                    }
+                  }}
+                  tabIndex={-1}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
               </Box>
-            </Grid>
+              </Grid>
             {dialogOpen && (
               <AddDialog
-                title=""
-                open={dialogOpen}
-                setDialogOpen={setDialogOpen}
+              title=""
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
               >
                 <DocModal
                   docData={docData}
                   setDocData={setDocData}
                   setDialogOpen={setDialogOpen}
-                />
+                  />
               </AddDialog>
             )}
           </Grid>
@@ -844,7 +846,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+          />
       </Box>
     </>
   );

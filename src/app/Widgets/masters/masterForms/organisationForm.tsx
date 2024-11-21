@@ -433,7 +433,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               xs={12}
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 mt: 2,
               }}
             >
@@ -463,6 +463,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
                     </Badge>
                   </IconButton>
                 </Tooltip>
+                </Box>
+           
+              <Box>
                 <Button onClick={handleCancel} tabIndex={-1}>
                   Cancel
                 </Button>
@@ -474,7 +477,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 >
                   Submit
                 </Button>
-              </Box>
+            </Box>
             </Grid>
             {dialogOpen && (
               <AddDialog
