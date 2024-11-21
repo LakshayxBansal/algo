@@ -14,12 +14,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Seperator from "@/app/Widgets/seperator";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import { createEnquiry } from "@/app/controllers/enquiry.controller";
-import Seperator from "@/app/Widgets/seperator";
-import { InputControl } from "@/app/Widgets/input/InputControl";
-import { InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   getEnquirySource,
   getEnquirySourceById,
@@ -32,14 +33,6 @@ import {
   getCategoryById,
   getEnquiryCategory,
 } from "@/app/controllers/enquiryCategory.controller";
-import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
-import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
-import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
-import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
-import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
-import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import DocModal from "@/app/utils/docs/DocModal";
 
@@ -47,10 +40,12 @@ import {
   getExecutive,
   getExecutiveById,
 } from "@/app/controllers/executive.controller";
+
 import {
   getEnquirySubSatusById,
   getEnquirySubStatus,
 } from "@/app/controllers/enquirySubStatus.controller";
+
 import {
   getActionById,
   getEnquiryAction,
@@ -67,7 +62,16 @@ import {
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
+import CustomField from "./CustomFields";
+
+
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
+import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
+import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
+import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
+import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
+import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
+import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 
 export interface IformData {
   // fields: Array<any>;

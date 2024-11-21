@@ -107,13 +107,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -463,8 +463,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                </Box>
-           
+              </Box>
+
               <Box>
                 <Button onClick={handleCancel} tabIndex={-1}>
                   Cancel
@@ -477,7 +477,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 >
                   Submit
                 </Button>
-            </Box>
+              </Box>
             </Grid>
             {dialogOpen && (
               <AddDialog

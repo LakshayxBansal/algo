@@ -201,3 +201,24 @@ export async function getCurrencyCharacterDb(
     console.log(e);
   }
 }
+
+export async function getRegionalSettingsDb(
+  crmDb: string
+) {
+  try {
+    let query =
+    "select config from app_config acn join config_meta_data cmd where acn.object_id=cmd.id and cmd.config_type='regionalSetting'";
+        let values: any[] = [];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
