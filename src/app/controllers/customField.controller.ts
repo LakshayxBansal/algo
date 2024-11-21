@@ -16,7 +16,6 @@ export async function createCustomFields(objectID: number,action_id: number,data
         action_id,  
         data
       );
-      console.log("dbResult",dbResult);
       if(dbResult){
         result=true;
       }
