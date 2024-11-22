@@ -1,7 +1,6 @@
 
 "use server";
 
-import { enquiryConfigSchemaT } from "../models/models";
 import { Session } from "next-auth";
 import executeQuery from "../utils/db/db";
 import { logger } from "../utils/logger.utils";

@@ -84,6 +84,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
     currentKey = event.key;
+    if(props.onKeyDown){
+      props.onKeyDown(event);
+    }
   };
 
   if (inputRef.current) {

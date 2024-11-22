@@ -857,9 +857,11 @@ export const nameAliasData = z.object({
 
 export const voucherSchema = z.object({
   voucherNumber : z.boolean(),
-  prefix : z.string().optional(),
-  suffix : z.string().optional(),
-  length : z.string().optional(),
+  prefix : z.string().max(10,"Prefix should not be greater than 10 character").optional(),
+  suffix : z.string().max(10,"Suffix should not be greater than 10 character").optional(),
+  length : z.string().refine((val) => Number(val) < Number("10"), {
+    message: "Digit length should not be greater than 10"
+  }).optional(),
   prefillWithZero : z.boolean()
 })
 
@@ -867,7 +869,7 @@ export const enquiryConfigSchema = z.object({
   reqd : z.boolean(),
   closeCall : z.boolean(),
   maintainProducts : z.boolean(),
-  saveFaq : z.boolean(),
+  saveFAQ: z.boolean(),
   maintainAction : z.boolean(),
   voucher : voucherSchema.optional()
 })
@@ -876,7 +878,7 @@ export const supportConfigSchema = z.object({
   reqd : z.boolean(),
   closeCall : z.boolean(),
   maintainProducts : z.boolean(),
-  saveFaq : z.boolean(),
+  saveFAQ : z.boolean(),
   maintainAction : z.boolean(),
   voucher : voucherSchema.optional()
 })
@@ -893,13 +895,13 @@ export const regionalSettingSchema = z.object({
   state_id: z.number(),
   country: z.string().optional(),
   state: z.string().optional(),
-  decimalPaces: z.string().optional(),
-  timeFormat: z.string().optional(),
-  currencyString: z.string().optional(),
-  currencySymbol: z.string().optional(),
-  currencySubString: z.string().optional(),
-  currencyCharacter: z.string().optional(),
-  dateformat: z.string().optional(),
+  decimalPlaces: z.string(),
+  timeFormat: z.string(),
+  currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
+  currencySymbol: z.string().max(5,"Currency symbol should not be greater than 5 character").optional(),
+  currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
+  currencyCharacter: z.string().max(1,"Currency character should not be greater than 1 character").optional(),
+  dateFormat: z.string(),
   voucher : voucherSchema.optional()
 });
 
