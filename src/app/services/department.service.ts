@@ -53,19 +53,17 @@ export async function checkIfUsed(crmDb: string, id: number) {
     console.log(e);
   }
 }
-
-export async function delDepartmentDetailsById(crmDb: string, id: number) {
+export async function delDepartmentDetailsById(session: Session, id: number) {
   try {
-    const result = await excuteQuery({
-      host: crmDb,
-      query: "delete from department_master where id=?;",
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call deleteDepartment(?)", 
       values: [id],
     });
-
-    return result;
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
+  return null;
 }
 
 /**

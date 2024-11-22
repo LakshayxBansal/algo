@@ -98,7 +98,7 @@ export async function delExecutiveDeptByIdDB(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from executive_dept_master where id=?;",
+      query: "call deleteExecutiveDept(?)",
       values: [id],
     });
 

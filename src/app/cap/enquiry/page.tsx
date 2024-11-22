@@ -15,6 +15,15 @@ interface SearchParams {
   id?: string;
 }
 
+interface MasterData {
+  // fields: Array<any>;
+  enqData: Record<string, any>;
+  // rights: Record<string, any>;
+  config_data: Record<string, any>;
+  regional_setting: Record<string, any>;
+  loggedInUserData: Record<string, any>;
+}
+
 export default async function MyForm({
   searchParams,
 }: {
@@ -25,26 +34,42 @@ export default async function MyForm({
   try {
     const session = await getSession();
 
-    if (session) {
-      // const fields = await getScreenDescription(26, 1);
-      const enqData = await getEnquiryById(enquiryId);
-      const rights = await getRightsData();
-      const config_data = await getConfigData();
-      const loggedInUserData = await getLoggedInUserDetails();
-
-      const masterData = {
-        // fields: fields as Array<any>,
-        enqData: enqData as Record<string, any>,
-        rights: rights as Record<string, any>,
-        config_data: JSON.parse(config_data?.config) as Record<string, any>,
-        loggedInUserData: loggedInUserData?.data as Record<string, any>,
-      };
-
-      return <InputForm baseData={masterData}></InputForm>;
+    if (!session) {
+      redirect("/signin");
+      return null; // Ensures no further code executes
     }
+
+    // const fields = await getScreenDescription(26, 1);
+    const enqData = enquiryId ? await getEnquiryById(enquiryId) : undefined;
+    // const rights = await getRightsData();
+    const config_data = await getConfigData();
+    const loggedInUserData = await getLoggedInUserDetails();
+
+    if (
+      /*!rights ||*/
+      !config_data ||
+      !loggedInUserData ||
+      !Array.isArray(config_data) ||
+      config_data.length < 2
+    ) {
+      logger.error("Required data is missing or invalid.");
+      redirect("/signin");
+      return null;
+    }
+
+    const masterData: MasterData = {
+      enqData: enqData ?? {},
+      /*rights: rights ?? {},*/
+      config_data: JSON.parse(config_data[0].config)?? {},
+      regional_setting: JSON.parse(config_data[1].config)?? {},
+      loggedInUserData: loggedInUserData ?? {},
+    };
+
+    return <InputForm baseData={masterData}></InputForm>;
   } catch (e) {
     // show error page
-    logger.error(e);
+    logger.error("An error occurred:", e);
+    redirect("/signin");
+    return null;
   }
-  redirect("/signin");
 }

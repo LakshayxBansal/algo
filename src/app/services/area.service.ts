@@ -77,7 +77,7 @@ export async function delAreaDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from area_master where id=?;",
+      query: "call deleteArea(?)",
       values: [id],
     });
 

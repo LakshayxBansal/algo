@@ -9,27 +9,27 @@ import { useRouter } from "next/navigation";
 import { encrypt } from "@/app/utils/encrypt.utils";
 
 function IconComponent(props: iconCompT) {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const router = useRouter();
-    async function onModifyDialog(modId: number) {
-      if(modId && props.link){
-        const encryptedId = await encrypt(modId);
-        router.push(`${props.link}?id=${encryptedId}&status=false`);
-      }
-      else  if (props.fnFetchDataByID && modId ) {
-          const data = await props.fnFetchDataByID(modId);
-          console.log(data);
-          
-          props.setModData(data[0]);
-          props.setDialogOpen(true);
-          props.setDlgMode(props.modify); //dialogMode.Modify
-          setAnchorEl(null);
-        }
-        
-      }
-   async function handleStatusUpdate(modId:number){
-    if(modId && props.link){
+  const router = useRouter();
+  async function onModifyDialog(modId: number) {
+    if (modId && props.link) {
+      const encryptedId = await encrypt(modId);
+      router.push(`${props.link}?id=${encryptedId}&status=false`);
+    }
+    else if (props.fnFetchDataByID && modId) {
+      const data = await props.fnFetchDataByID(modId);
+      console.log(data);
+
+      props.setModData(data[0]);
+      props.setDialogOpen(true);
+      props.setDlgMode(props.modify); //dialogMode.Modify
+      setAnchorEl(null);
+    }
+
+  }
+  async function handleStatusUpdate(modId: number) {
+    if (modId && props.link) {
       const encryptedId = await encrypt(modId);
       router.push(`${props.link}?id=${encryptedId}&status=true`);
     }
@@ -80,7 +80,7 @@ function IconComponent(props: iconCompT) {
             handleDeleteDialog(props.id);
           }}
         >
-          <DeleteIcon  fontSize="small"/>
+          <DeleteIcon fontSize="small" />
           <Typography variant="body2">Delete</Typography>
         </MenuItem>
         {props.link && (
@@ -89,7 +89,7 @@ function IconComponent(props: iconCompT) {
               handleStatusUpdate(props.id);
             }}
           >
-             <EditIcon fontSize="small" />
+            <EditIcon fontSize="small" />
 
             <Typography variant="body2">Update Status</Typography>
           </MenuItem>

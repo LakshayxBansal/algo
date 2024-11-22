@@ -105,10 +105,6 @@ export const organisationSchema = z.object({
     .string()
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
-  address3: z
-    .string()
-    .max(75, "Field must contain at most 75 character(s)")
-    .optional(),
   city: z
     .string()
     .max(75, "Field must contain at most 75 character(s)")
@@ -255,21 +251,20 @@ export const contactSchema = z.object({
   aadhaar: z.union([z.literal(""), z.string().optional()]),
   address1: z.string().max(75, "Field must contain at most 75 character(s)"),
   address2: z.string().max(75, "Field must contain at most 75 character(s)"),
-  address3: z.string().max(75, "Field must contain at most 75 character(s)"),
   pincode: z.string().max(15, "Field must contain at most 15 character(s)"),
   email: z.union([z.literal(""), z.string().email().max(100)]),
   mobile: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Phone No",
     path: ["mobile"],
-  }),
+  }).optional(),
   whatsapp: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Whatsapp No",
     path: ["whatsapp"],
-  }),
+  }).optional(),
   dob: z.date().optional(),
   doa: z.date().optional(),
-  contactGroup_id: z.number().optional(),
-  contactGroup: z.string().optional(),
+  contactGroup_id: z.number(),
+  contactGroup: z.string().min(1, 'Enter contact group'),
   state: z.string().optional(),
   area: z.string().optional(),
   area_id: z.number().optional(),
@@ -323,10 +318,6 @@ export const executiveSchema = z
       .max(75, "Field must contain atmost 60 character(s)")
       .optional(),
     address2: z
-      .string()
-      .max(75, "Field must contain atmost 60 character(s)")
-      .optional(),
-    address3: z
       .string()
       .max(75, "Field must contain atmost 60 character(s)")
       .optional(),

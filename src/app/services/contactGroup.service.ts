@@ -112,7 +112,7 @@ export async function delContactDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from contact_group_master where id=?;",
+      query: "call deleteContactGroup(?)",
       values: [id],
     });
 

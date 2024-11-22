@@ -42,6 +42,8 @@ type ModifiedRowT = {
 };
 
 type ProductGridProps = {
+  id?: string;
+  name?: string;
   dgData: any;
   setdgData: any;
   setdgDialogOpen: any;
@@ -428,9 +430,9 @@ export default function ProductGrid({
         }}
         rowHeight={
           dgFormError.product ||
-          dgFormError.quantity ||
-          dgFormError.unit ||
-          dgFormError.remark
+            dgFormError.quantity ||
+            dgFormError.unit ||
+            dgFormError.remark
             ? 70
             : 50
         }

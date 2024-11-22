@@ -85,7 +85,7 @@ export default function EntityList(props: entitiyCompT) {
         pgSize as number
       );
 
-      
+
 
       const roleId = await getRoleID();
       if (rows.data) {
@@ -110,7 +110,7 @@ export default function EntityList(props: entitiyCompT) {
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
-                link ={props.link}
+                link={props.link}
               />
             );
           },
@@ -200,13 +200,13 @@ export default function EntityList(props: entitiyCompT) {
     setSearch(e.target.value);
   };
 
-  const handleAddBtn = async() => {
-    if(props.link){
+  const handleAddBtn = async () => {
+    if (props.link) {
       router.push(props.link);
     }
-    else{
-    setDialogOpen(true);
-    setDlgMode(dialogMode.Add);
+    else {
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
     }
   };
 
@@ -234,16 +234,16 @@ export default function EntityList(props: entitiyCompT) {
         {dialogOpen && (
           <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.fileUploadFeatureReqd &&
-            dlgMode === dialogMode.FileUpload ? (
+              dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
                 setDialogOpen={setDialogOpen}
                 fnFileUpad={props.fnFileUpad}
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => {})
+              props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => {}, modData)
+              props.renderForm(setDialogOpen, (arg) => { }, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}
@@ -445,7 +445,7 @@ export default function EntityList(props: entitiyCompT) {
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
-            pageSizeOptions={[5,pgSize,20]}
+            pageSizeOptions={[5, pgSize, 20]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}
@@ -476,7 +476,7 @@ export default function EntityList(props: entitiyCompT) {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
