@@ -23,7 +23,7 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
        <Box style={{ display: "grid", width:"31.25rem", gap: "8px", columnGap: 3, gridTemplateColumns: "repeat(2, 2fr)" }}>
          <InputControl
           inputType={InputType.TEXT}
-          id="Prefix"
+          id={`${parentKey}_voucher_prefix`}
           name={`${parentKey}_voucher_prefix`}
           label="Prefix"
           error={formError?.[`${parentKey}_voucher_prefix`]?.error}
@@ -41,7 +41,7 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
         />
         <InputControl
           inputType={InputType.TEXT}
-          id="Suffix"
+          id={`${parentKey}_voucher_suffix`}
           name={`${parentKey}_voucher_suffix`}
           label="Suffix"
           error={formError?.[`${parentKey}_voucher_suffix`]?.error}
@@ -59,7 +59,7 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
           />
         <InputControl
           inputType={InputType.TEXT}
-          id="Length"
+          id={`${parentKey}_voucher_length`}
           name={`${parentKey}_voucher_length`}
           label="Digit Length"
           error={formError?.[`${parentKey}_voucher_length`]?.error}
@@ -77,8 +77,8 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
         />
         <InputControl
           inputType={InputType.CHECKBOX}
-          id="PrefillWithZero"
-          name="PrefillWithZero"
+          id={`${parentKey}_voucher_prefillWithZero`}
+          name={`${parentKey}_voucher_prefillWithZero`}
           custLabel="Prefill with Zero"
           checked={config[parentKey]["voucher"]?.["prefillWithZero"]}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,8 +93,8 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
         />
         <InputControl
           inputType={InputType.TEXT}
-          id="displayValue"
-          name="Display Value:"
+          id={`${parentKey}_voucher_displayValue`}
+          name={`${parentKey}_voucher_displayValue`}
           label="Display Value"
           value={getDisplayValue()}
           disabled

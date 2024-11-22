@@ -143,7 +143,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1-content"
-                  id="panel1-header"
+                  id={`${key}-panel1-content`}
                   sx={{ height: "50px" }}
                 >
                   {/* check out only visible for non mandatory config type */}
@@ -227,8 +227,8 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         {config[key as keyof configSchemaT].hasOwnProperty('voucher') && <InputControl
                           key={index}
                           inputType={InputType.CHECKBOX}
-                          id={`${key} Voucher`}
-                          name={`${key} Voucher`}
+                          id={`${key}Voucher`}
+                          name={`${key}Voucher`}
                           custLabel={customLabel["voucher"]}
                           checked={config[key as keyof configSchemaT]?.voucher?.voucherNumber}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,16 +257,16 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         <Box>
                           <Typography>Select Department to Allocate</Typography>
                           <FormControl sx={{ m: 1, width: 300 }}>
-                            <InputLabel id="demo-multiple-chip-label">Select Departments</InputLabel>
+                            <InputLabel id={`${key}-demo-multiple-chip-label`}>Select Departments</InputLabel>
                             <Select
                               labelId="demo-multiple-chip-label"
-                              id="demo-multiple-chip"
+                              id={`${key}-demo-multiple-chip`}
                               multiple
                               value={configDept[key as keyof configDeptMapSchemaT]}
                               onChange={(e: SelectChangeEvent<number[]>) =>
                                 setConfigDept({ ...configDept, [key]: e.target.value })
                               }
-                              input={<OutlinedInput id="select-multiple-chip" label=">Select Departments" />}
+                              input={<OutlinedInput id={`${key}-select-multiple-chip`} label=">Select Departments" />}
                               renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                   {selected.map((value: number) => (
