@@ -1,7 +1,6 @@
 "use client";
 import {
   optionsDataT,
-  selectKeyValueT,
 } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -10,24 +9,19 @@ import { Autocomplete, Box, Paper, Snackbar } from "@mui/material";
 import { useState } from "react";
 import {
   getCountryWithCurrency,
-  getCurrencyCharacter,
-  getCurrencyString,
-  getCurrencySubString,
-  getCurrencySymbol,
-  getDateFormat,
 } from "@/app/controllers/config.controller";
 import { getStates } from "@/app/controllers/masters.controller";
 
 const decimalPlacesList = ["Two Digits", "Three Digits"];
 const timeFormatList = ["12 Hours", "24 Hours"];
+const dateFormatList = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY/DD/MM", "YYYY/MM/DD"];
 
 export default function RegionalInfo({config,setConfig}:{config:any,setConfig:any}) {
-  // const [formError, setFormError] = useState<
-  //   Record<string, { msg: string; error: boolean }>
-  // >({});
+  const [formError, setFormError] = useState<
+    Record<string, { msg: string; error: boolean }>
+  >({});
   const [displayNumber, setDisplayNumber] = useState<string>(config.regionalSetting.decimalPlaces === "Two Digits" ? "9,99,99,999.99" : "9,99,99,999.999");
   const [decimalPlaces, setDecimalPlaces] = useState(config.regionalSetting?.decimalPlaces);
-  const [timeFormat, setTimeFormat] = useState(config.regionalSetting?.timeFormat);
   const [snackOpen, setSnackOpen] = useState(false);  
 
   const handleCountryChange = (
@@ -135,34 +129,30 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               flexWrap: "wrap",
             }}
           >
-            <AutocompleteDB
-              name={"dateFormat"}
-              id={"dateFormat"}
-              label={"Date Format"}
-              width={400}
-              onChange={(e, val, s) => {
+            <Autocomplete
+              value={config.regionalSetting?.dateFormat}
+              onChange={(e: any, value)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["dateFormat"] : val.name
+                    ...config["regionalSetting"], ["dateFormat"] : value
                   }
                 })
               }}
-              fetchDataFn={(stateStr: string) => {
-                return getDateFormat(stateStr);
-              }}
-              diaglogVal={{
-                      id: config.regionalSetting.dateFormat?.id,
-                      name: config.regionalSetting.dateFormat,
-                      detail: undefined,
-                    }
-              }
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              options={dateFormatList}
+              id="dateFormat"
+              sx={{ maxWidth: 400 }}
+              renderInput={(params) => (
+                <InputControl
+                  {...params}
+                  inputType={InputType.TEXT}
+                  name="dateFormat"
+                  label="Date Format"
+                />
+              )}
             />
+            
             <Autocomplete
-              value={timeFormat}
+              value={config.regionalSetting?.timeFormat}
               onChange={(e: any, value)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
@@ -179,8 +169,6 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
                   inputType={InputType.TEXT}
                   name="timeFormat"
                   label="Time Format"
-                  // error={formError?.timeFormat?.error}
-                  // helperText={formError?.timeFormat?.msg}
                 />
               )}
             />
@@ -194,109 +182,104 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               flexWrap: "wrap",
             }}
           >
-            <AutocompleteDB
-              name={"currencySymbol"}
-              id={"currencySymbol"}
-              label={"Currency Symbol"}
-              width={400}
-              onChange={(e, val, s) => {
+            <InputControl
+              id="currencySymbol"
+              label="Currency Symbol"
+              inputType={InputType.TEXT}
+              name="currencySymbol"
+              required
+              style={{width: "400px"}}
+              // error={formError?.name?.error}
+              // helperText={formError?.name?.msg}
+              defaultValue={config.regionalSetting.currencySymbol}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["currencySymbol"] : val.name
+                    ...config["regionalSetting"], ["currencySymbol"] : e.target.value
                   }
                 })
               }}
-              fetchDataFn={(stateStr: string) => {
-                return getCurrencySymbol(stateStr);
-              }}
-              diaglogVal={{
-                      id: config.regionalSetting.currencySymbol?.id,
-                      name: config.regionalSetting.currencySymbol
-                    }
-              }
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
             />
-            <AutocompleteDB
-              name={"currencyString"}
-              id={"currencyString"}
-              label={"Currency String"}
-              width={400}
-              onChange={(e, val, s) => {
+            <InputControl
+              id="currencyString"
+              label="Currency String"
+              inputType={InputType.TEXT}
+              name="currencyString"
+              required
+              style={{width: "400px"}}
+              // error={formError?.name?.error}
+              // helperText={formError?.name?.msg}
+              defaultValue={config.regionalSetting.currencyString}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["currencyString"] : val.name
+                    ...config["regionalSetting"], ["currencyString"] : e.target.value
                   }
                 })
               }}
-              fetchDataFn={(stateStr: string) => {
-                return getCurrencyString(stateStr);
-              }}
-              diaglogVal={{
-                      id: config.regionalSetting.currencyString?.id,
-                      name: config.regionalSetting.currencyString,
-                      detail: undefined,
-                    }
-              }
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
             />
-            <AutocompleteDB
-              name={"currencySubString"}
-              id={"currencySubString"}
-              label={"Currency Sub String"}
-              width={400}
-              onChange={(e, val, s) => {
+            <InputControl
+              id="currencySubString"
+              label="Currency Sub String"
+              inputType={InputType.TEXT}
+              name="currencySubString"
+              required
+              style={{width: "400px"}}
+              // error={formError?.name?.error}
+              // helperText={formError?.name?.msg}
+              defaultValue={config.regionalSetting.currencySubString}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["currencySubString"] : val.name
+                    ...config["regionalSetting"], ["currencySubString"] : e.target.value
                   }
                 })
               }}
-              fetchDataFn={(stateStr: string) => {
-                return getCurrencySubString(stateStr);
-              }}
-              diaglogVal={{
-                      id: config.regionalSetting.currencySubString?.id,
-                      name: config.regionalSetting.currencySubString,
-                      detail: undefined,
-                    }
-              }
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
             />
-            <AutocompleteDB
-              name={"currencyCharacter"}
-              id={"currencyCharacter"}
-              label={"Currency Character"}
-              width={400}
-              onChange={(e, val, s) => {
+            <InputControl
+              id="currencyCharacter"
+              label="Currency Character"
+              inputType={InputType.TEXT}
+              name="currencyCharacter"
+              required
+              style={{width: "400px"}}
+              // error={formError?.name?.error}
+              // helperText={formError?.name?.msg}
+              defaultValue={config.regionalSetting.currencyCharacter}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["currencyCharacter"] : val.name
+                    ...config["regionalSetting"], ["currencyCharacter"] : e.target.value
                   }
                 })
               }}
-              fetchDataFn={(stateStr: string) => {
-                return getCurrencyCharacter(stateStr);
-              }}
-              diaglogVal={{
-                      id: config.regionalSetting.currencyCharacter?.id,
-                      name: config.regionalSetting.currencyCharacter,
-                      detail: undefined,
-                    }
-              }
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
             />
+          
+            
             <Autocomplete
               value={decimalPlaces}
               options={decimalPlacesList}
@@ -308,8 +291,6 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
                   inputType={InputType.TEXT}
                   name="decimalPlaces"
                   label="Decimal Places"
-                  // error={formError?.decimalPlaces?.error}
-                  // helperText={formError?.decimalPlaces?.msg}
                 />
               )}
             />
