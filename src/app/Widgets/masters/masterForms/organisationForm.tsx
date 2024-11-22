@@ -206,9 +206,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
 
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m: 1 }}>
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 inputType={InputType.TEXT}

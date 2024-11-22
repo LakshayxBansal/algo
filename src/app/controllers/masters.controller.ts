@@ -23,6 +23,7 @@ import {
   checkCountryIfUsed,
   getCountryListMasterDb,
   getStateListMasterDb,
+  getCountryIdByNameDb,
 } from "../services/masters.service";
 import { getSession } from "../services/session.service";
 import * as zs from "../zodschema/zodschema";
@@ -578,6 +579,18 @@ export async function getStatesMaster(searchState: string, country: string) {
     if (session?.user) {
       return getStateListMasterDb(searchState, country);
     }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getCountryIdByName(name: string){
+  try{
+    const session = await getSession();
+    if(session?.user){
+    return getCountryIdByNameDb(name);
+    }
+
   } catch (error) {
     throw error;
   }
