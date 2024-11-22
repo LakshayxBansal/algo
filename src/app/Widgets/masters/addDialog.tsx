@@ -30,7 +30,7 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
   if (open) {
     return (
       <>
-        <Dialog maxWidth="xl" open={open} onClose={handleClose} >
+        <Dialog maxWidth="lg" open={open} onClose={handleClose} >
           <Divider variant="fullWidth" sx={{borderWidth: 0.1, borderColor: '#E2E8EB'}}/>
           <DialogContent sx={{paddingTop: 0}}>
             {children}

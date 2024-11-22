@@ -328,7 +328,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )} */}
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
                 inputType={InputType.TEXT}
