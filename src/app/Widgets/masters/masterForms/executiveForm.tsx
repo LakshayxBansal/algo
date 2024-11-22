@@ -177,45 +177,45 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-      ? entityData.executive_group_id
-      : 0;
+        ? entityData.executive_group_id
+        : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-      ? entityData.role_id
-      : 0;
+        ? entityData.role_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-      ? entityData.crm_user_id
-      : 0;
+        ? entityData.crm_user_id
+        : 0;
     data.executive_dept_id = selectValues.department
       ? selectValues.department.id
       : entityData.executive_dept_id
-      ? entityData.executive_dept_id
-      : 0;
+        ? entityData.executive_dept_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
     data.role = selectValues.role
       ? selectValues.role.name
       : entityData.role
-      ? entityData.role
-      : "";
+        ? entityData.role
+        : "";
     return data;
   };
 
@@ -287,7 +287,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           paddingY: "10px",
           bgcolor: "white",
           pb: 2,
-          mb:2
+          mb: 2
         }}
       >
         {props.parentData ? (
@@ -438,8 +438,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   props?.parentData === "profile" && entityData.role_id !== 1
                     ? true
                     : roleDisable
-                    ? true
-                    : false
+                      ? true
+                      : false
                 }
                 formError={formError?.role ?? formError.role}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -541,7 +541,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                     data={data}
-                    // isExecutive={true}
+                  // isExecutive={true}
                   />
                 )}
               />
@@ -674,7 +674,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.address1?.error}
                 helperText={formError?.address1?.msg}
                 style={{ width: "100%" }}
-                // fullWidth
+              // fullWidth
               />
             </Grid>
             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -687,7 +687,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.address2?.error}
                 helperText={formError?.address2?.msg}
                 style={{ width: "100%" }}
-                // fullWidth
+              // fullWidth
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3} lg={3}>
@@ -802,8 +802,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                </Box>
-                <Box>
+              </Box>
+              <Box>
                 <Button
                   onClick={() => {
                     if (props.parentData === "profile") {
@@ -824,18 +824,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   Submit
                 </Button>
               </Box>
-              </Grid>
+            </Grid>
             {dialogOpen && (
               <AddDialog
-              title=""
-              open={dialogOpen}
-              setDialogOpen={setDialogOpen}
+                title=""
+                open={dialogOpen}
+                setDialogOpen={setDialogOpen}
               >
                 <DocModal
                   docData={docData}
                   setDocData={setDocData}
                   setDialogOpen={setDialogOpen}
-                  />
+                />
               </AddDialog>
             )}
           </Grid>
@@ -846,7 +846,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           onClose={() => setSnackOpen(false)}
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
+        />
       </Box>
     </>
   );

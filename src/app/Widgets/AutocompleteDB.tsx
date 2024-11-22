@@ -51,13 +51,13 @@ type autocompleteDBT = {
 };
 
 export function AutocompleteDB(props: autocompleteDBT) {
-  const filterOpts = async (opts:optionsDataT[],input:string) => {
-    return opts.filter(item => item.name.toLowerCase().includes(input?input.toLowerCase():''));
+  const filterOpts = async (opts: optionsDataT[], input: string) => {
+    return opts.filter(item => item.name.toLowerCase().includes(input ? input.toLowerCase() : ''));
   }
 
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
-  const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(props.defaultOptions?props.defaultOptions:[]);
+  const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(props.defaultOptions ? props.defaultOptions : []);
   const [options, setOptions] = useState<optionsDataT[]>(defaultOpts);
   const width = props.width ? props.width : 300;
   const [valueChange, setvalueChange] = useState(true);
@@ -66,16 +66,16 @@ export function AutocompleteDB(props: autocompleteDBT) {
   let hltIndex = -1;
   let isTabbingOut = 0;
   // const [selectDefault, setSelectDefault] = useState(
-    // Boolean(props.defaultValue? true: false)
+  // Boolean(props.defaultValue? true: false)
   // );
   // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const showDetails= props.showDetails ? props.showDetails : false;
+  const showDetails = props.showDetails ? props.showDetails : false;
 
   if (defaultValue?.name !== props.defaultValue?.name) {
     props.setDialogVal(props.defaultValue as optionsDataT);
     console.log("set the default value!");
-  } 
+  }
 
   // useEffect(() => {
 
@@ -84,18 +84,17 @@ export function AutocompleteDB(props: autocompleteDBT) {
   useEffect(() => {
 
     const getData = debounce(async (input) => {
-      let results  
-      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
-        results = (await props.fetchDataFn(props.defaultOptions?'':input)) as optionsDataT[];
-        if(props.diaglogVal.reloadOpts){
+      let results
+      if (!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
+        results = (await props.fetchDataFn(props.defaultOptions ? '' : input)) as optionsDataT[];
+        if (props.diaglogVal.reloadOpts) {
           setDefaultOpts(results)
-          props.setDialogVal({...props.diaglogVal, reloadOpts:false})
+          props.setDialogVal({ ...props.diaglogVal, reloadOpts: false })
           return
         }
-      } 
-      else
-      {
-        results = await filterOpts(defaultOpts,input)
+      }
+      else {
+        results = await filterOpts(defaultOpts, input)
       }
 
       setOptions([] as optionsDataT[]);
@@ -111,11 +110,11 @@ export function AutocompleteDB(props: autocompleteDBT) {
       console.log("in the defaultvalue condition ------", defaultValue, "- ", props.defaultValue);
       setvalueChange(true);
       props.setDialogVal(props.defaultValue as optionsDataT);
-      setDefaultValue(props.defaultValue);  
+      setDefaultValue(props.defaultValue);
       setOptions(defaultOpts);
     }
 
-    if(valueChange || autoSelect) {
+    if (valueChange || autoSelect) {
       if (open) {
         // setLoading(true)
         getData(inputValue);
@@ -143,7 +142,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
   function onHighlightChange(event: SyntheticEvent, option: optionsDataT | null, reason: string) {
     if (option) {
       hltIndex = options.indexOf(option);
-    }  
+    }
     const text = document.getElementById(
       "popper_textid_temp_5276"
     ) as HTMLInputElement;
@@ -162,8 +161,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
       getOptionLabel={(option) => option.name ?? ""}
       autoHighlight
       onKeyDown={handleKeyDown}
-      filterOptions={(options, { inputValue }) => 
-        options.filter(option => 
+      filterOptions={(options, { inputValue }) =>
+        options.filter(option =>
           // option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
           `${option.detail ?? ''}${option.name ?? ''}`.toLowerCase().includes(inputValue.toLowerCase())
         )
@@ -197,31 +196,31 @@ export function AutocompleteDB(props: autocompleteDBT) {
       isOptionEqualToValue={(option, value) => option.id === value.id}
       PopperComponent={(props) =>
 
-       showDetails ? (
+        showDetails ? (
           <Popper
-          {...props}
-        >
-         <CustomStyledDiv>
-            {props.children as ReactNode}
-        
-            <TextField
-              id="popper_textid_temp_5276"
-              variant="standard"
-              defaultValue={" "}
-              InputProps={{
-                style: {
-                  ...autocompleteTextfieldSx, 
-                  height: "100%"
-                },
-              }}
-              multiline
-              rows={4}
-              fullWidth 
-              
-            />
-           </CustomStyledDiv>
-        </Popper>
-        
+            {...props}
+          >
+            <CustomStyledDiv>
+              {props.children as ReactNode}
+
+              <TextField
+                id="popper_textid_temp_5276"
+                variant="standard"
+                defaultValue={" "}
+                InputProps={{
+                  style: {
+                    ...autocompleteTextfieldSx,
+                    height: "100%"
+                  },
+                }}
+                multiline
+                rows={4}
+                fullWidth
+
+              />
+            </CustomStyledDiv>
+          </Popper>
+
         ) : (
           <Popper {...props}>
             <CustomStyledDiv>
@@ -236,7 +235,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
         if (isTabbingOut) {
           console.log("index ---:", hltIndex);
           if (hltIndex >= 0 && options.length > 0) {
-            setInputValue(options[hltIndex].name); 
+            setInputValue(options[hltIndex].name);
             props.setDialogVal(options[hltIndex]);
             if (props.onChange) {
               props.onChange(e, options[hltIndex], props.setDialogVal)
@@ -244,7 +243,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
           }
           isTabbingOut = 0;
           hltIndex = -1
-        } 
+        }
       }}
       onOpen={(e) => {
         setOpen(true);

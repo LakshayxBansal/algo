@@ -91,9 +91,9 @@ export default function AutoGrid(props: any) {
 
   React.useLayoutEffect(() => {
     if (apiRef.current) {
-      apiRef.current.setRowSelectionModel([]); 
+      apiRef.current.setRowSelectionModel([]);
     }
-  }, [value]); 
+  }, [value]);
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -111,11 +111,11 @@ export default function AutoGrid(props: any) {
     const value = Number(event.target.value);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
-const handleStatusClick= async ()=>{
-  const encyptedId= await encrypt(selectedRow?.id);
-  const path = `/cap/${tabOptions[value].name}?id=${encyptedId}&status=true`;
-  router.push(path);
-}
+  const handleStatusClick = async () => {
+    const encyptedId = await encrypt(selectedRow?.id);
+    const path = `/cap/${tabOptions[value].name}?id=${encyptedId}&status=true`;
+    router.push(path);
+  }
 
   const handleFilterChange = (field: string, value: any) => {
     setFilterValueState((prevState) => ({
@@ -266,7 +266,7 @@ const handleStatusClick= async ()=>{
       },
     },
     { field: "description", headerName: "Description", hideable: false, width: 130, sortable: false },
-    
+
 
     { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
@@ -612,7 +612,7 @@ const handleStatusClick= async ()=>{
     {
       field: "actionDate", width: 100, headerName: "Action Date",
       renderCell: (params) => {
-        return params.row.actionDate?adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
+        return params.row.actionDate ? adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15) : "";
       },
       renderHeader: () => (
         <FilterMenu
@@ -683,7 +683,7 @@ const handleStatusClick= async ()=>{
       field: "actionTime",
       headerName: "Action Time",
       renderCell: (params) => {
-        return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
+        return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A") : "";
       },
     },
   ]
@@ -904,7 +904,7 @@ const handleStatusClick= async ()=>{
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
@@ -928,19 +928,19 @@ const handleStatusClick= async ()=>{
               minHeight: "30px", // Set a minimum height of 30px
               height: details
                 ? {
-                    xs: "32vh",
-                    sm: "32vh",
-                    "@media (min-height: 645px)": {
-                      height: "50vh",
-                    },
-                  }
-                : {
-                    xs: "60vh",
-                    sm: "60vh",
-                    "@media (min-height: 645px)": {
-                      height: "65vh",
-                    },
+                  xs: "32vh",
+                  sm: "32vh",
+                  "@media (min-height: 645px)": {
+                    height: "50vh",
                   },
+                }
+                : {
+                  xs: "60vh",
+                  sm: "60vh",
+                  "@media (min-height: 645px)": {
+                    height: "65vh",
+                  },
+                },
               // '& .MuiDataGrid-virtualScroller': {
               //   overflowY: 'auto',
               // },
@@ -1001,8 +1001,8 @@ const handleStatusClick= async ()=>{
                     rowSelectionModel?.length == 0
                       ? "Please select a row first"
                       : enableAllocate
-                      ? ""
-                      : "Deselect Closed enquiries first"
+                        ? ""
+                        : "Deselect Closed enquiries first"
                   }
                   placement="top"
                 >
@@ -1027,9 +1027,9 @@ const handleStatusClick= async ()=>{
                   disabled={!selectedRow}
                   onClick={handleStatusClick}
                 >
-                 
-                    Status Update
-                  
+
+                  Status Update
+
                 </ContainedButton>
               </Box>
             </Grid>
@@ -1077,7 +1077,7 @@ const handleStatusClick= async ()=>{
                     textTransform: "none",
                   }}
                 >
-                  <Link href={`/cap`} tabIndex= {-1}style={{
+                  <Link href={`/cap`} tabIndex={-1} style={{
                     textDecoration: "none",
                   }}>
                     Quit

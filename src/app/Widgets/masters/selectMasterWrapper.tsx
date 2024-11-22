@@ -39,8 +39,8 @@ type selectMasterWrapperT = {
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
   disable?: boolean;
-  defaultOptions?:optionsDataT[]
-  showDetails?: boolean ;
+  defaultOptions?: optionsDataT[]
+  showDetails?: boolean;
   autoFocus?: boolean;
 };
 
@@ -110,7 +110,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             fnSetModifyMode={onModifyDialog}
             disable={props.disable}
             defaultOptions={props.defaultOptions}
-            showDetails = {props.showDetails? props.showDetails : false}
+            showDetails={props.showDetails ? props.showDetails : false}
           />
           {!props.disable && (
             <IconButton tabIndex={-1} size="small">
