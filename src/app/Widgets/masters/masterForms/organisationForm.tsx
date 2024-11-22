@@ -22,7 +22,7 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Badge, Collapse, IconButton, Snackbar, Tooltip, Typography } from "@mui/material";
+import { Badge, Collapse, Grid, IconButton, Snackbar, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import StateForm from "./stateForm";
@@ -165,6 +165,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "name",
       <InputControl
+        key="name"
         inputType={InputType.TEXT}
         autoFocus
         id="name"
@@ -187,6 +188,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "alias",
       <InputControl
+        key="alias"
         inputType={InputType.TEXT}
         id="alias"
         label="Alias"
@@ -206,6 +208,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "print_name",
       <InputControl
+        key="printName"
         inputType={InputType.TEXT}
         id="printName"
         label="Print Name"
@@ -225,6 +228,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "pan",
       <InputControl
+        key="pan"
         inputType={InputType.TEXT}
         id="pan"
         label="PAN"
@@ -244,6 +248,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "gstin",
       <InputControl
+        key="gstin"
         inputType={InputType.TEXT}
         id="gstin"
         label="GSTIN"
@@ -263,6 +268,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "address1",
       <InputControl
+        key="address1"
         inputType={InputType.TEXT}
         label="Address Line 1"
         name="address1"
@@ -282,6 +288,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "address2",
       <InputControl
+        key="address2"
         inputType={InputType.TEXT}
         label="Address Line 2"
         name="address2"
@@ -299,27 +306,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
       />
     ],
     [
-      "address3",
-      <InputControl
-        inputType={InputType.TEXT}
-        label="Address Line 3"
-        name="address3"
-        id="address3"
-        fullWidth
-        error={formError?.address3?.error}
-        helperText={formError?.address3?.msg}
-        defaultValue={entityData.address3}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { address3, ...rest } = curr;
-            return rest;
-          });
-        }}
-      />
-    ],
-    [
       "country",
       <SelectMasterWrapper
+        key='country'
         name={"country"}
         id={"country"}
         label={"Country"}
@@ -368,6 +357,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "city",
       <InputControl
+        key="city"
         inputType={InputType.TEXT}
         name="city"
         id="city"
@@ -387,6 +377,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     [
       "pincode",
       <InputControl
+        key="pincode"
         inputType={InputType.TEXT}
         name="pincode"
         id="pincode"
@@ -405,25 +396,10 @@ export default function OrganisationForm(props: masterFormPropsT) {
     ]
   ])
 
-
-  function fieldPropertiesById(id : string) {
-    const field = props.baseData?.fields.find(
-      (item: any) => item.column_name_id === id
-    );
-
-    if(field) {
-      return {
-        label: field.column_label,
-        required: field.is_mandatory === 1
-      };
-    }
-    return { label: "default label", required: false };
-  }
-
   let fieldArr: React.ReactElement[] = [];
 
   props.masterData.fields.map((field: any) => {
-    if(field.is_default_column){
+    if(field.column_name_id === 'name' || field.column_name_id === 'alias' || field.column_name_id === 'print_name'){
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -432,11 +408,51 @@ export default function OrganisationForm(props: masterFormPropsT) {
         ...baseElement.props,
         label: field.column_label,
         required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
+        key: `field-name-${field.column_name_id}`,
       });
 
       fieldArr.push(fld);
-    } else {
+    } else if (field.column_name_id === 'pan' || field.column_name_id === 'gstin') {
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-number-${field.column_name_id}`,
+      });
+
+      fieldArr.push(fld);
+    } else if (field.column_name_id === 'address1' || field.column_name_id === 'address2') {
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-address-${field.column_name_id}`,
+      });
+
+      fieldArr.push(fld);
+    } else if (field.column_name_id === 'city' || field.column_name_id === 'pincode' || field.column_name_id === 'country' || field.column_name_id === 'state'){
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-subAddress-${field.column_name_id}`,
+      });
+
+      fieldArr.push(fld);
+    }
+    else {
       const fld = (
         <CustomField 
           key={`field-custom-${field.column_name_id}`}
@@ -514,20 +530,48 @@ export default function OrganisationForm(props: masterFormPropsT) {
      </Tooltip>
       <Box id="sourceForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
-        <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            {fieldArr.map((field, index) => (
-              <div key={index}>
-                {field}
-              </div>
-            ))}
-          </Box>
+          <Grid container spacing={2}>
+            {fieldArr.map((field, index) => {
+              const fieldKey = field.key as string;
+              if (fieldKey.includes("field-number") || fieldKey.includes("field-address")) {
+                return(
+                  <Grid item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              } else if(fieldKey.includes("field-subAddress")){
+                return(
+                  <Grid item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              } else {
+                return(
+                  <Grid item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    >
+                      <div key={index}>
+                        {field}
+                      </div>
+                  </Grid>
+                )
+              }
+            })}
+          </Grid>
           <Box
             sx={{
               display: "flex",

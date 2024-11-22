@@ -155,11 +155,11 @@ export async function getDeptById(id: number) {
       const config_data = await getRegionalSettings();
       const desc = await getScreenDescription(10,1);
       if(id){
-        const executiveDeptDetails = getDeptDetailsById(session.user.dbInfo.dbName, id);
+        const executiveDeptDetails = await getDeptDetailsById(session.user.dbInfo.dbName, id);
       
         const result = [
           desc,
-          executiveDeptDetails,
+          executiveDeptDetails[0],
           rights,
           config_data,
           session

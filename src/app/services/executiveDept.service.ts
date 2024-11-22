@@ -41,7 +41,7 @@ export async function createExecutiveDeptDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createExecutiveDept(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query: "call createExecutiveDept(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [data.name,
                session.user.userId,
                data.c_col1,
@@ -95,19 +95,41 @@ export async function getDeptDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select c.id, c.name, c.stamp from executive_dept_master c \
-      cfd.c_col1,cfd.c_col2,cfd.c_col3,\
-        cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
-      left outer join custom_fields_data cfd on cfd.object_id=c.id and cfd.object_type_id=10 \
-      where c.id=?;",
+      query: `
+        SELECT 
+          c.id, 
+          c.name, 
+          c.stamp, 
+          cfd.c_col1, 
+          cfd.c_col2, 
+          cfd.c_col3, 
+          cfd.c_col4, 
+          cfd.c_col5, 
+          cfd.c_col6, 
+          cfd.c_col7, 
+          cfd.c_col8, 
+          cfd.c_col9, 
+          cfd.c_col10
+        FROM 
+          executive_dept_master c
+        LEFT OUTER JOIN 
+          custom_fields_data cfd 
+        ON 
+          cfd.object_id = c.id 
+          AND cfd.object_type_id = 10
+        WHERE 
+          c.id = ?;
+      `,
       values: [id],
     });
 
     return result;
   } catch (e) {
-    console.log(e);
+    // console.error('Error executing query:', e.message);
+    throw e; // Throw the error after logging it for better handling by the caller
   }
 }
+
 
 export async function checkIfUsed(crmDb: string, id: number) {
   try {

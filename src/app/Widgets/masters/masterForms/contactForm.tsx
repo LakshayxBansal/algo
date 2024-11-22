@@ -42,7 +42,7 @@ import {
   getStates,
 } from "@/app/controllers/masters.controller";
 import { masterFormPropsT } from "@/app/models/models";
-import { Badge, Paper, Tooltip, Typography } from "@mui/material";
+import { Badge, Grid, Paper, Tooltip, Typography } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -223,28 +223,31 @@ export default function ContactForm(props: masterFormPropsT) {
   const defaultComponentMap = new Map<string, React.ReactNode> ([
     [
       "name",
-      <InputControl
-        inputType={InputType.TEXT}
-        autoFocus
-        id="name"
-        label="Name"
-        name="name"
-        required
-        error={formError?.name?.error}
-        helperText={formError?.name?.msg}
-        defaultValue={entityData.name}
-        fullWidth
-        onChange={handlePrintNameChange}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
-      />
+        
+          <InputControl
+            inputType={InputType.TEXT}
+            autoFocus
+            id="name"
+            label="Name"
+            name="name"
+            required
+            fullWidth
+            error={formError?.name?.error}
+            helperText={formError?.name?.msg}
+            defaultValue={entityData.name}
+            onChange={handlePrintNameChange}
+            onKeyDown={() => {
+              setFormError((curr) => {
+                const { name, ...rest } = curr;
+                return rest;
+              });
+            }}
+          />
+        
     ],
     [
       "alias",
+      
       <InputControl
         inputType={InputType.TEXT}
         id="alias"
@@ -262,9 +265,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "print_name",
+      
       <InputControl
         inputType={InputType.TEXT}
         id="print_name"
@@ -282,9 +287,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "organisation",
+      
       <SelectMasterWrapper
         name={"organisation"}
         id={"organisation"}
@@ -297,6 +304,7 @@ export default function ContactForm(props: masterFormPropsT) {
           })
         }
         dialogTitle={"Organisation"}
+        width={375}
         fetchDataFn={getOrganisation}
         fnFetchDataByID={getOrganisationById}
         defaultValue={
@@ -314,9 +322,11 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
+      
     ],
     [
       "pan",
+      
       <InputControl
         inputType={InputType.TEXT}
         id="pan"
@@ -333,9 +343,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "aadhaar",
+      
       <InputControl
         inputType={InputType.TEXT}
         id="aadhaar"
@@ -352,15 +364,18 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "contactGroup",
+      
       <SelectMasterWrapper
         name={"contactGroup"}
         id={"contactGroup"}
         label={"Group"}
         showDetails={true}
         dialogTitle={"Group"}
+        width={375}
         fetchDataFn={getContactGroup}
         fnFetchDataByID={getContactGroupById}
         defaultValue={
@@ -383,14 +398,17 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
+      
     ],
     [
       "department",
+      
       <SelectMasterWrapper
         name={"department"}
         id={"department"}
         label={"Department"}
         dialogTitle={"Department"}
+        width={375}
         defaultValue={
           {
             id: entityData.department_id,
@@ -413,14 +431,17 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
+      
     ],
     [
       "area",
+      
       <SelectMasterWrapper
         name={"area"}
         id={"area"}
         label={"Area"}
         dialogTitle={"Area"}
+        width={375}
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
         defaultValue={
@@ -444,9 +465,11 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
+      
     ],
     [
       "email",
+      
       <InputControl
         inputType={InputType.EMAIL}
         id="email"
@@ -464,14 +487,17 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "mobile",
+      
       <InputControl
         inputType={InputType.PHONE}
         id="mobile"
         label="Phone No"
         name="mobile"
+        size="small"
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
         defaultValue={entityData.mobile}
@@ -483,9 +509,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "whatsapp",
+      
       <InputControl
         inputType={InputType.PHONE}
         id="whatsapp"
@@ -503,9 +531,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "address1",
+      
       <InputControl
         inputType={InputType.TEXT}
         label="Address Line 1"
@@ -522,9 +552,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "address2",
+      
       <InputControl
         inputType={InputType.TEXT}
         label="Address Line 2"
@@ -533,7 +565,7 @@ export default function ContactForm(props: masterFormPropsT) {
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
         defaultValue={entityData.address2}
-        fullWidth
+       fullWidth
         onKeyDown={() => {
           setFormError((curr) => {
             const { address2, ...rest } = curr;
@@ -541,33 +573,45 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
-    [
-      "address3",
-      <InputControl
-        inputType={InputType.TEXT}
-        label="Address Line 3"
-        name="address3"
-        id="address3"
-        error={formError?.address3?.error}
-        helperText={formError?.address3?.msg}
-        defaultValue={entityData.address3}
-        fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { address3, ...rest } = curr;
-            return rest;
-          });
-        }}
-      />
-    ],
+    // [
+    //   "address3",
+      
+    //   <InputControl
+    //     inputType={InputType.TEXT}
+    //     label="Address Line 3"
+    //     name="address3"
+    //     id="address3"
+    //     error={formError?.address3?.error}
+    //     helperText={formError?.address3?.msg}
+    //     defaultValue={entityData.address3}
+    //     sx={{
+    //       width: {
+    //         xs: "90%",  // Full width for extra-small screens (mobile)
+    //         sm: "90%",   // Slightly smaller width for small screens (tablets)
+    //         md: "80%",   // Moderate width for medium screens (small laptops)
+    //         lg: "405px", // Fixed width for large screens (desktops)
+    //       },
+    //     }}
+    //     onKeyDown={() => {
+    //       setFormError((curr) => {
+    //         const { address3, ...rest } = curr;
+    //         return rest;
+    //       });
+    //     }}
+    //   />
+      
+    // ],
     [
       "country",
+      
       <SelectMasterWrapper
         name={"country"}
         id={"country"}
         label={"Country"}
         dialogTitle={"Add country"}
+        width={375}
         onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
         fetchDataFn={getCountries}
         fnFetchDataByID={getCountryById}
@@ -585,6 +629,7 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
+      
     ],
     [
       "state",
@@ -595,6 +640,7 @@ export default function ContactForm(props: masterFormPropsT) {
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
         disable={stateDisable}
+        width={375}
         dialogTitle={"Add State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
@@ -610,10 +656,12 @@ export default function ContactForm(props: masterFormPropsT) {
             }
           />
         )}
-      />
+        />
+      
     ],
     [
       "city",
+      
       <InputControl
         inputType={InputType.TEXT}
         name="city"
@@ -630,9 +678,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ],
     [
       "pincode",
+      
       <InputControl
         inputType={InputType.TEXT}
         name="pincode"
@@ -649,28 +699,56 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
+      
     ]
   ])
  
   let fieldArr: React.ReactElement[] = [];
 
   props.masterData.fields.map((field: any) => {
-    if(field.is_default_column){
+    if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-
+  
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-address-${field.column_name_id}`,
+      });
+      fieldArr.push(fld);
+    }
+    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode'){
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+  
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-subAddress-${field.column_name_id}`,
+      });
+  
+      fieldArr.push(fld);
+    }
+    else if (field.is_default_column) {
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+  
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
       });
-
+  
       fieldArr.push(fld);
     } else {
       const fld = (
-        <CustomField 
+        <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
           defaultValue={entityData[field.column_name_id as keyof contactSchemaT]}
@@ -678,12 +756,11 @@ export default function ContactForm(props: masterFormPropsT) {
       );
       fieldArr.push(fld);
     }
-    return null;
-  })
-
+  });
+  
   return (
     <>
-      <Box
+        <Box
         sx={{
           position: "sticky",
           top: "0px",
@@ -692,14 +769,19 @@ export default function ContactForm(props: masterFormPropsT) {
           bgcolor: "white",
         }}
       >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Contact" : "Add Contact"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
+        {
+          props.parentData ? (<></>) : (<>
+            <Seperator>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                {props.data ? "Update Contacts" : "Add Contacts"}
+                <IconButton onClick={handleCancel} tabIndex={-1}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </Seperator>
+          </>
+          )
+        }
       </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
@@ -745,28 +827,63 @@ export default function ContactForm(props: masterFormPropsT) {
      </Tooltip>
       <Box id="contactForm" sx={{ p: 3 }}>
         <form action={handleSubmit} noValidate>
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
-            <Seperator>Contact Details</Seperator>
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-                p: 2,
-              }}
-            >
-            {fieldArr.map((field, index) => (
-              <div key={index}>
-                {field}
-              </div>
-            ))}
-            </Box>
-          </Paper>
+            <Grid container spacing={2}>
+              {fieldArr.map((field, index) => {
+                const fieldKey = field.key as string;
+                if(fieldKey.includes("field-address")){
+                  return (
+                  <Grid 
+                    item 
+                    xs={12}   
+                    sm={6}   
+                    md={6}
+                       
+                    >
+                      <div key={index}>
+                        {field}
+                      </div>
+                  </Grid>
+                  )
+                }
+                else if(fieldKey.includes("field-subAddress")){
+                  return (
+                  <Grid 
+                    item 
+                    xs={12}   
+                    sm={6}   
+                    md={3}
+                       
+                    >
+                      <div key={index}>
+                        {field}
+                      </div>
+                  </Grid>
+                  )
+                }
+                else {
+                  return (
+                  <Grid 
+                    item 
+                    xs={12}   
+                    sm={6}   
+                    md={4}
+                       
+                    >
+                      <div key={index}>
+                        {field}
+                      </div>
+                  </Grid>
+                  )
+                }
+              }
+              
+              )}
+            </Grid>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              marginTop: 2
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>

@@ -41,9 +41,9 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         label={props.desc.column_label}
                         inputType={InputType.TEXT}
                         name={props.desc.column_name}
-                        fullWidth
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
+                        fullWidth
                     />
                 );
             case 3:
@@ -54,9 +54,9 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         inputType={InputType.TEXT}
                         type="number"
                         name={props.desc.column_name}
-                        fullWidth
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
+                        fullWidth
                     />
                 );
             case 4:
@@ -66,9 +66,9 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         label={props.desc.column_label}
                         inputType={InputType.DATEINPUT}
                         name={props.desc.column_name}
-                        fullWidth
                         required={props.desc.is_mandatory}
                         defaultValue={props.defaultValue ? dayjs(props.defaultValue) : null}
+                        fullWidth
                     />
                 )
             case 5:
@@ -83,10 +83,11 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                                 inputType={InputType.TEXT}
                                 label={props.desc.column_label}
                                 name={props.desc.column_name}
-                                fullWidth
                                 required={props.desc.is_mandatory === 1}
+                                fullWidth
                             />
                         )}
+                        fullWidth
                     />
                 )
             case 2:
