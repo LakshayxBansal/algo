@@ -37,8 +37,8 @@ export default async function Support({ searchParams }: searchParamsProps) {
         <SupportTicketForm
           data={formatedSupportData}
           userDetails={{
-            id: userDetails?.data.id,
-            name: userDetails?.data.name,
+            id: userDetails.id,
+            name: userDetails.name,
           }}
           status ={status}
         />
@@ -88,6 +88,7 @@ async function formatedData(supportData: any) {
       status_id,
       status,
       next_action_date,
+      allocated_to_name,
       allocated_to:ledger_allocated_to,
       created_on: ledger_created_on,
       modified_on: ledger_modified_on,
@@ -140,6 +141,10 @@ async function formatedData(supportData: any) {
     category: {
       id: category_id,
       name: category,
+    },
+    allocated_to:{
+      id: ledger_allocated_to,
+      name: allocated_to_name,
     },
     date,
     next_action_date,

@@ -240,7 +240,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                       sx={{ display: "flex", flexGrow: 1 }}
                       slotProps={{
                         textField: {
-                          error: formError?.data?.error,
+                          error: formError?.date?.error,
                           helperText: formError?.date?.msg,
                         },
                         openPickerButton: {

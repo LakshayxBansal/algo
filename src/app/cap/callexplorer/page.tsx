@@ -9,7 +9,7 @@ export default async function callExplorer() {
   try {
     const session = await getSession();
     if (session) {
-        const result = await getCallEnquiries({}, "reset", "", "0", "0", 1, 10);
+        const result = await getCallEnquiries({}, "reset", "", "0", "0", 1, 10,[]);
         return (
           <AutoGrid result={result} />
         );
