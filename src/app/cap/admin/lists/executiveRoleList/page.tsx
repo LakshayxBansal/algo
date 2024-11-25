@@ -15,6 +15,11 @@ const columns: GridColDef[] = [
     headerName: "Name",
     editable: true,
   },
+  {
+    field: "level",
+    headerName: "Level",
+    editable: true,
+  },
 ];
 
 export default function executiveRole() {
@@ -33,7 +38,7 @@ export default function executiveRole() {
         fnFetchDataByID={getExecutiveRoleById}
         fnDeleteDataByID={delExecutiveRoleById}
         customCols={columns}
-        uploadAllowed={true}
+        uploadAllowed={false}
         AddAllowed={false}
         height = "60vh"
       ></EntityList>
