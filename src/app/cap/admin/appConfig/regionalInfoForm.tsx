@@ -29,8 +29,8 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
     if (val) {
       setConfig({
         ...config, ["regionalSetting"] : {
-          ...config["regionalSetting"], ["country"] : val.name, ["country_id"] : val.id, ["state"] : "", ["state_id"] : 0, ["currencyString"] : val.currencyString,
-          ["currencySubString"] : val.currencySubString, ["currencySymbol"] : val.currencySymbol, ["currencyCharacter"] : val.currencyCharacter,
+          ...config["regionalSetting"], ["country"] : val.name, ["country_id"] : val.id, ["state"] : "", ["state_id"] : 0, ["currencyString"] : val.currencyString ?? "",
+          ["currencySubString"] : val.currencySubString ?? "", ["currencySymbol"] : val.currencySymbol ?? "", ["currencyCharacter"] : val.currencyCharacter ?? "",
           ["dateFormat"] : val.date_format
         }
       })
@@ -203,7 +203,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
               style={{width: "400px"}}
               error={formError?.regionalSetting_currencySymbol?.error}
               helperText={formError?.regionalSetting_currencySymbol?.msg}
-              defaultValue={config.regionalSetting.currencySymbol}
+              value={config.regionalSetting.currencySymbol}
               onKeyDown={() => {
                 const { regionalSetting_currencySymbol, ...rest } = formError;
                 console.log("rest : ",rest);
@@ -225,7 +225,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
               style={{width: "400px"}}
               error={formError?.regionalSetting_currencyString?.error}
               helperText={formError?.regionalSetting_currencyString?.msg}
-              defaultValue={config.regionalSetting.currencyString}
+              value={config.regionalSetting.currencyString}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { regionalSetting_currencyString, ...rest } = curr;
@@ -248,7 +248,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
               style={{width: "400px"}}
               error={formError?.regionalSetting_currencySubString?.error}
               helperText={formError?.regionalSetting_currencySubString?.msg}
-              defaultValue={config.regionalSetting.currencySubString}
+              value={config.regionalSetting.currencySubString}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { regionalSetting_currencySubString, ...rest } = curr;
@@ -271,7 +271,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
               style={{width: "400px"}}
               error={formError?.regionalSetting_currencyCharacter?.error}
               helperText={formError?.regionalSetting_currencyCharacter?.msg}
-              defaultValue={config.regionalSetting.currencyCharacter}
+              value={config.regionalSetting.currencyCharacter}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { regionalSetting_currencyCharacter, ...rest } = curr;
