@@ -106,6 +106,104 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   // }
 }));
 
+// export const MinimizedDataGrid = styled(DataGrid)(({ theme }) => ({
+//   backgroundColor: "#fff",
+//   height: 650,
+//   border: "none",
+
+//   '& .MuiDataGrid-cellCheckbox': {
+//                 width: '30px',
+//                 height: '30px',
+//                 display: 'flex',
+//                 justifyContent: 'center',
+//                 alignItems: 'center',
+//               },
+//               '& .MuiDataGrid-cellCheckbox .MuiCheckbox-root': {
+//                 padding: 0,
+//               },
+//               '& .MuiDataGrid-cellCheckbox .MuiSvgIcon-root': {
+//                 width: '15px',
+//                 height: '15px',
+//               },
+//               '& .MuiDataGrid-columnHeaderCheckbox': {
+//                 width: '38px',
+//                 height: '30px',
+//                 display: 'flex',
+//                 justifyContent: 'center',
+//                 alignItems: 'center',
+//               },
+//               '& .MuiDataGrid-columnHeaderCheckbox .MuiCheckbox-root': {
+//                 padding: 0,
+//               },
+//               '& .MuiDataGrid-columnHeaderCheckbox .MuiSvgIcon-root': {
+//                 width: '15px',
+//                 height: '15px',
+//               },
+//               '& .MuiDataGrid-footerContainer': {
+//                 height: '28px', // Force footer container to 30px
+//                 minHeight: '28px', // Override any minimum height constraints
+//               },
+//               '& .MuiTablePagination-root': {
+//                 height: '28px', // Ensure pagination component also respects 30px height
+//                 minHeight: '28px',
+//                 overflow: "hidden"
+//               },
+//               '& .MuiTablePagination-toolbar': {
+//                 height: '28px', // Adjust the toolbar within the pagination
+//                 minHeight: '28px',
+//               },
+  
+//   // disableColumnMenu:true,
+//   "& .MuiDataGrid-cell": {
+//     borderBottom: "none",
+//   },
+//   "& .MuiDataGrid-columnHeaders": {
+//     borderBottom: "none",
+//   },
+//   // '& .MuiDataGrid-columnSeparator': {
+//   //   display: 'none',
+//   // },
+//   "& .MuiDataGrid-cell:hover": {
+//     color: "primary.main",
+//   },
+//   [`& .${gridClasses.row}.even`]: {
+//     backgroundColor: theme.palette.grey[200],
+//     "&:hover": {
+//       backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+//       "@media (hover: none)": {
+//         backgroundColor: "transparent",
+//       },
+//     },
+//     "&.Mui-selected": {
+//       backgroundColor: alpha(
+//         theme.palette.primary.main,
+//         ODD_OPACITY + theme.palette.action.selectedOpacity
+//       ),
+//       "&:hover": {
+//         backgroundColor: alpha(
+//           theme.palette.primary.main,
+//           ODD_OPACITY +
+//             theme.palette.action.selectedOpacity +
+//             theme.palette.action.hoverOpacity
+//         ),
+//         // Reset on touch devices, it doesn't add specificity
+//         "@media (hover: none)": {
+//           backgroundColor: alpha(
+//             theme.palette.primary.main,
+//             ODD_OPACITY + theme.palette.action.selectedOpacity
+//           ),
+//         },
+//       },
+//     },
+//   },
+//   // "&. MuiDataGrid-withBorderColor":{
+//   //   border:"none"
+//   // }
+//   // "&. MuiDataGrid-withBorderColor":{
+//   //   border:"none"
+//   // }
+// }));
+
 export const MinimizedDataGrid = styled(DataGrid)(({ theme }) => ({
   backgroundColor: "#fff",
   height: 650,

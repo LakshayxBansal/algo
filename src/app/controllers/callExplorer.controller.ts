@@ -1,6 +1,8 @@
 "use server";
 import { getSession } from "../services/session.service";
 import {
+  getAllCallEnquiriesDb,
+  getAllCallSupportTicketsDb,
   getCallEnquiriesCountDb,
   getCallEnquiriesDb,
   getCallEnquiriesDetailsDb,
@@ -10,6 +12,7 @@ import {
   updateCallAllocationDb,
   updateSupportCallAllocationDb,
 } from "../services/callExplorer.service";
+import { GridSortModel } from "@mui/x-data-grid";
 
 export async function getCallEnquiries(
   filterValueState: any,
@@ -18,7 +21,8 @@ export async function getCallEnquiries(
   callFilter: string,
   dateFilter: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  sortBy: GridSortModel
 ) {
   try {
     const session = await getSession();
@@ -31,7 +35,50 @@ export async function getCallEnquiries(
         callFilter,
         dateFilter,
         page,
-        pageSize
+        pageSize,
+        sortBy
+      );
+
+      // Fetch the total row count (with the same filters applied)
+      const count = await getCallEnquiriesCountDb(
+        session.user.dbInfo.dbName,
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter
+      );
+
+      // Return both result and count as separate variables in an object
+      return {
+        result,
+        count,
+      };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllCallEnquiries(
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string,
+  // sortBy: GridSortModel
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await getAllCallEnquiriesDb(
+        session.user.dbInfo.dbName,
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter,
+        // sortBy
       );
 
       // Fetch the total row count (with the same filters applied)
@@ -124,7 +171,8 @@ export async function getCallSupportEnquiries(
   callFilter: string,
   dateFilter: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  sortBy: GridSortModel
 ) {
   try {
     const session = await getSession();
@@ -137,7 +185,8 @@ export async function getCallSupportEnquiries(
         callFilter,
         dateFilter,
         page,
-        pageSize
+        pageSize,
+        sortBy
       );
 
       // Fetch the total row count (with the same filters applied)
@@ -162,6 +211,49 @@ export async function getCallSupportEnquiries(
     throw error;
   }
 }
+
+export async function getAllCallSupportEnquiries(
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const result = await getAllCallSupportTicketsDb(
+        session.user.dbInfo.dbName,
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter
+      );
+
+      // Fetch the total row count (with the same filters applied)
+      const count = await getCallSupportTicketsCountDb(
+        session.user.dbInfo.dbName,
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter
+      );
+
+      // const count = result.length;
+      // Return both result and count as separate variables in an object
+      return {
+        result,
+        count,
+      };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 
 export async function getCallSupportDetails(id: number) {
   try {
