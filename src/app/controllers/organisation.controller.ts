@@ -18,8 +18,6 @@ import * as mdl from "../models/models";
 import { bigIntToNum } from "../utils/db/types";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
-import { getRegionalSettings } from "./config.controller";
-import { getScreenDescription } from "./object.controller";
 
 export async function createOrganisation(data: zm.organisationSchemaT,docData : zm.docDescriptionSchemaT[]) {
   let result;
@@ -32,6 +30,9 @@ export async function createOrganisation(data: zm.organisationSchemaT,docData : 
           session,
           data as zm.organisationSchemaT
         );
+
+        console.log("RESULT ROU O: ", dbResult);
+
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -92,6 +93,7 @@ export async function updateOrganisation(data: zm.organisationSchemaT, docData :
           session,
           data as zm.organisationSchemaT
         );
+        
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           const objectDetails = await getObjectByName("Organisation");
@@ -160,41 +162,17 @@ export async function getOrganisationById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const rights={};
-      const config_data = await getRegionalSettings();
-      const desc = await getScreenDescription(19,1);
-      if(id)
-      {
-        const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
-        if(organisationDetails?.length>0){
-          const objectDetails = await getObjectByName("Organisation");
-          const docData = await getDocs(id,objectDetails[0].object_id);
-          if (organisationDetails.length > 0 && docData.length > 0) {
-            organisationDetails[0].docData = docData;
-          } else {
-            organisationDetails[0].docData = [];
-          }
+      const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
+      if(organisationDetails.length>0){
+        const objectDetails = await getObjectByName("Organisation");
+        const docData = await getDocs(id,objectDetails[0].object_id);
+        if (organisationDetails.length > 0 && docData.length > 0) {
+          organisationDetails[0].docData = docData;
+        } else {
+          organisationDetails[0].docData = [];
+        }
+        return organisationDetails;
       }
-      const result = [
-        desc,
-        organisationDetails[0],
-        rights,
-        config_data,
-        session
-      ]
-        return[
-          result
-        ]
-      }
-      const result=[
-        desc,
-        rights,
-        config_data,
-        session
-      ]
-      return[
-        result
-      ]
     }
   } catch (error) {
     throw error;
@@ -247,30 +225,34 @@ export async function getOrganisationByPage(
 }
 
 export async function delOrganisationById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delOrganisationDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-        const result = await delOrganisationDetailsById(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
-      }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }

@@ -491,65 +491,70 @@ export async function getStateByPage(
 }
 
 export async function delCountryById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkCountryIfUsed(session.user.dbInfo.dbName, id);
-      if (check[0].count > 0) {
-        return "Can't Be DELETED!";
+      const dbResult = await delCountryByIdDB(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
       } else {
-        const result = await delCountryByIdDB(session.user.dbInfo.dbName, id);
-        return "Record Deleted";
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      //   if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result.affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Can't Be DELETED!",
-      //   };
-      // }
-      // return ("Record Deleted");
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function delStateById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkStateIfUsed(session.user.dbInfo.dbName, id);
-      if (check[0].count > 0) {
-        return "Can't Be DELETED!";
+      const dbResult = await delStateDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
       } else {
-        const result = await delStateDetailsById(
-          session.user.dbInfo.dbName,
-          id
-        );
-        return "Record Deleted";
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      //   if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result.affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Can't Be DELETED!",
-      //   };
-      // }
-      // return ("Record Deleted");
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getCountriesMaster(searchString: string) {
   try {

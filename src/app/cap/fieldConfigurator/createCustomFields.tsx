@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Box,
     Paper,
@@ -25,6 +25,7 @@ import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
 import CloseIcon from "@mui/icons-material/Close";
 import { ErrorOutline as ErrorOutlineIcon } from "@mui/icons-material";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 
 
 type FieldItem = {
@@ -58,6 +59,11 @@ const FieldConfigurator = () => {
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
     const [selectedFormValue, setSelectedFormValue] = useState("");
     const [selectedFormModeValue, setSelectedFormModeValue] = useState("");
+    const [autoScrolling, setAutoScrolling] = useState(false);
+    const scrollIntervalRef = useRef<number | null>(null);
+    const [formError, setFormError] = useState<Record<string, { label_msg: string }>>({});
+    // const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
+
 
     const dateFormat = "DD.MM.YYYY";
 
@@ -83,14 +89,13 @@ const FieldConfigurator = () => {
         setSelectedFormValue(event.target.value);
     };
 
-    const handleFormModeChange = (event: any) => {
-        setSelectedFormModeValue(event.target.value);
-    };
-
+    // const handleFormModeChange = (event: any) => {
+    //     setSelectedFormModeValue(event.target.value);
+    // };
 
     useEffect(() => {
         async function getFieldData() {
-            const result = await getScreenDescription(Number(selectedFormValue), Number(selectedFormModeValue));
+            const result = await getScreenDescription(Number(selectedFormValue), 1);
             setFields(result);
         }
         getFieldData();
@@ -128,36 +133,92 @@ const FieldConfigurator = () => {
         updatedFields[index][field] = value;
         updatedFields[index]["column_format"] = null;
         setFields(updatedFields);
+
+        const updatedErrors = { ...formError };
+        if (field === "column_label" && updatedFields[index].column_label.trim() !== "") {
+            delete updatedErrors[updatedFields[index].column_name_id];
+        }
+        setFormError(updatedErrors);
+    };
+
+
+    const startAutoScroll = (clientY: number) => {
+        const scrollThreshold = 200; // pixels from top/bottom of viewport to trigger scroll
+        const maxScrollSpeed = 20; // maximum scroll speed in pixels per interval
+
+        const handleScroll = () => {
+            const viewportHeight = window.innerHeight;
+            const distanceFromTop = clientY;
+            const distanceFromBottom = viewportHeight - clientY;
+
+            if (distanceFromTop < scrollThreshold) {
+                // Scroll up when near top
+                const speed = Math.min(maxScrollSpeed, (scrollThreshold - distanceFromTop) / 5);
+                window.scrollBy(0, -speed);
+            } else if (distanceFromBottom < scrollThreshold) {
+                // Scroll down when near bottom
+                const speed = Math.min(maxScrollSpeed, (scrollThreshold - distanceFromBottom) / 5);
+                window.scrollBy(0, speed);
+            }
+        };
+
+        if (scrollIntervalRef.current) return; // Prevent multiple intervals
+        scrollIntervalRef.current = window.setInterval(handleScroll, 16);
+    };
+
+
+    const stopAutoScroll = () => {
+        if (scrollIntervalRef.current) {
+            clearInterval(scrollIntervalRef.current);
+            scrollIntervalRef.current = null;
+        }
+        setAutoScrolling(false);
     };
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         setDraggedItem(index);
         const element = e.currentTarget as HTMLDivElement;
-        element.classList.add("opacity-50");
-    };
-
-    const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
-        const element = e.currentTarget as HTMLDivElement;
-        element.classList.remove("opacity-50");
-        setDraggedItem(null);
+        // element.classList.add("opacity-50");
+        element.style.opacity = "0"; // Make it completely transparent
     };
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
+        startAutoScroll(e.clientY); // Pass the current mouse Y position for scrolling
     };
 
-    const handleDrop = (e: React.DragEvent, dropIndex: number) => {
-        e.preventDefault();
-
-        if (draggedItem === null) return;
-
-        const newFields = [...fields];
-        const [draggedField] = newFields.splice(draggedItem, 1);
-        newFields.splice(dropIndex, 0, draggedField);
-
-        setFields(newFields);
+    const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+        const element = e.currentTarget as HTMLDivElement;
+        // element.classList.remove("opacity-50");
+        element.style.opacity = "1"; // Make it completely transparent
         setDraggedItem(null);
+        stopAutoScroll();
     };
+
+    // Clean up interval on unmount
+    useEffect(() => {
+        return () => {
+            if (scrollIntervalRef.current) {
+                clearInterval(scrollIntervalRef.current);
+            }
+        };
+    }, []);
+
+
+    const handleDrop = (e: React.DragEvent, toIndex: number) => {
+        e.preventDefault();
+        if (draggedItem === null || draggedItem === toIndex) return;
+
+        const updatedFields = [...fields];
+        // Move the dragged item to the new position
+        const [movedItem] = updatedFields.splice(draggedItem, 1);
+        updatedFields.splice(toIndex, 0, movedItem);
+
+        setFields(updatedFields);
+        setDraggedItem(null);
+        stopAutoScroll();
+    };
+
 
     const moveItem = (fromIndex: number, direction: "up" | "down") => {
         if (
@@ -174,11 +235,51 @@ const FieldConfigurator = () => {
     };
 
     const handleSubmit = async () => {
-        console.log("Final field order and properties:", fields);
-        await createCustomFields(Number(selectedFormValue), Number(selectedFormModeValue), fields);
+        // await createCustomFields(Number(selectedFormValue), 1, fields);
         console.log("FIELDS", fields);
+        // fields.map((Item) => {
+        //     if (Item.column_label == "") {
+        //         const errorState = { ...formError };
+        //         errorState[Item.column_name_id] = { msg: "Label cannot be Empty" };
+        //         setFormError(errorState);
+        //         console.log("Final field error", errorState);
+        //         return;
+        //     }
+        // })
+        const errors: Record<string, { label_msg: string }> = {};
+        // const error: Record<string, { label_msg: string }> = {};
 
-        alert("Field configuration saved!");
+
+        // Validate each field to ensure labels are not empty
+        fields.forEach((item) => {
+            if (item.column_label.trim() === "") {
+                errors[item.column_name_id] = { label_msg: "Label cannot be empty" };
+            }
+        });
+
+        if (Object.keys(errors).length > 0) {
+            setFormError(errors);
+            console.log("Validation errors:", errors);
+            return; // Prevent form submission if there are errors
+        }
+
+        // Proceed with form submission if there are no errors
+        try {
+            const result = await createCustomFields(Number(selectedFormValue), 1, fields);
+            if (result) {
+                console.log("FIELDS", fields);
+                alert("Field configuration saved!");
+            }
+            else {
+                console.error("Error saving configuration:");
+                alert("Failed to save configuration. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error saving configuration:", error);
+            alert("Failed to save configuration. Please try again.");
+        }
+
+        // alert("Field configuration saved!");
     };
 
     return (
@@ -203,7 +304,7 @@ const FieldConfigurator = () => {
                         </Select>
                     </FormControl>
 
-                    <FormControl sx={{ width: 200 }} size="small" variant="outlined">
+                    {/* <FormControl sx={{ width: 200 }} size="small" variant="outlined">
                         <InputLabel>Select Form Mode</InputLabel>
                         <Select
                             value={selectedFormModeValue}
@@ -216,10 +317,9 @@ const FieldConfigurator = () => {
                                 </MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </FormControl> */}
                 </Box>
 
-                {/* Add the note at the rightmost end */}
                 {fields.length > 0 && <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
                     * denotes default fields
                 </Typography>}
@@ -255,13 +355,18 @@ const FieldConfigurator = () => {
                         onDragStart={(e) => handleDragStart(e, index)}
                         onDragEnd={handleDragEnd}
                         onDragOver={handleDragOver}
-                        onDrop={(e) => handleDrop(e, index)}
+                        onDrop={(e) => handleDrop(e, index)} // Attach the handleDrop function
                         sx={{
                             p: 2,
                             cursor: "move",
                             "&:hover": {
                                 bgcolor: "action.hover"
-                            }
+                            },
+                            transition: "transform 0.2s, opacity 0.2s",
+                            ...(draggedItem === index && {
+                                opacity: 0.5,
+                                transform: "scale(1.02)"
+                            })
                         }}
                     >
                         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -283,21 +388,37 @@ const FieldConfigurator = () => {
                                         <ArrowDownwardIcon fontSize="small" />
                                     </IconButton>
                                 </Stack>
-                                {item.is_default_column == 1 &&
+                                {item.is_default_column == 0 ?
                                     <Box>
                                         <Typography variant="h5" >
                                             *
                                         </Typography>
+                                    </Box> :
+                                    <Box>
+
                                     </Box>
                                 }
                             </Box>
 
-                            <TextField
+                            {/* <TextField
                                 label="Label"
                                 value={item.column_label}
                                 onChange={(e) => handleChange(index, "column_label", e.target.value)}
                                 size="small"
                                 sx={{ width: 200 }}
+                                error={!!formError[item.column_name_id]} // Show error state if there's an error
+                                helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
+                            /> */}
+                            <InputControl
+                                inputType={InputType.TEXT}
+                                id="label"
+                                key="label"
+                                label="Label"
+                                name="label"
+                                error={!!formError[item.column_name_id]} // Show error state if there's an error       
+                                helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
+                                defaultValue={item.column_label}
+                                onChange={(e: any) => handleChange(index, "column_label", e.target.value)}
                             />
 
                             {item.is_default_column !== 1 && (
@@ -369,7 +490,7 @@ const FieldConfigurator = () => {
                 ))}
             </Stack>
 
-            {selectedFormValue !== "" && selectedFormModeValue !== "" && fields.length > 0 && <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+            {selectedFormValue !== "" && fields.length > 0 && <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <Button variant="outlined" onClick={addField}>
                     Add Field
                 </Button>

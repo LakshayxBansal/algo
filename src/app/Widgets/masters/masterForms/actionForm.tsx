@@ -11,7 +11,7 @@ import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -60,13 +60,13 @@ export default function ActionForm(props: masterFormPropsT) {
     //   setFormError(errorState);
     // }
     const result = await persistEntity(data as nameMasterDataT);
-    console.log(result)
+    console.log(result);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     } else {
@@ -78,8 +78,8 @@ export default function ActionForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"]={ msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -109,11 +109,11 @@ export default function ActionForm(props: masterFormPropsT) {
   }
 
   return (
-    <Paper>
+    <>
+    <Box>
       <Box
         sx={{
           position: "sticky",
-          top: "0px",
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
@@ -146,44 +146,47 @@ export default function ActionForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ m: 2, p: 3 }}>
+      <Box id="actionForm">
         <form action={handleSubmit}>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
+        <Grid container>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               id="name"
               label="Action Name"
               inputType={InputType.TEXT}
               name="name"
+              titleCase={true}
               defaultValue={props.data?.name}
-              fullWidth
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+              style={{width: "100%"}}
             />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
+          </Grid>
+          <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1
+              }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+        </Grid>
         </form>
+        </Box>
         <Snackbar
           open={snackOpen}
           autoHideDuration={3000}
@@ -191,7 +194,7 @@ export default function ActionForm(props: masterFormPropsT) {
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
-      </Box>
-    </Paper>
+        </Box>
+    </>
   );
 }

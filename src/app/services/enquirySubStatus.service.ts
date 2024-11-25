@@ -158,7 +158,7 @@ export async function delSubStatusDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from enquiry_sub_status_master where id=?;",
+      query: "call deleteSubStatus(?)",
       values: [id],
     });
 

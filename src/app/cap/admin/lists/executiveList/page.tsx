@@ -9,7 +9,6 @@ import {
   getExecutiveByPage,
   getExecutiveColumns,
 } from "@/app/controllers/executive.controller";
-import { getScreenDescription } from "@/app/controllers/object.controller";
 
 const columns: GridColDef[] = [
   {
@@ -35,9 +34,7 @@ const columns: GridColDef[] = [
 ];
 
 
-export default async function executive() {
-
-
+export default function executive() {
   return (
     <>
       <EntityList
@@ -62,4 +59,3 @@ export default async function executive() {
     </>
   );
 }
-

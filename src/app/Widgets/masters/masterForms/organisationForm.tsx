@@ -26,19 +26,19 @@ import { Badge, Collapse, Grid, IconButton, Snackbar, Tooltip, Typography } from
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import StateForm from "./stateForm";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
-import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function OrganisationForm(props: masterFormPropsT) {
-  console.log(props)
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
+    props?.data ? props?.data?.docData : []
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const entityData: organisationSchemaT = props.data ? props.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
@@ -62,10 +62,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
-    for (let i = 1; i <= 10; ++i) {
-      data[`c_col${i}`] = "";
-    }
-
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
@@ -88,11 +84,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
+          if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
+      console.log("ERIRB I: ", errorState);
+
       setFormError(errorState);
     }
   };
@@ -101,25 +99,25 @@ export default function OrganisationForm(props: masterFormPropsT) {
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
 
   async function persistEntity(data: organisationSchemaT) {
     let result;
-    const newDocsData = docData.filter((row : any) => row.type !== "db");
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
-      result = await updateOrganisation(data,newDocsData);
+      result = await updateOrganisation(data, newDocsData);
     } else {
-      result = await createOrganisation(data,newDocsData);
+      result = await createOrganisation(data, newDocsData);
     }
     return result;
   }
@@ -146,7 +144,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
       setStateDisable(false);
       values["state"] = {};
       setDefaultState(undefined);
-      if(values.country.id===0){
+      if (values.country.id === 0) {
         setStateDisable(true);
       }
       setStateKey((prev) => 1 - prev);
@@ -399,7 +397,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
   let fieldArr: React.ReactElement[] = [];
 
   props.masterData.fields.map((field: any) => {
-    if(field.column_name_id === 'name' || field.column_name_id === 'alias' || field.column_name_id === 'print_name'){
+    if (field.column_name_id === 'name' || field.column_name_id === 'alias' || field.column_name_id === 'print_name') {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -438,7 +436,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
       });
 
       fieldArr.push(fld);
-    } else if (field.column_name_id === 'city' || field.column_name_id === 'pincode' || field.column_name_id === 'country' || field.column_name_id === 'state'){
+    } else if (field.column_name_id === 'city' || field.column_name_id === 'pincode' || field.column_name_id === 'country' || field.column_name_id === 'state') {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -454,7 +452,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
     }
     else {
       const fld = (
-        <CustomField 
+        <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
           defaultValue={entityData[field.column_name_id as keyof organisationSchemaT]}
@@ -470,7 +468,6 @@ export default function OrganisationForm(props: masterFormPropsT) {
       <Box
         sx={{
           position: "sticky",
-          top: "0px",
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
@@ -505,20 +502,20 @@ export default function OrganisationForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Tooltip
-      title={docData.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
+        title={docData.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
           </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
+        )}
       >
         <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0}}
+          sx={{ float: "right", position: "relative", paddingRight: 0 }}
           onClick={() => setDialogOpen(true)}
           aria-label="file"
         >
@@ -527,14 +524,14 @@ export default function OrganisationForm(props: masterFormPropsT) {
           </Badge>
 
         </IconButton>
-     </Tooltip>
+      </Tooltip>
       <Box id="sourceForm" sx={{ m: 2 }}>
         <form action={handleSubmit} noValidate>
           <Grid container spacing={2}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-number") || fieldKey.includes("field-address")) {
-                return(
+                return (
                   <Grid item
                     xs={12}
                     sm={6}
@@ -545,8 +542,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
                     </div>
                   </Grid>
                 )
-              } else if(fieldKey.includes("field-subAddress")){
-                return(
+              } else if (fieldKey.includes("field-subAddress")) {
+                return (
                   <Grid item
                     xs={12}
                     sm={6}
@@ -558,15 +555,15 @@ export default function OrganisationForm(props: masterFormPropsT) {
                   </Grid>
                 )
               } else {
-                return(
+                return (
                   <Grid item
                     xs={12}
                     sm={6}
                     md={4}
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
                   </Grid>
                 )
               }
@@ -591,14 +588,14 @@ export default function OrganisationForm(props: masterFormPropsT) {
             </Button>
           </Box>
           {dialogOpen && (
-          <AddDialog
-            title=""
-            open={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          >
-            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
-          </AddDialog>
-        )}
+            <AddDialog
+              title=""
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
+              <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+            </AddDialog>
+          )}
         </form>
         <Snackbar
           open={snackOpen}

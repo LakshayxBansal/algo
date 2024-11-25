@@ -71,7 +71,7 @@ export async function deleteProductListDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from product_master where id=?;",
+      query: "call deleteProduct(?)",
       values: [id],
     });
 

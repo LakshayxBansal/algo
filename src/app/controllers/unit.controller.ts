@@ -299,31 +299,34 @@ export async function getUnitData(id: number) {
 }
 
 export async function delUnitById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checksIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0]?.count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delUnitDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-      const result = await delUnitDetailsById(session.user.dbInfo.dbName, id);
-      return ("Record Deleted");
-      }
-      //   if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result.affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Can't Be DELETED!",
-      //   };
-      // }
-      // return ("Record Deleted");
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }

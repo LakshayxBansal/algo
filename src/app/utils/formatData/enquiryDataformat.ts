@@ -1,5 +1,8 @@
 "use server";
 import { selectKeyValueT } from "@/app/models/models";
+import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 
 export async function enquiryDataFormat({
   formData,
@@ -8,16 +11,18 @@ export async function enquiryDataFormat({
   formData: FormData;
   selectValues: selectKeyValueT;
 }) {
-  const formatDate = (dateStr: string): string => {
-    const dt = new Date(dateStr);
-    return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
-  };
+  
+  dayjs.extend(customParseFormat);
 
-  const date = formatDate(formData.get("date") as string);
+  const toISOString = (dateStr: string): string => {
+    if(!dateStr || dateStr==="") return "";
+    const dt = dayjs(dateStr, 'DD/MM/YYYY hh:mm A');
+    return dt.toISOString();
+  };
+  const date = toISOString(formData.get("date") as string);
   const nextActionDate = formData.get("next_action_date")
-    ? formatDate(formData.get("next_action_date") as string)
+    ? toISOString(formData.get("next_action_date") as string)
     : null;
-  // console.log(nextActionDate);
   const headerData = {
     enq_number: formData.get("enq_number") as string,
     date,

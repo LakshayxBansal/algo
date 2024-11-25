@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Badge,
   FormControl,
@@ -9,7 +11,6 @@ import {
   Radio,
   RadioGroup,
   Snackbar,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -18,6 +19,8 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DocModal from "@/app/utils/docs/DocModal";
 
 import { createEnquiry } from "@/app/controllers/enquiry.controller";
 import {
@@ -32,34 +35,18 @@ import {
   getCategoryById,
   getEnquiryCategory,
 } from "@/app/controllers/enquiryCategory.controller";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import DocModal from "@/app/utils/docs/DocModal";
-
 import {
   getExecutive,
   getExecutiveById,
 } from "@/app/controllers/executive.controller";
-
 import {
   getEnquirySubSatusById,
   getEnquirySubStatus,
 } from "@/app/controllers/enquirySubStatus.controller";
-
 import {
   getActionById,
   getEnquiryAction,
 } from "@/app/controllers/enquiryAction.controller";
-
-import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
-import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
-import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
-import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
-import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
-import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
-import AddProductToListForm from "./addProductToListForm";
-import ProductGrid from "./productGrid";
-import CustomField from "./CustomFields";
-import { AddDialog } from "@/app/Widgets/masters/addDialog";
 
 import dayjs from "dayjs";
 import { ZodIssue } from "zod";
@@ -68,24 +55,38 @@ import {
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
+
+import { AddDialog } from "@/app/Widgets/masters/addDialog";
+import AddProductToListForm from "./addProductToListForm";
+import ProductGrid from "./productGrid";
+import CustomField from "./CustomFields";
+import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
+import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
+import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
+import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
+import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
+import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 
-export interface IformData {
-  fields: Array<any>;
-  enqData: Record<string, any>;
-  rights: Record<string, any>;
-  config_data: Record<string, any>;
-  loggedInUserData: Record<string, any>;
+export interface InputFormProps {
+  baseData: {
+    fields: Array<any>;
+    enqData: Record<string, any>;
+    // rights: Record<string, any>;
+    config_data: Record<string, any>;
+    regional_setting: Record<string, any>;
+    loggedInUserData: Record<string, any>;
+  };
 }
 
 const rows: any = [];
 
-export default function InputForm(props: { baseData: IformData }) {
+export default function InputForm({ baseData }: InputFormProps) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({
     received_by: {
-      id: props.baseData.loggedInUserData.id,
-      name: props.baseData.loggedInUserData.name,
+      id: baseData.loggedInUserData.id,
+      name: baseData.loggedInUserData.name,
     },
   });
   const [formError, setFormError] = useState<
@@ -100,11 +101,19 @@ export default function InputForm(props: { baseData: IformData }) {
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [subStatus, setSubStatus] = useState<optionsDataT>();
+  const [nextAction, setNextAction] = useState<optionsDataT>();
+
+  const router = useRouter();
+
+  const { dateFormat, timeFormat } = baseData.regional_setting;
+  const timeFormatString = timeFormat ? (timeFormat === "12 Hours" ? "hh:mm A" : "HH:mm") : "HH:mm";
+  const dateTimeFormat = [dateFormat || "DD/MM/YYYY", timeFormatString].filter(Boolean).join(" ");
 
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "enq_number",
       <InputControl
+        autoFocus
         key="enq_number"
         label="Enq number"
         id="enq_number"
@@ -114,25 +123,23 @@ export default function InputForm(props: { baseData: IformData }) {
         required={false}
         error={formError?.enq_number?.error}
         helperText={formError?.enq_number?.msg}
-        autoFocus
       />,
     ],
     [
       "date",
       <InputControl
+        format={dateTimeFormat}
         key="date"
-        label={"date"}
+        label="date"
         inputType={InputType.DATETIMEINPUT}
         id="date"
         name="date"
         defaultValue={dayjs(new Date())}
         required={false}
-        error={formError?.date?.error}
-        helperText={formError?.date?.msg}
         sx={{ display: "flex", flexGrow: 1 }}
-        slotProps={{
+        slotprops={{
           textField: {
-            error: formError?.data?.error,
+            error: formError?.date?.error,
             helperText: formError?.date?.msg,
           },
           openPickerButton: {
@@ -233,8 +240,8 @@ export default function InputForm(props: { baseData: IformData }) {
         )}
         defaultValue={
           {
-            id: props.baseData?.loggedInUserData?.id,
-            name: props.baseData?.loggedInUserData?.name,
+            id: baseData?.loggedInUserData?.id,
+            name: baseData?.loggedInUserData?.name,
           } as optionsDataT
         }
       />,
@@ -275,7 +282,7 @@ export default function InputForm(props: { baseData: IformData }) {
     [
       "sub_status",
       <SelectMasterWrapper
-        key="sub_status"
+        key={`sub-status-${status}`}
         name="sub_status"
         id="sub_status"
         label="sub_status"
@@ -321,7 +328,8 @@ export default function InputForm(props: { baseData: IformData }) {
     [
       "next_action",
       <SelectMasterWrapper
-        key="next_action"
+        key={`next-action-${status}`}
+        defaultValue={nextAction}
         name="next_action"
         id="next_action"
         label="next_action"
@@ -343,13 +351,14 @@ export default function InputForm(props: { baseData: IformData }) {
     [
       "next_action_date",
       <InputControl
-        key="next_action_date"
-        label="next_action_date"
+        format={dateTimeFormat}
+        key={status}
+        defaultValue={status === "2" ? "11/22/2024 11:09 PM" : dayjs(new Date())}
+        label="When"
         required={false}
         inputType={InputType.DATETIMEINPUT}
         id="next_action_date"
         name="next_action_date"
-        defaultValue={dayjs(new Date())}
         disabled={status === "2"}
         slotProps={{
           textField: {
@@ -364,8 +373,10 @@ export default function InputForm(props: { baseData: IformData }) {
     ],
     [
       "closure_remark",
-      <TextField
-        key="closure_remark"
+      <InputControl
+        inputType={InputType.TEXTFIELD}
+        key={`closure-remark-${status}`}
+        defaultValue={""}
         placeholder="Closure remarks"
         label="closure_remark"
         required={false}
@@ -443,6 +454,10 @@ export default function InputForm(props: { baseData: IformData }) {
     }
   };
 
+  const handleCancel = () => {
+    router.back();
+  };
+
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getEnquirySubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -453,6 +468,8 @@ export default function InputForm(props: { baseData: IformData }) {
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
     setSubStatus({ id: 0, name: "" });
+    setNextAction({ id: 0, name: "" });
+    setSelectValues({ ...selectValues, sub_status: null, next_action: null });
   }
 
   function onSelectChange(
@@ -467,7 +484,7 @@ export default function InputForm(props: { baseData: IformData }) {
   }
 
   function fieldPropertiesById(id: string) {
-    const field = props.baseData.fields.find(
+    const field = baseData.fields.find(
       (item: any) => item.column_name_id === id
     );
 
@@ -489,9 +506,9 @@ export default function InputForm(props: { baseData: IformData }) {
   ];
 
   const enquiryMaintainProducts =
-    props.baseData.config_data.enquiryMaintainProducts;
+    baseData.config_data.maintainProducts;
 
-  props.baseData.fields.map((field: any, index) => {
+  baseData.fields.map((field: any, index) => {
     if (field.is_default_column) {
       if (field.column_name_id === "product_grid") {
         let propsForCallReceiptField = fieldPropertiesById(
@@ -514,13 +531,12 @@ export default function InputForm(props: { baseData: IformData }) {
                 >
                   <Box
                     sx={{
-                      height: 300,
+                      height: 264,
                     }}
                     key={`product-box-${index}`}
                   >
                     <ProductGrid
                       key={`product-grid-component-${index}`}
-                      label={field.column_label}
                       id="product_grid"
                       name="product_grid"
                       dgData={data}
@@ -542,7 +558,8 @@ export default function InputForm(props: { baseData: IformData }) {
                 key={`remarks-grid-${index}`}
               >
                 <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
-                  <TextField
+                  <InputControl
+                    inputType={InputType.TEXTFIELD}
                     key={`call-receipt-field-${index}`}
                     placeholder="Call receipt remarks"
                     label={propsForCallReceiptField.label}
@@ -567,7 +584,8 @@ export default function InputForm(props: { baseData: IformData }) {
                   md={12}
                   key={`suggested-action-grid-${index}`}
                 >
-                  <TextField
+                  <InputControl
+                    inputType={InputType.TEXTFIELD}
                     key={`suggested-action-field-${index}`}
                     placeholder="Suggested Action Remarks"
                     label={propsForSugActionField.label}
@@ -611,6 +629,7 @@ export default function InputForm(props: { baseData: IformData }) {
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
+          defaultValue=""
         />
       );
       fieldArr.push(fld);
@@ -627,31 +646,6 @@ export default function InputForm(props: { baseData: IformData }) {
               Enquiry Details
             </div>
           </Seperator>
-          <Tooltip
-            title={
-              docData.length > 0 ? (
-                docData.map((file: any, index: any) => (
-                  <Typography variant="body2" key={index}>
-                    {file.description}
-                  </Typography>
-                ))
-              ) : (
-                <Typography variant="body2" color="white">
-                  No files available
-                </Typography>
-              )
-            }
-          >
-            <IconButton
-              sx={{ float: "right", position: "relative", paddingRight: 0 }}
-              onClick={() => setDocDialogOpen(true)}
-              aria-label="file"
-            >
-              <Badge badgeContent={docData.length} color="primary">
-                <AttachFileIcon></AttachFileIcon>
-              </Badge>
-            </IconButton>
-          </Tooltip>
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
@@ -695,17 +689,44 @@ export default function InputForm(props: { baseData: IformData }) {
         </Grid>
         <Grid container>
           <Grid item xs={12} md={12}>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-                my={2}
+            <Box>
+              <Tooltip
+                title={
+                  docData.length > 0 ? (
+                    docData.map((file: any, index: any) => (
+                      <Typography variant="body2" key={index}>
+                        {file.description}
+                      </Typography>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="white">
+                      No files available
+                    </Typography>
+                  )
+                }
               >
-                <Button tabIndex={-1}>Cancel</Button>
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
+                <IconButton
+                  sx={{ float: "left", position: "relative", paddingRight: 0 }}
+                  onClick={() => setDocDialogOpen(true)}
+                  aria-label="file"
+                >
+                  <Badge badgeContent={docData.length} color="primary">
+                    <AttachFileIcon></AttachFileIcon>
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                  my={2}
+                >
+                  <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+                  <Button type="submit" variant="contained">
+                    Submit
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </Grid>

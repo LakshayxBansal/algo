@@ -2,15 +2,9 @@
 
 import excuteQuery from "../utils/db/db";
 
-export async function manageRightsDb(crmDb : string,id: number,data : any) {
+export async function manageRightsDb(crmDb : string,query : string) {
 
     try{
-        let query = "update object_rights_master set ";
-        data.map((i : any)=>{
-            query += `${i.field} = ${i.value}, `
-        })
-        query = query.slice(0, -2);
-        query += ` where id = ${id};`
         const result = await excuteQuery({
             host: crmDb,
             query: query,
@@ -21,12 +15,12 @@ export async function manageRightsDb(crmDb : string,id: number,data : any) {
     }
 }
 
-export async function getRightsDb(crmDb : string) {
+export async function getRightsDataDb(crmDb : string) {
 
     try{
         const result = await excuteQuery({
             host: crmDb,
-            query: "select rm.*,om.name as object_name from object_rights_master rm, object_type_master om where rm.object_id = om.id",
+            query: "select orm.id as id, orm.object_id as objectId, orm.role_id as roleId, orm.dept_id as deptId,orm.create as createRight,orm.read as readRight,orm.update as updateRight,orm.delete as deleteRight, otm.name as objectName, otm.type as categoryId, ocm.name as category, erm.name as roleName, edm.name as deptName from object_rights_master orm, object_type_master otm, object_category_master ocm, executive_role_master erm, executive_dept_master edm where orm.object_id = otm.id and otm.type = ocm.id and orm.role_id = erm.id and orm.dept_id = edm.id;",
             values : []
         })
         return result;
@@ -63,44 +57,4 @@ export async function getObjectsDb(crmDb : string) {
     }
 }
 
-export async function getMasterObjectsDb(crmDb : string) {
 
-    try{
-        const result = await excuteQuery({
-            host: crmDb,
-            query: "select om.name as name, om.id as id from object_type_master om where om.type = 1;",
-            values : []
-        })
-        return result;
-    }catch(error){
-        console.log(error);
-    }
-}
-
-export async function getTransactionObjectsDb(crmDb : string) {
-
-    try{
-        const result = await excuteQuery({
-            host: crmDb,
-            query: "select om.name as name, om.id as id from object_type_master om where om.type = 2;",
-            values : []
-        })
-        return result;
-    }catch(error){
-        console.log(error);
-    }
-}
-
-export async function getReportObjectsDb(crmDb : string) {
-
-    try{
-        const result = await excuteQuery({
-            host: crmDb,
-            query: "select om.name as name, om.id as id from object_type_master om where om.type = 3;",
-            values : []
-        })
-        return result;
-    }catch(error){
-        console.log(error);
-    }
-}

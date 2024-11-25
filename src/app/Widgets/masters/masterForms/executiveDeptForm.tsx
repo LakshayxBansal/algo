@@ -13,10 +13,8 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
-import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ExecutiveDeptForm(props: masterFormPropsT) {
-  console.log("Ex Props : ", props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -79,8 +77,8 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = { msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -112,12 +110,12 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     });
   };
 
-  function fieldPropertiesById(id : string) {
+  function fieldPropertiesById(id: string) {
     const field = props.baseData?.fields.find(
       (item: any) => item.column_name_id === id
     );
 
-    if(field) {
+    if (field) {
       return {
         label: field.column_label,
         required: field.is_mandatory === 1
@@ -126,10 +124,10 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     return { label: "default label", required: false };
   }
 
- 
+
 
   props.masterData.fields.map((field: any) => {
-    if(field.is_default_column){
+    if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -144,7 +142,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       fieldArr.push(fld);
     } else {
       const fld = (
-        <CustomField 
+        <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
           defaultValue={entityData[field.column_name_id as keyof executiveDeptSchemaT]}
@@ -194,50 +192,50 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-      <form action={handleSubmit} noValidate>
-        <Grid container spacing={2}>
-          {
-            fieldArr.map((field, index) => {
-              return (
-                <Grid 
-                  item 
-                  xs={12}   
-                  sm={6}   
-                  md={6} 
-                >
-                  <div key={index}>
-                    {field}
-                  </div>
-                </Grid>
-              )
-            })
-          }
-        </Grid>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            mt: 2
-          }}
-        >
-          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
+        <form action={handleSubmit} noValidate>
+          <Grid container spacing={2}>
+            {
+              fieldArr.map((field, index) => {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              })
+            }
+          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 2
+            }}
           >
-            Submit
-          </Button>
-        </Box>
-      </form>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Box>
+        </form>
 
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
       </Box>
     </>
   );

@@ -115,7 +115,7 @@ export async function getConfigData() {
     if (session) {
       const dbResult = await getConfigDataDB(session.user.dbInfo.dbName);
       if (dbResult) {
-        result = { status: true, config: dbResult[0].config };
+        result = dbResult;
       }
     }
     return result;
@@ -123,7 +123,6 @@ export async function getConfigData() {
     logger.error(e);
   }
 }
-
 export async function getLoggedInUserDetails() {
   let result;
 
@@ -135,7 +134,7 @@ export async function getLoggedInUserDetails() {
         session.user.userId
       );
       if (dbResult) {
-        result = { status: true, data: dbResult[0] };
+        result = dbResult[0];
       }
     }
     return result;

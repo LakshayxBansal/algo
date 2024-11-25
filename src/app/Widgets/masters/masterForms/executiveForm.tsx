@@ -7,7 +7,7 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import AreaForm from "./areaForm";
 import { getArea, getAreaById } from "@/app/controllers/area.controller";
 import { getInviteDetailByContact } from "@/app/controllers/user.controller";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import {
   getExecutiveRole,
   getExecutiveRoleById,
@@ -26,7 +26,12 @@ import InviteUserForm from "./InviteUserForm";
 import ExecutiveDeptForm from "./executiveDeptForm";
 import CountryForm from "@/app/Widgets/masters/masterForms/countryForm";
 import StateForm from "@/app/Widgets/masters/masterForms/stateForm";
-import { getCountries, getCountryById, getStateById, getStates } from "@/app/controllers/masters.controller";
+import {
+  getCountries,
+  getCountryById,
+  getStateById,
+  getStates,
+} from "@/app/controllers/masters.controller";
 import {
   getDeptById,
   getExecutiveDept,
@@ -43,23 +48,32 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
-import { Badge, Collapse, Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Badge,
+  Collapse,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { getSession } from "@/app/services/session.service";
 import { AddDialog } from "../addDialog";
-import CustomField from "@/app/cap/enquiry/CustomFields";
 import { useRouter } from "next/navigation";
 import DocModal from "@/app/utils/docs/DocModal";
-
+import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT) {
-  console.log("props : ", props);
+  console.log("executive prop", props);
+
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
+    props?.data ? props?.data?.docData : []
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
@@ -109,7 +123,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
         defaultValue={entityData.alias}
-        // fullWidth
+      // fullWidth
       />
     ],
     [
@@ -132,7 +146,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         }
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
-        renderForm={(fnDialogOpen, fnDialogValue,masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
           <AreaForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
@@ -243,7 +257,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
         defaultValue={entityData.pan}
-        // fullWidth
+      // fullWidth
       />
     ],
     [
@@ -258,7 +272,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
         defaultValue={entityData.aadhaar}
-        // fullWidth
+      // fullWidth
       />
     ],
     [
@@ -304,7 +318,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
         defaultValue={entityData.email}
-        // fullWidth
+      // fullWidth
       />
     ],
     [
@@ -325,7 +339,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             return rest;
           });
         }}
-        // fullWidth
+      // fullWidth
       />
     ],
     [
@@ -341,8 +355,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
         defaultValue={entityData.whatsapp}
-        slotProps={{
-          flagButton : {
+        slotprops={{
+          flagButton: {
             tabIndex: -1
           },
         }}
@@ -352,7 +366,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             return rest;
           });
         }}
-        // fullWidth
+      // fullWidth
       />
 
     ],
@@ -366,7 +380,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         name="doj"
         fullWidth
         defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
-        slotProps={{
+        slotprops={{
           textField: {
             error: formError?.doj?.error,
             helperText: formError?.doj?.msg,
@@ -387,7 +401,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         label="Date of Birth"
         name="dob"
         defaultValue={entityData.dob ? dayjs(entityData.dob) : null}
-        slotProps={{
+        slotprops={{
           textField: {
             error: formError?.dob?.error,
             helperText: formError?.dob?.msg,
@@ -410,7 +424,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         // defaultValue={entityData.doa}
         defaultValue={entityData.doa ? dayjs(entityData.doa) : null}
         fullWidth
-        slotProps={{
+        slotprops={{
           textField: {
             error: formError?.doa?.error,
             helperText: formError?.doa?.msg,
@@ -434,7 +448,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         defaultValue={entityData.address1}
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
-        // fullWidth
+      // fullWidth
       />
     ],
     [
@@ -449,7 +463,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         defaultValue={entityData.address2}
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
-        // fullWidth
+      // fullWidth
       />
     ],
     ["city",
@@ -589,10 +603,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
+        console.log("result :", result);
         const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Error encountered", error: true };
+        console.log("issue :", issues);
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
@@ -717,7 +733,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-  
+
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
@@ -726,32 +742,32 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       });
       fieldArr.push(fld);
     }
-    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode'){
+    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-  
+
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
       });
-  
+
       fieldArr.push(fld);
     }
     else if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-  
+
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
       });
-  
+
       fieldArr.push(fld);
     } else {
       const fld = (
@@ -813,20 +829,20 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         </Alert>
       </Collapse>
       <Tooltip
-      title={docData?.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
+        title={docData?.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
           </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
+        )}
       >
         <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0}}
+          sx={{ float: "right", position: "relative", paddingRight: 0 }}
           onClick={() => setDialogOpen(true)}
           aria-label="file"
         >
@@ -835,61 +851,61 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           </Badge>
 
         </IconButton>
-     </Tooltip>
+      </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit} noValidate>
-        <Grid container spacing={2}>
-              {fieldArr.map((field, index) => {
-                const fieldKey = field.key as string;
-                if(fieldKey.includes("field-address")){
-                  return (
-                  <Grid 
-                    item 
-                    xs={12}   
-                    sm={6}   
+          <Grid container spacing={2}>
+            {fieldArr.map((field, index) => {
+              const fieldKey = field.key as string;
+              if (fieldKey.includes("field-address")) {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
                     md={6}
-                       
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
+
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
                   </Grid>
-                  )
-                }
-                else if(fieldKey.includes("field-subAddress")){
-                  return (
-                  <Grid 
-                    item 
-                    xs={12}   
-                    sm={6}   
-                    md={3}
-                       
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
-                  </Grid>
-                  )
-                }
-                else {
-                  return (
-                  <Grid 
-                    item 
-                    xs={12}   
-                    sm={6}   
-                    md={4}
-                       
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
-                  </Grid>
-                  )
-                }
+                )
               }
-              
-              )}
-            </Grid>
+              else if (fieldKey.includes("field-subAddress")) {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              }
+              else {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              }
+            }
+
+            )}
+          </Grid>
           <Box
             sx={{
               display: "flex",

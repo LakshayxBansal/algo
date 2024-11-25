@@ -267,6 +267,7 @@ export default function LeftMenuTree(props: {
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
+                      style={{position:"absolute", zIndex:"9999"}}
                     >
                       {({ TransitionProps }) => (
                         <Grow {...TransitionProps}>

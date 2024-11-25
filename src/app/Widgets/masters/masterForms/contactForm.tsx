@@ -41,39 +41,46 @@ import {
   getStateById,
   getStates,
 } from "@/app/controllers/masters.controller";
-import { masterFormPropsT } from "@/app/models/models";
+import { masterFormPropsT, masterFormPropsWithDataT } from "@/app/models/models";
 import { Badge, Grid, Paper, Tooltip, Typography } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
-export default function ContactForm(props: masterFormPropsT) {
-  console.log("Contact Props : ",props);
+export default function ContactForm(props: masterFormPropsWithDataT) {
+  console.log("props : ", props)
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data ? props?.data?.docData : []);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
+    props?.data ? props?.data?.docData : []
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
-  const entityData: contactSchemaT = props.data ? props.data : {};
+  const entityData: contactSchemaT = props.masterData.data ? props.masterData.data : {};
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setPrintNameFn(event.target.value);
+  };
+
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -98,7 +105,7 @@ export default function ContactForm(props: masterFormPropsT) {
       setStateDisable(false);
       values["state"] = {};
       setDefaultState(undefined);
-      if(values.country.id===0){
+      if (values.country.id === 0) {
         setStateDisable(true);
       }
       setStateKey((prev) => 1 - prev);
@@ -112,8 +119,7 @@ export default function ContactForm(props: masterFormPropsT) {
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    for (let i=1; i<=10; ++i) {
+    for (let i = 1; i <= 10; ++i) {
       data[`c_col${i}`] = "";
     }
 
@@ -143,8 +149,8 @@ export default function ContactForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = { msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -156,45 +162,45 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-      ? entityData.contactGroup_id
-      : 0;
+        ? entityData.contactGroup_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-      ? entityData.organisation_id
-      : 0;
+        ? entityData.organisation_id
+        : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-      ? entityData.department_id
-      : 0;
+        ? entityData.department_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
 
   async function persistEntity(data: contactSchemaT) {
     let result;
-    const newDocsData = docData?.filter((row: any) => row.type !== "db");
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
     if (props.data) {
       Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
-      result = await updateContact(data,newDocsData);
+      result = await updateContact(data, newDocsData);
     } else {
-      result = await createContact(data,newDocsData);
+      result = await createContact(data, newDocsData);
     }
     return result;
   }
@@ -206,48 +212,34 @@ export default function ContactForm(props: masterFormPropsT) {
     });
   };
 
-  function fieldPropertiesById(id : string) {
-    const field = props.desc.find(
-      (item: any) => item.column_name_id === id
-    );
-
-    if(field) {
-      return {
-        label: field.column_label,
-        required: field.is_mandatory === 1
-      };
-    }
-    return { label: "default label", required: false };
-  }
-
-  const defaultComponentMap = new Map<string, React.ReactNode> ([
+  const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
-        
-          <InputControl
-            inputType={InputType.TEXT}
-            autoFocus
-            id="name"
-            label="Name"
-            name="name"
-            required
-            fullWidth
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            defaultValue={entityData.name}
-            onChange={handlePrintNameChange}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { name, ...rest } = curr;
-                return rest;
-              });
-            }}
-          />
-        
+
+      <InputControl
+        inputType={InputType.TEXT}
+        autoFocus
+        id="name"
+        label="Name"
+        name="name"
+        required
+        fullWidth
+        error={formError?.name?.error}
+        helperText={formError?.name?.msg}
+        defaultValue={entityData.name}
+        onChange={handlePrintNameChange}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { name, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+
     ],
     [
       "alias",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         id="alias"
@@ -265,11 +257,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "print_name",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         id="print_name"
@@ -287,11 +279,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "organisation",
-      
+
       <SelectMasterWrapper
         name={"organisation"}
         id={"organisation"}
@@ -322,11 +314,11 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
-      
+
     ],
     [
       "pan",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         id="pan"
@@ -343,11 +335,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "aadhaar",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         id="aadhaar"
@@ -364,11 +356,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "contactGroup",
-      
+
       <SelectMasterWrapper
         name={"contactGroup"}
         id={"contactGroup"}
@@ -398,11 +390,11 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
-      
+
     ],
     [
       "department",
-      
+
       <SelectMasterWrapper
         name={"department"}
         id={"department"}
@@ -431,11 +423,11 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
-      
+
     ],
     [
       "area",
-      
+
       <SelectMasterWrapper
         name={"area"}
         id={"area"}
@@ -465,11 +457,11 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
-      
+
     ],
     [
       "email",
-      
+
       <InputControl
         inputType={InputType.EMAIL}
         id="email"
@@ -487,11 +479,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "mobile",
-      
+
       <InputControl
         inputType={InputType.PHONE}
         id="mobile"
@@ -509,11 +501,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "whatsapp",
-      
+
       <InputControl
         inputType={InputType.PHONE}
         id="whatsapp"
@@ -531,11 +523,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "address1",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         label="Address Line 1"
@@ -552,11 +544,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "address2",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         label="Address Line 2"
@@ -565,7 +557,7 @@ export default function ContactForm(props: masterFormPropsT) {
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
         defaultValue={entityData.address2}
-       fullWidth
+        fullWidth
         onKeyDown={() => {
           setFormError((curr) => {
             const { address2, ...rest } = curr;
@@ -573,11 +565,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     // [
     //   "address3",
-      
+
     //   <InputControl
     //     inputType={InputType.TEXT}
     //     label="Address Line 3"
@@ -601,11 +593,11 @@ export default function ContactForm(props: masterFormPropsT) {
     //       });
     //     }}
     //   />
-      
+
     // ],
     [
       "country",
-      
+
       <SelectMasterWrapper
         name={"country"}
         id={"country"}
@@ -629,7 +621,7 @@ export default function ContactForm(props: masterFormPropsT) {
           />
         )}
       />
-      
+
     ],
     [
       "state",
@@ -645,7 +637,7 @@ export default function ContactForm(props: masterFormPropsT) {
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}
-        allowNewAdd={selectValues.country? true : entityData.country_id? true : false}
+        allowNewAdd={selectValues.country ? true : entityData.country_id ? true : false}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <StateForm
             setDialogOpen={fnDialogOpen}
@@ -656,12 +648,12 @@ export default function ContactForm(props: masterFormPropsT) {
             }
           />
         )}
-        />
-      
+      />
+
     ],
     [
       "city",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         name="city"
@@ -678,11 +670,11 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ],
     [
       "pincode",
-      
+
       <InputControl
         inputType={InputType.TEXT}
         name="pincode"
@@ -699,10 +691,10 @@ export default function ContactForm(props: masterFormPropsT) {
           });
         }}
       />
-      
+
     ]
   ])
- 
+
   let fieldArr: React.ReactElement[] = [];
 
   props.masterData.fields.map((field: any) => {
@@ -710,7 +702,7 @@ export default function ContactForm(props: masterFormPropsT) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-  
+
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
@@ -719,32 +711,32 @@ export default function ContactForm(props: masterFormPropsT) {
       });
       fieldArr.push(fld);
     }
-    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode'){
+    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-  
+
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
       });
-  
+
       fieldArr.push(fld);
     }
     else if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
-  
+
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
       });
-  
+
       fieldArr.push(fld);
     } else {
       const fld = (
@@ -757,10 +749,10 @@ export default function ContactForm(props: masterFormPropsT) {
       fieldArr.push(fld);
     }
   });
-  
+
   return (
     <>
-        <Box
+      <Box
         sx={{
           position: "sticky",
           top: "0px",
@@ -802,20 +794,20 @@ export default function ContactForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Tooltip
-      title={docData?.length > 0 ? (
-        docData.map((file: any, index: any) => (
-          <Typography variant="body2" key={index}>
-            {file.description}
+        title={docData?.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
           </Typography>
-        ))
-      ) : (
-        <Typography variant="body2" color="white">
-          No files available
-        </Typography>
-      )}
+        )}
       >
         <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0}}
+          sx={{ float: "right", position: "relative", paddingRight: 0 }}
           onClick={() => setDialogOpen(true)}
           aria-label="file"
         >
@@ -824,61 +816,61 @@ export default function ContactForm(props: masterFormPropsT) {
           </Badge>
 
         </IconButton>
-     </Tooltip>
+      </Tooltip>
       <Box id="contactForm" sx={{ p: 3 }}>
         <form action={handleSubmit} noValidate>
-            <Grid container spacing={2}>
-              {fieldArr.map((field, index) => {
-                const fieldKey = field.key as string;
-                if(fieldKey.includes("field-address")){
-                  return (
-                  <Grid 
-                    item 
-                    xs={12}   
-                    sm={6}   
+          <Grid container spacing={2}>
+            {fieldArr.map((field, index) => {
+              const fieldKey = field.key as string;
+              if (fieldKey.includes("field-address")) {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
                     md={6}
-                       
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
+
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
                   </Grid>
-                  )
-                }
-                else if(fieldKey.includes("field-subAddress")){
-                  return (
-                  <Grid 
-                    item 
-                    xs={12}   
-                    sm={6}   
-                    md={3}
-                       
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
-                  </Grid>
-                  )
-                }
-                else {
-                  return (
-                  <Grid 
-                    item 
-                    xs={12}   
-                    sm={6}   
-                    md={4}
-                       
-                    >
-                      <div key={index}>
-                        {field}
-                      </div>
-                  </Grid>
-                  )
-                }
+                )
               }
-              
-              )}
-            </Grid>
+              else if (fieldKey.includes("field-subAddress")) {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              }
+              else {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              }
+            }
+
+            )}
+          </Grid>
           <Box
             sx={{
               display: "flex",
@@ -898,14 +890,14 @@ export default function ContactForm(props: masterFormPropsT) {
             </Button>
           </Box>
           {dialogOpen && (
-          <AddDialog
-            title=""
-            open={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          >
-            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen}/>
-          </AddDialog>
-        )}
+            <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+              <DocModal
+                docData={docData}
+                setDocData={setDocData}
+                setDialogOpen={setDialogOpen}
+              />
+            </AddDialog>
+          )}
         </form>
         <Snackbar
           open={snackOpen}

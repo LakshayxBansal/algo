@@ -21,8 +21,8 @@ import { modifyPhone } from "../utils/phoneUtils";
 import { convertData } from "../utils/validateType.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
+import { getRegionalSettings } from "./config.controller";
 import { getScreenDescription } from "./object.controller";
-import { getRegionalSetting, getRegionalSettings } from "./config.controller";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -107,9 +107,9 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data.mobile);
-      data.whatsapp = modifyPhone(data.whatsapp);
-
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
+      
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
@@ -132,7 +132,7 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
+        for (const issue of parsed.error.issues) {          
           errorState.push({ path: issue.path, message: issue.message });
         }
         result = { status: false, data: errorState };
@@ -166,8 +166,8 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data.mobile);
-      data.whatsapp = modifyPhone(data.whatsapp);
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
 
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
@@ -285,31 +285,6 @@ export async function getContactById(id: number) {
   }
 }
 
-// For Deleting Contact
-export async function DeleteContact(id: number) {
-  let errorResult = { status: false, error: {} };
-  try {
-    const session = await getSession();
-
-    if (session?.user.dbInfo) {
-      const result = await DeleteContactList(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result.affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
-      }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
-  }
-  return errorResult;
-}
-
 export async function getContactByPage(
   page: number,
   filter: string | undefined,
@@ -378,3 +353,39 @@ export async function delContactById(id: number) {
   }
   return errorResult;
 }
+
+// For Deleting Contact
+export async function DeleteContact(id: number) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await delContactByIdDB(session.user.dbInfo.dbName, id);
+      console.log("TErugb ugui: ", dbResult);
+      
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
+      }
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
+  }
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
