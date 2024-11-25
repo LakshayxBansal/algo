@@ -25,6 +25,7 @@ import StateForm from "./stateForm";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import AutocompleteDB from "../../AutocompleteDB";
 
 export default function ExecutiveGroupForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -134,22 +135,17 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-        <Box
-          sx={{
-            display: "grid",
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: "repeat(2, 1fr)",
-          }}
-        >
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
           <InputControl
             autoFocus
             id="name"
             label="Executive Group Name"
             inputType={InputType.TEXT}
             name="name"
-            fullWidth
             required
+            titleCase={true}
+            style={{width: "100%"}}
             defaultValue={entityData.name}
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
@@ -160,12 +156,13 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
               });
             }}
           />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
           <InputControl
             inputType={InputType.TEXT}
             id="alias"
             label="Alias"
             name="alias"
-            fullWidth
             defaultValue={entityData.alias}
             error={formError?.alias?.error}
             helperText={formError?.alias?.msg}
@@ -175,59 +172,53 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
                 return rest;
               });
             }}
+            style={{width: "100%"}}
           />
-          {/* <AutocompleteDB<optionsDataT>
-          name={"parentgroup"}
-          id={"parentgroup"}
-          label={"Parent Executive Group"}
-          defaultValue={entityData.parent}
-          width={210}
-          fnSetModifyMode={randomFunction}
-          fetchDataFn={getExecutiveGroup}
-        /> */}
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
           <SelectMasterWrapper
             name={"parent"}
             id={"parent"}
             label={"Parent Executive Group"}
-            width={210}
+            defaultValue={
+              {
+                id: entityData.parent_id,
+                name: entityData.parent,
+              } as optionsDataT
+            }
             onChange={(e, val, s) =>
               setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
             }
             dialogTitle={"Parent Executive Group"}
             fetchDataFn={getExecutiveGroup}
-            // fnFetchDataByID={getStateById}
             formError={formError?.parentgroup}
             allowModify={false}
             allowNewAdd={false}
-            defaultValue={
-              { id: entityData.id, name: entityData.parent } as optionsDataT
-            }
-            // disable={selectValues.country ? false : true}
-            // renderForm={(fnDialogOpen, fnDialogValue, data, parentData) =>
-            //   <StateForm
-            //     setDialogOpen={fnDialogOpen}
-            //     setDialogValue={fnDialogValue}
-            //     data={data}
-            //     parentData={selectValues.country?.id}
-            //   />
-            // }
+            width={350}
           />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
+        </Grid>
+        <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 1,
+            }}
           >
-            Submit
-          </Button>
-        </Box>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </form>
       <Snackbar
           open={snackOpen}

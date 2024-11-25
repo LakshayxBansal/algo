@@ -164,6 +164,7 @@ export default function AutoGrid(props: any) {
   React.useLayoutEffect(() => {
     if (apiRef.current) {
       apiRef.current.setRowSelectionModel([]);
+      apiRef.current.setRowSelectionModel([]);
     }
   }, [value]);
 
@@ -652,6 +653,7 @@ export default function AutoGrid(props: any) {
       field: "time",
       headerName: "Time",
       width: 100,
+      sortable:false,
       renderCell: (params) => {
         return adjustToLocal(params.row.date).format("hh:mm A");
       },
@@ -1073,6 +1075,7 @@ export default function AutoGrid(props: any) {
     {
       field: "actionTime",
       headerName: "Next Action Time",
+      sortable: false,
       renderCell: (params) => {
         return params.row.actionDate
           ? adjustToLocal(params.row.actionDate).format("hh:mm A")
@@ -1143,7 +1146,8 @@ export default function AutoGrid(props: any) {
           </MenuItem>
         </FilterMenu>
       ),
-    },
+    }
+   
   ];
 
   const handleDateFilterChange = (event: SelectChangeEvent) => {
@@ -1373,7 +1377,7 @@ export default function AutoGrid(props: any) {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
@@ -1503,8 +1507,8 @@ export default function AutoGrid(props: any) {
                     rowSelectionModel?.length == 0
                       ? "Please select a row first"
                       : enableAllocate
-                      ? ""
-                      : "Deselect Closed enquiries first"
+                        ? ""
+                        : "Deselect Closed enquiries first"
                   }
                   placement="top"
                 >

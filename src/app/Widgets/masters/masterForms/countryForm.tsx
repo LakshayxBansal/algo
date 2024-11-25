@@ -43,7 +43,7 @@ export default function CountryForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
+          if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
         }
@@ -113,73 +113,76 @@ export default function CountryForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-        <Box
-          sx={{
-            display: "grid",
-            columnGap: 3,
-            rowGap: 1,
-            gridTemplateColumns: "repeat(2, 1fr)",
-          }}
-        >
-          <InputControl
-            autoFocus
-            inputType={InputType.TEXT}
-            id="name"
-            label="Country Name"
-            name="name"
-            required
-            fullWidth
-            defaultValue={entityData.name}
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { name, ...rest } = curr;
-                return rest;
-              });
-            }} 
-          />
-          <InputControl
-            inputType={InputType.TEXT}
-            id="alias"
-            label="Alias"
-            name="alias"
-            fullWidth
-            defaultValue={entityData.alias}
-            error={formError?.alias?.error}
-            helperText={formError?.alias?.msg}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { alias, ...rest } = curr;
-                return rest;
-              });
-            }} 
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            mt:2
-          }}
-        >
-          <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <InputControl
+              autoFocus
+              inputType={InputType.TEXT}
+              id="name"
+              label="Country Name"
+              name="name"
+              required
+              titleCase={true}
+              defaultValue={entityData.name}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
+              style={{width: "100%"}}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <InputControl
+              inputType={InputType.TEXT}
+              id="alias"
+              label="Alias"
+              name="alias"
+              defaultValue={entityData.alias}
+              error={formError?.alias?.error}
+              helperText={formError?.alias?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { alias, ...rest } = curr;
+                  return rest;
+                });
+              }}
+              style={{width: "100%"}}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              // mt: 1,
+            }}
           >
-            Submit
-          </Button>
-        </Box>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </form>
       <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </>
   );
 }

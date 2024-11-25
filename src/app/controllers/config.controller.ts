@@ -1,6 +1,6 @@
 "use server";
 import { regionalSettingSchemaT } from "../models/models";
-import { getCountryWithCurrencyDb, getCurrencyCharacterDb, getCurrencyStringDb, getCurrencySubStringDb, getCurrencySymbolDb, getDateFormatDb, getRegionalSettingDb, updateteRegionalSettingDb } from "../services/config.service";
+import { getCountryWithCurrencyDb, getCurrencyCharacterDb, getCurrencyStringDb, getCurrencySubStringDb, getCurrencySymbolDb, getDateFormatDb, getRegionalSettingDb, getRegionalSettingsDb, updateteRegionalSettingDb } from "../services/config.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
 
@@ -93,3 +93,15 @@ export async function getCurrencyCharacter(searchString: string) {
     throw error;
   }
 }
+
+export async function getRegionalSettings() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getRegionalSettingsDb(session.user.dbInfo.dbName);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+

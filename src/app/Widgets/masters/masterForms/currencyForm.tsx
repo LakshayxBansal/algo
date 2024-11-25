@@ -10,6 +10,7 @@ import { masterFormPropsT } from "@/app/models/models";
 import Paper from "@mui/material/Paper";
 import {
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -66,8 +67,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
-        if(issue.path==='refresh'){
-          errorState["form"] = { msg: issue.message, error: true};
+        if (issue.path === 'refresh') {
+          errorState["form"] = { msg: issue.message, error: true };
         }
       }
       setFormError(errorState);
@@ -140,7 +141,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper sx={{ margin: "auto", width: "37vw" }}>
+    <>
       <Box
         sx={{
           position: "sticky",
@@ -177,16 +178,10 @@ export default function CurrencyForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="currencyForm" sx={{ mt: 2, p: 2 }}>
+      <Box id="currencyForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 0.5,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
             <InputControl
               autoFocus
               inputType={InputType.TEXT}
@@ -195,6 +190,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
               name="symbol"
               fullWidth
               required
+              titleCase={true}
               defaultValue={entityData.symbol}
               error={formError?.symbol?.error}
               helperText={formError?.symbol?.msg}
@@ -206,12 +202,13 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 });
               }}
             />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
             <InputControl
               inputType={InputType.TEXT}
               id="Name"
               label="Name"
               name="name"
-              fullWidth
               required
               defaultValue={entityData.name}
               error={formError?.name?.error}
@@ -222,13 +219,16 @@ export default function CurrencyForm(props: masterFormPropsT) {
                   return rest;
                 });
               }}
+              style={{width: "100%"}}
             />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
             <InputControl
               id="shortForm"
               label="Currency Short Form"
               inputType={InputType.TEXT}
               name="shortForm"
-              fullWidth
+              style={{width: "100%"}}
               defaultValue={entityData.shortForm}
               error={formError?.shortForm?.error}
               helperText={formError?.shortForm?.msg}
@@ -239,6 +239,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 });
               }}
             />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
             <FormControl
               fullWidth
               size="small"
@@ -261,11 +263,13 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 <MenuItem value="int">International</MenuItem>
               </Select>
             </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
             <FormControl
-              fullWidth
-              size="small"
+                size="small"
               sx={{
                 marginTop: "1.3vh",
+                width: "100%"
               }}
             >
               <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
@@ -277,58 +281,44 @@ export default function CurrencyForm(props: masterFormPropsT) {
                 value={decimalPlaces}
                 label="Decimal Places"
                 onChange={handleDecimalChange}
-                sx={{ height: "6.1vh" }}
               >
                 <MenuItem value={2}>Two Digits</MenuItem>
                 <MenuItem value={3}>Three Digits</MenuItem>
               </Select>
             </FormControl>
-          </Box>
-          <Box
-            sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
+             <InputControl
               id="Sample"
-              // label="Sample"
               inputType={InputType.TEXT}
               name="Sample"
-              // defaultValue={sample}
               value={sample}
-              // error={formError?.Name?.error}
-              // helperText={formError?.Name?.msg}
               disabled
+              style={{width: "100%"}}
             />
-
-            {/* sx={{
-                mt: 3,
-                display: "grid",
-              }}
-              defaultValue={sample}
-              disabled
-            > */}
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
               mt: 1,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
+          </Grid>
+        </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -338,6 +328,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+    </>
   );
 }

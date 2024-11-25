@@ -46,7 +46,7 @@ export async function delSupportCategoryDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from ticket_category_master where id=?;",
+      query: "call deleteSupportCategory(?)",
       values: [id],
     });
 

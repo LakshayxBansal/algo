@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../Widgets/seperator";
-// import Snackbar from "@mui/material/Snackbar";
 import {
   masterFormPropsT,
   optionsDataT,
@@ -259,7 +258,8 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               }
             />
           </Box>
-          <TextField
+          <InputControl
+            inputType={InputType.TEXTFIELD}
             placeholder="Remarks"
             label="Remarks"
             multiline
@@ -287,7 +287,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
-
       </Box>
     </>
   );

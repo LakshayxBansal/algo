@@ -15,6 +15,7 @@ import {
   checkIfUsed,
   getProfileDetailsById,
   getExecutiveColumnsDb,
+  mapExecutiveToDeptDb,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -49,6 +50,8 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          // pass array of depts
+          await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id]);
           const objectDetails = await getObjectByName("Executive");
           await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
@@ -112,6 +115,7 @@ export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDe
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id,2,4]);
           const objectDetails = await getObjectByName("Executive");
           await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
@@ -279,13 +283,13 @@ export async function delExecutiveById(id: number) {
         return "Can't Be DELETED!";
       } else {
         const mappedUser = await getExecutiveById(id);
-        if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
-          await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
-        }
         const result = await delExecutiveDetailsById(
           session.user.dbInfo.dbName,
           id
         );
+        if (mappedUser.length > 0 && mappedUser[0].crm_user_id) {
+          await mapUser(false, mappedUser[0].crm_user_id, 0, session.user.dbInfo.id);
+        }
         return "Record Deleted";
       }
       // if ((result.affectedRows = 1)) {
@@ -374,6 +378,17 @@ export async function getExecutiveColumns() {
     if (session) {
       const result = await getExecutiveColumnsDb(session.user.dbInfo.dbName as string);
       return result;
+    }
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function mapExecutiveToDept(executiveId : number, deptsArray : number[]) {
+  try {
+    const session = await getSession();
+    if (session) {
+      await mapExecutiveToDeptDb(session.user.dbInfo.dbName,executiveId,deptsArray);
     }
   } catch (e) {
     logger.error(e);

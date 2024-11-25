@@ -15,7 +15,7 @@ export async function createRegionalSettingDb(dbName: string, data: any) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "INSERT INTO app_config (config_type_id, config) VALUES (?, ?) returning *;",
+        "INSERT INTO app_config_new (config_type_id, config) VALUES (?, ?) returning *;",
       values: [configResult[0].id, JSON.stringify(data)],
     });
 
@@ -33,14 +33,14 @@ export async function updateteRegionalSettingDb(
     const result = await excuteQuery({
       host: dbName,
       query:
-        "UPDATE app_config ac SET ac.config = ? WHERE ac.config_type_id = ?;",
+        "UPDATE app_config_new ac SET ac.config = ? WHERE ac.object_id = ?;",
       values: [JSON.stringify(data), config_id],
     });
 
-    return {status: true};
+    return { status: true };
   } catch (error) {
     logger.error(error);
-    return {status: false};
+    return { status: false };
   }
 }
 export async function getRegionalSettingDb(dbName: string) {
@@ -48,7 +48,7 @@ export async function getRegionalSettingDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "select * from app_config where config_type_id = (select id from config_meta_data where config_type='regional_setting');",
+        "select * from app_config_new where object_id = (select id from config_meta_data where config_type='regional_setting');",
       values: [],
     });
 
@@ -201,3 +201,24 @@ export async function getCurrencyCharacterDb(
     console.log(e);
   }
 }
+
+export async function getRegionalSettingsDb(
+  crmDb: string
+) {
+  try {
+    let query =
+    "select config from app_config acn join config_meta_data cmd where acn.object_id=cmd.id and cmd.config_type='regionalSetting'";
+        let values: any[] = [];
+
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+

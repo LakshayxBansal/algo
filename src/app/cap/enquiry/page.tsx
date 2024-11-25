@@ -5,43 +5,71 @@ import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
 import {
   getLoggedInUserDetails,
-  showProductGrid,
+  getConfigData,
+  getEnquiryById,
 } from "@/app/controllers/enquiry.controller";
-import { useParams } from 'next/navigation';
+import { getRightsData } from "@/app/controllers/rights.controller";
+// import { getScreenDescription } from "@/app/controllers/object.controller";
 
+interface SearchParams {
+  id?: string;
+}
 
+interface MasterData {
+  // fields: Array<any>;
+  enqData: Record<string, any>;
+  // rights: Record<string, any>;
+  config_data: Record<string, any>;
+  regional_setting: Record<string, any>;
+  loggedInUserData: Record<string, any>;
+}
 
+export default async function MyForm({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const enquiryId = searchParams.id ? parseInt(searchParams.id, 10) : undefined;
 
-export default async function MyForm({ searchParams }: { searchParams: any }) {
-  // const params = useParams();
-  const id = searchParams.id; // `id` is the route parameter here
   try {
     const session = await getSession();
 
-    if (session) {
-      const masterData = {
-        userName: session.user?.name as string,
-      };
-
-      const data = await getLoggedInUserDetails();
-      const config_data = await showProductGrid();
-      const config = JSON.parse(config_data?.config);
-      if (config_data?.status) {
-        console.log("Config Data is present->", config);
-      } else {
-        console.log("Config Data is not present->", config);
-      }
-      return (
-        <InputForm
-          baseData={masterData}
-          config={config}
-          loggedInUserData={data?.data}
-        ></InputForm>
-      );
+    if (!session) {
+      redirect("/signin");
+      return null; // Ensures no further code executes
     }
+
+    // const fields = await getScreenDescription(26, 1);
+    const enqData = enquiryId ? await getEnquiryById(enquiryId) : undefined;
+    // const rights = await getRightsData();
+    const config_data = await getConfigData();
+    const loggedInUserData = await getLoggedInUserDetails();
+
+    if (
+      /*!rights ||*/
+      !config_data ||
+      !loggedInUserData ||
+      !Array.isArray(config_data) ||
+      config_data.length < 2
+    ) {
+      logger.error("Required data is missing or invalid.");
+      redirect("/signin");
+      return null;
+    }
+
+    const masterData: MasterData = {
+      enqData: enqData ?? {},
+      /*rights: rights ?? {},*/
+      config_data: JSON.parse(config_data[0].config)?? {},
+      regional_setting: JSON.parse(config_data[1].config)?? {},
+      loggedInUserData: loggedInUserData ?? {},
+    };
+
+    return <InputForm baseData={masterData}></InputForm>;
   } catch (e) {
     // show error page
-    logger.error(e);
+    logger.error("An error occurred:", e);
+    redirect("/signin");
+    return null;
   }
-  redirect("/signin");
 }

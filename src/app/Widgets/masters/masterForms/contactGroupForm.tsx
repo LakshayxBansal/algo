@@ -18,7 +18,7 @@ import {
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { Autocomplete, Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -52,9 +52,9 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setSnackOpen(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
-      },1000);
+      }, 1000);
       setFormError({});
     } else {
       const issues = result.data;
@@ -64,7 +64,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
+          if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
         }
@@ -77,8 +77,8 @@ export default function ContactGroupForm(props: masterFormPropsT) {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
       : entityData.parent_id
-        ? entityData.parent_id
-        : 0;
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -112,7 +112,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
-          mt: 1
+          mt: 1,
         }}
       >
         <Seperator>
@@ -142,92 +142,96 @@ export default function ContactGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactGroup" sx={{ mt: 2, p: 3 }}>
+      <Box id="contactGroup">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="name"
-              label="Group Name"
-              name="name"
-              required
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="name"
+                label="Group Name"
+                name="name"
+                titleCase={true}
+                required
+                defaultValue={entityData.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{width: "100%"}}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="alias"
+                label="Alias"
+                name="alias"
+                defaultValue={entityData.alias}
+                error={formError?.alias?.error}
+                helperText={formError?.alias?.msg}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { alias, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{width: "100%"}}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <SelectMasterWrapper
+                name={"parent"}
+                id={"parent"}
+                label={"Parent Group"}
+                // width={210}
+                defaultValue={
+                  {
+                    id: entityData.parent_id,
+                    name: entityData.parent,
+                  } as optionsDataT
+                }
+                onChange={(e, val, s) =>
+                  setSelectValues({
+                    ...selectValues,
+                    parent: val ? val : { id: 0, name: "" },
+                  })
+                }
+                dialogTitle={"Add Parent Group"}
+                fetchDataFn={getContactGroup}
+                fnFetchDataByID={getContactGroupById}
+                formError={formError?.parentgroup}
+                allowNewAdd={false}
+                allowModify={false}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // mt: 1,
               }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="alias"
-              label="Alias"
-              name="alias"
-              defaultValue={entityData.alias}
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { alias, ...rest } = curr;
-                  return rest;
-                });
-              }}  
-            />
-            <SelectMasterWrapper
-              name={"parent"}
-              id={"parent"}
-              label={"Parent Group"}
-              width={210}
-              defaultValue={
-                {
-                  id: entityData.id,
-                  name: entityData.parent,
-                } as optionsDataT
-              }
-              onChange={(e, val, s) =>
-                setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
-              }
-              dialogTitle={"Add Parent Group"}
-              fetchDataFn={getContactGroup}
-              // fnFetchDataByID={getContactGroupById}
-              formError={formError?.parentgroup}
-              allowNewAdd={false}
-              allowModify={false}
-              // renderForm={(fnDialogOpen, fnDialogValue) => (
-              //   <ContactGroupForm
-              //     setDialogOpen={fnDialogOpen}
-              //     setDialogValue={fnDialogValue}
-              //   />
-              // )}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}

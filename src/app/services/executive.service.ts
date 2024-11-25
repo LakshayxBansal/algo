@@ -20,13 +20,12 @@ export async function createExecutiveDB(
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.pincode,
@@ -70,7 +69,7 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -78,7 +77,6 @@ export async function updateExecutiveDB(
         data.stamp,
         data.address1,
         data.address2,
-        data.address3,
         data.city,
         data.state_id,
         data.pincode,
@@ -192,7 +190,7 @@ export async function delExecutiveDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from executive_master where id=?;",
+      query: "call deleteExecutive(?)",
       values: [id],
     });
 
@@ -323,6 +321,30 @@ export async function getExecutiveColumnsDb(crmDb:string){
       query:"select * from custom_fields_master where object_type_id =11",
       values:""
     });
+  }catch(e){
+    logger.error(e);
+  }
+}
+
+export async function mapExecutiveToDeptDb(crmDb:string, executiveId: number, deptsArray : number[]){
+  try{
+    await excuteQuery({
+      host:crmDb,
+      query:"delete from executive_dept_relation where executive_id = ?;",
+      values: [executiveId]
+    });
+    let insertQuery : string = "insert into executive_dept_relation (executive_id, executive_dept_id) values ";
+    for(const dept of deptsArray){
+      insertQuery += `(${executiveId}, ${dept}),`
+    }
+    insertQuery = insertQuery.slice(0, -1);
+    insertQuery += ";"
+    await excuteQuery({
+      host:crmDb,
+      query: insertQuery,
+      values: []
+    });
+
   }catch(e){
     logger.error(e);
   }

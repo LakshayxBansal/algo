@@ -426,7 +426,7 @@ export async function delStateDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from state_master where id=?;",
+      query: "call deleteState(?)",
       values: [id],
     });
 
@@ -439,7 +439,7 @@ export async function delCountryByIdDB(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from country_master where id=?;",
+      query: "call deleteCountry(?)",
       values: [id],
     });
 
@@ -520,6 +520,26 @@ export async function getStateListMasterDb(
 
     return result;
   } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getCountryIdByNameDb (country: string) {
+  try{
+
+    let query =
+      "select s.id as id country_master c where \
+        c.name = ?";
+    let values = [country];
+
+    const result = await excuteQuery({
+      host: "userDb",
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch(e) {
     console.log(e);
   }
 }

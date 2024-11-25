@@ -6,12 +6,10 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridRowId,
-  GridSlots,
-  GridToolbarContainer,
 } from "@mui/x-data-grid";
 
 import { darken, lighten, styled, Theme } from "@mui/material/styles";
-import { Button, TextField } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -44,9 +42,10 @@ type ModifiedRowT = {
 };
 
 type ProductGridProps = {
+  id?: string;
+  name?: string;
   dgData: any;
   setdgData: any;
-  dgDialogOpen: any;
   setdgDialogOpen: any;
   dgFormError: any;
   setdgFormError: any;
@@ -61,22 +60,9 @@ const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
   }),
 });
 
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
-  ".MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal": {
-    zIndex: 0,
-  },
-  "& .super-app-theme--Rejected": {
-    ...getTextColor(theme.palette.error.main, theme, 0.1),
-    "&:hover": {
-      ...getTextColor(theme.palette.error.main, theme, 0.2),
-    },
-  },
-}));
-
 export default function ProductGrid({
   dgData,
   setdgData,
-  dgDialogOpen,
   setdgDialogOpen,
   dgFormError,
   setdgFormError,
@@ -84,6 +70,39 @@ export default function ProductGrid({
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
+  const [isButtonFocused, setIsButtonFocused] = useState(false);
+
+  const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    ".MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal": {
+      opacity: 0.8,
+    },
+    "& .super-app-theme--Rejected": {
+      ...getTextColor(theme.palette.error.main, theme, 0.1),
+      "&:hover": {
+        ...getTextColor(theme.palette.error.main, theme, 0.2),
+      },
+    },
+    "& .MuiDataGrid-columnHeaders": {
+      "& .MuiDataGrid-columnHeaderTitle": {
+        fontWeight: "bold",
+      },
+    },
+    "& .MuiDataGrid-footerContainer": {
+      display: "none",
+    },
+    "& .MuiDivider-root": {
+      display: "none", // Hides the divider
+    },
+    "&:hover": {
+      borderColor: "#212121",
+    },
+    "&.button-focused": {
+      borderColor: "#1976d2",
+      borderWidth: 2,
+    },
+    borderWidth: 1,
+    borderStyle: "solid",
+  }));
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -95,7 +114,6 @@ export default function ProductGrid({
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Clean up the observer on unmount
     return () => observer.disconnect();
   }, []);
 
@@ -300,7 +318,8 @@ export default function ProductGrid({
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
-            <TextField
+            <InputControl
+              inputType={InputType.TEXTFIELD}
               name="remarks"
               id="remarks"
               defaultValue={params.row.remarks}
@@ -380,54 +399,40 @@ export default function ProductGrid({
     },
   ];
 
-  function AddProductToolbar() {
-    const handleClick = () => {
-      setdgDialogOpen(true);
-    };
-
-    return (
-      <GridToolbarContainer
-        sx={{ display: "flex", justifyContent: "space-between" }}
-      >
-        <Seperator>Product List</Seperator>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-          Add Product
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
+  const handleFocus = () => setIsButtonFocused(true);
+  const handleBlur = () => setIsButtonFocused(false);
+  const handleClick = () => {
+    setdgDialogOpen(true);
+  };
 
   return (
     <>
+      <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Seperator>Product List</Seperator>
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleClick}
+          onFocus={handleFocus} // Track focus
+          onBlur={handleBlur} // Track blur
+        >
+          Add Product
+        </Button>
+      </Grid>
       <StyledDataGrid
         disableColumnMenu
         columns={columns}
         rows={dgData ? dgData : []}
         disableRowSelectionOnClick
+        className={isButtonFocused ? "button-focused" : ""}
         slots={{
           noRowsOverlay: () => <></>,
-          toolbar: AddProductToolbar as GridSlots["toolbar"],
-        }}
-        sx={{
-          "& .MuiDataGrid-columnHeaders": {
-            "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "bold",
-            },
-          },
-          "& .MuiDataGrid-footerContainer": {
-            display: "none",
-          },
-          "& .MuiDivider-root": {
-            display: "none", // Hides the divider
-          },
-          borderColor: dgDialogOpen ? "#1976d2" : "",
-          borderWidth: 2,
         }}
         rowHeight={
           dgFormError.product ||
-          dgFormError.quantity ||
-          dgFormError.unit ||
-          dgFormError.remark
+            dgFormError.quantity ||
+            dgFormError.unit ||
+            dgFormError.remark
             ? 70
             : 50
         }
