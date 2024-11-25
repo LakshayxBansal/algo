@@ -428,7 +428,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 width={352}
                 dialogTitle={"Add Role"}
                 fetchDataFn={(roleStr: string) =>
-                  getExecutiveRole(roleStr, selectValues.department?.id)
+                  getExecutiveRole(roleStr)
                 }
                 fnFetchDataByID={getExecutiveRoleById}
                 defaultValue={defaultRole}

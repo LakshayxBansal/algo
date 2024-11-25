@@ -883,7 +883,7 @@ export const contractConfigSchema = z.object({
 })
 
 export const regionalSettingSchema = z.object({
-  reqd : z.boolean(),
+  reqd : z.boolean().optional(),
   id: z.number().optional(),
   country_id: z.number(),
   state_id: z.number(),
