@@ -35,9 +35,7 @@ const columns: GridColDef[] = [
 ];
 
 
-export default async function executive() {
-
-
+export default function executive() {
   return (
     <>
       <EntityList
