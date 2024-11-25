@@ -37,8 +37,8 @@ export default async function Support({ searchParams }: searchParamsProps) {
         <SupportTicketForm
           data={formatedSupportData}
           userDetails={{
-            id: userDetails?.data.id,
-            name: userDetails?.data.name,
+            id: userDetails.id,
+            name: userDetails.name,
           }}
           status ={status}
         />

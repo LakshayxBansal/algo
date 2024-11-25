@@ -125,8 +125,13 @@ export async function getCallEnquiriesDb(
 
      //  sorting logic
      if (sortBy.length > 0) {
+     
       const sortClauses = sortBy.map(
-        (sort) => `${sort.field} ${sort.sort ? sort.sort.toUpperCase():"ASC"}`
+        (sort) =>
+        {
+          const sortingField = sort.field === 'modified_on' ? 'el.modified_on' :sort.field ;
+          return `${sortingField} ${sort.sort ? sort.sort.toUpperCase():"ASC"}`
+        }
       );
       query += ` ORDER BY ${sortClauses.join(', ')}`;
     }
