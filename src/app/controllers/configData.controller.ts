@@ -45,11 +45,10 @@ export async function updateConfigData(config: any, configDept : {[key : string]
         }
         return { status: false, data: errorState};
       }
-      return {status : false, data : []}
     }
   } catch (e: any) {
     logger.error(e);
-    return {status : false, data : []};
+    return {status : false, data : [{path:"form",message: "Error encountered"}]};
   }
 }
 
