@@ -540,6 +540,7 @@ export const supportLedgerSchema = z.object({
   created_on: z.date().optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
+  allocated_to_name: z.string().max(60).optional(),
   stamp: z.number().optional(),
 });
 

@@ -64,7 +64,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
 
 
     const column2: GridColDef[] = [
-        { field: "type", headerName: "Type", width: 70
+        { field: "tranType", headerName: "Type", width: 70
         },
         {
             field: "date", headerName: "Date", width: 130, renderCell: (params) => {
@@ -82,19 +82,19 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
             headerName: "Executive",
             width: 100,
         },
-        { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "actionTaken", headerName: "Action Taken", width: 100 },
+        { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "nextAction", headerName: "Next Action", width: 100 },
         {
             field: "actionDate",
-            headerName: "Action Date",
+            headerName: "Next Action Date",
             width: 130,
             renderCell: (params) => {
                 return params.row.actionDate ? adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
             },
         },
         {
-            field: "actionTime", headerName: "Action Time", width: 100,
+            field: "actionTime", headerName: "Next Action Time", width: 100,
             renderCell: (params) => {
                 return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
             },

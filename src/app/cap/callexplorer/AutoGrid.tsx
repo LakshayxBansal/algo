@@ -3,9 +3,42 @@ import * as React from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Checkbox, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from "@mui/material";
-import { gridClasses, GridColDef, gridPreferencePanelStateSelector, GridPreferencePanelsValue, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
-import { ContainedButton, MinimizedDataGrid } from "../../utils/styledComponents";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Paper,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import {
+  gridClasses,
+  GridColDef,
+  gridPreferencePanelStateSelector,
+  GridPreferencePanelsValue,
+  GridRowSelectionModel,
+  GridSortModel,
+  useGridApiRef,
+} from "@mui/x-data-grid";
+import {
+  ContainedButton,
+  MinimizedDataGrid,
+} from "../../utils/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../../controllers/executive.controller";
 import { optionsDataT } from "../../models/models";
@@ -15,13 +48,18 @@ import AutocompleteDB from "../../Widgets/AutocompleteDB";
 import CallDetailList from "./CallDetailList";
 import { getEnquirySubStatus } from "../../controllers/enquirySubStatus.controller";
 import { getEnquiryAction } from "../../controllers/enquiryAction.controller";
-import { getCallEnquiries, getCallSupportEnquiries } from "../../controllers/callExplorer.controller";
+import {
+  getAllCallEnquiries,
+  getAllCallSupportEnquiries,
+  getCallEnquiries,
+  getCallSupportEnquiries,
+} from "../../controllers/callExplorer.controller";
 import { AddDialog } from "../../Widgets/masters/addDialog";
 import AllocateCall from "./AllocateCall";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Link from "next/link";
-import RefreshIcon from '@mui/icons-material/Refresh';
+import RefreshIcon from "@mui/icons-material/Refresh";
 import FilterMenu from "./FilterMenu";
 import { getSupportCategory } from "@/app/controllers/supportCategory.controller";
 import { getSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
@@ -30,39 +68,57 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { encrypt } from "@/app/utils/encrypt.utils";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { set } from "lodash";
+import dayjs from "dayjs";
 export let handleRefresh: any;
+import * as XLSX from "xlsx";
+import { exportToExcel } from "@/app/utils/exportExcel";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+
+// type FilterKey = "Open-Unallocated" | "Open-Allocated" | "Closed-Failure" | "Closed-Success";
 
 export default function AutoGrid(props: any) {
   const pgSize = 10;
   const [data, setData] = React.useState(props.result.result);
   const [dateFilter, setDateFilter] = React.useState("0");
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>("");
-  const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({} as any);
+  const [columnVisibilityModel, setColumnVisibilityModel] = React.useState(
+    {} as any
+  );
   const [filterType, setFilterType] = React.useState<string>("reset"); // Default to "reset"
   const [status, setStatus] = React.useState("1");
   const [callFilter, setCallFilter] = React.useState<string>("0");
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const [pageModel, setPageModel] = React.useState({ page: 0, pageSize: pgSize });
+  const [pageModel, setPageModel] = React.useState({
+    page: 0,
+    pageSize: pgSize,
+  });
   const [totalRowCount, setTotalRowCount] = React.useState(props.count); // State for row count
   const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>([]);
   const [refresh, setRefresh] = React.useState<boolean>(true);
   const [refreshInterval, setRefreshInterval] = React.useState<number>(5); // Default to 5 minutes
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(false);
   const [details, setDetails] = React.useState(true);
   const [dlgState, setDlgState] = React.useState<DlgState>({});
-  const [filterValueState, setFilterValueState] = React.useState<{ [key: string]: any }>({});
-  type DlgState = { [key: string]: HTMLElement | null; };
+  const [filterValueState, setFilterValueState] = React.useState<{
+    [key: string]: any;
+  }>({});
+  type DlgState = { [key: string]: HTMLElement | null };
   const [enableAllocate, setEnableAllocate] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [value, setValue] = React.useState(0);
-  const [selectedStatuses, setSelectedStatuses] = React.useState({
-    "Open-Unallocated": false,
-    "Open-Allocated": false,
-    "Closed-Failure": false,
-    "Closed-Success": false,
-  });
-
+  const [sortBy, setSortBy] = React.useState<GridSortModel>([]);
+  // const [selectedStatuses, setSelectedStatuses] = React.useState<Record<FilterKey, boolean>>({
+  //   "Open-Unallocated": false,
+  //   "Open-Allocated": false,
+  //   "Closed-Failure": false,
+  //   "Closed-Success": false,
+  // });
+  const [selectedStatusRows, setSelectedStatusRows] =
+    React.useState<GridRowSelectionModel>([]);
+  const [lastSelectedIndex, setLastSelectedIndex] = React.useState(null);
   const apiRef = useGridApiRef();
 
   const router = useRouter();
@@ -78,28 +134,127 @@ export default function AutoGrid(props: any) {
     },
   };
 
+  // const handleCheckboxClick=(filterKey:FilterKey)=>{
+  //   setSelectedStatuses((prevFilters) => ({
+  //     ...prevFilters,
+  //     [filterKey]: !prevFilters[filterKey],
+  //   }));
+
+  // }
+
   const tabOptions = [
     {
-      "name": "enquiry",
-      "getCategory": getEnquiryCategory,
-      "getSubStatus": getEnquirySubStatus,
-      "getAction": getEnquiryAction,
-      "getCallData": getCallEnquiries
-
-    }, {
-      "name": "support",
-      "getCategory": getSupportCategory,
-      "getSubStatus": getSupportSubStatus,
-      "getAction": getSupportAction,
-      "getCallData": getCallSupportEnquiries
-    }
-  ]
+      name: "enquiry",
+      getCategory: getEnquiryCategory,
+      getSubStatus: getEnquirySubStatus,
+      getAction: getEnquiryAction,
+      getCallData: getCallEnquiries,
+      getAllData: getAllCallEnquiries,
+    },
+    {
+      name: "support",
+      getCategory: getSupportCategory,
+      getSubStatus: getSupportSubStatus,
+      getAction: getSupportAction,
+      getCallData: getCallSupportEnquiries,
+      getAllData: getAllCallSupportEnquiries,
+    },
+  ];
 
   React.useLayoutEffect(() => {
     if (apiRef.current) {
-      apiRef.current.setRowSelectionModel([]); 
+      apiRef.current.setRowSelectionModel([]);
     }
-  }, [value]); 
+  }, [value]);
+
+  const isShiftPressedRef = React.useRef(false);
+  const wasShiftPressedRef = React.useRef(false);
+  const handleCellClick = (params: any, event: any) => {
+    if (params.field !== "statusColor") return; // Exit if the clicked field isn't "statusColor"
+
+    event.stopPropagation();
+    let deSelect = false;
+
+    const isCntlPressed = event?.ctrlKey;
+    isShiftPressedRef.current = event?.shiftKey;
+
+    if (!wasShiftPressedRef.current && isShiftPressedRef.current) {
+      wasShiftPressedRef.current = true;
+    }
+
+    let updatedSelectedRows = [...selectedStatusRows]; // Temporary storage for selected rows
+
+    if (isShiftPressedRef.current && lastSelectedIndex !== null) {
+      // Calculate range between last selected and current row
+
+      const lastIndex = data.findIndex(
+        (row: any) => row.id === lastSelectedIndex
+      );
+      const currentIndex = data.findIndex(
+        (row: any) => row.id === params.row.id
+      );
+
+      const alreadySelected = selectedStatusRows.includes(params.row.id);
+      if (alreadySelected) {
+        updatedSelectedRows = updatedSelectedRows.filter(
+          (id) => id !== params.row.id
+        );
+      } else {
+        const start = Math.min(lastIndex, currentIndex);
+        const end = Math.max(lastIndex, currentIndex);
+
+        // Select all rows in the range
+        const rangeIds = data.slice(start, end + 1).map((row: any) => row.id);
+        updatedSelectedRows = Array.from(
+          new Set([...updatedSelectedRows, ...rangeIds])
+        );
+      }
+    } else if (
+      !isShiftPressedRef.current &&
+      wasShiftPressedRef.current &&
+      !isCntlPressed
+    ) {
+
+      updatedSelectedRows = [params.row.id];
+      wasShiftPressedRef.current = false;
+
+    } else {
+      // Toggle selection for the clicked row
+
+      if (updatedSelectedRows.includes(params.row.id)) {
+        deSelect = true;
+        updatedSelectedRows = updatedSelectedRows.filter(
+          (id) => id !== params.row.id
+        );
+      } else {
+        updatedSelectedRows = [...updatedSelectedRows, params.row.id];
+      }
+    }
+
+    // Apply updates after the conditional logic
+    setSelectedStatusRows(updatedSelectedRows);
+    deSelect ? setLastSelectedIndex(null) : setLastSelectedIndex(params.row.id);
+
+    // find if any of selected row has closed status
+    const isAllocatable =
+      updatedSelectedRows.length > 0 &&
+      !updatedSelectedRows.some((rowId: any) => {
+        const selectedData = data.find((row: any) => row.id === rowId);
+        return selectedData?.callStatus === "Closed";
+      });
+
+    // Set enableAllocate state
+    setEnableAllocate(isAllocatable);
+
+    if (deSelect && selectedRow.id === params.row.id) {
+      setSelectedRow(null);
+      setRowSelectionModel([]);
+    } else {
+      const selectedRowData = data.find((row: any) => row.id === params.row.id);
+      setSelectedRow(selectedRowData);
+      setRowSelectionModel([params.row.id]);
+    }
+  };
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -117,11 +272,11 @@ export default function AutoGrid(props: any) {
     const value = Number(event.target.value);
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
-const handleStatusClick= async ()=>{
-  const encyptedId= await encrypt(selectedRow?.id);
-  const path = `/cap/${tabOptions[value].name}?id=${encyptedId}&status=true`;
-  router.push(path);
-}
+  const handleStatusClick = async () => {
+    const encyptedId = await encrypt(selectedRow?.id);
+    const path = `/cap/${tabOptions[value].name}?id=${encyptedId}&status=true`;
+    router.push(path);
+  };
 
   const handleFilterChange = (field: string, value: any) => {
     setFilterValueState((prevState) => ({
@@ -131,21 +286,38 @@ const handleStatusClick= async ()=>{
   };
 
   useEffect(() => {
-
-    setLoading(true)
+    setLoading(true);
     async function getEnquiries() {
-      // const result = await getCallEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
-      // const supportResult= await getCallSupportEnquiries(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
-      const result = await tabOptions[value].getCallData(filterValueState, filterType, selectedStatus, callFilter, dateFilter, pageModel.page + 1, pageModel.pageSize);
-      console.log('result', result);
 
+      const result = await tabOptions[value].getCallData(
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter,
+        pageModel.page + 1,
+        pageModel.pageSize,
+        sortBy
+      );
 
       setData(result?.result);
       setTotalRowCount(Number(result?.count));
     }
     getEnquiries();
-    setLoading(false)
-  }, [filterValueState, filterType, selectedStatus, callFilter, dateFilter, dialogOpen, refresh, value, pageModel.page, pageModel.pageSize])
+    setLoading(false);
+  }, [
+    filterValueState,
+    filterType,
+    selectedStatus,
+    callFilter,
+    dateFilter,
+    dialogOpen,
+    refresh,
+    value,
+    pageModel.page,
+    pageModel.pageSize,
+    sortBy,
+  ]);
 
   handleRefresh = () => {
     setPageModel((prev: any) => ({
@@ -154,9 +326,8 @@ const handleStatusClick= async ()=>{
     }));
     setRowSelectionModel([]);
     setSelectedRow(null);
-    setRefresh(!refresh)
+    setRefresh(!refresh);
   };
-
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -167,58 +338,71 @@ const handleStatusClick= async ()=>{
   }, [refreshInterval]);
 
   const handleColumnVisibility = () => {
-    return <>
-      <Tooltip title="Manage Columns" placement="top-end" arrow>
-        <IconButton
-          aria-controls="tune-menu"
-          aria-haspopup="true"
-          ref={(ref) => setAnchorEl(ref)}
-          onClick={toggleColBtn}
-        >
-          <TuneIcon fontSize="medium" />
-        </IconButton>
-      </Tooltip>
-    </>
-  }
-
+    return (
+      <>
+        <Tooltip title="Manage Columns" placement="top-end" arrow>
+          <IconButton
+            aria-controls="tune-menu"
+            aria-haspopup="true"
+            ref={(ref) => setAnchorEl(ref)}
+            onClick={toggleColBtn}
+          >
+            <TuneIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+      </>
+    );
+  };
 
   const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
-    setSelectedRow
-    setRowSelectionModel(selectionModel);
+    // setSelectedRow
+
     // Enable Allocate Call button if there are selected rows and no row has 'Closed' callStatus
-    if (selectionModel.length > 0) {
-      let isAllocatable = true;
+    // if (selectionModel.length > 0) {
+    //   let isAllocatable = true;
 
-      for (let i = 0; i < selectionModel.length; ++i) {
-        const selectedData = data.find((row: any) => row.id === selectionModel[i]);
+    //   for (let i = 0; i < selectionModel.length; ++i) {
+    //     const selectedData = data.find((row: any) => row.id === selectionModel[i]);
 
-        if (selectedData && selectedData.callStatus === "Closed") {
-          isAllocatable = false;
-          break; // If any row has 'Closed' status, disable the button
-        }
-      }
+    //     if (selectedData && selectedData.callStatus === "Closed") {
+    //       isAllocatable = false;
+    //       break; // If any row has 'Closed' status, disable the button
+    //     }
+    //   }
 
-      // Set enableAllocate state based on the conditions
-      setEnableAllocate(isAllocatable);
-    } else {
-      // If no rows are selected, disable the button
-      setEnableAllocate(false);
+    //   // Set enableAllocate state based on the conditions
+    //   setEnableAllocate(isAllocatable);
+    // } else {
+    // If no rows are selected, disable the button
+
+    // }
+
+    // if (selectionModel?.length > 1) {
+    //   setSelectedRow(null);
+    // }
+    // else {
+    const selectedId = selectionModel[0] ?? selectedStatusRows[0]; // Get the ID of the selected row
+
+    const selectedData = data?.find((row: any) => row.id === selectedId); // Find the corresponding row data
+    const isAllocatable = selectedData?.callStatus === "Open";
+    setEnableAllocate(isAllocatable);
+    setRowSelectionModel(selectionModel);
+    setSelectedRow(selectedData); // Set the selected row data
+    // }
+  };
+
+  const handleCustomSort = (sortModel: GridSortModel) => {
+    if (sortModel.length === 0) {
+      // No sorting applied
+      return;
     }
-
-    if (selectionModel?.length > 1) {
-      setSelectedRow(null);
-    }
-    else {
-      const selectedId = selectionModel[0]; // Get the ID of the selected row
-      const selectedData = data.find((row: any) => row.id === selectedId); // Find the corresponding row data
-      setSelectedRow(selectedData); // Set the selected row data
-    }
+    setSortBy(sortModel);
   };
 
   const handleSelectedStatus = (e: SelectChangeEvent) => {
     setSelectedStatus(e.target.value);
     setCallFilter("0");
-  }
+  };
 
   const handleSelectedSubStatus = (e: SelectChangeEvent) => {
     setStatus(e.target.value);
@@ -226,18 +410,15 @@ const handleStatusClick= async ()=>{
       ...prevState,
       ["subStatus"]: null, // Set the selected value for the specific field
     }));
-  }
-
-  const options = {
-    timeZone: 'Asia/Kolkata',
-    hour12: true, // Use 12-hour format with AM/PM
-    hour: '2-digit',
-    minute: '2-digit',
   };
 
+  const options = {
+    timeZone: "Asia/Kolkata",
+    hour12: true, // Use 12-hour format with AM/PM
+    hour: "2-digit",
+    minute: "2-digit",
+  };
 
-
-  // const CustomColor = (props: { row: any; }) => {
   //   let color;
   //   if (props.row.callStatus === "Open") {
   //     if (props.row.executive === null) { color = "blue" }
@@ -267,7 +448,7 @@ const handleStatusClick= async ()=>{
   //   } else {
   //     color = props.row.subStatus === "Success" ? "green" : "red";
   //   }
-  
+
   //   return (
   //     <Checkbox
   //       checked={props.selected}
@@ -281,6 +462,69 @@ const handleStatusClick= async ()=>{
   //     />
   //   );
   // };
+
+  /**
+   * Handles keyboard navigation within a data grid.
+   *
+   * @param {object} params - The parameters containing information about the current cell.
+   * @param {object} event - The keyboard event triggered by the user.
+   *
+   * Navigates to the next or previous row based on the arrow key pressed. Prevents the default
+   * behavior of arrow keys. Selects the next row on "ArrowDown" and the previous row on "ArrowUp".
+   * Prevents default action on "Enter" and "Space" keys. Updates the row selection model and sets
+   * the selected row if navigation occurs.
+   */
+  const handleCellKeyDown = (params: any, event: any, details: any) => {
+    const rowId = params.row.id;
+    const currentIndex = data.findIndex((row: any) => row.id === rowId);
+
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      nextIndex =
+        currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+    }
+
+    if (nextIndex !== currentIndex) {
+      const nextRow = data[nextIndex];
+      if (nextRow) {
+        setRowSelectionModel([nextRow.id]);
+        setSelectedRow(nextRow);
+      }
+    }
+  };
+  const handleExport = async () => {
+    try {
+      // Get visible columns from DataGrid API
+      const visibleColumns = apiRef.current
+        .getVisibleColumns()
+        .filter((col) => !["time", "actionTime"].includes(col.field));
+
+      // Extract fields and headers for visible columns
+      const fields = visibleColumns.slice(2).map((col) => col.field);
+      const headers = visibleColumns.slice(2).map((col) => col.headerName);
+
+      const allData = await tabOptions[value].getAllData(
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter
+      );
+
+      // Call the `exportToExcel` function
+      await exportToExcel(fields, headers, { result: allData?.result });
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+      alert("Failed to export data. Please try again.");
+    }
+  };
 
   const checkboxSelectionWithColor = (params: any) => {
     let color;
@@ -297,58 +541,10 @@ const handleStatusClick= async ()=>{
     };
   };
   const column1: GridColDef[] = [
-    // {
-    //   field: "Type",
-    //   headerName: "Status",
-    //   width: 50,
-    //   hideable: false,
-    //   renderCell: (params) => {
-    //     return <CustomColor row={params.row} />;
-    //   },
-    // },
-
-    // {
-    //   field: "statusColor",
-    //   headerName: "Select",
-    //   width: 100,
-    //   renderCell: (params) => (
-    //     <CustomColor
-    //       row={params.row}
-    //       selected={selectionModel.includes(params.row.id)}
-    //       onChange={handleRowSelection}
-    //     />
-    //   ),
-    // },
-    // {
-    //   field: "statusColor",
-    //   headerName: "Select",
-    //   width: 80,
-    //   renderCell: (params) => {
-    //     let color;
-    //     if (params.row.callStatus === "Open") {
-    //       color = params.row.executive === null ? "blue" : "purple";
-    //     } else {
-    //       color = params.row.subStatus === "Success" ? "green" : "red";
-    //     }
-  
-    //     return (
-    //       <Checkbox
-    //         checked={params.row.selected}
-    //         size="small"
-    //         sx={{
-    //           color: color,
-    //           '&.Mui-checked': {
-    //             color: color,
-    //           },
-    //         }}
-    //       />
-    //     );
-    //   },
-    // },
     {
       field: "statusColor",
       headerName: "Status",
-      width: 80,  
+      width: 80,
       renderCell: (params) => {
         let color;
         if (params.row.callStatus === "Open") {
@@ -356,21 +552,21 @@ const handleStatusClick= async ()=>{
         } else {
           color = params.row.subStatus === "Success" ? "green" : "red";
         }
-    
+
         return (
           <Checkbox
-            checked={params.row.selected}
+            checked={selectedStatusRows.includes(params.row.id)}
             size="small" // Smaller checkbox size
             sx={{
               color: color,
-              '&.Mui-checked': {
+              "&.Mui-checked": {
                 color: color,
               },
-              transform: 'scale(0.75)',
-              padding: 0,  // Remove padding to make it fit better
+              transform: "scale(0.75)",
+              padding: 0, // Remove padding to make it fit better
               // // width: 20,   // Adjust width
               // // height: 20,  // Adjust height
-              margin: 0,   // Remove margin if any
+              margin: 0, // Remove margin if any
               display: "flex", // Ensure proper alignment
               alignItems: "center", // Center the checkbox within the row
               justifyContent: "center", // Center the checkbox in the cell
@@ -379,13 +575,26 @@ const handleStatusClick= async ()=>{
         );
       },
     },
-    
-    { field: "description", headerName: "Description", hideable: false, width: 130, sortable: false },
-    
 
-    { field: "contactParty", headerName: "Contact/Party", hideable: false, width: 130 },
     {
-      field: "date", width: 130, headerName: "Date", hideable: false,
+      field: "description",
+      headerName: "Description",
+      hideable: false,
+      width: 130,
+      sortable: false,
+    },
+
+    {
+      field: "contactParty",
+      headerName: "Contact/Party",
+      hideable: false,
+      width: 130,
+    },
+    {
+      field: "date",
+      width: 130,
+      headerName: "Date",
+      hideable: false,
       renderCell: (params) => {
         return adjustToLocal(params.row.date).toDate().toString().slice(0, 15);
       },
@@ -404,9 +613,16 @@ const handleStatusClick= async ()=>{
               id="initial"
               label="Initial Date"
               name="initial"
-              defaultValue={filterValueState.date ? filterValueState.date.initial : null}
+              defaultValue={
+                filterValueState.date ? filterValueState.date.initial : null
+              }
               value={filterValueState?.date?.initial}
-              onChange={(val: any) => handleFilterChange("date", { ...filterValueState?.date, "initial": val })}
+              onChange={(val: any) =>
+                handleFilterChange("date", {
+                  ...filterValueState?.date,
+                  initial: val,
+                })
+              }
             />
           </MenuItem>
           <MenuItem>
@@ -415,22 +631,35 @@ const handleStatusClick= async ()=>{
               id="final"
               label="Final Date"
               name="final"
-              defaultValue={filterValueState.date ? filterValueState.date.final : null}
+              defaultValue={
+                filterValueState.date
+                  ? filterValueState.date.final
+                  : dayjs(new Date())
+              }
               value={filterValueState?.date?.final}
-              onChange={(val: any) => handleFilterChange("date", { ...filterValueState?.date, "final": val })}
+              onChange={(val: any) =>
+                handleFilterChange("date", {
+                  ...filterValueState?.date,
+                  final: val,
+                })
+              }
             />
           </MenuItem>
         </FilterMenu>
       ),
     },
     {
-      field: "time", headerName: "Time", width: 100,
+      field: "time",
+      headerName: "Time",
+      width: 100,
       renderCell: (params) => {
         return adjustToLocal(params.row.date).format("hh:mm A");
       },
     },
     {
-      field: "callCategory", width: 120, headerName: "Call Category",
+      field: "callCategory",
+      width: 120,
+      headerName: "Call Category",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -446,7 +675,7 @@ const handleStatusClick= async ()=>{
               id={"category"}
               label={"Category"}
               // onChange={(e, val, s) => setCategorySearchText(val)}
-              onChange={(e, val, s) => handleFilterChange('callCategory', val)}
+              onChange={(e, val, s) => handleFilterChange("callCategory", val)}
               fetchDataFn={tabOptions[value].getCategory}
               defaultValue={
                 {
@@ -457,19 +686,21 @@ const handleStatusClick= async ()=>{
               diaglogVal={{
                 id: filterValueState?.callCategory?.id,
                 name: filterValueState?.callCategory?.name,
-                detail: undefined
+                detail: undefined,
               }}
-              setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
-              }}
-              fnSetModifyMode={function (id: string): void {
-              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
           </MenuItem>
         </FilterMenu>
       ),
     },
     {
-      field: "area", width: 100, headerName: "Area",
+      field: "area",
+      width: 100,
+      headerName: "Area",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -486,7 +717,7 @@ const handleStatusClick= async ()=>{
               label={"Area"}
               width={210}
               fetchDataFn={getArea}
-              onChange={(e, val, s) => handleFilterChange('area', val)}
+              onChange={(e, val, s) => handleFilterChange("area", val)}
               defaultValue={
                 {
                   id: filterValueState?.area?.id,
@@ -496,19 +727,21 @@ const handleStatusClick= async ()=>{
               diaglogVal={{
                 id: filterValueState?.area?.id,
                 name: filterValueState?.area?.name,
-                detail: undefined
+                detail: undefined,
               }}
-              setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
-              }}
-              fnSetModifyMode={function (id: string): void {
-              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
           </MenuItem>
         </FilterMenu>
       ),
     },
     {
-      field: "executive", width: 100, headerName: "Executive",
+      field: "executive",
+      width: 100,
+      headerName: "Executive",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -549,7 +782,7 @@ const handleStatusClick= async ()=>{
                 id={"executive"}
                 label={"Executive"}
                 // width={210}
-                onChange={(e, val, s) => handleFilterChange('executive', val)}
+                onChange={(e, val, s) => handleFilterChange("executive", val)}
                 fetchDataFn={getExecutive}
                 defaultValue={
                   {
@@ -560,12 +793,12 @@ const handleStatusClick= async ()=>{
                 diaglogVal={{
                   id: filterValueState?.executive?.id,
                   name: filterValueState?.executive?.name,
-                  detail: undefined
+                  detail: undefined,
                 }}
-                setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
-                }}
-                fnSetModifyMode={function (id: string): void {
-                }}
+                setDialogVal={function (
+                  value: React.SetStateAction<optionsDataT>
+                ): void {}}
+                fnSetModifyMode={function (id: string): void {}}
               />
             </MenuItem>
           )}
@@ -573,10 +806,10 @@ const handleStatusClick= async ()=>{
       ),
     },
     {
-      field: "callStatus", headerName: "Call Status", width: 100,
-      renderCell: (params) => (
-        <span>{params.row.callStatus}</span>
-      ),
+      field: "callStatus",
+      headerName: "Call Status",
+      width: 100,
+      renderCell: (params) => <span>{params.row.callStatus}</span>,
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -592,14 +825,26 @@ const handleStatusClick= async ()=>{
                 value={selectedStatus}
                 onChange={handleSelectedStatus}
               >
-                <FormControlLabel value="Open" control={<Radio />} label="Open" />
-                <FormControlLabel value="Closed" control={<Radio />} label="Closed" />
-                <FormControlLabel value="" control={<Radio />} label="Both Calls" />
+                <FormControlLabel
+                  value="Open"
+                  control={<Radio />}
+                  label="Open"
+                />
+                <FormControlLabel
+                  value="Closed"
+                  control={<Radio />}
+                  label="Closed"
+                />
+                <FormControlLabel
+                  value=""
+                  control={<Radio />}
+                  label="Both Calls"
+                />
               </RadioGroup>
             </FormControl>
           </MenuItem>
           <MenuItem>
-            {selectedStatus !== "" &&
+            {selectedStatus !== "" && (
               <FormControl
                 variant="outlined"
                 sx={{ Width: 50, marginLeft: "0px" }}
@@ -613,22 +858,31 @@ const handleStatusClick= async ()=>{
                   value={callFilter}
                   onChange={handleCallFilterChange}
                 >
-
-                  {selectedStatus === "Open" && <MenuItem value={"1"}>Allocated</MenuItem>}
-                  {selectedStatus === "Open" && <MenuItem value={"2"}>Unallocated</MenuItem>}
-                  {selectedStatus === "Closed" && <MenuItem value={"3"}>Success</MenuItem>}
-                  {selectedStatus === "Closed" && <MenuItem value={"4"}>Failure</MenuItem>}
+                  {selectedStatus === "Open" && (
+                    <MenuItem value={"1"}>Allocated</MenuItem>
+                  )}
+                  {selectedStatus === "Open" && (
+                    <MenuItem value={"2"}>Unallocated</MenuItem>
+                  )}
+                  {selectedStatus === "Closed" && (
+                    <MenuItem value={"3"}>Success</MenuItem>
+                  )}
+                  {selectedStatus === "Closed" && (
+                    <MenuItem value={"4"}>Failure</MenuItem>
+                  )}
 
                   <MenuItem value={"0"}>Both Calls</MenuItem>
                 </Select>
               </FormControl>
-            }
+            )}
           </MenuItem>
         </FilterMenu>
       ),
     },
     {
-      field: "subStatus", width: 100, headerName: "Sub Status",
+      field: "subStatus",
+      width: 100,
+      headerName: "Sub Status",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -639,10 +893,7 @@ const handleStatusClick= async ()=>{
           tooltipTitle={"Filter by Sub Status"}
         >
           <MenuItem>
-            <RadioGroup
-              value={status}
-              onChange={handleSelectedSubStatus}
-            >
+            <RadioGroup value={status} onChange={handleSelectedSubStatus}>
               <FormControlLabel
                 value="1"
                 control={<Radio />}
@@ -656,12 +907,11 @@ const handleStatusClick= async ()=>{
             </RadioGroup>
           </MenuItem>
           <MenuItem>
-
             <AutocompleteDB
               name={"sub_status"}
               id={"sub_status"}
               label={"Call Sub-Status"}
-              onChange={(e, val, s) => handleFilterChange('subStatus', val)}
+              onChange={(e, val, s) => handleFilterChange("subStatus", val)}
               // fetchDataFn={getSubStatusforStatus}
               fetchDataFn={(roleStr: string) =>
                 tabOptions[value].getSubStatus(roleStr, status)
@@ -675,19 +925,21 @@ const handleStatusClick= async ()=>{
               diaglogVal={{
                 id: filterValueState?.subStatus?.id,
                 name: filterValueState?.subStatus?.name,
-                detail: undefined
+                detail: undefined,
               }}
-              setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
-              }}
-              fnSetModifyMode={function (id: string): void {
-              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
           </MenuItem>
         </FilterMenu>
       ),
     },
     {
-      field: "nextAction", width: 100, headerName: "Next Action",
+      field: "nextAction",
+      width: 100,
+      headerName: "Next Action",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -702,7 +954,7 @@ const handleStatusClick= async ()=>{
               name={"next_action"}
               id={"next_action"}
               label={"Next Action"}
-              onChange={(e, val, s) => handleFilterChange('nextAction', val)}
+              onChange={(e, val, s) => handleFilterChange("nextAction", val)}
               fetchDataFn={tabOptions[value].getAction}
               defaultValue={
                 {
@@ -713,21 +965,28 @@ const handleStatusClick= async ()=>{
               diaglogVal={{
                 id: filterValueState?.nextAction?.id,
                 name: filterValueState?.nextAction?.name,
-                detail: undefined
+                detail: undefined,
               }}
-              setDialogVal={function (value: React.SetStateAction<optionsDataT>): void {
-              }}
-              fnSetModifyMode={function (id: string): void {
-              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {}}
+              fnSetModifyMode={function (id: string): void {}}
             />
           </MenuItem>
         </FilterMenu>
       ),
     },
     {
-      field: "actionDate", width: 100, headerName: "Action Date",
+      field: "actionDate",
+      width: 100,
+      headerName: " Next Action Date",
       renderCell: (params) => {
-        return params.row.actionDate?adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
+        return params.row.actionDate
+          ? adjustToLocal(params.row.actionDate)
+              .toDate()
+              .toString()
+              .slice(0, 15)
+          : "";
       },
       renderHeader: () => (
         <FilterMenu
@@ -735,7 +994,7 @@ const handleStatusClick= async ()=>{
           setFilterValueState={setFilterValueState}
           setDlgState={setDlgState}
           field={"actionDate"}
-          headerName={"Action Date"}
+          headerName={"Next Action Date"}
           tooltipTitle={"Filter by Action Date"}
           filterReset={setDateFilter}
           resetValue={"0"}
@@ -771,22 +1030,39 @@ const handleStatusClick= async ()=>{
                   label="Initial Date"
                   name="initialActionDate"
                   size="small"
-                  defaultValue={filterValueState.actionDate ? filterValueState.actionDate?.initial : null}
+                  defaultValue={
+                    filterValueState.actionDate
+                      ? filterValueState.actionDate?.initial
+                      : null
+                  }
                   value={filterValueState?.actionDate?.initial}
-                  onChange={(val: any) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "initial": val })}
+                  onChange={(val: any) =>
+                    handleFilterChange("actionDate", {
+                      ...filterValueState?.actionDate,
+                      initial: val,
+                    })
+                  }
                 />
               </MenuItem>
 
               <MenuItem>
-
                 <InputControl
                   inputType={InputType.DATEINPUT}
                   id="final_action_date"
                   label="Final Date"
                   name="finalActionDate"
-                  defaultValue={filterValueState.actionDate ? filterValueState.actionDate?.final : null}
+                  defaultValue={
+                    filterValueState.actionDate
+                      ? filterValueState.actionDate?.final
+                      : dayjs(new Date())
+                  }
                   value={filterValueState?.actionDate?.final}
-                  onChange={(val: any) => handleFilterChange("actionDate", { ...filterValueState?.actionDate, "final": val })}
+                  onChange={(val: any) =>
+                    handleFilterChange("actionDate", {
+                      ...filterValueState?.actionDate,
+                      final: val,
+                    })
+                  }
                 />
               </MenuItem>
             </>
@@ -796,12 +1072,79 @@ const handleStatusClick= async ()=>{
     },
     {
       field: "actionTime",
-      headerName: "Action Time",
+      headerName: "Next Action Time",
       renderCell: (params) => {
-        return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
+        return params.row.actionDate
+          ? adjustToLocal(params.row.actionDate).format("hh:mm A")
+          : "";
       },
     },
-  ]
+    {
+      field: "modified_on",
+      width: 130,
+      headerName: "Last Updated",
+      hideable: false,
+      renderCell: (params) => {
+        return params.row.modified_on
+          ? adjustToLocal(params.row.modified_on)
+              .toDate()
+              .toString()
+              .slice(0, 15)
+          : "";
+      },
+      renderHeader: () => (
+        <FilterMenu
+          filterValueState={filterValueState}
+          setFilterValueState={setFilterValueState}
+          setDlgState={setDlgState}
+          field={"modified_on"}
+          headerName={"Last Updated"}
+          tooltipTitle={"Filter by Last Updated Date"}
+        >
+          <MenuItem>
+            <InputControl
+              inputType={InputType.DATEINPUT}
+              id="initial"
+              label="Initial Date"
+              name="initial"
+              defaultValue={
+                filterValueState.modified_on
+                  ? filterValueState.modified_on.initial
+                  : null
+              }
+              value={filterValueState?.modified_on?.initial}
+              onChange={(val: any) =>
+                handleFilterChange("modified_on", {
+                  ...filterValueState?.modified_on,
+                  initial: val,
+                })
+              }
+            />
+          </MenuItem>
+          <MenuItem>
+            <InputControl
+              inputType={InputType.DATEINPUT}
+              id="final"
+              label="Final Date"
+              name="final"
+              defaultValue={
+                filterValueState.modified_on
+                  ? filterValueState.modified_on.final
+                  : dayjs(new Date())
+              }
+              value={filterValueState?.modified_on?.final}
+              onChange={(val: any) =>
+                handleFilterChange("modified_on", {
+                  ...filterValueState?.modified_on,
+                  final: val,
+                })
+              }
+            />
+          </MenuItem>
+        </FilterMenu>
+      ),
+    },
+  ];
 
   const handleDateFilterChange = (event: SelectChangeEvent) => {
     setDateFilter(event.target.value as string);
@@ -812,19 +1155,15 @@ const handleStatusClick= async ()=>{
   };
 
   //options of options in checkbox
-  const checkboxOptions = ['Enquiry', 'Support'];
-
-
+  const checkboxOptions = ["Enquiry", "Support"];
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const CallType = (props: { text: string, color: string }) => {
+  const CallType = (props: { text: string; color: string }) => {
     return (
-      <Box
-        sx={{ display: "flex", alignItems: "center" }}
-      >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <Box
           sx={{
             width: "7px",
@@ -835,8 +1174,8 @@ const handleStatusClick= async ()=>{
         ></Box>
         <Typography fontSize={14}>{props.text}</Typography>
       </Box>
-    )
-  }
+    );
+  };
 
   return (
     <Box
@@ -867,7 +1206,7 @@ const handleStatusClick= async ()=>{
                     position: "relative",
                     "& .MuiTab-root": {
                       marginRight: "2px",
-                      padding: "8px 16px",
+                      padding: "0px 16px",
                       borderTopLeftRadius: "8px",
                       borderTopRightRadius: "8px",
                       border: "1px solid #d3d3d3",
@@ -971,27 +1310,45 @@ const handleStatusClick= async ()=>{
                 </Grid>
               </Grid>
             </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Tooltip title="Export to Excel" arrow >
+                <IconButton onClick={handleExport}>
+                  <CloudDownloadIcon />
+                </IconButton>
+              </Tooltip>
 
-            <Box>{handleColumnVisibility()}</Box>
+              <Box>{handleColumnVisibility()}</Box>
+            </Box>
           </Grid>
         </Seperator>
-        <Paper elevation={1} sx={{ mb: 1 }}
-        >
-          {/* <MinimizedDataGrid
+        <Paper elevation={1} sx={{ mb: 1 }}>
+
+          <MinimizedDataGrid
             disableColumnMenu
-            rowHeight={25}
-            columnHeaderHeight={30}
+            rowHeight={25} // Compact row height
+            columnHeaderHeight={30} // Header height remains compact
             keepNonExistentRowsSelected
+            disableMultipleRowSelection={true}
             rows={data ? data : []}
             columns={column1}
+            sortingMode="server" // Disable default sorting
+            onSortModelChange={(sortModel) => handleCustomSort(sortModel)}
+            onCellKeyDown={handleCellKeyDown}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel: any) =>
               setColumnVisibilityModel(newModel)
             }
-            onRowSelectionModelChange={handleRowSelection} // Event listener for row selection
+            onCellClick={handleCellClick}
+            onRowSelectionModelChange={handleRowSelection}
             rowSelectionModel={rowSelectionModel}
             paginationMode="server"
-            pageSizeOptions={[5, 10, 20]}
+            pageSizeOptions={[10, 20, 50]} // Updated to allow more rows per page
             paginationModel={pageModel}
             onPaginationModelChange={setPageModel}
             rowCount={totalRowCount}
@@ -1001,9 +1358,6 @@ const handleStatusClick= async ()=>{
             slotProps={{
               columnsPanel: {
                 sx: {
-                  // "& .MuiDataGrid-panelFooter button:firstChild": {
-                  //   display: "none"
-                  // },
                   ".MuiDataGrid-columnsManagementRow:first-child": {
                     display: "none",
                   },
@@ -1033,213 +1387,80 @@ const handleStatusClick= async ()=>{
                 },
               },
             }}
-            // slots={{
-            //   footer: handleColumnVisibility
-            // }}
             sx={{
-              // height: "10em",
-              mt: "1%",
+              mt: "0",
               overflowY: "auto",
-              minHeight: "30px", // Set a minimum height of 30px
-              height: details
-                ? {
-                    xs: "32vh",
-                    sm: "32vh",
-                    "@media (min-height: 645px)": {
-                      height: "50vh",
-                    },
-                  }
-                : {
-                    xs: "60vh",
-                    sm: "60vh",
-                    "@media (min-height: 645px)": {
-                      height: "65vh",
-                    },
-                  },
-              // '& .MuiDataGrid-virtualScroller': {
-              //   overflowY: 'auto',
-              // },
+              height: {
+                xs: "50vh",
+                sm: "50vh",
+                "@media (min-height: 800px)": {
+                  height: "60vh", // Maximum height for larger screens
+                },
+              },
+              "& .MuiDataGrid-root": {
+                fontSize: "12px", // Keep row font size compact
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                fontSize: "inherit", // Keep header font size unchanged
+                fontWeight: "bold",
+              },
+              "& .MuiDataGrid-row": {
+                fontSize: "12px", // Compact font for rows
+              },
+              "& .MuiTablePagination-root": {
+                fontSize: "10px", // Compact pagination font
+              },
+              "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox":
+                {
+                  display: "none",
+                },
+              "& .MuiDataGrid-footerContainer": {
+                fontSize: "0.75rem", // Set smaller font size
+              },
             }}
-          /> */}
-          {/* <MinimizedDataGrid
-  disableColumnMenu
-  rowHeight={25}
-  columnHeaderHeight={30}
-  keepNonExistentRowsSelected
-  rows={data ? data : []}
-  columns={column1}
-  columnVisibilityModel={columnVisibilityModel}
-  onColumnVisibilityModelChange={(newModel: any) =>
-    setColumnVisibilityModel(newModel)
-  }
-  checkboxSelection
-  apiRef={apiRef}
-  onRowSelectionModelChange={handleRowSelection}
-  rowSelectionModel={rowSelectionModel}
-  paginationMode="server"
-  pageSizeOptions={[5, 10, 20]}
-  paginationModel={pageModel}
-  onPaginationModelChange={setPageModel}
-  rowCount={totalRowCount}
-  loading={loading}
-  slotProps={{
-    columnsPanel: {
-      sx: {
-        ".MuiDataGrid-columnsManagementRow:first-child": {
-          display: "none",
-        },
-        ".MuiDataGrid-columnsManagementHeader": {
-          display: "none",
-        },
-      },
-    },
-    panel: {
-      anchorEl: () => {
-        const preferencePanelState = gridPreferencePanelStateSelector(
-          apiRef.current.state
-        );
-        if (
-          preferencePanelState.openedPanelValue ===
-            GridPreferencePanelsValue.columns &&
-          anchorEl
-        ) {
-          return anchorEl;
-        }
-        const columnHeadersElement =
-          apiRef.current.rootElementRef?.current?.querySelector(
-            `.${gridClasses.columnHeaders}`
-          )!;
-        return columnHeadersElement;
-      },
-    },
-  }}
-  sx={{
-    mt: "1%",
-    overflowY: "auto",
-    minHeight: "30px",
-    height: details
-      ? {
-          xs: "32vh",
-          sm: "32vh",
-          "@media (min-height: 645px)": {
-            height: "50vh",
-          },
-        }
-      : {
-          xs: "60vh",
-          sm: "60vh",
-          "@media (min-height: 645px)": {
-            height: "65vh",
-          },
-        },
-    // Hide the default checkboxes in rows and header
-    "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox": {
-      display: "none",
-    },
-  }}
-/> */}
-
-<MinimizedDataGrid
-  disableColumnMenu
-  rowHeight={25} // Compact row height
-  columnHeaderHeight={30} // Header height remains compact
-  keepNonExistentRowsSelected
-  rows={data ? data : []}
-  columns={column1}
-  columnVisibilityModel={columnVisibilityModel}
-  onColumnVisibilityModelChange={(newModel: any) =>
-    setColumnVisibilityModel(newModel)
-  }
-  onRowSelectionModelChange={handleRowSelection}
-  rowSelectionModel={rowSelectionModel}
-  paginationMode="server"
-  pageSizeOptions={[10, 20, 50]} // Updated to allow more rows per page
-  paginationModel={pageModel}
-  onPaginationModelChange={setPageModel}
-  rowCount={totalRowCount}
-  checkboxSelection
-  apiRef={apiRef}
-  loading={loading}
-  slotProps={{
-    columnsPanel: {
-      sx: {
-        ".MuiDataGrid-columnsManagementRow:first-child": {
-          display: "none",
-        },
-        ".MuiDataGrid-columnsManagementHeader": {
-          display: "none",
-        },
-      },
-    },
-    panel: {
-      anchorEl: () => {
-        const preferencePanelState = gridPreferencePanelStateSelector(
-          apiRef.current.state
-        );
-        if (
-          preferencePanelState.openedPanelValue ===
-            GridPreferencePanelsValue.columns &&
-          anchorEl
-        ) {
-          return anchorEl;
-        }
-
-        const columnHeadersElement =
-          apiRef.current.rootElementRef?.current?.querySelector(
-            `.${gridClasses.columnHeaders}`
-          )!;
-        return columnHeadersElement;
-      },
-    },
-  }}
-  sx={{
-    mt: "1%",
-    overflowY: "auto",
-    height: {
-      xs: "50vh", 
-      sm: "50vh",
-      "@media (min-height: 800px)": {
-        height: "60vh", // Maximum height for larger screens
-      },
-    },
-    "& .MuiDataGrid-root": {
-      fontSize: "12px", // Keep row font size compact
-    },
-    "& .MuiDataGrid-columnHeaders": {
-      fontSize: "inherit", // Keep header font size unchanged
-      fontWeight: "bold",
-    },
-    "& .MuiDataGrid-row": {
-      fontSize: "12px", // Compact font for rows
-    },
-    "& .MuiTablePagination-root": {
-      fontSize: "10px", // Compact pagination font
-    },
-    "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox": {
-      display: "none",
-    },
-  }}
-/>
-
-
-
-
-
-
-
+          />
         </Paper>
 
-
-        {selectedRow && details && (<Box sx={{ mt: 1, fontSize: "11px" }}> Call Details : {selectedRow.id} ({selectedRow.contactParty})(Org:)(Ledger:)</Box>)}
-        {details && <Paper elevation={1} sx={{ border: "0.01rem solid #686D76", bgcolor: "white", mt: 0 }} tabIndex={-1}>
-          <CallDetailList selectedRow={selectedRow} refresh={refresh} callType={value} />
-        </Paper>}
-        <Box
-
-        >
-          <Grid container alignItems="center" sx={{ justifyContent: { xs: "center", sm: "space-between", md: "space-between" } }} marginTop={2} >
-            <Grid item xs={8.5} sm={5} md={3}  >
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: { xs: "center", md: "flex-start" } }}>
+        {selectedRow && details && (
+          <Box sx={{ mt: 1, fontSize: "11px" }}>
+            {" "}
+            Call Details : ({selectedRow.contactParty})(Org:)
+          </Box>
+        )}
+        {details && (
+          <Paper
+            elevation={1}
+            sx={{ border: "0.01rem solid #686D76", bgcolor: "white", mt: 0 }}
+            tabIndex={-1}
+          >
+            <CallDetailList
+              selectedRow={selectedRow}
+              refresh={refresh}
+              callType={value}
+            />
+          </Paper>
+        )}
+        <Box>
+          <Grid
+            container
+            alignItems="center"
+            sx={{
+              justifyContent: {
+                xs: "center",
+                sm: "space-between",
+                md: "space-between",
+              },
+            }}
+            marginTop={2}
+          >
+            <Grid item xs={8.5} sm={5} md={3}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: { xs: "center", md: "flex-start" },
+                }}
+              >
                 <ContainedButton
                   variant="contained"
                   size="small"
@@ -1305,12 +1526,10 @@ const handleStatusClick= async ()=>{
                   variant="contained"
                   size="small"
                   sx={{ textTransform: "none" }}
-                  disabled={!selectedRow}
+                  disabled={!selectedRow || selectedStatusRows?.length > 1}
                   onClick={handleStatusClick}
                 >
-                 
-                    Status Update
-                  
+                  Status Update
                 </ContainedButton>
               </Box>
             </Grid>
@@ -1358,9 +1577,13 @@ const handleStatusClick= async ()=>{
                     textTransform: "none",
                   }}
                 >
-                  <Link href={`/cap`} tabIndex= {-1}style={{
-                    textDecoration: "none",
-                  }}>
+                  <Link
+                    href={`/cap`}
+                    tabIndex={-1}
+                    style={{
+                      textDecoration: "none",
+                    }}
+                  >
                     Quit
                   </Link>
                 </ContainedButton>
@@ -1376,7 +1599,11 @@ const handleStatusClick= async ()=>{
           >
             <AllocateCall
               setDialogOpen={setDialogOpen}
-              data={rowSelectionModel}
+              data={
+                selectedStatusRows.length > 1
+                  ? selectedStatusRows
+                  : rowSelectionModel
+              }
               setRefresh={setRefresh}
               formName={tabOptions[value].name}
             />
@@ -1386,7 +1613,3 @@ const handleStatusClick= async ()=>{
     </Box>
   );
 }
-
-
-
-

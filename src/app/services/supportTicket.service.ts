@@ -79,13 +79,15 @@ export async function createSupportTicketDB(
          sub_st.name AS sub_status, \
          tam.name AS action_taken, \
          next_action.name AS next_action, \
-         em2.name AS modified_by_name \
+         em2.name AS modified_by_name ,\
+         em3.name AS allocated_to_name \
     FROM ticket_ledger_tran l \
     LEFT JOIN ticket_status_master st ON st.id = l.status_id \
     LEFT JOIN ticket_sub_status_master sub_st ON sub_st.id = l.sub_status_id \
     LEFT JOIN ticket_action_master tam ON tam.id = l.action_taken_id \
     LEFT JOIN ticket_action_master next_action ON next_action.id = l.next_action_id \
     LEFT JOIN executive_master em2 ON em2.crm_user_id = l.modified_by \
+    LEFT JOIN executive_master em3 ON em3.id =l.allocated_to \
     WHERE l.ticket_id = ? order by l.id;",
         values: [id],
       });
