@@ -72,6 +72,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
   const [config, setConfig] = useState(configData);
 
   const handleSubmit = async (formData: FormData) => {
+    setFormError({});
     const result = await updateConfigData(config, configDept);
     if (result?.status) {
       setSnackOpen(true);
@@ -90,6 +91,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
           customPath += "_";
         }
         customPath = customPath.slice(0,-1);
+        errorState[issue.path[0]] = {msg: "error",error:true};
         errorState[customPath] = { msg: issue.message, error: true };
       }
       console.log("error state : ",errorState);
@@ -144,7 +146,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1-content"
                   id={`${key}-panel1-content`}
-                  sx={{ height: "50px" }}
+                  sx={{ height: "50px",border: formError?.[key]?.error ? "1px solid red" : "" }}
                 >
                   {/* check out only visible for non mandatory config type */}
                   {["enquiry", "support", "contract"].includes(key) ?
@@ -154,7 +156,15 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                       id={`${key}`}
                       name={`${key}`}
                       custLabel={customLabel[key] || camelCaseToNormal(key)}
+                      sx={{
+                        '&, & + .MuiFormControlLabel-label': {
+                          color: formError?.[key]?.error ? "red" : "",
+                        },
+                      }}
                       checked={config[key as keyof configSchemaT]["reqd"]}
+                      // componentProps={{
+                      //   typography: {color: formError?.[key]?.error ? "1px solid red" : ""}
+                      // }}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setConfig({ ...config, [key]: { ...config[key as keyof configSchemaT], ["reqd"]: e.target.checked } })
                         // empty config data for that particular config type while unchecking "reqd"
@@ -190,7 +200,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                       }
                       }
                     /> :
-                    <Typography sx={{ marginLeft: "30px" }}>{customLabel[key] || camelCaseToNormal(key)}</Typography>
+                    <Typography sx={{ marginLeft: "30px",color: formError?.[key]?.error ? "red" : "" }}>{customLabel[key] || camelCaseToNormal(key)}</Typography>
                   }
                 </AccordionSummary>
                 <AccordionDetails style={{ marginLeft: "1.3rem" }} >

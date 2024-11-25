@@ -37,6 +37,11 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
               }
             })
           }}
+          onKeyDown={() => {
+            let newFormError = {...formError};
+            delete newFormError[`${parentKey}_voucher_prefix`];
+            setFormError(newFormError);
+          }}
           disabled={!config[parentKey]["reqd"]}
         />
         <InputControl
@@ -55,6 +60,11 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
               }
             })
           }}
+          onKeyDown={() => {
+            let newFormError = {...formError};
+            delete newFormError[`${parentKey}_voucher_suffix`];
+            setFormError(newFormError);
+          }}
           disabled={!config[parentKey]["reqd"]}
           />
         <InputControl
@@ -72,6 +82,11 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
                   { ...config[parentKey]["voucher"], ["length"]: e.target.value }
               }
             })
+          }}
+          onKeyDown={() => {
+            let newFormError = {...formError};
+            delete newFormError[`${parentKey}_voucher_length`];
+            setFormError(newFormError);
           }}
           disabled={!config[parentKey]["reqd"]}
         />

@@ -861,6 +861,7 @@ export const enquiryConfigSchema = z.object({
   closeCall : z.boolean(),
   maintainProducts : z.boolean(),
   saveFAQ: z.boolean(),
+  allowReallocation: z.boolean(),
   maintainAction : z.boolean(),
   voucher : voucherSchema.optional()
 })
@@ -870,6 +871,7 @@ export const supportConfigSchema = z.object({
   closeCall : z.boolean(),
   maintainProducts : z.boolean(),
   saveFAQ : z.boolean(),
+  allowReallocation: z.boolean(),
   maintainAction : z.boolean(),
   voucher : voucherSchema.optional()
 })

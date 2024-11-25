@@ -145,7 +145,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
                   name="regionalSetting_dateFormat"
                   label="Date Format"
                   error={formError?.regionalSetting_dateFormat?.error}
-                  helperText={"Required"}
+                  helperText={formError?.regionalSetting_dateFormat?.error && "Required"}
                   onKeyDown={() => {
                     setFormError((curr) => {
                       const { regionalSetting_dateFormat, ...rest } = curr;
@@ -175,7 +175,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
                   name="regionalSetting_timeFormat"
                   label="Time Format"
                   error={formError?.regionalSetting_timeFormat?.error}
-                  helperText={"Required"}
+                  helperText={formError?.regionalSetting_timeFormat?.error && "Required"}
                   onKeyDown={() => {
                     setFormError((curr) => {
                       const { regionalSetting_timeFormat, ...rest } = curr;
@@ -300,7 +300,7 @@ export default function RegionalInfo({config,setConfig,formError,setFormError}:{
                   name="regionalSetting_decimalPlaces"
                   label="Decimal Places"
                   error={formError?.regionalSetting_decimalPlaces?.error}
-                  helperText={"Required"}
+                  helperText={formError?.regionalSetting_decimalPlaces?.error && "Required"}
                   onKeyDown={() => {
                     setFormError((curr) => {
                       const { regionalSetting_decimalPlaces, ...rest } = curr;
