@@ -27,6 +27,7 @@ import { handleRefresh } from "./AutoGrid";
 
 interface customprop extends masterFormPropsT {
   setRefresh: (props: any) => void;
+  formName: string;
 }
 
 export default function AllocateCall(props: customprop) {

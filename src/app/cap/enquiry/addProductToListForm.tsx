@@ -22,7 +22,11 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 
-export default function AddProductToListForm(props: masterFormPropsT) {
+interface customprop extends masterFormPropsT {
+  setData: (props: any) => void;
+}
+
+export default function AddProductToListForm(props: customprop) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
