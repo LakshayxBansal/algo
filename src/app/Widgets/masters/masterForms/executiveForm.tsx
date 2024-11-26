@@ -146,11 +146,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <AreaForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
             data={data}
           />
         )}
@@ -176,11 +175,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         fnFetchDataByID={getDeptById}
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -728,10 +727,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     });
   };
 
-  console.log('731 : ', props.masterData);
+  console.log('731 : ', props.metaData);
 
 
-  props.masterData.fields.map((field: any) => {
+  props.metaData?.fields.map((field: any) => {
     if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id

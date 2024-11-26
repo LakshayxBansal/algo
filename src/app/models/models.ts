@@ -67,6 +67,7 @@ export type masterUploadFormT = {
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
+  metaData?: formMetaDataPropT;
   data?: any;
 };
 
@@ -76,7 +77,6 @@ export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSche
 // this type is for fetching meta info for custom fields
 export type formMetaDataPropT = {
   fields: customFieldsMasterSchemaT[],
-  data?: {},
   rights: [],
   regionalSettingsConfigData: [],
   loggedInUserData: {}
@@ -103,8 +103,8 @@ export type masterFormPropsWithDataT<T> = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: T;
-  parentData?: any;
-  masterData?: any;
+  parentData?: number;
+  metaData?: formMetaDataPropT;
 };
 
 //Enquiry Schemas
@@ -124,17 +124,7 @@ export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArrayS
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
-export type getDeptsT = [{
-    id: number;
-    name: string;
-    rowID: number;
-    stamp: number }]
-    //jp mail files
-    export type getDeptT = [{
-        id: number;
-        name: string;
-        stamp: number }]
-    //jp_dev
+
 
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;
@@ -258,8 +248,8 @@ export type iconCompT = {
   setIds:(props: any) => void;
   delete:any;
   modify:any;
- link ?:string;
- setMasterData:(props: any) => void;
+  link ?:string;
+  setMetaData:(props: any) => void;
 };
 export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
