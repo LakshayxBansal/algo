@@ -79,7 +79,6 @@ export default function EntityList(props: entitiyCompT) {
     config_data: [],
     loggedInUserData: {}
   });
-  let isCustum = 0;
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -214,13 +213,11 @@ export default function EntityList(props: entitiyCompT) {
   };
 
   const handleAddBtn = async () => {
-    setDialogOpen(true);
-    setDlgMode(dialogMode.Add);
     if (props.fnFetchDataByID) {
       const data = await props.fnFetchDataByID(0);
-      console.log("!12 : ", data[0]);
+      console.log("!12 : ", data);
       if (data[0]?.length > 0) {
-        isCustum = 1;
+        console.log("221 : ", data[0][0]);
         setMasterData({
           fields: data[0][0] || [],
           rights: data[0][1] || {},
@@ -230,8 +227,8 @@ export default function EntityList(props: entitiyCompT) {
       }
       // console.log("dialogmode.ADD",masterData);
     }
-
-
+    setDialogOpen(true);
+    setDlgMode(dialogMode.Add);
   };
 
   const handleDropDownBtn = () => {
@@ -266,7 +263,7 @@ export default function EntityList(props: entitiyCompT) {
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => { }, masterData)
+              masterData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, masterData) : props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
               props.renderForm(setDialogOpen, (arg) => { }, masterData, modData)
             ) : dlgMode === dialogMode.Delete ? (

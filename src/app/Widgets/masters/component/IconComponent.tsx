@@ -19,7 +19,7 @@ function IconComponent(props: iconCompT) {
     }
     else if (props.fnFetchDataByID && modId) {
       const data = await props.fnFetchDataByID(modId);
-      console.log(data);
+      console.log("Iconcomponent", data);
 
       props.setModData(data[0][1]);
       props.setMasterData({

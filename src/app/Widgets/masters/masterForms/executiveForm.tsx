@@ -728,6 +728,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     });
   };
 
+  console.log('731 : ', props.masterData);
+
+
   props.masterData.fields.map((field: any) => {
     if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
