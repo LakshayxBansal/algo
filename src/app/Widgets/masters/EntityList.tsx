@@ -32,7 +32,7 @@ import TuneIcon from "@mui/icons-material/Tune";
 import SearchIcon from "@mui/icons-material/Search";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AddDialog } from "./addDialog";
-import { entitiyCompT } from "@/app/models/models";
+import { entitiyCompT, formMetaDataPropT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import UploadFileForm from "./UploadFileForm";
@@ -41,6 +41,7 @@ import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
+
 const pgSize = 10;
 
 enum dialogMode {
@@ -66,7 +67,7 @@ export default function EntityList(props: entitiyCompT) {
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
-  const [masterData, setMasterData] = useState<masterDataprop>({
+  const [masterData, setMasterData] = useState<formMetaDataPropT>({
     fields: [],
     data: {},
     rights: {},
