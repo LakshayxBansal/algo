@@ -247,9 +247,9 @@ export async function getExecutiveById(id: number) {
         ]
       }
        const result=[
-        desc,
-        rights,
-        config_data,
+        screenDesc,
+        userRights,
+        configData,
         session
       ]
       return[

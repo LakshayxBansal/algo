@@ -64,7 +64,7 @@ import { useRouter } from "next/navigation";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
-export default function ExecutiveForm(props: masterFormPropsWithDataT) {
+export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
   console.log("executive prop", props);
 
   const router = useRouter();
@@ -77,7 +77,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const entityData: executiveSchemaT = props.data ? props.data : {};
+  const entityData: executiveSchemaT = props.data ? props.data : {} as executiveSchemaT;
   let fieldArr: React.ReactElement[] = [];
 
 
@@ -146,11 +146,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         }
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <AreaForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
             data={data}
           />
         )}
@@ -176,11 +175,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         fnFetchDataByID={getDeptById}
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -547,9 +546,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   ]);
 
 
-  entityData.executive_dept_id = props.data?.dept_id;
-  entityData.executive_group = props.data?.group_name;
-  entityData.executive_group_id = props.data?.group_id;
+  entityData.executive_dept_id = props.data?.executive_dept_id;
+  entityData.executive_group = props.data?.executive_group;
+  entityData.executive_group_id = props.data?.executive_group_id;
 
 
 
@@ -728,10 +727,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     });
   };
 
-  console.log('731 : ', props.masterData);
+  console.log('731 : ', props.metaData);
 
 
-  props.masterData.fields.map((field: any) => {
+  props.metaData?.fields.map((field: any) => {
     if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
@@ -862,7 +861,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-address")) {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}
@@ -877,7 +876,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               }
               else if (fieldKey.includes("field-subAddress")) {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}
@@ -892,7 +891,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
               }
               else {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}
