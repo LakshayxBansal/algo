@@ -406,7 +406,7 @@ export const enquiryHeaderSchema = z.object({
     .max(75, {
       message: "Enquiry description must contain atmost 75 character(s)",
     }),
-  date: z.string().min(1).max(20),
+  date: z.string().min(1, { message: "Date must not be empty" }).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
   contact: z.string().min(1, { message: "Contact must not be empty" }).max(60),
@@ -437,7 +437,7 @@ export const enquiryLedgerSchema = z.object({
   status_version: z.number().optional(),
   allocated_to_id: z.number().min(0).optional(),
   allocated_to: z.string().max(60).optional(),
-  date: z.string().min(1).max(20),
+  date: z.string().min(1, { message: "Date must not be empty" }).max(20),
   status_id: z.number().min(1),
   sub_status: z.string().min(1, { message: "Sub Status must not be empty" }),
   sub_status_id: z.number().min(1),
@@ -445,7 +445,7 @@ export const enquiryLedgerSchema = z.object({
   action_taken: z.string().optional(),
   next_action_id: z.number().optional(),
   next_action: z.string().optional(),
-  next_action_date: z.string().min(1).max(20).nullable().optional(),
+  next_action_date: z.string().min(0).max(20).nullable().optional(),
   suggested_action_remark: z
     .string()
     .max(5000, {
