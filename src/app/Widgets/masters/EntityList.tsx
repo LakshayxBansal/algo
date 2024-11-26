@@ -50,13 +50,7 @@ enum dialogMode {
   FileUpload,
 }
 
-type masterDataprop = {
-  fields: [],
-  data?: {},
-  rights: {},
-  config_data: [],
-  loggedInUserData: {}
-}
+
 
 export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
