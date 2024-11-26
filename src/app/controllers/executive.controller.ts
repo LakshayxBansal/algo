@@ -15,13 +15,13 @@ import {
   checkIfUsed,
   getProfileDetailsById,
   getExecutiveColumnsDb,
+  mapExecutiveToDeptDb,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
 import { getBizAppUserList, mapUser } from "../services/user.service";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
-import { getScreenDescription } from "./object.controller";
 import { modifyPhone } from "../utils/phoneUtils";
 import { logger } from "../utils/logger.utils";
 import { getUserDetailsById } from "./user.controller";
@@ -29,6 +29,7 @@ import { revalidatePage } from "../company/SelectCompany";
 import { getDocs, uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
 import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
 
 const inviteSring = "Send Invite...";
 
@@ -36,10 +37,11 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
   let result;
   try {
     const session = await getSession();
-
     if (session) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
+      data.role = "Admin";
+      data.role_id = 1;
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
@@ -52,6 +54,8 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          // pass array of depts
+          await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id]);
           const objectDetails = await getObjectByName("Executive");
           await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
@@ -115,6 +119,7 @@ export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDe
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
+          await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id,2,4]);
           const objectDetails = await getObjectByName("Executive");
           await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
@@ -216,14 +221,14 @@ export async function getExecutiveById(id: number) {
       const desc = await getScreenDescription(11,1);
       if(id){
         const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
-      if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
-        const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
-        if (crm_user) {
-          executiveDetails[0].crm_user = crm_user.name;
+        if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
+          const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
+          if (crm_user) {
+            executiveDetails[0].crm_user = crm_user.name;
+          }
         }
-      }
-      const objectDetails = await getObjectByName("Executive");
-      const docData = await getDocs(id,objectDetails[0].object_id);
+        const objectDetails = await getObjectByName("Executive");
+        const docData = await getDocs(id,objectDetails[0].object_id);
       if (executiveDetails.length > 0 && docData.length > 0) {
         executiveDetails[0].docData = docData;
       } else {
@@ -296,7 +301,7 @@ export async function insertUserIdInExecutive(
 }
 
 export async function delExecutiveById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -305,29 +310,33 @@ export async function delExecutiveById(id: number) {
         return "Can't Be DELETED!";
       } else {
         const mappedUser = await getExecutiveById(id);
-        if (mappedUser!== undefined && mappedUser.length > 0 && mappedUser[1][0].crm_user_id) {
-          await mapUser(false, mappedUser[1][0].crm_user_id, 0, session.user.dbInfo.id);
-        }
-        const result = await delExecutiveDetailsById(
+        const dbResult = await delExecutiveDetailsById(
           session.user.dbInfo.dbName,
           id
         );
-        return "Record Deleted";
+        if (mappedUser && mappedUser[0].length > 0 && mappedUser[0][1].crm_user_id) {
+          await mapUser(false, mappedUser[0][1].crm_user_id, 0, session.user.dbInfo.id);
+        }
+        // return "Record Deleted";
+        if (dbResult[0][0].error === 0) {
+          result = { status: true };
+        } else {
+          result = {
+            status: false,
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
+          };
+        }
       }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
     }
   } catch (error: any) {
     throw error;
-    errorResult = { status: false, error: error };
   }
-  return errorResult;
+  return result;
 }
 
 export async function getExecutiveByPage(
@@ -400,6 +409,17 @@ export async function getExecutiveColumns() {
     if (session) {
       const result = await getExecutiveColumnsDb(session.user.dbInfo.dbName as string);
       return result;
+    }
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function mapExecutiveToDept(executiveId : number, deptsArray : number[]) {
+  try {
+    const session = await getSession();
+    if (session) {
+      await mapExecutiveToDeptDb(session.user.dbInfo.dbName,executiveId,deptsArray);
     }
   } catch (e) {
     logger.error(e);

@@ -51,10 +51,10 @@ enum dialogMode {
 }
 
 type masterDataprop = {
-  fields: {},
+  fields: [],
   data?: {},
   rights: {},
-  config_data: {},
+  config_data: [],
   loggedInUserData: {}
 }
 
@@ -79,6 +79,7 @@ export default function EntityList(props: entitiyCompT) {
     config_data: [],
     loggedInUserData: {}
   });
+  let isCustum = 0;
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -218,12 +219,15 @@ export default function EntityList(props: entitiyCompT) {
     if (props.fnFetchDataByID) {
       const data = await props.fnFetchDataByID(0);
       console.log("!12 : ", data[0]);
-      setMasterData({
-        fields: data[0][0] || [],
-        rights: data[0][1] || {},
-        config_data: data[0][2] || [],
-        loggedInUserData: data[0][3] || {}
-      });
+      if (data[0]?.length > 0) {
+        isCustum = 1;
+        setMasterData({
+          fields: data[0][0] || [],
+          rights: data[0][1] || {},
+          config_data: data[0][2] || [],
+          loggedInUserData: data[0][3] || {}
+        });
+      }
       // console.log("dialogmode.ADD",masterData);
     }
 

@@ -36,7 +36,7 @@ export async function getExecutiveDeptList(
  */
 export async function createExecutiveDeptDb(
   session: Session,
-  data: zm.executiveDeptSchemaT
+  sourceData: zm.executiveDeptSchemaT
 ) {
   try {
     return excuteQuery({
@@ -64,26 +64,13 @@ export async function createExecutiveDeptDb(
 
 export async function updateExecutiveDeptDb(
   session: Session,
-  data: zm.executiveDeptSchemaT
+  sourceData: zm.executiveDeptSchemaT
 ) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateExecutiveDept(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?);",
-      values: [data.id,
-               data.name, 
-               data.stamp, 
-               session.user.userId,
-               data.c_col1,
-               data.c_col2,
-               data.c_col3,
-               data.c_col4,
-               data.c_col5,
-               data.c_col6,
-               data.c_col7,
-               data.c_col8,
-               data.c_col9,
-               data.c_col10],
+      query: "call updateExecutiveDept(?, ?, ?, ?);",
+      values: [sourceData.id, sourceData.name, sourceData.stamp, session.user.userId],
     });
   } catch (e) {
     console.log(e);
@@ -149,7 +136,7 @@ export async function delExecutiveDeptByIdDB(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from executive_dept_master where id=?;",
+      query: "call deleteExecutiveDept(?)",
       values: [id],
     });
 
@@ -203,6 +190,22 @@ export async function getExecutiveDeptCount(
         (value ? "WHERE name LIKE CONCAT('%',?,'%') " : ""),
       values: [value],
     });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function getAllDeptsDB(
+  crmDb: string
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select id as id, name as name from executive_dept_master;",
+      values: [],
+    });
+
+    return result;
   } catch (e) {
     console.log(e);
   }

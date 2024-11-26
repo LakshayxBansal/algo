@@ -9,7 +9,6 @@ import {
   getExecutiveByPage,
   getExecutiveColumns,
 } from "@/app/controllers/executive.controller";
-import { getScreenDescription } from "@/app/controllers/object.controller";
 
 const columns: GridColDef[] = [
   {
@@ -60,4 +59,3 @@ export default function executive() {
     </>
   );
 }
-

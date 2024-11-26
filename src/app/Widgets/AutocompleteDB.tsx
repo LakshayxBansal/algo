@@ -163,7 +163,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
       onKeyDown={handleKeyDown}
       filterOptions={(options, { inputValue }) =>
         options.filter(option =>
-          option.detail ? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
+          // option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
+          `${option.detail ?? ''}${option.name ?? ''}`.toLowerCase().includes(inputValue.toLowerCase())
         )
       }
       renderOption={(p, option) => {
@@ -205,7 +206,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
               <TextField
                 id="popper_textid_temp_5276"
                 variant="standard"
-                defaultValue={"Please select from Options"}
+                defaultValue={" "}
                 InputProps={{
                   style: {
                     ...autocompleteTextfieldSx,
@@ -213,7 +214,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
                   },
                 }}
                 multiline
-                rows={3}
+                rows={4}
                 fullWidth
 
               />
@@ -273,6 +274,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }}
       forcePopupIcon={true}
       // autoHighlight
+      noOptionsText={" "}
       autoComplete
       includeInputInList
       disableClearable={

@@ -105,10 +105,6 @@ export const organisationSchema = z.object({
     .string()
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
-  address3: z
-    .string()
-    .max(75, "Field must contain at most 75 character(s)")
-    .optional(),
   city: z
     .string()
     .max(75, "Field must contain at most 75 character(s)")
@@ -200,18 +196,23 @@ export const productToListFormSchema = z.object({
     .string()
     .min(1)
     .max(60)
+    .optional()
     .refine((val) => val !== undefined && val.length !== 0, {
       message: "Product Name Empty !",
       path: ["product"],
     }),
   product_id: z.number().min(1),
-  quantity: z.number()
-  .min(1, { message: "Quantity cannot be empty or zero!" })
-  .refine((val) => val >= 0, { message: "Quantity cannot be negative!" })
-  .refine((val) => val <= 10000000, { message: "Quantity cannot exceed 10000000!" }),
+  quantity: z
+    .number()
+    .min(1, { message: "Quantity cannot be empty or zero!" })
+    .refine((val) => val >= 0, { message: "Quantity cannot be negative!" })
+    .refine((val) => val <= 10000000, {
+      message: "Quantity cannot exceed 10000000!",
+    }),
   unit: z
     .string()
     .min(1)
+    .optional()
     .refine((val) => val !== undefined && val.length !== 0, {
       message: "Unit Name Empty !",
       path: ["unit"],
@@ -258,23 +259,22 @@ export const contactSchema = z.object({
     z.string().max(10).regex(panRegEx, "Invalid PAN number!"),
   ]),
   aadhaar: z.union([z.literal(""), z.string().optional()]),
-  address1: z.string().max(75, "Field must contain at most 75 character(s)"),
-  address2: z.string().max(75, "Field must contain at most 75 character(s)"),
-  address3: z.string().max(75, "Field must contain at most 75 character(s)"),
-  pincode: z.string().max(15, "Field must contain at most 15 character(s)"),
+  address1: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
+  address2: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
+  pincode: z.string().max(15, "Field must contain at most 15 character(s)").optional(),
   email: z.union([z.literal(""), z.string().email().max(100)]),
   mobile: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Phone No",
     path: ["mobile"],
-  }),
+  }).optional(),
   whatsapp: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Whatsapp No",
     path: ["whatsapp"],
-  }),
+  }).optional(),
   dob: z.date().optional(),
   doa: z.date().optional(),
-  contactGroup_id: z.number().optional(),
-  contactGroup: z.string().optional(),
+  contactGroup_id: z.number(),
+  contactGroup: z.string().min(1, 'Enter contact group'),
   state: z.string().optional(),
   area: z.string().optional(),
   area_id: z.number().optional(),
@@ -285,7 +285,10 @@ export const contactSchema = z.object({
   state_id: z.number().optional(),
   country_id: z.number().optional(),
   country: z.string().optional(),
-  city: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
+  city: z
+    .string()
+    .max(75, "Field must contain at most 75 character(s)")
+    .optional(),
   stamp: z.number().optional(),
   c_col1: z.string().optional(),
   c_col2: z.string().optional(),
@@ -335,10 +338,6 @@ export const executiveSchema = z
       .max(75, "Field must contain atmost 60 character(s)")
       .optional(),
     address2: z
-      .string()
-      .max(75, "Field must contain atmost 60 character(s)")
-      .optional(),
-    address3: z
       .string()
       .max(75, "Field must contain atmost 60 character(s)")
       .optional(),
@@ -437,7 +436,7 @@ export const enquiryHeaderSchema = z.object({
     .max(75, {
       message: "Enquiry description must contain atmost 75 character(s)",
     }),
-  date: z.string().min(1).max(20),
+  date: z.string().min(1, { message: "Date must not be empty" }).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
   contact: z.string().min(1, { message: "Contact must not be empty" }).max(60),
@@ -468,7 +467,7 @@ export const enquiryLedgerSchema = z.object({
   status_version: z.number().optional(),
   allocated_to_id: z.number().min(0).optional(),
   allocated_to: z.string().max(60).optional(),
-  date: z.string().min(1).max(20),
+  date: z.string().min(1, { message: "Date must not be empty" }).max(20),
   status_id: z.number().min(1),
   sub_status: z.string().min(1, { message: "Sub Status must not be empty" }),
   sub_status_id: z.number().min(1),
@@ -476,7 +475,7 @@ export const enquiryLedgerSchema = z.object({
   action_taken: z.string().optional(),
   next_action_id: z.number().optional(),
   next_action: z.string().optional(),
-  next_action_date: z.string().min(1).max(20).nullable().optional(),
+  next_action_date: z.string().min(0).max(20).nullable().optional(),
   suggested_action_remark: z
     .string()
     .max(5000, {
@@ -520,8 +519,8 @@ export const supportHeaderSchema = z.object({
   id: z.number().optional(),
   tkt_number: z
     .string()
-    .min(1, "Ticket must not be empty")
-    .max(75, "Ticket must contain at most 75 character(s)"),
+    .min(1, "Ticket description must not be empty")
+    .max(75, "Ticket description must contain at most 75 character(s)"),
   date: z.string().min(1).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1, "Contact must not be empty"),
@@ -535,7 +534,10 @@ export const supportHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
-  call_receipt_remark: z.string().max(5000,"Call receipt remark must contain at most 5000 character(s)").optional(),
+  call_receipt_remark: z
+    .string()
+    .max(5000, "Call receipt remark must contain at most 5000 character(s)")
+    .optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
 });
@@ -547,14 +549,17 @@ export const supportLedgerSchema = z.object({
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1,"Sub status must not be empty").max(50),
-  sub_status_id: z.number().min(1,"Sub status must not be empty"),
-  action_taken_id: z.number().min(1,"Action must not be empty"),
+  sub_status: z.string().min(1, "Sub status must not be empty").max(50),
+  sub_status_id: z.number().min(1, "Sub status must not be empty"),
+  action_taken_id: z.number().min(0).optional(),
   action_taken: z.string().min(0).max(60).optional(),
-  next_action_id: z.number().min(1).nullable().optional(),
+  next_action_id: z.number().min(0).nullable().optional(),
   next_action: z.string().max(60).optional(),
-  next_action_date: z.string().min(1).max(20),
-  suggested_action_remark: z.string().max(5000,"Remark must contain at most 5000 character(s)").optional(),
+  next_action_date: z.string().min(0).max(20).optional(),
+  suggested_action_remark: z
+    .string()
+    .max(5000, "Remark must contain at most 5000 character(s)")
+    .optional(),
   action_taken_remark: z.string().max(5000).optional(),
   closure_remark: z.string().max(5000).optional(),
   ticket_tran_type: z.number().optional(),
@@ -587,7 +592,6 @@ export const supportProductSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
-
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
 });
@@ -872,24 +876,92 @@ export const nameAliasData = z.object({
   alias: z.string().max(45),
 });
 
+// export const enquirySupportConfig = z.object({
+//   enquiryReqd: z.boolean().optional(),
+//   supportReqd: z.boolean().optional(),
+
+//   enquiryCloseCall: z.boolean().optional(),
+//   enquiryMaintainProducts: z.boolean().optional(),
+//   enquirySaveFAQ: z.boolean().optional(),
+//   enquiryMaintainAction: z.boolean().optional(),
+
+//   supportCloseCall: z.boolean().optional(),
+//   supportMaintainProducts: z.boolean().optional(),
+//   supportSaveFAQ: z.boolean().optional(),
+//   supportMaintainAction: z.boolean().optional(),
+//   supportMaintainContract: z.boolean().optional(),
+
+//   generalMaintainArea: z.boolean().optional(),
+//   generalMaintainImage: z.boolean().optional(),
+//   generalShowList: z.boolean().optional(),
+// });
+
 export const enquirySupportConfig = z.object({
   enquiryReqd: z.boolean().optional(),
   supportReqd: z.boolean().optional(),
+  contractReqd: z.boolean().optional(),
+  enquiryGenerationReqd: z.boolean().optional(),
+  regionalSettingReqd: z.boolean().optional(),
+  category: z.string().optional(),
+  isEnabled: z.boolean().optional(),
+  // enquiryConfig: z.object().optional(),
+  // regionalData: regionalSettingSchema,
+  // voucherNumber: z.boolean().optional(),
 
   enquiryCloseCall: z.boolean().optional(),
   enquiryMaintainProducts: z.boolean().optional(),
   enquirySaveFAQ: z.boolean().optional(),
   enquiryMaintainAction: z.boolean().optional(),
+  enquiryVoucherNumber: z.boolean().optional(),
+  enquiryPrefix: z.string().optional(),
+  enquirySuffix: z.string().optional(),
+  enquiryLength: z.string().optional(),
+  enquiryPrefillWithZero: z.boolean().optional(),
 
   supportCloseCall: z.boolean().optional(),
   supportMaintainProducts: z.boolean().optional(),
   supportSaveFAQ: z.boolean().optional(),
   supportMaintainAction: z.boolean().optional(),
   supportMaintainContract: z.boolean().optional(),
+  supportVoucherNumber: z.boolean().optional(),
+  supportPrefix: z.string().optional(),
+  supportSuffix: z.string().optional(),
+  supportLength: z.string().optional(),
+  supportPrefillWithZero: z.boolean().optional(),
+
+  contractVoucherNumber: z.boolean().optional(),
+  contractPrefix: z.string().optional(),
+  contractSuffix: z.string().optional(),
+  contractLength: z.string().optional(),
+  contractPrefillWithZero: z.boolean().optional(),
+
+  enquiryGenerationVoucherNumber: z.boolean().optional(),
+  enquiryGenerationPrefix: z.string().optional(),
+  enquiryGenerationSuffix: z.string().optional(),
+  enquiryGenerationLength: z.string().optional(),
+  enquiryGenerationPrefillWithZero: z.boolean().optional(),
+
+  regionalSettingVoucherNumber: z.boolean().optional(),
+  regionalSettingPrefix: z.string().optional(),
+  regionalSettingSuffix: z.string().optional(),
+  regionalSettingLength: z.string().optional(),
+  regionalSettingPrefillWithZero: z.boolean().optional(),
 
   generalMaintainArea: z.boolean().optional(),
   generalMaintainImage: z.boolean().optional(),
   generalShowList: z.boolean().optional(),
+
+  country_id: z.number().optional(),
+  state_id: z.number().optional(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  decimalPlaces: z.string().optional(),
+  timeFormat: z.string().optional(),
+  currencyString: z.string().optional(),
+  currencySymbol: z.string().optional(),
+  currencySubString: z.string().optional(),
+  currencyCharacter: z.string().optional(),
+  dateFormat: z.string().optional(),
 });
 
 export const companySchema = z.object({
@@ -953,28 +1025,59 @@ export const inviteUserSchema = z
     { message: "Please provide email", path: ["email"] }
   );
 
+export const configBaseSchema = z.object({
+    reqd: z.boolean().optional(),
+    closeCall: z.boolean().optional(),
+    maintainProducts: z.boolean().optional(),
+    saveFAQ: z.boolean().optional(),
+    maintainAction: z.boolean().optional(),
+    voucherNumber: z.boolean().optional(),
+    prefix: z.string().optional(),
+    suffix: z.string().optional(),
+    length: z.string().optional(),
+    prefillWithZero: z.boolean().optional(),
+  });
+  
+   const voucherSchema = z.object({
+    reqd: z.boolean().optional(),
+    voucherNumber: z.boolean().optional(),
+    prefix: z.string().optional(),
+    suffix: z.string().optional(),
+    length: z.string().optional(),
+    prefillWithZero: z.boolean().optional(),
+  });
+  
   export const regionalSettingSchema = z.object({
     id: z.number().optional(),
     country_id: z.number(),
     state_id: z.number(),
     country: z.string().optional(),
     state: z.string().optional(),
-    decimalPaces: z.string().optional(),
+    decimalPlaces: z.string().optional(),
     timeFormat: z.string().optional(),
     currencyString: z.string().optional(),
     currencySymbol: z.string().optional(),
     currencySubString: z.string().optional(),
     currencyCharacter: z.string().optional(),
-    dateformat: z.string().optional(),
+    dateFormat: z.string().optional(),
+    ...voucherSchema.shape
+  });
+  
+export const configSchema = z.object({
+    enquiryConfig: configBaseSchema.optional(),
+    supportConfig: configBaseSchema.optional(),
+    contractConfig: voucherSchema.optional(),
+    regionalSettingConfig: regionalSettingSchema.optional(),
+    enquiryGenerationConfig: voucherSchema.optional(),
   });
 
-  export const docDescriptionSchema = z.object({
-    id : z.number().optional(),
-    description : z.string().min(1).max(255),
-    fileName : z.string().optional(),
-    objectId : z.number().optional(),
-    objectTypeId : z.number().optional(),
-    file : z.string().optional(),
-    fileType : z.string().optional(),
-    docId : z.string().optional()
-  }) 
+export const docDescriptionSchema = z.object({
+  id: z.number().optional(),
+  description: z.string().min(1).max(255),
+  fileName: z.string().optional(),
+  objectId: z.number().optional(),
+  objectTypeId: z.number().optional(),
+  file: z.string().optional(),
+  fileType: z.string().optional(),
+  docId: z.string().optional(),
+});

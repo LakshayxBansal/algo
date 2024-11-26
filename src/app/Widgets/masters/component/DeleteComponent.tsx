@@ -1,24 +1,68 @@
 import { useState } from "react";
-import { Box, Typography, Button, Snackbar } from "@mui/material";
+import { Box, Typography, Button, Snackbar, Collapse, Alert, IconButton } from "@mui/material";
 import { deleteCompT } from "@/app/models/models";
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 
 const DeleteComponent = (props: deleteCompT) => {
+  const [formError, setFormError] = useState<
+    Record<string, { msg: string; error: boolean }>
+  >({});
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
 
   async function onDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
-      const data = await props.fnDeleteDataByID(modId);
-      setSnackOpen(true);
+      const result = await props.fnDeleteDataByID(modId);
 
-      setTimeout(() => {
-        props.open ? props.setDialogOpen(false) : null;
-        setSnackOpen(false);
-      }, 1000);
+      if (!result.status) {
+        const issues = result.data;
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        for (const issue of issues) {
+          errorState[issue.path[0]] = { msg: issue.message, error: true };
+          if (issue.path[0] === "delete") {
+            errorState["form"] = { msg: issue.message, error: true };
+          }
+        }
+        setFormError(errorState);
+      } else {
+        setFormError({});
+        setSnackOpen(true);
+
+        setTimeout(() => {
+          props.open ? props.setDialogOpen(false) : null;
+          setSnackOpen(false);
+        }, 1000)
+      }
     }
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   return (
     <Box id="sourceForm" style={{ padding: "20px", marginTop: "20px" }}>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <form>
         <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
           Are you sure you want to delete?

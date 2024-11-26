@@ -4,6 +4,22 @@ import * as zm from "../models/models";
 import { Session } from "next-auth";
 import excuteQuery from "../utils/db/db";
 
+export async function getAllRolesDB(
+  crmDb: string
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select id as id, name as name from executive_role_master;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveRoleList(
   crmDb: string,
   searchString: string,
@@ -89,7 +105,7 @@ export async function delExecutiveRoleDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from executive_role_master where id=?;",
+      query: "call deleteExecutiveRole(?)",
       values: [id],
     });
 

@@ -49,6 +49,7 @@ export enum InputType {
   DATETIMEINPUT,
   EMAIL,
   PHONE,
+  TEXTFIELD,
 }
 // Define the additional props for the base control
 interface BaseControlProps {
@@ -77,11 +78,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   let prevKey = "",
-    currentKey = "";
+    currentKey = "",
+    first = true;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
     currentKey = event.key;
+    if(props.onKeyDown){
+      props.onKeyDown(event);
+    }
   };
 
   if (inputRef.current) {
@@ -107,7 +112,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
               position === currValue.length &&
               currentKey !== "Backspace")
           ) {
-            const newChar = currValue.charAt(currValue.length - 1).toUpperCase();
+            const newChar = currValue
+              .charAt(currValue.length - 1)
+              .toUpperCase();
             event.target.value = currValue.slice(0, -1) + newChar;
           }
         }
@@ -136,6 +143,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         }
         break;
       }
+
+      case InputType.TEXTFIELD: {
+        const inputProps = props as TextFieldProps;
+
+        if (event.target.value.length === 1 && first) {
+          event.target.value = event.target.value.toUpperCase();
+          first = false;
+        }
+      }
     }
   }
 
@@ -143,8 +159,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
-    console.log("datechange");
-    console.log(value);
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -178,6 +192,26 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     }
   }
 
+  function handleFocus() {
+    switch (inputType) {
+      case InputType.PHONE: {
+        const inputElement = inputRef.current?.querySelector("input");
+        if (inputElement) {
+          const value = inputElement.value;
+          const countryCodeLength = value.indexOf(" ") + 1;
+          if (countryCodeLength > 0) {
+            inputElement.setSelectionRange(countryCodeLength, value.length);
+          }
+        }
+        break;
+      }
+      case InputType.TEXTFIELD: {
+        first = true;
+        break;
+      }
+    }
+  }
+
   // function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
   //   const inputProps = props as PhoneInputProps;
   //   if(inputProps.onChange) {
@@ -191,13 +225,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.TEXT: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <CustomTextField {...textFieldProps}
-        InputLabelProps={{
-          style: {
-            zIndex: 0, // Adjust this value as needed
-          },
-        }}
-        onChange={onChange} />;
+      return (
+        <CustomTextField
+          {...textFieldProps}
+          onChange={onChange}
+          onKeyDown={handleKeyDown}
+        />
+      );
       break;
     }
     case InputType.CHECKBOX: {
@@ -253,6 +287,19 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           {...props}
           value={value}
           onChange={onPhoneChange}
+          onFocus={handleFocus}
+        />
+      );
+      break;
+    }
+    case InputType.TEXTFIELD: {
+      // It's a TextField
+      const textFieldProps = props as TextFieldProps;
+      return (
+        <TextField
+          {...textFieldProps}
+          onChange={onChange}
+          onFocus={handleFocus}
         />
       );
       break;

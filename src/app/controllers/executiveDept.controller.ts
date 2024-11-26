@@ -11,13 +11,12 @@ import {
   getExecutiveDeptByPageDb,
   delExecutiveDeptByIdDB,
   checkIfUsed,
+  getAllDeptsDB,
 } from "../services/executiveDept.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
-import { getRegionalSettings } from "./config.controller";
-import { getScreenDescription } from "./object.controller";
 
 export async function getExecutiveDept(searchString: string) {
   try {
@@ -182,35 +181,38 @@ export async function getDeptById(id: number) {
     throw error;
   }
 }
-
 export async function delExecutiveDeptById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-        const result = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
-      }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getExecutiveDeptByPage(
   page: number,
@@ -255,4 +257,15 @@ export async function getExecutiveDeptByPage(
     };
   }
   return getExecutiveDept;
+}
+
+export async function getAllDepts() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getAllDeptsDB(session.user.dbInfo.dbName);
+    }
+  } catch (error) {
+    throw error;
+  }
 }

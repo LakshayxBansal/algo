@@ -10,13 +10,20 @@ import { formErrorT } from "../../models/models";
 import EditIcon from "@mui/icons-material/Edit";
 import { optionsDataT } from "@/app/models/models";
 import { RenderFormFunctionT } from "@/app/models/models";
-import { getScreenDescription } from "@/app/controllers/object.controller";
 
 type OnChangeFunction = (
   event: any,
   newVal: any,
   setDialogValue: (props: any) => void
 ) => void;
+
+type masterDataprop = {
+  fields: {},
+  data?: {},
+  rights: {},
+  config_data: {},
+  loggedInUserData: {}
+}
 
 type SelectOptionsFunction = (option: any) => string;
 
@@ -45,14 +52,6 @@ type selectMasterWrapperT = {
   autoFocus?: boolean;
 };
 
-type masterDataprop = {
-  fields: {},
-  data?: {},
-  rights: {},
-  config_data: {},
-  loggedInUserData: {}
-}
-
 enum dialogMode {
   Add,
   Modify,
@@ -65,7 +64,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     // {} as optionsDataT
     props.defaultValue ?? {} as optionsDataT
   );
-  const [desc, setDesc] = useState();
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
@@ -77,25 +75,24 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     loggedInUserData: {}
   });
 
-
   async function openDialog() {
     if (allowNewAdd) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-        setDesc(data[0]);
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-
-        setMasterData({
-          fields: data[0][0] || [],
-          rights: data[0][1] || {},
-          config_data: data[0][2] || [],
-          loggedInUserData: data[0][3] || {}
-        });
+        if (data.length > 0)
+          setMasterData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            config_data: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
       }
+
     }
     // getDescriptionData();
   }
@@ -108,6 +105,10 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     }
   }
 
+  if (props.name === 'received_by') {
+    console.log("Value : ", props.defaultValue);
+
+  }
 
   async function onModifyDialog() {
     if (allowModify) {
@@ -127,7 +128,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     }
     // getDescriptionData();
   }
-
   return (
     <>
       <Grid item xs={12} md={12}>

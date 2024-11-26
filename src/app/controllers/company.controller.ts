@@ -133,13 +133,13 @@ export async function createCompany(data: companySchemaT) {
             country: data.country ?? "",
             state_id: data.state_id ?? 0,
             state: data.state ?? "",
-            decimalPaces: "Two Digits",
+            decimalPlaces: "Two Digits",
             timeFormat: "12 Hours",
             currencyString: "",
             currencySymbol: "",
             currencySubString: "",
             currencyCharacter: "",
-            dateformat: "",
+            dateFormat: "",
           };
 
           if (data.country_id !== 0) {
@@ -147,7 +147,7 @@ export async function createCompany(data: companySchemaT) {
             regionalData.currencySymbol = countryData[0].currencySymbol;
             regionalData.currencySubString = countryData[0].currencySubString;
             regionalData.currencyCharacter = countryData[0].currencyCharacter;
-            regionalData.dateformat = countryData[0].date_format;
+            regionalData.dateFormat = countryData[0].date_format;
           }
 
           const regionalSettingResult = await createRegionalSettingDb(dbName, regionalData);
@@ -219,13 +219,13 @@ export async function updateCompany(data: companySchemaT) {
             country: data.country ?? "",
             state_id: data.state_id ?? 0,
             state: data.state ?? "",
-            decimalPaces: "Two Digits",
+            decimalPlaces: "Two Digits",
             timeFormat: "12 Hours",
             currencyString: "",
             currencySymbol: "",
             currencySubString: "",
             currencyCharacter: "",
-            dateformat: "",
+            dateFormat: "",
           };
 
           if (data.country_id !== 0) {
@@ -233,7 +233,7 @@ export async function updateCompany(data: companySchemaT) {
             regionalData.currencySymbol = countryData[0].currencySymbol;
             regionalData.currencySubString = countryData[0].currencySubString;
             regionalData.currencyCharacter = countryData[0].currencyCharacter;
-            regionalData.dateformat = countryData[0].date_format;
+            regionalData.dateFormat = countryData[0].date_format;
           }
 
           const regionalResult = await updateteRegionalSettingDb(dbName, regionalData, regionalDataRes.config_type_id);
