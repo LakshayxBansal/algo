@@ -13,6 +13,7 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
+import CustomField  from '@/app/cap/enquiry/CustomFields';
 
 export default function ExecutiveDeptForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -111,14 +112,14 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
   };
 
   function fieldPropertiesById(id: string) {
-    const field = props.baseData?.fields.find(
+    const field = props.metaData?.fields.find(
       (item: any) => item.column_name_id === id
     );
 
     if (field) {
       return {
-        label: field.column_label,
-        required: field.is_mandatory === 1
+        label: field.columnLabel,
+        required: field.isMandatory === 1
       };
     }
     return { label: "default label", required: false };
@@ -126,7 +127,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
 
 
 
-  props.masterData.fields.map((field: any) => {
+  props.metaData?.fields.map((field: any) => {
     if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
@@ -197,7 +198,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
             {
               fieldArr.map((field, index) => {
                 return (
-                  <Grid
+                  <Grid key={index}
                     item
                     xs={12}
                     sm={6}

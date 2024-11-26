@@ -21,14 +21,16 @@ function IconComponent(props: iconCompT) {
       const data = await props.fnFetchDataByID(modId);
       console.log("Iconcomponent", data);
 
-      props.setModData(data[0][1]);
-      props.setMasterData({
-        fields: data[0][0] || {},
-        data: data[0][1] || {},
-        rights: data[0][2] || {},
-        config_data: data[0][3] || {},
-        loggedInUserData: data[0][4] || {}
-      });
+      if (data[0]) {
+        props.setModData(data[0][1]);
+        props.setMetaData({
+          fields: data[0][0] || {},
+          rights: data[0][2] || {},
+          regionalSettingsConfigData: data[0][3] || {},
+          loggedInUserData: data[0][4] || {}
+        });
+      }
+
       props.setDialogOpen(true);
       props.setDlgMode(props.modify); //dialogMode.Modify
       setAnchorEl(null);

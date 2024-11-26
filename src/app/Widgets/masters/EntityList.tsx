@@ -67,11 +67,10 @@ export default function EntityList(props: entitiyCompT) {
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
-  const [masterData, setMasterData] = useState<formMetaDataPropT>({
+  const [metaData, setMetaData] = useState<formMetaDataPropT>({
     fields: [],
-    data: {},
-    rights: {},
-    config_data: [],
+    rights: [],
+    regionalSettingsConfigData: [],
     loggedInUserData: {}
   });
 
@@ -116,7 +115,7 @@ export default function EntityList(props: entitiyCompT) {
                 setDlgMode={setDlgMode}
                 setDialogOpen={setDialogOpen}
                 setModData={setModData}
-                setMasterData={setMasterData}
+                setMetaData={setMetaData}
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
@@ -213,14 +212,14 @@ export default function EntityList(props: entitiyCompT) {
       console.log("!12 : ", data);
       if (data[0]?.length > 0) {
         console.log("221 : ", data[0][0]);
-        setMasterData({
+        setMetaData({
           fields: data[0][0] || [],
           rights: data[0][1] || {},
-          config_data: data[0][2] || [],
+          regionalSettingsConfigData: data[0][2] || [],
           loggedInUserData: data[0][3] || {}
         });
       }
-      // console.log("dialogmode.ADD",masterData);
+      // console.log("dialogmode.ADD",metaData);
     }
     setDialogOpen(true);
     setDlgMode(dialogMode.Add);
@@ -258,9 +257,9 @@ export default function EntityList(props: entitiyCompT) {
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              masterData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, masterData) : props.renderForm(setDialogOpen, (arg) => { })
+              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData) : props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => { }, masterData, modData)
+              props.renderForm(setDialogOpen, (arg) => { }, metaData, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}
