@@ -137,7 +137,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         defaultValue={dayjs(new Date())}
         required={false}
         sx={{ display: "flex", flexGrow: 1 }}
-        slotprops={{
+        slotProps={{
           textField: {
             error: formError?.date?.error,
             helperText: formError?.date?.msg,
@@ -398,7 +398,7 @@ export default function InputForm({ baseData }: InputFormProps) {
   ]);
 
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues });
+    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat});
 
     let result;
     let issues = [];
