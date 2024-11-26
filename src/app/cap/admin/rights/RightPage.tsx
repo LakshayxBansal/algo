@@ -7,23 +7,7 @@ import Paper from '@mui/material/Paper';
 import Snackbar from "@mui/material/Snackbar";
 import { manageRights } from '@/app/controllers/rights.controller';
 import { logger } from '@/app/utils/logger.utils';
-
-type DataState = {
-    id: number,
-    name: string,
-    objectName: string,
-    objectId: number,
-    category: string,
-    categoryId: number,
-    roleId: number,
-    roleName: string,
-    deptId: number,
-    deptName: string,
-    createRight: string,
-    readRight: string,
-    updateRight: string,
-    deleteRight: string
-};
+import { rightSchemaT } from '@/app/models/models';
 
 
 function normalToCamelCaseString(normalString: string) {
@@ -77,6 +61,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
     const [role, setRole] = React.useState(roles[0].name || "");
     const [dept, setDept] = React.useState(depts[0].name || "");
     const [snackOpen, setSnackOpen] = React.useState(false);
+    const [snackMSG,setSnackMSG] = React.useState("");
     const [openParent, setOpenParent] = React.useState<{ [key: string]: boolean }>(parentObject);
 
     const setParentKeyActive = (key: string) => {
@@ -149,7 +134,55 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
 
     async function handleSubmit() {
         try {
-            await manageRights(rightsData, data, objects, roles, depts);
+            let updatedData: { [key: string]: boolean } = {};
+            for (const key in data) {
+                if (rightsData.hasOwnProperty(key)) {
+                    if (rightsData[key] !== data[key]) {
+                        updatedData[key] = data[key];
+                    }
+                }
+            }
+            let objectMap: Map<string, number> = new Map();
+            objects.map((obj) => {
+                objectMap.set(normalToCamelCaseString(obj.name), obj.id);
+            })
+
+            let roleMap: Map<string, number> = new Map();
+            roles.map((role) => {
+                roleMap.set(normalToCamelCaseString(role.name), role.id);
+            })
+
+            let deptMap: Map<string, number> = new Map();
+            depts.map((dept) => {
+                deptMap.set(normalToCamelCaseString(dept.name), dept.id);
+            })
+
+            let dataMap: Map<string, Array<{ field: string, value: number }>> = new Map();
+
+            for (const key in updatedData) {
+                const primaryKey = `${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}`;
+                if (dataMap.has(primaryKey)) {
+                    dataMap.get(primaryKey)!.push(updatedData[key] === true ? { "field": `${key.split("_")[3].replace(/Right$/, '')}`, "value": 1 } : { "field": `${key.split("_")[3].replace(/Right$/, '')}`, "value": 0 });
+                } else {
+                    dataMap.set(primaryKey, []);
+                    dataMap.get(primaryKey)!.push(updatedData[key] === true ? { "field": `${key.split("_")[3].replace(/Right$/, '')}`, "value": 1 } : { "field": `${key.split("_")[3].replace(/Right$/, '')}`, "value": 0 });
+                }
+            }
+            let dataArray : Array<rightSchemaT> = [];
+            dataMap.forEach(async (value, key) => {
+                let newRightData : rightSchemaT = {
+                    objectId : objectMap.get(key.split("_")[0]) as number,
+                    roleId : roleMap.get(key.split("_")[1]) as number,
+                    deptId : deptMap.get(key.split("_")[2]) as number,
+                    createRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_createRight`],
+                    readRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_readRight`],
+                    updateRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_updateRight`],
+                    deleteRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_deleteRight`]
+                };
+                dataArray.push(newRightData);
+            });
+            const result = await manageRights(dataArray);
+            setSnackMSG(result as string);
             setSnackOpen(true);
         } catch (error) {
             logger.error(error);
@@ -271,7 +304,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                 open={snackOpen}
                 autoHideDuration={3000}
                 onClose={() => setSnackOpen(false)}
-                message="Record Saved!"
+                message={snackMSG}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             />
             <Button onClick={handleSubmit} variant="contained" sx={{ marginTop: "1%", marginLeft: "85%" }}>Submit</Button>

@@ -1029,3 +1029,26 @@ export const configDeptMapSchema = z.object({
   contract : z.array(z.number())
 })
 
+export const rightSchema = z.object({
+    id: z.number().optional(),
+    name: z.string().optional(),
+    objectName: z.string().optional(),
+    objectId: z.number(),
+    category: z.string().optional(),
+    categoryId: z.number().optional(),
+    roleId: z.number(),
+    roleName: z.string().optional(),
+    deptId: z.number(),
+    deptName: z.string().optional(),
+    createRight: z.boolean(),
+    readRight: z.boolean(),
+    updateRight: z.boolean(),
+    deleteRight: z.boolean()
+})
+
+export const rightDataSchema = z.record(z.boolean()).refine((data) => {
+  return Object.keys({...data}).map((key : string) => ["area","action"].includes(key.split("_")[0]) && ["admin","manager"].includes(key.split("_")[1]) && ["sales","support"].includes(key.split("_")[2]) && typeof data[key] === 'boolean');
+}, {
+  message: "invalid right data key"
+});
+

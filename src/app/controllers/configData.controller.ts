@@ -18,7 +18,6 @@ export async function getConfigType() {
   }
 }
 
-
 export async function updateConfigData(config: any, configDept : {[key : string] : number[]}) {
   let result : any = {status : false, data : []};
   try {
