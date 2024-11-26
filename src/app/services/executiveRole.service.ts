@@ -23,11 +23,12 @@ export async function getAllRolesDB(
 export async function getExecutiveRoleList(
   crmDb: string,
   searchString: string,
-  department?: number
+  // department?: number
 ) {
   try {
-    let query = "select id as id, name as name from executive_role_master rm where rm.department_id= ?";
-    let values: any[] = [department];
+    let query = "select id as id, name as name from executive_role_master";
+    // let query = "select * from executive_role_master";
+    let values: any[] = [];
 
     if (searchString !== "") {
       query = query + " and name like '%" + searchString + "%'";
@@ -57,11 +58,11 @@ export async function createExecutiveRoleDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createExecutiveRole(?, ?, ?, ?)",
+      query: "call createExecutiveRole(?, ?, ?)",
       values: [
         sourceData.name,
         sourceData.parent_id,
-        sourceData.department_id,
+        // sourceData.department_id,
         session.user.userId,
       ],
     });

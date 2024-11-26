@@ -15,12 +15,19 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
 import SnackModal from "../utils/SnackModalUtils";
+import { getCountryByIp } from "../controllers/company.controller";
+// import { headers } from "next/headers";
 
 export default async function Companies() {
   try {
     const session = await getSession();
     const totalInvites = await getTotalInvite();
     if (session) {
+      // const requestHeaders = headers();
+      // const result = await getCountryByIp();
+      // console.log(result);
+      // const result = await fetch("http://localhost:3000/api/get-ip");
+
       return (
         <>
           <Box>

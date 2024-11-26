@@ -67,7 +67,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
     }
 
     formData = updateFormData(data);
-    data["department_id"] = props.parentData;
+    // data["department_id"] = props.parentData;
 
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {

@@ -30,6 +30,7 @@
     "mui-tel-input": "^5.1.2",
     "next": "14.1.0",
     "next-auth": "^4.24.7",
+    "node-fetch": "^3.3.2",
     "notistack": "^3.0.1",
     "papaparse": "^5.4.1",
     "pino": "^9.1.0",

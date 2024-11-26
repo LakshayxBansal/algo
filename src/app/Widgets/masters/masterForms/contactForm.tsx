@@ -157,33 +157,33 @@ export default function ContactForm(props: masterFormPropsT) {
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-        ? entityData.contactGroup_id
-        : 0;
+      ? entityData.contactGroup_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-        ? entityData.organisation_id
-        : 0;
+      ? entityData.organisation_id
+      : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-        ? entityData.department_id
-        : 0;
+      ? entityData.department_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -503,6 +503,25 @@ export default function ContactForm(props: masterFormPropsT) {
               id="whatsapp"
               label="Whatsapp No"
               name="whatsapp"
+              width={210}
+              error={formError?.whatsapp?.error}
+              helperText={formError?.whatsapp?.msg}
+              defaultValue={whatsappFn}
+              key={whatsappFn}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                setWhatsappFn(value); 
+                setFormError((curr) => {
+                  const { whatsapp, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+            {/* <InputControl
+              inputType={InputType.PHONE}
+              id="whatsapp"
+              label="Whatsapp No"
+              name="whatsapp"
               // defaultCountry="FR"
               width={210}
               error={formError?.whatsapp?.error}
@@ -515,7 +534,7 @@ export default function ContactForm(props: masterFormPropsT) {
                   return rest;
                 });
               }}
-            />
+            /> */}
           </Box>
           <Box
             sx={{
@@ -604,7 +623,7 @@ export default function ContactForm(props: masterFormPropsT) {
                 });
               }}
             />
-              <SelectMasterWrapper
+            <SelectMasterWrapper
               name={"country"}
               id={"country"}
               label={"Country"}
@@ -645,8 +664,8 @@ export default function ContactForm(props: masterFormPropsT) {
                 selectValues.country
                   ? true
                   : entityData.country_id
-                    ? true
-                    : false
+                  ? true
+                  : false
               }
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <StateForm
