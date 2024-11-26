@@ -87,7 +87,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       let results
       if (!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
         results = (await props.fetchDataFn(props.defaultOptions ? '' : input)) as optionsDataT[];
-        if (props.diaglogVal.reloadOpts) {
+        if (props.diaglogVal?.reloadOpts) {
           setDefaultOpts(results)
           props.setDialogVal({ ...props.diaglogVal, reloadOpts: false })
           return
@@ -193,7 +193,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }}
       onHighlightChange={onHighlightChange}
       value={props.diaglogVal}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
+      isOptionEqualToValue={(option, value) => option.id === value?.id}
       PopperComponent={(props) =>
 
         showDetails ? (
@@ -278,7 +278,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       autoComplete
       includeInputInList
       disableClearable={
-        inputValue ? inputValue.length === 0 : !Boolean(props.diaglogVal.id)
+        inputValue ? inputValue.length === 0 : !Boolean(props.diaglogVal?.id)
       }
     />
   );

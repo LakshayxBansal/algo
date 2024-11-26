@@ -27,6 +27,7 @@ import { handleRefresh } from "./AutoGrid";
 
 interface customprop extends masterFormPropsT {
   setRefresh: (props: any) => void;
+  formName: string;
 }
 
 export default function AllocateCall(props: customprop) {
@@ -161,8 +162,8 @@ export default function AllocateCall(props: customprop) {
                 }}
                 setDialogVal={function (
                   value: React.SetStateAction<optionsDataT>
-                ): void {}}
-                fnSetModifyMode={function (id: string): void {}}
+                ): void { }}
+                fnSetModifyMode={function (id: string): void { }}
               />
               {/* <InputControl
                             inputType={InputType.TEXT}

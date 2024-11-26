@@ -14,23 +14,22 @@ export default async function Profile() {
     try {
         const session = await getSession();
         if (session) {
-                const executiveData = await getProfileById(session.user.userId);
-                if (executiveData) {
-                    return (
-                        <Box sx={{ maxWidth: "100%" }}>
-                            <Box sx={{ display: "flex", justifyContent: "center", width: "100vw" }}>
-                                <ExecutiveForm
-                                    data={executiveData[0]}
-                                    parentData="profile"
-                                />
-                            </Box>
+            const executiveData = await getProfileById(session.user.userId);
+            if (executiveData) {
+                return (
+                    <Box sx={{ maxWidth: "100%" }}>
+                        <Box sx={{ display: "flex", justifyContent: "center", width: "100vw" }}>
+                            <ExecutiveForm
+                                data={executiveData[0]}
+                            />
                         </Box>
-                    );
-                } else {
-                    return (
-                        <SnackModal open={true} msg={"Profile not Found"} />
-                    )
-                }
+                    </Box>
+                );
+            } else {
+                return (
+                    <SnackModal open={true} msg={"Profile not Found"} />
+                )
+            }
         }
     } catch (e) {
         // show error page

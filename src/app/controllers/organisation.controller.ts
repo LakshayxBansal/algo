@@ -18,6 +18,9 @@ import * as mdl from "../models/models";
 import { bigIntToNum } from "../utils/db/types";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
+import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
+import { ORGANISATION_OBJECT_ID } from "../utils/consts.utils";
 
 export async function createOrganisation(data: zm.organisationSchemaT,docData : zm.docDescriptionSchemaT[]) {
   let result;
@@ -162,17 +165,42 @@ export async function getOrganisationById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
-      if(organisationDetails.length>0){
-        const objectDetails = await getObjectByName("Organisation");
-        const docData = await getDocs(id,objectDetails[0].object_id);
-        if (organisationDetails.length > 0 && docData.length > 0) {
-          organisationDetails[0].docData = docData;
-        } else {
-          organisationDetails[0].docData = [];
+      const userRights = {};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(ORGANISATION_OBJECT_ID);
+      if(id)
+      {
+          const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
+          if(organisationDetails.length>0){
+            const objectDetails = await getObjectByName("Organisation");
+            const docData = await getDocs(id,objectDetails[0].object_id);
+            if (organisationDetails.length > 0 && docData.length > 0) {
+              organisationDetails[0].docData = docData;
+            } else {
+              organisationDetails[0].docData = [];
+            }
+            const result = [
+              screenDesc,
+              organisationDetails[0],
+              userRights,
+              configData,
+              session
+            ]
+
+            return [
+              result
+            ]
         }
-        return organisationDetails;
       }
+      const result=[
+        screenDesc,
+        userRights,
+        configData,
+        session
+      ]
+      return[
+        result
+      ]
     }
   } catch (error) {
     throw error;

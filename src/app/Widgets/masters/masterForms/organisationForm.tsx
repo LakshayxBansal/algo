@@ -17,6 +17,7 @@ import CountryForm from "./countryForm";
 import {
   docDescriptionSchemaT,
   masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   organisationSchemaT,
   selectKeyValueT,
@@ -29,18 +30,19 @@ import StateForm from "./stateForm";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
+import CustomField from "@/app/cap/enquiry/CustomFields";
 
-export default function OrganisationForm(props: masterFormPropsT) {
+export default function OrganisationForm(props: masterFormPropsWithDataT<organisationSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
-    props?.data ? props?.data?.docData : []
+    props.data?.docData ? props?.data?.docData : []
   );
   const [dialogOpen, setDialogOpen] = useState(false);
-  const entityData: organisationSchemaT = props.data ? props.data : {};
+  const entityData: organisationSchemaT = props.data ? props.data : {} as organisationSchemaT;
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -61,6 +63,10 @@ export default function OrganisationForm(props: masterFormPropsT) {
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (let i = 1; i <= 10; ++i) {
+      data[`c_col${i}`] = "";
+    }
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -396,7 +402,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
 
   let fieldArr: React.ReactElement[] = [];
 
-  props.masterData.fields.map((field: any) => {
+  props.metaData?.fields.map((field: any) => {
     if (field.column_name_id === 'name' || field.column_name_id === 'alias' || field.column_name_id === 'print_name') {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
@@ -532,7 +538,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-number") || fieldKey.includes("field-address")) {
                 return (
-                  <Grid item
+                  <Grid key={fieldKey}
+                    item
                     xs={12}
                     sm={6}
                     md={6}
@@ -544,7 +551,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 )
               } else if (fieldKey.includes("field-subAddress")) {
                 return (
-                  <Grid item
+                  <Grid key={fieldKey}
+                    item
                     xs={12}
                     sm={6}
                     md={3}
@@ -556,7 +564,8 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 )
               } else {
                 return (
-                  <Grid item
+                  <Grid key={fieldKey}
+                    item
                     xs={12}
                     sm={6}
                     md={4}

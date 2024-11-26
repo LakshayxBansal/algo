@@ -32,7 +32,7 @@ import TuneIcon from "@mui/icons-material/Tune";
 import SearchIcon from "@mui/icons-material/Search";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AddDialog } from "./addDialog";
-import { entitiyCompT, formMetaDataPropT } from "@/app/models/models";
+import { entitiyCompT, formMetaDataPropT, loggedInUserDataT, regionalSettingSchemaT, rightSchemaT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import UploadFileForm from "./UploadFileForm";
@@ -69,9 +69,9 @@ export default function EntityList(props: entitiyCompT) {
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
   const [metaData, setMetaData] = useState<formMetaDataPropT>({
     fields: [],
-    rights: [],
-    regionalSettingsConfigData: [],
-    loggedInUserData: {}
+    rights: {} as rightSchemaT,
+    regionalSettingsConfigData: {} as regionalSettingSchemaT,
+    loggedInUserData: {} as loggedInUserDataT
   });
 
   const anchorRef = useRef<HTMLDivElement>(null);
