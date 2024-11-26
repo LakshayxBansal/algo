@@ -30,6 +30,7 @@ import { getDocs, uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
 import { getRegionalSettings } from "./config.controller";
 import { getScreenDescription } from "./object.controller";
+import { EXECUTIVE_OBJECT_ID } from '@/app/utils/consts.utils';
 
 const inviteSring = "Send Invite...";
 
@@ -216,9 +217,9 @@ export async function getExecutiveById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const rights={};
-      const config_data=await getRegionalSettings();
-      const desc = await getScreenDescription(11,1);
+      const userRights={};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(EXECUTIVE_OBJECT_ID);
       if(id){
         const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
         if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
@@ -235,10 +236,10 @@ export async function getExecutiveById(id: number) {
         executiveDetails[0].docData = [];
       }
       const result=[
-        desc,
+        screenDesc,
         executiveDetails[0],
-        rights,
-        config_data,
+        userRights,
+        configData,
         session
       ]
         return[
@@ -246,9 +247,9 @@ export async function getExecutiveById(id: number) {
         ]
       }
        const result=[
-        desc,
-        rights,
-        config_data,
+        screenDesc,
+        userRights,
+        configData,
         session
       ]
       return[
