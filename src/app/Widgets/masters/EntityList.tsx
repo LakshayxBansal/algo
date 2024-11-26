@@ -259,7 +259,7 @@ export default function EntityList(props: entitiyCompT) {
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
               metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData) : props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => { }, metaData, modData)
+              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData, modData) : props.renderForm(setDialogOpen, (arg) => { }, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}

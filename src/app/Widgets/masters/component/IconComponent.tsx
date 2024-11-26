@@ -21,7 +21,7 @@ function IconComponent(props: iconCompT) {
       const data = await props.fnFetchDataByID(modId);
       console.log("Iconcomponent", data);
 
-      if (data[0]) {
+      if (data[0].length > 0) {
         props.setModData(data[0][1]);
         props.setMetaData({
           fields: data[0][0] || {},
@@ -29,6 +29,9 @@ function IconComponent(props: iconCompT) {
           regionalSettingsConfigData: data[0][3] || {},
           loggedInUserData: data[0][4] || {}
         });
+      }
+      else {
+        props.setModData(data[0])
       }
 
       props.setDialogOpen(true);

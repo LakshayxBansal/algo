@@ -839,7 +839,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-address")) {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}
@@ -854,7 +854,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
               }
               else if (fieldKey.includes("field-subAddress")) {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}

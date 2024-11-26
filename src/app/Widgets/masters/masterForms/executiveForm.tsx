@@ -147,7 +147,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
-        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <AreaForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
