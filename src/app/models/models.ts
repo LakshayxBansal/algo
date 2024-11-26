@@ -163,47 +163,47 @@ export type dbInfoT = {
   roleId: number;
 };
 
-export type getOrgansT = [
-  {
-    id: string;
-    name: string;
-    printName: string;
-    alias: string;
-    rowID: number;
-    stamp: string;
-  }
-];
+// export type getOrgansT = [
+//   {
+//     id: string;
+//     name: string;
+//     printName: string;
+//     alias: string;
+//     rowID: number;
+//     stamp: string;
+//   }
+// ];
 
 export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContactByPageT = [
-  {
-    id: number;
-    name: string;
-    whatsapp: string;
-    email: string;
-  }
-];
+// export type getContactByPageT = [
+//   {
+//     id: number;
+//     name: string;
+//     whatsapp: string;
+//     email: string;
+//   }
+// ];
 
-export type getProductT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getProductT = [
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   }
+// ];
 
-export type getUnitT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getUnitT = [
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   }
+// ];
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
 
