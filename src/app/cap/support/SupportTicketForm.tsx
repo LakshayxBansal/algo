@@ -651,7 +651,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
               )}
             >
               <IconButton
-                sx={{ float: "right", position: "relative", paddingRight: 0 }}
+                sx={{ float: "left", position: "relative"}}
                 onClick={() => setDocDialogOpen(true)}
                 aria-label="file"
               >

@@ -240,7 +240,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
       return (
         <FormControlLabel
           label={custLabel}
-          control={<Checkbox {...CheckboxProps} onChange={onChange} />}
+          control={<Checkbox {...CheckboxProps} onChange={onChange}/>}
         />
       );
       break;

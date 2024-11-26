@@ -23,11 +23,11 @@ export async function getAllRolesDB(
 export async function getExecutiveRoleList(
   crmDb: string,
   searchString: string,
-  department?: number
+  // department?: number
 ) {
   try {
-    let query = "select id as id, name as name from executive_role_master rm where rm.department_id= ?";
-    let values: any[] = [department];
+    let query = "select id as id, name as name from executive_role_master";
+    let values: any[] = [];
 
     if (searchString !== "") {
       query = query + " and name like '%" + searchString + "%'";
@@ -57,11 +57,11 @@ export async function createExecutiveRoleDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createExecutiveRole(?, ?, ?, ?)",
+      query: "call createExecutiveRole(?, ?)",
       values: [
         sourceData.name,
-        sourceData.parent_id,
-        sourceData.department_id,
+        // sourceData.parent_id,
+        // sourceData.department_id,
         session.user.userId,
       ],
     });
@@ -76,7 +76,7 @@ export async function getExecutiveRoleDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT c1.*, c2.name parentRole FROM executive_role_master c1 left outer join executive_role_master c2 on c1.parent = c2.id \
+        "SELECT c1.* FROM executive_role_master c1 \
         where c1.id=?;",
       values: [id],
     });
@@ -122,12 +122,12 @@ export async function updateExecutiveRoleDb(
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateExecutiveRole(?, ?, ?, ?, ?);",
+      query: "call updateExecutiveRole(?, ?, ?, ?);",
       values: [
         executiveRoleData.id,
         executiveRoleData.name,
         executiveRoleData.stamp,
-        executiveRoleData.parent_id,
+        // executiveRoleData.parent_id,
         session.user.userId,
       ],
     });
@@ -154,9 +154,9 @@ export async function getExecutiveRoleByPageDb(
       host: crmDb,
       query:
       "SELECT *, RowNum AS RowID \
-       FROM (SELECT c1.*, c2.name parentRole, ROW_NUMBER() OVER () AS RowNum FROM executive_role_master c1 left outer join executive_role_master c2 on c1.parent = c2.id " +
-        (filter ? "WHERE c1.name LIKE CONCAT('%', ?, '%') " : "") + 
-      "ORDER BY c1.name \
+       FROM (SELECT *, ROW_NUMBER() OVER () AS RowNum FROM executive_role_master " +
+        (filter ? "WHERE name LIKE CONCAT('%', ?, '%') " : "") + 
+      "ORDER BY name \
       ) AS NumberedRows\
       WHERE RowNum > ?*? \
       ORDER BY RowNum\
