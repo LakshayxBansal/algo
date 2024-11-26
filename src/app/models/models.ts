@@ -65,11 +65,23 @@ export type masterUploadFormT = {
 };
 
 export type masterFormPropsT = {
-  [x: string]: any;
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;
 };
+
+
+export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
+
+// this type is for fetching meta info for custom fields
+type masterDataprop = {
+  fields: customFieldsMasterSchemaT[],
+  data?: {},
+  rights: [],
+  regionalSettingsConfigData: [],
+  loggedInUserData: {}
+}
+
 
 export type masterFormPropsWithParentT = masterFormPropsT & {
   parentData?: number;

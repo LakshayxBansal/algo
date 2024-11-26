@@ -1081,3 +1081,23 @@ export const docDescriptionSchema = z.object({
   fileType: z.string().optional(),
   docId: z.string().optional(),
 });
+
+
+
+export const customFieldsMasterSchema = z.object ({
+  id : z.number().optional(),
+  objectTypeId : z.number(),    // form id
+  columnNameId: z.string().min(1).max(45),
+  columnLabel:  z.string().min(1).max(45),
+  columnName:  z.string().min(1).max(45),
+  columnId:  z.string().min(1).max(45),
+  columnTypeId:  z.string().min(1).max(45),
+  columnFormat: z.string().min(1).max(1000),    // special handling required. blank or 1000 max
+  form_section:  z.string().optional(),
+  isMandatory:  z.number(),
+  isDefaultColumn:  z.number(),
+  isDefaultMandatory:  z.number(),
+  columnOrder:  z.number(),
+  actionId:  z.number().optional(),
+  isDisabled:  z.number().optional()
+})
