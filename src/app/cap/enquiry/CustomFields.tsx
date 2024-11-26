@@ -24,7 +24,8 @@ type CustomFieldT = {
     column_order: number
 }
 
-export default function CustomField(props: { desc: CustomFieldT, defaultValue: any }) {
+export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any }) {
+    console.log("props.defaultValue", props.desc.column_name_id, props.defaultValue);
     const [status, setStatus] = useState(0);
 
     function onStatusChange(event: React.SyntheticEvent, value: any) {
@@ -74,6 +75,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue: a
                 const list_item = props.desc.column_format?.split(",") || [];
                 return (
                     <Autocomplete
+                        id={props.desc.column_name_id}
                         options={list_item}
                         defaultValue={props.defaultValue}
                         renderInput={(params) => (

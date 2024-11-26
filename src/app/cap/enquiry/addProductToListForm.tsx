@@ -22,7 +22,11 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 
-export default function AddProductToListForm(props: masterFormPropsT) {
+interface customprop extends masterFormPropsT {
+  setData: (props: any) => void;
+}
+
+export default function AddProductToListForm(props: customprop) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -51,26 +55,26 @@ export default function AddProductToListForm(props: masterFormPropsT) {
     if (parsed.success) {
       props.setData
         ? props.setData((prevData: any) => {
-            prevDataPresent = prevData.some(
-              (item: any) => item.product_id === data.product_id
-            );
-            if (prevDataPresent) {
-              const errorState: Record<
-                string,
-                { msg: string; error: boolean }
-              > = {};
-              errorState["form"] = {
-                msg: "Product already exists in the list",
-                error: true,
-              };
-              setFormError((curr: any) => {
-                return { ...curr, ...errorState };
-              });
-              return prevData;
-            } else {
-              return [...prevData, { id: prevData.length + 1, ...data }];
-            }
-          })
+          prevDataPresent = prevData.some(
+            (item: any) => item.product_id === data.product_id
+          );
+          if (prevDataPresent) {
+            const errorState: Record<
+              string,
+              { msg: string; error: boolean }
+            > = {};
+            errorState["form"] = {
+              msg: "Product already exists in the list",
+              error: true,
+            };
+            setFormError((curr: any) => {
+              return { ...curr, ...errorState };
+            });
+            return prevData;
+          } else {
+            return [...prevData, { id: prevData.length + 1, ...data }];
+          }
+        })
         : null;
 
       if (prevDataPresent) return;

@@ -95,7 +95,7 @@ const FieldConfigurator = () => {
 
     useEffect(() => {
         async function getFieldData() {
-            const result = await getScreenDescription(Number(selectedFormValue), 1);
+            const result = await getScreenDescription(Number(selectedFormValue));
             setFields(result);
         }
         getFieldData();
@@ -131,7 +131,6 @@ const FieldConfigurator = () => {
     const handleChange = (index: number, field: keyof FieldItem, value: any) => {
         const updatedFields: any = [...fields];
         updatedFields[index][field] = value;
-        updatedFields[index]["column_format"] = null;
         setFields(updatedFields);
 
         const updatedErrors = { ...formError };
@@ -236,7 +235,6 @@ const FieldConfigurator = () => {
 
     const handleSubmit = async () => {
         // await createCustomFields(Number(selectedFormValue), 1, fields);
-        console.log("FIELDS", fields);
         // fields.map((Item) => {
         //     if (Item.column_label == "") {
         //         const errorState = { ...formError };
@@ -259,7 +257,7 @@ const FieldConfigurator = () => {
 
         if (Object.keys(errors).length > 0) {
             setFormError(errors);
-            console.log("Validation errors:", errors);
+            // console.log("Validation errors:", errors);
             return; // Prevent form submission if there are errors
         }
 
@@ -267,15 +265,15 @@ const FieldConfigurator = () => {
         try {
             const result = await createCustomFields(Number(selectedFormValue), 1, fields);
             if (result) {
-                console.log("FIELDS", fields);
+                // console.log("FIELDS", fields);
                 alert("Field configuration saved!");
             }
             else {
-                console.error("Error saving configuration:");
+                // console.error("Error saving configuration:");
                 alert("Failed to save configuration. Please try again.");
             }
         } catch (error) {
-            console.error("Error saving configuration:", error);
+            // console.error("Error saving configuration:", error);
             alert("Failed to save configuration. Please try again.");
         }
 
@@ -440,13 +438,20 @@ const FieldConfigurator = () => {
                             )}
 
                             {item.is_default_column !== 1 && (
-                                <TextField
+                                <InputControl
+                                    inputType={InputType.TEXT}
+                                    id="format"
+                                    key="format"
                                     label={item.column_type_id !== 4 ? "Format" : dateFormat}
                                     value={item.column_format || ""}
-                                    onChange={(e) => handleChange(index, "column_format", e.target.value)}
-                                    size="small"
-                                    sx={{ width: 300 }}
-                                    disabled={item.column_type_id !== 1 && item.column_type_id !== 3 && item.column_type_id !== 4 ? false : true}
+                                    name="format"
+                                    defaultValue={item.column_format}
+                                    onChange={(e: any) => handleChange(index, "column_format", e.target.value)}
+                                    disabled={
+                                        item.column_type_id !== 2 && // Text
+                                        item.column_type_id !== 5 && // Numeric
+                                        item.column_type_id !== 6    // Date
+                                    }
                                     placeholder={item.column_type_id === 6
                                         ? "Number of decimal places"
                                         : item.column_type_id === 5

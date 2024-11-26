@@ -73,13 +73,18 @@ export type masterFormPropsT = {
 
 
 export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
+export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
+export type rightSchemaT = z.infer<typeof zs.rightSchema>;
+export type loggedInUserDataT= z.infer<typeof zs.loggedInUserData>;
+
+
 
 // this type is for fetching meta info for custom fields
 export type formMetaDataPropT = {
   fields: customFieldsMasterSchemaT[],
-  rights: [],
-  regionalSettingsConfigData: [],
-  loggedInUserData: {}
+  rights: rightSchemaT,
+  regionalSettingsConfigData: regionalSettingSchemaT,
+  loggedInUserData: loggedInUserDataT
 }
 
 
@@ -251,6 +256,5 @@ export type iconCompT = {
   link ?:string;
   setMetaData:(props: any) => void;
 };
-export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;

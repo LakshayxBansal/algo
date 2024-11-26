@@ -36,7 +36,7 @@ export async function getExecutiveDeptList(
  */
 export async function createExecutiveDeptDb(
   session: Session,
-  sourceData: zm.executiveDeptSchemaT
+  data: zm.executiveDeptSchemaT
 ) {
   try {
     return excuteQuery({
@@ -64,13 +64,28 @@ export async function createExecutiveDeptDb(
 
 export async function updateExecutiveDeptDb(
   session: Session,
-  sourceData: zm.executiveDeptSchemaT
+  data: zm.executiveDeptSchemaT
 ) {
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateExecutiveDept(?, ?, ?, ?);",
-      values: [sourceData.id, sourceData.name, sourceData.stamp, session.user.userId],
+      query: "call updateExecutiveDept(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        data.id,
+        data.name,
+        data.stamp, 
+        session.user.userId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
+      ],
     });
   } catch (e) {
     console.log(e);
