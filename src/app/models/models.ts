@@ -202,7 +202,7 @@ export type getUnitT = [
   }
 ];
 
-export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
+export type configSchemaT = z.infer<typeof zs.configSchema>;
 
 export type deleteCompT={
   fnDeleteDataByID?: (id: number) => Promise<any>;
@@ -248,5 +248,6 @@ export type iconCompT = {
  link ?:string;
 };
 export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
+export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;

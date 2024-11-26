@@ -43,12 +43,12 @@ export async function getObjectByNameDb(crmDb : string,name : string) {
     }
 }
 
-export async function getObjectsDb(crmDb : string) {
+export async function getAllObjectsDB(crmDb : string) {
 
     try{
         const result = await excuteQuery({
             host: crmDb,
-            query: "select rm.id as right_id, om.name as object_name, om.id as object_id, om.type as object_type from object_rights_master rm, object_type_master om where rm.object_id = om.id",
+            query: "select om.name as object_name, om.id as object_id, om.type as object_type from object_type_master om;",
             values : []
         })
         return result;
@@ -57,4 +57,38 @@ export async function getObjectsDb(crmDb : string) {
     }
 }
 
+export async function createDeptInRightsTableDB(crmDb : string,deptId: number,objects:Array<{object_name:string,object_id:number}>,roles:Array<{name:string,id:number}>) {
 
+    try{
+        let query = "insert into object_rights_master (object_id,role_id,dept_id) values ";
+        objects.map((obj:{object_name:string,object_id:number})=>{
+            roles.map((role:{name:string,id:number})=>{
+                query += `(${obj.object_id},${role.id},${deptId}),`
+            })
+        })
+        query = query.slice(0, -1);
+        query += ";";
+        if(query!=="insert into config_dept_mapping (config_id,dept_id) values;"){
+            await excuteQuery({
+                host: crmDb,
+                query: query,
+                values: [],
+            });
+        }
+    }catch(error){
+        console.log(error);
+    }
+}
+
+export async function delDeptFromRightTableDB(crmDb : string,deptId : number) {
+
+    try{
+        await excuteQuery({
+            host: crmDb,
+            query: "delete from object_rights_master where dept_id = ?",
+            values : [deptId]
+        })
+    }catch(error){
+        console.log(error);
+    }
+}
