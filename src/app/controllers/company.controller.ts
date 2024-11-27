@@ -122,23 +122,11 @@ export async function createCompany(data: companySchemaT) {
         }
         const userId = session.user.userId;
 
-        const companyData = await createCompanyAndInfoDb(
-          hostDetails.id,
-          dbName,
-          data,
-          userId as number
-        );
+        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userId as number);
 
         if (companyData[0].length === 0) {
           dbName += companyData[2][0].id;
-          result = await createCompanyDbAndTableProc(
-            dbName,
-            hostDetails.host,
-            hostDetails.port,
-            companyData[1][0].id,
-            companyData[2][0].id,
-            companyData[4][0]
-          );
+          result = await createCompanyDbAndTableProc(dbName, hostDetails.host, hostDetails.port, companyData[1][0].id, companyData[2][0].id, companyData[4][0]);
           if (!result.status) {
             return result;
           }
@@ -162,15 +150,9 @@ export async function createCompany(data: companySchemaT) {
             { path: ["form"], message: "Error encountered" },
           ];
           companyData[0].forEach((error: any) => {
-            errorState.push({
-              path: [error.error_path],
-              message: error.error_text,
-            });
+            errorState.push({path: [error.error_path], message: error.error_text});
           });
-          result = {
-            status: false,
-            data: errorState,
-          };
+          result = {status: false, data: errorState};
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -215,44 +197,25 @@ export async function updateCompany(data: companySchemaT) {
         if (dbResult[0].length === 0) {
           dbName += dbResult[1][0].dbinfo_id;
 
-          const countryData = await getCountryWithCurrencyDb(
-            dbName,
-            "",
-            data.country_id
-          );
+          const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
 
           let regionalDataRes = (await getRegionalSettingDb(dbName))[0];
-          console.log(regionalDataRes);
 
           const regionalData: regionalSettingSchemaT = JSON.parse(regionalDataRes.config);
           
-          // let regionalData: regionalSettingSchemaT = {
-          //   country_id: data.country_id ?? 0,
-          //   country: data.country ?? "",
-          //   state_id: data.state_id ?? 0,
-          //   state: data.state ?? "",
-          //   decimalPlaces: regionalDataRes["config"]["decimalPlaces"] ?? "Two Digits",
-          //   timeFormat: regionalDataRes["config"]["timeFormat"] ?? "12 Hours",
-          //   currencyString: regionalDataRes["config"]["currencyString"] ?? "",
-          //   currencySymbol: regionalDataRes["config"]["currencySymbol"] ?? "",
-          //   currencySubString: regionalDataRes["config"]["currencySubString"] ?? "",
-          //   currencyCharacter: regionalDataRes["config"]["currencyCharacter"] ?? "",
-          //   dateFormat: regionalDataRes["config"]["dateFormat"] ?? "",
-          // };
-
           if (data.country_id !== 0) {
-            regionalData.currencyString = countryData[0].currencyString;
-            regionalData.currencySymbol = countryData[0].currencySymbol;
-            regionalData.currencySubString = countryData[0].currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter;
-            regionalData.dateFormat = countryData[0].date_format;
+            regionalData.country = data.country;
+            regionalData.country_id = data.country_id ?? 0;
+            regionalData.state = data.state;
+            regionalData.state_id = data.state_id ?? 0;
+            regionalData.currencyString = countryData[0].currencyString ?? regionalData.currencyString;
+            regionalData.currencySymbol = countryData[0].currencySymbol ?? regionalData.currencySymbol;
+            regionalData.currencySubString = countryData[0].currencySubString ?? regionalData.currencySubString;
+            regionalData.currencyCharacter = countryData[0].currencyCharacter ?? regionalData.currencyCharacter;
+            regionalData.dateFormat = countryData[0].date_format ?? regionalData.dateFormat;
           }
 
-          const regionalResult = await updateteRegionalSettingDb(
-            dbName,
-            regionalData,
-            regionalDataRes.config_type_id
-          );
+          const regionalResult = await updateteRegionalSettingDb(dbName, regionalData, regionalDataRes.config_type_id);
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
