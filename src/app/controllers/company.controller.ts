@@ -1,5 +1,5 @@
 "use server";
-import { companySchemaT, dbInfoT, regionalSettingSchemaT } from "../models/models";
+import { companySchemaT, configSchemaT, dbInfoT, regionalSettingSchemaT } from "../models/models";
 import {
   createCompanyDB,
   getHostId,
@@ -19,6 +19,7 @@ import {
   getRegionalSettingDb,
   updateteRegionalSettingDb,
 } from "../services/config.service";
+import { createConfigDataDB } from "../services/configData.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
@@ -34,6 +35,7 @@ export async function getCompanyById(id: number) {
     throw error;
   }
 }
+
 
 export async function getCompanyDbById(id: number) {
   try {
@@ -86,6 +88,18 @@ async function createCompanyDbAndTableProc(
   return tableAndProcRes;
 }
 
+function createAppConfigData(): configSchemaT{
+  const enquiryData = {reqd:true, closeCall:true,maintainProducts:false,saveFAQ:false,allowReallocation:true,maintainAction:true,voucher:{voucherNumber:true,prefix:"",suffix:"",length: "6",prefillWithZero:true}};
+  const supportData = {reqd:true,closeCall:true,maintainProducts:false,saveFAQ:false,allowReallocation:true,maintainAction:true,voucher:{voucherNumber:true,prefix:"",suffix:"",length: "6",prefillWithZero:true}};
+  const contractData = {reqd:false,voucher:{voucherNumber:false,prefix:"",suffix:"",length: "0",prefillWithZero:false}};
+  const regionalData = {country_id: 0, country: "", state_id: 0, state: "", decimalPlaces: "Two Digits", timeFormat: "12 Hours", currencyString: "", currencySymbol: "", currencySubString: "", currencyCharacter: "", dateFormat: ""};
+  const searchNavbarData = {reqd:true,menu:true,enquiryDescription:true,organisation:true,supportDescription:true,contractDescription:true,product:true};
+  const searchContactData = {reqd:true,name:true,alias:true,phone:true,email:true,organisation:true,city:true};
+  const searchExecutiveData = {reqd:true,name:true,alias:true,dept:true,role:true,email:true,phone:true};
+  const searchOrganisationData = {reqd:true,name:true,alias:true,city:true};
+  return {enquiry: enquiryData, support: supportData, contract: contractData, regionalSetting: regionalData, searchNavbar: searchNavbarData, searchContact: searchContactData, searchExecutive: searchExecutiveData, searchOrganisation: searchOrganisationData};
+}
+
 export async function createCompany(data: companySchemaT) {
   let result;
   try {
@@ -128,29 +142,16 @@ export async function createCompany(data: companySchemaT) {
 
           const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
 
-          let regionalData: regionalSettingSchemaT = {
-            country_id: data.country_id ?? 0,
-            country: data.country ?? "",
-            state_id: data.state_id ?? 0,
-            state: data.state ?? "",
-            decimalPlaces: "Two Digits",
-            timeFormat: "12 Hours",
-            currencyString: "",
-            currencySymbol: "",
-            currencySubString: "",
-            currencyCharacter: "",
-            dateFormat: "",
-          };
-
+          const configData: configSchemaT = createAppConfigData();
           if (data.country_id !== 0) {
-            regionalData.currencyString = countryData[0].currencyString;
-            regionalData.currencySymbol = countryData[0].currencySymbol;
-            regionalData.currencySubString = countryData[0].currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter;
-            regionalData.dateFormat = countryData[0].date_format;
+            configData.regionalSetting.currencyString = countryData[0].currencyString;
+            configData.regionalSetting.currencySymbol = countryData[0].currencySymbol;
+            configData.regionalSetting.currencySubString = countryData[0].currencySubString;
+            configData.regionalSetting.currencyCharacter = countryData[0].currencyCharacter;
+            configData.regionalSetting.dateFormat = countryData[0].date_format;
           }
 
-          const regionalSettingResult = await createRegionalSettingDb(dbName, regionalData);
+          const configResult = await createConfigDataDB(dbName, configData);
 
           result = { status: true, data: companyData[1] };
         } else {
@@ -214,19 +215,23 @@ export async function updateCompany(data: companySchemaT) {
           const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
 
           let regionalDataRes = (await getRegionalSettingDb(dbName))[0];
-          let regionalData: regionalSettingSchemaT = {
-            country_id: data.country_id ?? 0,
-            country: data.country ?? "",
-            state_id: data.state_id ?? 0,
-            state: data.state ?? "",
-            decimalPlaces: "Two Digits",
-            timeFormat: "12 Hours",
-            currencyString: "",
-            currencySymbol: "",
-            currencySubString: "",
-            currencyCharacter: "",
-            dateFormat: "",
-          };
+          console.log(regionalDataRes);
+
+          const regionalData: regionalSettingSchemaT = JSON.parse(regionalDataRes.config);
+          
+          // let regionalData: regionalSettingSchemaT = {
+          //   country_id: data.country_id ?? 0,
+          //   country: data.country ?? "",
+          //   state_id: data.state_id ?? 0,
+          //   state: data.state ?? "",
+          //   decimalPlaces: regionalDataRes["config"]["decimalPlaces"] ?? "Two Digits",
+          //   timeFormat: regionalDataRes["config"]["timeFormat"] ?? "12 Hours",
+          //   currencyString: regionalDataRes["config"]["currencyString"] ?? "",
+          //   currencySymbol: regionalDataRes["config"]["currencySymbol"] ?? "",
+          //   currencySubString: regionalDataRes["config"]["currencySubString"] ?? "",
+          //   currencyCharacter: regionalDataRes["config"]["currencyCharacter"] ?? "",
+          //   dateFormat: regionalDataRes["config"]["dateFormat"] ?? "",
+          // };
 
           if (data.country_id !== 0) {
             regionalData.currencyString = countryData[0].currencyString;

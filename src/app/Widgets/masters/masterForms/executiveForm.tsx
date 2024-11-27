@@ -177,45 +177,45 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-      ? entityData.executive_group_id
-      : 0;
+        ? entityData.executive_group_id
+        : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-      ? entityData.role_id
-      : 0;
+        ? entityData.role_id
+        : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-      ? entityData.area_id
-      : 0;
+        ? entityData.area_id
+        : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-      ? entityData.crm_user_id
-      : 0;
+        ? entityData.crm_user_id
+        : 0;
     data.executive_dept_id = selectValues.department
       ? selectValues.department.id
       : entityData.executive_dept_id
-      ? entityData.executive_dept_id
-      : 0;
+        ? entityData.executive_dept_id
+        : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
     data.role = selectValues.role
       ? selectValues.role.name
       : entityData.role
-      ? entityData.role
-      : "";
+        ? entityData.role
+        : "";
     return data;
   };
 
@@ -286,6 +286,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
+          pb: 2,
+          mb: 2
         }}
       >
         {props.parentData ? (
@@ -326,7 +328,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
           <p style={{ color: "red" }}>{formError?.form.msg}</p>
         )} */}
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2} rowGap={1}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
                 inputType={InputType.TEXT}
@@ -426,7 +428,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 width={352}
                 dialogTitle={"Add Role"}
                 fetchDataFn={(roleStr: string) =>
-                  getExecutiveRole(roleStr, selectValues.department?.id)
+                  getExecutiveRole(roleStr)
                 }
                 fnFetchDataByID={getExecutiveRoleById}
                 defaultValue={defaultRole}
@@ -436,8 +438,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   props?.parentData === "profile" && entityData.role_id !== 1
                     ? true
                     : roleDisable
-                    ? true
-                    : false
+                      ? true
+                      : false
                 }
                 formError={formError?.role ?? formError.role}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -539,7 +541,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                     data={data}
-                    // isExecutive={true}
+                  // isExecutive={true}
                   />
                 )}
               />
@@ -604,6 +606,26 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
                 inputType={InputType.DATEINPUT}
+                id="doj"
+                label="Joining Date"
+                name="doj"
+                // defaultValue={entityData.doj}
+                defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
+                slotProps={{
+                  textField: {
+                    error: formError?.doj?.error,
+                    helperText: formError?.doj?.msg,
+                  },
+                  openPickerButton: {
+                    tabIndex: -1,
+                  },
+                }}
+                sx={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.DATEINPUT}
                 id="dob"
                 label="Date of Birth"
                 name="dob"
@@ -642,26 +664,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 sx={{ width: "100%" }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <InputControl
-                inputType={InputType.DATEINPUT}
-                id="doj"
-                label="Joining Date"
-                name="doj"
-                // defaultValue={entityData.doj}
-                defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
-                slotProps={{
-                  textField: {
-                    error: formError?.doj?.error,
-                    helperText: formError?.doj?.msg,
-                  },
-                  openPickerButton: {
-                    tabIndex: -1,
-                  },
-                }}
-                sx={{ width: "100%" }}
-              />
-            </Grid>
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 inputType={InputType.TEXT}
@@ -672,7 +674,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.address1?.error}
                 helperText={formError?.address1?.msg}
                 style={{ width: "100%" }}
-                // fullWidth
+              // fullWidth
               />
             </Grid>
             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -685,7 +687,31 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 error={formError?.address2?.error}
                 helperText={formError?.address2?.msg}
                 style={{ width: "100%" }}
-                // fullWidth
+              // fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} lg={3}>
+              <InputControl
+                inputType={InputType.TEXT}
+                name="city"
+                id="city"
+                label="City"
+                defaultValue={entityData.city}
+                error={formError?.city?.error}
+                helperText={formError?.city?.msg}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} lg={3}>
+              <InputControl
+                inputType={InputType.TEXT}
+                name="pincode"
+                id="pincode"
+                label="Pin Code"
+                defaultValue={entityData.pincode}
+                error={formError?.pincode?.error}
+                helperText={formError?.pincode?.msg}
+                style={{ width: "100%" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3} lg={3}>
@@ -741,36 +767,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3} lg={3}>
-              <InputControl
-                inputType={InputType.TEXT}
-                name="city"
-                id="city"
-                label="City"
-                defaultValue={entityData.city}
-                error={formError?.city?.error}
-                helperText={formError?.city?.msg}
-                style={{ width: "100%" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} lg={3}>
-              <InputControl
-                inputType={InputType.TEXT}
-                name="pincode"
-                id="pincode"
-                label="Pin Code"
-                defaultValue={entityData.pincode}
-                error={formError?.pincode?.error}
-                helperText={formError?.pincode?.msg}
-                style={{ width: "100%" }}
-              />
-            </Grid>
             <Grid
               item
               xs={12}
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 mt: 1,
               }}
             >
@@ -791,7 +793,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                   }
                 >
                   <IconButton
-                    sx={{ float: "left", position: "relative", m: 1 }}
+                    sx={{ float: "left", position: "relative" }}
                     onClick={() => setDialogOpen(true)}
                     aria-label="file"
                   >
@@ -800,27 +802,27 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                {/* <Box> */}
-                  <Button
-                    onClick={() => {
-                      if (props.parentData === "profile") {
-                        router.push("/cap");
-                      } else {
-                        handleCancel();
-                      }
-                    }}
-                    tabIndex={-1}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ width: "15%", marginLeft: "5%" }}
-                  >
-                    Submit
-                  </Button>
-                {/* </Box> */}
+              </Box>
+              <Box>
+                <Button
+                  onClick={() => {
+                    if (props.parentData === "profile") {
+                      router.push("/cap");
+                    } else {
+                      handleCancel();
+                    }
+                  }}
+                  tabIndex={-1}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
               </Box>
             </Grid>
             {dialogOpen && (

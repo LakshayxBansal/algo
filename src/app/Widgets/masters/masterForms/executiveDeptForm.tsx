@@ -47,8 +47,8 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = { msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -119,29 +119,29 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-       <Grid container>
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-          <InputControl
-            inputType={InputType.TEXT}
-            autoFocus
-            id="name"
-            label="Executive Dept Name"
-            name="name"
-            fullWidth
-            required
-            titleCase={true}
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            defaultValue={entityData.name}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { name, ...rest } = curr;
-                return rest;
-              });
-            }}
-          />
-        </Grid>
-        <Grid
+        <Grid container>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <InputControl
+              inputType={InputType.TEXT}
+              autoFocus
+              id="name"
+              label="Executive Dept Name"
+              name="name"
+              fullWidth
+              required
+              titleCase={true}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              defaultValue={entityData.name}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
+          </Grid>
+          <Grid
             item
             xs={12}
             sx={{

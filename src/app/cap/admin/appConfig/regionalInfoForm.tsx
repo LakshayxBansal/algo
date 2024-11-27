@@ -1,12 +1,13 @@
 "use client";
 import {
+  configSchemaT,
   optionsDataT,
 } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Seperator from "@/app/Widgets/seperator";
 import { Autocomplete, Box, Paper, Snackbar } from "@mui/material";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import {
   getCountryWithCurrency,
 } from "@/app/controllers/config.controller";
@@ -16,12 +17,8 @@ const decimalPlacesList = ["Two Digits", "Three Digits"];
 const timeFormatList = ["12 Hours", "24 Hours"];
 const dateFormatList = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY/DD/MM", "YYYY/MM/DD"];
 
-export default function RegionalInfo({config,setConfig}:{config:any,setConfig:any}) {
-  const [formError, setFormError] = useState<
-    Record<string, { msg: string; error: boolean }>
-  >({});
-  const [displayNumber, setDisplayNumber] = useState<string>(config.regionalSetting.decimalPlaces === "Two Digits" ? "9,99,99,999.99" : "9,99,99,999.999");
-  const [decimalPlaces, setDecimalPlaces] = useState(config.regionalSetting?.decimalPlaces);
+export default function RegionalInfo({config,setConfig,formError,setFormError}:{config:configSchemaT,setConfig:React.Dispatch<React.SetStateAction<configSchemaT>>,formError : Record<string, { msg: string; error: boolean }>, setFormError : React.Dispatch<React.SetStateAction<Record<string, { msg: string; error: boolean }>>>}) {
+  const [displayNumber, setDisplayNumber] = useState<string>(config?.regionalSetting?.decimalPlaces === "Two Digits" ? "9,99,99,999.99" : "9,99,99,999.999");
   const [snackOpen, setSnackOpen] = useState(false);  
 
   const handleCountryChange = (
@@ -32,18 +29,18 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
     if (val) {
       setConfig({
         ...config, ["regionalSetting"] : {
-          ...config["regionalSetting"], ["country"] : val.name, ["country_id"] : val.id, ["state"] : null, ["state_id"] : null, ["currencyString"] : val.currencyString,
-          ["currencySubString"] : val.currencySubString, ["currencySymbol"] : val.currencySymbol, ["currencyCharacter"] : val.currencyCharacter,
+          ...config["regionalSetting"], ["country"] : val.name, ["country_id"] : val.id, ["state"] : "", ["state_id"] : 0, ["currencyString"] : val.currencyString ?? "",
+          ["currencySubString"] : val.currencySubString ?? "", ["currencySymbol"] : val.currencySymbol ?? "", ["currencyCharacter"] : val.currencyCharacter ?? "",
           ["dateFormat"] : val.date_format
         }
       })
     }
   };
 
-  const handleDecimalPlacesChange = (e: any, newValue: string) => {
+  const handleDecimalPlacesChange = (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
     setConfig({
       ...config, ["regionalSetting"] : {
-        ...config["regionalSetting"], ["decimalPlaces"] : newValue
+        ...config["regionalSetting"], ["decimalPlaces"] : newValue as string
       }
     })
     if (newValue === "Two Digits") {
@@ -56,7 +53,7 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
   return (
     <>
       <Paper sx={{  padding: "1%" }}>
-        <Box mb={2} sx={{ width: "80%%" }}>
+        <Box mb={2} sx={{ width: "80%" }}>
           <Seperator>Regional Settings</Seperator>
         </Box>
         <Box sx={{ width: "90%" }}>
@@ -77,8 +74,8 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               width={400}
               fetchDataFn={getCountryWithCurrency}
               diaglogVal={{
-                      id: config.regionalSetting.country?.id,
-                      name: config.regionalSetting.country,
+                      id: config.regionalSetting.country_id as number,
+                      name: config.regionalSetting.country as string,
                       detail: undefined,
                     }
               }
@@ -102,7 +99,7 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               fetchDataFn={(stateStr: string) => {
                 const country =
                   config.regionalSetting.country;
-                return getStates(stateStr, country);
+                return getStates(stateStr, country as string);
               }}
               disable={
                 config.regionalSetting.country ||  config.regionalSetting.country_id !== 0
@@ -111,7 +108,7 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               }
               diaglogVal={{
                       id: config.regionalSetting.state_id,
-                      name: config.regionalSetting.state
+                      name: config.regionalSetting.state as string
                     }
               }
               setDialogVal={function (
@@ -134,7 +131,7 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               onChange={(e: any, value)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["dateFormat"] : value
+                    ...config["regionalSetting"], ["dateFormat"] : value as string
                   }
                 })
               }}
@@ -145,8 +142,16 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
                 <InputControl
                   {...params}
                   inputType={InputType.TEXT}
-                  name="dateFormat"
+                  name="regionalSetting_dateFormat"
                   label="Date Format"
+                  error={formError?.regionalSetting_dateFormat?.error}
+                  helperText={formError?.regionalSetting_dateFormat?.error && "Required"}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { regionalSetting_dateFormat, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
                 />
               )}
             />
@@ -156,7 +161,7 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               onChange={(e: any, value)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
-                    ...config["regionalSetting"], ["timeFormat"] : value
+                    ...config["regionalSetting"], ["timeFormat"] : value as string
                   }
                 })
               }}
@@ -167,8 +172,16 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
                 <InputControl
                   {...params}
                   inputType={InputType.TEXT}
-                  name="timeFormat"
+                  name="regionalSetting_timeFormat"
                   label="Time Format"
+                  error={formError?.regionalSetting_timeFormat?.error}
+                  helperText={formError?.regionalSetting_timeFormat?.error && "Required"}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { regionalSetting_timeFormat, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
                 />
               )}
             />
@@ -186,18 +199,16 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               id="currencySymbol"
               label="Currency Symbol"
               inputType={InputType.TEXT}
-              name="currencySymbol"
-              required
+              name="regionalSetting_currencySymbol"
               style={{width: "400px"}}
-              // error={formError?.name?.error}
-              // helperText={formError?.name?.msg}
-              defaultValue={config.regionalSetting.currencySymbol}
-              // onKeyDown={() => {
-              //   setFormError((curr) => {
-              //     const { name, ...rest } = curr;
-              //     return rest;
-              //   });
-              // }}
+              error={formError?.regionalSetting_currencySymbol?.error}
+              helperText={formError?.regionalSetting_currencySymbol?.msg}
+              value={config.regionalSetting.currencySymbol}
+              onKeyDown={() => {
+                const { regionalSetting_currencySymbol, ...rest } = formError;
+                console.log("rest : ",rest);
+                setFormError(rest);
+              }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
@@ -210,18 +221,17 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               id="currencyString"
               label="Currency String"
               inputType={InputType.TEXT}
-              name="currencyString"
-              required
+              name="regionalSetting_currencyString"
               style={{width: "400px"}}
-              // error={formError?.name?.error}
-              // helperText={formError?.name?.msg}
-              defaultValue={config.regionalSetting.currencyString}
-              // onKeyDown={() => {
-              //   setFormError((curr) => {
-              //     const { name, ...rest } = curr;
-              //     return rest;
-              //   });
-              // }}
+              error={formError?.regionalSetting_currencyString?.error}
+              helperText={formError?.regionalSetting_currencyString?.msg}
+              value={config.regionalSetting.currencyString}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { regionalSetting_currencyString, ...rest } = curr;
+                  return rest;
+                });
+              }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
@@ -234,18 +244,17 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               id="currencySubString"
               label="Currency Sub String"
               inputType={InputType.TEXT}
-              name="currencySubString"
-              required
+              name="regionalSetting_currencySubString"
               style={{width: "400px"}}
-              // error={formError?.name?.error}
-              // helperText={formError?.name?.msg}
-              defaultValue={config.regionalSetting.currencySubString}
-              // onKeyDown={() => {
-              //   setFormError((curr) => {
-              //     const { name, ...rest } = curr;
-              //     return rest;
-              //   });
-              // }}
+              error={formError?.regionalSetting_currencySubString?.error}
+              helperText={formError?.regionalSetting_currencySubString?.msg}
+              value={config.regionalSetting.currencySubString}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { regionalSetting_currencySubString, ...rest } = curr;
+                  return rest;
+                });
+              }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
@@ -258,18 +267,17 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
               id="currencyCharacter"
               label="Currency Character"
               inputType={InputType.TEXT}
-              name="currencyCharacter"
-              required
+              name="regionalSetting_currencyCharacter"
               style={{width: "400px"}}
-              // error={formError?.name?.error}
-              // helperText={formError?.name?.msg}
-              defaultValue={config.regionalSetting.currencyCharacter}
-              // onKeyDown={() => {
-              //   setFormError((curr) => {
-              //     const { name, ...rest } = curr;
-              //     return rest;
-              //   });
-              // }}
+              error={formError?.regionalSetting_currencyCharacter?.error}
+              helperText={formError?.regionalSetting_currencyCharacter?.msg}
+              value={config.regionalSetting.currencyCharacter}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { regionalSetting_currencyCharacter, ...rest } = curr;
+                  return rest;
+                });
+              }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                 setConfig({
                   ...config, ["regionalSetting"] : {
@@ -281,7 +289,7 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
           
             
             <Autocomplete
-              value={decimalPlaces}
+              value={config?.regionalSetting?.decimalPlaces}
               options={decimalPlacesList}
               sx={{ maxWidth: 400 }}
               onChange={handleDecimalPlacesChange}
@@ -289,8 +297,16 @@ export default function RegionalInfo({config,setConfig}:{config:any,setConfig:an
                 <InputControl
                   {...params}
                   inputType={InputType.TEXT}
-                  name="decimalPlaces"
+                  name="regionalSetting_decimalPlaces"
                   label="Decimal Places"
+                  error={formError?.regionalSetting_decimalPlaces?.error}
+                  helperText={formError?.regionalSetting_decimalPlaces?.error && "Required"}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { regionalSetting_decimalPlaces, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
                 />
               )}
             />

@@ -9,7 +9,7 @@ import {
 } from "@mui/x-data-grid";
 
 import { darken, lighten, styled, Theme } from "@mui/material/styles";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -42,6 +42,8 @@ type ModifiedRowT = {
 };
 
 type ProductGridProps = {
+  id?: string;
+  name?: string;
   dgData: any;
   setdgData: any;
   setdgDialogOpen: any;
@@ -406,7 +408,7 @@ export default function ProductGrid({
   return (
     <>
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Seperator>Product List</Seperator>
+        <Typography>Product List</Typography>
         <Button
           color="primary"
           startIcon={<AddIcon />}
@@ -428,9 +430,9 @@ export default function ProductGrid({
         }}
         rowHeight={
           dgFormError.product ||
-          dgFormError.quantity ||
-          dgFormError.unit ||
-          dgFormError.remark
+            dgFormError.quantity ||
+            dgFormError.unit ||
+            dgFormError.remark
             ? 70
             : 50
         }

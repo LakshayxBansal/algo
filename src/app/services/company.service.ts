@@ -117,6 +117,8 @@ export async function createTablesAndProc(
       data: data,
     };
   } catch (e) {
+    console.log(e);
+    
     result = {
       status: false,
       data: [{ path: ["form"], message: "Error: Server Error" }],

@@ -14,12 +14,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Seperator from "@/app/Widgets/seperator";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import { createEnquiry } from "@/app/controllers/enquiry.controller";
-import Seperator from "@/app/Widgets/seperator";
-import { InputControl } from "@/app/Widgets/input/InputControl";
-import { InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   getEnquirySource,
   getEnquirySourceById,
@@ -32,14 +33,6 @@ import {
   getCategoryById,
   getEnquiryCategory,
 } from "@/app/controllers/enquiryCategory.controller";
-import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
-import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
-import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
-import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
-import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
-import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import DocModal from "@/app/utils/docs/DocModal";
 
@@ -47,10 +40,12 @@ import {
   getExecutive,
   getExecutiveById,
 } from "@/app/controllers/executive.controller";
+
 import {
   getEnquirySubSatusById,
   getEnquirySubStatus,
 } from "@/app/controllers/enquirySubStatus.controller";
+
 import {
   getActionById,
   getEnquiryAction,
@@ -67,24 +62,35 @@ import {
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
-import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
+import CustomField from "./CustomFields";
 
-export interface IformData {
-  // fields: Array<any>;
-  enqData: Record<string, any>;
-  rights: Record<string, any>;
-  config_data: Record<string, any>;
-  loggedInUserData: Record<string, any>;
+import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
+import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
+import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
+import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
+import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
+import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
+import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
+
+export interface InputFormProps {
+  baseData: {
+    // fields: Array<any>;
+    enqData: Record<string, any>;
+    // rights: Record<string, any>;
+    config_data: Record<string, any>;
+    regional_setting: Record<string, any>;
+    loggedInUserData: Record<string, any>;
+  };
 }
 
 const rows: any = [];
 
-export default function InputForm(props: { baseData: IformData }) {
+export default function InputForm({ baseData }: InputFormProps) {
   const [status, setStatus] = useState("1");
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({
     received_by: {
-      id: props.baseData.loggedInUserData.id,
-      name: props.baseData.loggedInUserData.name,
+      id: baseData.loggedInUserData.id,
+      name: baseData.loggedInUserData.name,
     },
   });
   const [formError, setFormError] = useState<
@@ -103,8 +109,21 @@ export default function InputForm(props: { baseData: IformData }) {
 
   const router = useRouter();
 
+  const { dateFormat, timeFormat } = baseData.regional_setting;
+  const timeFormatString = timeFormat
+    ? timeFormat === "12 Hours"
+      ? "hh:mm A"
+      : "HH:mm"
+    : "HH:mm";
+  const dateTimeFormat = [
+    dateFormat || "DD/MM/YYYY", // Add dateFormat if it exists
+    timeFormatString, // Add timeFormatString if timeFormat is valid
+  ]
+    .filter(Boolean)
+    .join(" "); // Remove empty strings and join with space
+
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues });
+    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
 
     let result;
     let issues = [];
@@ -188,8 +207,7 @@ export default function InputForm(props: { baseData: IformData }) {
     setSelectValues(values);
   }
 
-  const enquiryMaintainProducts = props.baseData.config_data.maintainProducts;
-
+  const enquiryMaintainProducts = baseData.config_data.maintainProducts;
   return (
     <Box>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
@@ -220,6 +238,7 @@ export default function InputForm(props: { baseData: IformData }) {
                   </Grid>
                   <Grid item xs={12} sm={3} md={3}>
                     <InputControl
+                      format={dateTimeFormat}
                       label="Received On"
                       inputType={InputType.DATETIMEINPUT}
                       id="date"
@@ -229,7 +248,7 @@ export default function InputForm(props: { baseData: IformData }) {
                       sx={{ display: "flex", flexGrow: 1 }}
                       slotProps={{
                         textField: {
-                          error: formError?.data?.error,
+                          error: formError?.date?.error,
                           helperText: formError?.date?.msg,
                         },
                         openPickerButton: {
@@ -338,8 +357,8 @@ export default function InputForm(props: { baseData: IformData }) {
                       )}
                       defaultValue={
                         {
-                          id: props.baseData.loggedInUserData?.id,
-                          name: props.baseData.loggedInUserData?.name,
+                          id: baseData.loggedInUserData?.id,
+                          name: baseData.loggedInUserData?.name,
                         } as optionsDataT
                       }
                     />
@@ -353,7 +372,7 @@ export default function InputForm(props: { baseData: IformData }) {
                 <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
                   <Box
                     sx={{
-                      height: 260,
+                      height: 264,
                     }}
                   >
                     <ProductGrid
@@ -516,6 +535,7 @@ export default function InputForm(props: { baseData: IformData }) {
                 disable={status === "2"}
               />
               <InputControl
+                format={dateTimeFormat}
                 key={`next-action-date-${status}`}
                 defaultValue={status === "2" ? null : dayjs(new Date())}
                 label="When"
@@ -565,46 +585,46 @@ export default function InputForm(props: { baseData: IformData }) {
           <Grid container>
             <Grid item xs={12} md={12}>
               <Box>
-              <Tooltip
-              title={
-                docData.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
-                    </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )
-              }
-            >
-              <IconButton
-                sx={{ float: "left", position: "relative"}}
-                onClick={() => setDocDialogOpen(true)}
-                aria-label="file"
-              >
-                <Badge badgeContent={docData.length} color="primary">
-                  <AttachFileIcon></AttachFileIcon>
-                </Badge>
-              </IconButton>
-            </Tooltip>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  m={1}
+                <Tooltip
+                  title={
+                    docData.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
+                      </Typography>
+                    )
+                  }
                 >
-                  <Button onClick={handleCancel} tabIndex={-1}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" variant="contained">
-                    Submit
-                  </Button>
+                  <IconButton
+                    sx={{ float: "left", position: "relative" }}
+                    onClick={() => setDocDialogOpen(true)}
+                    aria-label="file"
+                  >
+                    <Badge badgeContent={docData.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                    m={1}
+                  >
+                    <Button onClick={handleCancel} tabIndex={-1}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" variant="contained">
+                      Submit
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
               </Box>
             </Grid>
           </Grid>

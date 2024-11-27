@@ -19,11 +19,10 @@ CREATE TABLE `config_meta_data` (\
 CREATE TABLE `app_config` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `config_type_id` int(11) NOT NULL,\
-  `config` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\
+  `enabled` int(11) NOT NULL,\
+  `config` varchar(5000) NOT NULL,\
   PRIMARY KEY (`id`),\
-  UNIQUE KEY `config_type_id_UNIQUE` (`config_type_id`),\
-  CONSTRAINT `app_config_ibfk_1` FOREIGN KEY (`config_type_id`) REFERENCES `config_meta_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\
-  CONSTRAINT `app_config_chk_1` CHECK (json_valid(`config`))\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `app_config_new` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
@@ -734,6 +733,12 @@ CREATE TABLE `unit_master` (\
   `modified_on` datetime DEFAULT NULL,\
   `created_by` int(11) DEFAULT NULL,\
   `modified_by` int(11) DEFAULT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
+CREATE TABLE `config_dept_mapping` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `config_id` int(11) NOT NULL,\
+  `dept_id` int(11) NOT NULL,\
   PRIMARY KEY (`id`)\
 );~\
 INSERT INTO `country_master` VALUES (1,'AF','Afghanistan',1,NULL,1,NULL,'2024-10-18 10:49:35','؋','Afghani','AFN',NULL,NULL,NULL),(2,'AX','Aland Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,'AL','Albania',1,NULL,NULL,NULL,NULL,'Lek','Lek','ALL',NULL,'DD/MM/YYYY',NULL),(4,'DZ','Algeria',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(5,'AS','American Samoa',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(6,'AD','Andorra',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),\
@@ -6419,4 +6424,53 @@ INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashb
     \
   select * from error_table;\
     select * from unit_master um where um.id = id;\
-END ;";
+END ;~\
+CREATE PROCEDURE `createConfig`(\
+	IN enquiryData varchar(5000),\
+  IN supportData varchar(5000),\
+  IN contractData varchar(5000),\
+  IN regionalSettingData varchar(5000),\
+  IN searchNavbarData varchar(5000),\
+  IN searchContactData varchar(5000),\
+  IN searchExecutiveData varchar(5000),\
+  IN searchOrganisationData varchar(5000)\
+)\
+BEGIN\
+  DECLARE enquiryId integer Default NULL;\
+  DECLARE supportId integer Default NULL;\
+  DECLARE contractId integer Default NULL;\
+  DECLARE regionalSettingId integer Default NULL;\
+  DECLARE searchNavbarId integer Default NULL;\
+  DECLARE searchContactId integer Default NULL;\
+  DECLARE searchExecutiveId integer Default NULL;\
+  DECLARE searchOrganisationId integer Default NULL;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END;\
+  \
+  Start Transaction;\
+	Insert into config_meta_data (config_type) values ('enquiry');\
+    set enquiryId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('support');\
+    set supportId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('contract');\
+    set contractId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('regionalSetting');\
+    set regionalSettingId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchNavbar');\
+    set searchNavbarId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchContact');\
+    set searchContactId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchExecutive');\
+    set searchExecutiveId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchOrganisation');\
+    set searchOrganisationId = LAST_INSERT_ID();\
+    \
+	INSERT into app_config (config_type_id, enabled, config) values (enquiryId, 1, enquiryData), \
+    (supportId, 1, supportData), (contractId, 0, contractData), (regionalSettingId, 1, regionalSettingData), \
+    (searchNavbarId, 1, searchNavbarData), (searchContactId, 1, searchContactData), \
+    (searchExecutiveId, 1, searchExecutiveData), (searchOrganisationId, 1, searchOrganisationData);\
+  Commit;\
+END;";

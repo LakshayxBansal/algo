@@ -1,21 +1,28 @@
 "use server";
 import { selectKeyValueT } from "@/app/models/models";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export async function enquiryDataFormat({
   formData,
   selectValues,
+  timeFormat
 }: {
   formData: FormData;
   selectValues: selectKeyValueT;
+  timeFormat: string;
 }) {
-  const formatDate = (dateStr: string): string => {
-    const dt = new Date(dateStr);
+  dayjs.extend(customParseFormat);
+
+  const toISOString = (dateStr: string): string => {
+    // Parse the input format and convert to ISO 8601
+    if (!dateStr || dateStr === " ") return "";
+    const dt = dayjs(dateStr, `${timeFormat === "12 Hours" ? "DD/MM/YYYY hh:mm A" : "DD/MM/YYYY HH:mm"}`);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
-
-  const date = formatDate(formData.get("date") as string);
+  const date = toISOString(formData.get("date") as string);
   const nextActionDate = formData.get("next_action_date")
-    ? formatDate(formData.get("next_action_date") as string)
+    ? toISOString(formData.get("next_action_date") as string)
     : null;
   // console.log(nextActionDate);
   const headerData = {

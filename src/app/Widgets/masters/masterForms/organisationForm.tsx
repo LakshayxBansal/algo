@@ -107,13 +107,13 @@ export default function OrganisationForm(props: masterFormPropsT) {
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-      ? entityData.country_id
-      : 0;
+        ? entityData.country_id
+        : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
+        ? entityData.state_id
+        : 0;
 
     return data;
   };
@@ -206,9 +206,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
 
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m: 1 }}>
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 inputType={InputType.TEXT}
@@ -433,7 +433,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
               xs={12}
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 mt: 2,
               }}
             >
@@ -463,6 +463,9 @@ export default function OrganisationForm(props: masterFormPropsT) {
                     </Badge>
                   </IconButton>
                 </Tooltip>
+              </Box>
+
+              <Box>
                 <Button onClick={handleCancel} tabIndex={-1}>
                   Cancel
                 </Button>

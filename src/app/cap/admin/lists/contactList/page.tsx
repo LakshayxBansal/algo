@@ -99,7 +99,7 @@ export default function ManageContacts() {
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
         uploadAllowed={true}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );

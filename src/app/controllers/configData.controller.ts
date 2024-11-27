@@ -3,7 +3,7 @@
 import { getConfigDB, getConfigDeptMappingDB, getConfigTypeDB, updateConfigDataDB, updateConfigDeptDB } from "../services/configData.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
-// import { enquirySupportConfig } from "../zodschema/zodschema";
+import * as zs from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
 
 export async function getConfigType() {
@@ -20,24 +20,35 @@ export async function getConfigType() {
 
 
 export async function updateConfigData(config: any, configDept : {[key : string] : number[]}) {
-  let result;
+  let result : any = {status : false, data : []};
   try {
     const session = await getSession();
     if(session){
-      const configType = await getConfigType();
-      Object.keys({...config}).map(async(key,index)=>{
-        const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
-        const enabled = config[key].reqd ? 1 : 0;
-        const data = JSON.stringify(config[key]);
-        result = await updateConfigDataDB(session.user.dbInfo.dbName,configId,enabled,data);
-      });
-      
-      result = await updateConfigDeptDB(session.user.dbInfo.dbName,configDept,configType);
-    return result;
+      const parsedData = zs.configSchema.safeParse(config);
+      if(parsedData.success){
+        const configType = await getConfigType();
+        Object.keys({...config}).map(async(key,index)=>{
+          const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
+          const enabled = config[key].reqd ? 1 : 0;
+          const data = JSON.stringify(config[key]);
+          await updateConfigDataDB(session.user.dbInfo.dbName,configId,enabled,data);
+        });
+        await updateConfigDeptDB(session.user.dbInfo.dbName,configDept,configType);
+        return {status : true, data : []}
+      }else{
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsedData.error.issues) {
+          errorState.push({
+            path: issue.path,
+            message: issue.message,
+          });
+        }
+        return { status: false, data: errorState};
+      }
     }
   } catch (e: any) {
     logger.error(e);
-    return false;
+    return {status : false, data : [{path:"form",message: "Error encountered"}]};
   }
 }
 

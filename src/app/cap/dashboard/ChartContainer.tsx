@@ -5,10 +5,10 @@ import { LinePlot } from '@mui/x-charts/LineChart';
 import { ChartsLegend, ChartsTooltip, ChartsXAxis, ChartsYAxis } from '@mui/x-charts';
 
 export default function ChartContainer(props: {
-    openData: any,
-    closedData: any,
-    lineData: any,
-    xAxisData: any
+    openData: number[],
+    closedData: number[],
+    lineData: number[],
+    xAxisData: string[]
 }) {
     return (
         <ResponsiveChartContainer

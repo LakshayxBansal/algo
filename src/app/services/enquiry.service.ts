@@ -14,10 +14,10 @@ export async function createEnquiryDB(
   enqData: { headerLedger: enquiryDataSchemaT; product: any }
 ) {
   try {
-   const result = excuteQuery({
+    const result = excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -38,10 +38,10 @@ export async function createEnquiryDB(
         enqData.headerLedger.enquiry_tran_type,
         enqData.headerLedger.active,
         session.user.userId,
-        enqData.product,
+        enqData.product
       ],
     });
-    return result ;
+    return result;
   } catch (e) {
     console.log(e);
   }
@@ -75,7 +75,7 @@ export async function getEnquiryStatusList(
 export async function getConfigDataDB(crmDb: string) {
   try {
     let query =
-      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type="enquiry"';
+      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type in("enquiry", "regionalSetting")';
     let values: any[] = [];
 
     const result = await excuteQuery({
@@ -180,5 +180,3 @@ export async function getProductDataAction(session: Session, id: number) {
     console.log(error);
   }
 }
-
-

@@ -1,7 +1,8 @@
 "use server"
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils"
-import { manageRightsDb, getObjectsDb, getObjectByNameDb, getRightsDataDb } from "../services/rights.service";
+import { manageRightsDb, getObjectByNameDb, getRightsDataDb, getAllObjectsDB, createDeptInRightsTableDB, delDeptFromRightTableDB } from "../services/rights.service";
+import { getAllRoles } from "./executiveRole.controller";
 
 function normalToCamelCaseString(normalString: string) {
     const objectNameWithOutSpace = normalString.replace(/\s+/g, '');
@@ -82,7 +83,7 @@ export async function getAllObjects() {
     try {
         const session = await getSession();
         if (session) {
-            const objects = await getObjectsDb(session.user.dbInfo.dbName);
+            const objects = await getAllObjectsDB(session.user.dbInfo.dbName);
             return objects;
         }
     } catch (error) {
@@ -102,4 +103,27 @@ export async function getObjectByName(name: string) {
     }
 }
 
+export async function createDeptInRightsTable(deptId:number) {
+    try {
+        const session = await getSession();
+        if (session) {
+            const objects = await getAllObjects();
+            const roles = await getAllRoles();
+            await createDeptInRightsTableDB(session.user.dbInfo.dbName,deptId,objects,roles);
+        }
+    } catch (error) {
+        logger.error(error);
+    }
+}
+
+export async function delDeptFromRightTable(deptId:number) {
+    try {
+        const session = await getSession();
+        if (session) {
+            await delDeptFromRightTableDB(session.user.dbInfo.dbName,deptId);
+        }
+    } catch (error) {
+        logger.error(error);
+    }
+}
 

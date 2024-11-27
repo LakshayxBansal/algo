@@ -523,3 +523,23 @@ export async function getStateListMasterDb(
     console.log(e);
   }
 }
+
+export async function getCountryIdByNameDb (country: string) {
+  try{
+
+    let query =
+      "select s.id as id country_master c where \
+        c.name = ?";
+    let values = [country];
+
+    const result = await excuteQuery({
+      host: "userDb",
+      query: query,
+      values: values,
+    });
+
+    return result;
+  } catch(e) {
+    console.log(e);
+  }
+}
