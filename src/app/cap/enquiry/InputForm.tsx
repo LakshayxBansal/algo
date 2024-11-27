@@ -162,11 +162,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getContactById}
         required={false}
         formError={formError?.contact ?? formError.contact}
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -230,11 +230,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getExecutiveById}
         required={false}
         formError={formError?.received_by ?? formError.received_by}
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -296,7 +296,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           <SubStatusForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            parentData={status}
+            parentData={parseInt(status)}
             data={data}
           />
         )}
@@ -398,7 +398,7 @@ export default function InputForm({ baseData }: InputFormProps) {
   ]);
 
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat});
+    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
 
     let result;
     let issues = [];

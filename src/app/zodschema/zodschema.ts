@@ -15,6 +15,17 @@ const passwordRegex = new RegExp(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 );
 
+export const docDescriptionSchema = z.object({
+  id: z.number().optional(),
+  description: z.string().min(1).max(255).optional(),
+  fileName: z.string().optional(),
+  objectId: z.number().optional(),
+  objectTypeId: z.number().optional(),
+  file: z.string().optional(),
+  fileType: z.string().optional(),
+  docId: z.string().optional(),
+});
+
 export const signInSchema = z
   .object({
     email: z.string().optional(),
@@ -109,6 +120,7 @@ export const organisationSchema = z.object({
     .string()
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
+  docData: z.array(docDescriptionSchema).optional(),
   state_id: z.number().optional(),
   state: z.string().optional(),
   country_id: z.number().optional(),
@@ -262,6 +274,7 @@ export const contactSchema = z.object({
   address1: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
   address2: z.string().max(75, "Field must contain at most 75 character(s)").optional(),
   pincode: z.string().max(15, "Field must contain at most 15 character(s)").optional(),
+  docData: z.array(docDescriptionSchema).optional(),
   email: z.union([z.literal(""), z.string().email().max(100)]),
   mobile: z.string().refine((val) => checkPhone(val), {
     message: "Please provide a valid Phone No",
@@ -387,6 +400,7 @@ export const executiveSchema = z
     dob: z.union([z.literal(""), z.date().optional()]),
     doa: z.union([z.literal(""), z.date().optional()]),
     doj: z.union([z.literal(""), z.date().optional()]),
+    docData: z.array(docDescriptionSchema).optional(),
     area_id: z.number().optional(),
     area: z.string().max(60).optional(),
     call_type_id: z.number().optional(),
@@ -1046,41 +1060,6 @@ export const configBaseSchema = z.object({
     length: z.string().optional(),
     prefillWithZero: z.boolean().optional(),
   });
-  
-  export const regionalSettingSchema = z.object({
-    id: z.number().optional(),
-    country_id: z.number(),
-    state_id: z.number(),
-    country: z.string().optional(),
-    state: z.string().optional(),
-    decimalPlaces: z.string().optional(),
-    timeFormat: z.string().optional(),
-    currencyString: z.string().optional(),
-    currencySymbol: z.string().optional(),
-    currencySubString: z.string().optional(),
-    currencyCharacter: z.string().optional(),
-    dateFormat: z.string().optional(),
-    ...voucherSchema.shape
-  });
-  
-export const configSchema = z.object({
-    enquiryConfig: configBaseSchema.optional(),
-    supportConfig: configBaseSchema.optional(),
-    contractConfig: voucherSchema.optional(),
-    regionalSettingConfig: regionalSettingSchema.optional(),
-    enquiryGenerationConfig: voucherSchema.optional(),
-  });
-
-export const docDescriptionSchema = z.object({
-  id: z.number().optional(),
-  description: z.string().min(1).max(255),
-  fileName: z.string().optional(),
-  objectId: z.number().optional(),
-  objectTypeId: z.number().optional(),
-  file: z.string().optional(),
-  fileType: z.string().optional(),
-  docId: z.string().optional(),
-});
 
 
 
@@ -1101,3 +1080,50 @@ export const customFieldsMasterSchema = z.object ({
   actionId:  z.number().optional(),
   isDisabled:  z.number().optional()
 })
+
+export const rightSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  objectName: z.string(),
+  objectId: z.number(),
+  category: z.string(),
+  categoryId: z.number(),
+  roleId: z.number(),
+  roleName: z.string(),
+  deptId: z.number(),
+  deptName: z.string(),
+  createRight: z.boolean(),
+  readRight: z.boolean(),
+  updateRight: z.boolean(),
+  deleteRight: z.boolean()
+})
+
+export const regionalSettingSchema = z.object({
+  reqd : z.boolean().optional(),
+  id: z.number().optional(),
+  country_id: z.number(),
+  state_id: z.number(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  decimalPlaces: z.string(),
+  timeFormat: z.string(),
+  currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
+  currencySymbol: z.string().max(5,"Currency symbol should not be greater than 5 character").optional(),
+  currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
+  currencyCharacter: z.string().max(1,"Currency character should not be greater than 1 character").optional(),
+  dateFormat: z.string(),
+  voucher : voucherSchema.optional()
+});
+
+export const configSchema = z.object({
+  enquiryConfig: configBaseSchema.optional(),
+  supportConfig: configBaseSchema.optional(),
+  contractConfig: voucherSchema.optional(),
+  regionalSettingConfig: regionalSettingSchema.optional(),
+  enquiryGenerationConfig: voucherSchema.optional(),
+});
+
+export const loggedInUserData = z.object({
+  name: z.string(),
+  user_id: z.number()
+});

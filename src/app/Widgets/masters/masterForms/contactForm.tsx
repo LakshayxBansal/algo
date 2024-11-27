@@ -51,19 +51,19 @@ import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
-export default function ContactForm(props: masterFormPropsWithDataT) {
+export default function ContactForm(props: masterFormPropsWithDataT<contactSchemaT>) {
   console.log("props : ", props)
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
-    props?.data ? props?.data?.docData : []
+    props.data?.docData ? props?.data?.docData : []
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
-  const entityData: contactSchemaT = props.masterData.data ? props.masterData.data : {};
+  const entityData: contactSchemaT = props.data ? props.data : {} as contactSchemaT;
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -218,6 +218,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key="name"
         autoFocus
         id="name"
         label="Name"
@@ -285,6 +286,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
       "organisation",
 
       <SelectMasterWrapper
+        key={"organisation"}
         name={"organisation"}
         id={"organisation"}
         label={"Organisation"}
@@ -305,11 +307,11 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
             name: entityData.organisation,
           } as optionsDataT
         }
-        renderForm={(fnDialogOpen, fnDialogValue, masterData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <OrganisationForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            masterData={masterData}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -321,6 +323,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key="pan"
         id="pan"
         label="PAN"
         name="pan"
@@ -342,6 +345,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key="aadhaar"
         id="aadhaar"
         label="AADHAAR"
         name="aadhaar"
@@ -362,6 +366,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
       "contactGroup",
 
       <SelectMasterWrapper
+        key="contactGroup"
         name={"contactGroup"}
         id={"contactGroup"}
         label={"Group"}
@@ -396,6 +401,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
       "department",
 
       <SelectMasterWrapper
+        key={"department"}
         name={"department"}
         id={"department"}
         label={"Department"}
@@ -429,6 +435,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
       "area",
 
       <SelectMasterWrapper
+        key={"area"}
         name={"area"}
         id={"area"}
         label={"Area"}
@@ -464,6 +471,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.EMAIL}
+        key={"email"}
         id="email"
         label="Email"
         name="email"
@@ -486,6 +494,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.PHONE}
+        key={"mobile"}
         id="mobile"
         label="Phone No"
         name="mobile"
@@ -508,6 +517,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.PHONE}
+        key={"whatsapp"}
         id="whatsapp"
         label="Whatsapp No"
         name="whatsapp"
@@ -530,6 +540,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key={"address1"}
         label="Address Line 1"
         name="address1"
         id="address1"
@@ -551,6 +562,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key={"address2"}
         label="Address Line 2"
         name="address2"
         id="address2"
@@ -599,6 +611,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
       "country",
 
       <SelectMasterWrapper
+        key={"country"}
         name={"country"}
         id={"country"}
         label={"Country"}
@@ -656,6 +669,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key={"city"}
         name="city"
         id="city"
         label="City"
@@ -677,6 +691,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
       <InputControl
         inputType={InputType.TEXT}
+        key={"pincode"}
         name="pincode"
         id="pincode"
         label="Pin Code"
@@ -697,7 +712,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
 
   let fieldArr: React.ReactElement[] = [];
 
-  props.masterData.fields.map((field: any) => {
+  props.metaData?.fields.map((field: any) => {
     if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
@@ -824,7 +839,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-address")) {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}
@@ -839,7 +854,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
               }
               else if (fieldKey.includes("field-subAddress")) {
                 return (
-                  <Grid
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}
@@ -855,6 +870,7 @@ export default function ContactForm(props: masterFormPropsWithDataT) {
               else {
                 return (
                   <Grid
+                    key={fieldKey}
                     item
                     xs={12}
                     sm={6}

@@ -6,7 +6,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import AutocompleteDB from "../AutocompleteDB";
-import { formErrorT } from "../../models/models";
+import { formErrorT, formMetaDataPropT, loggedInUserDataT, regionalSettingSchemaT, rightSchemaT } from "../../models/models";
 import EditIcon from "@mui/icons-material/Edit";
 import { optionsDataT } from "@/app/models/models";
 import { RenderFormFunctionT } from "@/app/models/models";
@@ -16,14 +16,6 @@ type OnChangeFunction = (
   newVal: any,
   setDialogValue: (props: any) => void
 ) => void;
-
-type masterDataprop = {
-  fields: {},
-  data?: {},
-  rights: {},
-  config_data: {},
-  loggedInUserData: {}
-}
 
 type SelectOptionsFunction = (option: any) => string;
 
@@ -67,12 +59,11 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
-  const [masterData, setMasterData] = useState<masterDataprop>({
+  const [metaData, setMetaData] = useState<formMetaDataPropT>({
     fields: [],
-    data: {},
-    rights: {},
-    config_data: [],
-    loggedInUserData: {}
+    rights: {} as rightSchemaT,
+    regionalSettingsConfigData: {} as regionalSettingSchemaT,
+    loggedInUserData: {} as loggedInUserDataT
   });
 
   async function openDialog() {
@@ -84,11 +75,11 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       setDlgMode(dialogMode.Add);
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-        if (data.length > 0)
-          setMasterData({
+        if (data[0]?.length > 0)
+          setMetaData({
             fields: data[0][0] || [],
             rights: data[0][1] || {},
-            config_data: data[0][2] || [],
+            regionalSettingsConfigData: data[0][2] || [],
             loggedInUserData: data[0][3] || {}
           });
       }
@@ -114,14 +105,17 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     if (allowModify) {
       if (props.fnFetchDataByID && dialogValue.id) {
         const data = await props.fnFetchDataByID(dialogValue.id);
-        setModData(data[0][1]);
-        setMasterData({
-          fields: data[0][0] || {},
-          data: data[0][1] || {},
-          rights: data[0][2] || {},
-          config_data: data[0][3] || {},
-          loggedInUserData: data[0][4] || {}
-        });
+        if (data[0]?.length > 0) {
+          setModData(data[0][1]);
+          setMetaData({
+            fields: data[0][0] || {},
+            rights: data[0][2] || {},
+            regionalSettingsConfigData: data[0][3] || {},
+            loggedInUserData: data[0][4] || {}
+          });
+        } else {
+          setModData(data[0]);
+        }
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
@@ -177,7 +171,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
                     fontSize="small"
                   />
                 </Tooltip>
-                {(dialogValue.id ? true : false) && (
+                {(dialogValue?.id ? true : false) && (
                   <Tooltip
                     title={
                       allowModify ? "Click to modify" : "Not allowed to modify"
@@ -205,10 +199,16 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
           setDialogOpen={setDialogOpen}
         >
           {props.renderForm
-            ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, changeDialogValue, masterData)
-              : props.renderForm(setDialogOpen, changeDialogValue, masterData, modData)
-            : 1}
+            ? metaData?.fields.length > 0 ? (
+              dlgMode === dialogMode.Add
+                ? props.renderForm(setDialogOpen, changeDialogValue, metaData)
+                : props.renderForm(setDialogOpen, changeDialogValue, metaData, modData)
+            ) : (
+              dlgMode === dialogMode.Add
+                ? props.renderForm(setDialogOpen, changeDialogValue)
+                : props.renderForm(setDialogOpen, changeDialogValue, modData)
+            ) : 1
+          }
         </AddDialog>
       )}
     </>

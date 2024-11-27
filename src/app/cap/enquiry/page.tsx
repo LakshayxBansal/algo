@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/enquiry.controller";
 import { getRightsData } from "@/app/controllers/rights.controller";
 import { getScreenDescription } from "@/app/controllers/object.controller";
+import { ENQUIRY_ID } from "@/app/utils/consts.utils";
 
 interface SearchParams {
   id?: string;
@@ -39,7 +40,7 @@ export default async function MyForm({
       return null; // Ensures no further code executes
     }
 
-    const fields = await getScreenDescription(26, 1);
+    const fields = await getScreenDescription(ENQUIRY_ID);
     const enqData = enquiryId ? await getEnquiryById(enquiryId) : undefined;
     // const rights = await getRightsData();
     const config_data = await getConfigData();

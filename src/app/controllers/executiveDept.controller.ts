@@ -17,6 +17,9 @@ import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { getRegionalSettings } from "./config.controller";
+import { EXECUTIVE_DEPT_OBJECT_ID } from "../utils/consts.utils";
+import { getScreenDescription } from "./object.controller";
 
 export async function getExecutiveDept(searchString: string) {
   try {
@@ -150,17 +153,17 @@ export async function getDeptById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const rights={};
-      const config_data = await getRegionalSettings();
-      const desc = await getScreenDescription(10,1);
+      const userRights={};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(EXECUTIVE_DEPT_OBJECT_ID);
       if(id){
         const executiveDeptDetails = await getDeptDetailsById(session.user.dbInfo.dbName, id);
       
         const result = [
-          desc,
+          screenDesc,
           executiveDeptDetails[0],
-          rights,
-          config_data,
+          userRights,
+          configData,
           session
         ]
         return[
@@ -168,9 +171,9 @@ export async function getDeptById(id: number) {
         ]
     }
       const result=[
-        desc,
-        rights,
-        config_data,
+        screenDesc,
+        userRights,
+        configData,
         session
       ]
       return[

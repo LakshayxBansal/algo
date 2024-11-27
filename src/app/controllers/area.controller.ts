@@ -17,8 +17,6 @@ import { SqlError } from "mariadb";
 import { areaSchemaT } from "../models/models";
 import * as mdl from "../models/models";
 import { bigIntToNum } from "../utils/db/types";
-import { getScreenDescription } from "./object.controller";
-import { getRegionalSettings } from "./config.controller";
 
 export async function getArea(searchString: string) {
   try {
@@ -35,31 +33,7 @@ export async function getAreaById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const rights = {};
-      const config_data = await getRegionalSettings();
-      const desc = await getScreenDescription(3,1);
-      if(id){
-        const areaDetails = await getAreaByIDList(session.user.dbInfo.dbName, id);
-        const result = [
-          desc,
-          areaDetails[0],
-          rights,
-          config_data,
-          session
-        ];
-        return [
-          result
-        ]
-      }
-      const result = [
-        desc,
-        rights,
-        config_data,
-        session
-      ];
-      return [
-        result
-      ]
+      return getAreaByIDList(session.user.dbInfo.dbName, id);
     }
   } catch (error) {
     throw error;

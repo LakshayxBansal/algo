@@ -216,7 +216,7 @@ export async function getRegionalSettingsDb(
       values: values,
     });
 
-    return result;
+    return result[0];
   } catch (e) {
     console.log(e);
   }

@@ -13,15 +13,16 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
-import CustomField  from '@/app/cap/enquiry/CustomFields';
+import CustomField from '@/app/cap/enquiry/CustomFields';
 
-export default function ExecutiveDeptForm(props: masterFormPropsT) {
+export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<executiveDeptSchemaT>) {
+  console.log(props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: executiveDeptSchemaT = props.data ? props.data : {};
+  const entityData: executiveDeptSchemaT = props.data ? props.data : {} as executiveDeptSchemaT;
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
@@ -111,22 +112,6 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     });
   };
 
-  function fieldPropertiesById(id: string) {
-    const field = props.metaData?.fields.find(
-      (item: any) => item.column_name_id === id
-    );
-
-    if (field) {
-      return {
-        label: field.columnLabel,
-        required: field.isMandatory === 1
-      };
-    }
-    return { label: "default label", required: false };
-  }
-
-
-
   props.metaData?.fields.map((field: any) => {
     if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(
@@ -197,8 +182,9 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           <Grid container spacing={2}>
             {
               fieldArr.map((field, index) => {
+                const fieldKey = field.key as string;
                 return (
-                  <Grid key={index}
+                  <Grid key={fieldKey}
                     item
                     xs={12}
                     sm={6}

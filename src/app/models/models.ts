@@ -73,13 +73,18 @@ export type masterFormPropsT = {
 
 
 export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
+export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
+export type rightSchemaT = z.infer<typeof zs.rightSchema>;
+export type loggedInUserDataT= z.infer<typeof zs.loggedInUserData>;
+
+
 
 // this type is for fetching meta info for custom fields
 export type formMetaDataPropT = {
   fields: customFieldsMasterSchemaT[],
-  rights: [],
-  regionalSettingsConfigData: [],
-  loggedInUserData: {}
+  rights: rightSchemaT,
+  regionalSettingsConfigData: regionalSettingSchemaT,
+  loggedInUserData: loggedInUserDataT
 }
 
 
@@ -163,47 +168,47 @@ export type dbInfoT = {
   roleId: number;
 };
 
-export type getOrgansT = [
-  {
-    id: string;
-    name: string;
-    printName: string;
-    alias: string;
-    rowID: number;
-    stamp: string;
-  }
-];
+// export type getOrgansT = [
+//   {
+//     id: string;
+//     name: string;
+//     printName: string;
+//     alias: string;
+//     rowID: number;
+//     stamp: string;
+//   }
+// ];
 
 export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContactByPageT = [
-  {
-    id: number;
-    name: string;
-    whatsapp: string;
-    email: string;
-  }
-];
+// export type getContactByPageT = [
+//   {
+//     id: number;
+//     name: string;
+//     whatsapp: string;
+//     email: string;
+//   }
+// ];
 
-export type getProductT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getProductT = [
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   }
+// ];
 
-export type getUnitT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getUnitT = [
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   }
+// ];
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
 
@@ -251,6 +256,5 @@ export type iconCompT = {
   link ?:string;
   setMetaData:(props: any) => void;
 };
-export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;

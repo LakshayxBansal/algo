@@ -72,7 +72,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     Record<string, { msg: string; error: boolean }>
   >({});
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
-    props?.data ? props?.data?.docData : []
+    // props?.data ? props?.data?.docData : []
+    props.data?.docData ? props?.data?.docData : []
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
@@ -146,7 +147,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
-        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <AreaForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
@@ -171,7 +172,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             name: entityData.executive_dept,
           } as optionsDataT
         }
-        disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
+        disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         fnFetchDataByID={getDeptById}
@@ -202,7 +203,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
         onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
         required
-        disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
+        disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         formError={formError?.role ?? formError.role}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
@@ -223,7 +224,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"Executive Group"}
         dialogTitle={"Add Executive Group"}
         width={365}
-        disable={(props?.parentData === "profile" && entityData.role_id !== 1) ? true : false}
+        disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         defaultValue={
           {
             id: entityData.executive_group_id,
@@ -799,7 +800,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }}
       >
         {
-          props.parentData ? (<></>) : (<>
+          props?.setDialogOpen === null ? (<></>) : (<>
             <Seperator>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 {props.data ? "Update Executive" : "Add Executive"}
@@ -916,7 +917,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             }}
           >
             <Button onClick={() => {
-              if (props.parentData === 'profile') {
+              if (props.setDialogOpen === null) {
                 router.push('/cap');
               }
               else {
