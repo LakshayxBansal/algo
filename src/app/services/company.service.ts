@@ -199,6 +199,8 @@ export async function deleteCompanyAndDbInfo(
   dbInfoId: number
 ) {
   try {
+    console.log(dbInfoId);
+    
     let result = await excuteQuery({
       host: "userDb",
       query: "DELETE FROM company WHERE id = ?",
