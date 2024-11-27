@@ -23,6 +23,7 @@ import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
 import { getRegionalSettings } from "./config.controller";
 import { getScreenDescription } from "./object.controller";
+import { CONTACT_OBJECT_ID } from "../utils/consts.utils";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -247,7 +248,7 @@ export async function getContactById(id: number) {
     if (session?.user.dbInfo) {
       const rights={};
       const config_data=await getRegionalSettings();
-      const desc = await getScreenDescription(5,1);
+      const desc = await getScreenDescription(CONTACT_OBJECT_ID);
       if(id){
         const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
         if(contactDetails?.length>0){
