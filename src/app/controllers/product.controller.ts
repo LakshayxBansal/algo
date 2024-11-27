@@ -240,7 +240,7 @@ export async function getProductByPage(
 export async function getProductData(id: number) {
   let getProduct = {
     status: false,
-    data: [{}] as mdl.getProductT,
+    data: {} as mdl.getProductT,
     error: {},
   };
   try {

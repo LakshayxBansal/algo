@@ -183,6 +183,7 @@ export type selectKeyValueT = {
   [key: string]: any;
 };
 
+
 // export type getContactByPageT = [
 //   {
 //     id: number;
@@ -192,23 +193,21 @@ export type selectKeyValueT = {
 //   }
 // ];
 
-// export type getProductT = [
-//   {
-//     id: number;
-//     name: string;
-//     phone: string;
-//     email: string;
-//   }
-// ];
+export type getProductT = 
+  {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+  };
 
-// export type getUnitT = [
-//   {
-//     id: number;
-//     name: string;
-//     phone: string;
-//     email: string;
-//   }
-// ];
+export type getUnitT = 
+  {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+  };
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
 
