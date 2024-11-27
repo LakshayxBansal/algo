@@ -533,7 +533,7 @@ const SupportTicketForm = (props: customprop) => {
                   <SupportSubStatusForm
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
-                    parentData={status}
+                    parentData={parseInt(status)}
                     data={data}
                   />
                 )}

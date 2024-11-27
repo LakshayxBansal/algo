@@ -24,7 +24,7 @@ import {
 } from "@/app/models/models";
 import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
 
-export default function SubStatusListForm(props: masterFormPropsWithDataT) {
+export default function SubStatusListForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -32,7 +32,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   const [status_id, setStatus] = useState<number | undefined>(
     props.data?.enquiry_status_id
   );
-  const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
+  const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -44,8 +44,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     data["enquiry_status_id"] = status_id
       ? status_id
       : entityData.enquiry_status_id
-      ? entityData.enquiry_status_id
-      : 0;
+        ? entityData.enquiry_status_id
+        : 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
@@ -198,7 +198,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                     return rest;
                   });
                 }}
-                sx={{marginTop: "1rem" }}
+                sx={{ marginTop: "1rem" }}
               />
             </Grid>
             <Grid

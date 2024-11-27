@@ -296,7 +296,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           <SubStatusForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
-            parentData={status}
+            parentData={parseInt(status)}
             data={data}
           />
         )}

@@ -12,6 +12,7 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import { getContactGroup } from "@/app/controllers/contactGroup.controller";
 import {
   contactGroupSchemaT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -22,13 +23,13 @@ import { Autocomplete, Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function ContactGroupForm(props: masterFormPropsT) {
+export default function ContactGroupForm(props: masterFormPropsWithDataT<contactGroupSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: contactGroupSchemaT = props.data ? props.data : {};
+  const entityData: contactGroupSchemaT = props.data ? props.data : {} as contactGroupSchemaT;
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -77,8 +78,8 @@ export default function ContactGroupForm(props: masterFormPropsT) {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
       : entityData.parent_id
-      ? entityData.parent_id
-      : 0;
+        ? entityData.parent_id
+        : 0;
     return data;
   };
 
@@ -163,7 +164,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
-                style={{width: "100%"}}
+                style={{ width: "100%" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -181,7 +182,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
                     return rest;
                   });
                 }}
-                style={{width: "100%"}}
+                style={{ width: "100%" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
