@@ -24,6 +24,9 @@ import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
+import { headers } from "next/headers";
+import { getCountryIdByName } from "./masters.controller";
+import { NextRequest } from "next/server";
 
 export async function getCompanyById(id: number) {
   try {
@@ -212,7 +215,11 @@ export async function updateCompany(data: companySchemaT) {
         if (dbResult[0].length === 0) {
           dbName += dbResult[1][0].dbinfo_id;
 
-          const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
+          const countryData = await getCountryWithCurrencyDb(
+            dbName,
+            "",
+            data.country_id
+          );
 
           let regionalDataRes = (await getRegionalSettingDb(dbName))[0];
           console.log(regionalDataRes);
@@ -241,7 +248,11 @@ export async function updateCompany(data: companySchemaT) {
             regionalData.dateFormat = countryData[0].date_format;
           }
 
-          const regionalResult = await updateteRegionalSettingDb(dbName, regionalData, regionalDataRes.config_type_id);
+          const regionalResult = await updateteRegionalSettingDb(
+            dbName,
+            regionalData,
+            regionalDataRes.config_type_id
+          );
           result = { status: true, data: dbResult[1] };
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -353,5 +364,29 @@ export async function deleteCompanyById(id: number) {
     }
   } catch (error) {
     throw error;
+  }
+}
+
+export async function getCountryByIp() {
+  try {
+    console.log("Test Passed");
+    
+    const requestHeaders = headers();
+    // const requestHeaders = req.headers();
+    // console.log("HEADERS: ", requestHeaders);
+    const ip = requestHeaders.get("x-forwarded-for");
+    const fetchedData = await fetch(
+      `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
+    );
+    const data = await fetchedData.json();
+    const country = data.location.country;
+    const countryId = await getCountryIdByName(country);
+    console.log("Country & CountryID: ", {country, countryId});
+    requestHeaders.forEach((key, value)=> console.log(key, "-", value));
+    // return {country, countryId};
+    // console.log("ip ", ip);
+    return ip;
+  } catch (e) {
+    console.log(e);
   }
 }

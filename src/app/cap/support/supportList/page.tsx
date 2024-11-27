@@ -61,13 +61,13 @@ export default function Action() {
     <>
       <EntityList
         title="Support Ticket List"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <SupportTicketForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
+        // renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        //   <SupportTicketForm
+        //     setDialogOpen={fnDialogOpen}
+        //     setDialogValue={fnDialogValue}
+        //     data={data}
+        //   />
+        // )}
         fileUploadFeatureReqd={true} 
         fnFileUpad={createContactsBatch} 
         sampleFileName=""

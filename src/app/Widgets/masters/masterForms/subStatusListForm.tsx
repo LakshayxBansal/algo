@@ -138,48 +138,54 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
       <Box id="subStatusForm">
         <form action={handleSubmit} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
               <FormControl sx={{ marginLeft: "2rem", marginTop: "1rem" }}>
-                <RadioGroup
-                  row
-                  name="status"
-                  id="status"
-                  value={status_id}
-                  onChange={onStatusChange}
-                >
-                  <FormControlLabel
-                    value="Status"
-                    control={<label />}
-                    label="Status :"
-                  />
-                  <FormControlLabel
-                    value={1}
-                    control={
-                      <Radio
-                        inputProps={{
-                          tabIndex: -1,
-                          "aria-label": "Open status",
-                        }}
+                <Grid container alignItems="center">
+                  <Grid item xs={12} sm="auto">
+                    <FormControlLabel
+                      value="Status"
+                      control={<label />}
+                      label="Status :"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm="auto">
+                    <RadioGroup
+                      row
+                      name="status"
+                      id="status"
+                      value={status_id}
+                      onChange={onStatusChange}
+                    >
+                      <FormControlLabel
+                        value={1}
+                        control={
+                          <Radio
+                            inputProps={{
+                              tabIndex: -1,
+                              "aria-label": "Open status",
+                            }}
+                          />
+                        }
+                        label="Open"
                       />
-                    }
-                    label="Open"
-                  />
-                  <FormControlLabel
-                    value={2}
-                    control={
-                      <Radio
-                        inputProps={{
-                          tabIndex: -1,
-                          "aria-label": "Closed status",
-                        }}
+                      <FormControlLabel
+                        value={2}
+                        control={
+                          <Radio
+                            inputProps={{
+                              tabIndex: -1,
+                              "aria-label": "Closed status",
+                            }}
+                          />
+                        }
+                        label="Closed"
                       />
-                    }
-                    label="Closed"
-                  />
-                </RadioGroup>
+                    </RadioGroup>
+                  </Grid>
+                </Grid>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 autoFocus
                 inputType={InputType.TEXT}
@@ -198,7 +204,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
                     return rest;
                   });
                 }}
-                sx={{marginTop: "1rem" }}
+                sx={{ marginTop: "1rem" }}
               />
             </Grid>
             <Grid
