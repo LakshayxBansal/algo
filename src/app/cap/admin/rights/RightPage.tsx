@@ -1,6 +1,6 @@
 "use client"
 import * as React from 'react';
-import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, Grid, Divider, Button } from '@mui/material';
+import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, Grid, Divider, Button, SelectChangeEvent } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Paper from '@mui/material/Paper';
@@ -8,6 +8,7 @@ import Snackbar from "@mui/material/Snackbar";
 import { manageRights } from '@/app/controllers/rights.controller';
 import { logger } from '@/app/utils/logger.utils';
 import { rightSchemaT } from '@/app/models/models';
+import { InputControl, InputType } from '@/app/Widgets/input/InputControl';
 
 
 function normalToCamelCaseString(normalString: string) {
@@ -15,11 +16,11 @@ function normalToCamelCaseString(normalString: string) {
     return objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
 }
 
-function Child({ object, handleChange, data, role, dept, parentName }: { object: any, handleChange: any, data: any, role: string, dept: string, parentName: string }) {
+function Child({ object, handleChange, data, role, dept, parentName }: { object: Array<{ name: string, id: number, type: number }>, handleChange: (column: string, parentName: string, parentSize: number) => (event: React.ChangeEvent<HTMLInputElement>) => void, data: { [key: string]: boolean }, role: string, dept: string, parentName: string }) {
 
     return (
         <Box>
-            {object.map((obj: any) => {
+            {object.map((obj: { name: string, id: number, type: number }) => {
                 return (
                     <Box key={obj.id}>
                         <Grid container sx={{ alignItems: "center" }}>
@@ -31,11 +32,13 @@ function Child({ object, handleChange, data, role, dept, parentName }: { object:
                             <Grid item xs={4}>
                                 <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                     {["createRight", "readRight", "updateRight", "deleteRight"].map((right) => (
-                                        <Checkbox
-                                            key={right}
+                                        <InputControl
+                                            key={`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`}
+                                            inputType={InputType.CHECKBOX}
+                                            id={`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`}
+                                            name={`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`}
                                             checked={data[`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`]}
                                             onChange={handleChange(`${normalToCamelCaseString(obj.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${normalToCamelCaseString(right)}`, parentName, object.length)}
-                                            inputProps={{ 'aria-label': 'controlled' }}
                                         />
                                     ))}
                                 </Box>
@@ -52,8 +55,8 @@ function Child({ object, handleChange, data, role, dept, parentName }: { object:
 
 export default function RightPage({ rightsData, categorys, roles, depts, objects, parentCountDefaultValue, parentDataDefaultValue }: { rightsData: { [key: string]: boolean }, categorys: Array<{ name: string, id: number }>, roles: Array<{ name: string, id: number }>, depts: Array<{ name: string, id: number }>, objects: Array<{ name: string, id: number, type: number }>, parentCountDefaultValue: { [key: string]: number }, parentDataDefaultValue: { [key: string]: boolean } }) {
     const [data, setData] = React.useState(rightsData);
-    const [parentData, setParentData] = React.useState<any>(parentDataDefaultValue);
-    const [parentDataCount, setParentDataCount] = React.useState<any>(parentCountDefaultValue);
+    const [parentData, setParentData] = React.useState(parentDataDefaultValue);
+    const [parentDataCount, setParentDataCount] = React.useState(parentCountDefaultValue);
     let parentObject: { [key: string]: boolean } = {};
     for (const ele of categorys) {
         parentObject[ele.name] = false;
@@ -61,7 +64,7 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
     const [role, setRole] = React.useState(roles[0].name || "");
     const [dept, setDept] = React.useState(depts[0].name || "");
     const [snackOpen, setSnackOpen] = React.useState(false);
-    const [snackMSG,setSnackMSG] = React.useState("");
+    const [snackMSG, setSnackMSG] = React.useState("");
     const [openParent, setOpenParent] = React.useState<{ [key: string]: boolean }>(parentObject);
 
     const setParentKeyActive = (key: string) => {
@@ -76,13 +79,13 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
         });
     };
 
-    const handleRoleSelectChange = (event: any) => {
+    const handleRoleSelectChange = (event: SelectChangeEvent) => {
         setRole(event.target.value);
     };
-    const handleDeptSelectChange = (event: any) => {
+    const handleDeptSelectChange = (event: SelectChangeEvent) => {
         setDept(event.target.value);
     };
-    const handleChange = (column: string, parentName: string, parentSize: number) => (event: any) => {
+    const handleChange = (column: string, parentName: string, parentSize: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setData({
             ...data,
             [column]: event.target.checked,
@@ -106,26 +109,26 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                     [parentColumn]: true
                 })
             }
-            setParentDataCount((prevState: any) => ({
+            setParentDataCount((prevState) => ({
                 ...prevState,
                 [parentColumn]: prevState[parentColumn] + 1
             }))
         }
     };
-    const handleParentChange = (column: string, object: any) => (event: any) => {
+    const handleParentChange = (column: string, object: Array<{ name: string, id: number, type: number }>) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setParentData({
             ...parentData,
             [column]: event.target.checked,
         });
-        event.target.checked === true ? setParentDataCount((prevState: any) => ({
+        event.target.checked === true ? setParentDataCount((prevState) => ({
             ...prevState,
             [column]: object.length
-        })) : setParentDataCount((prevState: any) => ({
+        })) : setParentDataCount((prevState) => ({
             ...prevState,
             [column]: 0
         }));
-        object.map((obj: any) => {
-            setData((prevState: any) => ({
+        object.map((obj: { name: string, id: number, type: number }) => {
+            setData((prevState) => ({
                 ...prevState,
                 [`${normalToCamelCaseString(obj.name)}_${column.split("_")[1]}_${column.split("_")[2]}_${column.split("_")[3]}`]: event.target.checked
             }));
@@ -168,16 +171,16 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                     dataMap.get(primaryKey)!.push(updatedData[key] === true ? { "field": `${key.split("_")[3].replace(/Right$/, '')}`, "value": 1 } : { "field": `${key.split("_")[3].replace(/Right$/, '')}`, "value": 0 });
                 }
             }
-            let dataArray : Array<rightSchemaT> = [];
+            let dataArray: Array<rightSchemaT> = [];
             dataMap.forEach(async (value, key) => {
-                let newRightData : rightSchemaT = {
-                    objectId : objectMap.get(key.split("_")[0]) as number,
-                    roleId : roleMap.get(key.split("_")[1]) as number,
-                    deptId : deptMap.get(key.split("_")[2]) as number,
-                    createRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_createRight`],
-                    readRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_readRight`],
-                    updateRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_updateRight`],
-                    deleteRight : data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_deleteRight`]
+                let newRightData: rightSchemaT = {
+                    objectId: objectMap.get(key.split("_")[0]) as number,
+                    roleId: roleMap.get(key.split("_")[1]) as number,
+                    deptId: deptMap.get(key.split("_")[2]) as number,
+                    createRight: data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_createRight`],
+                    readRight: data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_readRight`],
+                    updateRight: data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_updateRight`],
+                    deleteRight: data[`${key.split("_")[0]}_${key.split("_")[1]}_${key.split("_")[2]}_deleteRight`]
                 };
                 dataArray.push(newRightData);
             });
@@ -277,21 +280,23 @@ export default function RightPage({ rightsData, categorys, roles, depts, objects
                                 <Grid item xs={4}>
                                     <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                                         {["createRight", "readRight", "updateRight", "deleteRight"].map((right) => (
-                                            <Checkbox
-                                                key={right}
+                                            <InputControl
+                                                key={`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`}
+                                                inputType={InputType.CHECKBOX}
+                                                id={`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`}
+                                                name={`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`}
                                                 checked={parentData[`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`]}
                                                 onChange={handleParentChange(`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`, objects.filter((obj) => obj.type === category.id))}
-                                                inputProps={{ 'aria-label': 'controlled' }}
                                                 indeterminate={parentDataCount[`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`] !== objects.filter((obj) => obj.type === category.id).length && parentDataCount[`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`] !== 0}
                                                 color={(parentDataCount[`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`] === objects.filter((obj) => obj.type === category.id).length || parentDataCount[`${normalToCamelCaseString(category.name)}_${normalToCamelCaseString(role)}_${normalToCamelCaseString(dept)}_${right}`] === 0) ? "primary" : "default"}
                                             />
+                                            
                                         ))}
 
                                     </Box>
                                 </Grid>
 
                             )}
-
                             {openParent[category.name] && (<Grid item xs={12}><Child object={objects.filter((obj) => obj.type === category.id)} handleChange={handleChange} data={data} role={role} dept={dept} parentName={category.name} /></Grid>)}
                         </Grid>
                         <Divider variant='middle' />

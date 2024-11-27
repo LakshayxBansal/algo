@@ -69,8 +69,8 @@ export async function updateConfigDeptDB(crmDb:string,configDept : {[key : strin
     })
     let query = "insert into config_dept_mapping (config_id,dept_id) values "
       Object.keys({...configDept}).map((key,index)=>{
-        const configId = configType.filter((item : any)=>item.config_type===key)[0].id;
-        configDept[key].map((dept:any)=>{
+        const configId = configType.filter((item : {config_type : string,id:number})=>item.config_type===key)[0].id;
+        configDept[key].map((dept:number)=>{
           query += `(${configId},${dept}),`
         })
       })

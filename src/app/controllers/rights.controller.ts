@@ -32,6 +32,7 @@ export async function manageRights(dataArray : Array<rightSchemaT>) {
         }
     } catch (error) {
         logger.error(error);
+        return "Error encountered!"
     }
 }
 

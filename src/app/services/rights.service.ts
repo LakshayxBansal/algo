@@ -11,8 +11,8 @@ export async function manageRightsDb(crmDb: string, dataArray: Array<rightSchema
                 query: "update object_rights_master orm set orm.create = ?, orm.read = ?, orm.update = ?, orm.delete = ? where orm.object_id = ? and orm.role_id = ? and orm.dept_id = ?;",
                 values: [data.createRight === true ? 1 : 0, data.readRight === true ? 1 : 0, data.updateRight === true ? 1 : 0, data.deleteRight === true ? 1 : 0, data.objectId, data.roleId, data.deptId]
             })
-            return true;
         })
+        return true;
     } catch (error) {
         console.log(error);
     }
