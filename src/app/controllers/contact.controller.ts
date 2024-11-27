@@ -1,7 +1,7 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT, docDescriptionSchemaT, getContactByPageT } from "../models/models";
+import { contactSchemaT, docDescriptionSchemaT } from "../models/models";
 import {
   createContactDB,
   DeleteContactList,
@@ -293,7 +293,7 @@ export async function getContactByPage(
 ) {
   let getContactByPage = {
     status: false,
-    data: {} as getContactByPageT,
+    data: {} as contactSchemaT,
     count: 0,
     error: {},
   };
@@ -314,7 +314,7 @@ export async function getContactByPage(
       );
       getContactByPage = {
         status: true,
-        data: conts.map(bigIntToNum) as getContactByPageT,
+        data: conts.map(bigIntToNum) as contactSchemaT,
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -325,7 +325,7 @@ export async function getContactByPage(
     getContactByPage = {
       ...getContactByPage,
       status: false,
-      data: {} as getContactByPageT,
+      data: {} as contactSchemaT,
       error: err,
     };
   }
