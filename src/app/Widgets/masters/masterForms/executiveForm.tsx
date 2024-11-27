@@ -378,7 +378,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         id="doj"
         label="Joining Date"
         name="doj"
-        fullWidth
         defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
         slotprops={{
           textField: {
@@ -390,6 +389,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1,
           }
         }}
+        sx={{ width: "100%" }}
       />
     ],
     [
@@ -405,12 +405,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.dob?.error,
             helperText: formError?.dob?.msg,
-            fullWidth: true,
+            fullwidth: true,
           },
           openPickerButton: {
             tabIndex: -1,
           }
         }}
+        sx={{ width: "100%" }}
       />
     ],
     [
@@ -434,6 +435,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1,
           }
         }}
+        sx={{ width: "100%" }}
       />
     ],
     [
