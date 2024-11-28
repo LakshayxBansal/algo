@@ -451,6 +451,7 @@ export const enquiryHeaderSchema = z.object({
       message: "Enquiry description must contain atmost 75 character(s)",
     }),
   date: z.string().min(1, { message: "Date must not be empty" }).max(20),
+  date: z.string().min(1, { message: "Date must not be empty" }).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
   contact: z.string().min(1, { message: "Contact must not be empty" }).max(60),
@@ -585,6 +586,7 @@ export const supportLedgerSchema = z.object({
   created_on: z.date().optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
+  allocated_to_name: z.string().max(60).optional(),
   stamp: z.number().optional(),
 });
 
@@ -910,73 +912,109 @@ export const nameAliasData = z.object({
 //   generalShowList: z.boolean().optional(),
 // });
 
-export const enquirySupportConfig = z.object({
-  enquiryReqd: z.boolean().optional(),
-  supportReqd: z.boolean().optional(),
-  contractReqd: z.boolean().optional(),
-  enquiryGenerationReqd: z.boolean().optional(),
-  regionalSettingReqd: z.boolean().optional(),
-  category: z.string().optional(),
-  isEnabled: z.boolean().optional(),
-  // enquiryConfig: z.object().optional(),
-  // regionalData: regionalSettingSchema,
-  // voucherNumber: z.boolean().optional(),
+export const voucherSchema = z.object({
+  voucherNumber : z.boolean(),
+  prefix : z.string().max(10,"Prefix should not be greater than 10 character").optional(),
+  suffix : z.string().max(10,"Suffix should not be greater than 10 character").optional(),
+  length : z.string().refine((val) => Number(val) < Number("10"), {
+    message: "Digit length should not be greater than 10"
+  }).optional(),
+  prefillWithZero : z.boolean()
+})
 
-  enquiryCloseCall: z.boolean().optional(),
-  enquiryMaintainProducts: z.boolean().optional(),
-  enquirySaveFAQ: z.boolean().optional(),
-  enquiryMaintainAction: z.boolean().optional(),
-  enquiryVoucherNumber: z.boolean().optional(),
-  enquiryPrefix: z.string().optional(),
-  enquirySuffix: z.string().optional(),
-  enquiryLength: z.string().optional(),
-  enquiryPrefillWithZero: z.boolean().optional(),
+export const enquiryConfigSchema = z.object({
+  reqd : z.boolean(),
+  closeCall : z.boolean(),
+  maintainProducts : z.boolean(),
+  saveFAQ: z.boolean(),
+  allowReallocation: z.boolean(),
+  maintainAction : z.boolean(),
+  voucher : voucherSchema.optional()
+})
 
-  supportCloseCall: z.boolean().optional(),
-  supportMaintainProducts: z.boolean().optional(),
-  supportSaveFAQ: z.boolean().optional(),
-  supportMaintainAction: z.boolean().optional(),
-  supportMaintainContract: z.boolean().optional(),
-  supportVoucherNumber: z.boolean().optional(),
-  supportPrefix: z.string().optional(),
-  supportSuffix: z.string().optional(),
-  supportLength: z.string().optional(),
-  supportPrefillWithZero: z.boolean().optional(),
+export const supportConfigSchema = z.object({
+  reqd : z.boolean(),
+  closeCall : z.boolean(),
+  maintainProducts : z.boolean(),
+  saveFAQ : z.boolean(),
+  allowReallocation: z.boolean(),
+  maintainAction : z.boolean(),
+  voucher : voucherSchema.optional()
+})
 
-  contractVoucherNumber: z.boolean().optional(),
-  contractPrefix: z.string().optional(),
-  contractSuffix: z.string().optional(),
-  contractLength: z.string().optional(),
-  contractPrefillWithZero: z.boolean().optional(),
+export const contractConfigSchema = z.object({
+  reqd : z.boolean(),
+  voucher : voucherSchema.optional()
+})
 
-  enquiryGenerationVoucherNumber: z.boolean().optional(),
-  enquiryGenerationPrefix: z.string().optional(),
-  enquiryGenerationSuffix: z.string().optional(),
-  enquiryGenerationLength: z.string().optional(),
-  enquiryGenerationPrefillWithZero: z.boolean().optional(),
-
-  regionalSettingVoucherNumber: z.boolean().optional(),
-  regionalSettingPrefix: z.string().optional(),
-  regionalSettingSuffix: z.string().optional(),
-  regionalSettingLength: z.string().optional(),
-  regionalSettingPrefillWithZero: z.boolean().optional(),
-
-  generalMaintainArea: z.boolean().optional(),
-  generalMaintainImage: z.boolean().optional(),
-  generalShowList: z.boolean().optional(),
-
-  country_id: z.number().optional(),
-  state_id: z.number().optional(),
+export const regionalSettingSchema = z.object({
+  reqd : z.boolean().optional(),
+  id: z.number().optional(),
+  country_id: z.number(),
+  state_id: z.number(),
   country: z.string().optional(),
   state: z.string().optional(),
-  decimalPlaces: z.string().optional(),
-  timeFormat: z.string().optional(),
-  currencyString: z.string().optional(),
-  currencySymbol: z.string().optional(),
-  currencySubString: z.string().optional(),
-  currencyCharacter: z.string().optional(),
-  dateFormat: z.string().optional(),
+  decimalPlaces: z.string(),
+  timeFormat: z.string(),
+  currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
+  currencySymbol: z.string().max(5,"Currency symbol should not be greater than 5 character").optional(),
+  currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
+  currencyCharacter: z.string().max(1,"Currency character should not be greater than 1 character").optional(),
+  dateFormat: z.string(),
+  voucher : voucherSchema.optional()
 });
+
+export const searchNavbarConfigSchema = z.object({
+  reqd : z.boolean(),
+  menu : z.boolean(),
+  enquiryDescription : z.boolean(),
+  organisation : z.boolean(),
+  supportDescription : z.boolean(),
+  contractDescription : z.boolean(),
+  product : z.boolean(),
+  voucher : voucherSchema.optional()
+})
+
+export const searchContactConfigSchema = z.object({
+  reqd : z.boolean(),
+  name : z.boolean(),
+  alias : z.boolean(),
+  organisation : z.boolean(),
+  phone : z.boolean(),
+  email : z.boolean(),
+  city : z.boolean(),
+  voucher : voucherSchema.optional()
+})
+
+export const searchExecutiveConfigSchema = z.object({
+  reqd : z.boolean(),
+  name : z.boolean(),
+  alias : z.boolean(),
+  dept: z.boolean(),
+  phone : z.boolean(),
+  email : z.boolean(),
+  role : z.boolean(),
+  voucher : voucherSchema.optional()
+})
+
+export const searchOrganisationConfigSchema = z.object({
+  reqd : z.boolean(),
+  name : z.boolean(),
+  alias : z.boolean(),
+  city: z.boolean(),
+  voucher : voucherSchema.optional()
+})
+
+export const configSchema = z.object({
+  enquiry : enquiryConfigSchema,
+  support : supportConfigSchema,
+  contract : contractConfigSchema,
+  regionalSetting : regionalSettingSchema,
+  searchNavbar : searchNavbarConfigSchema,
+  searchContact : searchContactConfigSchema,
+  searchExecutive : searchExecutiveConfigSchema,
+  searchOrganisation : searchOrganisationConfigSchema
+})
 
 export const companySchema = z.object({
   id: z.number().optional(),
@@ -1127,3 +1165,10 @@ export const loggedInUserData = z.object({
   name: z.string(),
   userId: z.number()
 });
+
+export const configDeptMapSchema = z.object({
+  enquiry : z.array(z.number()),
+  support : z.array(z.number()),
+  contract : z.array(z.number())
+})
+

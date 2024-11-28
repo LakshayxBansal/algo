@@ -84,7 +84,7 @@ export async function getEnquiryStatusList(
 export async function getConfigDataDB(crmDb: string) {
   try {
     let query =
-      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type in ("enquiry","regionalSetting")';
+      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type in("enquiry", "regionalSetting")';
     let values: any[] = [];
 
     const result = await excuteQuery({
@@ -189,5 +189,3 @@ export async function getProductDataAction(session: Session, id: number) {
     console.log(error);
   }
 }
-
-

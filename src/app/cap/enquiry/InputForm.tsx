@@ -60,6 +60,7 @@ import { AddDialog } from "@/app/Widgets/masters/addDialog";
 import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
 import CustomField from "./CustomFields";
+
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
 import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
@@ -106,8 +107,17 @@ export default function InputForm({ baseData }: InputFormProps) {
   const router = useRouter();
 
   const { dateFormat, timeFormat } = baseData.regional_setting;
-  const timeFormatString = timeFormat ? (timeFormat === "12 Hours" ? "hh:mm A" : "HH:mm") : "HH:mm";
-  const dateTimeFormat = [dateFormat || "DD/MM/YYYY", timeFormatString].filter(Boolean).join(" ");
+  const timeFormatString = timeFormat
+    ? timeFormat === "12 Hours"
+      ? "hh:mm A"
+      : "HH:mm"
+    : "HH:mm";
+  const dateTimeFormat = [
+    dateFormat || "DD/MM/YYYY", // Add dateFormat if it exists
+    timeFormatString, // Add timeFormatString if timeFormat is valid
+  ]
+    .filter(Boolean)
+    .join(" "); // Remove empty strings and join with space
 
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [

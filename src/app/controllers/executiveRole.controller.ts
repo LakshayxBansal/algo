@@ -20,7 +20,7 @@ import * as mdl from "../models/models";
 
 export async function getExecutiveRole(
   searchString: string,
-  department?: number
+  // department?: number
 ) {
   try {
     const session = await getSession();
@@ -28,7 +28,7 @@ export async function getExecutiveRole(
       return getExecutiveRoleList(
         session.user.dbInfo.dbName,
         searchString,
-        department
+        // department
       );
     }
   } catch (error) {

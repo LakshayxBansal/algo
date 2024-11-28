@@ -17,6 +17,7 @@ import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { createDeptInRightsTable, delDeptFromRightTable } from "./rights.controller";
 import { getRegionalSettings } from "./config.controller";
 import { EXECUTIVE_DEPT_OBJECT_ID } from "../utils/consts.utils";
 import { getScreenDescription } from "./object.controller";
@@ -37,12 +38,6 @@ export async function createExecutiveDept(data: executiveDeptSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      // let data: { [key: string]: any } = {}; // Initialize an empty object
-
-      // for (const [key, value] of formData.entries()) {
-      //   data[key] = value;
-      // }
-
       const parsed = zs.executiveDeptSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createExecutiveDeptDb(
@@ -51,6 +46,7 @@ export async function createExecutiveDept(data: executiveDeptSchemaT) {
         );
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
+          await createDeptInRightsTable(dbResult[1][0].id);
         } else {
           result = {
             status: false,
@@ -195,6 +191,7 @@ export async function delExecutiveDeptById(id: number) {
     if (session?.user.dbInfo) {
       const dbResult = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
       if (dbResult[0][0].error === 0) {
+        await delDeptFromRightTable(id);
         result = { status: true };
       } else {
         result = {

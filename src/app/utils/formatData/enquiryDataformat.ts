@@ -1,8 +1,7 @@
 "use server";
 import { selectKeyValueT } from "@/app/models/models";
 import dayjs from "dayjs";
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export async function enquiryDataFormat({
   formData,
@@ -11,9 +10,8 @@ export async function enquiryDataFormat({
 }: {
   formData: FormData;
   selectValues: selectKeyValueT;
-  timeFormat: string
+  timeFormat: string;
 }) {
-  
   dayjs.extend(customParseFormat);
 
   const toISOString = (dateStr: string): string => {

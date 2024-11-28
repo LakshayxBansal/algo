@@ -114,7 +114,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
       </Collapse>
       <form action={handleSubmit} noValidate>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={6} lg={6}>
+          <Grid item xs={12} sm={6} md={6} lg={6}>
             <InputControl
               autoFocus
               inputType={InputType.TEXT}
@@ -135,7 +135,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
               style={{ width: "100%" }}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={6}>
+          <Grid item xs={12} sm={6} md={6} lg={6}>
             <InputControl
               inputType={InputType.TEXT}
               id="alias"

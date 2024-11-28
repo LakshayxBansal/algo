@@ -68,8 +68,8 @@ export default function Action() {
         //     data={data}
         //   />
         // )}
-        fileUploadFeatureReqd={true}
-        fnFileUpad={createContactsBatch}
+        fileUploadFeatureReqd={true} 
+        fnFileUpad={createContactsBatch} 
         sampleFileName=""
         fetchDataFn={getSupportDataByPage}
         fnFetchDataByID={getSupportDataById}
