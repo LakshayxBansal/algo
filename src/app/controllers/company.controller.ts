@@ -132,9 +132,12 @@ export async function createCompany(data: companySchemaT) {
           }
 
           const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
-
           const configData: configSchemaT = createAppConfigData();
           if (data.country_id !== 0) {
+            configData.regionalSetting.country_id = data.country_id ?? 0;
+            configData.regionalSetting.country = data.country ?? "";
+            configData.regionalSetting.state = data.state ?? "";
+            configData.regionalSetting.state_id = data.state_id ?? 0;
             configData.regionalSetting.currencyString = countryData[0].currencyString;
             configData.regionalSetting.currencySymbol = countryData[0].currencySymbol;
             configData.regionalSetting.currencySubString = countryData[0].currencySubString;

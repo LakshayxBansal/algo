@@ -116,9 +116,7 @@ export async function createTablesAndProc(
       status: true,
       data: data,
     };
-  } catch (e) {
-    console.log(e);
-    
+  } catch (e) {    
     result = {
       status: false,
       data: [{ path: ["form"], message: "Error: Server Error" }],
@@ -198,9 +196,7 @@ export async function deleteCompanyAndDbInfo(
   companyId: number,
   dbInfoId: number
 ) {
-  try {
-    console.log(dbInfoId);
-    
+  try {    
     let result = await excuteQuery({
       host: "userDb",
       query: "DELETE FROM company WHERE id = ?",

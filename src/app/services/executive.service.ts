@@ -177,7 +177,7 @@ export async function checkIfUsed(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "SELECT COUNT(*) as count FROM executive_master em INNER JOIN enquiry_allocation ea ON ea.executive_id = em.id where em.id=?;",
+      "SELECT COUNT(*) as count FROM executive_master em INNER JOIN enquiry_allocation ea ON ea.executive_id = em.id where em.id=?;",
       values: [id],
     });
     return result;
@@ -193,7 +193,7 @@ export async function delExecutiveDetailsById(crmDb: string, id: number) {
       query: "call deleteExecutive(?)",
       values: [id],
     });
-
+    
     return result;
   } catch (e) {
     console.log(e);
@@ -208,7 +208,7 @@ export async function getExecutiveByPageDb(
 ) {
   try {
     const vals: any = [page, limit, limit];
-
+    
     if (filter) {
       vals.unshift(filter);
     }
@@ -225,8 +225,8 @@ export async function getExecutiveByPageDb(
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id " +
-        (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') " : "") +
-        "order by em.name\
+         (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') " : "") +
+         "order by em.name\
               ) AS NumberedRows \
             WHERE RowNum > ?*? \
             ORDER BY RowNum \
@@ -262,13 +262,13 @@ export async function getExecutiveIdFromEmailList(
   try {
     let query = "select id as id from executive_master where email = ?";
     let values: any[] = [email];
-
+    
     const result = await excuteQuery({
       host: crmDb,
       query: query,
       values: values,
     });
-
+    
     return result;
   } catch (e) {
     console.log(e);
@@ -281,9 +281,9 @@ export async function getExecutiveProfileImageByCrmUserIdList(
 ) {
   try {
     let query =
-      "select profile_img as profileImg from executive_master where crm_user_id = ?";
+    "select profile_img as profileImg from executive_master where crm_user_id = ?";
     let values: any[] = [crmUserId];
-
+    
     const result = await excuteQuery({
       host: crmDb,
       query: query,
@@ -307,7 +307,7 @@ export async function insertUserIdInExecutiveDb(
       query: "update executive_master set crm_user_id =  ? where id = ?;",
       values: [userId, executiveId],
     });
-
+    
     return result;
   } catch (error) {
     console.log(error);
@@ -347,5 +347,24 @@ export async function mapExecutiveToDeptDb(crmDb:string, executiveId: number, de
 
   }catch(e){
     logger.error(e);
+  }
+}
+
+export async function getEnquiriesByExecutiveIdDb(crmDb: string, userId: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select ht.enq_number enqDesc, cm.name contact, lt.date, lt.suggested_action_remark remark, lt.id\
+              from enquiry_header_tran ht \
+              left join enquiry_ledger_tran lt on lt.enquiry_id = ht.id \
+              left join contact_master cm on cm.id = ht.contact_id\
+              where lt.id in (select max(id) from enquiry_ledger_tran group by enquiry_id) AND \
+              lt.allocated_to = (select id from executive_master em where em.crm_user_id = ?) AND lt.status_id = 1;",
+      values: [userId],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
   }
 }
