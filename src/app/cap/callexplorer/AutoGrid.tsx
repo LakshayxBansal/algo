@@ -27,12 +27,15 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  GridCallbackDetails,
   gridClasses,
   GridColDef,
+  GridColumnHeaderParams,
   gridPreferencePanelStateSelector,
   GridPreferencePanelsValue,
   GridRowSelectionModel,
   GridSortModel,
+  MuiEvent,
   useGridApiRef,
 } from "@mui/x-data-grid";
 import {
@@ -215,10 +218,8 @@ export default function AutoGrid(props: any) {
       wasShiftPressedRef.current &&
       !isCntlPressed
     ) {
-
       updatedSelectedRows = [params.row.id];
       wasShiftPressedRef.current = false;
-
     } else {
       // Toggle selection for the clicked row
 
@@ -289,7 +290,6 @@ export default function AutoGrid(props: any) {
   useEffect(() => {
     setLoading(true);
     async function getEnquiries() {
-
       const result = await tabOptions[value].getCallData(
         filterValueState,
         filterType,
@@ -321,12 +321,12 @@ export default function AutoGrid(props: any) {
   ]);
 
   handleRefresh = () => {
-    setPageModel((prev: any) => ({
-      ...prev,
-      page: 0,
-    }));
-    setRowSelectionModel([]);
-    setSelectedRow(null);
+    // setPageModel((prev: any) => ({
+    //   ...prev,
+    //   page: 0,
+    // }));
+    // setRowSelectionModel([]);
+    // setSelectedRow(null);
     setRefresh(!refresh);
   };
 
@@ -382,27 +382,39 @@ export default function AutoGrid(props: any) {
     //   setSelectedRow(null);
     // }
     // else {
-    const selectedId = selectionModel[0] ?? selectedStatusRows[0]; // Get the ID of the selected row
+    if (selectionModel.length > 0) {
+      const selectedId = selectionModel[0] ?? selectedStatusRows[0]; // Get the ID of the selected row
 
-    const selectedData = data?.find((row: any) => row.id === selectedId); // Find the corresponding row data
-    const isAllocatable = selectedData?.callStatus === "Open";
-    setEnableAllocate(isAllocatable);
-    setRowSelectionModel(selectionModel);
-    setSelectedRow(selectedData); // Set the selected row data
+      const selectedData = data?.find((row: any) => row.id === selectedId); // Find the corresponding row data
+      const isAllocatable = selectedData?.callStatus === "Open";
+      setEnableAllocate(isAllocatable);
+      setRowSelectionModel(selectionModel);
+      setSelectedRow(selectedData); // Set the selected row data
+    }
     // }
   };
 
+  /**
+   * Handles the custom sorting of grid data by updating the sort model state.
+   *
+   * @param sortModel - The sorting model that contains the field and sort direction.
+   */
   const handleCustomSort = (sortModel: GridSortModel) => {
-    if (sortModel.length === 0) {
-      // No sorting applied
-      return;
-    }
     setSortBy(sortModel);
   };
 
   const handleSelectedStatus = (e: SelectChangeEvent) => {
     setSelectedStatus(e.target.value);
     setCallFilter("0");
+  };
+
+  const handleHeaderClick = (params: any, event: any, details: any) => {
+    const sortIconClicked = event.target.closest(".MuiDataGrid-sortIcon");
+
+    if (!sortIconClicked) {
+      event.defaultMuiPrevented = true;
+      console.log("i am here");
+    }
   };
 
   const handleSelectedSubStatus = (e: SelectChangeEvent) => {
@@ -546,6 +558,7 @@ export default function AutoGrid(props: any) {
       field: "statusColor",
       headerName: "Status",
       width: 80,
+      sortable: false,
       renderCell: (params) => {
         let color;
         if (params.row.callStatus === "Open") {
@@ -587,7 +600,7 @@ export default function AutoGrid(props: any) {
 
     {
       field: "contactParty",
-      headerName: "Contact/Party",
+      headerName: "Contact",
       hideable: false,
       width: 130,
     },
@@ -653,7 +666,7 @@ export default function AutoGrid(props: any) {
       field: "time",
       headerName: "Time",
       width: 100,
-      sortable:false,
+      sortable: false,
       renderCell: (params) => {
         return adjustToLocal(params.row.date).format("hh:mm A");
       },
@@ -743,7 +756,7 @@ export default function AutoGrid(props: any) {
     {
       field: "executive",
       width: 100,
-      headerName: "Executive",
+      headerName: "Allocated To",
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -1146,8 +1159,7 @@ export default function AutoGrid(props: any) {
           </MenuItem>
         </FilterMenu>
       ),
-    }
-   
+    },
   ];
 
   const handleDateFilterChange = (event: SelectChangeEvent) => {
@@ -1163,6 +1175,7 @@ export default function AutoGrid(props: any) {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    setSelectedStatusRows([]);
   };
 
   const CallType = (props: { text: string; color: string }) => {
@@ -1321,7 +1334,7 @@ export default function AutoGrid(props: any) {
                 justifyContent: "flex-end",
               }}
             >
-              <Tooltip title="Export to Excel" arrow >
+              <Tooltip title="Export to Excel" arrow>
                 <IconButton onClick={handleExport}>
                   <CloudDownloadIcon />
                 </IconButton>
@@ -1332,19 +1345,20 @@ export default function AutoGrid(props: any) {
           </Grid>
         </Seperator>
         <Paper elevation={1} sx={{ mb: 1 }}>
-
           <MinimizedDataGrid
             disableColumnMenu
             rowHeight={25} // Compact row height
             columnHeaderHeight={30} // Header height remains compact
             keepNonExistentRowsSelected
             disableMultipleRowSelection={true}
+            onColumnHeaderClick={handleHeaderClick}
             rows={data ? data : []}
             columns={column1}
             sortingMode="server" // Disable default sorting
             onSortModelChange={(sortModel) => handleCustomSort(sortModel)}
             onCellKeyDown={handleCellKeyDown}
             columnVisibilityModel={columnVisibilityModel}
+            hideFooterSelectedRowCount
             onColumnVisibilityModelChange={(newModel: any) =>
               setColumnVisibilityModel(newModel)
             }
@@ -1377,7 +1391,7 @@ export default function AutoGrid(props: any) {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                    GridPreferencePanelsValue.columns &&
+                      GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
@@ -1411,15 +1425,31 @@ export default function AutoGrid(props: any) {
               "& .MuiDataGrid-row": {
                 fontSize: "12px", // Compact font for rows
               },
-              "& .MuiTablePagination-root": {
-                fontSize: "10px", // Compact pagination font
-              },
+
               "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox":
                 {
                   display: "none",
                 },
-              "& .MuiDataGrid-footerContainer": {
-                fontSize: "0.75rem", // Set smaller font size
+              "& .MuiTablePagination-root": {
+                fontSize: "0.75rem", // Compact font size for footer
+              },
+              "& .MuiTablePagination-selectLabel": {
+                fontSize: "0.75rem", // Smaller text for "Rows per page"
+              },
+              "& .MuiTablePagination-actions": {
+                fontSize: "0.75rem", // Set smaller font size for pagination actions
+              },
+              "& .MuiTablePagination-displayedRows": {
+                fontSize: "0.75rem", // Set smaller font size for displayed row count
+              },
+              "& .MuiDataGrid-selectedRowCount": {
+                fontSize: "0.75rem", // Set smaller font size for selected row count
+              },
+              "& .MuiDataGrid-cell:focus": {
+                outline: "none", // Removes the default focus outline
+              },
+              "& .MuiDataGrid-cell:focus-within": {
+                outline: "none", // Removes the outline when the cell has child focus
               },
             }}
           />
@@ -1428,7 +1458,8 @@ export default function AutoGrid(props: any) {
         {selectedRow && details && (
           <Box sx={{ mt: 1, fontSize: "11px" }}>
             {" "}
-            Call Details : ({selectedRow.contactParty})(Org:)
+            Call Details : ({selectedRow.contactParty})(Org:{" "}
+            {selectedRow?.organisation})
           </Box>
         )}
         {details && (
@@ -1507,8 +1538,8 @@ export default function AutoGrid(props: any) {
                     rowSelectionModel?.length == 0
                       ? "Please select a row first"
                       : enableAllocate
-                        ? ""
-                        : "Deselect Closed enquiries first"
+                      ? ""
+                      : "Deselect Closed enquiries first"
                   }
                   placement="top"
                 >
@@ -1530,7 +1561,7 @@ export default function AutoGrid(props: any) {
                   variant="contained"
                   size="small"
                   sx={{ textTransform: "none" }}
-                  disabled={!selectedRow || selectedStatusRows?.length > 1}
+                  disabled={!selectedRow || selectedStatusRows?.length > 1 || selectedRow.callStatus === "Closed"}
                   onClick={handleStatusClick}
                 >
                   Status Update
