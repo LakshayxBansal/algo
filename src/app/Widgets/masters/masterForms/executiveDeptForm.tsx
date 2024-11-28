@@ -123,6 +123,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);

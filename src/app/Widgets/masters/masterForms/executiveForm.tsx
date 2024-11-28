@@ -184,7 +184,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             name: entityData.executive_dept,
           } as optionsDataT
         }
-        disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         formError={formError?.executive_dept ?? formError.executive_dept}
@@ -214,7 +214,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
         onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
         required
-        disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         formError={formError?.role ?? formError.role}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
@@ -234,7 +234,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"Executive Group"}
         dialogTitle={"Add Executive Group"}
         width={365}
-        disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         defaultValue={
           {
             id: entityData.executive_group_id,
@@ -545,7 +545,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"State"}
         dialogTitle={"Add State"}
         width={365}
-        disable={stateDisable}
+        disabled={stateDisable}
         defaultValue={defaultState}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
         fetchDataFn={getStatesforCountry}
@@ -778,6 +778,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-address-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
       fieldArr.push(fld);
     }
@@ -791,6 +792,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);
@@ -805,6 +807,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);

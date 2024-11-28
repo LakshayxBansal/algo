@@ -52,7 +52,7 @@ import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ContactForm(props: masterFormPropsWithDataT<contactSchemaT>) {
-  console.log("props : ", props)
+  // console.log("props : ", props)
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -645,7 +645,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         id={"state"}
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        disable={stateDisable}
+        disabled={stateDisable}
         width={375}
         dialogTitle={"Add State"}
         fetchDataFn={getStatesforCountry}
@@ -724,6 +724,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-address-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
       fieldArr.push(fld);
     }
@@ -737,6 +738,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);
@@ -751,6 +753,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);

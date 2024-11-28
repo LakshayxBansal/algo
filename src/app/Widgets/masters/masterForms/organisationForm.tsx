@@ -343,7 +343,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         id={"state"}
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        disable={stateDisable}
+        disabled={stateDisable}
         dialogTitle={"Add State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
@@ -413,6 +413,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-name-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);
@@ -426,6 +427,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-number-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);
@@ -439,6 +441,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-address-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);
@@ -452,6 +455,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
       });
 
       fieldArr.push(fld);

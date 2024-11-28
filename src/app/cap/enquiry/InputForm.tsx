@@ -354,7 +354,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
-        disable={status === "2"}
+        disabled={status === "2"}
         required={false}
       />,
     ],

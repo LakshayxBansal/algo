@@ -274,7 +274,7 @@ const SupportTicketForm = (props: customprop) => {
                           data={data}
                         />
                       )}
-                      disable={props?.status === "true" ? true : false}
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
 
@@ -342,7 +342,7 @@ const SupportTicketForm = (props: customprop) => {
                           data={data}
                         />
                       )}
-                      disable={props?.status === "true" ? true : false}
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
 
@@ -372,7 +372,7 @@ const SupportTicketForm = (props: customprop) => {
                           data={data}
                         />
                       )}
-                      disable={props?.status === "true" ? true : false}
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
                   {/* <Grid item xs={12} sm={6} md={12}>
@@ -555,7 +555,7 @@ const SupportTicketForm = (props: customprop) => {
         data={data}
       />
     )}
-    disable={status === "2"}
+    disabled={status === "2"}
   />
 }
   <SelectMasterWrapper
@@ -594,7 +594,7 @@ const SupportTicketForm = (props: customprop) => {
         data={data}
       />
     )}
-    disable={status === "2"}
+    disabled={status === "2"}
   />
 
   <InputControl

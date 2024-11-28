@@ -21,7 +21,8 @@ type CustomFieldT = {
     modified_on: null,
     is_default_column: number,
     is_default_mandatory: null,
-    column_order: number
+    column_order: number,
+    is_disabled: number
 }
 
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any }) {
@@ -43,6 +44,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         name={props.desc.column_name}
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
+                        disabled={props.desc.is_disabled === 1 ? true : false}
                         fullWidth
                     />
                 );
@@ -56,6 +58,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         name={props.desc.column_name}
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
+                        disabled={props.desc.is_disabled === 1 ? true : false}
                         fullWidth
                     />
                 );
@@ -68,6 +71,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         name={props.desc.column_name}
                         required={props.desc.is_mandatory}
                         defaultValue={props.defaultValue ? dayjs(props.defaultValue) : null}
+                        disabled={props.desc.is_disabled === 1 ? true : false}
                         fullWidth
                     />
                 )
@@ -78,6 +82,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         id={props.desc.column_name_id}
                         options={list_item}
                         defaultValue={props.defaultValue}
+                        disabled={props.desc.is_disabled === 1 ? true : false}
                         renderInput={(params) => (
                             <InputControl
                                 {...params}
