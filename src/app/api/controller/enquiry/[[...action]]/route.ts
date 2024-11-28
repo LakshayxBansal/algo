@@ -39,11 +39,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 async function createEnquiryLedgerRoute(req: NextRequest) {
   try {    
-    const { ledgerId, statusId, subStatusId, actionTakenId, nextActionId, suggestedActionRemark, actionTakenRemark, closureRemark, nextActionDate } = await req.json();
-    const date = new Date(nextActionDate);  
-    console.log(nextActionDate);
-    
-      
+    const { ledgerId, statusId, subStatusId, actionTakenId, nextActionId, suggestedActionRemark, actionTakenRemark, closureRemark, nextActionDate } = await req.json();  
     const result = await createEnquiryLedger(ledgerId, statusId, subStatusId, actionTakenId, nextActionId, suggestedActionRemark, actionTakenRemark, closureRemark, nextActionDate);
     return NextResponse.json(result);
   } catch (error) {
