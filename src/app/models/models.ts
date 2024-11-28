@@ -73,7 +73,6 @@ export type masterFormPropsT = {
 
 
 export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
-export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
 export type rightSchemaT = z.infer<typeof zs.rightSchema>;
 export type loggedInUserDataT= z.infer<typeof zs.loggedInUserData>;
 

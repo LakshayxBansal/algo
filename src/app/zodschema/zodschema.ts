@@ -451,7 +451,6 @@ export const enquiryHeaderSchema = z.object({
       message: "Enquiry description must contain atmost 75 character(s)",
     }),
   date: z.string().min(1, { message: "Date must not be empty" }).max(20),
-  date: z.string().min(1, { message: "Date must not be empty" }).max(20),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
   contact: z.string().min(1, { message: "Contact must not be empty" }).max(60),
@@ -1090,17 +1089,6 @@ export const configBaseSchema = z.object({
     prefillWithZero: z.boolean().optional(),
   });
   
-   const voucherSchema = z.object({
-    reqd: z.boolean().optional(),
-    voucherNumber: z.boolean().optional(),
-    prefix: z.string().optional(),
-    suffix: z.string().optional(),
-    length: z.string().optional(),
-    prefillWithZero: z.boolean().optional(),
-  });
-
-
-
 export const customFieldsMasterSchema = z.object ({
   id : z.number().optional(),
   objectTypeId : z.number(),    // form id
@@ -1135,31 +1123,6 @@ export const rightSchema = z.object({
   updateRight: z.boolean(),
   deleteRight: z.boolean()
 })
-
-export const regionalSettingSchema = z.object({
-  reqd : z.boolean().optional(),
-  id: z.number().optional(),
-  country_id: z.number(),
-  state_id: z.number(),
-  country: z.string().optional(),
-  state: z.string().optional(),
-  decimalPlaces: z.string(),
-  timeFormat: z.string(),
-  currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
-  currencySymbol: z.string().max(5,"Currency symbol should not be greater than 5 character").optional(),
-  currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
-  currencyCharacter: z.string().max(1,"Currency character should not be greater than 1 character").optional(),
-  dateFormat: z.string(),
-  voucher : voucherSchema.optional()
-});
-
-export const configSchema = z.object({
-  enquiryConfig: configBaseSchema.optional(),
-  supportConfig: configBaseSchema.optional(),
-  contractConfig: voucherSchema.optional(),
-  regionalSettingConfig: regionalSettingSchema.optional(),
-  enquiryGenerationConfig: voucherSchema.optional(),
-});
 
 export const loggedInUserData = z.object({
   name: z.string(),
