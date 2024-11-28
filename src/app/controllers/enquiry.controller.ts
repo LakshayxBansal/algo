@@ -177,7 +177,7 @@ export async function updateEnquiryById({
   }
 }
 
-export async function createEnquiryLedger(ledgerId: number, statusId: number, subStatusId: number, actionTakenId: number, nextActionId: number, suggestedActionRemark: string, actionTakenRemark: string, closureRemark: string, date: Date) {
+export async function createEnquiryLedger(ledgerId: number, statusId: number, subStatusId: number, actionTakenId: number, nextActionId: number, suggestedActionRemark: string, actionTakenRemark: string, closureRemark: string, nextActionDate: String) {
   try {
     const session = await getSession();
     if (session) {
@@ -190,12 +190,12 @@ export async function createEnquiryLedger(ledgerId: number, statusId: number, su
         suggested_action_remark: suggestedActionRemark,
         action_taken_remark: actionTakenRemark,
         closure_remark: closureRemark,
-        date: date.toDateString()
+        next_action_date: nextActionDate
       }
+      
       const ledgerRes = createEnquiryLedgerDB(session, ledgerData as enquiryLedgerSchemaT);
       return {
-        status: true,
-        data: ledgerRes
+        status: true
       }
     }
   } catch (error) {

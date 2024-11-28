@@ -41,8 +41,10 @@ async function createEnquiryLedgerRoute(req: NextRequest) {
   try {    
     const { ledgerId, statusId, subStatusId, actionTakenId, nextActionId, suggestedActionRemark, actionTakenRemark, closureRemark, nextActionDate } = await req.json();
     const date = new Date(nextActionDate);  
+    console.log(nextActionDate);
+    
       
-    const result = await createEnquiryLedger(ledgerId, statusId, subStatusId, actionTakenId, nextActionId, suggestedActionRemark, actionTakenRemark, closureRemark, date);
+    const result = await createEnquiryLedger(ledgerId, statusId, subStatusId, actionTakenId, nextActionId, suggestedActionRemark, actionTakenRemark, closureRemark, nextActionDate);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(error);
