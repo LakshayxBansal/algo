@@ -528,8 +528,7 @@ export async function getCountryIdByNameDb (country: string) {
   try{
 
     let query =
-      "select s.id as id country_master c where \
-        c.name = ?";
+      "select c.id as id from country_master c where c.name = ?";
     let values = [country];
 
     const result = await excuteQuery({

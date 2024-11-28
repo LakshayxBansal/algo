@@ -15,6 +15,7 @@ import {
 } from "@/app/models/models";
 import {
   createCompany,
+  getCountryByIp,
   updateCompany,
 } from "../controllers/company.controller";
 import Seperator from "../Widgets/seperator";
@@ -36,7 +37,9 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: companySchemaT = props.data ? props.data : {};
+  const countryData = getCountryByIp();
 
+  // if(countryData)
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -269,6 +272,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
                     name: entityData.country,
                   } as optionsDataT)
               }
+              // defaultValue={country}
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
