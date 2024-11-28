@@ -1125,5 +1125,5 @@ export const configSchema = z.object({
 
 export const loggedInUserData = z.object({
   name: z.string(),
-  user_id: z.number()
+  userId: z.number()
 });

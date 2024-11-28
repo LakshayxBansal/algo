@@ -249,6 +249,10 @@ export async function getContactById(id: number) {
       const rights={};
       const config_data=await getRegionalSettings();
       const desc = await getScreenDescription(CONTACT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
+      }
       if(id){
         const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
         if(contactDetails?.length>0){
@@ -265,7 +269,7 @@ export async function getContactById(id: number) {
         contactDetails[0],
         rights,
         config_data,
-        session
+        loggedInUserData
       ]
         return[
           result
@@ -275,7 +279,7 @@ export async function getContactById(id: number) {
         desc,
         rights,
         config_data,
-        session
+        loggedInUserData
       ]
       return[
         result
@@ -293,7 +297,7 @@ export async function getContactByPage(
 ) {
   let getContactByPage = {
     status: false,
-    data: {} as contactSchemaT,
+    data: [] as contactSchemaT[],
     count: 0,
     error: {},
   };
@@ -301,7 +305,7 @@ export async function getContactByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getContactByPageDb(
+      const dbData = await getContactByPageDb(
         // appSession.dbSession?.dbInfo.dbName as string,
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -314,7 +318,7 @@ export async function getContactByPage(
       );
       getContactByPage = {
         status: true,
-        data: conts.map(bigIntToNum) as contactSchemaT,
+        data: dbData.map(bigIntToNum) as contactSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -325,7 +329,7 @@ export async function getContactByPage(
     getContactByPage = {
       ...getContactByPage,
       status: false,
-      data: {} as contactSchemaT,
+      data: [] as contactSchemaT[],
       error: err,
     };
   }

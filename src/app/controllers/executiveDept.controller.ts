@@ -156,6 +156,10 @@ export async function getDeptById(id: number) {
       const userRights={};
       const configData = await getRegionalSettings();
       const screenDesc = await getScreenDescription(EXECUTIVE_DEPT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
+      }
       if(id){
         const executiveDeptDetails = await getDeptDetailsById(session.user.dbInfo.dbName, id);
       
@@ -164,7 +168,7 @@ export async function getDeptById(id: number) {
           executiveDeptDetails[0],
           userRights,
           configData,
-          session
+          loggedInUserData
         ]
         return[
           result
@@ -174,7 +178,7 @@ export async function getDeptById(id: number) {
         screenDesc,
         userRights,
         configData,
-        session
+        loggedInUserData
       ]
       return[
         result
@@ -224,7 +228,7 @@ export async function getExecutiveDeptByPage(
 ) {
   let getExecutiveDept = {
     status: false,
-    data: {} as mdl.executiveDeptSchemaT,
+    data: [] as mdl.executiveDeptSchemaT[],
     count: 0,
     error: {},
   };
@@ -232,7 +236,7 @@ export async function getExecutiveDeptByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveDeptByPageDb(
+      const dbData = await getExecutiveDeptByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -244,7 +248,7 @@ export async function getExecutiveDeptByPage(
       );
       getExecutiveDept = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveDeptSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveDeptSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -255,7 +259,7 @@ export async function getExecutiveDeptByPage(
     getExecutiveDept = {
       ...getExecutiveDept,
       status: false,
-      data: {} as mdl.executiveDeptSchemaT,
+      data: [] as mdl.executiveDeptSchemaT[],
       error: err,
     };
   }

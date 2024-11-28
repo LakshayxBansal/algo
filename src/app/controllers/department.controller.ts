@@ -178,7 +178,7 @@ export async function getDepartmentByPage(
   // console.log("controller params",page,filter,limit)
   let getDepartment = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -186,24 +186,22 @@ export async function getDepartmentByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getDepartmentByPageDb(
+      const dbData = await getDepartmentByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
-      // console.log("smale data", conts)
       const rowCount = await getDepartmentCount(
         appSession.user.dbInfo.dbName as string,
         filter
       );
       getDepartment = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
-      // console.log("this is the result",conts);  
     }
   } catch (e: any) {
 
@@ -212,7 +210,7 @@ export async function getDepartmentByPage(
     getDepartment = {
       ...getDepartment,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

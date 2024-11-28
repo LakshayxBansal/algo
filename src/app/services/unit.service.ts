@@ -79,6 +79,7 @@ export async function getUnitByPageDb(
   filter: string | undefined,
   limit: number
 ) {
+  let result;
   try {
     const vals: any = [page, limit, limit];
 
@@ -86,8 +87,8 @@ export async function getUnitByPageDb(
       vals.unshift(filter);
     }
 
-    return excuteQuery({
-      host: crmDb,
+    result = await excuteQuery({
+      host: "crmapp1",
       query:
         "SELECT *, RowNum as RowID\
      FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \
@@ -98,11 +99,16 @@ export async function getUnitByPageDb(
     WHERE RowNum > ?*?\
     ORDER BY RowNum\
     LIMIT ?;",
+    // query:"SELECT * FROM unit_master",
       values: vals,
     });
+   
+  
   } catch (e) {
     console.log(e);
   }
+  console.log("result need",result);
+  return result;
 }
 
 export async function getUnitCount(crmDb: string, value: string | undefined) {
