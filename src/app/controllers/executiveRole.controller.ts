@@ -28,7 +28,6 @@ export async function getExecutiveRole(
       return getExecutiveRoleList(
         session.user.dbInfo.dbName,
         searchString,
-        // department
       );
     }
   } catch (error) {

@@ -42,8 +42,6 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
     if (session) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
-      data.role = "Admin";
-      data.role_id = 1;
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {

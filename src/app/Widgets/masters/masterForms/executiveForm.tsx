@@ -175,6 +175,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         disable={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
+        formError={formError?.executive_dept ?? formError.executive_dept}
         fnFetchDataByID={getDeptById}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
@@ -195,9 +196,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"Role"}
         dialogTitle={"Add Role"}
         width={365}
-        fetchDataFn={(roleStr: string) =>
-          getExecutiveRole(roleStr, selectValues.department?.id)
-        }
+        fetchDataFn={getExecutiveRole}
         fnFetchDataByID={getExecutiveRoleById}
         defaultValue={defaultRole}
 
@@ -210,7 +209,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
             data={data}
-            parentData={selectValues.department?.id || entityData.executive_dept_id}
           />
         )}
       />
