@@ -892,9 +892,9 @@ export const regionalSettingSchema = z.object({
   decimalPlaces: z.string(),
   timeFormat: z.string(),
   currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
-  currencySymbol: z.string().max(5,"Currency symbol should not be greater than 5 character").optional(),
+  currencySymbol: z.string().max(1,"Currency symbol should not be greater than 1 character").optional(),
   currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
-  currencyCharacter: z.string().max(1,"Currency character should not be greater than 1 character").optional(),
+  currencyCharacter: z.string().max(5,"Currency character should not be greater than 5 character").optional(),
   dateFormat: z.string(),
   voucher : voucherSchema.optional()
 });
