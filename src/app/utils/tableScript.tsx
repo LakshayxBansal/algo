@@ -19,11 +19,10 @@ CREATE TABLE `config_meta_data` (\
 CREATE TABLE `app_config` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `config_type_id` int(11) NOT NULL,\
-  `config` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\
+  `enabled` int(11) NOT NULL,\
+  `config` varchar(5000) NOT NULL,\
   PRIMARY KEY (`id`),\
-  UNIQUE KEY `config_type_id_UNIQUE` (`config_type_id`),\
-  CONSTRAINT `app_config_ibfk_1` FOREIGN KEY (`config_type_id`) REFERENCES `config_meta_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\
-  CONSTRAINT `app_config_chk_1` CHECK (json_valid(`config`))\
+  UNIQUE KEY `id_UNIQUE` (`id`)\
 );~\
 CREATE TABLE `app_config_new` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
@@ -482,18 +481,12 @@ CREATE TABLE `object_category_master` (\
 CREATE TABLE `object_rights_master` (\
   `id` int(11) NOT NULL AUTO_INCREMENT,\
   `object_id` int(11) NOT NULL,\
-  `admin_create` int(11) NOT NULL DEFAULT 1,\
-  `admin_read` int(11) NOT NULL DEFAULT 1,\
-  `admin_update` int(11) NOT NULL DEFAULT 1,\
-  `admin_delete` int(11) NOT NULL DEFAULT 1,\
-  `manager_create` int(11) NOT NULL DEFAULT 1,\
-  `manager_read` int(11) NOT NULL DEFAULT 1,\
-  `manager_update` int(11) NOT NULL DEFAULT 1,\
-  `manager_delete` int(11) NOT NULL DEFAULT 1,\
-  `executive_create` int(11) NOT NULL DEFAULT 1,\
-  `executive_read` int(11) NOT NULL DEFAULT 1,\
-  `executive_update` int(11) NOT NULL DEFAULT 1,\
-  `executive_delete` int(11) NOT NULL DEFAULT 1,\
+  `role_id` int(11) NOT NULL,\
+  `dept_id` int(11) NOT NULL,\
+  `create` int(11) NOT NULL DEFAULT 1,\
+  `read` int(11) NOT NULL DEFAULT 1,\
+  `update` int(11) NOT NULL DEFAULT 1,\
+  `delete` int(11) NOT NULL DEFAULT 1,\
   PRIMARY KEY (`id`)\
 );~\
 CREATE TABLE `object_type_master` (\
@@ -736,6 +729,12 @@ CREATE TABLE `unit_master` (\
   `modified_by` int(11) DEFAULT NULL,\
   PRIMARY KEY (`id`)\
 );~\
+CREATE TABLE `config_dept_mapping` (\
+  `id` int(11) NOT NULL AUTO_INCREMENT,\
+  `config_id` int(11) NOT NULL,\
+  `dept_id` int(11) NOT NULL,\
+  PRIMARY KEY (`id`)\
+);~\
 INSERT INTO `country_master` VALUES (1,'AF','Afghanistan',1,NULL,1,NULL,'2024-10-18 10:49:35','؋','Afghani','AFN',NULL,NULL,NULL),(2,'AX','Aland Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,'AL','Albania',1,NULL,NULL,NULL,NULL,'Lek','Lek','ALL',NULL,'DD/MM/YYYY',NULL),(4,'DZ','Algeria',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(5,'AS','American Samoa',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(6,'AD','Andorra',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),\
   (7,'AO','Angola',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(8,'AI','Anguilla',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(9,'AQ','Antarctica',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(10,'AG','Antigua and Barbuda',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(11,'AR','Argentina',1,NULL,NULL,NULL,NULL,'$','Peso','ARS',NULL,NULL,NULL),(12,'AM','Armenia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(13,'AW','Aruba',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),\
   (14,'AU','Australia',1,NULL,NULL,NULL,NULL,'$','Dollar','AUD',NULL,NULL,NULL),(15,'AT','Austria',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(16,'AZ','Azerbaijan',1,NULL,NULL,NULL,NULL,'₼','Manat','AZN',NULL,'DD.MM.YYYY',NULL),(17,'BS','Bahamas',1,NULL,NULL,NULL,NULL,'$','Dollar','BSD',NULL,NULL,NULL),(18,'BH','Bahrain',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(19,'BD','Bangladesh',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(20,'BB','Barbados',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),\
@@ -760,22 +759,60 @@ INSERT INTO `country_master` VALUES (1,'AF','Afghanistan',1,NULL,1,NULL,'2024-10
   (160,'NC','New Caledonia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(161,'NZ','New Zealand',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(162,'NI','Nicaragua',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(163,'NE','Niger',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(164,'NG','Nigeria',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(165,'NU','Niue',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(166,'NF','Norfolk Island',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(167,'MP','Northern Mariana Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(168,'NO','Norway',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),\
   (169,'OM','Oman',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(170,'PK','Pakistan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(171,'PW','Palau',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(172,'PS','Palestinian Territory, Occupied',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(173,'PA','Panama',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(174,'PG','Papua New Guinea',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(175,'PY','Paraguay',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(176,'PE','Peru',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(177,'PH','Philippines',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(178,'PN','Pitcairn',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(179,'PL','Poland',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(180,'PT','Portugal',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(181,'PR','Puerto Rico',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(182,'QA','Qatar',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(183,'KR','Republic of Korea',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(184,'MD','Republic of Moldova',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(185,'RE','Reunion',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(186,'RO','Romania',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(187,'RU','Russian Federation',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(188,'RW','Rwanda',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(189,'SH','Saint Helena',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(190,'KN','Saint Kitts and Nevis',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(191,'LC','Saint Lucia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(192,'MF','Saint Martin',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(193,'VC','Saint Vincent & the Grenadines',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(194,'WS','Samoa',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(195,'SM','San Marino',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(196,'ST','Sao Tome and Principe',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(197,'SA','Saudi Arabia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(198,'SN','Senegal',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(199,'RS','Serbia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(200,'SC','Seychelles',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(201,'SL','Sierra Leone',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(202,'SG','Singapore',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(203,'SX','Sint Maarten',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(204,'SK','Slovakia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(205,'SI','Slovenia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(206,'SB','Solomon Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(207,'SO','Somalia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(208,'ZA','South Africa',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(209,'GS','South Georgia and The South Sandwich Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(210,'SS','South Sudan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(211,'ES','Spain',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(212,'LK','Sri Lanka',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(213,'PM','St. Pierre and Miquelon',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(214,'SD','Sudan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(215,'SR','Suriname',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(216,'SJ','Svalbard and Jan Mayen',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(217,'SZ','Swaziland',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(218,'SE','Sweden',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(219,'CH','Switzerland',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(220,'SY','Syrian Arab Republic',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(221,'TW','Taiwan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(222,'TJ','Tajikistan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(223,'TH','Thailand',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(224,'MK','The Former Yugoslav Republic of Macedonia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(225,'TL','Timor-Leste',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(226,'TG','Togo',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(227,'TK','Tokelau',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(228,'TO','Tonga',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(229,'TT','Trinidad and Tobago',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(230,'TN','Tunisia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(231,'TR','Turkey',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(232,'TM','Turkmenistan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(233,'TC','Turks and Caicos Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(234,'TV','Tuvalu',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(235,'UM','US Minor Outlying Islands',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(236,'UG','Uganda',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(237,'UA','Ukraine',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(238,'AE','United Arab Emirates',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(239,'GB','United Kingdom',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(240,'TZ','United Republic of Tanzania',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(241,'US','United States of America',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(242,'UY','Uruguay',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(243,'UZ','Uzbekistan',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(244,'VU','Vanuatu',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(245,'VE','Venezuela',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(246,'VN','Viet Nam',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(247,'VG','Virgin Islands (British)',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(248,'VI','Virgin Islands (U.S.A.)',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(249,'WF','Wallis and Futuna',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(250,'EH','Western Sahara',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(251,'YE','Yemen',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(252,'ZM','Zambia',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(253,'ZW','Zimbabwe',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);~\
 INSERT INTO `state_master` VALUES (1,'','Andhra Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(2,'','Arunachal Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(3,'','Assam',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(4,'','Bihar',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(5,'','Chhattisgarh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(7,'','Gujarat',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(8,'','Haryana',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(9,'','Himachal Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(10,'','Jharkhand',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(11,'','Karnataka',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(12,'','Kerala',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(13,'','Madhya Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(14,'','Maharashtra',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(15,'','Manipur',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(16,'','Meghalaya',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(17,'','Mizoram',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(18,'','Nagaland',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(19,'','Odisha',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(20,'','Punjab',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(21,'','Rajasthan',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(22,'','Sikkim',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(23,'','Tamil Nadu',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(24,'','Telangana',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(25,'','Tripura',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(26,'','Uttar Pradesh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(27,'','Uttarakhand',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(28,'','West Bengal',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(29,'','Andaman and Nicobar Islands',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(30,'','Chandigarh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(31,'','Dadra and Nagar Haveli and Daman and Diu',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(32,'','Jammu and Kashmir',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(33,'','Ladakh',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107),(34,'','Lakshadweep',0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00',107);~\
-INSERT INTO `object_category_master` VALUES (1,'master'),(2,'transaction'),(3,'report');~\
-INSERT INTO `object_rights_master` VALUES (1,1,1,1,1,1,1,1,1,1,1,1,1,1),(2,2,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (3,3,1,1,1,1,1,1,1,1,1,1,1,1),(4,4,1,1,1,1,1,1,1,1,1,1,1,1),(5,5,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (6,6,1,1,1,1,1,1,1,1,1,1,1,1),(7,7,1,1,1,1,1,1,1,1,1,1,1,1),(8,8,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (9,9,1,1,1,1,1,1,1,1,1,1,1,1),(10,10,1,1,1,1,1,1,1,1,1,1,1,1),(11,11,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (12,12,1,1,1,1,1,1,1,1,1,1,1,1),(13,13,1,1,1,1,1,1,1,1,1,1,1,1),(14,14,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (15,15,1,1,1,1,1,1,1,1,1,1,1,1),(16,16,1,1,1,1,1,1,1,1,1,1,1,1),(17,17,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (18,18,1,1,1,1,1,1,1,1,1,1,1,1),(19,19,1,1,1,1,1,1,1,1,1,1,1,1),(20,20,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (21,21,1,1,1,1,1,1,1,1,1,1,1,1),(22,22,1,1,1,1,1,1,1,1,1,1,1,1),(23,23,1,1,1,1,1,1,1,1,1,1,1,1),\
-    (24,24,1,1,1,1,1,1,1,1,1,1,1,1),(25,25,1,1,1,1,1,1,1,1,1,1,1,1);~\
-INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(3,'Area',1),(4,'Category',1),\
-    (5,'Contact',1),(6,'Contact Group',1),(7,'Country',1),(8,'Currency',1),(9,'Department',1),\
-    (10,'Executive Dept',1),(11,'Executive',1),(12,'Executive Group',1),(13,'Executive Role',1),\
-    (14,'Invite User',2),(15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),\
-    (19,'Organisation',1),(20,'Source',1),(21,'State',1),(22,'State List',1),(23,'Sub Status',2),\
-    (24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2);~\
+INSERT INTO `object_category_master` VALUES (1,'Master'),(2,'Transaction'),(3,'Report');~\
+INSERT INTO `object_rights_master` (`object_id`, `role_id`, `dept_id`, `create`, `read`, `update`, `delete`) \
+  VALUES (1,1,1,1,1,1,1),(1,1,2,1,1,1,1),(1,2,1,1,1,1,1),\
+  (1,2,2,1,1,1,1),(1,3,1,1,1,1,1),(1,3,2,1,1,1,1),(1,4,1,1,1,1,1),(1,4,2,1,1,1,1),\
+  (2,1,1,1,1,1,1),(2,1,2,1,1,1,1),(2,2,1,1,1,1,1),(2,2,2,1,1,1,1),(2,3,1,1,1,1,1),\
+  (2,3,2,1,1,1,1),(2,4,1,1,1,1,1),(2,4,2,1,1,1,1),(3,1,1,1,1,1,1),(3,1,2,1,1,1,1),\
+  (3,2,1,1,1,1,1),(3,2,2,1,1,1,1),(3,3,1,1,1,1,1),(3,3,2,1,1,1,1),(3,4,1,1,1,1,1),\
+  (3,4,2,1,1,1,1),(4,1,1,1,1,1,1),(4,1,2,1,1,1,1),(4,2,1,1,1,1,1),(4,2,2,1,1,1,1),\
+  (4,3,1,1,1,1,1),(4,3,2,1,1,1,1),(4,4,1,1,1,1,1),(4,4,2,1,1,1,1),(5,1,1,1,1,1,1),\
+  (5,1,2,1,1,1,1),(5,2,1,1,1,1,1),(5,2,2,1,1,1,1),(5,3,1,1,1,1,1),(5,3,2,1,1,1,1),\
+  (5,4,1,1,1,1,1),(5,4,2,1,1,1,1),(6,1,1,1,1,1,1),(6,1,2,1,1,1,1),(6,2,1,1,1,1,1),\
+  (6,2,2,1,1,1,1),(6,3,1,1,1,1,1),(6,3,2,1,1,1,1),(6,4,1,1,1,1,1),(6,4,2,1,1,1,1),\
+  (7,1,1,1,1,1,1),(7,1,2,1,1,1,1),(7,2,1,1,1,1,1),(7,2,2,1,1,1,1),(7,3,1,1,1,1,1),\
+  (7,3,2,1,1,1,1),(7,4,1,1,1,1,1),(7,4,2,1,1,1,1),(8,1,1,1,1,1,1),(8,1,2,1,1,1,1),\
+  (8,2,1,1,1,1,1),(8,2,2,1,1,1,1),(8,3,1,1,1,1,1),(8,3,2,1,1,1,1),(8,4,1,1,1,1,1),\
+  (8,4,2,1,1,1,1),(9,1,1,1,1,1,1),(9,1,2,1,1,1,1),(9,2,1,1,1,1,1),(9,2,2,1,1,1,1),\
+  (9,3,1,1,1,1,1),(9,3,2,1,1,1,1),(9,4,1,1,1,1,1),(9,4,2,1,1,1,1),(10,1,1,1,1,1,1),\
+  (10,1,2,1,1,1,1),(10,2,1,1,1,1,1),(10,2,2,1,1,1,1),(10,3,1,1,1,1,1),(10,3,2,1,1,1,1),\
+  (10,4,1,1,1,1,1),(10,4,2,1,1,1,1),(11,1,1,1,1,1,1),(11,1,2,1,1,1,1),(11,2,1,1,1,1,1),\
+  (11,2,2,1,1,1,1),(11,3,1,1,1,1,1),(11,3,2,1,1,1,1),(11,4,1,1,1,1,1),(11,4,2,1,1,1,1),\
+  (12,1,1,1,1,1,1),(12,1,2,1,1,1,1),(12,2,1,1,1,1,1),(12,2,2,1,1,1,1),(12,3,1,1,1,1,1),\
+  (12,3,2,1,1,1,1),(12,4,1,1,1,1,1),(12,4,2,1,1,1,1),(13,1,1,1,1,1,1),(13,1,2,1,1,1,1),\
+  (13,2,1,1,1,1,1),(13,2,2,1,1,1,1),(13,3,1,1,1,1,1),(13,3,2,1,1,1,1),(13,4,1,1,1,1,1),\
+  (13,4,2,1,1,1,1),(14,1,1,1,1,1,1),(14,1,2,1,1,1,1),(14,2,1,1,1,1,1),(14,2,2,1,1,1,1),\
+  (14,3,1,1,1,1,1),(14,3,2,1,1,1,1),(14,4,1,1,1,1,1),(14,4,2,1,1,1,1),(15,1,1,1,1,1,1),\
+  (15,1,2,1,1,1,1),(15,2,1,1,1,1,1),(15,2,2,1,1,1,1),(15,3,1,1,1,1,1),(15,3,2,1,1,1,1),\
+  (15,4,1,1,1,1,1),(15,4,2,1,1,1,1),(16,1,1,1,1,1,1),(16,1,2,1,1,1,1),(16,2,1,1,1,1,1),\
+  (16,2,2,1,1,1,1),(16,3,1,1,1,1,1),(16,3,2,1,1,1,1),(16,4,1,1,1,1,1),(16,4,2,1,1,1,1),\
+  (17,1,1,1,1,1,1),(17,1,2,1,1,1,1),(17,2,1,1,1,1,1),(17,2,2,1,1,1,1),(17,3,1,1,1,1,1),\
+  (17,3,2,1,1,1,1),(17,4,1,1,1,1,1),(17,4,2,1,1,1,1),(18,1,1,1,1,1,1),(18,1,2,1,1,1,1),\
+  (18,2,1,1,1,1,1),(18,2,2,1,1,1,1),(18,3,1,1,1,1,1),(18,3,2,1,1,1,1),(18,4,1,1,1,1,1),\
+  (18,4,2,1,1,1,1),(19,1,1,1,1,1,1),(19,1,2,1,1,1,1),(19,2,1,1,1,1,1),(19,2,2,1,1,1,1),\
+  (19,3,1,1,1,1,1),(19,3,2,1,1,1,1),(19,4,1,1,1,1,1),(19,4,2,1,1,1,1),(20,1,1,1,1,1,1),\
+  (20,1,2,1,1,1,1),(20,2,1,1,1,1,1),(20,2,2,1,1,1,1),(20,3,1,1,1,1,1),(20,3,2,1,1,1,1),\
+  (20,4,1,1,1,1,1),(20,4,2,1,1,1,1),(21,1,1,1,1,1,1),(21,1,2,1,1,1,1),(21,2,1,1,1,1,1),\
+  (21,2,2,1,1,1,1),(21,3,1,1,1,1,1),(21,3,2,1,1,1,1),(21,4,1,1,1,1,1),(21,4,2,1,1,1,1),\
+  (22,1,1,1,1,1,1),(22,1,2,1,1,1,1),(22,2,1,1,1,1,1),(22,2,2,1,1,1,1),(22,3,1,1,1,1,1),\
+  (22,3,2,1,1,1,1),(22,4,1,1,1,1,1),(22,4,2,1,1,1,1),(23,1,1,1,1,1,1),(23,1,2,1,1,1,1),\
+  (23,2,1,1,1,1,1),(23,2,2,1,1,1,1),(23,3,1,1,1,1,1),(23,3,2,1,1,1,1),(23,4,1,1,1,1,1),\
+  (23,4,2,1,1,1,1),(24,1,1,1,1,1,1),(24,1,2,1,1,1,1),(24,2,1,1,1,1,1),(24,2,2,1,1,1,1),\
+  (24,3,1,1,1,1,1),(24,3,2,1,1,1,1),(24,4,1,1,1,1,1),(24,4,2,1,1,1,1),(25,1,1,1,1,1,1),\
+  (25,1,2,1,1,1,1),(25,2,1,1,1,1,1),(25,2,2,1,1,1,1),(25,3,1,1,1,1,1),(25,3,2,1,1,1,1),\
+  (25,4,1,1,1,1,1),(25,4,2,1,1,1,1),(26,1,1,1,1,1,1),(26,1,2,1,1,1,1),(26,2,1,1,1,1,1),\
+  (26,2,2,1,1,1,1),(26,3,1,1,1,1,1),(26,3,2,1,1,1,1),(26,4,1,1,1,1,1),(26,4,2,1,1,1,1),\
+  (27,1,1,1,1,1,1),(27,1,2,1,1,1,1),(27,2,1,1,1,1,1),(27,2,2,1,1,1,1),(27,3,1,1,1,1,1),\
+  (27,3,2,1,1,1,1),(27,4,1,1,1,1,1),(27,4,2,1,1,1,1),(28,1,1,1,1,1,1),(28,1,2,1,1,1,1),\
+  (28,2,1,1,1,1,1),(28,2,2,1,1,1,1),(28,3,1,1,1,1,1),(28,3,2,1,1,1,1),(28,4,1,1,1,1,1),\
+  (28,4,2,1,1,1,1);~\
+INSERT INTO `object_type_master` VALUES (1,'Action',2),(2,'Allocation Type',2),(3,'Area',1),\
+  (4,'Category',1),(5,'Contact',1),(6,'Contact Group',1),(7,'Country',1),(8,'Currency',1),(9,'Department',1),\
+  (10,'Executive Dept',1),(11,'Executive',1),(12,'Executive Group',1),(13,'Executive Role',1),(14,'Invite User',2),\
+  (15,'Company User',2),(16,'Item',1),(17,'Item Group',1),(18,'Notification',3),(19,'Organisation',1),(20,'Source',1),\
+  (21,'State',1),(22,'State List',1),(23,'Sub Status',2),(24,'Sub Status List',2),(25,'Unit',1),(26,'Enquiry',2),\
+  (27,'Contract',2),(28,'Support',2),(29,'Regional Setting',2);~\
 INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashboardOutlinedIcon','/cap',0,'','',0,0,0),\
   (2,'Enquiry','Enquiry',0,'FolderOutlinedIcon','#',0,'','',0,0,0),(3,'Campaign','Campaign',0,'PeopleAltOutlinedIcon','#',0,'','',0,0,0),\
   (4,'Reports','Reports',0,'BarChartIcon','#',0,'','',0,0,0),(5,'Admin','Admin',0,'FolderOutlinedIcon','#',0,'','',0,0,0),\
@@ -6419,4 +6456,53 @@ INSERT INTO `menu_option_master` VALUES (1,'Dashboard','Dashboard',0,'SpaceDashb
     \
   select * from error_table;\
     select * from unit_master um where um.id = id;\
-END ;";
+END ;~\
+CREATE PROCEDURE `createConfig`(\
+	IN enquiryData varchar(5000),\
+  IN supportData varchar(5000),\
+  IN contractData varchar(5000),\
+  IN regionalSettingData varchar(5000),\
+  IN searchNavbarData varchar(5000),\
+  IN searchContactData varchar(5000),\
+  IN searchExecutiveData varchar(5000),\
+  IN searchOrganisationData varchar(5000)\
+)\
+BEGIN\
+  DECLARE enquiryId integer Default NULL;\
+  DECLARE supportId integer Default NULL;\
+  DECLARE contractId integer Default NULL;\
+  DECLARE regionalSettingId integer Default NULL;\
+  DECLARE searchNavbarId integer Default NULL;\
+  DECLARE searchContactId integer Default NULL;\
+  DECLARE searchExecutiveId integer Default NULL;\
+  DECLARE searchOrganisationId integer Default NULL;\
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING\
+  BEGIN\
+    ROLLBACK;\
+    RESIGNAL;\
+  END;\
+  \
+  Start Transaction;\
+	Insert into config_meta_data (config_type) values ('enquiry');\
+    set enquiryId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('support');\
+    set supportId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('contract');\
+    set contractId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('regionalSetting');\
+    set regionalSettingId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchNavbar');\
+    set searchNavbarId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchContact');\
+    set searchContactId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchExecutive');\
+    set searchExecutiveId = LAST_INSERT_ID();\
+    Insert into config_meta_data (config_type) values ('searchOrganisation');\
+    set searchOrganisationId = LAST_INSERT_ID();\
+    \
+	INSERT into app_config (config_type_id, enabled, config) values (enquiryId, 1, enquiryData), \
+    (supportId, 1, supportData), (contractId, 0, contractData), (regionalSettingId, 1, regionalSettingData), \
+    (searchNavbarId, 1, searchNavbarData), (searchContactId, 1, searchContactData), \
+    (searchExecutiveId, 1, searchExecutiveData), (searchOrganisationId, 1, searchOrganisationData);\
+  Commit;\
+END;";

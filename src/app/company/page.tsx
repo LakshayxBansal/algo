@@ -20,7 +20,8 @@ export default async function Companies() {
   try {
     const session = await getSession();
     const totalInvites = await getTotalInvite();
-    if (session) {
+    
+    if (session) {      
       return (
         <>
           <Box>
