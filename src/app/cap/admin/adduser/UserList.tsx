@@ -19,44 +19,42 @@ const columns: GridColDef[] = [
     headerName: 'Contact',
     width: 150
   },
-  // {
-  //   field: 'role',
-  //   headerName: 'Role',
-  //   width: 150
-  // },
+  {
+    field: 'role',
+    headerName: 'Role',
+    width: 150
+  },
   {
     field: 'remove',
     headerName: 'Remove',
     width: 150,
     renderCell: (params) => (
-          <Button onClick={()=>handleRemove(params)}>Remove</Button>
-        )
+      <Button onClick={() => handleRemove(params)}>Remove</Button>
+    )
   },
 ];
 
-const handleRemove = async(params : any)=>{
-  try{
-    await deRegisterFromCompany(params.row.id,null,null);
+const handleRemove = async (params: any) => {
+  try {
+    await deRegisterFromCompany(params.row.id, null, null);
     await deleteSession(params.row.userId);
-  }catch(error){
-    throw(error);
-  }finally{
+  } catch (error) {
+    throw (error);
+  } finally {
     window.location.reload();
   }
 }
 
-export default function UserList(){
-
-    return <>
-        <EntityList
-        title="User List"
-        fetchDataFn={getCompanyUser}
-        // fnFetchDataByID={getInviteUserById}
-        customCols={columns}
-        AddAllowed={false}
-        height="20em"
-        >
-        
-      </EntityList>
-      </>
+export default function UserList() {
+  return <>
+    <EntityList
+      title="User List"
+      fetchDataFn={getCompanyUser}
+      // fnFetchDataByID={getInviteUserById}
+      customCols={columns}
+      AddAllowed={false}
+      height="20em"
+    >
+    </EntityList>
+  </>
 }
