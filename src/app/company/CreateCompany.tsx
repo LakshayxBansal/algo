@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
@@ -22,7 +22,6 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   getCountriesMaster,
-  getCountryIdByName,
   getStates,
   getStatesMaster,
 } from "../controllers/masters.controller";
@@ -36,23 +35,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [defaultCountry, setdefaultCountry] = useState("");
-  const [defaultCountryId, setdefaultCountryId] = useState(0);
   const entityData: companySchemaT = props.data ? props.data : {};
-
-  useEffect(()=>{
-    const fetchCountry = async () => {
-      const result = await fetch("https://api.ipregistry.co/?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV");
-      const data = await result.json();
-
-      setdefaultCountry(data.location.country.name);
-      const countryId = await getCountryIdByName(data.location.country.name); 
-      // setSelectValues({ country: { id: countryId, name: data.location.country.name } });
-      setdefaultCountryId(countryId);
-      // return data.location.country.name;
-    };
-    fetchCountry();
-  },[]); 
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -274,29 +257,18 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
               }}
               width={340}
               fetchDataFn={getCountriesMaster}
-              // diaglogVal={
-              //   selectValues.country
-              //     ? {
-              //       id: selectValues.country?.id,
-              //       name: selectValues.country?.name ?? "",
-              //       detail: undefined,
-              //     }
-              //     : ({
-              //       id: entityData.country_id,
-              //       name: entityData.country,
-              //     } as optionsDataT)
-              // }
               diaglogVal={
-                entityData.country
+                selectValues.country
                   ? {
-                    id: entityData.country_id,
-                    name: entityData.country,
+                    id: selectValues.country?.id,
+                    name: selectValues.country?.name ?? "",
+                    detail: undefined,
                   }
                   : ({
-                    id: defaultCountryId,
-                    name: defaultCountry,
+                    id: entityData.country_id,
+                    name: entityData.country,
                   } as optionsDataT)
-                    }
+              }
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
@@ -380,7 +352,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
           >
             <Button
               onClick={() => {
-                if (props.parentData.route === "addcompany") {
+                if (props.parentData === "addcompany") {
                   router.push("/signin");
                 } else {
                   handleCancel();

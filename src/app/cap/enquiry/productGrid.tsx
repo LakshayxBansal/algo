@@ -9,7 +9,7 @@ import {
 } from "@mui/x-data-grid";
 
 import { darken, lighten, styled, Theme } from "@mui/material/styles";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -408,7 +408,7 @@ export default function ProductGrid({
   return (
     <>
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Seperator>Product List</Seperator>
+        <Typography>Product List</Typography>
         <Button
           color="primary"
           startIcon={<AddIcon />}

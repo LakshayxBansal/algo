@@ -65,7 +65,6 @@ export type masterUploadFormT = {
 };
 
 export type masterFormPropsT = {
-  [x: string]: any;
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
   data?: any;
