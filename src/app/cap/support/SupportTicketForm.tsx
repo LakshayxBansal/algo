@@ -79,7 +79,15 @@ import { format } from "path";
 import { useRouter } from "next/navigation";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 
-const SupportTicketForm = (props: masterFormPropsT) => {
+interface customprop extends masterFormPropsT {
+  userDetails: {
+    id: string | number; 
+    name: string;
+  };
+  status: string | string[] | undefined ;
+}
+
+const SupportTicketForm = (props: customprop) => {
 
   const masterData = props?.data?.masterData ?? {};
 
@@ -652,7 +660,7 @@ const SupportTicketForm = (props: masterFormPropsT) => {
               )}
             >
               <IconButton
-                sx={{ float: "right", position: "relative", paddingRight: 0 }}
+                sx={{ float: "left", position: "relative"}}
                 onClick={() => setDocDialogOpen(true)}
                 aria-label="file"
               >

@@ -64,7 +64,6 @@ import AddProductToListForm from "./addProductToListForm";
 import ProductGrid from "./productGrid";
 import CustomField from "./CustomFields";
 
-
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 import ContactForm from "@/app/Widgets/masters/masterForms/contactForm";
 import CategoryForm from "@/app/Widgets/masters/masterForms/categoryForm";
@@ -111,11 +110,20 @@ export default function InputForm({ baseData }: InputFormProps) {
   const router = useRouter();
 
   const { dateFormat, timeFormat } = baseData.regional_setting;
-  const timeFormatString = timeFormat === "12 Hours" ? "hh:mm A" : "HH:mm";
-  const dateTimeFormat = `${dateFormat} ${timeFormatString}`;
+  const timeFormatString = timeFormat
+    ? timeFormat === "12 Hours"
+      ? "hh:mm A"
+      : "HH:mm"
+    : "HH:mm";
+  const dateTimeFormat = [
+    dateFormat || "DD/MM/YYYY", // Add dateFormat if it exists
+    timeFormatString, // Add timeFormatString if timeFormat is valid
+  ]
+    .filter(Boolean)
+    .join(" "); // Remove empty strings and join with space
 
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues });
+    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
 
     let result;
     let issues = [];
@@ -364,7 +372,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                 <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
                   <Box
                     sx={{
-                      height: 260,
+                      height: 264,
                     }}
                   >
                     <ProductGrid

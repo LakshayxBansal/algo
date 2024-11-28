@@ -31,9 +31,9 @@ export default function AddDocsForm(props: any) {
         Record<string, { msg: string; error: boolean }>
     >({});
     const [snackOpen, setSnackOpen] = React.useState(false);
-    const [file,setFile] = React.useState<string | ArrayBuffer | null | undefined>();
-    const [selectedFileName,setSelectedFileName] = React.useState("");
-    const [fileType,setFileType] = React.useState("");
+    const [file, setFile] = React.useState<string | ArrayBuffer | null | undefined>();
+    const [selectedFileName, setSelectedFileName] = React.useState("");
+    const [fileType, setFileType] = React.useState("");
     const handleCancel = () => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
     };
@@ -46,13 +46,29 @@ export default function AddDocsForm(props: any) {
         data["file"] = file;
         data["fileType"] = fileType;
         data["type"] = "state";
-        props.setData
-            ? props.setData((prevData : docDescriptionSchemaT[]) => [
-                ...prevData,
-                { id: (0-prevData.length-1), ...data },
-            ])
-            : null;
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
+        const parsed = zs.docDescriptionSchema.safeParse(data);
+        if (parsed.success) {
+            props.setData
+                ? props.setData((prevData: docDescriptionSchemaT[]) => [
+                    ...prevData,
+                    { id: (0 - prevData.length - 1), ...data },
+                ])
+                : null;
+            props.setDialogOpen ? props.setDialogOpen(false) : null;
+        } else {
+            const issues = parsed.error.issues;
+            const errorState: Record<string, { msg: string; error: boolean }> = {};
+            errorState["form"] = { msg: "Error encountered", error: true };
+            for (const issue of issues) {
+                for (const path of issue.path) {
+                    errorState[path] = { msg: issue.message, error: true };
+                    if (path === "refresh") {
+                        errorState["form"] = { msg: issue.message, error: true };
+                    }
+                }
+            }
+            setFormError(errorState);
+        }
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +76,7 @@ export default function AddDocsForm(props: any) {
 
         if (files && files.length > 0) {
             const file = files[0];
-            console.log("upload file : ",file);
+            console.log("upload file : ", file);
             setSelectedFileName(file.name);
             setFileType(file.type);
 

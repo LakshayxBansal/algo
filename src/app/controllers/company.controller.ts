@@ -1,5 +1,5 @@
 "use server";
-import { companySchemaT, dbInfoT, regionalSettingSchemaT } from "../models/models";
+import { companySchemaT, configSchemaT, dbInfoT, regionalSettingSchemaT } from "../models/models";
 import {
   createCompanyDB,
   getHostId,
@@ -19,10 +19,14 @@ import {
   getRegionalSettingDb,
   updateteRegionalSettingDb,
 } from "../services/config.service";
+import { createConfigDataDB } from "../services/configData.service";
 import { getSession } from "../services/session.service";
 import { bigIntToNum } from "../utils/db/types";
 import { companySchema } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
+import { headers } from "next/headers";
+import { getCountryIdByName } from "./masters.controller";
+import { NextRequest } from "next/server";
 
 export async function getCompanyById(id: number) {
   try {
@@ -34,6 +38,7 @@ export async function getCompanyById(id: number) {
     throw error;
   }
 }
+
 
 export async function getCompanyDbById(id: number) {
   try {
@@ -86,6 +91,18 @@ async function createCompanyDbAndTableProc(
   return tableAndProcRes;
 }
 
+function createAppConfigData(): configSchemaT{
+  const enquiryData = {reqd:true, closeCall:true,maintainProducts:false,saveFAQ:false,allowReallocation:true,maintainAction:true,voucher:{voucherNumber:true,prefix:"",suffix:"",length: "6",prefillWithZero:true}};
+  const supportData = {reqd:true,closeCall:true,maintainProducts:false,saveFAQ:false,allowReallocation:true,maintainAction:true,voucher:{voucherNumber:true,prefix:"",suffix:"",length: "6",prefillWithZero:true}};
+  const contractData = {reqd:false,voucher:{voucherNumber:false,prefix:"",suffix:"",length: "0",prefillWithZero:false}};
+  const regionalData = {reqd:true,country_id: 0, country: "", state_id: 0, state: "", decimalPlaces: "Two Digits", timeFormat: "12 Hours", currencyString: "", currencySymbol: "", currencySubString: "", currencyCharacter: "", dateFormat: ""};
+  const searchNavbarData = {reqd:true,menu:true,enquiryDescription:true,organisation:true,supportDescription:true,contractDescription:true,product:true};
+  const searchContactData = {reqd:true,name:true,alias:true,phone:true,email:true,organisation:true,city:true};
+  const searchExecutiveData = {reqd:true,name:true,alias:true,dept:true,role:true,email:true,phone:true};
+  const searchOrganisationData = {reqd:true,name:true,alias:true,city:true};
+  return {enquiry: enquiryData, support: supportData, contract: contractData, regionalSetting: regionalData, searchNavbar: searchNavbarData, searchContact: searchContactData, searchExecutive: searchExecutiveData, searchOrganisation: searchOrganisationData};
+}
+
 export async function createCompany(data: companySchemaT) {
   let result;
   try {
@@ -105,52 +122,30 @@ export async function createCompany(data: companySchemaT) {
         }
         const userId = session.user.userId;
 
-        const companyData = await createCompanyAndInfoDb(
-          hostDetails.id,
-          dbName,
-          data,
-          userId as number
-        );
+        const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userId as number);
 
         if (companyData[0].length === 0) {
           dbName += companyData[2][0].id;
-          result = await createCompanyDbAndTableProc(
-            dbName,
-            hostDetails.host,
-            hostDetails.port,
-            companyData[1][0].id,
-            companyData[2][0].id,
-            companyData[4][0]
-          );
+          result = await createCompanyDbAndTableProc(dbName, hostDetails.host, hostDetails.port, companyData[1][0].id, companyData[2][0].id, companyData[4][0]);
           if (!result.status) {
             return result;
           }
 
           const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
-
-          let regionalData: regionalSettingSchemaT = {
-            country_id: data.country_id ?? 0,
-            country: data.country ?? "",
-            state_id: data.state_id ?? 0,
-            state: data.state ?? "",
-            decimalPlaces: "Two Digits",
-            timeFormat: "12 Hours",
-            currencyString: "",
-            currencySymbol: "",
-            currencySubString: "",
-            currencyCharacter: "",
-            dateFormat: "",
-          };
-
+          const configData: configSchemaT = createAppConfigData();
           if (data.country_id !== 0) {
-            regionalData.currencyString = countryData[0].currencyString;
-            regionalData.currencySymbol = countryData[0].currencySymbol;
-            regionalData.currencySubString = countryData[0].currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter;
-            regionalData.dateFormat = countryData[0].date_format;
+            configData.regionalSetting.country_id = data.country_id ?? 0;
+            configData.regionalSetting.country = data.country ?? "";
+            configData.regionalSetting.state = data.state ?? "";
+            configData.regionalSetting.state_id = data.state_id ?? 0;
+            configData.regionalSetting.currencyString = countryData[0].currencyString;
+            configData.regionalSetting.currencySymbol = countryData[0].currencySymbol;
+            configData.regionalSetting.currencySubString = countryData[0].currencySubString;
+            configData.regionalSetting.currencyCharacter = countryData[0].currencyCharacter;
+            configData.regionalSetting.dateFormat = countryData[0].date_format;
           }
 
-          const regionalSettingResult = await createRegionalSettingDb(dbName, regionalData);
+          const configResult = await createConfigDataDB(dbName, configData);
 
           result = { status: true, data: companyData[1] };
         } else {
@@ -158,15 +153,9 @@ export async function createCompany(data: companySchemaT) {
             { path: ["form"], message: "Error encountered" },
           ];
           companyData[0].forEach((error: any) => {
-            errorState.push({
-              path: [error.error_path],
-              message: error.error_text,
-            });
+            errorState.push({path: [error.error_path], message: error.error_text});
           });
-          result = {
-            status: false,
-            data: errorState,
-          };
+          result = {status: false, data: errorState};
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -214,26 +203,19 @@ export async function updateCompany(data: companySchemaT) {
           const countryData = await getCountryWithCurrencyDb(dbName, "", data.country_id);
 
           let regionalDataRes = (await getRegionalSettingDb(dbName))[0];
-          let regionalData: regionalSettingSchemaT = {
-            country_id: data.country_id ?? 0,
-            country: data.country ?? "",
-            state_id: data.state_id ?? 0,
-            state: data.state ?? "",
-            decimalPlaces: "Two Digits",
-            timeFormat: "12 Hours",
-            currencyString: "",
-            currencySymbol: "",
-            currencySubString: "",
-            currencyCharacter: "",
-            dateFormat: "",
-          };
 
+          const regionalData: regionalSettingSchemaT = JSON.parse(regionalDataRes.config);
+          
           if (data.country_id !== 0) {
-            regionalData.currencyString = countryData[0].currencyString;
-            regionalData.currencySymbol = countryData[0].currencySymbol;
-            regionalData.currencySubString = countryData[0].currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter;
-            regionalData.dateFormat = countryData[0].date_format;
+            regionalData.country = data.country;
+            regionalData.country_id = data.country_id ?? 0;
+            regionalData.state = data.state;
+            regionalData.state_id = data.state_id ?? 0;
+            regionalData.currencyString = countryData[0].currencyString ?? regionalData.currencyString;
+            regionalData.currencySymbol = countryData[0].currencySymbol ?? regionalData.currencySymbol;
+            regionalData.currencySubString = countryData[0].currencySubString ?? regionalData.currencySubString;
+            regionalData.currencyCharacter = countryData[0].currencyCharacter ?? regionalData.currencyCharacter;
+            regionalData.dateFormat = countryData[0].date_format ?? regionalData.dateFormat;
           }
 
           const regionalResult = await updateteRegionalSettingDb(dbName, regionalData, regionalDataRes.config_type_id);
@@ -337,7 +319,7 @@ export async function deleteCompanyById(id: number) {
       if (dbRes.status) {
         const delCompanyAndDbInfoRes = await deleteCompanyAndDbInfo(
           id,
-          companyDetails.dbinfo_id
+          companyDetails.dbInfoId
         );
         if (delCompanyAndDbInfoRes.status) {
           return { status: true };
@@ -348,5 +330,29 @@ export async function deleteCompanyById(id: number) {
     }
   } catch (error) {
     throw error;
+  }
+}
+
+export async function getCountryByIp() {
+  try {
+    console.log("Test Passed");
+    
+    const requestHeaders = headers();
+    // const requestHeaders = req.headers();
+    // console.log("HEADERS: ", requestHeaders);
+    const ip = requestHeaders.get("x-forwarded-for");
+    const fetchedData = await fetch(
+      `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
+    );
+    const data = await fetchedData.json();
+    const country = data.location.country;
+    const countryId = await getCountryIdByName(country);
+    console.log("Country & CountryID: ", {country, countryId});
+    requestHeaders.forEach((key, value)=> console.log(key, "-", value));
+    // return {country, countryId};
+    // console.log("ip ", ip);
+    return ip;
+  } catch (e) {
+    console.log(e);
   }
 }

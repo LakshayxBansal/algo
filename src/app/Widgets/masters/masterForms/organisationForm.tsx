@@ -209,7 +209,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
       <Box id="sourceForm" sx={{ m: 1 }}>
         <form action={handleSubmit} noValidate>
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Grid item xs={12} sm={4} md={4} lg={4}>
               <InputControl
                 inputType={InputType.TEXT}
                 autoFocus
@@ -231,7 +231,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 style={{ width: "100%" }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Grid item xs={12} sm={4} md={4} lg={4}>
               <InputControl
                 inputType={InputType.TEXT}
                 id="alias"
@@ -267,7 +267,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 style={{ width: "100%" }}
               />
             </Grid>
-            <Grid item xs={12} sm={4} md={4} lg={4}>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 inputType={InputType.TEXT}
                 id="pan"
@@ -285,7 +285,7 @@ export default function OrganisationForm(props: masterFormPropsT) {
                 style={{ width: "100%" }}
               />
             </Grid>
-            <Grid item xs={12} sm={4} md={4} lg={4}>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl
                 inputType={InputType.TEXT}
                 id="gstin"

@@ -67,7 +67,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
     }
 
     formData = updateFormData(data);
-    data["department_id"] = props.parentData;
+    // data["department_id"] = props.parentData;
 
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
@@ -167,7 +167,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
       <Box id="executiveRole">
         <form action={handleSubmit} noValidate>
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
                 autoFocus
                 inputType={InputType.TEXT}
@@ -175,7 +175,6 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                 label="Executive Role Name"
                 name="name"
                 required
-                fullWidth
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
@@ -186,9 +185,10 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                     return rest;
                   });
                 }}
+                style={{width:"100%"}}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            {/* <Grid item xs={12} sm={12} md={6} lg={6}>
               <SelectMasterWrapper
                 name={"parentrole"}
                 id={"parentrole"}
@@ -219,7 +219,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
                   />
                 )}
               />
-            </Grid>
+            </Grid> */}
             <Grid
               item
               xs={12}
