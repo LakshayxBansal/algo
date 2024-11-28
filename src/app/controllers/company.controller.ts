@@ -284,7 +284,7 @@ export async function getCompanies(
   filter: string | undefined,
   limit: number
 ) {
-  let getCompanies = { status: false, data: [] as dbInfoT[], count: 0, error: {} };
+  let getCompanies = { status: false, data: [] as companySchemaT[], count: 0, error: {} };
   try {
     const appSession = await getSession();
 
@@ -299,7 +299,7 @@ export async function getCompanies(
 
       getCompanies = {
         status: true,
-        data: dbData.map(bigIntToNum) as dbInfoT[],
+        data: dbData.map(bigIntToNum) as companySchemaT[],
         count: Number(dbData[0]["total_count"]),
         error: {},
       };
@@ -310,7 +310,7 @@ export async function getCompanies(
     getCompanies = {
       ...getCompanies,
       status: false,
-      data: [] as dbInfoT[],
+      data: [] as companySchemaT[],
       error: err,
     };
   }
