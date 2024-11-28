@@ -396,7 +396,7 @@ const FieldConfigurator = () => {
                                         <ArrowDownwardIcon fontSize="small" />
                                     </IconButton>
                                 </Stack>
-                                {item.is_default_column == 0 ?
+                                {item.is_default_column == 1 ?
                                     <Box>
                                         <Typography variant="h5" >
                                             *
