@@ -110,6 +110,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
         defaultValue={entityData.name}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { name, ...rest } = curr;
+            return rest;
+          });
+        }}
       />
     ],
     [
@@ -124,6 +130,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
         defaultValue={entityData.alias}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { alias, ...rest } = curr;
+            return rest;
+          });
+        }}
       // fullWidth
       />
     ],
@@ -255,6 +267,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
         defaultValue={entityData.pan}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { pan, ...rest } = curr;
+            return rest;
+          });
+        }}
       // fullWidth
       />
     ],
@@ -270,6 +288,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
         defaultValue={entityData.aadhaar}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { aadhaar, ...rest } = curr;
+            return rest;
+          });
+        }}
       // fullWidth
       />
     ],
@@ -316,6 +340,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
         defaultValue={entityData.email}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { email, ...rest } = curr;
+            return rest;
+          });
+        }}
       // fullWidth
       />
     ],
@@ -542,6 +572,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.pincode}
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { pincode, ...rest } = curr;
+            return rest;
+          });
+        }}
       />
     ],
   ]);
