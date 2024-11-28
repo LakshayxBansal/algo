@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
+  Alert,
   Badge,
+  Collapse,
   FormControl,
   FormControlLabel,
   Grid,
@@ -71,6 +73,7 @@ import SourceForm from "@/app/Widgets/masters/masterForms/sourceForm";
 import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
 import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
+import { GridCloseIcon } from "@mui/x-data-grid";
 
 export interface InputFormProps {
   baseData: {
@@ -123,6 +126,8 @@ export default function InputForm({ baseData }: InputFormProps) {
     .join(" "); // Remove empty strings and join with space
 
   const handleSubmit = async (formData: FormData) => {
+    setFormError({});
+    setProductFormError({});
     const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
 
     let result;
@@ -137,7 +142,6 @@ export default function InputForm({ baseData }: InputFormProps) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
       setTimeout(function () {
-        setFormError;
         location.reload();
       }, 3000);
     } else {
@@ -146,11 +150,11 @@ export default function InputForm({ baseData }: InputFormProps) {
       let formIssue: ZodIssue[] = [];
       let productIssue = [];
 
-      formIssue = issues[0]?.enqDataIssue ? issues[0].enqDataIssue : issues;
+      formIssue = issues[0]?.enqDataIssue;
       productIssue = issues[1]?.productIssue;
 
+      // set errors for form inputs
       if (formIssue?.length > 0) {
-        // set errors for form inputs
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         for (const issue of formIssue) {
           errorState[issue.path[0]] = { msg: issue.message, error: true };
@@ -207,9 +211,35 @@ export default function InputForm({ baseData }: InputFormProps) {
     setSelectValues(values);
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
+
   const enquiryMaintainProducts = baseData.config_data.maintainProducts;
   return (
     <Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <GridCloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid container>
           <Grid item xs={12}>
