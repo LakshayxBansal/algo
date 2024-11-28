@@ -136,7 +136,7 @@ export async function getCallEnquiriesDb(
       );
       query += ` ORDER BY ${sortClauses.join(', ')}`;
     }
-    else { query += ` ORDER BY eh.date DESC`; }
+    else { query += ` ORDER BY callStatus DESC , eh.date  `; }
 
     const offset = (page-1) * pageSize;
     query += ` LIMIT ? OFFSET ?`;
@@ -633,7 +633,7 @@ WHERE tl.id = ( \
       );
       query += ` ORDER BY ${sortClauses.join(', ')}`;
     }
-    else { query += ` ORDER BY th.date DESC`; }
+    else { query += ` ORDER BY  callStatus DESC, th.date `; }
 
     const offset = (page - 1) * pageSize;
     query += ` LIMIT ? OFFSET ?`;
