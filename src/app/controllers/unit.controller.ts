@@ -222,7 +222,7 @@ export async function getUnitByPage(
 ) {
   let getUnit = {
     status: false,
-    data: {} as mdl.getUnitT,
+    data: [] as mdl.unitSchemaT[],
     count: 0,
     error: {},
   };
@@ -230,19 +230,20 @@ export async function getUnitByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getUnitByPageDb(
+      const dbData = await getUnitByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
+      console.log("Data from DB : ", dbData);
       const rowCount = await getUnitCount(
         appSession.user.dbInfo.dbName as string,
         filter
       );
       getUnit = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.getUnitT,
+        data: dbData.map(bigIntToNum) as mdl.unitSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -255,7 +256,7 @@ export async function getUnitByPage(
     getUnit = {
       ...getUnit,
       status: false,
-      data: {} as mdl.getUnitT,
+      data: [] as mdl.unitSchemaT[],
       error: err,
     };
   }
@@ -265,7 +266,7 @@ export async function getUnitByPage(
 export async function getUnitData(id: number) {
   let getUnit = {
     status: false,
-    data: {} as mdl.getUnitT,
+    data: {} as mdl.unitSchemaT,
     error: {},
   };
   try {
@@ -279,7 +280,7 @@ export async function getUnitData(id: number) {
 
       getUnit = {
         status: true,
-        data: dep.map(bigIntToNum) as mdl.getUnitT,
+        data: dep.map(bigIntToNum) as mdl.unitSchemaT,
         error: {},
       };
     }
@@ -291,7 +292,7 @@ export async function getUnitData(id: number) {
     getUnit = {
       ...getUnit,
       status: false,
-      data: {} as mdl.getUnitT,
+      data: {} as mdl.unitSchemaT,
       error: err,
     };
   }

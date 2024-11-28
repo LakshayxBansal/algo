@@ -81,6 +81,8 @@ async function getPool(host: string) {
      });
 
      if (conn) {
+    // let res = await  conn.query("select * from unit_master");
+    // console.log("mainres",res);
       return conn;
      } 
 

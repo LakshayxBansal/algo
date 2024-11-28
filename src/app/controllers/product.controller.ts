@@ -198,7 +198,7 @@ export async function getProductByPage(
 ) {
   let getProduct = {
     status: false,
-    data: {} as mdl.getProductT,
+    data: [] as productSchemaT[],
     count: 0,
     error: {},
   };
@@ -206,7 +206,7 @@ export async function getProductByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getProductByPageDb(
+      const dbData = await getProductByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -218,7 +218,7 @@ export async function getProductByPage(
       );
       getProduct = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.getProductT,
+        data: dbData.map(bigIntToNum) as productSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -230,7 +230,7 @@ export async function getProductByPage(
     getProduct = {
       ...getProduct,
       status: false,
-      data: {} as mdl.getProductT,
+      data: [] as productSchemaT[],
       error: err,
     };
   }
@@ -240,7 +240,7 @@ export async function getProductByPage(
 export async function getProductData(id: number) {
   let getProduct = {
     status: false,
-    data: {} as mdl.getProductT,
+    data: {} as productSchemaT,
     error: {},
   };
   try {
@@ -254,7 +254,7 @@ export async function getProductData(id: number) {
 
       getProduct = {
         status: true,
-        data: dep.map(bigIntToNum) as mdl.getProductT,
+        data: dep.map(bigIntToNum) as productSchemaT,
         error: {},
       };
     }
@@ -265,7 +265,7 @@ export async function getProductData(id: number) {
     getProduct = {
       ...getProduct,
       status: false,
-      data: {} as mdl.getProductT,
+      data: {} as productSchemaT,
       error: err,
     };
   }

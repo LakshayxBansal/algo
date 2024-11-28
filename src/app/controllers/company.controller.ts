@@ -284,37 +284,37 @@ export async function getCompanies(
   filter: string | undefined,
   limit: number
 ) {
-  let getConts = { status: false, data: {} as dbInfoT, count: 0, error: {} };
+  let getCompanies = { status: false, data: [] as companySchemaT[], count: 0, error: {} };
   try {
     const appSession = await getSession();
 
     if (appSession) {
       const userId = appSession.user.userId;
-      const conts = await getCompaniesDb(
+      const dbData = await getCompaniesDb(
         userId as number,
         page as number,
         filter,
         limit as number
       );
 
-      getConts = {
+      getCompanies = {
         status: true,
-        data: conts.map(bigIntToNum) as dbInfoT,
-        count: Number(conts[0]["total_count"]),
+        data: dbData.map(bigIntToNum) as companySchemaT[],
+        count: Number(dbData[0]["total_count"]),
         error: {},
       };
     }
   } catch (e: any) {
     let err = "Contact Admin, E-Code:369";
 
-    getConts = {
-      ...getConts,
+    getCompanies = {
+      ...getCompanies,
       status: false,
-      data: {} as dbInfoT,
+      data: [] as companySchemaT[],
       error: err,
     };
   }
-  return getConts;
+  return getCompanies;
 }
 
 export async function deleteCompanyById(id: number) {

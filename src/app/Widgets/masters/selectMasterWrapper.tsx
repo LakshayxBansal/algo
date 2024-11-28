@@ -108,9 +108,9 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
         if (data[0]?.length > 0) {
           setModData(data[0][1]);
           setMetaData({
-            fields: data[0][0] || {},
+            fields: data[0][0] || [],
             rights: data[0][2] || {},
-            regionalSettingsConfigData: data[0][3] || {},
+            regionalSettingsConfigData: data[0][3] || [],
             loggedInUserData: data[0][4] || {}
           });
         } else {

@@ -405,7 +405,7 @@ export async function getCountryByPage(
 ) {
   let getCountry = {
     status: false,
-    data: {} as mdl.countrySchemaT,
+    data: [] as mdl.countrySchemaT[],
     count: 0,
     error: {},
   };
@@ -413,7 +413,7 @@ export async function getCountryByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getCountryByPageDb(
+      const dbData = await getCountryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -426,7 +426,7 @@ export async function getCountryByPage(
       );
       getCountry = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.countrySchemaT,
+        data: dbData.map(bigIntToNum) as mdl.countrySchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -437,7 +437,7 @@ export async function getCountryByPage(
     getCountry = {
       ...getCountry,
       status: false,
-      data: {} as mdl.countrySchemaT,
+      data: [] as mdl.countrySchemaT[],
       error: err,
     };
   }
@@ -451,7 +451,7 @@ export async function getStateByPage(
 ) {
   let getState = {
     status: false,
-    data: {} as mdl.stateSchemaT,
+    data: [] as mdl.stateSchemaT[],
     count: 0,
     error: {},
   };
@@ -459,7 +459,7 @@ export async function getStateByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getStateByPageDb(
+      const dbData = await getStateByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -472,7 +472,7 @@ export async function getStateByPage(
       );
       getState = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.stateSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.stateSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -483,7 +483,7 @@ export async function getStateByPage(
     getState = {
       ...getState,
       status: false,
-      data: {} as mdl.stateSchemaT,
+      data: [] as mdl.stateSchemaT[],
       error: err,
     };
   }

@@ -220,6 +220,10 @@ export async function getExecutiveById(id: number) {
       const userRights={};
       const configData = await getRegionalSettings();
       const screenDesc = await getScreenDescription(EXECUTIVE_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
+      }
       if(id){
         const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
         if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
@@ -240,7 +244,7 @@ export async function getExecutiveById(id: number) {
         executiveDetails[0],
         userRights,
         configData,
-        session
+        loggedInUserData
       ]
         return[
           result
@@ -250,7 +254,7 @@ export async function getExecutiveById(id: number) {
         screenDesc,
         userRights,
         configData,
-        session
+        loggedInUserData
       ]
       return[
         result
@@ -347,7 +351,7 @@ export async function getExecutiveByPage(
 ) {
   let getExecutive = {
     status: false,
-    data: {} as mdl.executiveSchemaT,
+    data: [] as mdl.executiveSchemaT[],
     count: 0,
     error: {},
   };
@@ -355,7 +359,7 @@ export async function getExecutiveByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveByPageDb(
+      const dbData = await getExecutiveByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -367,7 +371,7 @@ export async function getExecutiveByPage(
       );
       getExecutive = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -380,7 +384,7 @@ export async function getExecutiveByPage(
     getExecutive = {
       ...getExecutive,
       status: false,
-      data: {} as mdl.executiveSchemaT,
+      data: [] as mdl.executiveSchemaT[],
       error: err,
     };
   }
