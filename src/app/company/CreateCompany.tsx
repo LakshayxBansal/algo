@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import {
   companySchemaT,
   masterFormPropsT,
@@ -26,7 +26,7 @@ import {
   getStates,
   getStatesMaster,
 } from "../controllers/masters.controller";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Grid } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
 export default function CreateCompany(props: masterFormPropsWithDataT) {
@@ -36,10 +36,41 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  const [defaultCountry, setdefaultCountry] = useState("");
+  const [defaultCountryId, setdefaultCountryId] = useState(0);
   const entityData: companySchemaT = props.data ? props.data : {};
-  const countryData = getCountryByIp();
 
-  // if(countryData)
+  useEffect(() => {
+    const fetchCountryData = async () => {
+      try {
+        const countryData = await getCountryByIp();
+
+        if (countryData) {
+          setdefaultCountry(countryData.country);
+          setdefaultCountryId(countryData.countryId);
+        } else {
+          setdefaultCountry("");
+          setdefaultCountryId(0);
+          setFormError({
+            form: {
+              msg: "Failed to fetch country data. Please insert data manually.",
+              error: true,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching country data:", error);
+        setFormError({
+          form: {
+            msg: "Failed to fetch country data. Please try again later.",
+            error: true,
+          },
+        });
+      }
+    };
+    fetchCountryData();
+  }, []);
+
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -56,7 +87,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
-        if(props.parentData==="addcompany"){
+        if (props.parentData === "addcompany") {
           router.push("/company");
         }
       }, 1000);
@@ -82,13 +113,13 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -115,50 +146,57 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
     });
   };
   return (
-    <Paper
-      elevation={3}
-      sx={{ mt: 2, mb: 1.5, p: 2, minWidth: "50vw" }}
-      square={false}
-    >
+    <>
       <Box
         sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
+          width: {
+            xs: "100%",
+            sm: "100%",
+            md: "100%",
+            lg: "600px",
+          },
+          // padding: "10px",
         }}
       >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Company" : "Add Company"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
-      <Collapse in={formError?.form ? true : false}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={clearFormError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
+        <Box
+          sx={{
+            position: "sticky",
+            top: "0px",
+            zIndex: 2,
+            paddingY: "10px",
+            bgcolor: "white",
+          }}
         >
-          {formError?.form?.msg}
-        </Alert>
-      </Collapse>
-      <Box sx={{ m: 2 }}>
-        <form action={handleSubmit} noValidate>
-          <Box
+          <Seperator>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              {entityData.id ? "Update Company" : "Add Company"}
+              <IconButton onClick={handleCancel} tabIndex={-1}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Seperator>
+        </Box>
+        <Collapse in={formError?.form ? true : false}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={clearFormError}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {formError?.form?.msg}
+          </Alert>
+        </Collapse>
+        <Box id="companyForm" sx={{ m: 1 }}>
+          <form action={handleSubmit} noValidate>
+            {/* <Box
             sx={{
               display: "grid",
               columnGap: 3,
@@ -166,223 +204,238 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
               gridTemplateColumns: "repeat(2, 1fr)",
               paddingBottom: "10px",
             }}
-          >
-            <InputControl
-              inputType={InputType.TEXT}
-              autoFocus
-              id="name"
-              label="Name"
-              name="name"
-              required
-              fullWidth
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
-              FormHelperTextProps={{
-                sx: { backgroundColor: "white", margin: 0 },
-              }}
-              sx={{ height: "fit-content" }}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="alias"
-              label="Alias"
-              name="alias"
-              fullWidth
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
-              defaultValue={entityData.alias}
-              sx={{ height: "fit-content" }}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { alias, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
-              inputType={InputType.TEXT}
-              label="Address Line 1"
-              name="add1"
-              id="add1"
-              fullWidth
-              error={formError?.add1?.error}
-              helperText={formError?.add1?.msg}
-              defaultValue={entityData.add1}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { add1, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              label="Address Line 2"
-              name="add2"
-              id="add2"
-              // fullWidth
-              error={formError?.add2?.error}
-              helperText={formError?.add2?.msg}
-              defaultValue={entityData.add2}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { add2, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <AutocompleteDB
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              onChange={(e, val, s) => {
-                setSelectValues({ country: val, state: null });
-                entityData.country_id = undefined;
-                entityData.country = "";
-                entityData.state_id = undefined;
-                entityData.state = "";
-              }}
-              width={340}
-              fetchDataFn={getCountriesMaster}
-              diaglogVal={
-                selectValues.country
-                  ? {
-                    id: selectValues.country?.id,
-                    name: selectValues.country?.name ?? "",
-                    detail: undefined,
+          > */}
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  autoFocus
+                  id="name"
+                  label="Name"
+                  name="name"
+                  required
+                  style={{ width: "100%" }}
+                  error={formError?.name?.error}
+                  helperText={formError?.name?.msg}
+                  defaultValue={entityData.name}
+                  FormHelperTextProps={{
+                    sx: { backgroundColor: "white", margin: 0 },
+                  }}
+                  sx={{ height: "fit-content" }}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { name, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  id="alias"
+                  label="Alias"
+                  name="alias"
+                  style={{ width: "100%" }}
+                  error={formError?.alias?.error}
+                  helperText={formError?.alias?.msg}
+                  defaultValue={entityData.alias}
+                  sx={{ height: "fit-content" }}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { alias, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  label="Address Line 1"
+                  name="add1"
+                  id="add1"
+                  style={{ width: "100%" }}
+                  error={formError?.add1?.error}
+                  helperText={formError?.add1?.msg}
+                  defaultValue={entityData.add1}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { add1, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  label="Address Line 2"
+                  name="add2"
+                  id="add2"
+                  style={{ width: "100%" }}
+                  error={formError?.add2?.error}
+                  helperText={formError?.add2?.msg}
+                  defaultValue={entityData.add2}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { add2, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <AutocompleteDB
+                  name={"country"}
+                  id={"country"}
+                  label={"Country"}
+                  onChange={(e, val, s) => {
+                    setSelectValues({ country: val, state: null });
+                    entityData.country_id = undefined;
+                    entityData.country = "";
+                    entityData.state_id = undefined;
+                    entityData.state = "";
+                  }}
+                  // width={352}
+                  width={{ xs: "100%", sm: 290, md: 290 }}
+                  fetchDataFn={getCountriesMaster}
+                  diaglogVal={
+                    entityData.country
+                      ? {
+                          id: entityData.country_id,
+                          name: entityData.country,
+                        }
+                      : ({
+                          id: defaultCountryId,
+                          name: defaultCountry,
+                        } as optionsDataT)
                   }
-                  : ({
-                    id: entityData.country_id,
-                    name: entityData.country,
-                  } as optionsDataT)
-              }
-              // defaultValue={country}
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
-            />
-            <AutocompleteDB
-              name={"state"}
-              id={"state"}
-              label={"State"}
-              width={340}
-              onChange={(e, val, s) => {
-                setSelectValues({ ...selectValues, state: val });
-                entityData.state_id = undefined;
-                entityData.state = "";
-              }}
-              fetchDataFn={(stateStr: string) => {
-                const country =
-                  selectValues.country?.name ?? entityData.country;
-                return getStatesMaster(stateStr, country);
-              }}
-              disable={
-                selectValues.country || entityData.country ? false : true
-              }
-              diaglogVal={
-                selectValues.state
-                  ? {
-                    id: selectValues.state?.id,
-                    name: selectValues.state?.name ?? "",
-                    detail: undefined,
+                  setDialogVal={function (
+                    value: React.SetStateAction<optionsDataT>
+                  ): void {}}
+                  fnSetModifyMode={function (id: string): void {}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                {/* <div style={{ width: '100%' }}> */}
+                <AutocompleteDB
+                  name={"state"}
+                  id={"state"}
+                  label={"State"}
+                  // width={31.5rem}
+                  // width="stretch"
+                  // width={275}
+                  // style={{ width: '100%' }}
+                  width={{ xs: "100%", sm: 290, md: 290 }}
+                  onChange={(e, val, s) => {
+                    setSelectValues({ ...selectValues, state: val });
+                    entityData.state_id = undefined;
+                    entityData.state = "";
+                  }}
+                  fetchDataFn={(stateStr: string) => {
+                    const country =
+                      selectValues.country?.name ?? entityData.country;
+                    return getStatesMaster(stateStr, country);
+                  }}
+                  disable={
+                    selectValues.country || entityData.country ? false : true
                   }
-                  : ({
-                    id: entityData.state_id,
-                    name: entityData.state,
-                  } as optionsDataT)
-              }
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
-            />
-
-            <InputControl
-              inputType={InputType.TEXT}
-              name="city"
-              id="city"
-              label="City"
-              fullWidth
-              error={formError?.city?.error}
-              helperText={formError?.city?.msg}
-              defaultValue={entityData.city}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { city, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              name="pincode"
-              id="pincode"
-              label="Pin Code"
-              fullWidth
-              error={formError?.pincode?.error}
-              helperText={formError?.pincode?.msg}
-              defaultValue={entityData.pincode}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { pincode, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2,
-            }}
-          >
-            <Button
-              onClick={() => {
-                if (props.parentData === "addcompany") {
-                  router.push("/signin");
-                } else {
-                  handleCancel();
-                }
-              }}
-              tabIndex={-1}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Box>
-        </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+                  diaglogVal={
+                    selectValues.state
+                      ? {
+                          id: selectValues.state?.id,
+                          name: selectValues.state?.name ?? "",
+                          detail: undefined,
+                        }
+                      : ({
+                          id: entityData.state_id,
+                          name: entityData.state,
+                        } as optionsDataT)
+                  }
+                  setDialogVal={function (
+                    value: React.SetStateAction<optionsDataT>
+                  ): void {}}
+                  fnSetModifyMode={function (id: string): void {}}
+                />
+                {/* </div> */}
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  name="city"
+                  id="city"
+                  label="City"
+                  style={{ width: "100%" }}
+                  error={formError?.city?.error}
+                  helperText={formError?.city?.msg}
+                  defaultValue={entityData.city}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { city, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  name="pincode"
+                  id="pincode"
+                  label="Pin Code"
+                  style={{ width: "100%" }}
+                  error={formError?.pincode?.error}
+                  helperText={formError?.pincode?.msg}
+                  defaultValue={entityData.pincode}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { pincode, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 0.5,
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (props.parentData.route === "addcompany") {
+                      router.push("/signin");
+                    } else {
+                      handleCancel();
+                    }
+                  }}
+                  tabIndex={-1}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={1000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Box>
       </Box>
-    </Paper>
+    </>
   );
 }

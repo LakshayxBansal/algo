@@ -112,7 +112,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
-          mt: 1,
+          // mt: 0,
         }}
       >
         <Seperator>
@@ -144,7 +144,7 @@ export default function ContactGroupForm(props: masterFormPropsT) {
       </Collapse>
       <Box id="contactGroup">
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
                 autoFocus

@@ -32,6 +32,7 @@ import { getCountryIdByName } from "./masters.controller";
 import { NextRequest } from "next/server";
 import os from "os";
 import { isIP } from "net";
+import { count } from "console";
 
 export async function getCompanyById(id: number) {
   try {
@@ -375,34 +376,70 @@ export async function deleteCompanyById(id: number) {
   }
 }
 
-// export async function getCountryByIp() {
-//   try {
-//     console.log("Test Passed");
+function findServerIp() {
+  let serverIp;
+  const networkInterfaces = os.networkInterfaces();
 
-//     const requestHeaders = headers();
-//     // const requestHeaders = req.headers();
-//     // console.log("HEADERS: ", requestHeaders);
-//     const clientIp = requestHeaders.get("x-forwarded-for");
-//     const hostIp = requestHeaders.get("x-forwarded-host");
-//     let ip = clientIp;
-//     if(clientIp===hostIp || clientIp=== ":::1" || clientIp==="localhost"){
-//       ip = hostIp;
-//     }
-//     const fetchedData = await fetch(
-//       `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
-//     );
-//     const data = await fetchedData.json();
-//     const country = data.location.country;
-//     const countryId = await getCountryIdByName(country);
-//     console.log("Country & CountryID: ", {country, countryId});
-//     requestHeaders.forEach((key, value)=> console.log(key, "-", value));
-//     // return {country, countryId};
-//     // console.log("ip ", ip);
-//     return ip;
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
+  for (const interfaceName in networkInterfaces) {
+    const interfaces = networkInterfaces[interfaceName];
+    if (interfaces) {
+      for (const iface of interfaces) {
+        if (iface.family === "IPv4" && !iface.internal) {
+          serverIp = iface.address;
+          break;
+        }
+      }
+    }
+  }
+  return serverIp;
+}
+
+function isLocalhostIp(ip: string): boolean {
+  if (ip.startsWith("127.")) {
+    return true;
+  }
+  if (ip === "::1") {
+    return true;
+  }
+
+  return false;
+}
+
+function compareIpOctets(clientIp: string, serverIp: string): boolean {
+  const clientOctets = clientIp.split(".");
+  const serverOctets = serverIp.split(".");
+
+  if (clientOctets.length !== 4 || serverOctets.length !== 4) {
+    return false;
+  } 
+
+  const result =  clientOctets.slice(0, 3).join(".") === serverOctets.slice(0, 3).join(".");
+
+  return result;
+}
+
+async function getCountryByAPI(ip: string){
+  let country, countryId, fetchedData;
+  if(ip===""){
+    fetchedData = await fetch(
+      `https://api.ipregistry.co/?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
+    );
+  }
+  else{
+    fetchedData = await fetch(
+      `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
+    );
+  }
+    const data = await fetchedData.json();
+    country = data.location.country.name;
+    countryId = await getCountryIdByName(country);
+    console.log(country);
+    console.log(countryId);
+
+    console.log("Country & CountryID: ", { country, countryId });
+  
+  return {country, countryId};
+}
 
 export async function getCountryByIp() {
   let data;
@@ -434,71 +471,4 @@ export async function getCountryByIp() {
     console.error("Error in getCountryByIp:", e);
  }
   return data;
-}
-
-function compareIpOctets(clientIp: string, serverIp: string): boolean {
-  const clientOctets = clientIp.split(".");
-  const serverOctets = serverIp.split(".");
-
-  if (clientOctets.length !== 4 || serverOctets.length !== 4) {
-    return false;
-  }
-
-  return (
-    clientOctets.slice(0, 3).join(".") === serverOctets.slice(0, 3).join(".")
-  );
-}
-
-function isLocalhostIp(ip: string): boolean {
-  if (ip.startsWith("127.")) {
-    return true;
-  }
-
-  if (ip === "::1") {
-    return true;
-  }
-
-  return false;
-}
-
-function findServerIp() {
-  const networkInterfaces = os.networkInterfaces();
-  let serverIp;
-
-  for (const interfaceName in networkInterfaces) {
-    const interfaces = networkInterfaces[interfaceName];
-    if (interfaces) {
-      for (const iface of interfaces) {
-        if (iface.family === "IPv4" && !iface.internal) {
-          serverIp = iface.address;
-          break;
-        }
-      }
-    }
-  }
-  return serverIp;
-}
-
-
-async function getCountryByAPI(ip: string){
-  let country, countryId, fetchedData;
-  if(ip===""){
-    fetchedData = await fetch(
-      `https://api.ipregistry.co/?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
-    );
-  }
-  else{
-    fetchedData = await fetch(
-      `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
-    );
-  }
-    const data = await fetchedData.json();
-    country = data.location.country.name;
-    countryId = await getCountryIdByName(country);
-    console.log(country);
-    console.log(countryId);
-
-    console.log("Country & CountryID: ", { country, countryId });
-  
-  return {country, countryId};
 }
