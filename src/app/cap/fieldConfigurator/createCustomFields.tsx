@@ -500,6 +500,7 @@ const FieldConfigurator = () => {
                             />
 
                             <FormControlLabel
+                                disabled={item.is_default_mandatory === 1 || item.is_mandatory === 1}
                                 control={
                                     <Checkbox
                                         checked={item.is_disabled === 1}
