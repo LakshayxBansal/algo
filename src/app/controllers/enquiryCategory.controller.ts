@@ -186,7 +186,7 @@ export async function getEnquiryCategoryByPage(
 ) {
   let getCategory = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -194,7 +194,7 @@ export async function getEnquiryCategoryByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getEnquiryCategoryByPageDb(
+      const dbData = await getEnquiryCategoryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -206,7 +206,7 @@ export async function getEnquiryCategoryByPage(
       );
       getCategory = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -218,7 +218,7 @@ export async function getEnquiryCategoryByPage(
     getCategory = {
       ...getCategory,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

@@ -28,14 +28,14 @@ import {
 import { Collapse, IconButton } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsWithDataT<companySchemaT>) {
+export default function CreateCompany(props: masterFormPropsWithDataT) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const entityData: companySchemaT = props.data ? props.data : {} as companySchemaT;
+  const entityData: companySchemaT = props.data ? props.data : {};
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object

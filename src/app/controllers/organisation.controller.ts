@@ -168,6 +168,10 @@ export async function getOrganisationById(id: number) {
       const userRights = {};
       const configData = await getRegionalSettings();
       const screenDesc = await getScreenDescription(ORGANISATION_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
+      }
       if(id)
       {
           const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
@@ -184,7 +188,7 @@ export async function getOrganisationById(id: number) {
               organisationDetails[0],
               userRights,
               configData,
-              session
+              loggedInUserData
             ]
 
             return [
@@ -196,7 +200,7 @@ export async function getOrganisationById(id: number) {
         screenDesc,
         userRights,
         configData,
-        session
+        loggedInUserData
       ]
       return[
         result
@@ -214,7 +218,7 @@ export async function getOrganisationByPage(
 ) {
   let getOrg = {
     status: false,
-    data: {} as mdl.organisationSchemaT,
+    data: [] as mdl.organisationSchemaT[],
     count: 0,
     error: {},
   };
@@ -222,7 +226,7 @@ export async function getOrganisationByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getOrganisationByPageDb(
+      const dbData = await getOrganisationByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -234,7 +238,7 @@ export async function getOrganisationByPage(
       );
       getOrg = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.organisationSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.organisationSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -245,7 +249,7 @@ export async function getOrganisationByPage(
     getOrg = {
       ...getOrg,
       status: false,
-      data: {} as mdl.organisationSchemaT,
+      data: [] as mdl.organisationSchemaT[],
       error: err,
     };
   }
