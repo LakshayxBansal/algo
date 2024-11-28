@@ -385,8 +385,9 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
           setSelectValues({
             ...selectValues,
             contactGroup: val ? val : { id: 0, name: "" },
-          })
+          })  
         }
+        formError={formError?.contactGroup}
         renderForm={(fnDialogOpen, fnDialogValue, data?) => (
           <ContactGroupForm
             setDialogOpen={fnDialogOpen}
