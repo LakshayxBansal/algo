@@ -79,7 +79,15 @@ import { format } from "path";
 import { useRouter } from "next/navigation";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 
-const SupportTicketForm = (props: masterFormPropsT) => {
+interface customprop extends masterFormPropsT {
+  userDetails: {
+    id: string | number; 
+    name: string;
+  };
+  status: string | string[] | undefined ;
+}
+
+const SupportTicketForm = (props: customprop) => {
 
   const masterData = props?.data?.masterData ?? {};
 
@@ -175,8 +183,9 @@ const SupportTicketForm = (props: masterFormPropsT) => {
      data.id = props.data.ticket_id;
      data.created_by= props.data.created_by;
      data.stamp = props.data.stamp;
-     data.ticket_tran_type = props?.status 
-     ? (masterData.allocated_to === selectValues.allocated_to.id 
+     
+     data.ticket_tran_type = props?.status ==="true"
+     ? ( masterData.allocated_to.id === selectValues.allocated_to.id 
          ? 4 // If status exists and allocation matches, assign 4
          : 2 // If status exists but allocation doesn't match, assign 2
        ) 

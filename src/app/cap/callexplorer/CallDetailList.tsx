@@ -79,10 +79,11 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
         },
         {
             field: "executive",
-            headerName: "Executive",
+            headerName: "Allocated To",
             width: 100,
         },
         { field: "actionTaken", headerName: "Action Taken", width: 100 },
+        { field: "status", headerName: "Call Status", width: 100 },
         { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "nextAction", headerName: "Next Action", width: 100 },
         {
@@ -187,7 +188,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
     overflowY: 'auto',
     fontSize: '12px', 
     '& .MuiDataGrid-row': {
-      fontSize: '12px', 
+      fontSize: '11px', 
     },
     '& .MuiDataGrid-columnHeaders': {
       fontSize: 'inherit', 

@@ -48,6 +48,35 @@ export async function createEnquiryDB(
   return null;
 }
 
+export async function createEnquiryLedgerDB(
+  session: Session,
+  ledgerData: enquiryLedgerSchemaT
+) {
+  try {
+    const result = excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+      "call createEnquiryLedger(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        ledgerData.id,
+        ledgerData.status_id,
+        ledgerData.sub_status_id,
+        ledgerData.action_taken_id,
+        ledgerData.next_action_id,
+        ledgerData.suggested_action_remark,
+        ledgerData.action_taken_remark,
+        ledgerData.closure_remark,
+        session.user.userId,
+        ledgerData.next_action_date
+      ],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
 export async function getEnquiryStatusList(
   crmDb: string,
   searchString: string

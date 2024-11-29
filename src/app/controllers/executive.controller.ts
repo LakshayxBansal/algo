@@ -16,6 +16,7 @@ import {
   getProfileDetailsById,
   getExecutiveColumnsDb,
   mapExecutiveToDeptDb,
+  getEnquiriesByExecutiveIdDb,
 } from "../services/executive.service";
 import { getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -392,5 +393,16 @@ export async function mapExecutiveToDept(executiveId : number, deptsArray : numb
     }
   } catch (e) {
     logger.error(e);
+  }
+}
+
+export async function getEnquiriesByExecutiveId() {
+  try {
+    const session = await getSession();
+    if (session) {
+      return getEnquiriesByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);
+    }
+  } catch (error) {
+    throw error;
   }
 }

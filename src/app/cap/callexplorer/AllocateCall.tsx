@@ -27,11 +27,11 @@ import { handleRefresh } from "./AutoGrid";
 
 interface customprop extends masterFormPropsT {
   setRefresh: (props: any) => void;
+  formName: string;
 }
 
 export default function AllocateCall(props: customprop) {
-  console.log("my props", props);
-  
+
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
