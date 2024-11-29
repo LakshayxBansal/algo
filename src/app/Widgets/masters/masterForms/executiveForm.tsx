@@ -211,7 +211,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fetchDataFn={getExecutiveRole}
         fnFetchDataByID={getExecutiveRoleById}
         defaultValue={defaultRole}
-
+        allowModify={false}
+        allowNewAdd={false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
         required
         disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
