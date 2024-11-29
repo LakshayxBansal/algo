@@ -163,18 +163,21 @@ export default function EntityList(props: entitiyCompT) {
       } else {
         setAllColumns(allDfltCols);
       }
+      // for title
+      let newUrl: string;
+      if (searchParams.size > 0) {
+        // newUrl = url+`&pgTitle=${props.title}`
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.set("pgTitle", props.title);
+        // router.push(url+`?${newSearchParams.toString()}`);
+        newUrl = url + `?${newSearchParams.toString()}`;
+      } else {
+        newUrl = url + `?pgTitle=${props.title}`;
+      }
+      router.push(newUrl);
       //for title
-      // let newUrl : string;
-      // console.log(url);
-      // if(url.includes("?")){
-      //   newUrl = url+`&pgTitle=${props.title}`
-      // }else{
-      //   newUrl = url+`?pgTitle=${props.title}`
-      // }
-      // router.push(newUrl);
-      //for title
-
     }, 400);
+
 
     if (searchData) {
       fetchData(searchData);
