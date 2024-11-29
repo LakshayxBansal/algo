@@ -14,14 +14,26 @@ import {
 import { getStates } from "@/app/controllers/masters.controller";
 import dayjs, { Dayjs } from "dayjs";
 
+type countryDetails = {
+  name : string,
+  id : number,
+  state : string,
+  state_id : number,
+  currencyString : string,
+  currencySymbol : string,
+  currencySubString : string,
+  currencyCharacter : string,
+  date_format : string
+}
+
 const decimalPlacesList = ["Two Digits", "Three Digits"];
 const timeFormatList = ["12 Hours", "24 Hours"];
 const seperatorList = ["space", "/", "-"];
 
-function getDefaultSeperator(dateFormat : string){
+function getDefaultSeperator(dateFormat: string) {
   let seperator = '';
-  for(let i=dateFormat.length-1;i>=0;i--){
-    if(dateFormat[i]!=='d'&& dateFormat[i]!=='D'&& dateFormat[i]!=='M'&& dateFormat[i]!=='Y'){
+  for (let i = dateFormat.length - 1; i >= 0; i--) {
+    if (dateFormat[i] !== 'd' && dateFormat[i] !== 'D' && dateFormat[i] !== 'M' && dateFormat[i] !== 'Y') {
       seperator = dateFormat[i];
       break;
     }
@@ -29,19 +41,19 @@ function getDefaultSeperator(dateFormat : string){
   return seperator === ' ' ? "space" : seperator;
 }
 
-function generateDateFormatList(showWeekDay:boolean,seperator:string,monthInWord:boolean){
-  return [`${showWeekDay ? "ddd ": ""}DD${seperator === "space" ? " " : seperator}${monthInWord ? "MMM":"MM"}${seperator === "space" ? " " : seperator}YYYY`, `${showWeekDay ? "ddd ": ""}${monthInWord ? "MMM":"MM"}${seperator === "space" ? " " : seperator}DD${seperator === "space" ? " " : seperator}YYYY`, `${showWeekDay ? "ddd ": ""}YYYY${seperator === "space" ? " " : seperator}DD${seperator === "space" ? " " : seperator}${monthInWord ? "MMM":"MM"}`, `${showWeekDay ? "ddd ": ""}YYYY${seperator === "space" ? " " : seperator}${monthInWord ? "MMM":"MM"}${seperator === "space" ? " " : seperator}DD`]
+function generateDateFormatList(showWeekDay: boolean, seperator: string, monthInWord: boolean) {
+  return [`${showWeekDay ? "ddd " : ""}DD${seperator === "space" ? " " : seperator}${monthInWord ? "MMM" : "MM"}${seperator === "space" ? " " : seperator}YYYY`, `${showWeekDay ? "ddd " : ""}${monthInWord ? "MMM" : "MM"}${seperator === "space" ? " " : seperator}DD${seperator === "space" ? " " : seperator}YYYY`, `${showWeekDay ? "ddd " : ""}YYYY${seperator === "space" ? " " : seperator}DD${seperator === "space" ? " " : seperator}${monthInWord ? "MMM" : "MM"}`, `${showWeekDay ? "ddd " : ""}YYYY${seperator === "space" ? " " : seperator}${monthInWord ? "MMM" : "MM"}${seperator === "space" ? " " : seperator}DD`]
 }
 
-function changeSeperator(dateFormat:string, value:string){
-  let count=0;
+function changeSeperator(dateFormat: string, value: string) {
+  let count = 0;
   let newDateFormat = "";
-  for(let i=dateFormat.length-1;i>=0;i--){
-    if(count<2 && dateFormat[i]!=='d'&& dateFormat[i]!=='D'&& dateFormat[i]!=='M'&& dateFormat[i]!=='Y'){
-        count++;
-        newDateFormat += value==="space" ? " " : value;
-    }else{
-        newDateFormat += dateFormat[i];
+  for (let i = dateFormat.length - 1; i >= 0; i--) {
+    if (count < 2 && dateFormat[i] !== 'd' && dateFormat[i] !== 'D' && dateFormat[i] !== 'M' && dateFormat[i] !== 'Y') {
+      count++;
+      newDateFormat += value === "space" ? " " : value;
+    } else {
+      newDateFormat += dateFormat[i];
     }
   }
   return newDateFormat.split('').reverse().join('');
@@ -53,28 +65,28 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
   const [seperator, setSeperator] = useState(getDefaultSeperator(config?.regionalSetting?.dateFormat));
   const [showWeekDay, setShowWeekDay] = useState(config?.regionalSetting?.dateFormat.includes("ddd") ? true : false);
   const [monthInWord, setMonthInWord] = useState(config?.regionalSetting?.dateFormat.includes("MMM") ? true : false);
-  const [dateFormatList, setDateFormatList] = useState(generateDateFormatList(showWeekDay,seperator,monthInWord));
+  const [dateFormatList, setDateFormatList] = useState(generateDateFormatList(showWeekDay, seperator, monthInWord));
 
   const handleCountryChange = (
     event: React.SyntheticEvent,
-    val: any,
-    setDialogValue: any
+    val: countryDetails,
+    setDialogValue: (props: any) => void
   ) => {
     if (val) {
-      if(val.date_format){
+      if (val.date_format) {
         console.log("true")
         setSeperator(getDefaultSeperator(val.date_format));
         setShowWeekDay(val.date_format.includes("ddd") ? true : false);
         setMonthInWord(val.date_format.includes("MMM") ? true : false);
-        setDateFormatList(generateDateFormatList(val.date_format.includes("ddd"),getDefaultSeperator(val.date_format),val.date_format.includes("MMM")));
-      }else{
+        setDateFormatList(generateDateFormatList(val.date_format.includes("ddd"), getDefaultSeperator(val.date_format), val.date_format.includes("MMM")));
+      } else {
         console.log("false")
         setSeperator("/");
         setShowWeekDay(false);
         setMonthInWord(false);
-        setDateFormatList(generateDateFormatList(false,"/",false));
+        setDateFormatList(generateDateFormatList(false, "/", false));
       }
-
+      
       setConfig({
         ...config, ["regionalSetting"]: {
           ...config["regionalSetting"], ["country"]: val.name, ["country_id"]: val.id, ["state"]: "", ["state_id"]: 0, ["currencyString"]: val.currencyString ?? "",
@@ -176,14 +188,16 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
           >
             <Autocomplete
               value={seperator}
-              onChange={(event: SyntheticEvent<Element, Event>, value) => {
-                console.log("value : ", value);
-                console.log("seperator : ", seperator);
-                const newDateFormatList = dateFormatList.map((dateFormat: string) => {
-                  // dateFormat = dateFormat.replaceAll(seperator === "space" ? " " : seperator, value === "space" ? " " : value as string);
-                  // return dateFormat;
-                  return changeSeperator(dateFormat,value as string);
-                });
+              onChange={(event: SyntheticEvent<Element, Event>, value: string | null) => {
+                console.log("before : ", dateFormatList);
+                let newDateFormatList = dateFormatList;
+                if (value !== null) {
+                  newDateFormatList = dateFormatList.map((dateFormat: string) => {
+                    console.log("dateformat : ", dateFormat);
+                    return changeSeperator(dateFormat, value as string);
+                  });
+                }
+                console.log("after : ", newDateFormatList);
                 setSeperator(value as string);
                 setDateFormatList(newDateFormatList);
                 setConfig({
@@ -204,6 +218,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                 />
               )}
             />
+            <Box sx={{display:"flex"}}>
             <InputControl
               inputType={InputType.CHECKBOX}
               id="show_week_day"
@@ -219,13 +234,13 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                 })
                 if (e.target.checked) {
                   const newDateFormatList = dateFormatList.map((dateFormat: string) => {
-                    dateFormat = "ddd "+ dateFormat
+                    dateFormat = "ddd " + dateFormat
                     return dateFormat;
                   });
                   setDateFormatList(newDateFormatList);
                 } else {
                   const newDateFormatList = dateFormatList.map((dateFormat: string) => {
-                    dateFormat =  dateFormat.substring(4,dateFormat.length);
+                    dateFormat = dateFormat.substring(4, dateFormat.length);
                     return dateFormat;
                   });
                   setDateFormatList(newDateFormatList);
@@ -262,14 +277,33 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               }
               }
             />
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: "grid",
+              rowGap: 1,
+              gridTemplateColumns: "repeat(2, 1fr)",
+              paddingBottom: "10px",
+              flexWrap: "wrap",
+            }}
+          >
             <Autocomplete
-              value={config.regionalSetting?.dateFormat==="" ? null : dayjs(new Date()).format(config.regionalSetting?.dateFormat) as any}
-              onChange={(e: any, value) => {
-                setConfig({
-                  ...config, ["regionalSetting"]: {
-                    ...config["regionalSetting"], ["dateFormat"]: value as string
-                  }
-                })
+              value={config.regionalSetting?.dateFormat === "" ? "" : dayjs(new Date()).format(config.regionalSetting?.dateFormat) as string}
+              onChange={(e: SyntheticEvent<Element, Event>, value : string | null) => {
+                if (value !== null) {
+                  setConfig({
+                    ...config, ["regionalSetting"]: {
+                      ...config["regionalSetting"], ["dateFormat"]: value as string
+                    }
+                  })
+                } else {
+                  setConfig({
+                    ...config, ["regionalSetting"]: {
+                      ...config["regionalSetting"], ["dateFormat"]: "" as string
+                    }
+                  })
+                }
                 // setDateTimeFormat(value);
               }}
               options={dateFormatList}
@@ -296,7 +330,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
 
             <Autocomplete
               value={config.regionalSetting?.timeFormat}
-              onChange={(e: any, value) => {
+              onChange={(e: SyntheticEvent<Element, Event>, value : string | null) => {
                 setConfig({
                   ...config, ["regionalSetting"]: {
                     ...config["regionalSetting"], ["timeFormat"]: value as string
@@ -378,6 +412,16 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                 })
               }}
             />
+          </Box>
+          <Box
+            sx={{
+              display: "grid",
+              rowGap: 1,
+              gridTemplateColumns: "repeat(2, 1fr)",
+              paddingBottom: "10px",
+              flexWrap: "wrap",
+            }}
+          >
             <InputControl
               id="currencySubString"
               label="Currency Sub String"
@@ -424,8 +468,16 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                 })
               }}
             />
-
-
+          </Box>
+          <Box
+            sx={{
+              display: "grid",
+              rowGap: 1,
+              gridTemplateColumns: "repeat(2, 1fr)",
+              paddingBottom: "10px",
+              flexWrap: "wrap",
+            }}
+          >
             <Autocomplete
               value={config?.regionalSetting?.decimalPlaces}
               options={decimalPlacesList}
@@ -462,7 +514,8 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
             />
           </Box>
         </Box>
-      </Paper>
+      
+    </Paper >
       <Snackbar
         open={snackOpen}
         autoHideDuration={1000}
