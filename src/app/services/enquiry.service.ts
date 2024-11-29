@@ -207,9 +207,9 @@ export async function getProductDataAction(session: Session, id: number) {
       query:
         "SELECT i.*, im.name AS product_name, \
       um.name AS unit_name \
- FROM crmapp1.enquiry_product_tran i \
- JOIN crmapp1.unit_master um ON um.id = i.unit_id \
- JOIN crmapp1.product_master im ON im.id = i.product_id \
+ FROM enquiry_product_tran i \
+ JOIN unit_master um ON um.id = i.unit_id \
+ JOIN product_master im ON im.id = i.product_id \
  WHERE i.enquiry_id = ?;",
       values: [id],
     });

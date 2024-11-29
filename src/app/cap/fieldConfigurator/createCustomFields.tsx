@@ -471,7 +471,7 @@ const FieldConfigurator = () => {
                                 label="Mandatory"
                             />
 
-                            <FormControlLabel
+                            {item.is_default_column ? (<FormControlLabel
                                 disabled={item.is_default_mandatory === 1 || item.is_mandatory === 1}
                                 control={
                                     <Checkbox
@@ -480,7 +480,7 @@ const FieldConfigurator = () => {
                                     />
                                 }
                                 label="Disabled"
-                            />
+                            />) : (<></>) }
 
                             {item.is_default_column !== 1 && <Box sx={{ marginLeft: "auto" }}>
                                 <IconButton onClick={() => {

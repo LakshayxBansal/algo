@@ -71,8 +71,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
       }
-      setDialogOpen(true);
-      setDlgMode(dialogMode.Add);
+     
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
         if (data[0]?.length > 0)
@@ -83,7 +82,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             loggedInUserData: data[0][3] || {}
           });
       }
-
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
     }
     // getDescriptionData();
   }

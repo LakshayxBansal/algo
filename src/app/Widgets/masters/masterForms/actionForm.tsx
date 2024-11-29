@@ -110,82 +110,83 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
 
   return (
     <>
-      <Box>
-        <Box
-          sx={{
-            position: "sticky",
-            zIndex: 2,
-            paddingY: "10px",
-            bgcolor: "white",
-          }}
+    <Box>
+      <Box
+        sx={{
+          position: "sticky",
+          zIndex: 2,
+          paddingY: "10px",
+          bgcolor: "white",
+        }}
+      >
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {props.data ? "Update Action" : "Add Action"}
+            <IconButton onClick={handleCancel} tabIndex={-1}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Seperator>
+      </Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
         >
-          <Seperator>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              {props.data ? "Update Action" : "Add Action"}
-              <IconButton onClick={handleCancel} tabIndex={-1}>
-                <CloseIcon />
-              </IconButton>
-            </Box>
-          </Seperator>
-        </Box>
-        <Collapse in={formError?.form ? true : false}>
-          <Alert
-            severity="error"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={clearFormError}
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
+      <Box id="actionForm">
+        <form action={handleSubmit} noValidate>
+        <Grid container>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <InputControl
+              autoFocus
+              id="name"
+              required
+              label="Action Name"
+              inputType={InputType.TEXT}
+              name="name"
+              titleCase={true}
+              defaultValue={props.data?.name}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              style={{width: "100%"}}
+            />
+          </Grid>
+          <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1
+              }}
+            >
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
               >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            {formError?.form?.msg}
-          </Alert>
-        </Collapse>
-        <Box id="actionForm">
-          <form action={handleSubmit}>
-            <Grid container>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <InputControl
-                  autoFocus
-                  id="name"
-                  label="Action Name"
-                  inputType={InputType.TEXT}
-                  name="name"
-                  titleCase={true}
-                  defaultValue={props.data?.name}
-                  error={formError?.name?.error}
-                  helperText={formError?.name?.msg}
-                  style={{ width: "100%" }}
-                />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  mt: 1
-                }}
-              >
-                <Button onClick={handleCancel} tabIndex={-1}>
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  sx={{ width: "15%", marginLeft: "5%" }}
-                >
-                  Submit
-                </Button>
-              </Grid>
+                Submit
+              </Button>
             </Grid>
-          </form>
+        </Grid>
+        </form>
         </Box>
         <Snackbar
           open={snackOpen}
@@ -194,7 +195,7 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
           message="Record Saved!"
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
-      </Box>
+        </Box>
     </>
   );
 }

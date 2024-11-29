@@ -408,7 +408,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label="Joining Date"
         name="doj"
         defaultValue={entityData.doj ? dayjs(entityData.doj) : null}
-        slotprops={{
+        slotProps={{
           textField: {
             error: formError?.doj?.error,
             helperText: formError?.doj?.msg,
@@ -430,7 +430,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label="Date of Birth"
         name="dob"
         defaultValue={entityData.dob ? dayjs(entityData.dob) : null}
-        slotprops={{
+        slotProps={{
           textField: {
             error: formError?.dob?.error,
             helperText: formError?.dob?.msg,
@@ -454,7 +454,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         // defaultValue={entityData.doa}
         defaultValue={entityData.doa ? dayjs(entityData.doa) : null}
         fullWidth
-        slotprops={{
+        slotProps={{
           textField: {
             error: formError?.doa?.error,
             helperText: formError?.doa?.msg,

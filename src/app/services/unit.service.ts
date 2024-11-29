@@ -88,7 +88,7 @@ export async function getUnitByPageDb(
     }
 
     result = await excuteQuery({
-      host: "crmapp1",
+      host: crmDb,
       query:
         "SELECT *, RowNum as RowID\
      FROM (SELECT *,ROW_NUMBER() OVER () AS RowNum \

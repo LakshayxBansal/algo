@@ -211,22 +211,28 @@ export default function EntityList(props: entitiyCompT) {
   };
 
   const handleAddBtn = async () => {
-    if (props.fnFetchDataByID) {
-      const data = await props.fnFetchDataByID(0);
-      console.log("!12 : ", data);
-      if (data[0]?.length > 0) {
-        console.log("221 : ", data[0][0]);
-        setMetaData({
-          fields: data[0][0] || [],
-          rights: data[0][1] || {},
-          regionalSettingsConfigData: data[0][2] || [],
-          loggedInUserData: data[0][3] || {}
-        });
-      }
-      // console.log("dialogmode.ADD",metaData);
+    if (props?.link)
+    {
+      router.push(props.link);
     }
-    setDialogOpen(true);
-    setDlgMode(dialogMode.Add);
+    else {
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        console.log("!12 : ", data);
+        if (data[0]?.length > 0) {
+          console.log("221 : ", data[0][0]);
+          setMetaData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            regionalSettingsConfigData: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
+        }
+        // console.log("dialogmode.ADD",metaData);
+      }
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
+    }
   };
 
   const handleDropDownBtn = () => {
@@ -465,7 +471,7 @@ export default function EntityList(props: entitiyCompT) {
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
-            pageSizeOptions={[pgSize]}
+            pageSizeOptions={[5, pgSize, 20]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}

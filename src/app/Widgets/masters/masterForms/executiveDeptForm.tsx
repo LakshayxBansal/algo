@@ -188,8 +188,8 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
                   <Grid key={fieldKey}
                     item
                     xs={12}
-                    sm={6}
-                    md={6}
+                    sm={12}
+                    md={12}
                   >
                     <div key={index}>
                       {field}
