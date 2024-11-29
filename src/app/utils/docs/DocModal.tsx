@@ -174,7 +174,6 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
         {
             field: "actions",
             type: "actions",
-            headerName: "Actions",
             width: 100,
             getActions: (params) => {
                 if (editMode === params.row.id) {
@@ -319,15 +318,16 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
 
     return (
         <>
-            <Box sx={{ height: "500px", width: "800px", p: 2, m: 2 }}>
+            <Box sx={{ height: "450px", width: "800px", p: 2, m: 2 }}>
                 <DataGrid
                     columns={columns}
                     rows={docData ? docData : []}
                     disableRowSelectionOnClick
                     slots={{
-                        noRowsOverlay: CustomNoRowsOverlay,
+                        noRowsOverlay: ()=><></>,
                         toolbar: EditToolbar as GridSlots["toolbar"],
                     }}
+                    hideFooter = {true}
                     sx={{
                         "& .MuiDataGrid-columnHeaders": {
                             "& .MuiDataGrid-columnHeaderTitle": {

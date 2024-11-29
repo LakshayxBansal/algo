@@ -74,26 +74,34 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
   ) => {
     if (val) {
       if (val.date_format) {
-        console.log("true")
         setSeperator(getDefaultSeperator(val.date_format));
         setShowWeekDay(val.date_format.includes("ddd") ? true : false);
         setMonthInWord(val.date_format.includes("MMM") ? true : false);
         setDateFormatList(generateDateFormatList(val.date_format.includes("ddd"), getDefaultSeperator(val.date_format), val.date_format.includes("MMM")));
       } else {
-        console.log("false")
         setSeperator("/");
         setShowWeekDay(false);
         setMonthInWord(false);
         setDateFormatList(generateDateFormatList(false, "/", false));
-      }
-      
+      }      
       setConfig({
         ...config, ["regionalSetting"]: {
           ...config["regionalSetting"], ["country"]: val.name, ["country_id"]: val.id, ["state"]: "", ["state_id"]: 0, ["currencyString"]: val.currencyString ?? "",
-          ["currencySubString"]: val.currencySubString ?? "", ["currencySymbol"]: val.currencySymbol ?? "", ["currencyCharacter"]: val.currencyCharacter ?? "",
+          ["currencySubString"]: val.currencySubString ?? "", ["currencySymbol"]: val.currencySymbol ?? "",
           ["dateFormat"]: val.date_format ?? "DD/MM/YYYY"
         }
       })
+    }else{
+      setConfig({
+        ...config, ["regionalSetting"]: {
+          ...config["regionalSetting"], ["country"]: "", ["country_id"]: 0, ["state"]: "", ["state_id"]: 0, ["currencyString"]: "",
+          ["currencySubString"]: "", ["currencySymbol"]: "",
+          ["dateFormat"]: ""
+        }
+      })
+      setSeperator("/");
+      setShowWeekDay(false);
+      setMonthInWord(false);
     }
   };
 
@@ -133,6 +141,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               onChange={(e, val, s) => handleCountryChange(e, val, s)}
               width={400}
               fetchDataFn={getCountryWithCurrency}
+              formError={formError?.regionalSetting_country}
               diaglogVal={{
                 id: config.regionalSetting.country_id as number,
                 name: config.regionalSetting.country as string,
@@ -152,7 +161,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               onChange={(e, val, s) => {
                 setConfig({
                   ...config, ["regionalSetting"]: {
-                    ...config["regionalSetting"], ["state"]: val.name, ["state_id"]: val.id
+                    ...config["regionalSetting"], ["state"]: val ? val.name : "", ["state_id"]: val ? val.id : 0
                   }
                 })
               }}
@@ -189,20 +198,17 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
             <Autocomplete
               value={seperator}
               onChange={(event: SyntheticEvent<Element, Event>, value: string | null) => {
-                console.log("before : ", dateFormatList);
                 let newDateFormatList = dateFormatList;
                 if (value !== null) {
                   newDateFormatList = dateFormatList.map((dateFormat: string) => {
-                    console.log("dateformat : ", dateFormat);
                     return changeSeperator(dateFormat, value as string);
                   });
                 }
-                console.log("after : ", newDateFormatList);
                 setSeperator(value as string);
                 setDateFormatList(newDateFormatList);
                 setConfig({
                   ...config, ["regionalSetting"]: {
-                    ...config["regionalSetting"], ["dateFormat"]: ""
+                    ...config["regionalSetting"], ["dateFormat"]: value===null ? "" : newDateFormatList[0]
                   }
                 })
               }}
@@ -237,12 +243,22 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                     dateFormat = "ddd " + dateFormat
                     return dateFormat;
                   });
+                  setConfig({
+                    ...config, ["regionalSetting"]: {
+                      ...config["regionalSetting"], ["dateFormat"]: newDateFormatList[0]
+                    }
+                  })
                   setDateFormatList(newDateFormatList);
                 } else {
                   const newDateFormatList = dateFormatList.map((dateFormat: string) => {
                     dateFormat = dateFormat.substring(4, dateFormat.length);
                     return dateFormat;
                   });
+                  setConfig({
+                    ...config, ["regionalSetting"]: {
+                      ...config["regionalSetting"], ["dateFormat"]: newDateFormatList[0]
+                    }
+                  })
                   setDateFormatList(newDateFormatList);
                 }
               }
@@ -250,28 +266,33 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
             />
             <InputControl
               inputType={InputType.CHECKBOX}
-              id="show_month_in_word"
-              name="show_month_in_word"
-              custLabel="Show Month In Word"
+              id="show_month_in_words"
+              name="show_month_in_words"
+              custLabel="Show Month In Words"
               checked={monthInWord}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setMonthInWord(e.target.checked);
-                setConfig({
-                  ...config, ["regionalSetting"]: {
-                    ...config["regionalSetting"], ["dateFormat"]: ""
-                  }
-                })
                 if (e.target.checked) {
                   const newDateFormatList = dateFormatList.map((dateFormat: string) => {
                     dateFormat = dateFormat.replaceAll("MM", "MMM");
                     return dateFormat;
                   });
+                  setConfig({
+                    ...config, ["regionalSetting"]: {
+                      ...config["regionalSetting"], ["dateFormat"]: newDateFormatList[0]
+                    }
+                  })
                   setDateFormatList(newDateFormatList);
                 } else {
                   const newDateFormatList = dateFormatList.map((dateFormat: string) => {
                     dateFormat = dateFormat.replaceAll("MMM", "MM");
                     return dateFormat;
                   });
+                  setConfig({
+                    ...config, ["regionalSetting"]: {
+                      ...config["regionalSetting"], ["dateFormat"]: newDateFormatList[0]
+                    }
+                  })
                   setDateFormatList(newDateFormatList);
                 }
               }
@@ -445,39 +466,6 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                 })
               }}
             />
-            <InputControl
-              id="currencyCharacter"
-              label="Currency Character"
-              inputType={InputType.TEXT}
-              name="regionalSetting_currencyCharacter"
-              style={{ width: "400px" }}
-              error={formError?.regionalSetting_currencyCharacter?.error}
-              helperText={formError?.regionalSetting_currencyCharacter?.msg}
-              value={config.regionalSetting.currencyCharacter}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { regionalSetting_currencyCharacter, ...rest } = curr;
-                  return rest;
-                });
-              }}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setConfig({
-                  ...config, ["regionalSetting"]: {
-                    ...config["regionalSetting"], ["currencyCharacter"]: e.target.value
-                  }
-                })
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "grid",
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-              paddingBottom: "10px",
-              flexWrap: "wrap",
-            }}
-          >
             <Autocomplete
               value={config?.regionalSetting?.decimalPlaces}
               options={decimalPlacesList}
@@ -500,6 +488,16 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
                 />
               )}
             />
+          </Box>
+          <Box
+            sx={{
+              display: "grid",
+              rowGap: 1,
+              gridTemplateColumns: "repeat(2, 1fr)",
+              paddingBottom: "10px",
+              flexWrap: "wrap",
+            }}
+          >
             <InputControl
               inputType={InputType.TEXT}
               autoFocus
@@ -509,7 +507,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               label="Format for displaying numbers"
               disabled
               value={
-                config.regionalSetting.currencyCharacter + " " + displayNumber
+                config.regionalSetting.currencySymbol + " " + displayNumber
               }
             />
           </Box>

@@ -887,14 +887,13 @@ export const regionalSettingSchema = z.object({
   id: z.number().optional(),
   country_id: z.number(),
   state_id: z.number(),
-  country: z.string().optional(),
+  country: z.string().min(1,"Required"),
   state: z.string().optional(),
   decimalPlaces: z.string(),
   timeFormat: z.string().min(1,"Required"),
   currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
-  currencySymbol: z.string().max(5,"Currency symbol should not be greater than 5 character").optional(),
+  currencySymbol: z.string().max(2,"Currency symbol should not be greater than 2 character").optional(),
   currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
-  currencyCharacter: z.string().max(1,"Currency character should not be greater than 1 character").optional(),
   dateFormat: z.string().min(1,"Required"),
   voucher : voucherSchema.optional()
 });

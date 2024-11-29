@@ -136,7 +136,7 @@ export default function AddDocsForm(props: any) {
                     {formError?.form?.msg}
                 </Alert>
             </Collapse>
-            <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+            <Box id="sourceForm" sx={{ m: 2, p: 1 }}>
                 <form action={handleSubmit} noValidate>
                     <Box
                         sx={{
@@ -164,7 +164,7 @@ export default function AddDocsForm(props: any) {
                             startIcon={<CloudUploadIcon />}
                             sx={{ width: '200px', height: '35px' }}
                         >
-                            Upload files
+                            Upload file
                             <VisuallyHiddenInput
                                 type="file"
                                 onChange={handleFileChange}
@@ -183,9 +183,9 @@ export default function AddDocsForm(props: any) {
                         <Button
                             type="submit"
                             variant="contained"
-                            sx={{ width: "15%", marginLeft: "5%" }}
+                            sx={{ width: "20%", marginLeft: "5%" }}
                         >
-                            Submit
+                            Upload
                         </Button>
                     </Box>
                 </form>

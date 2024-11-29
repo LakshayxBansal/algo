@@ -149,7 +149,6 @@ export async function createCompany(data: companySchemaT) {
             currencyString: "",
             currencySymbol: "",
             currencySubString: "",
-            currencyCharacter: "",
             dateFormat: "",
           };
 
@@ -157,7 +156,6 @@ export async function createCompany(data: companySchemaT) {
             regionalData.currencyString = countryData[0].currencyString;
             regionalData.currencySymbol = countryData[0].currencySymbol;
             regionalData.currencySubString = countryData[0].currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter;
             regionalData.dateFormat = countryData[0].date_format;
           }
 
@@ -242,7 +240,6 @@ export async function updateCompany(data: companySchemaT) {
             currencyString: "",
             currencySymbol: "",
             currencySubString: "",
-            currencyCharacter: "",
             dateFormat: "",
           };
 
@@ -250,7 +247,6 @@ export async function updateCompany(data: companySchemaT) {
             regionalData.currencyString = countryData[0].currencyString;
             regionalData.currencySymbol = countryData[0].currencySymbol;
             regionalData.currencySubString = countryData[0].currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter;
             regionalData.dateFormat = countryData[0].date_format;
           }
 
