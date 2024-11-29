@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { AddDialog } from "./addDialog";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import AddIcon from '@mui/icons-material/Add';
+import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import AutocompleteDB from "../AutocompleteDB";
@@ -71,7 +73,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
       }
-     
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
         if (data[0]?.length > 0)
@@ -82,8 +85,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             loggedInUserData: data[0][3] || {}
           });
       }
-      setDialogOpen(true);
-      setDlgMode(dialogMode.Add);
+
     }
     // getDescriptionData();
   }
@@ -148,29 +150,32 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             showDetails={props.showDetails ? props.showDetails : false}
           />
           {!props.disabled && (
-            <IconButton tabIndex={-1} size="small">
+            <IconButton tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
               <span
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "Center",
+                  justifyContent: "Left",
                   alignItems: "Center",
-                  marginLeft: "3px",
+                  marginLeft: "1px",
                   gap: "0px",
                 }}
               >
+                {!(dialogValue?.id ? true : false) && (
                 <Tooltip
                   title={
                     allowNewAdd ? "Click to add new" : "Not allowed to add"
                   }
                   placement="top"
                 >
-                  <AddBoxIcon
+                  <AddIcon
                     onClick={openDialog}
                     color="action"
                     fontSize="small"
+                    sx={{ padding:0, margin:0 }}
                   />
                 </Tooltip>
+                )}
                 {(dialogValue?.id ? true : false) && (
                   <Tooltip
                     title={
@@ -179,7 +184,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
                     placement="bottom"
                   >
                     {
-                      <EditIcon
+                      <EditTwoToneIcon
                         onClick={onModifyDialog}
                         color="action"
                         fontSize="small"
