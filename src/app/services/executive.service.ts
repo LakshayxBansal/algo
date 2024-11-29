@@ -10,13 +10,7 @@ export async function createExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    console.log("DATA in services\n: ", data, "\n");
-    // const placeholderDate = new Date("1900-01-01");
-    // data.dob = data.dob == "" ? placeholderDate : new Date(data.dob);
-
-    // data.doa = data.doa == "" ? placeholderDate : new Date(data.doa);
-    // data.doj = data.doj == "" ? placeholderDate : new Date(data.doj);
-    // if (data["dob"] == "") data["dob"] = null;
+    console.log("Harsh=====>", session.user.dbInfo.dbName)
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
@@ -58,7 +52,7 @@ export async function createExecutiveDB(
       ],
     });
     console.log('session.user.userId')
-    console.log("services : ",result);
+    console.log("services : ", result);
     return result;
   } catch (e) {
     logger.error(e);
@@ -81,7 +75,7 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-      "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -134,13 +128,13 @@ export async function updateExecutiveDB(
 export async function getExecutiveList(crmDb: string, searchString: string) {
   try {
     const search_value = searchString ? searchString : '';
-    
+
     const result = await excuteQuery({
       host: crmDb,
       query: "call search_executive(?);",
       values: [search_value]
     })
-    return result[0];  
+    return result[0];
   } catch (e) {
     console.log(e);
   }
@@ -201,7 +195,7 @@ export async function checkIfUsed(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-      "SELECT COUNT(*) as count FROM executive_master em INNER JOIN enquiry_allocation ea ON ea.executive_id = em.id where em.id=?;",
+        "SELECT COUNT(*) as count FROM executive_master em INNER JOIN enquiry_allocation ea ON ea.executive_id = em.id where em.id=?;",
       values: [id],
     });
     return result;
@@ -217,7 +211,7 @@ export async function delExecutiveDetailsById(crmDb: string, id: number) {
       query: "call deleteExecutive(?)",
       values: [id],
     });
-    
+
     return result;
   } catch (e) {
     console.log(e);
@@ -232,7 +226,7 @@ export async function getExecutiveByPageDb(
 ) {
   try {
     const vals: any = [page, limit, limit];
-    
+
     if (filter) {
       vals.unshift(filter);
     }
@@ -249,8 +243,8 @@ export async function getExecutiveByPageDb(
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id " +
-         (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') " : "") +
-         "order by em.name\
+        (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') " : "") +
+        "order by em.name\
               ) AS NumberedRows \
             WHERE RowNum > ?*? \
             ORDER BY RowNum \
@@ -286,13 +280,13 @@ export async function getExecutiveIdFromEmailList(
   try {
     let query = "select id as id from executive_master where email = ?";
     let values: any[] = [email];
-    
+
     const result = await excuteQuery({
       host: crmDb,
       query: query,
       values: values,
     });
-    
+
     return result;
   } catch (e) {
     console.log(e);
@@ -305,9 +299,9 @@ export async function getExecutiveProfileImageByCrmUserIdList(
 ) {
   try {
     let query =
-    "select profile_img as profileImg from executive_master where crm_user_id = ?";
+      "select profile_img as profileImg from executive_master where crm_user_id = ?";
     let values: any[] = [crmUserId];
-    
+
     const result = await excuteQuery({
       host: crmDb,
       query: query,
@@ -331,45 +325,45 @@ export async function insertUserIdInExecutiveDb(
       query: "update executive_master set crm_user_id =  ? where id = ?;",
       values: [userId, executiveId],
     });
-    
+
     return result;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function getExecutiveColumnsDb(crmDb:string){
-  try{
+export async function getExecutiveColumnsDb(crmDb: string) {
+  try {
     return excuteQuery({
-      host:crmDb,
-      query:"select * from custom_fields_master where object_type_id =11",
-      values:""
+      host: crmDb,
+      query: "select * from custom_fields_master where object_type_id =11",
+      values: ""
     });
-  }catch(e){
+  } catch (e) {
     logger.error(e);
   }
 }
 
-export async function mapExecutiveToDeptDb(crmDb:string, executiveId: number, deptsArray : number[]){
-  try{
+export async function mapExecutiveToDeptDb(crmDb: string, executiveId: number, deptsArray: number[]) {
+  try {
     await excuteQuery({
-      host:crmDb,
-      query:"delete from executive_dept_relation where executive_id = ?;",
+      host: crmDb,
+      query: "delete from executive_dept_relation where executive_id = ?;",
       values: [executiveId]
     });
-    let insertQuery : string = "insert into executive_dept_relation (executive_id, executive_dept_id) values ";
-    for(const dept of deptsArray){
+    let insertQuery: string = "insert into executive_dept_relation (executive_id, executive_dept_id) values ";
+    for (const dept of deptsArray) {
       insertQuery += `(${executiveId}, ${dept}),`
     }
     insertQuery = insertQuery.slice(0, -1);
     insertQuery += ";"
     await excuteQuery({
-      host:crmDb,
+      host: crmDb,
       query: insertQuery,
       values: []
     });
 
-  }catch(e){
+  } catch (e) {
     logger.error(e);
   }
 }

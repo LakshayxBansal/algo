@@ -119,6 +119,7 @@ export default function EntityList(props: entitiyCompT) {
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
+                link={props.link}
               />
             );
           },
