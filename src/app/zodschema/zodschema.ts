@@ -378,7 +378,7 @@ export const executiveSchema = z
     role_id: z.number().optional(),
     role: z.string().min(1, "Select role").max(45), //Remove it from optional
     executive_dept_id: z.number().optional(),
-    executive_dept: z.string().max(75).optional(),
+    executive_dept: z.string().min(1, "Select role").max(45),
     executive_group_id: z.number().optional(),
     executive_group: z.string().max(75).optional(),
     pan: z.union([

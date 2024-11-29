@@ -88,9 +88,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
   const [stateDisable, setStateDisable] = useState<boolean>(
     !entityData.country
   );
-  const [roleDisable, setRoleDisable] = useState<boolean>(
-    !entityData.executive_dept
-  );
+  // const [roleDisable, setRoleDisable] = useState<boolean>(
+  //   !entityData.executive_dept
+  // );
   const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
 
   entityData.executive_dept_id = props.data?.dept_id;
@@ -247,13 +247,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
       else setStateDisable(false);
       setStateKey((prev) => 1 - prev);
     }
-    if (name === "department") {
-      values["role"] = {};
-      setDefaultRole(undefined);
-      if (values.department.id === 0) setRoleDisable(true);
-      else setRoleDisable(false);
-      setRoleKey((prev) => 1 - prev);
-    }
+    // if (name === "department") {
+    //   values["role"] = {};
+    //   setDefaultRole(undefined);
+    //   if (values.department.id === 0) setRoleDisable(true);
+    //   else setRoleDisable(false);
+    //   setRoleKey((prev) => 1 - prev);
+    // }
     setSelectValues(values);
   }
 
@@ -434,12 +434,17 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                 defaultValue={defaultRole}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
                 required
+                // disable={
+                //   props?.parentData === "profile" && entityData.role_id !== 1
+                //     ? true
+                //     : roleDisable
+                //       ? true
+                //       : false
+                // }
                 disable={
                   props?.parentData === "profile" && entityData.role_id !== 1
                     ? true
-                    : roleDisable
-                      ? true
-                      : false
+                    : false
                 }
                 formError={formError?.role ?? formError.role}
                 renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -447,10 +452,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT) {
                     setDialogOpen={fnDialogOpen}
                     setDialogValue={fnDialogValue}
                     data={data}
-                    parentData={
-                      selectValues.department?.id ||
-                      entityData.executive_dept_id
-                    }
+                    // parentData={
+                    //   selectValues.department?.id ||
+                    //   entityData.executive_dept_id
+                    // }
                   />
                 )}
               />
