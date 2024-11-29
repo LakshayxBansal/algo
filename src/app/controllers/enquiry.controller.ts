@@ -7,6 +7,7 @@ import {
   getConfigDataDB,
   getLoggedInUserDetailsDB,
   createEnquiryLedgerDB,
+  getEnquiryDescriptionDb,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -200,5 +201,17 @@ export async function createEnquiryLedger(ledgerId: number, statusId: number, su
     }
   } catch (error) {
     logger.error(error);
+  }
+}
+
+
+export async function getEnquiryDescription(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getEnquiryDescriptionDb(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
   }
 }

@@ -16,6 +16,7 @@ import {
   getProductDataAction,
   getSupportDataByPageDb,
   getSupportDataCount,
+  getSupportTicketDescriptionDb,
   updateSupportDataDb,
 } from "../services/supportTicket.service";
 import { logger } from "../utils/logger.utils";
@@ -272,6 +273,18 @@ export async function delSupportDataById(ticketId: number) {
     }
     return result;
   } catch (error: any) {
+    throw error;
+  }
+}
+
+
+export async function getSupportTicketDescription(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getSupportTicketDescriptionDb(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
     throw error;
   }
 }

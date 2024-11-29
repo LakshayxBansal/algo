@@ -35,7 +35,7 @@ type autocompleteDBT = {
   renderOptions?: SelectOptionsFunction;
   labelOptions?: SelectOptionsFunction;
   highlightOptions?: SelectOptionsFunction;
-  width?: number;
+  width?: number | string;
   diaglogVal: optionsDataT;
   setDialogVal: Dispatch<SetStateAction<optionsDataT>>;
   formError?: formErrorT;

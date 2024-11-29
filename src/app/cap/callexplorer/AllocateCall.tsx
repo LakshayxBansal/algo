@@ -16,14 +16,19 @@ import {
   optionsDataT,
   selectKeyValueT,
 } from "../../models/models";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Seperator from "../../Widgets/seperator";
 import CloseIcon from "@mui/icons-material/Close";
 import {
+  getCallEnquiryDetails,
+  getCallSupportDetails,
   updateCallAllocation,
   updateSupportCallAllocation,
 } from "../../controllers/callExplorer.controller";
 import { handleRefresh } from "./AutoGrid";
+import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
+import { set } from "lodash";
 
 interface customprop extends masterFormPropsT {
   setRefresh: (props: any) => void;
@@ -31,13 +36,51 @@ interface customprop extends masterFormPropsT {
 }
 
 export default function AllocateCall(props: customprop) {
-
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
   const [remark, setRemark] = useState("");
+  const [remarkHistory, setRemarkHistroy] = useState("");
+
+  useEffect(() => {
+    async function getEnquiries() {
+      let ledgerData;
+      let suggested_action_remark = "";
+
+      if (props.formName === "enquiry") {
+        ledgerData = await getCallEnquiryDetails(props.data[0]);
+      } else {
+        ledgerData = await getCallSupportDetails(props.data[0]);
+      }
+      for (let i = 0; i < ledgerData.length; i++) {
+        if (ledgerData[i].suggested_action_remark) {
+          suggested_action_remark += `Suggested Action Remarks:- ${adjustToLocal(
+            ledgerData[i].date
+          )
+            .toDate()
+            .toString()
+            .slice(0, 15)} ; ${ledgerData[i].suggested_action_remark} \n`;
+        }
+        if (ledgerData[i].action_taken_remark) {
+          suggested_action_remark += `Action Taken Remarks:- ${adjustToLocal(
+            ledgerData[i].date
+          )
+            .toDate()
+            .toString()
+            .slice(0, 15)} ; ${ledgerData[i].action_taken_remark} \n`;
+        }
+      }
+
+      setRemarkHistroy(suggested_action_remark);
+    }
+    if (props?.data.length > 1) {
+      setRemarkHistroy("Multiple Calls are Selected");
+    } else {
+      getEnquiries();
+    }
+  }, [props.formName]);
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -103,17 +146,41 @@ export default function AllocateCall(props: customprop) {
         sx={{
           position: "sticky",
           top: "0px",
+          width: { xs: "100%", sm: "90%", md: "700px" },
           zIndex: 2,
           paddingY: "10px",
           bgcolor: "white",
         }}
       >
         <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Allocate Executive
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Box>Remark History</Box>
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
+          </Box>
+        </Seperator>
+        {/* InputControl for Remarks */}
+        <InputControl
+          multiline
+          inputType={InputType.TEXTFIELD}
+          name="remarks_history"
+          id="remarks_history"
+          value={remarkHistory}
+          rows={6}
+          fullWidth
+          disabled
+        />
+
+        <Seperator>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+            Allocate Executive
           </Box>
         </Seperator>
       </Box>
@@ -137,24 +204,16 @@ export default function AllocateCall(props: customprop) {
       </Collapse>
       <Box id="sourceForm" sx={{ p: 3 }}>
         <form action={handleSubmit}>
-          <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
-            <Box
-              sx={{
-                display: "grid",
-                columnGap: 2,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(2, 1fr)",
-                p: 2,
-              }}
-            >
+          <Paper elevation={3} sx={{ p: 2 }} square={false}>
+            <Box>
               <AutocompleteDB
                 name={"executive"}
                 id={"executive"}
                 label={"Executive"}
-                width={210}
                 onChange={(e, val, s) =>
                   setSelectValues({ ...selectValues, executive: val })
                 }
+                width={"100%"}
                 fetchDataFn={getExecutive}
                 diaglogVal={{
                   id: selectValues.executive?.id,
@@ -175,24 +234,30 @@ export default function AllocateCall(props: customprop) {
                             value={remark}
                             onChange={(e: any) => setRemark(e.target.value)}
                         /> */}
-              <TextField
-                name="remark"
-                id="remark"
-                label="Remark"
-                fullWidth
-                value={remark}
-                onChange={(e: any) => setRemark(e.target.value)}
-                multiline={true}
-                maxRows={3}
-              />
+              {props.data.length <= 1 && (
+                <TextField
+                  name="remark"
+                  id="remark"
+                  label="Remark"
+                  fullWidth
+                  rows={3}
+                  value={remark}
+                  onChange={(e: any) => setRemark(e.target.value)}
+                  multiline={true}
+                  maxRows={3}
+                />
+              )}
             </Box>
             <Box
               sx={{
                 display: "flex",
+                mt: 2,
                 justifyContent: "flex-end",
               }}
             >
-              <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
               {
                 <Tooltip
                   title={
@@ -207,7 +272,7 @@ export default function AllocateCall(props: customprop) {
                       type="submit"
                       variant="contained"
                       sx={{ width: "15%", marginLeft: "5%" }}
-                      disabled={!selectValues.executive || !remark}
+                      disabled={!selectValues.executive}
                     >
                       Submit
                     </Button>

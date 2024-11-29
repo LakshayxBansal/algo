@@ -29,7 +29,10 @@ export default async function Support({ searchParams }: searchParamsProps) {
         const decryptedId = await decrypt(id);
 
         supportData = await getSupportDataById(Number(decryptedId));
-        const updatedWithSuggestedRemark = await getSuggestedRemark(supportData, status);
+        const updatedWithSuggestedRemark = await getSuggestedRemark(
+          supportData,
+          status
+        );
         formatedSupportData = await formatedData(updatedWithSuggestedRemark);
       }
 
@@ -40,7 +43,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
             id: userDetails.id,
             name: userDetails.name,
           }}
-          status ={status}
+          status={status}
         />
       );
     }
@@ -51,24 +54,47 @@ export default async function Support({ searchParams }: searchParamsProps) {
   redirect("/signin");
 }
 
-async function getSuggestedRemark(data :any ,status :any){
+async function getSuggestedRemark(data: any, status: any) {
   let length = data.length;
-  let ledgerData= data.ledgerData;
-  const headerData= data.headerData;
-  if(status==="true"){
-    let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).format("MM-DD-YYYY hh:mm A")} ; ${ledgerData[0].suggested_action_remark} \n`;
+  let ledgerData = data.ledgerData;
+  const headerData = data.headerData;
+  if (status === "true") {
+    let suggested_action_remark = `Call Receipt Remarks:-${
+      headerData[0].created_by_name
+    } ; ${adjustToLocal(headerData[0].created_on)
+      .toDate()
+          .toString()
+          .slice(0, 15)
+    } ; ${headerData[0].call_receipt_remark} \n__________________________________________________________________________________________________________\n`;
 
-      for (let i = 1; i < ledgerData.length; i++) {
-        if (ledgerData[i].suggested_action_remark) {
-          suggested_action_remark += `${ledgerData[i].modified_by_name} ; ${adjustToLocal(ledgerData[i].modified_on).format("MM-DD-YYYY hh:mm A")} ; ${ledgerData[i].suggested_action_remark} \n`;
-        }
+    // formating suggested action remark and action taken reamark 
+    //format-   modified_by , date , remark
+    //
+    //
+
+
+    for (let i = 1; i < ledgerData.length; i++) {
+      if (ledgerData[i].suggested_action_remark) {
+        suggested_action_remark += `Suggested Action Remarks:- ${
+          ledgerData[i].modified_by_name
+        } ; ${adjustToLocal(ledgerData[i].modified_on)
+          .toDate()
+          .toString()
+          .slice(0, 15)} ; ${ledgerData[i].suggested_action_remark} \n__________________________________________________________________________________________________________\n`;
       }
-      ledgerData = ledgerData[ledgerData.length - 1];
+      if (ledgerData[i].action_taken_remark) {
+        suggested_action_remark += `Action Taken Remarks:-${
+          ledgerData[i].modified_by_name
+        } ; ${adjustToLocal(ledgerData[i].modified_on)
+          .toDate()
+          .toString()
+          .slice(0, 15)} ; ${ledgerData[i].action_taken_remark} \n__________________________________________________________________________________________________________\n`;
+      }
+    }
+    ledgerData = ledgerData[ledgerData.length - 1];
 
-      ledgerData.suggested_action_remark = suggested_action_remark;
-      
-  }
-  else{
+    ledgerData.suggested_action_remark = suggested_action_remark;
+  } else {
     ledgerData = ledgerData[ledgerData.length - 1];
   }
   data.ledgerData = ledgerData;
@@ -89,11 +115,11 @@ async function formatedData(supportData: any) {
       status,
       next_action_date,
       allocated_to_name,
-      allocated_to:ledger_allocated_to,
+      allocated_to: ledger_allocated_to,
       created_on: ledger_created_on,
       modified_on: ledger_modified_on,
-      modified_by : ledger_modified_by,
-      created_by : ledger_created_by,
+      modified_by: ledger_modified_by,
+      created_by: ledger_created_by,
       ...remainingLedgerData
     },
     headerData: {
@@ -106,7 +132,7 @@ async function formatedData(supportData: any) {
       date,
       created_on,
       modified_on,
-     
+
       ...remainingHeaderData
     },
     productData,
@@ -142,7 +168,7 @@ async function formatedData(supportData: any) {
       id: category_id,
       name: category,
     },
-    allocated_to:{
+    allocated_to: {
       id: ledger_allocated_to,
       name: allocated_to_name,
     },
@@ -150,7 +176,7 @@ async function formatedData(supportData: any) {
     next_action_date,
   };
 
-  const result= {
+  const result = {
     masterData,
     ledger_allocated_to,
     ledger_created_on,
