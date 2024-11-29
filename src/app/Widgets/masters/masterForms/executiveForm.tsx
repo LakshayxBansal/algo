@@ -839,7 +839,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }}
       >
         {
-          props?.setDialogOpen === null ? (<></>) : (<>
+          props?.setDialogOpen === undefined ? (<></>) : (<>
             <Seperator>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 {props.data ? "Update Executive" : "Add Executive"}
@@ -956,7 +956,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             }}
           >
             <Button onClick={() => {
-              if (props.setDialogOpen === null) {
+              if (props.setDialogOpen === undefined) {
                 router.push('/cap');
               }
               else {

@@ -53,7 +53,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
-        if (props?.setDialogOpen === null) {
+        if (props?.setDialogOpen === undefined) {
           router.push("/company");
         }
       }, 1000);
@@ -352,7 +352,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
           >
             <Button
               onClick={() => {
-                if (props?.setDialogOpen === null) {
+                if (props?.setDialogOpen === undefined) {
                   router.push("/signin");
                 } else {
                   handleCancel();

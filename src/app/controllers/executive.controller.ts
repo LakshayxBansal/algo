@@ -55,7 +55,7 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           // pass array of depts
-          await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id]);
+          // await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id]);
           const objectDetails = await getObjectByName("Executive");
           await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
@@ -119,7 +119,7 @@ export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDe
 
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
-          await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id,2,4]);
+          // await mapExecutiveToDept(dbResult[1][0].id,[dbResult[1][0].dept_id,2,4]);
           const objectDetails = await getObjectByName("Executive");
           await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
           if (dbResult[1][0].crm_user_id) {
