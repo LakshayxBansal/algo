@@ -502,6 +502,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       return {
         label: field.column_label,
         required: field.is_mandatory === 1, // True if mandatory, otherwise false
+        disabled: field.is_disabled,
       };
     }
     return { label: "default label", required: false }; // Default if no match is found
@@ -579,6 +580,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     rows={6}
                     fullWidth
                     required={propsForCallReceiptField.required}
+                    disabled={propsForCallReceiptField.disabled}
                     error={formError?.call_receipt_remark?.error}
                     helperText={formError?.call_receipt_remark?.msg}
                     sx={{
@@ -605,6 +607,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     rows={6}
                     fullWidth
                     required={propsForSugActionField.required}
+                    disabled={propsForSugActionField.disabled}
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
                     sx={{
@@ -629,6 +632,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           ...baseElement.props,
           label: field.column_label,
           required: field.is_mandatory === 1,
+          disabled: field.is_disabled,
           key: `field-default-${field.column_name_id}`,
         });
 
