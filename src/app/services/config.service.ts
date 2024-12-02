@@ -33,7 +33,7 @@ export async function updateteRegionalSettingDb(
     const result = await excuteQuery({
       host: dbName,
       query:
-        "UPDATE app_config_new ac SET ac.config = ? WHERE ac.object_id = ?;",
+        "UPDATE app_config ac SET ac.config = ? WHERE ac.config_type_id = ?;",
       values: [JSON.stringify(data), config_id],
     });
 
@@ -48,7 +48,7 @@ export async function getRegionalSettingDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "select * from app_config_new where object_id = (select id from config_meta_data where config_type='regional_setting');",
+        "select * from app_config where config_type_id = (select id from config_meta_data where config_type='regionalSetting');",
       values: [],
     });
 

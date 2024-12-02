@@ -505,7 +505,7 @@ export const supportHeaderSchema = z.object({
 export const supportLedgerSchema = z.object({
   ticket_id: z.number().optional(),
   status_version: z.number().optional(),
-  allocated_to_id: z.number().min(0).optional(),
+  allocated_to_id: z.number().min(0).nullable().optional(),
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),

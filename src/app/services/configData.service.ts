@@ -4,6 +4,7 @@
 import { Session } from "next-auth";
 import executeQuery from "../utils/db/db";
 import { logger } from "../utils/logger.utils";
+import { configSchemaT } from "../models/models";
 
 export async function getConfigTypeId(
   crmDb: string,
@@ -43,6 +44,28 @@ export async function getConfigTypeDB(
 
   } catch (error) {
     logger.error(error);
+  }
+}
+
+export async function createConfigDataDB(crmDb: string, configData: configSchemaT) {
+  try{
+    const enquiryData = JSON.stringify(configData.enquiry);
+    const supportData = JSON.stringify(configData.support);
+    const contractData = JSON.stringify(configData.contract);
+    const regionalSettingData = JSON.stringify(configData.regionalSetting);
+    const searchNavbarData = JSON.stringify(configData.searchNavbar);
+    const searchContactData = JSON.stringify(configData.searchContact);
+    const searchExecutiveData = JSON.stringify(configData.searchExecutive);
+    const searchOrganisationData = JSON.stringify(configData.searchOrganisation);
+    await executeQuery({
+      host: crmDb,
+      query: "call createConfig(?, ?, ?, ?, ?, ?, ?, ?)",
+      values: [enquiryData, supportData, contractData, regionalSettingData, searchNavbarData, searchContactData, searchExecutiveData, searchOrganisationData],
+    });
+    return true;
+  }catch(error){
+    logger.error(error);
+    return false;
   }
 }
 
