@@ -102,6 +102,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
       setSeperator("/");
       setShowWeekDay(false);
       setMonthInWord(false);
+      setDateFormatList(generateDateFormatList(false, "/", false));
     }
   };
 
@@ -399,7 +400,6 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               value={config.regionalSetting.currencySymbol}
               onKeyDown={() => {
                 const { regionalSetting_currencySymbol, ...rest } = formError;
-                console.log("rest : ", rest);
                 setFormError(rest);
               }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
