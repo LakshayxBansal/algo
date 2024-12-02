@@ -128,7 +128,7 @@ export default function InputForm({ baseData }: InputFormProps) {
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
-    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
+    const formatedData = await enquiryDataFormat({ formData, selectValues, dateFormat, timeFormat });
 
     let result;
     let issues = [];

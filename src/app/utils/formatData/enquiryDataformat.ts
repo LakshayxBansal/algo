@@ -6,10 +6,12 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 export async function enquiryDataFormat({
   formData,
   selectValues,
+  dateFormat,
   timeFormat
 }: {
   formData: FormData;
   selectValues: selectKeyValueT;
+  dateFormat: string;
   timeFormat: string;
 }) {
   dayjs.extend(customParseFormat);
@@ -17,9 +19,11 @@ export async function enquiryDataFormat({
   const toISOString = (dateStr: string): string => {
     // Parse the input format and convert to ISO 8601
     if (!dateStr || dateStr === " ") return "";
-    const dt = dayjs(dateStr, `${timeFormat === "12 Hours" ? "DD/MM/YYYY hh:mm A" : "DD/MM/YYYY HH:mm"}`);
+    const timeFormatString = timeFormat === "12 Hours" ? `${dateFormat} hh:mm A` : `${dateFormat} HH:mm`;
+    const dt = dayjs(dateStr, timeFormatString);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
+
   const date = toISOString(formData.get("date") as string);
   const nextActionDate = formData.get("next_action_date")
     ? toISOString(formData.get("next_action_date") as string)

@@ -408,7 +408,13 @@ export default function ProductGrid({
   return (
     <>
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography>Product List</Typography>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ position: "relative", backgroundColor: "white" }}
+        >
+          Product List
+        </Typography>
         <Button
           color="primary"
           startIcon={<AddIcon />}
@@ -430,9 +436,9 @@ export default function ProductGrid({
         }}
         rowHeight={
           dgFormError.product ||
-            dgFormError.quantity ||
-            dgFormError.unit ||
-            dgFormError.remark
+          dgFormError.quantity ||
+          dgFormError.unit ||
+          dgFormError.remark
             ? 70
             : 50
         }
