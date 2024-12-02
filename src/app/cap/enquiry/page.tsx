@@ -68,7 +68,6 @@ export default async function MyForm({
     };
 
     return <InputForm baseData={masterData}></InputForm>;
-    return <InputForm baseData={masterData}></InputForm>;
   } catch (e) {
     // show error page
     logger.error("An error occurred:", e);
