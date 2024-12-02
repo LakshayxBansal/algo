@@ -8,6 +8,7 @@ import { getSession } from '../services/session.service';
 import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from 'mariadb';
 import { getCompanyDbByIdList, getCompanyDetailsById } from '../services/company.service';
+import { getAllRoles } from './executiveRole.controller';
 
 
 export async function registerUser(formData: userSchemaT) {
@@ -180,12 +181,11 @@ export async function getCompanyUser(
         companyId,
         filter
       );
+      const roles = await getAllRoles();
       for (const ele of companyUsers) {
-        if (ele.admin === 1) {
-          ele.role = "Admin"
-        } else {
-          ele.role = "User";
-        }
+        const userRole = roles.filter((role:{id:number,name:string})=>role.id===ele.roleId)[0]
+        ele.roleId = userRole.id;
+        ele.role = userRole.name
       }
       getCompanyUsers = {
         status: true,

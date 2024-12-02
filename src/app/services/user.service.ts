@@ -242,7 +242,7 @@ export async function getCompanyUserDB(
           host: "userDb",
           query:
                 "SELECT * \
-       FROM (SELECT uc.id as id,uc.user_id as userId, uc.isAdmin as admin ,u.name as name,u.contact as contact, ROW_NUMBER() OVER () AS RowID \
+       FROM (SELECT uc.id as id,uc.user_id as userId, uc.isAdmin as admin,uc.role_id as roleId ,u.name as name,u.contact as contact, ROW_NUMBER() OVER () AS RowID \
           FROM userCompany uc left join user u on uc.user_id = u.id where uc.company_id = ? and uc.isAccepted = 1 " +
                 (filter ? "and u.name LIKE CONCAT('%',?,'%') " : "") +
                 "order by uc.isAdmin desc, u.name asc \

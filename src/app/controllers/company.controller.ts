@@ -27,6 +27,7 @@ import { SqlError } from "mariadb";
 import { headers } from "next/headers";
 import { getCountryIdByName } from "./masters.controller";
 import { NextRequest } from "next/server";
+import { getAllRolesDB } from "../services/executiveRole.service";
 
 export async function getCompanyById(id: number) {
   try {
@@ -276,7 +277,12 @@ export async function getCompanies(
         filter,
         limit as number
       );
-
+      for(const company of dbData){
+        const companyRoles = await getAllRolesDB(company.dbName);
+        const role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
+        company.role = role;
+      }
+      
       getCompanies = {
         status: true,
         data: dbData.map(bigIntToNum) as companySchemaT[],
