@@ -28,7 +28,6 @@ export async function enquiryDataFormat({
   const nextActionDate = formData.get("next_action_date")
     ? toISOString(formData.get("next_action_date") as string)
     : null;
-  // console.log(nextActionDate);
   const headerData = {
     enq_number: formData.get("enq_number") as string,
     date,
@@ -57,6 +56,16 @@ export async function enquiryDataFormat({
       "") as string,
     action_taken_remark: (formData.get("action_taken_remark") ?? "") as string,
     closure_remark: (formData.get("closure_remark") ?? "") as string,
+    c_col1: (formData.get("c_col1") ?? "") as string,
+    c_col2: (formData.get("c_col2") ?? "") as string,
+    c_col3: (formData.get("c_col3") ?? "") as string,
+    c_col4: (formData.get("c_col4") ?? "") as string,
+    c_col5: (formData.get("c_col5") ?? "") as string,
+    c_col6: (formData.get("c_col6") ?? "") as string,
+    c_col7: (formData.get("c_col7") ?? "") as string,
+    c_col8: (formData.get("c_col8") ?? "") as string,
+    c_col9: (formData.get("c_col9") ?? "") as string,
+    c_col10: (formData.get("c_col10") ?? "") as string,
   };
 
   return { ...headerData, ...ledgerData };

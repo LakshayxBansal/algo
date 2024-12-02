@@ -6,18 +6,18 @@ import Box from "@mui/material/Box";
 import { createArea, updateArea } from "../../../controllers/area.controller";
 import Grid from "@mui/material/Grid";
 import { nameMasterData } from "../../../zodschema/zodschema";
-import { masterFormPropsT, areaSchemaT } from "@/app/models/models";
+import { masterFormPropsWithDataT, areaSchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function AreaForm(props: masterFormPropsT) {
+export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: areaSchemaT = props.data ? props.data : {};
+  const entityData: areaSchemaT = props.data ? props.data : {} as areaSchemaT;
   // submit function. Save to DB and set value to the dropdown control
   console.log(entityData);
   const handleSubmit = async (formData: FormData) => {
@@ -30,7 +30,7 @@ export default function AreaForm(props: masterFormPropsT) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     }
@@ -48,8 +48,8 @@ export default function AreaForm(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
-        if(issue.path[0] === "refresh"){
-          errorState["form"] = { msg: issue.message, error: true};
+        if (issue.path[0] === "refresh") {
+          errorState["form"] = { msg: issue.message, error: true };
         }
       }
       setFormError(errorState);
@@ -59,7 +59,7 @@ export default function AreaForm(props: masterFormPropsT) {
   async function persistEntity(data: areaSchemaT) {
     let result;
     if (props.data) {
-      Object.assign(data, { id: props.data.id, stamp:props.data.stamp });
+      Object.assign(data, { id: props.data.id, stamp: props.data.stamp });
       result = await updateArea(data);
     } else {
       result = await createArea(data);
@@ -119,50 +119,50 @@ export default function AreaForm(props: masterFormPropsT) {
       <form action={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
-          <InputControl
-            autoFocus
-            id="name"
-            name="name"
-            label="Area Name"
-            required
-            titleCase={true}
-            defaultValue={entityData.name}
-            inputType={InputType.TEXT}
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            style={{width: "100%"}}
+            <InputControl
+              autoFocus
+              id="name"
+              name="name"
+              label="Area Name"
+              required
+              titleCase={true}
+              defaultValue={entityData.name}
+              inputType={InputType.TEXT}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              style={{ width: "100%" }}
             />
-        </Grid>
-        <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 1
-              }}
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 1
+            }}
+          >
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              <Button onClick={handleCancel} tabIndex={-1}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
-            </Grid>
+              Submit
+            </Button>
+          </Grid>
         </Grid>
       </form>
       <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </>
   );
 }

@@ -142,7 +142,6 @@ export async function getConfigData() {
     logger.error(e);
   }
 }
-
 export async function getLoggedInUserDetails() {
   let result;
 

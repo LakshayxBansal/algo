@@ -18,6 +18,9 @@ import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
 import { createDeptInRightsTable, delDeptFromRightTable } from "./rights.controller";
+import { getRegionalSettings } from "./config.controller";
+import { EXECUTIVE_DEPT_OBJECT_ID } from "../utils/consts.utils";
+import { getScreenDescription } from "./object.controller";
 
 export async function getExecutiveDept(searchString: string) {
   try {
@@ -146,8 +149,37 @@ export async function getDeptById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getDeptDetailsById(session.user.dbInfo.dbName, id);
+      const userRights={};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(EXECUTIVE_DEPT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
+      }
+      if(id){
+        const executiveDeptDetails = await getDeptDetailsById(session.user.dbInfo.dbName, id);
+      
+        const result = [
+          screenDesc,
+          executiveDeptDetails[0],
+          userRights,
+          configData,
+          loggedInUserData
+        ]
+        return[
+          result
+        ]
     }
+      const result=[
+        screenDesc,
+        userRights,
+        configData,
+        loggedInUserData
+      ]
+      return[
+        result
+      ]
+  }
   } catch (error) {
     throw error;
   }
@@ -193,7 +225,7 @@ export async function getExecutiveDeptByPage(
 ) {
   let getExecutiveDept = {
     status: false,
-    data: {} as mdl.executiveDeptSchemaT,
+    data: [] as mdl.executiveDeptSchemaT[],
     count: 0,
     error: {},
   };
@@ -201,7 +233,7 @@ export async function getExecutiveDeptByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveDeptByPageDb(
+      const dbData = await getExecutiveDeptByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -213,7 +245,7 @@ export async function getExecutiveDeptByPage(
       );
       getExecutiveDept = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveDeptSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveDeptSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -224,7 +256,7 @@ export async function getExecutiveDeptByPage(
     getExecutiveDept = {
       ...getExecutiveDept,
       status: false,
-      data: {} as mdl.executiveDeptSchemaT,
+      data: [] as mdl.executiveDeptSchemaT[],
       error: err,
     };
   }

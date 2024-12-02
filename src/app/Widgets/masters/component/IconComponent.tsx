@@ -19,9 +19,21 @@ function IconComponent(props: iconCompT) {
     }
     else if (props.fnFetchDataByID && modId) {
       const data = await props.fnFetchDataByID(modId);
-      console.log(data);
+      console.log("Iconcomponent", data);
 
-      props.setModData(data[0]);
+      if (data[0]?.length > 0) {
+        props.setModData(data[0][1]);
+        props.setMetaData({
+          fields: data[0][0] || {},
+          rights: data[0][2] || {},
+          regionalSettingsConfigData: data[0][3] || {},
+          loggedInUserData: data[0][4] || {}
+        });
+      }
+      else {
+        props.setModData(data[0])
+      }
+
       props.setDialogOpen(true);
       props.setDlgMode(props.modify); //dialogMode.Modify
       setAnchorEl(null);

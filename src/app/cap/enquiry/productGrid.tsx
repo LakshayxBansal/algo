@@ -14,7 +14,6 @@ import { Button, Grid, Typography } from "@mui/material";
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
-import Seperator from "@/app/Widgets/seperator";
 import {
   getProduct,
   getProductById,
@@ -89,9 +88,6 @@ export default function ProductGrid({
     },
     "& .MuiDataGrid-footerContainer": {
       display: "none",
-    },
-    "& .MuiDivider-root": {
-      display: "none", // Hides the divider
     },
     "&:hover": {
       borderColor: "#212121",
@@ -408,13 +404,7 @@ export default function ProductGrid({
   return (
     <>
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ position: "relative", backgroundColor: "white" }}
-        >
-          Product List
-        </Typography>
+        <Typography variant="h6" component="div" sx={{ position: 'relative', backgroundColor: 'white' }}>Product List</Typography>
         <Button
           color="primary"
           startIcon={<AddIcon />}
@@ -431,9 +421,6 @@ export default function ProductGrid({
         rows={dgData ? dgData : []}
         disableRowSelectionOnClick
         className={isButtonFocused ? "button-focused" : ""}
-        slots={{
-          noRowsOverlay: () => <></>,
-        }}
         rowHeight={
           dgFormError.product ||
           dgFormError.quantity ||
