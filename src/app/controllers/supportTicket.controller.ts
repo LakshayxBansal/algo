@@ -205,7 +205,7 @@ export async function getSupportDataByPage(
 ){
   let result={
     status: false,
-    data: {} ,
+    data: [] as supportTicketSchemaT[],
     count: 0,
     error: {},
   };
@@ -213,7 +213,7 @@ export async function getSupportDataByPage(
   try {
     const session = await getSession();
     if(session?.user.dbInfo){
-      const conts= await getSupportDataByPageDb(session,
+      const dbData= await getSupportDataByPageDb(session,
         page as number,
         filter,
         limit as number
@@ -226,7 +226,7 @@ export async function getSupportDataByPage(
   );
  result = {
     status: true,
-    data: conts.map(bigIntToNum) ,
+    data: dbData.map(bigIntToNum) as supportTicketSchemaT[],
     count: Number(rowCount[0]["rowCount"]),
     error: {},
   };
@@ -238,7 +238,7 @@ export async function getSupportDataByPage(
     result = {
       ...result,
       status: false,
-      data: {} ,
+      data: [] as supportTicketSchemaT[],
       error: err,
     };
   }

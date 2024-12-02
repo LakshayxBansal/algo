@@ -7,24 +7,56 @@ import {
   createExecutiveDept,
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
-import { executiveDeptSchemaT, masterFormPropsT } from "@/app/models/models";
+import { executiveDeptSchemaT, masterFormPropsT, masterFormPropsWithDataT } from "@/app/models/models";
 import { Grid, Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
+import CustomField from '@/app/cap/enquiry/CustomFields';
 
-export default function ExecutiveDeptForm(props: masterFormPropsT) {
+export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<executiveDeptSchemaT>) {
+  console.log(props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: executiveDeptSchemaT = props.data ? props.data : {};
+  const entityData: executiveDeptSchemaT = props.data ? props.data : {} as executiveDeptSchemaT;
+  const defaultComponentMap = new Map<string, React.ReactNode>([
+    [
+      "name",
+      <InputControl
+        key='name'
+        autoFocus
+        inputType={InputType.TEXT}
+        id="name"
+        label="Department Name"
+        name="name"
+        fullWidth
+        required
+        error={formError?.name?.error}
+        helperText={formError?.name?.msg}
+        defaultValue={entityData.name}
+        onKeyDown={() => {
+          setFormError((curr) => {
+            const { name, ...rest } = curr;
+            return rest;
+          });
+        }}
+      />
+    ]
+  ])
+
+  let fieldArr: React.ReactElement[] = [];
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
+
+    for (let i = 1; i <= 10; ++i) {
+      data[`c_col${i}`] = "";
+    }
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -80,6 +112,34 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
     });
   };
 
+  props.metaData?.fields.map((field: any) => {
+    if (field.is_default_column) {
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-default-${field.column_name_id}`,
+        disabled: field.is_disabled===1?true:false
+      });
+
+      fieldArr.push(fld);
+    } else {
+      const fld = (
+        <CustomField
+          key={`field-custom-${field.column_name_id}`}
+          desc={field}
+          defaultValue={entityData[field.column_name_id as keyof executiveDeptSchemaT]}
+        />
+      );
+      fieldArr.push(fld);
+    }
+    return null;
+  })
+
   return (
     <>
       <Box
@@ -118,60 +178,53 @@ export default function ExecutiveDeptForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit} noValidate>
-        <Grid container>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              inputType={InputType.TEXT}
-              autoFocus
-              id="name"
-              label="Executive Dept Name"
-              name="name"
-              fullWidth
-              required
-              titleCase={true}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
+      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+        <form action={handleSubmit} noValidate>
+          <Grid container spacing={2}>
+            {
+              fieldArr.map((field, index) => {
+                const fieldKey = field.key as string;
+                return (
+                  <Grid key={fieldKey}
+                    item
+                    xs={12}
+                    sm={12}
+                    md={12}
+                  >
+                    <div key={index}>
+                      {field}
+                    </div>
+                  </Grid>
+                )
+              })
+            }
           </Grid>
-          <Grid
-            item
-            xs={12}
+          <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 1,
+              mt: 2
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
+            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
             <Button
               type="submit"
               variant="contained"
-              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Grid>
-        </Grid>
-      </form>
+          </Box>
+        </form>
 
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Box>
     </>
   );
 }

@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { currencySchemaT, selectKeyValueT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT } from "@/app/models/models";
+import { masterFormPropsWithDataT } from "@/app/models/models";
 import Paper from "@mui/material/Paper";
 import {
   FormControl,
@@ -24,7 +24,7 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function CurrencyForm(props: masterFormPropsT) {
+export default function CurrencyForm(props: masterFormPropsWithDataT<currencySchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -33,7 +33,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
   const [decimalPlaces, setDecimalPlaces] = useState(props.data ? props.data.decimal_places : "2");
   const [symbol, setSymbol] = useState("");
   const [sample, setSample] = useState("");
-  const entityData: currencySchemaT = props.data ? props.data : {};
+  const entityData: currencySchemaT = props.data ? props.data : {} as currencySchemaT;
 
   // if (props.data) {
   //   setCurrencySystem(entityData.currency_system);
@@ -182,143 +182,143 @@ export default function CurrencyForm(props: masterFormPropsT) {
         <form action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="Symbol"
-              label="Currency Symbol"
-              name="symbol"
-              fullWidth
-              required
-              titleCase={true}
-              defaultValue={entityData.symbol}
-              error={formError?.symbol?.error}
-              helperText={formError?.symbol?.msg}
-              onChange={onSymbolChange}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { symbol, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="Symbol"
+                label="Currency Symbol"
+                name="symbol"
+                fullWidth
+                required
+                titleCase={true}
+                defaultValue={entityData.symbol}
+                error={formError?.symbol?.error}
+                helperText={formError?.symbol?.msg}
+                onChange={onSymbolChange}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { symbol, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
-            <InputControl
-              inputType={InputType.TEXT}
-              id="Name"
-              label="Name"
-              name="name"
-              required
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
-              style={{width: "100%"}}
-            />
+              <InputControl
+                inputType={InputType.TEXT}
+                id="Name"
+                label="Name"
+                name="name"
+                required
+                defaultValue={entityData.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
-            <InputControl
-              id="shortForm"
-              label="Currency Short Form"
-              inputType={InputType.TEXT}
-              name="shortForm"
-              style={{width: "100%"}}
-              defaultValue={entityData.shortForm}
-              error={formError?.shortForm?.error}
-              helperText={formError?.shortForm?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { shortForm, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
+              <InputControl
+                id="shortForm"
+                label="Currency Short Form"
+                inputType={InputType.TEXT}
+                name="shortForm"
+                style={{ width: "100%" }}
+                defaultValue={entityData.shortForm}
+                error={formError?.shortForm?.error}
+                helperText={formError?.shortForm?.msg}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { shortForm, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
-            <FormControl
-              fullWidth
-              size="small"
-              sx={{
-                marginTop: "0.9vh",
-              }}
-            >
-              <InputLabel id="demo-simple-select-label">
-                Currency System
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="currency_system"
-                value={currencySystem}
-                label="Currency System"
-                onChange={handleSystemChange}
-              >
-                <MenuItem value="ind">Indian</MenuItem>
-                <MenuItem value="int">International</MenuItem>
-              </Select>
-            </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-            <FormControl
+              <FormControl
+                fullWidth
                 size="small"
+                sx={{
+                  marginTop: "0.9vh",
+                }}
+              >
+                <InputLabel id="demo-simple-select-label">
+                  Currency System
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="currency_system"
+                  value={currencySystem}
+                  label="Currency System"
+                  onChange={handleSystemChange}
+                >
+                  <MenuItem value="ind">Indian</MenuItem>
+                  <MenuItem value="int">International</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <FormControl
+                size="small"
+                sx={{
+                  marginTop: "1.3vh",
+                  width: "100%"
+                }}
+              >
+                <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
+                <Select
+                  labelId="decmal-place-label"
+                  id="decimal-place"
+                  datatype="number"
+                  name="decimal_places"
+                  value={decimalPlaces}
+                  label="Decimal Places"
+                  onChange={handleDecimalChange}
+                >
+                  <MenuItem value={2}>Two Digits</MenuItem>
+                  <MenuItem value={3}>Three Digits</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                id="Sample"
+                inputType={InputType.TEXT}
+                name="Sample"
+                value={sample}
+                disabled
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
               sx={{
-                marginTop: "1.3vh",
-                width: "100%"
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
             >
-              <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
-              <Select
-                labelId="decmal-place-label"
-                id="decimal-place"
-                datatype="number"
-                name="decimal_places"
-                value={decimalPlaces}
-                label="Decimal Places"
-                onChange={handleDecimalChange}
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
               >
-                <MenuItem value={2}>Two Digits</MenuItem>
-                <MenuItem value={3}>Three Digits</MenuItem>
-              </Select>
-            </FormControl>
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={4}>
-             <InputControl
-              id="Sample"
-              inputType={InputType.TEXT}
-              name="Sample"
-              value={sample}
-              disabled
-              style={{width: "100%"}}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Grid>
-        </Grid>
         </form>
         <Snackbar
           open={snackOpen}

@@ -13,25 +13,25 @@ const DeleteComponent = (props: deleteCompT) => {
   async function onDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
       const result = await props.fnDeleteDataByID(modId);
-      
+
       if (!result.status) {
         const issues = result.data;
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         for (const issue of issues) {
           errorState[issue.path[0]] = { msg: issue.message, error: true };
-          if(issue.path[0]==="delete"){
-            errorState["form"]={msg:issue.message, error: true };
+          if (issue.path[0] === "delete") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
         setFormError(errorState);
-      } else{
-          setFormError({});
-          setSnackOpen(true);
+      } else {
+        setFormError({});
+        setSnackOpen(true);
 
-          setTimeout(() => {
-            props.open ? props.setDialogOpen(false) : null;
-            setSnackOpen(false);
-          }, 1000)
+        setTimeout(() => {
+          props.open ? props.setDialogOpen(false) : null;
+          setSnackOpen(false);
+        }, 1000)
       }
     }
   }
@@ -72,13 +72,13 @@ const DeleteComponent = (props: deleteCompT) => {
           justifyContent="flex-end"
           alignItems="flex-end"
           m={1}
-          >
+        >
           <Button
             style={{ paddingRight: "20px" }}
             onClick={() => {
               props.setDialogOpen(false);
             }}
-            >
+          >
             Cancel
           </Button>
           <Button
@@ -86,7 +86,7 @@ const DeleteComponent = (props: deleteCompT) => {
               onDeleteDialog(props.modId);
             }}
             variant="contained"
-            >
+          >
             Delete
           </Button>
         </Box>
@@ -97,7 +97,7 @@ const DeleteComponent = (props: deleteCompT) => {
         onClose={() => setSnackOpen(false)}
         message={"Record Deleted Successfully"}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+      />
     </Box>
   );
 };

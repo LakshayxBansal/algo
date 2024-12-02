@@ -6,19 +6,19 @@ import Box from "@mui/material/Box";
 import { createArea, updateArea } from "../../../controllers/area.controller";
 import Grid from "@mui/material/Grid";
 import { nameMasterData } from "../../../zodschema/zodschema";
-import { masterFormPropsT, areaSchemaT } from "@/app/models/models";
+import { masterFormPropsWithDataT, areaSchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function AreaForm(props: masterFormPropsT) {
+export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: areaSchemaT = props.data ? props.data : {};
+  const entityData: areaSchemaT = props.data ? props.data : {} as areaSchemaT;
   // submit function. Save to DB and set value to the dropdown control
   console.log(entityData);
   const formRef =  useRef<HTMLFormElement>(null);

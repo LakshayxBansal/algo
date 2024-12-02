@@ -216,7 +216,7 @@ export async function getEnquirySubStatusByPage(
 ) {
   let getEnquirySubStatus = {
     status: false,
-    data: {} as mdl.enquirySubStatusMasterT,
+    data: [] as mdl.enquirySubStatusMasterT[],
     count: 0,
     error: {},
   };
@@ -224,7 +224,7 @@ export async function getEnquirySubStatusByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getEnquirySubStatusByPageDb(
+      const dbData = await getEnquirySubStatusByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -236,7 +236,7 @@ export async function getEnquirySubStatusByPage(
       );
       getEnquirySubStatus = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.enquirySubStatusMasterT,
+        data: dbData.map(bigIntToNum) as mdl.enquirySubStatusMasterT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -247,7 +247,7 @@ export async function getEnquirySubStatusByPage(
     getEnquirySubStatus = {
       ...getEnquirySubStatus,
       status: false,
-      data: {} as mdl.enquirySubStatusMasterT,
+      data: [] as mdl.enquirySubStatusMasterT[],
       error: err,
     };
   }

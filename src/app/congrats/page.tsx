@@ -7,6 +7,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+  title : 'Congratulations'
+}
 
 export default function Congrats() {
   return (

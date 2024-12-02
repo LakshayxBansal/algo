@@ -200,7 +200,7 @@ export async function getAreaByPage(
 ) {
   let getArea = {
     status: false,
-    data: {} as mdl.areaSchemaT,
+    data: [] as mdl.areaSchemaT[],
     count: 0,
     error: {},
   };
@@ -208,7 +208,7 @@ export async function getAreaByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getAreaByPageDb(
+      const dbData = await getAreaByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -220,7 +220,7 @@ export async function getAreaByPage(
       );
       getArea = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.areaSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.areaSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -231,7 +231,7 @@ export async function getAreaByPage(
     getArea = {
       ...getArea,
       status: false,
-      data: {} as mdl.areaSchemaT,
+      data: [] as mdl.areaSchemaT[],
       error: err,
     };
   }

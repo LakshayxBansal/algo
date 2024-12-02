@@ -12,7 +12,7 @@ import {
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
-  masterFormPropsWithParentT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -23,14 +23,14 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
 
-export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
+export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<executiveRoleSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: executiveRoleSchemaT = props.data ? props.data : {};
+  const entityData: executiveRoleSchemaT = props.data ? props.data : {} as executiveRoleSchemaT;
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {

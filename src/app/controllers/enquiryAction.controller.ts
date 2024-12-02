@@ -84,7 +84,7 @@ export async function getEnquiryActionByPage(
 ) {
   let getAction = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -92,7 +92,7 @@ export async function getEnquiryActionByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getEnquiryActionByPageDb(
+      const dbData = await getEnquiryActionByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -104,7 +104,7 @@ export async function getEnquiryActionByPage(
       );
       getAction = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -115,7 +115,7 @@ export async function getEnquiryActionByPage(
     getAction = {
       ...getAction,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

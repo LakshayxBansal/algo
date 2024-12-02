@@ -16,7 +16,7 @@ import {
 import {
   optionsDataT,
   executiveGroupSchemaT,
-  masterFormPropsT,
+  masterFormPropsWithDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import { SelectMasterWrapper } from "../../masters/selectMasterWrapper";
@@ -27,13 +27,13 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
 
-export default function ExecutiveGroupForm(props: masterFormPropsT) {
+export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<executiveGroupSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const entityData: executiveGroupSchemaT = props.data ? props.data : {};
+  const entityData: executiveGroupSchemaT = props.data ? props.data : {} as executiveGroupSchemaT;
   // submit function. Save to DB and set value to the dropdown control
   console.log(selectValues);
   const handleSubmit = async (formData: FormData) => {
@@ -60,8 +60,8 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = { msg: issue.message, error: true} ;
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -70,7 +70,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
   };
 
   const updateFormData = (data: any) => {
-    data.parent_id = selectValues.parent ? selectValues.parent.id : entityData.parent_id? entityData.parent_id: 0;
+    data.parent_id = selectValues.parent ? selectValues.parent.id : entityData.parent_id ? entityData.parent_id : 0;
     return data;
   };
 
@@ -137,67 +137,67 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
       <form action={handleSubmit} noValidate>
         <Grid container spacing={1}>
           <Grid item xs={12} sm={6} md={4} lg={4}>
-          <InputControl
-            autoFocus
-            id="name"
-            label="Executive Group Name"
-            inputType={InputType.TEXT}
-            name="name"
-            required
-            titleCase={true}
-            style={{width: "100%"}}
-            defaultValue={entityData.name}
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { name, ...rest } = curr;
-                return rest;
-              });
-            }}
-          />
+            <InputControl
+              autoFocus
+              id="name"
+              label="Executive Group Name"
+              inputType={InputType.TEXT}
+              name="name"
+              required
+              titleCase={true}
+              style={{ width: "100%" }}
+              defaultValue={entityData.name}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { name, ...rest } = curr;
+                  return rest;
+                });
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={4}>
-          <InputControl
-            inputType={InputType.TEXT}
-            id="alias"
-            label="Alias"
-            name="alias"
-            defaultValue={entityData.alias}
-            error={formError?.alias?.error}
-            helperText={formError?.alias?.msg}
-            onKeyDown={() => {
-              setFormError((curr) => {
-                const { alias, ...rest } = curr;
-                return rest;
-              });
-            }}
-            style={{width: "100%"}}
-          />
+            <InputControl
+              inputType={InputType.TEXT}
+              id="alias"
+              label="Alias"
+              name="alias"
+              defaultValue={entityData.alias}
+              error={formError?.alias?.error}
+              helperText={formError?.alias?.msg}
+              onKeyDown={() => {
+                setFormError((curr) => {
+                  const { alias, ...rest } = curr;
+                  return rest;
+                });
+              }}
+              style={{ width: "100%" }}
+            />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={4}>
-          <SelectMasterWrapper
-            name={"parent"}
-            id={"parent"}
-            label={"Parent Executive Group"}
-            defaultValue={
-              {
-                id: entityData.parent_id,
-                name: entityData.parent,
-              } as optionsDataT
-            }
-            onChange={(e, val, s) =>
-              setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
-            }
-            dialogTitle={"Parent Executive Group"}
-            fetchDataFn={getExecutiveGroup}
-            formError={formError?.parentgroup}
-            allowModify={false}
-            allowNewAdd={false}
-            width={350}
-          />
-        </Grid>
-        <Grid
+            <SelectMasterWrapper
+              name={"parent"}
+              id={"parent"}
+              label={"Parent Executive Group"}
+              defaultValue={
+                {
+                  id: entityData.parent_id,
+                  name: entityData.parent,
+                } as optionsDataT
+              }
+              onChange={(e, val, s) =>
+                setSelectValues({ ...selectValues, parent: val ? val : { id: 0, name: "" } })
+              }
+              dialogTitle={"Parent Executive Group"}
+              fetchDataFn={getExecutiveGroup}
+              formError={formError?.parentgroup}
+              allowModify={false}
+              allowNewAdd={false}
+              width={350}
+            />
+          </Grid>
+          <Grid
             item
             xs={12}
             sx={{
@@ -221,12 +221,12 @@ export default function ExecutiveGroupForm(props: masterFormPropsT) {
         </Grid>
       </form>
       <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </>
   );
 }

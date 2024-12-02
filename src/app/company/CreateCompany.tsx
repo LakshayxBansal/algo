@@ -29,7 +29,7 @@ import {
 import { Collapse, IconButton, Grid } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsWithDataT) {
+export default function CreateCompany(props: masterFormPropsWithDataT<companySchemaT>) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -38,7 +38,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [defaultCountry, setdefaultCountry] = useState("");
   const [defaultCountryId, setdefaultCountryId] = useState(0);
-  const entityData: companySchemaT = props.data ? props.data : {};
+  const entityData: companySchemaT = props.data ? props.data : {} as companySchemaT;
 
   useEffect(() => {
     const fetchCountryData = async () => {
@@ -87,7 +87,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
-        if (props.parentData === "addcompany") {
+        if (props?.setDialogOpen === undefined) {
           router.push("/company");
         }
       }, 1000);
@@ -407,9 +407,9 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
               >
                 <Button
                   onClick={() => {
-                    if(props.parentData==="addcompany"){
-                      router.push("/company");
-                    } else {
+                    if (props?.setDialogOpen === undefined) {
+                      router.push("/signin");
+                    }  else {
                       handleCancel();
                     }
                   }}
