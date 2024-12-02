@@ -14,10 +14,10 @@ export async function createEnquiryDB(
   enqData: { headerLedger: enquiryDataSchemaT; product: any }
 ) {
   try {
-    const result = excuteQuery({
+    return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-      "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -38,10 +38,19 @@ export async function createEnquiryDB(
         enqData.headerLedger.enquiry_tran_type,
         enqData.headerLedger.active,
         session.user.userId,
-        enqData.product
+        enqData.product,
+        enqData.headerLedger.c_col1,
+        enqData.headerLedger.c_col2,
+        enqData.headerLedger.c_col3,
+        enqData.headerLedger.c_col4,
+        enqData.headerLedger.c_col5,
+        enqData.headerLedger.c_col6,
+        enqData.headerLedger.c_col7,
+        enqData.headerLedger.c_col8,
+        enqData.headerLedger.c_col9,
+        enqData.headerLedger.c_col10,
       ],
     });
-    return result;
   } catch (e) {
     console.log(e);
   }
@@ -198,9 +207,9 @@ export async function getProductDataAction(session: Session, id: number) {
       query:
         "SELECT i.*, im.name AS product_name, \
       um.name AS unit_name \
- FROM crmapp1.enquiry_product_tran i \
- JOIN crmapp1.unit_master um ON um.id = i.unit_id \
- JOIN crmapp1.product_master im ON im.id = i.product_id \
+ FROM enquiry_product_tran i \
+ JOIN unit_master um ON um.id = i.unit_id \
+ JOIN product_master im ON im.id = i.product_id \
  WHERE i.enquiry_id = ?;",
       values: [id],
     });

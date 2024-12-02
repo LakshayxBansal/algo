@@ -178,7 +178,7 @@ export async function getSupportCategoryByPage(
 ) {
   let getCategory = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -186,7 +186,7 @@ export async function getSupportCategoryByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getSupportCategoryByPageDb(
+      const dbData = await getSupportCategoryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -198,7 +198,7 @@ export async function getSupportCategoryByPage(
       );
       getCategory = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -210,7 +210,7 @@ export async function getSupportCategoryByPage(
     getCategory = {
       ...getCategory,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

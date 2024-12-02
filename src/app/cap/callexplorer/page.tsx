@@ -6,6 +6,12 @@ import { getCallEnquiries } from '@/app/controllers/callExplorer.controller';
 import { logger } from '@/app/utils/logger.utils';
 import { getConfigData } from '@/app/controllers/enquiry.controller';
 
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+  title : 'Call Explorer'
+}
+
 export default async function callExplorer() {
   try {
     const session = await getSession();

@@ -32,7 +32,7 @@ import TuneIcon from "@mui/icons-material/Tune";
 import SearchIcon from "@mui/icons-material/Search";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AddDialog } from "./addDialog";
-import { entitiyCompT } from "@/app/models/models";
+import { entitiyCompT, formMetaDataPropT, loggedInUserDataT, regionalSettingSchemaT, rightSchemaT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import UploadFileForm from "./UploadFileForm";
@@ -41,6 +41,7 @@ import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
+
 const pgSize = 10;
 
 enum dialogMode {
@@ -49,6 +50,8 @@ enum dialogMode {
   Delete,
   FileUpload,
 }
+
+
 
 export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -64,6 +67,12 @@ export default function EntityList(props: entitiyCompT) {
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [metaData, setMetaData] = useState<formMetaDataPropT>({
+    fields: [],
+    rights: {} as rightSchemaT,
+    regionalSettingsConfigData: {} as regionalSettingSchemaT,
+    loggedInUserData: {} as loggedInUserDataT
+  });
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -74,7 +83,6 @@ export default function EntityList(props: entitiyCompT) {
   //for navbar search
   const searchParams = useSearchParams();
   const searchData: string | null = searchParams.get("searchText");
-  // console.log("url",url);
   //for navbar search
 
   useEffect(() => {
@@ -85,13 +93,13 @@ export default function EntityList(props: entitiyCompT) {
         pgSize as number
       );
 
-
-
       const roleId = await getRoleID();
       if (rows.data) {
         setData(rows.data);
         setNRows(rows.count as number);
       }
+
+
       const optionsColumn: GridColDef[] = [
         {
           field: "Icon menu",
@@ -107,6 +115,7 @@ export default function EntityList(props: entitiyCompT) {
                 setDlgMode={setDlgMode}
                 setDialogOpen={setDialogOpen}
                 setModData={setModData}
+                setMetaData={setMetaData}
                 setIds={setIds}
                 modify={dialogMode.Modify}
                 delete={dialogMode.Delete}
@@ -154,7 +163,7 @@ export default function EntityList(props: entitiyCompT) {
       } else {
         setAllColumns(allDfltCols);
       }
-      //for title
+      // for title
       let newUrl: string;
       if (searchParams.size > 0) {
         // newUrl = url+`&pgTitle=${props.title}`
@@ -169,6 +178,7 @@ export default function EntityList(props: entitiyCompT) {
       //for title
     }, 400);
 
+
     if (searchData) {
       fetchData(searchData);
     } else {
@@ -182,7 +192,7 @@ export default function EntityList(props: entitiyCompT) {
     dialogOpen,
     searchData,
     apiRef,
-    props,
+    props
   ]);
 
   const toggleColBtn = () => {
@@ -201,10 +211,25 @@ export default function EntityList(props: entitiyCompT) {
   };
 
   const handleAddBtn = async () => {
-    if (props.link) {
+    if (props?.link)
+    {
       router.push(props.link);
     }
     else {
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        console.log("!12 : ", data);
+        if (data[0]?.length > 0) {
+          console.log("221 : ", data[0][0]);
+          setMetaData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            regionalSettingsConfigData: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
+        }
+        // console.log("dialogmode.ADD",metaData);
+      }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
     }
@@ -228,6 +253,7 @@ export default function EntityList(props: entitiyCompT) {
     setOpen(false);
   };
 
+
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
@@ -241,9 +267,9 @@ export default function EntityList(props: entitiyCompT) {
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => { })
+              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData) : props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => { }, modData)
+              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData, modData) : props.renderForm(setDialogOpen, (arg) => { }, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}
@@ -293,7 +319,7 @@ export default function EntityList(props: entitiyCompT) {
                       backgroundColor: "#f5f5f5",
                     },
                   }}
-                  sx={{ marginLeft: "1.1em" }}
+                  sx={{ marginLeft: '1.1em' }}
                 />
               </Box>
             </Grid>
