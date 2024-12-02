@@ -111,7 +111,7 @@ export default function AddDocsForm(props: any) {
             >
                 <Seperator>
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        Add Document
+                        Upload Document
                         <IconButton onClick={handleCancel}>
                             <CloseIcon />
                         </IconButton>
