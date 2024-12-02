@@ -1,7 +1,7 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT, docDescriptionSchemaT, getContactByPageT } from "../models/models";
+import { contactSchemaT, docDescriptionSchemaT } from "../models/models";
 import {
   createContactDB,
   DeleteContactList,
@@ -21,6 +21,9 @@ import { modifyPhone } from "../utils/phoneUtils";
 import { convertData } from "../utils/validateType.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
+import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
+import { CONTACT_OBJECT_ID } from "../utils/consts.utils";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -243,17 +246,44 @@ export async function getContactById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
-      if(contactDetails.length>0){
-        const objectDetails = await getObjectByName("Contact");
-        const docData = await getDocs(id,objectDetails[0].object_id);
-      if (contactDetails.length > 0 && docData.length > 0) {
-        contactDetails[0].docData = docData;
-      } else {
-        contactDetails[0].docData = [];
+      const rights={};
+      const config_data=await getRegionalSettings();
+      const desc = await getScreenDescription(CONTACT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
       }
-      return contactDetails;
+      if(id){
+        const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
+        if(contactDetails?.length>0){
+          const objectDetails = await getObjectByName("Contact");
+          const docData = await getDocs(id,objectDetails[0].object_id);
+        if (contactDetails.length > 0 && docData.length > 0) {
+          contactDetails[0].docData = docData;
+        } else {
+          contactDetails[0].docData = [];
+        }
       }
+      const result = [
+        desc,
+        contactDetails[0],
+        rights,
+        config_data,
+        loggedInUserData
+      ]
+        return[
+          result
+        ]
+      }
+      const result=[
+        desc,
+        rights,
+        config_data,
+        loggedInUserData
+      ]
+      return[
+        result
+      ]
     }
   } catch (error) {
     throw error;
@@ -267,7 +297,7 @@ export async function getContactByPage(
 ) {
   let getContactByPage = {
     status: false,
-    data: {} as getContactByPageT,
+    data: [] as contactSchemaT[],
     count: 0,
     error: {},
   };
@@ -275,7 +305,7 @@ export async function getContactByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getContactByPageDb(
+      const dbData = await getContactByPageDb(
         // appSession.dbSession?.dbInfo.dbName as string,
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -288,7 +318,7 @@ export async function getContactByPage(
       );
       getContactByPage = {
         status: true,
-        data: conts.map(bigIntToNum) as getContactByPageT,
+        data: dbData.map(bigIntToNum) as contactSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -299,7 +329,7 @@ export async function getContactByPage(
     getContactByPage = {
       ...getContactByPage,
       status: false,
-      data: {} as getContactByPageT,
+      data: [] as contactSchemaT[],
       error: err,
     };
   }

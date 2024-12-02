@@ -28,7 +28,6 @@ export async function getExecutiveRole(
       return getExecutiveRoleList(
         session.user.dbInfo.dbName,
         searchString,
-        // department
       );
     }
   } catch (error) {
@@ -206,7 +205,7 @@ export async function getExecutiveRoleByPage(
 ) {
   let getExecutiveRole = {
     status: false,
-    data: {} as mdl.executiveRoleSchemaT,
+    data: [] as mdl.executiveRoleSchemaT[],
     count: 0,
     error: {},
   };
@@ -214,7 +213,7 @@ export async function getExecutiveRoleByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveRoleByPageDb(
+      const dbData = await getExecutiveRoleByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -226,7 +225,7 @@ export async function getExecutiveRoleByPage(
       );
       getExecutiveRole = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveRoleSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveRoleSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -238,7 +237,7 @@ export async function getExecutiveRoleByPage(
     getExecutiveRole = {
       ...getExecutiveRole,
       status: false,
-      data: {} as mdl.executiveRoleSchemaT,
+      data: [] as mdl.executiveRoleSchemaT[],
       error: err,
     };
   }

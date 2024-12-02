@@ -139,7 +139,7 @@ export async function getEnquirySourceByPage(
 ) {
   let getEnquirySource = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -147,7 +147,7 @@ export async function getEnquirySourceByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getEnquirySourceByPageDb(
+      const dbData = await getEnquirySourceByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -159,7 +159,7 @@ export async function getEnquirySourceByPage(
       );
       getEnquirySource = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -171,7 +171,7 @@ export async function getEnquirySourceByPage(
     getEnquirySource = {
       ...getEnquirySource,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

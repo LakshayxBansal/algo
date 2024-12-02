@@ -62,7 +62,7 @@ const FieldConfigurator = () => {
     const [autoScrolling, setAutoScrolling] = useState(false);
     const scrollIntervalRef = useRef<number | null>(null);
     const [formError, setFormError] = useState<Record<string, { label_msg: string }>>({});
-    const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
+    // const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
 
 
     const dateFormat = "DD.MM.YYYY";
@@ -71,13 +71,13 @@ const FieldConfigurator = () => {
         Form: [
             { label: 'Enquiry', value: 26 },
             { label: 'Contact', value: 5 },
-            { label: 'Organization', value: 19 },
-            { label: 'Item', value: 16 },
+            { label: 'Organisation', value: 19 },
             { label: 'Executive', value: 11 },
-            { label: 'Source', value: 2 },
-            { label: 'Executive Group', value: 12 },
-            { label: 'Contact Group', value: 6 },
             { label: 'Executive Department', value: 10 }
+            // { label: 'Item', value: 16 },
+            // { label: 'Source', value: 2 },
+            // { label: 'Executive Group', value: 12 },
+            // { label: 'Contact Group', value: 6 },
         ],
         Mode: [
             { label: 'Create', value: 1 },
@@ -95,7 +95,7 @@ const FieldConfigurator = () => {
 
     useEffect(() => {
         async function getFieldData() {
-            const result = await getScreenDescription(Number(selectedFormValue), 1);
+            const result = await getScreenDescription(Number(selectedFormValue));
             setFields(result);
         }
         getFieldData();
@@ -129,8 +129,6 @@ const FieldConfigurator = () => {
     };
 
     const handleChange = (index: number, field: keyof FieldItem, value: any) => {
-        console.log("format", value);
-
         const updatedFields: any = [...fields];
         updatedFields[index][field] = value;
         setFields(updatedFields);
@@ -237,7 +235,6 @@ const FieldConfigurator = () => {
 
     const handleSubmit = async () => {
         // await createCustomFields(Number(selectedFormValue), 1, fields);
-        console.log("FIELDS", fields);
         // fields.map((Item) => {
         //     if (Item.column_label == "") {
         //         const errorState = { ...formError };
@@ -248,42 +245,35 @@ const FieldConfigurator = () => {
         //     }
         // })
         const errors: Record<string, { label_msg: string }> = {};
-        const error: Record<string, Record<string, { label: string; format: string }>> = {};
+        // const error: Record<string, { label_msg: string }> = {};
 
 
         // Validate each field to ensure labels are not empty
         fields.forEach((item) => {
             if (item.column_label.trim() === "") {
-                // error[item.column_name_id].fieldError.label = "Label cannot be empty";
                 errors[item.column_name_id] = { label_msg: "Label cannot be empty" };
             }
         });
 
-        if (Object.keys(error).length > 0) {
-            setFieldHelperText(error);
-            console.log("Validation errors:", error);
-            return; // Prevent form submission if there are errors
-        }
-
         if (Object.keys(errors).length > 0) {
             setFormError(errors);
-            console.log("Validation errors:", errors);
+            // console.log("Validation errors:", errors);
             return; // Prevent form submission if there are errors
         }
 
         // Proceed with form submission if there are no errors
         try {
-            const result = await createCustomFields(Number(selectedFormValue), 1, fields);
+            const result = await createCustomFields(Number(selectedFormValue), fields);
             if (result) {
                 console.log("FIELDS", fields);
                 alert("Field configuration saved!");
             }
             else {
-                console.error("Error saving configuration:");
+                // console.error("Error saving configuration:");
                 alert("Failed to save configuration. Please try again.");
             }
         } catch (error) {
-            console.error("Error saving configuration:", error);
+            // console.error("Error saving configuration:", error);
             alert("Failed to save configuration. Please try again.");
         }
 
@@ -396,7 +386,7 @@ const FieldConfigurator = () => {
                                         <ArrowDownwardIcon fontSize="small" />
                                     </IconButton>
                                 </Stack>
-                                {item.is_default_column == 0 ?
+                                {item.is_default_column == 1 ?
                                     <Box>
                                         <Typography variant="h5" >
                                             *
@@ -425,7 +415,6 @@ const FieldConfigurator = () => {
                                 name="label"
                                 error={!!formError[item.column_name_id]} // Show error state if there's an error       
                                 helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
-                                // error={!!setFieldHelperText[item.column_name_id].fieldError} // Show error state if there's an error       
                                 defaultValue={item.column_label}
                                 onChange={(e: any) => handleChange(index, "column_label", e.target.value)}
                             />
@@ -449,23 +438,6 @@ const FieldConfigurator = () => {
                             )}
 
                             {item.is_default_column !== 1 && (
-                                // <TextField
-                                //     label={item.column_type_id !== 4 ? "Format" : dateFormat}
-                                //     value={item.column_format || ""}
-                                //     onChange={(e) => handleChange(index, "column_format", e.target.value)}
-                                //     size="small"
-                                //     sx={{ width: 300 }}
-                                //     disabled={
-                                //         item.column_type_id !== 2 && // Text
-                                //         item.column_type_id !== 5 && // Numeric
-                                //         item.column_type_id !== 6    // Date
-                                //     }
-                                //     placeholder={item.column_type_id === 6
-                                //         ? "Number of decimal places"
-                                //         : item.column_type_id === 5
-                                //             ? "Enter comma separated list items"
-                                //             : item.column_type_id === 2 ? "Enter comma seperated options" : ""}
-                                // />
                                 <InputControl
                                     inputType={InputType.TEXT}
                                     id="format"
@@ -499,7 +471,8 @@ const FieldConfigurator = () => {
                                 label="Mandatory"
                             />
 
-                            <FormControlLabel
+                            {item.is_default_column ? (<FormControlLabel
+                                disabled={item.is_default_mandatory === 1 || item.is_mandatory === 1}
                                 control={
                                     <Checkbox
                                         checked={item.is_disabled === 1}
@@ -507,7 +480,7 @@ const FieldConfigurator = () => {
                                     />
                                 }
                                 label="Disabled"
-                            />
+                            />) : (<></>) }
 
                             {item.is_default_column !== 1 && <Box sx={{ marginLeft: "auto" }}>
                                 <IconButton onClick={() => {

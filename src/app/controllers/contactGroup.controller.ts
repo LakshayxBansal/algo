@@ -207,7 +207,7 @@ export async function getContactGroupByPage(
 ) {
   let getContactGroup = {
     status: false,
-    data: {} as mdl.contactGroupSchemaT,
+    data: [] as mdl.contactGroupSchemaT[],
     count: 0,
     error: {},
   };
@@ -216,7 +216,7 @@ export async function getContactGroupByPage(
 
     if (appSession) {
       
-      const conts = await getContactGroupByPageDb(
+      const dbData = await getContactGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -229,7 +229,7 @@ export async function getContactGroupByPage(
       );
       getContactGroup = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.contactGroupSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.contactGroupSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -240,7 +240,7 @@ export async function getContactGroupByPage(
     getContactGroup = {
       ...getContactGroup,
       status: false,
-      data: {} as mdl.contactGroupSchemaT,
+      data: [] as mdl.contactGroupSchemaT[],
       error: err,
     };
   }

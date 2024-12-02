@@ -9,14 +9,15 @@ import {
   getEnquiryById,
 } from "@/app/controllers/enquiry.controller";
 import { getRightsData } from "@/app/controllers/rights.controller";
-// import { getScreenDescription } from "@/app/controllers/object.controller";
+import { getScreenDescription } from "@/app/controllers/object.controller";
+import { ENQUIRY_ID } from "@/app/utils/consts.utils";
 
 interface SearchParams {
   id?: string;
 }
 
 interface MasterData {
-  // fields: Array<any>;
+  fields: Array<Record<string, any>>;
   enqData: Record<string, any>;
   // rights: Record<string, any>;
   config_data: Record<string, any>;
@@ -39,14 +40,14 @@ export default async function MyForm({
       return null; // Ensures no further code executes
     }
 
-    // const fields = await getScreenDescription(26, 1);
+    const fields = await getScreenDescription(ENQUIRY_ID);
     const enqData = enquiryId ? await getEnquiryById(enquiryId) : undefined;
     // const rights = await getRightsData();
     const config_data = await getConfigData();
     const loggedInUserData = await getLoggedInUserDetails();
 
     if (
-      /*!rights ||*/
+      !fields ||
       !config_data ||
       !loggedInUserData ||
       !Array.isArray(config_data) ||
@@ -58,10 +59,11 @@ export default async function MyForm({
     }
 
     const masterData: MasterData = {
+      fields: fields ?? [],
       enqData: enqData ?? {},
       /*rights: rights ?? {},*/
-      config_data: JSON.parse(config_data[0].config)?? {},
-      regional_setting: JSON.parse(config_data[1].config)?? {},
+      config_data: JSON.parse(config_data[0].config) ?? {},
+      regional_setting: JSON.parse(config_data[1].config) ?? {},
       loggedInUserData: loggedInUserData ?? {},
     };
 

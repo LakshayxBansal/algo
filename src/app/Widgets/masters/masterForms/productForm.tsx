@@ -8,7 +8,7 @@ import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import {
   productSchemaT,
-  masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -25,16 +25,16 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateProduct } from "@/app/controllers/product.controller";
 
-export default function ProductForm(props: masterFormPropsT) {
+export default function ProductForm(props: masterFormPropsWithDataT<productSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: productSchemaT = props.data ? props.data : {};
+  const entityData: productSchemaT = props.data ? props.data : {} as productSchemaT;
 
-  entityData.group = props.data?.group_id;
-  entityData.unit = props.data?.unit_id;
+  entityData.group = props.data?.group;
+  entityData.unit = props.data?.unit;
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
@@ -81,13 +81,13 @@ export default function ProductForm(props: masterFormPropsT) {
     data.group = selectValues.productGroup
       ? selectValues.productGroup.id
       : entityData.group
-      ? entityData.group
-      : 0;
+        ? entityData.group
+        : 0;
     data.unit = selectValues.unit
       ? selectValues.unit.id
       : entityData.unit
-      ? entityData.unit
-      : 0;
+        ? entityData.unit
+        : 0;
     return data;
   };
 

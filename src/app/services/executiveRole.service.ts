@@ -22,8 +22,7 @@ export async function getAllRolesDB(
 
 export async function getExecutiveRoleList(
   crmDb: string,
-  searchString: string,
-  // department?: number
+  searchString: string
 ) {
   try {
     let query = "select id as id, name as name from executive_role_master";

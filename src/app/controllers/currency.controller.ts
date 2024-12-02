@@ -203,7 +203,7 @@ export async function getCurrencyByPage(
 ) {
   let getCurrency = {
     status: false,
-    data: {} as mdl.currencySchemaT,
+    data: [] as mdl.currencySchemaT[],
     count: 0,
     error: {},
   };
@@ -211,7 +211,7 @@ export async function getCurrencyByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getCurrencyByPageDb(
+      const dbData = await getCurrencyByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -224,7 +224,7 @@ export async function getCurrencyByPage(
       );
       getCurrency = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.currencySchemaT,
+        data: dbData.map(bigIntToNum) as mdl.currencySchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -235,7 +235,7 @@ export async function getCurrencyByPage(
     getCurrency = {
       ...getCurrency,
       status: false,
-      data: {} as mdl.currencySchemaT,
+      data: [] as mdl.currencySchemaT[],
       error: err,
     };
   }

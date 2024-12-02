@@ -20,39 +20,39 @@ const columns: GridColDef[] = [
     editable: true,
   },
   {
-    field:"category",
-    headerName:"Category",
-    editable:true
+    field: "category",
+    headerName: "Category",
+    editable: true
   },
   {
     field: "contact",
     headerName: "Contact",
     editable: true,
   }
-  ,{
-    field:"status",
-    headerName:"Status",
-    editable:true
+  , {
+    field: "status",
+    headerName: "Status",
+    editable: true
   }
   ,
   {
-    field:"sub_status",
-    headerName:"Sub Status",
-    editable:true
-  },{
-    field : "received_by",
-    headerName:"Received By",
-    editable:true
+    field: "sub_status",
+    headerName: "Sub Status",
+    editable: true
+  }, {
+    field: "received_by",
+    headerName: "Received By",
+    editable: true
   },
   {
     field: "action_taken",
     headerName: "Action Taken",
     editable: true,
   }
-  ,{
-    field : "next_action",
-    headerName:" Next Action ",
-    editable : true
+  , {
+    field: "next_action",
+    headerName: " Next Action ",
+    editable: true
   }
 ];
 
@@ -77,7 +77,7 @@ export default function Action() {
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
-        height = "60vh"
+        height="60vh"
         link="/cap/support"
       ></EntityList>
     </>

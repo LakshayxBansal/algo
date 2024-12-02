@@ -206,7 +206,7 @@ export async function getExecutiveGroupByPage(
 ) {
   let getExecutiveGroup = {
     status: false,
-    data: {} as mdl.executiveGroupSchemaT,
+    data: [] as mdl.executiveGroupSchemaT[],
     count: 0,
     error: {},
   };
@@ -214,7 +214,7 @@ export async function getExecutiveGroupByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveGroupByPageDb(
+      const dbData = await getExecutiveGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -226,7 +226,7 @@ export async function getExecutiveGroupByPage(
       );
       getExecutiveGroup = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveGroupSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveGroupSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -239,7 +239,7 @@ export async function getExecutiveGroupByPage(
     getExecutiveGroup = {
       ...getExecutiveGroup,
       status: false,
-      data: {} as mdl.executiveGroupSchemaT,
+      data: [] as mdl.executiveGroupSchemaT[],
       error: err,
     };
   }
