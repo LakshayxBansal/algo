@@ -26,7 +26,7 @@ export async function getCallEnquiriesDb(
                 left join enquiry_status_master esm on el.status_id=esm.id\
                 left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
                 left join enquiry_action_master eam on el.action_taken_id=eam.id\
-                left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
+                left join enquiry_action_master eaxm on el.next_action_id=eaxm.id\
                 left join area_master am on am.id=cm.area_id\
                 left join executive_master em on em.id=el.allocated_to\
                 where el.id = (SELECT MAX(lt.id) from enquiry_ledger_tran lt\
@@ -38,6 +38,18 @@ export async function getCallEnquiriesDb(
     if (filterValueState.callCategory) {
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`eh.enq_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`eam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -174,7 +186,7 @@ export async function getAllCallEnquiriesDb(
                 left join enquiry_status_master esm on el.status_id=esm.id\
                 left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
                 left join enquiry_action_master eam on el.action_taken_id=eam.id\
-                left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
+                left join enquiry_action_master eaxm on el.next_action_id=eaxm.id\
                 left join area_master am on am.id=cm.area_id\
                 left join executive_master em on em.id=el.allocated_to\
                 where el.id = (SELECT MAX(lt.id) from enquiry_ledger_tran lt\
@@ -186,6 +198,18 @@ export async function getAllCallEnquiriesDb(
     if (filterValueState.callCategory) {
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`eh.enq_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`eam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -297,7 +321,7 @@ export async function getCallEnquiriesDetailsDb(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate,el.status_id,el.closure_remark,el.suggested_action_remark, etm.name as tranType, esm.name as status\
+        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate,el.status_id,el.closure_remark,el.suggested_action_remark, etm.name as tranType, esm.name as status,el.action_taken_remark\
     from enquiry_ledger_tran el\
     left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
     left join enquiry_action_master eam on el.action_taken_id=eam.id\
@@ -345,6 +369,18 @@ export async function getCallEnquiriesCountDb(
     if (filterValueState.callCategory) {
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`eh.enq_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`eam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -545,6 +581,18 @@ WHERE tl.id = ( \
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
+    if (filterValueState.description) {
+      whereConditions.push(`th.tkt_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`tam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
+    }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
       values.push(filterValueState.area.name);
@@ -699,6 +747,18 @@ WHERE tl.id = ( \
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
+    if (filterValueState.description) {
+      whereConditions.push(`th.tkt_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`tam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
+    }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
       values.push(filterValueState.area.name);
@@ -819,6 +879,18 @@ export async function getCallSupportTicketsCountDb(
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
+    if (filterValueState.description) {
+      whereConditions.push(`th.tkt_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`tam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
+    }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
       values.push(filterValueState.area.name);
@@ -926,6 +998,7 @@ export async function getCallSupportDetailsDb(crmDb: string, id: number) {
           tl.closure_remark, \
           tl.suggested_action_remark ,\
           tsm.name AS status, \
+          tl.action_taken_remark, \
           ttm.name AS tranType \
         FROM ticket_ledger_tran tl \
         LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \

@@ -218,3 +218,24 @@ export async function getProductDataAction(session: Session, id: number) {
     console.log(error);
   }
 }
+
+
+export async function getEnquiryDescriptionDb(crmDb: string, searchString: string) {
+  try {
+    let query = "select id as id, enq_number as name from enquiry_header_tran";
+    let values: any[] = [];
+    if (searchString !== "") {
+      query = query + " where enq_number like '%" + searchString + "%'";
+      values = [];
+    }
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+    return result;
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
