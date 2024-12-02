@@ -7,6 +7,11 @@ import { getSupportDataById } from "@/app/controllers/supportTicket.controller";
 import { decrypt } from "@/app/utils/encrypt.utils";
 import { getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : ''
+}
 
 interface searchParamsProps {
   searchParams: { [key: string]: string | string[] | undefined };

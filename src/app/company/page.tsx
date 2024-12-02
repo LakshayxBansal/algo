@@ -15,6 +15,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
 import SnackModal from "../utils/SnackModalUtils";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'Manage Company'
+}
 
 export default async function Companies() {
   try {

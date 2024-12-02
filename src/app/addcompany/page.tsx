@@ -3,6 +3,11 @@ import { redirect } from 'next/navigation';
 import { logger } from '@/app/utils/logger.utils';
 import { Box } from "@mui/material";
 import CreateCompany from "../company/CreateCompany";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+    title : 'Manage Company'
+}
 
 export default async function AddCompany() {
     try {

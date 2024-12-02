@@ -4,6 +4,11 @@ import { redirect } from 'next/navigation';
 import AutoGrid from './AutoGrid';
 import { getCallEnquiries } from '@/app/controllers/callExplorer.controller';
 import { logger } from '@/app/utils/logger.utils';
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+  title : 'Call Explorer'
+}
 
 export default async function callExplorer() {
   try {
