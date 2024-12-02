@@ -11,6 +11,11 @@ import UserList from "./UserList";
 import { getSession } from "../../../services/session.service";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'Manage User'
+}
 
 export default async function AddUser() {
   const session = await getSession();
