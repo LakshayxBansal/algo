@@ -75,7 +75,7 @@ export async function getSupportActionByPage(
 ) {
   let getAction = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -83,7 +83,7 @@ export async function getSupportActionByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getSupportActionByPageDb(
+      const dbData = await getSupportActionByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -95,7 +95,7 @@ export async function getSupportActionByPage(
       );
       getAction = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -106,7 +106,7 @@ export async function getSupportActionByPage(
     getAction = {
       ...getAction,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

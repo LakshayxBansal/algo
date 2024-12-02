@@ -39,10 +39,11 @@ export default function executive() {
     <>
       <EntityList
         title="Executive List Master"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            metaData={metaData}
             data={data}
           />
         )}

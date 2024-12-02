@@ -203,7 +203,7 @@ export async function getProductGroupByPage(
 ) {
   let getProductGroup = {
     status: false,
-    data: {} as mdl.productGroupSchemaT,
+    data: [] as mdl.productGroupSchemaT[],
     count: 0,
     error: {},
   };
@@ -211,7 +211,7 @@ export async function getProductGroupByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getProductGroupByPageDb(
+      const dbData = await getProductGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -224,7 +224,7 @@ export async function getProductGroupByPage(
       );
       getProductGroup = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.productGroupSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.productGroupSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -235,7 +235,7 @@ export async function getProductGroupByPage(
     getProductGroup = {
       ...getProductGroup,
       status: false,
-      data: {} as mdl.productGroupSchemaT,
+      data: [] as mdl.productGroupSchemaT[],
       error: err,
     };
   }

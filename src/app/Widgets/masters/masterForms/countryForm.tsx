@@ -8,18 +8,18 @@ import {
 } from "@/app/controllers/masters.controller";
 import Grid from "@mui/material/Grid";
 import { nameMasterData } from "@/app/zodschema/zodschema";
-import { masterFormPropsT, countrySchemaT } from "@/app/models/models";
+import { masterFormPropsWithDataT, countrySchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function CountryForm(props: masterFormPropsT) {
+export default function CountryForm(props: masterFormPropsWithDataT<countrySchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: countrySchemaT = props.data ? props.data : {};
+  const entityData: countrySchemaT = props.data ? props.data : {} as countrySchemaT;
 
   const handleSubmit = async (formData: FormData) => {
     const data = {
@@ -132,7 +132,7 @@ export default function CountryForm(props: masterFormPropsT) {
                   return rest;
                 });
               }}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -150,7 +150,7 @@ export default function CountryForm(props: masterFormPropsT) {
                   return rest;
                 });
               }}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
             />
           </Grid>
           <Grid

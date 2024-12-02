@@ -19,13 +19,13 @@ import {
   masterFormPropsWithDataT,
 } from "@/app/models/models";
 
-export default function SubStatusForm(props: masterFormPropsWithDataT) {
+export default function SubStatusForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
-  const statusName = props.parentData === "1" ? "Open" : "Closed";
+  const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
+  const statusName = props.parentData === 1 ? "Open" : "Closed";
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -76,7 +76,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     } else {
@@ -131,7 +131,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {(props.data ? "Update " : "Add ") +
               "Sub-Status for " +
-              (props.parentData === '1' ? "Open" : "Closed")}{" "}
+              (props.parentData === 1 ? "Open" : "Closed")}{" "}
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -160,48 +160,48 @@ export default function SubStatusForm(props: masterFormPropsWithDataT) {
         <form action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={6} lg={6}>
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="name"
-              label="Sub-Status Name"
-              name="name"
-              required
-              fullWidth
-              titleCase={true}
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }} 
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="name"
+                label="Sub-Status Name"
+                name="name"
+                required
+                fullWidth
+                titleCase={true}
+                defaultValue={entityData.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
         </form>
         <Snackbar
           open={snackOpen}

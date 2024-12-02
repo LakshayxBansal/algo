@@ -28,14 +28,14 @@ import {
 import { Collapse, IconButton } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsWithDataT) {
+export default function CreateCompany(props: masterFormPropsWithDataT<companySchemaT>) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const entityData: companySchemaT = props.data ? props.data : {};
+  const entityData: companySchemaT = props.data ? props.data : {} as companySchemaT;
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -53,7 +53,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
-        if(props.parentData==="addcompany"){
+        if (props?.setDialogOpen === undefined) {
           router.push("/company");
         }
       }, 1000);
@@ -352,7 +352,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
           >
             <Button
               onClick={() => {
-                if (props.parentData === "addcompany") {
+                if (props?.setDialogOpen === undefined) {
                   router.push("/signin");
                 } else {
                   handleCancel();

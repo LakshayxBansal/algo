@@ -6,7 +6,7 @@ import { createState, updateState } from "@/app/controllers/masters.controller";
 import Grid from "@mui/material/Grid";
 import {
   masterFormPropsT,
-  masterFormPropsWithParentT,
+  masterFormPropsWithDataT,
   stateSchemaT,
 } from "@/app/models/models";
 import { nameMasterData } from "@/app/zodschema/zodschema";
@@ -15,12 +15,12 @@ import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function StateForm(props: masterFormPropsWithParentT) {
+export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: stateSchemaT = props.data ? props.data : {};
+  const entityData: stateSchemaT = props.data ? props.data : {} as stateSchemaT;
   const parentData: any = props.parentData ? props.parentData : null;
 
   const handleSubmit = async (formData: FormData) => {
@@ -49,7 +49,7 @@ export default function StateForm(props: masterFormPropsWithParentT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
+          if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
         }
@@ -121,32 +121,32 @@ export default function StateForm(props: masterFormPropsWithParentT) {
       <form action={handleSubmit}>
         <Grid container>
           <Grid item xs={12} sm={12} md={6} lg={6}>
-          <InputControl
-            autoFocus
-            id="name"
-            label="State Name"
-            titleCase={true}
-            inputType={InputType.TEXT}
-            defaultValue={entityData.name}
-            name="name"
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            style={{width: "100%"}}
-          />
+            <InputControl
+              autoFocus
+              id="name"
+              label="State Name"
+              titleCase={true}
+              inputType={InputType.TEXT}
+              defaultValue={entityData.name}
+              name="name"
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              style={{ width: "100%" }}
+            />
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={6}>
-          <InputControl
-            id="alias"
-            label="Alias"
-            defaultValue={entityData.alias}
-            inputType={InputType.TEXT}
-            name="alias"
-            error={formError?.alias?.error}
-            helperText={formError?.alias?.msg}
-            style={{width: "100%"}}
-          />
-        </Grid>
-        <Grid
+            <InputControl
+              id="alias"
+              label="Alias"
+              defaultValue={entityData.alias}
+              inputType={InputType.TEXT}
+              name="alias"
+              error={formError?.alias?.error}
+              helperText={formError?.alias?.msg}
+              style={{ width: "100%" }}
+            />
+          </Grid>
+          <Grid
             item
             xs={12}
             sx={{
@@ -170,12 +170,12 @@ export default function StateForm(props: masterFormPropsWithParentT) {
         </Grid>
       </form>
       <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </>
   );
 }

@@ -10,17 +10,17 @@ import {
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
+import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function ActionForm(props: masterFormPropsT) {
+export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {};
+  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
 
   const handleSubmit = async (formData: FormData) => {
     // const data = { name: formData.get("name") as string };
@@ -147,12 +147,13 @@ export default function ActionForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="actionForm">
-        <form action={handleSubmit}>
+        <form action={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               id="name"
+              required
               label="Action Name"
               inputType={InputType.TEXT}
               name="name"

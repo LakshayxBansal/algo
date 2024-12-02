@@ -10,17 +10,17 @@ import {
 import { nameMasterDataT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT } from "@/app/models/models";
+import { masterFormPropsWithDataT } from "@/app/models/models";
 import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function DepartmentForm(props: masterFormPropsT) {
+export default function DepartmentForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {};
+  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -49,8 +49,8 @@ export default function DepartmentForm(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
-        if(issue.path[0]==="refresh"){
-          errorState["form"]={msg:issue.message, error: true };
+        if (issue.path[0] === "refresh") {
+          errorState["form"] = { msg: issue.message, error: true };
         }
       }
       setFormError(errorState);
@@ -114,50 +114,50 @@ export default function DepartmentForm(props: masterFormPropsT) {
       </Collapse>
       <Box id="departmentForm">
         <form action={handleSubmit} noValidate>
-         <Grid container>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="name"
-              label="Department Name"
-              name="name"
-              fullWidth
-              required
-              titleCase={true}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="name"
+                label="Department Name"
+                name="name"
+                fullWidth
+                required
+                titleCase={true}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                defaultValue={entityData.name}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
         </form>
         <Snackbar
           open={snackOpen}
