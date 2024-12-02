@@ -1107,16 +1107,16 @@ export const customFieldsMasterSchema = z.object ({
 })
 
 export const rightSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  objectName: z.string(),
+  id: z.number().optional(),
+  name: z.string().optional(),
+  objectName: z.string().optional(),
   objectId: z.number(),
-  category: z.string(),
-  categoryId: z.number(),
+  category: z.string().optional(),
+  categoryId: z.number().optional(),
   roleId: z.number(),
-  roleName: z.string(),
+  roleName: z.string().optional(),
   deptId: z.number(),
-  deptName: z.string(),
+  deptName: z.string().optional(),
   createRight: z.boolean(),
   readRight: z.boolean(),
   updateRight: z.boolean(),
