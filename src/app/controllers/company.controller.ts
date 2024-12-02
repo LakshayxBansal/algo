@@ -279,7 +279,10 @@ export async function getCompanies(
       );
       for(const company of dbData){
         const companyRoles = await getAllRolesDB(company.dbName);
-        const role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
+        let role = "none";
+        if(company.roleId && companyRoles.length>0){
+          role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
+        }
         company.role = role;
       }
       
