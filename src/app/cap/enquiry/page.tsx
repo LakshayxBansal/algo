@@ -11,6 +11,11 @@ import {
 import { getRightsData } from "@/app/controllers/rights.controller";
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { ENQUIRY_ID } from "@/app/utils/consts.utils";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'Add Enquiry'
+}
 
 interface SearchParams {
   id?: string;
@@ -24,6 +29,8 @@ interface MasterData {
   regional_setting: Record<string, any>;
   loggedInUserData: Record<string, any>;
 }
+
+
 
 export default async function MyForm({
   searchParams,

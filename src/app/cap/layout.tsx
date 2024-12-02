@@ -5,6 +5,11 @@ import { ThemeProvider } from "@mui/material/styles";
 import Footer from './navbar/Footer';
 import SecondNavbar from './navbar/SecondNavbar';
 import { useState } from 'react';
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+  title : 'Dashboard'
+}
 
 export default function CapLayout({children} : {children?: React.ReactNode}) {
 
