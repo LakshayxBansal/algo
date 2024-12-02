@@ -298,7 +298,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
                     entityData.state = "";
                   }}
                   // width={352}
-                  width={{ xs: "100%", sm: 290, md: 290 }}
+                  // width={{ xs: "100%", sm: 290, md: 290 }}
                   fetchDataFn={getCountriesMaster}
                   diaglogVal={
                     entityData.country
@@ -327,7 +327,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
                   // width="stretch"
                   // width={275}
                   // style={{ width: '100%' }}
-                  width={{ xs: "100%", sm: 290, md: 290 }}
+                  // width={{ xs: "100%", sm: 290, md: 290 }}
                   onChange={(e, val, s) => {
                     setSelectValues({ ...selectValues, state: val });
                     entityData.state_id = undefined;
@@ -407,8 +407,8 @@ export default function CreateCompany(props: masterFormPropsWithDataT) {
               >
                 <Button
                   onClick={() => {
-                    if (props.parentData.route === "addcompany") {
-                      router.push("/signin");
+                    if(props.parentData==="addcompany"){
+                      router.push("/company");
                     } else {
                       handleCancel();
                     }

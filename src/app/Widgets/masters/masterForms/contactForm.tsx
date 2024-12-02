@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -49,6 +49,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
+import { usePathname } from "next/navigation";
 
 export default function ContactForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
@@ -70,6 +71,10 @@ export default function ContactForm(props: masterFormPropsT) {
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
   const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
+  const formRef = useRef<HTMLFormElement>(null); // const [flag, setFlag ]= useState(true);
+
+  const pathName = usePathname();
+  console.log("PATHNAME: ", pathName);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -132,9 +137,24 @@ export default function ContactForm(props: masterFormPropsT) {
       };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/contactList") {
+        // setTimeout(() => {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+        // for (const [key, value] of formData.entries()) {
+        //   setFormData
+        // }
+        // formRef.current=
+        // setFlag(prev=>!prev);
+        // delete formData;
+        // props.setDialogValue ? props.setDialogValue({id: 0, name: ""})
+        // }, 1000);
+      } else {
+        if (formRef.current) {
+          formRef.current.reset();
+        }
+      }
       setFormError({});
     } else {
       const issues = result.data;
@@ -246,10 +266,10 @@ export default function ContactForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="contactForm">
-        <form action={handleSubmit} noValidate>
+        <form action={handleSubmit} ref={formRef} noValidate>
           <Grid container spacing={1}>
-          <Grid item xs={12} sm={6} md={4} lg={4}>
-          <InputControl
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
                 inputType={InputType.TEXT}
                 autoFocus
                 id="name"
@@ -518,8 +538,9 @@ export default function ContactForm(props: masterFormPropsT) {
                 helperText={formError?.whatsapp?.msg}
                 defaultValue={whatsappFn}
                 key={whatsappFn}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value;
+                // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(value: string) => {
+                  // const value = e.target.value;
                   setWhatsappFn(value);
                   setFormError((curr) => {
                     const { whatsapp, ...rest } = curr;
