@@ -12,6 +12,11 @@ import { EXECUTIVE_OBJECT_ID } from "@/app/utils/consts.utils";
 import { getRegionalSettings } from "@/app/controllers/config.controller";
 // import { snackbarActive } from "@/app/company/CompanyEntityList";
 // import { showSnackbar } from "@/app/company/page";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+    title: 'Manage Profile'
+}
 
 export default async function Profile() {
     try {

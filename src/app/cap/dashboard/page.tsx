@@ -11,6 +11,12 @@ import OpenCard from "./OpenCard";
 import UnassignedCard from "./UnassignedCard";
 import OverviewCard from "./OverviewCard";
 import { logger } from "@/app/utils/logger.utils";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'Dashboard'
+}
+
 
 export default async function Dashboard() {
   try {

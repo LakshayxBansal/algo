@@ -4,6 +4,11 @@ import { getRightsData } from "@/app/controllers/rights.controller";
 import RightPage from "./RightPage";
 import { redirect } from "next/navigation";
 import { rightSchemaT } from "@/app/models/models";
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+    title: 'Manage Rights'
+}
 
 type rightSchemaArray = [rightSchemaT];
 

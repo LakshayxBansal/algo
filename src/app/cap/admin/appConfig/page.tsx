@@ -4,6 +4,11 @@ import { fetchConfigData, fetchConfigDeptMapData } from "@/app/controllers/confi
 import ConfigForm from "./configForm";
 import { getAllDepts } from "@/app/controllers/executiveDept.controller";
 import { configDeptMapSchemaT, configSchemaT } from "@/app/models/models";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'Manage Configurations'
+}
 
 const EnquiryConfigPage = async () => {
   const session = await getSession();
