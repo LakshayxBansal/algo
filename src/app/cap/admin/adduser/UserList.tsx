@@ -13,7 +13,7 @@ import { AddDialog } from "@/app/Widgets/masters/addDialog";
 
 export default function UserList() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [userCompanyInfo,setUserCompanyInfo] = useState({userId:0,companyId:0});
+  const [userCompanyInfo, setUserCompanyInfo] = useState({ userId: 0, companyId: 0 });
   const columns: GridColDef[] = [
     { field: 'RowID', headerName: 'ID', width: 90 },
     {
@@ -38,26 +38,25 @@ export default function UserList() {
       renderCell: (params) => (
         <Button onClick={() => {
           setDialogOpen(true);
-          setUserCompanyInfo({userId:params.row.userId,companyId:params.row.companyId});
+          setUserCompanyInfo({ userId: params.row.userId, companyId: params.row.companyId });
         }}>Remove</Button>
       )
     },
   ];
-  
-  
+
+
   const handleRemove = async () => {
     try {
-      await deRegisterFromCompany(userCompanyInfo.userId,userCompanyInfo.companyId);
+      await deRegisterFromCompany(userCompanyInfo.userId, userCompanyInfo.companyId);
       const userSession = await getDbSession(userCompanyInfo.userId);
-      if (userSession && userSession.id === userCompanyInfo.companyId){
+      if (userSession && userSession.id === userCompanyInfo.companyId) {
         await deleteSession(userCompanyInfo.userId);
       }
     } catch (error) {
       throw (error);
-    } finally {
-      window.location.reload();
     }
   }
+
   return <>
     <EntityList
       title="User List"
@@ -68,33 +67,33 @@ export default function UserList() {
     >
     </EntityList>
     {dialogOpen && (
-                <AddDialog
-                    title={"Modal"}
-                    open={dialogOpen}
-                    setDialogOpen={setDialogOpen}
-                >
-                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", height: "7rem", width: "25rem" }}>
-                        <Typography variant='h6' sx={{ margin: "auto" }}>Do you want to remove user ?</Typography>
-                        <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
-                            <Button
-                                onClick={() => setDialogOpen(false)}
-                                tabIndex={-1}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="contained"
-                                sx={{ width: "15%", marginLeft: "5%" }}
-                                onClick={() => {
-                                  handleRemove();
-                                  setDialogOpen(false);
-                                }}
-                            >
-                                Yes
-                            </Button>
-                        </Box>
-                    </Box>
-                </AddDialog>
-            )}
+      <AddDialog
+        title={"Modal"}
+        open={dialogOpen}
+        setDialogOpen={setDialogOpen}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", height: "7rem", width: "25rem" }}>
+          <Typography variant='h6' sx={{ margin: "auto" }}>Do you want to remove user ?</Typography>
+          <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
+            <Button
+              onClick={() => setDialogOpen(false)}
+              tabIndex={-1}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+              onClick={() => {
+                handleRemove();
+                setDialogOpen(false);
+              }}
+            >
+              Yes
+            </Button>
+          </Box>
+        </Box>
+      </AddDialog>
+    )}
   </>
 }

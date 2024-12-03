@@ -39,6 +39,11 @@ export default function AddDocsForm(props: any) {
     };
 
     const handleSubmit = async (formData: FormData) => {
+        if(!file){
+            const errorState: Record<string, { msg: string; error: boolean }> = {};
+            errorState["form"] = { msg: "Please upload file", error: true };
+            setFormError(errorState);
+        }
         let data: { [key: string]: any } = {}; // Initialize an empty object
 
         data["description"] = formData.get("description");
@@ -59,6 +64,9 @@ export default function AddDocsForm(props: any) {
             const issues = parsed.error.issues;
             const errorState: Record<string, { msg: string; error: boolean }> = {};
             errorState["form"] = { msg: "Error encountered", error: true };
+            if(!file){
+                errorState["form"] = { msg: "Please upload file", error: true };
+            }
             for (const issue of issues) {
                 for (const path of issue.path) {
                     errorState[path] = { msg: issue.message, error: true };
@@ -76,7 +84,6 @@ export default function AddDocsForm(props: any) {
 
         if (files && files.length > 0) {
             const file = files[0];
-            console.log("upload file : ", file);
             setSelectedFileName(file.name);
             setFileType(file.type);
 
@@ -136,7 +143,7 @@ export default function AddDocsForm(props: any) {
                     {formError?.form?.msg}
                 </Alert>
             </Collapse>
-            <Box id="sourceForm" sx={{ m: 2, p: 1 }}>
+            <Box id="sourceForm" sx={{ m: 2, p: 1,width: "500px" }}>
                 <form action={handleSubmit} noValidate>
                     <Box
                         sx={{
@@ -149,10 +156,12 @@ export default function AddDocsForm(props: any) {
                     >
                         <InputControl
                             required
-                            inputType={InputType.TEXT}
+                            inputType={InputType.TEXTFIELD}
                             name="description"
                             id="description"
                             label="Description"
+                            rows={6}
+                            fullWidth
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
                         />
