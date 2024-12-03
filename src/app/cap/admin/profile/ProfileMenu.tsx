@@ -41,7 +41,7 @@ export default function ProfileMenu(props: profileModalT) {
         redirectToPage("/signin");
     }
     const handleDeregisterFormCompany = async function () {
-        await Promise.all([deRegisterFromCompany(null, props.userId, props.companyId), deleteSession(props.userId)]);
+        await Promise.all([deRegisterFromCompany(props.userId, props.companyId), deleteSession(props.userId)]);
         handleClose();
         redirectToPage("/company");
     }

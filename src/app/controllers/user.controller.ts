@@ -124,9 +124,9 @@ export async function deleteUser(userId: number | undefined) {
   return null;
 }
 
-export async function deRegisterFromCompany(id: number | null, userId: number | null, companyId: number | null) {
+export async function deRegisterFromCompany(userId: number, companyId: number) {
   try {
-    await deRegisterFromCompanyDB(id, userId, companyId);
+    await deRegisterFromCompanyDB(userId, companyId);
   } catch (e) {
     throw e;
   }
@@ -187,6 +187,7 @@ export async function getCompanyUser(
         ele.roleId = userRole.id;
         ele.role = userRole.name
       }
+      console.log("company users : ",companyUsers);
       getCompanyUsers = {
         status: true,
         data: companyUsers.map(bigIntToNum) as userSchemaT,
