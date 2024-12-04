@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -73,14 +73,23 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
   const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
 
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setPrintNameFn(event.target.value);
-  };
+    const value = event.target.value;
 
-  const handleWhatsappChange = (val: string) => {
-    setWhatsappFn(val);
+    // Clear the existing timeout
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Set a new timeout
+    debounceTimeout.current = setTimeout(() => {
+      setPrintNameFn(value); // Update the state after 300ms of inactivity
+    }, 300);
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -229,12 +238,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.name?.msg}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { name, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -251,12 +260,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.alias?.msg}
         defaultValue={entityData.alias}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { alias, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { alias, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -273,12 +282,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.print_name?.msg}
         defaultValue={printNameFn}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { print_name, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { print_name, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -331,12 +340,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.pan?.msg}
         defaultValue={entityData.pan}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pan, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pan, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -353,12 +362,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.aadhaar?.msg}
         defaultValue={entityData.aadhaar}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { aadhaar, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { aadhaar, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -481,12 +490,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.email?.msg}
         defaultValue={entityData.email}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { email, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { email, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -504,12 +513,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.mobile?.msg}
         defaultValue={entityData.mobile}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { mobile, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { mobile, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -527,12 +536,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.whatsapp?.msg}
         defaultValue={entityData.whatsapp}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { whatsapp, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { whatsapp, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -549,12 +558,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.address1?.msg}
         defaultValue={entityData.address1}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { address1, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { address1, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -571,12 +580,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.address2?.msg}
         defaultValue={entityData.address2}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { address2, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { address2, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -645,13 +654,13 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         id={"state"}
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        disabled={stateDisable}
         width={375}
         dialogTitle={"Add State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}
-        allowNewAdd={selectValues.country ? true : entityData.country_id ? true : false}
+        allowModify={!stateDisable}
+        allowNewAdd={!stateDisable}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <StateForm
             setDialogOpen={fnDialogOpen}
@@ -678,12 +687,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.city?.msg}
         defaultValue={entityData.city}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { city, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { city, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ],
@@ -700,12 +709,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         helperText={formError?.pincode?.msg}
         defaultValue={entityData.pincode}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pincode, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pincode, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
 
     ]
@@ -729,19 +738,35 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
       fieldArr.push(fld);
     }
     else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
+      if(field.column_name_id === 'state')
+      {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+  
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-subAddress-${field.column_name_id}-${stateKey}`,
+        });
+  
+        fieldArr.push(fld);
+      } else {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+  
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-subAddress-${field.column_name_id}`,
+        });
+  
+        fieldArr.push(fld);
+      }
 
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-subAddress-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
-      });
-
-      fieldArr.push(fld);
     }
     else if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(

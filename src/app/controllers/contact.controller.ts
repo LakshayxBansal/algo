@@ -171,8 +171,10 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
       data.whatsapp = modifyPhone(data.whatsapp as string);
 
       const parsed = contactSchema.safeParse(data);
+      
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
+        console.log(dbResult);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           const objectDetails = await getObjectByName("Contact");
