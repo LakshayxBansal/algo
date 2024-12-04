@@ -720,7 +720,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                 }
               >
                 <IconButton
-                  sx={{ float: "left", position: "relative", paddingRight: 0 }}
+                  sx={{ float: "left", position: "relative" }}
                   onClick={() => setDocDialogOpen(true)}
                   aria-label="file"
                 >

@@ -65,7 +65,7 @@ import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
-  console.log("executive prop", props);
+  console.log("executive prop", props?.setDialogOpen);
 
   const router = useRouter();
   const [formError, setFormError] = useState<
@@ -184,7 +184,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             name: entityData.executive_dept,
           } as optionsDataT
         }
-        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         formError={formError?.executive_dept ?? formError.executive_dept}
@@ -215,7 +215,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         allowNewAdd={false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
         required
-        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         formError={formError?.role ?? formError.role}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
@@ -235,7 +235,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"Executive Group"}
         dialogTitle={"Add Executive Group"}
         width={365}
-        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         defaultValue={
           {
             id: entityData.executive_group_id,
@@ -871,30 +871,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
-        title={docData?.length > 0 ? (
-          docData.map((file: any, index: any) => (
-            <Typography variant="body2" key={index}>
-              {file.description}
-            </Typography>
-          ))
-        ) : (
-          <Typography variant="body2" color="white">
-            No files available
-          </Typography>
-        )}
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0 }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData?.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-
-        </IconButton>
-      </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Grid container spacing={2}>
@@ -949,6 +925,30 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
             )}
           </Grid>
+          <Tooltip
+        title={docData?.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
+          </Typography>
+        )}
+      >
+        <IconButton
+          sx={{ float: "left", position: "relative" }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData?.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+      </Tooltip>
           <Box
             sx={{
               display: "flex",

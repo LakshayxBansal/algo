@@ -812,30 +812,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
-        title={docData?.length > 0 ? (
-          docData.map((file: any, index: any) => (
-            <Typography variant="body2" key={index}>
-              {file.description}
-            </Typography>
-          ))
-        ) : (
-          <Typography variant="body2" color="white">
-            No files available
-          </Typography>
-        )}
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0 }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData?.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-
-        </IconButton>
-      </Tooltip>
       <Box id="contactForm" sx={{ p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Grid container spacing={2}>
@@ -891,6 +867,30 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
 
             )}
           </Grid>
+          <Tooltip
+        title={docData?.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
+          </Typography>
+        )}
+      >
+        <IconButton
+          sx={{ float: "left", position: "relative" }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData?.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+      </Tooltip>
           <Box
             sx={{
               display: "flex",
