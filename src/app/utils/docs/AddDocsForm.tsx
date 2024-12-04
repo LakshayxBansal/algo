@@ -12,7 +12,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { docDescriptionSchemaT } from "@/app/models/models";
+import { docDescriptionSchemaT, masterFormPropsT } from "@/app/models/models";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -26,7 +26,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function AddDocsForm(props: any) {
+export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : React.Dispatch<React.SetStateAction<boolean>>,setData : React.Dispatch<React.SetStateAction<docDescriptionSchemaT[]>>}) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
@@ -35,31 +35,31 @@ export default function AddDocsForm(props: any) {
     const [selectedFileName, setSelectedFileName] = React.useState("");
     const [fileType, setFileType] = React.useState("");
     const handleCancel = () => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
+        setDialogOpen(false);
     };
 
     const handleSubmit = async (formData: FormData) => {
+        let data: { [key: string]: any } = {}; // Initialize an empty object
         if(!file){
             const errorState: Record<string, { msg: string; error: boolean }> = {};
             errorState["form"] = { msg: "Please upload file", error: true };
             setFormError(errorState);
         }
-        let data: { [key: string]: any } = {}; // Initialize an empty object
-
         data["description"] = formData.get("description");
         data["fileName"] = selectedFileName;
-        data["file"] = file;
+        data["file"] = file as string;
         data["fileType"] = fileType;
         data["type"] = "state";
+
         const parsed = zs.docDescriptionSchema.safeParse(data);
         if (parsed.success) {
-            props.setData
-                ? props.setData((prevData: docDescriptionSchemaT[]) => [
+            if(file){
+            setData((prevData: docDescriptionSchemaT[]) => [
                     ...prevData,
-                    { id: (0 - prevData.length - 1), ...data },
-                ])
-                : null;
-            props.setDialogOpen ? props.setDialogOpen(false) : null;
+                    { id: (0 - prevData.length - 1), ...data as docDescriptionSchemaT},
+                ]);
+            setDialogOpen(false);
+            }
         } else {
             const issues = parsed.error.issues;
             const errorState: Record<string, { msg: string; error: boolean }> = {};

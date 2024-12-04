@@ -82,7 +82,7 @@ function CustomNoRowsOverlay() {
 }
 
 
-export default function DocModal({ docData, setDocData, setDialogOpen }: { docData: docDescriptionSchemaT[], setDocData: any, setDialogOpen: any }) {
+export default function DocModal({ docData, setDocData, setDialogOpen }: { docData: docDescriptionSchemaT[], setDocData: React.Dispatch<React.SetStateAction<docDescriptionSchemaT[]>>, setDialogOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
@@ -127,10 +127,10 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                             defaultValue={params.row.description}
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
-                            onChange={(e: any) => {
+                            onChange={(event:React.ChangeEvent<HTMLInputElement>) => {
                                 setModifiedRowData((prevState) => ({
                                     ...prevState,
-                                    description: e.target.value,
+                                    description: event.target.value,
                                 }));
                             }}
                         />
@@ -244,11 +244,11 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
         }
     }
 
-    const handleDeleteClickDB = async (data: any) => {
+    const handleDeleteClickDB = async (data: docDescriptionSchemaT) => {
         try {
             if (docData.length > 0) {
                 const updatedRows = docData.filter((row) => row.id !== data.id);
-                await deleteExecutiveDoc(data.id,data.docId);
+                await deleteExecutiveDoc(data.id as number,data.docId as string);
                 setDocData(updatedRows);
             }
         } catch (error) {
@@ -345,7 +345,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                 }}
             >
                 <Button onClick={() => {
-                    setDocData((prevData : any) => prevData.filter((doc : any) => doc.id >= 0));
+                    setDocData((prevData) => prevData.filter((doc) => doc.id as number >= 0));
                     setDialogOpen(false)
 
                 }} tabIndex={-1}>Cancel</Button>

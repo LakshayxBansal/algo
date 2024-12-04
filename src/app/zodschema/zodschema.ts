@@ -17,11 +17,11 @@ const passwordRegex = new RegExp(
 
 export const docDescriptionSchema = z.object({
   id: z.number().optional(),
-  description: z.string().min(1,"Description can't be empty").max(255).optional(),
+  description: z.string().min(1,"Description can't be empty").max(255),
   fileName: z.string().optional(),
   objectId: z.number().optional(),
   objectTypeId: z.number().optional(),
-  file: z.string().min(1,"please choose file"),
+  file: z.string().min(1,"please choose file").optional(),
   fileType: z.string().optional(),
   docId: z.string().optional(),
 });
