@@ -381,13 +381,13 @@ function compareIpOctets(clientIp: string, serverIp: string): boolean {
 async function getCountryByAPI(ip: string){
   let country, countryId, fetchedData;
   if(ip===""){
-    fetchedData = await fetch(
-      `https://api.ipregistry.co/?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
+    fetchedData = await fetch(``
+      // `https://api.ipregistry.co/?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
     );
   }
   else{
-    fetchedData = await fetch(
-      `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
+    fetchedData = await fetch(``
+      // `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
     );
   }
     const data = await fetchedData.json();
