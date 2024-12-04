@@ -235,6 +235,24 @@ export async function createSupportTicketDB(
       }
     }
     
-  
+    export async function getSupportTicketDescriptionDb(crmDb: string, searchString: string) {
+      try {
+        let query = "select id as id, tkt_number as name from ticket_header_tran";
+        let values: any[] = [];
+        if (searchString !== "") {
+          query = query + " where tkt_number like '%" + searchString + "%'";
+          values = [];
+        }
+        const result = await excuteQuery({
+          host: crmDb,
+          query: query,
+          values: values,
+        });
+        return result;
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
     
   

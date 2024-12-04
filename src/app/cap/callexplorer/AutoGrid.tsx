@@ -77,6 +77,9 @@ export let handleRefresh: any;
 import * as XLSX from "xlsx";
 import { exportToExcel } from "@/app/utils/exportExcel";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import { getEnquiryDescription } from "@/app/controllers/enquiry.controller";
+import { getSupportTicketDescription } from "@/app/controllers/supportTicket.controller";
+import { getContact } from "@/app/controllers/contact.controller";
 
 // type FilterKey = "Open-Unallocated" | "Open-Allocated" | "Closed-Failure" | "Closed-Success";
 
@@ -137,6 +140,20 @@ export default function AutoGrid(props: any) {
     },
   };
 
+  const { dateFormat, timeFormat } = props.regional_setting;
+  
+  const timeFormatString = timeFormat
+    ? timeFormat === "12 Hours"
+      ? "hh:mm A"
+      : "HH:mm"
+    : "HH:mm";
+  const dateTimeFormat = [
+    dateFormat || "DD/MM/YYYY", // Add dateFormat if it exists
+    timeFormatString, // Add timeFormatString if timeFormat is valid
+  ]
+    .filter(Boolean)
+    .join(" "); // Remove empty strings and join with space
+
   // const handleCheckboxClick=(filterKey:FilterKey)=>{
   //   setSelectedStatuses((prevFilters) => ({
   //     ...prevFilters,
@@ -152,6 +169,8 @@ export default function AutoGrid(props: any) {
       getSubStatus: getEnquirySubStatus,
       getAction: getEnquiryAction,
       getCallData: getCallEnquiries,
+      getDescription:getEnquiryDescription,
+      getContact: getContact,
       getAllData: getAllCallEnquiries,
     },
     {
@@ -160,6 +179,8 @@ export default function AutoGrid(props: any) {
       getSubStatus: getSupportSubStatus,
       getAction: getSupportAction,
       getCallData: getCallSupportEnquiries,
+      getDescription: getSupportTicketDescription,
+      getContact: getContact,
       getAllData: getAllCallSupportEnquiries,
     },
   ];
@@ -248,7 +269,7 @@ export default function AutoGrid(props: any) {
     // Set enableAllocate state
     setEnableAllocate(isAllocatable);
 
-    if (deSelect && selectedRow.id === params.row.id) {
+    if (deSelect && selectedRow?.id === params.row.id) {
       setSelectedRow(null);
       setRowSelectionModel([]);
     } else {
@@ -257,6 +278,8 @@ export default function AutoGrid(props: any) {
       setRowSelectionModel([params.row.id]);
     }
   };
+
+  
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -595,7 +618,47 @@ export default function AutoGrid(props: any) {
       headerName: "Description",
       hideable: false,
       width: 130,
-      sortable: false,
+      renderHeader: () => (
+        <FilterMenu
+          filterValueState={filterValueState}
+          setFilterValueState={setFilterValueState}
+          setDlgState={setDlgState}
+          field={"description"}
+          headerName={"Description"}
+          tooltipTitle={"Filter by Description"}
+        >
+          <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
+            <AutocompleteDB
+              name={"description"}
+              id={"description"}
+              label={"Description"}
+              // onChange={(e, val, s) => setCategorySearchText(val)}
+              onChange={(e, val, s) =>{handleFilterChange("description", val)}}
+              fetchDataFn={tabOptions[value].getDescription}
+              defaultValue={
+                filterValueState?.description
+                  ? {
+                      id: filterValueState.description.id,
+                      name: filterValueState.description.name,
+                    }
+                  : undefined // Set default value to null if no data exists
+              }
+              diaglogVal={{
+                id: filterValueState?.description?.id,
+                name: filterValueState?.description?.name,
+                detail: undefined,
+              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {
+                
+                
+              }}
+              fnSetModifyMode={function (id: string): void {}}
+            />
+          </MenuItem>
+        </FilterMenu>
+      ),
     },
 
     {
@@ -603,14 +666,55 @@ export default function AutoGrid(props: any) {
       headerName: "Contact",
       hideable: false,
       width: 130,
+      renderHeader: () => (
+        <FilterMenu
+          filterValueState={filterValueState}
+          setFilterValueState={setFilterValueState}
+          setDlgState={setDlgState}
+          field={"contactParty"}
+          headerName={"Contact"}
+          tooltipTitle={"Filter by Contact"}
+        >
+          <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
+            <AutocompleteDB
+              name={"contactParty"}
+              id={"contactParty"}
+              label={"Contact"}
+              // onChange={(e, val, s) => setCategorySearchText(val)}
+              onChange={(e, val, s) =>{handleFilterChange("contactParty", val)}}
+              fetchDataFn={tabOptions[value].getContact}
+              defaultValue={
+                filterValueState?.contactParty
+                  ? {
+                      id: filterValueState.contactParty.id,
+                      name: filterValueState.contactParty.name,
+                    }
+                  : undefined // Set default value to null if no data exists
+              }
+              diaglogVal={{
+                id: filterValueState?.contactParty?.id,
+                name: filterValueState?.contactParty?.name,
+                detail: undefined,
+              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {
+                
+                
+              }}
+              fnSetModifyMode={function (id: string): void {}}
+            />
+          </MenuItem>
+        </FilterMenu>
+      )
     },
     {
       field: "date",
-      width: 130,
+      width: 140,
       headerName: "Date",
       hideable: false,
       renderCell: (params) => {
-        return adjustToLocal(params.row.date).toDate().toString().slice(0, 15);
+        return params.row.date?adjustToLocal(params.row.date).format(dateTimeFormat) : "";
       },
       renderHeader: () => (
         <FilterMenu
@@ -663,15 +767,6 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "time",
-      headerName: "Time",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        return adjustToLocal(params.row.date).format("hh:mm A");
-      },
-    },
-    {
       field: "callCategory",
       width: 120,
       headerName: "Call Category",
@@ -684,7 +779,7 @@ export default function AutoGrid(props: any) {
           headerName={"Call Category"}
           tooltipTitle={"Filter by Call Category"}
         >
-          <MenuItem>
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()}>
             <AutocompleteDB
               name={"category"}
               id={"category"}
@@ -725,7 +820,7 @@ export default function AutoGrid(props: any) {
           headerName={"Area"}
           tooltipTitle={"Filter by Area"}
         >
-          <MenuItem>
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()}>
             <AutocompleteDB
               name={"area"}
               id={"area"}
@@ -763,12 +858,12 @@ export default function AutoGrid(props: any) {
           setFilterValueState={setFilterValueState}
           setDlgState={setDlgState}
           field={"executive"}
-          headerName={"Executive"}
+          headerName={"Allocated To"}
           tooltipTitle={"Filter by Executive"}
           filterReset={setFilterType}
           resetValue={"reset"}
         >
-          <MenuItem sx={{ bgcolor: "white" }}>
+          <MenuItem sx={{ bgcolor: "white" }} >
             <RadioGroup
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
@@ -791,7 +886,7 @@ export default function AutoGrid(props: any) {
             </RadioGroup>
           </MenuItem>
           {filterType === "allocated" && (
-            <MenuItem>
+            <MenuItem onKeyDown={(e: any) => e.stopPropagation()}>
               <AutocompleteDB
                 name={"executive"}
                 id={"executive"}
@@ -817,6 +912,53 @@ export default function AutoGrid(props: any) {
               />
             </MenuItem>
           )}
+        </FilterMenu>
+      ),
+    },
+    {
+      field: "actionTaken",
+      headerName: "Action Taken",
+      hideable: true,
+      width: 130,
+      renderHeader: () => (
+        <FilterMenu
+          filterValueState={filterValueState}
+          setFilterValueState={setFilterValueState}
+          setDlgState={setDlgState}
+          field={"actionTaken"}
+          headerName={"Action Taken"}
+          tooltipTitle={"Filter by Action Taken"}
+        >
+          <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
+            <AutocompleteDB
+              name={"actionTaken"}
+              id={"actionTaken"}
+              label={"Action Taken"}
+              // onChange={(e, val, s) => setCategorySearchText(val)}
+              onChange={(e, val, s) =>{handleFilterChange("actionTaken", val)}}
+              fetchDataFn={tabOptions[value].getAction}
+              defaultValue={
+                filterValueState?.actionTaken
+                  ? {
+                      id: filterValueState.actionTaken.id,
+                      name: filterValueState.actionTaken.name,
+                    }
+                  : undefined // Set default value to null if no data exists
+              }
+              diaglogVal={{
+                id: filterValueState?.actionTaken?.id,
+                name: filterValueState?.actionTaken?.name,
+                detail: undefined,
+              }}
+              setDialogVal={function (
+                value: React.SetStateAction<optionsDataT>
+              ): void {
+                
+                
+              }}
+              fnSetModifyMode={function (id: string): void {}}
+            />
+          </MenuItem>
         </FilterMenu>
       ),
     },
@@ -921,7 +1063,7 @@ export default function AutoGrid(props: any) {
               />
             </RadioGroup>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()}>
             <AutocompleteDB
               name={"sub_status"}
               id={"sub_status"}
@@ -964,7 +1106,7 @@ export default function AutoGrid(props: any) {
           headerName={"Next Action"}
           tooltipTitle={"Filter Next Action"}
         >
-          <MenuItem>
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()}>
             <AutocompleteDB
               name={"next_action"}
               id={"next_action"}
@@ -993,14 +1135,12 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "actionDate",
-      width: 100,
+      width: 140,
       headerName: " Next Action Date",
       renderCell: (params) => {
         return params.row.actionDate
-          ? adjustToLocal(params.row.actionDate)
-              .toDate()
-              .toString()
-              .slice(0, 15)
+          ? adjustToLocal(params.row.actionDate).format( dateTimeFormat)
+              
           : "";
       },
       renderHeader: () => (
@@ -1086,26 +1226,13 @@ export default function AutoGrid(props: any) {
       ),
     },
     {
-      field: "actionTime",
-      headerName: "Next Action Time",
-      sortable: false,
-      renderCell: (params) => {
-        return params.row.actionDate
-          ? adjustToLocal(params.row.actionDate).format("hh:mm A")
-          : "";
-      },
-    },
-    {
       field: "modified_on",
-      width: 130,
+      width: 100,
       headerName: "Last Updated",
-      hideable: false,
+      hideable: true,
       renderCell: (params) => {
         return params.row.modified_on
-          ? adjustToLocal(params.row.modified_on)
-              .toDate()
-              .toString()
-              .slice(0, 15)
+          ? adjustToLocal(params.row.modified_on).format( dateTimeFormat)
           : "";
       },
       renderHeader: () => (
@@ -1176,6 +1303,9 @@ export default function AutoGrid(props: any) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
     setSelectedStatusRows([]);
+    setSelectedRow(null);
+    setRowSelectionModel([]);
+    
   };
 
   const CallType = (props: { text: string; color: string }) => {
@@ -1408,6 +1538,7 @@ export default function AutoGrid(props: any) {
             sx={{
               mt: "0",
               overflowY: "auto",
+              width: "100%",
               height: {
                 xs: "50vh",
                 sm: "50vh",
@@ -1472,6 +1603,7 @@ export default function AutoGrid(props: any) {
               selectedRow={selectedRow}
               refresh={refresh}
               callType={value}
+              dateTimeFormat ={dateTimeFormat}
             />
           </Paper>
         )}
@@ -1626,7 +1758,8 @@ export default function AutoGrid(props: any) {
             </Grid>
           </Grid>
         </Box>
-        {dialogOpen && (
+        {dialogOpen && 
+        (
           <AddDialog
             title={"Allocate Executive"}
             open={dialogOpen}
