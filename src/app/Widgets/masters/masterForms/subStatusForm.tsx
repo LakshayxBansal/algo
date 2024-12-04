@@ -159,7 +159,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT<enquirySub
       <Box id="sourceForm">
         <form action={handleSubmit} noValidate>
           <Grid container>
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
                 autoFocus
                 inputType={InputType.TEXT}
@@ -167,7 +167,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT<enquirySub
                 label="Sub-Status Name"
                 name="name"
                 required
-                fullWidth
+                style={{ width: "100%" }}
                 titleCase={true}
                 defaultValue={entityData.name}
                 error={formError?.name?.error}

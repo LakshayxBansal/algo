@@ -119,7 +119,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
         </Alert>
       </Collapse>
       <form action={handleSubmit}>
-        <Grid container>
+        <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={6} lg={6}>
             <InputControl
               autoFocus
@@ -152,7 +152,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 1,
+              // mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>

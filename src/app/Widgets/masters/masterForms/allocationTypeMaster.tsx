@@ -119,7 +119,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       </Collapse>
 
       <form action={handleSubmit} noValidate>
-        <Grid container spacing={2}>
+        <Grid container >
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               inputType={InputType.TEXT}

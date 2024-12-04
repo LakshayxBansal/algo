@@ -138,39 +138,39 @@ export default function StateFormList(props: masterFormPropsWithDataT<stateListS
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={4} lg={4}>
-            <SelectMasterWrapper
-              name={"country"}
-              id={"country"}
-              label={"Country"}
-              formError={formError.country}
-              dialogTitle={"country"}
-              onChange={(e, val, s) => {
-                setSelectValues((prevSelectValues) => ({
-                  ...prevSelectValues,
-                  country: val,
-                  country_id: val
-                }));
-              }}
-              fetchDataFn={getCountries}
-              fnFetchDataByID={getCountryById}
-              defaultValue={
-                {
-                  id: entityData.country_id,
-                  name: entityData.country,
-                } as optionsDataT
-              }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <CountryForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-              required
-              width={350}
-            />
+       <Grid container spacing={1}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
+          <SelectMasterWrapper
+            name={"country"}
+            id={"country"}
+            label={"Country"}
+            formError={formError.country}
+            dialogTitle={"country"}
+            onChange={(e, val, s) => {
+              setSelectValues((prevSelectValues) => ({
+                ...prevSelectValues,
+                country: val,
+                country_id:val
+              }));
+            }}
+            fetchDataFn={getCountries}
+            fnFetchDataByID={getCountryById}
+            defaultValue={
+              {
+                id: entityData.country_id,
+                name: entityData.country,
+              } as optionsDataT
+            }
+            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              <CountryForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+                data={data}
+              />
+            )}
+            required
+            width={350}
+          />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={4}>
             <InputControl
