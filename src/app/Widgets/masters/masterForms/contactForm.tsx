@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -53,7 +53,6 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
-import { usePathname } from "next/navigation";
 
 export default function ContactForm(
   props: masterFormPropsWithDataT<contactSchemaT>
@@ -80,10 +79,6 @@ export default function ContactForm(
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
   const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
-  const formRef = useRef<HTMLFormElement>(null); // const [flag, setFlag ]= useState(true);
-
-  const pathName = usePathname();
-  console.log("PATHNAME: ", pathName);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -149,25 +144,9 @@ export default function ContactForm(
       };
       setSnackOpen(true);
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      if (pathName !== "/cap/admin/lists/contactList") {
-        // setTimeout(() => {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
-        // for (const [key, value] of formData.entries()) {
-        //   setFormData
-        // }
-        // formRef.current=
-        // setFlag(prev=>!prev);
-        // delete formData;
-        // props.setDialogValue ? props.setDialogValue({id: 0, name: ""})
-        // }, 1000);
-      } else {
-        if (formRef.current) {
-          formRef.current.reset();
-          setSelectValues({});
-        }
-      }
       setFormError({});
     } else {
       const issues = result.data;
@@ -869,7 +848,7 @@ export default function ContactForm(
         </IconButton>
       </Tooltip> */}
       <Box id="contactForm">
-        <form ref={formRef} action={handleSubmit} noValidate>
+        <form action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;

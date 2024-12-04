@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
@@ -11,7 +11,6 @@ import Seperator from "../../seperator";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import { usePathname } from "next/navigation";
 
 export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
   const [formError, setFormError] = useState<
@@ -21,8 +20,6 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
   const entityData: areaSchemaT = props.data ? props.data : {} as areaSchemaT;
   // submit function. Save to DB and set value to the dropdown control
   console.log(entityData);
-  const formRef =  useRef<HTMLFormElement>(null);
-  const pathName = usePathname();
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
@@ -33,17 +30,9 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      if (pathName !== "/cap/admin/lists/areaList") {
-        setTimeout(() => {
-          props.setDialogOpen ? props.setDialogOpen(false) : null;
-        }, 1000);
-        console.log("entering in condition...");
-      } else {
-        if (formRef.current) {
-          formRef.current.reset();
-        }
-      }
-      // setFormError({});
+      setTimeout(()=>{
+        props.setDialogOpen ? props.setDialogOpen(false) : null;
+      }, 1000);
     }
     // } else {
     //   issues = parsed.error.issues;
@@ -127,8 +116,8 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form ref={formRef} action={handleSubmit} noValidate>
-        <Grid container>
+      <form action={handleSubmit} noValidate>
+        <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
