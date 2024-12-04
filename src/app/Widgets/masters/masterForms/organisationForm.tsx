@@ -108,7 +108,6 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           }
         }
       }
-      console.log("ERIRB I: ", errorState);
 
       setFormError(errorState);
     }
@@ -524,7 +523,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
+      {/* <Tooltip
         title={docData.length > 0 ? (
           docData.map((file: any, index: any) => (
             <Typography variant="body2" key={index}>
@@ -547,10 +546,10 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           </Badge>
 
         </IconButton>
-      </Tooltip>
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      </Tooltip> */}
+      <Box id="sourceForm">
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-number") || fieldKey.includes("field-address")) {
@@ -594,12 +593,48 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
                 )
               }
             })}
-          </Grid>
+          {/* </Grid> */}
+          <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
+            >
+              <Box>
+          <Tooltip
+        title={docData.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
+          </Typography>
+        )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", paddingRight: 0 }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+      </Tooltip>
+        </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2,
+              // mt: 2,
+              paddingLeft: "2rem",
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
@@ -613,6 +648,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
               Submit
             </Button>
           </Box>
+          </Grid>
           {dialogOpen && (
             <AddDialog
               title=""
@@ -622,6 +658,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
               <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
             </AddDialog>
           )}
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}

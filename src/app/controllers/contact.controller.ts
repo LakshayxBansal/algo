@@ -368,7 +368,6 @@ export async function DeleteContact(id: number) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       const dbResult = await delContactByIdDB(session.user.dbInfo.dbName, id);
-      console.log("TErugb ugui: ", dbResult);
       
       if (dbResult[0][0].error === 0) {
         result = { status: true };

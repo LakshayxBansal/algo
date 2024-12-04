@@ -152,7 +152,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 1,
+              // mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
