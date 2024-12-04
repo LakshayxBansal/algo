@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { Collapse, IconButton } from "@mui/material";
@@ -12,7 +11,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { docDescriptionSchemaT, masterFormPropsT } from "@/app/models/models";
+import { docDescriptionSchemaT } from "@/app/models/models";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
