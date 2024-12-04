@@ -33,18 +33,13 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(()=>{
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/areaList") {
-setTimeout(()=>{
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
-              console.log("entering in condition...")
-        // formRef.current?.reset();
-      }
-      else{
-        if(formRef.current){
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+        console.log("entering in condition...");
+      } else {
+        if (formRef.current) {
           formRef.current.reset();
         }
       }
