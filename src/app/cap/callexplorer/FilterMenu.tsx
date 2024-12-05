@@ -53,7 +53,7 @@ export default function FilterMenu(props: customprop,) {
                 sx={{ color: props.filterValueState[props.field] ? "blue" : "black", textTransform: "none" }}
                 startIcon={
                     <Tooltip title={props.tooltipTitle} arrow>
-                        <GridFilterListIcon />
+                        <GridFilterListIcon style={{ fontSize:12}} />
                     </Tooltip>
                 }
                 onClick={handleClickFilter(props.field)}
