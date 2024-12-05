@@ -60,7 +60,7 @@ async function handleReject(params: any) {
 export default function InviteEntityList() {
   return <>
     <EntityList
-      title="Invite List" 
+      // title="Invite List" 
       fetchDataFn={getInviteByUserContact}
       customCols={columns}
       AddAllowed={false}

@@ -253,9 +253,29 @@ const SupportTicketForm = (props: customprop) => {
           <Grid item xs={12}>
             <Grid container spacing={2}>
               {/* Main Grid Container */}
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={12}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={6}>
+                <Grid item xs={12} sm={4} md={3}>
+                    <InputControl
+                      label="Ticket Description"
+                      id="tkt_number"
+                      inputType={InputType.TEXT}
+                      name="tkt_number"
+                      fullWidth
+                      required
+                      defaultValue={props.data?.tkt_number}
+                      error={formError?.tkt_number?.error}
+                      helperText={formError?.tkt_number?.msg}
+                      // sx={{
+                      //   "& .MuiInputBase-root": {
+                      //     height: 100,
+                      //     alignItems: "start",
+                      //   },
+                      // }}
+                      disabled={props?.status === "true" ? true : false}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4} md={3}>
                     <SelectMasterWrapper
                       name="contact"
                       id="contact"
@@ -280,7 +300,7 @@ const SupportTicketForm = (props: customprop) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6} md={6}>
+                  <Grid item xs={12} sm={4} md={3}>
                     <InputControl
                       label="Received on"
                       inputType={InputType.DATETIMEINPUT}
@@ -301,27 +321,8 @@ const SupportTicketForm = (props: customprop) => {
                       disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6} md={12}>
-                    <InputControl
-                      label="Ticket Description"
-                      id="tkt_number"
-                      inputType={InputType.TEXT}
-                      name="tkt_number"
-                      fullWidth
-                      required
-                      defaultValue={props.data?.tkt_number}
-                      error={formError?.tkt_number?.error}
-                      helperText={formError?.tkt_number?.msg}
-                      sx={{
-                        "& .MuiInputBase-root": {
-                          height: 100,
-                          alignItems: "start",
-                        },
-                      }}
-                      disabled={props?.status === "true" ? true : false}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={6}>
+                  
+                  <Grid item xs={12} sm={4} md={3}>
                     <SelectMasterWrapper
                       name="category"
                       id="category"
@@ -348,7 +349,7 @@ const SupportTicketForm = (props: customprop) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6} md={6}>
+                  <Grid item xs={12} sm={4} md={3}>
                     <SelectMasterWrapper
                       name="received_by"
                       id="received_by"
@@ -400,7 +401,11 @@ const SupportTicketForm = (props: customprop) => {
               </Grid> */}
                 </Grid>
               </Grid>
-              <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }}>
+             
+            </Grid>
+
+            <Grid container spacing={2}>
+            <Grid item xs={12} md={6} >
                 <Box
                   sx={{
                     height: 300,
@@ -417,66 +422,55 @@ const SupportTicketForm = (props: customprop) => {
                   />
                 </Box>
               </Grid>
-            </Grid>
-
-            <Grid container spacing={2}>
-              <Grid
-                item
-                xs={12}
-                md={12}
-                sx={{ display: "flex", flexDirection: "column" }}
-              >
-                <Grid item xs={12} md={12}>
-                  <InputControl
-                    placeholder="Call receipt remarks"
-                    label="Call receipt remarks"
-                    multiline
-                    inputType={InputType.TEXTFIELD}
-                    name="call_receipt_remark"
-                    id="call_receipt_remark"
-                    error={formError?.call_receipt_remark?.error}
-                    helperText={formError?.call_receipt_remark?.msg}
-                    defaultValue={props.data?.call_receipt_remark}
-                    rows={6}
-                    fullWidth
-                    disabled={props?.status === "true" ? true : false}
-                  />
-                </Grid>
-                <Grid item xs={12} md={12}>
-                  <InputControl
-                    placeholder="Suggested Action Remarks"
-                    label="Suggested Action Remarks"
-                    multiline
-                    inputType={InputType.TEXTFIELD}
-                    name="suggested_action_remark"
-                    defaultValue={props.data?.suggested_action_remark}
-                    id="suggested_action_remark"
-                    error={formError?.suggested_action_remark?.error}
-                    helperText={formError?.suggested_action_remark?.msg}
-                    rows={6}
-                    fullWidth
-                    disabled={props?.status === "true" ? true : false}
-                  />
-                </Grid>
-                {props?.status === "true" &&
-                  <Grid item xs={12} md={12}>
-                    <InputControl
-                      placeholder=" Action Taken Remarks"
-                      label=" Action Taken Remarks"
-                      multiline
-                      inputType={InputType.TEXTFIELD}
-                      name="action_taken_remark"
-                      defaultValue={props.data?.action_taken_remark}
-                      id="action_taken_remark"
-                      error={formError?.action_taken_remark?.error}
-                      helperText={formError?.action_taken_remark?.msg}
-                      rows={6}
-                      fullWidth
-
-                    />
-                  </Grid>
-                }
-              </Grid>
+              {/* Right Side: Remarks */}
+  <Grid item xs={12} md={6} sx={{padding :0}}>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <InputControl
+        placeholder="Call receipt remarks"
+        label="Call receipt remarks"
+        multiline
+        inputType={InputType.TEXTFIELD}
+        name="call_receipt_remark"
+        id="call_receipt_remark"
+        error={formError?.call_receipt_remark?.error}
+        helperText={formError?.call_receipt_remark?.msg}
+        defaultValue={props.data?.call_receipt_remark}
+        rows={6}
+        fullWidth
+        disabled={props?.status === "true" ? true : false}
+      />
+      <InputControl
+        placeholder="Suggested Action Remarks"
+        label="Suggested Action Remarks"
+        multiline
+        inputType={InputType.TEXTFIELD}
+        name="suggested_action_remark"
+        id="suggested_action_remark"
+        error={formError?.suggested_action_remark?.error}
+        helperText={formError?.suggested_action_remark?.msg}
+        defaultValue={props.data?.suggested_action_remark}
+        rows={6}
+        fullWidth
+        disabled={props?.status === "true" ? true : false}
+      />
+      {props?.status === "true" && (
+        <InputControl
+          placeholder="Action Taken Remarks"
+          label="Action Taken Remarks"
+          multiline
+          inputType={InputType.TEXTFIELD}
+          name="action_taken_remark"
+          id="action_taken_remark"
+          error={formError?.action_taken_remark?.error}
+          helperText={formError?.action_taken_remark?.msg}
+          defaultValue={props.data?.action_taken_remark}
+          rows={6}
+          fullWidth
+        />
+      )}
+    </Box>
+  </Grid>
+              
             </Grid>
 
             <Grid item xs={12}>
@@ -484,38 +478,38 @@ const SupportTicketForm = (props: customprop) => {
             </Grid>
 
             <Box
-              sx={{
-                display: "grid",
-                columnGap: 3,
-                rowGap: 1,
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(2, 1fr)",
-                  lg: "repeat(3, 1fr)",
-                },
-              }}
-            >
-              <FormControl sx={{ pl: "0.625em" }}>
-                <RadioGroup
-                  row
-                  name="status"
-                  id="status"
-                  defaultValue={
-                    masterData?.status != null ? masterData?.status.id.toString() : "1"
-                  }
-                  onChange={onStatusChange}
-                  sx={{ color: "black" }}
-                >
-                  <FormControlLabel
-                    value="Status"
-                    control={<label />}
-                    label="Status :"
-                  />
-                  <FormControlLabel value="1" control={<Radio />} label="Open" />
-                  <FormControlLabel value="2" control={<Radio />} label="Closed" />
-                </RadioGroup>
-              </FormControl>
+  sx={{
+    display: "grid",
+    columnGap: 3,
+    rowGap: 1,
+    gridTemplateColumns: {
+      xs: "1fr",
+      sm: "repeat(2, 1fr)",
+      md: "repeat(2, 1fr)",
+      lg: "repeat(4, 1fr)",
+    },
+  }}
+>
+  <FormControl sx={{ pl: "0.625em" }}>
+    <RadioGroup
+      row
+      name="status"
+      id="status"
+      defaultValue={
+        masterData?.status != null ? masterData?.status.id.toString() : "1"
+      }
+      onChange={onStatusChange}
+      sx={{ color: "black" }}
+    >
+      <FormControlLabel
+        value="Status"
+        control={<label />}
+        label="Status :"
+      />
+      <FormControlLabel value="1" control={<Radio />} label="Open" />
+      <FormControlLabel value="2" control={<Radio />} label="Closed" />
+    </RadioGroup>
+  </FormControl>
 
               <SelectMasterWrapper
                 name={"sub_status"}
