@@ -137,7 +137,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
       </Collapse>
       <Box id="subStatusForm">
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <FormControl sx={{ marginLeft: "2rem", marginTop: "1rem" }}>
                 <Grid container alignItems="center">
