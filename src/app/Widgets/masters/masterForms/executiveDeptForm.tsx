@@ -178,9 +178,9 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm">
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             {
               fieldArr.map((field, index) => {
                 const fieldKey = field.key as string;
@@ -203,7 +203,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2
+              // mt: 2
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
