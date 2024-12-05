@@ -148,53 +148,53 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             disable={props.disabled}
             defaultOptions={props.defaultOptions}
             showDetails={props.showDetails ? props.showDetails : false}
-          />
-          {!props.disabled && (
-            <IconButton tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
-              <span
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "Left",
-                  alignItems: "Center",
-                  marginLeft: "1px",
-                  gap: "0px",
-                }}
-              >
-                {!(dialogValue?.id ? true : false) && (
-                <Tooltip
-                  title={
-                    allowNewAdd ? "Click to add new" : "Not allowed to add"
-                  }
-                  placement="top"
+            iconControl = {!props.disabled && (
+              <IconButton tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
+                <span
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "Left",
+                    alignItems: "Center",
+                    marginLeft: "1px",
+                    gap: "0px",
+                  }}
                 >
-                  <AddIcon
-                    onClick={openDialog}
-                    color="action"
-                    fontSize="small"
-                    sx={{ padding:0, margin:0 }}
-                  />
-                </Tooltip>
-                )}
-                {(dialogValue?.id ? true : false) && (
+                  {!(dialogValue?.id ? true : false) && (
                   <Tooltip
                     title={
-                      allowModify ? "Click to modify" : "Not allowed to modify"
+                      allowNewAdd ? "Click to add new" : "Not allowed to add"
                     }
-                    placement="bottom"
+                    placement="top"
                   >
-                    {
-                      <EditTwoToneIcon
-                        onClick={onModifyDialog}
-                        color="action"
-                        fontSize="small"
-                      />
-                    }
+                    <AddIcon
+                      onClick={openDialog}
+                      color="action"
+                      fontSize="small"
+                      sx={{ padding:0, margin:0 }}
+                    />
                   </Tooltip>
-                )}
-              </span>
-            </IconButton>
-          )}
+                  )}
+                  {(dialogValue?.id ? true : false) && (
+                    <Tooltip
+                      title={
+                        allowModify ? "Click to modify" : "Not allowed to modify"
+                      }
+                      placement="bottom"
+                    >
+                      {
+                        <EditTwoToneIcon
+                          onClick={onModifyDialog}
+                          color="action"
+                          fontSize="small"
+                        />
+                      }
+                    </Tooltip>
+                  )}
+                </span>
+              </IconButton>
+            )}
+          />        
         </Box>
       </Grid>
       {dialogOpen && (
