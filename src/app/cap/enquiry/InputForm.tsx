@@ -408,7 +408,7 @@ export default function InputForm({ baseData }: InputFormProps) {
   ]);
 
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
+    const formatedData = await enquiryDataFormat({ formData, selectValues, dateFormat, timeFormat });
 
     let result;
     let issues = [];
@@ -628,13 +628,24 @@ export default function InputForm({ baseData }: InputFormProps) {
           field.column_name_id
         ) as React.ReactElement;
 
-        const fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          disabled: field.is_disabled,
-          key: `field-default-${field.column_name_id}`,
-        });
+        let fld;
+        if ((field.column_name_id === "closure_remark" || field.column_name_id === "next_action_date" || field.column_name_id === "next_action") && field.is_disabled === 0) {
+          fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-default-${field.column_name_id}`,
+          });
+        }
+        else {
+          fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            disabled: field.is_disabled,
+            key: `field-default-${field.column_name_id}`,
+          });
+        }
 
         fieldArr.push(fld);
       }

@@ -30,7 +30,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
+      setTimeout(()=>{
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
     }
@@ -117,7 +117,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
         </Alert>
       </Collapse>
       <form action={handleSubmit} noValidate>
-        <Grid container>
+        <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
@@ -139,7 +139,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 1
+              mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
