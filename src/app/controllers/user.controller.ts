@@ -56,11 +56,15 @@ export async function registerUser(formData: userSchemaT) {
 }
 
 
-export async function getBizAppUser(searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
+export async function getBizAppUser(searchString: string,mappedUser:{id: number | undefined,name: string | undefined} ,invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getBizAppUserList(session.user.dbInfo.id, searchString, invited, accepted, mapped, admin);
+      let result = await getBizAppUserList(session.user.dbInfo.id, searchString, invited, accepted, mapped, admin);
+      if(mappedUser.id){
+        result = [mappedUser,...result];
+      }
+      return result;
     }
   } catch (error) {
     throw error;

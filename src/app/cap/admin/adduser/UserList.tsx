@@ -55,14 +55,14 @@ export default function UserList() {
             executiveDetail[0][key]=""
           }
         }
-        const updatedExecutiveDetail = {...executiveDetail[0],executive_dept :"Sales",crm_user_id:0,call_type:"Enquiry"};
+        const updatedExecutiveDetail = {...executiveDetail[0],crm_user:"",crm_user_id:0,call_type:"Enquiry"};
         await updateExecutive(updatedExecutiveDetail,[]);
       }
-      // await deRegisterFromCompany(userCompanyInfo.userId, userCompanyInfo.companyId);
-      // const userSession = await getDbSession(userCompanyInfo.userId);
-      // if (userSession && userSession.id === userCompanyInfo.companyId) {
-      //   await deleteSession(userCompanyInfo.userId);
-      // }
+      await deRegisterFromCompany(userCompanyInfo.userId, userCompanyInfo.companyId);
+      const userSession = await getDbSession(userCompanyInfo.userId);
+      if (userSession && userSession.id === userCompanyInfo.companyId) {
+        await deleteSession(userCompanyInfo.userId);
+      }
     } catch (error) {
       throw (error);
     }

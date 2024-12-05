@@ -192,12 +192,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         helperText={formError?.name?.msg}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { name, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { name, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -212,12 +212,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
         defaultValue={entityData.alias}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { alias, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { alias, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -232,12 +232,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.printName?.error}
         helperText={formError?.printName?.msg}
         defaultValue={printNameFn}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { printName, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { printName, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -252,12 +252,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
         defaultValue={entityData.pan}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { pan, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { pan, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -272,12 +272,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.gstin?.error}
         helperText={formError?.gstin?.msg}
         defaultValue={entityData.gstin}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { gstin, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { gstin, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -292,12 +292,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
         defaultValue={entityData.address1}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { address1, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { address1, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -312,12 +312,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
         defaultValue={entityData.address2}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { address2, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { address2, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -382,12 +382,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
         defaultValue={entityData.city}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { city, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { city, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -402,12 +402,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
         defaultValue={entityData.pincode}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { pincode, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { pincode, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ]
   ])
@@ -425,7 +425,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-name-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false
       });
 
       fieldArr.push(fld);
@@ -439,7 +439,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-number-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false
       });
 
       fieldArr.push(fld);
@@ -453,7 +453,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-address-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false
       });
 
       fieldArr.push(fld);
@@ -467,7 +467,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false
       });
 
       fieldArr.push(fld);
@@ -569,49 +569,51 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
                 )
               }
             })}
-          <Tooltip
-        title={docData.length > 0 ? (
-          docData.map((file: any, index: any) => (
-            <Typography variant="body2" key={index}>
-              {file.description}
-            </Typography>
-          ))
-        ) : (
-          <Typography variant="body2" color="white">
-            No files available
-          </Typography>
-        )}
-      >
-        <IconButton
-          sx={{ float: "left", position: "relative" }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-
-        </IconButton>
-      </Tooltip>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              // mt: 2,
-              paddingLeft: "2rem",
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
+            <Grid xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // mt: 2,
+                paddingLeft: "2rem",
+              }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Tooltip
+                title={docData.length > 0 ? (
+                  docData.map((file: any, index: any) => (
+                    <Typography variant="body2" key={index}>
+                      {file.description}
+                    </Typography>
+                  ))
+                ) : (
+                  <Typography variant="body2" color="white">
+                    No files available
+                  </Typography>
+                )}
+              >
+                <IconButton
+                  sx={{ marginRight:"3rem" }}
+                  onClick={() => setDialogOpen(true)}
+                  aria-label="file"
+                >
+                  <Badge badgeContent={docData.length} color="primary">
+                    <AttachFileIcon></AttachFileIcon>
+                  </Badge>
+  
+                </IconButton>
+              </Tooltip>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
+            </Grid>
           </Grid>
           {dialogOpen && (
             <AddDialog
@@ -622,7 +624,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
               <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
             </AddDialog>
           )}
-  
+
         </form>
         <Snackbar
           open={snackOpen}
