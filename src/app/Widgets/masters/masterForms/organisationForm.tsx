@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import {
@@ -51,10 +51,23 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
   const [printNameFn, setPrintNameFn] = useState(entityData.printName);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
 
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setPrintNameFn(event.target.value);
+    const value = event.target.value;
+
+    // Clear the existing timeout
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Set a new timeout
+    debounceTimeout.current = setTimeout(() => {
+      setPrintNameFn(value); // Update the state after 300ms of inactivity
+    }, 300);
   };
 
   const handleCancel = () => {
@@ -95,7 +108,6 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           }
         }
       }
-      console.log("ERIRB I: ", errorState);
 
       setFormError(errorState);
     }
@@ -150,9 +162,8 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
       setStateDisable(false);
       values["state"] = {};
       setDefaultState(undefined);
-      if (values.country.id === 0) {
-        setStateDisable(true);
-      }
+      if (values.country.id === 0) setStateDisable(true);
+      else setStateDisable(false);
       setStateKey((prev) => 1 - prev);
     }
     setSelectValues(values);
@@ -181,12 +192,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         helperText={formError?.name?.msg}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { name, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -201,12 +212,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
         defaultValue={entityData.alias}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { alias, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { alias, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -221,12 +232,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.printName?.error}
         helperText={formError?.printName?.msg}
         defaultValue={printNameFn}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { printName, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { printName, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -241,12 +252,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
         defaultValue={entityData.pan}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pan, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pan, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -261,12 +272,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.gstin?.error}
         helperText={formError?.gstin?.msg}
         defaultValue={entityData.gstin}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { gstin, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { gstin, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -281,12 +292,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
         defaultValue={entityData.address1}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { address1, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { address1, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -301,12 +312,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
         defaultValue={entityData.address2}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { address2, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { address2, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -343,11 +354,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         id={"state"}
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        disabled={stateDisable}
         dialogTitle={"Add State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}
+        allowModify={!stateDisable}
+        allowNewAdd={!stateDisable}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <StateForm
             setDialogOpen={fnDialogOpen}
@@ -370,12 +382,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
         defaultValue={entityData.city}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { city, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { city, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ],
     [
@@ -390,12 +402,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
         defaultValue={entityData.pincode}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pincode, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pincode, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ]
   ])
@@ -511,7 +523,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
+      {/* <Tooltip
         title={docData.length > 0 ? (
           docData.map((file: any, index: any) => (
             <Typography variant="body2" key={index}>
@@ -534,10 +546,10 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           </Badge>
 
         </IconButton>
-      </Tooltip>
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      </Tooltip> */}
+      <Box id="sourceForm">
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-number") || fieldKey.includes("field-address")) {
@@ -581,12 +593,48 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
                 )
               }
             })}
-          </Grid>
+          {/* </Grid> */}
+          <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
+            >
+              <Box>
+          <Tooltip
+        title={docData.length > 0 ? (
+          docData.map((file: any, index: any) => (
+            <Typography variant="body2" key={index}>
+              {file.description}
+            </Typography>
+          ))
+        ) : (
+          <Typography variant="body2" color="white">
+            No files available
+          </Typography>
+        )}
+      >
+        <IconButton
+          sx={{ float: "right", position: "relative", paddingRight: 0 }}
+          onClick={() => setDialogOpen(true)}
+          aria-label="file"
+        >
+          <Badge badgeContent={docData.length} color="primary">
+            <AttachFileIcon></AttachFileIcon>
+          </Badge>
+
+        </IconButton>
+      </Tooltip>
+        </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2,
+              // mt: 2,
+              paddingLeft: "2rem",
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
@@ -600,6 +648,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
               Submit
             </Button>
           </Box>
+          </Grid>
           {dialogOpen && (
             <AddDialog
               title=""
@@ -609,6 +658,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
               <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
             </AddDialog>
           )}
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}

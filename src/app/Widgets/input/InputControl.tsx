@@ -95,6 +95,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     )[0] as HTMLElement;
     if (flagButton) {
       flagButton.tabIndex = -1;
+      flagButton.style.width = "2.188rem";
+      flagButton.style.height = "0.813rem";
     }
   }
 
