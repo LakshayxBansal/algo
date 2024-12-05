@@ -16,7 +16,7 @@ const EnquiryConfigPage = async () => {
     const config  = await fetchConfigData();     // fetch all configs
     const allDepts = await getAllDepts();       // get dept list 
     const configDeptMap = await fetchConfigDeptMapData(); //allocation matrix for transactions
-    return <ConfigForm configData={config} allDepts={allDepts} configDeptMap={configDeptMap}/>
+    return <ConfigForm configData={config as configSchemaT} allDepts={allDepts} configDeptMap={configDeptMap as configDeptMapSchemaT}/>
   } else {
     redirect("/signin");
   }
