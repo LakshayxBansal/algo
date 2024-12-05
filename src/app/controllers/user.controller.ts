@@ -184,10 +184,9 @@ export async function getCompanyUser(
       const roles = await getAllRoles();
       for (const ele of companyUsers) {
         const userRole = roles.filter((role:{id:number,name:string})=>role.id===ele.roleId)[0]
-        ele.roleId = userRole.id;
-        ele.role = userRole.name
+        ele.roleId = userRole ? userRole.id : 0;
+        ele.role = userRole ? userRole.name : "none";
       }
-      console.log("company users : ",companyUsers);
       getCompanyUsers = {
         status: true,
         data: companyUsers.map(bigIntToNum) as userSchemaT,

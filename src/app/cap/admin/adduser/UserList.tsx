@@ -8,12 +8,13 @@ import InviteUserForm from "@/app/Widgets/masters/masterForms/InviteUserForm";
 import { deleteSession, getDbSession } from "@/app/services/session.service";
 import { useState } from "react";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
+import { getProfileById, updateExecutive } from "@/app/controllers/executive.controller";
 
 
 
 export default function UserList() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [userCompanyInfo, setUserCompanyInfo] = useState({ userId: 0, companyId: 0 });
+  const [userCompanyInfo, setUserCompanyInfo] = useState({ userId: 0, companyId: 0,roleId:0 });
   const columns: GridColDef[] = [
     { field: 'RowID', headerName: 'ID', width: 90 },
     {
@@ -38,7 +39,7 @@ export default function UserList() {
       renderCell: (params) => (
         <Button onClick={() => {
           setDialogOpen(true);
-          setUserCompanyInfo({ userId: params.row.userId, companyId: params.row.companyId });
+          setUserCompanyInfo({ userId: params.row.userId, companyId: params.row.companyId, roleId:params.row.roleId });
         }}>Remove</Button>
       )
     },
@@ -47,11 +48,21 @@ export default function UserList() {
 
   const handleRemove = async () => {
     try {
-      await deRegisterFromCompany(userCompanyInfo.userId, userCompanyInfo.companyId);
-      const userSession = await getDbSession(userCompanyInfo.userId);
-      if (userSession && userSession.id === userCompanyInfo.companyId) {
-        await deleteSession(userCompanyInfo.userId);
+      if(userCompanyInfo.roleId){
+        const executiveDetail = await getProfileById(userCompanyInfo.userId);
+        for(const key in executiveDetail[0]){
+          if(executiveDetail[0][key]===null){
+            executiveDetail[0][key]=""
+          }
+        }
+        const updatedExecutiveDetail = {...executiveDetail[0],executive_dept :"Sales",crm_user_id:0,call_type:"Enquiry"};
+        await updateExecutive(updatedExecutiveDetail,[]);
       }
+      // await deRegisterFromCompany(userCompanyInfo.userId, userCompanyInfo.companyId);
+      // const userSession = await getDbSession(userCompanyInfo.userId);
+      // if (userSession && userSession.id === userCompanyInfo.companyId) {
+      //   await deleteSession(userCompanyInfo.userId);
+      // }
     } catch (error) {
       throw (error);
     }
