@@ -163,7 +163,10 @@ export default function EntityList(props: entitiyCompT) {
       } else {
         setAllColumns(allDfltCols);
       }
-      // for title
+    }, 400);
+
+    // for title
+    if (props.title) {
       let newUrl: string;
       if (searchParams.size > 0) {
         // newUrl = url+`&pgTitle=${props.title}`
@@ -175,9 +178,8 @@ export default function EntityList(props: entitiyCompT) {
         newUrl = url + `?pgTitle=${props.title}`;
       }
       router.push(newUrl);
-      //for title
-    }, 400);
-
+    }
+    //for title
 
     if (searchData) {
       fetchData(searchData);
