@@ -513,11 +513,11 @@ export default function InputForm({ baseData }: InputFormProps) {
     if (field) {
       return {
         label: field.column_label,
-        required: field.is_mandatory === 1, // True if mandatory, otherwise false
-        disabled: field.is_disabled,
+        required: field.is_mandatory === 1,
+        disabled : field.is_disabled === 1,
       };
     }
-    return { label: "default label", required: false }; // Default if no match is found
+    return { label: "default label", required: false, disabled : false}; // Default if no match is found
   }
 
   let fieldArr: React.ReactElement[] = [];
@@ -654,7 +654,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             ...baseElement.props,
             label: field.column_label,
             required: field.is_mandatory === 1,
-            disabled: field.is_disabled,
+            disabled: field.is_disabled ? true : baseElement.props.disabled, 
             key: `field-default-${field.column_name_id}`,
           });
         }
