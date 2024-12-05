@@ -366,7 +366,9 @@ export default function InputForm({ baseData }: InputFormProps) {
       <InputControl
         format={dateTimeFormat}
         key={status}
-        defaultValue={status === "2" ? "11/22/2024 11:09 PM" : dayjs(new Date())}
+        defaultValue={
+          status === "2" ? "11/22/2024 11:09 PM" : dayjs(new Date())
+        }
         label="When"
         required={false}
         inputType={InputType.DATETIMEINPUT}
@@ -413,7 +415,12 @@ export default function InputForm({ baseData }: InputFormProps) {
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
-    const formatedData = await enquiryDataFormat({ formData, selectValues, dateFormat, timeFormat });
+    const formatedData = await enquiryDataFormat({
+      formData,
+      selectValues,
+      dateFormat,
+      timeFormat,
+    });
 
     let result;
     let issues = [];
@@ -504,7 +511,6 @@ export default function InputForm({ baseData }: InputFormProps) {
     });
   };
 
-
   function fieldPropertiesById(id: string) {
     const field = baseData.fields.find(
       (item: any) => item.column_name_id === id
@@ -514,10 +520,10 @@ export default function InputForm({ baseData }: InputFormProps) {
       return {
         label: field.column_label,
         required: field.is_mandatory === 1,
-        disabled : field.is_disabled === 1,
+        disabled: field.is_disabled === 1,
       };
     }
-    return { label: "default label", required: false, disabled : false}; // Default if no match is found
+    return { label: "default label", required: false, disabled: false }; // Default if no match is found
   }
 
   let fieldArr: React.ReactElement[] = [];
@@ -528,8 +534,7 @@ export default function InputForm({ baseData }: InputFormProps) {
     "suggested_action_remark",
   ];
 
-  const enquiryMaintainProducts =
-    baseData.config_data.maintainProducts;
+  const enquiryMaintainProducts = baseData.config_data.maintainProducts;
 
   baseData.fields.map((field: any, index) => {
     if (field.is_default_column) {
@@ -641,23 +646,14 @@ export default function InputForm({ baseData }: InputFormProps) {
         ) as React.ReactElement;
 
         let fld;
-        if ((field.column_name_id === "closure_remark" || field.column_name_id === "next_action_date" || field.column_name_id === "next_action") && field.is_disabled === 0) {
-          fld = React.cloneElement(baseElement, {
-            ...baseElement.props,
-            label: field.column_label,
-            required: field.is_mandatory === 1,
-            key: `field-default-${field.column_name_id}`,
-          });
-        }
-        else {
-          fld = React.cloneElement(baseElement, {
-            ...baseElement.props,
-            label: field.column_label,
-            required: field.is_mandatory === 1,
-            disabled: field.is_disabled ? true : baseElement.props.disabled, 
-            key: `field-default-${field.column_name_id}`,
-          });
-        }
+
+        fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          disabled: field.is_disabled ? true : baseElement.props.disabled,
+          key: `field-default-${field.column_name_id}`,
+        });
 
         fieldArr.push(fld);
       }
@@ -777,7 +773,9 @@ export default function InputForm({ baseData }: InputFormProps) {
                   alignItems="flex-end"
                   my={2}
                 >
-                  <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+                  <Button onClick={handleCancel} tabIndex={-1}>
+                    Cancel
+                  </Button>
                   <Button type="submit" variant="contained">
                     Submit
                   </Button>
