@@ -13,6 +13,8 @@ import {
   updateSupportCallAllocationDb,
 } from "../services/callExplorer.service";
 import { GridSortModel } from "@mui/x-data-grid";
+import { adjustToLocal } from "../utils/utcToLocal";
+import { regionalDateFormat } from "../utils/getRegionalFormat";
 
 export async function getCallEnquiries(
   filterValueState: any,
@@ -71,7 +73,7 @@ export async function getAllCallEnquiries(
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await getAllCallEnquiriesDb(
+      const res = await getAllCallEnquiriesDb(
         session.user.dbInfo.dbName,
         filterValueState,
         filterType,
@@ -80,21 +82,17 @@ export async function getAllCallEnquiries(
         dateFilter,
         // sortBy
       );
-
-      // Fetch the total row count (with the same filters applied)
-      const count = await getCallEnquiriesCountDb(
-        session.user.dbInfo.dbName,
-        filterValueState,
-        filterType,
-        selectedStatus,
-        callFilter,
-        dateFilter
-      );
+      const dateFormat = await regionalDateFormat();
+      const result = res.map((item: any) => ({
+        ...item, // Copy all other fields
+        date: adjustToLocal(item.date).format(dateFormat), // Update 'date'
+        next_action_date: adjustToLocal(item.next_action_date).format(dateFormat), // Update 'next_action_date'
+      }));
+      
 
       // Return both result and count as separate variables in an object
       return {
         result,
-        count,
       };
     }
   } catch (error) {
@@ -222,7 +220,7 @@ export async function getAllCallSupportEnquiries(
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await getAllCallSupportTicketsDb(
+      const res = await getAllCallSupportTicketsDb(
         session.user.dbInfo.dbName,
         filterValueState,
         filterType,
@@ -231,21 +229,17 @@ export async function getAllCallSupportEnquiries(
         dateFilter
       );
 
-      // Fetch the total row count (with the same filters applied)
-      const count = await getCallSupportTicketsCountDb(
-        session.user.dbInfo.dbName,
-        filterValueState,
-        filterType,
-        selectedStatus,
-        callFilter,
-        dateFilter
-      );
+      const dateFormat = await regionalDateFormat();
+      const result = res.map((item: any) => ({
+        ...item, // Copy all other fields
+        date: adjustToLocal(item.date).format(dateFormat), // Update 'date'
+        next_action_date: adjustToLocal(item.next_action_date).format(dateFormat), // Update 'next_action_date'
+      }));
 
       // const count = result.length;
       // Return both result and count as separate variables in an object
       return {
-        result,
-        count,
+        result
       };
     }
   } catch (error) {
