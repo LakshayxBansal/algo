@@ -715,6 +715,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         <Grid container>
           <Grid item xs={12} md={12}>
             <Box>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                  my={2}
+                >
               <Tooltip
                 title={
                   docData.length > 0 ? (
@@ -731,7 +738,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                 }
               >
                 <IconButton
-                  sx={{ float: "left", position: "relative", paddingRight: 0 }}
+                  sx={{ marginRight: "3rem" }}
                   onClick={() => setDocDialogOpen(true)}
                   aria-label="file"
                 >
@@ -740,13 +747,6 @@ export default function InputForm({ baseData }: InputFormProps) {
                   </Badge>
                 </IconButton>
               </Tooltip>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  my={2}
-                >
                   <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
                   <Button type="submit" variant="contained">
                     Submit

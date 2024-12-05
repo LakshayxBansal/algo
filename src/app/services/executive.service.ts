@@ -169,16 +169,17 @@ export async function getProfileDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        `select em.*, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
-         s.name state, co.name country, us.name as crm_user\
+        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+         s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
+         cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
          left outer join  executive_role_master e on em.role_id = e.id \
          left outer join executive_group_master egm on egm.id=em.group_id\
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
-         left outer join userDb.user us on em.crm_user_id=us.id\
-         where em.crm_user_id=?`,
+         left outer join custom_fields_data cfd on cfd.object_id=em.id and cfd.object_type_id=11\
+         where em.crm_user_id=?",
       values: [id],
     });
 
@@ -279,7 +280,7 @@ export async function getExecutiveIdFromEmailList(
 ) {
   try {
     let query = "select id as id from executive_master where email = ?";
-    let values: any[] = [email];
+    let values = [email];
 
     const result = await excuteQuery({
       host: crmDb,
@@ -300,7 +301,7 @@ export async function getExecutiveProfileImageByCrmUserIdList(
   try {
     let query =
       "select profile_img as profileImg from executive_master where crm_user_id = ?";
-    let values: any[] = [crmUserId];
+    let values = [crmUserId];
 
     const result = await excuteQuery({
       host: crmDb,

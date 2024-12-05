@@ -66,7 +66,7 @@ export async function getCountryWithCurrencyDb(
   try {
     let query =
       "select id as id, name as name, currency_string currencyString, currency_symbol currencySymbol, \
-      currency_substring currencySubString, currency_character currencyCharacter, locale, date_format from country_master";
+      currency_substring currencySubString, locale, date_format from country_master";
     let values: any[] = [];
 
     if (searchString !== "") {

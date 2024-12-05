@@ -30,6 +30,7 @@ import { NextRequest } from "next/server";
 import os from "os";
 import { isIP } from "net";
 import { count } from "console";
+import { getAllRolesDB } from "../services/executiveRole.service";
 
 export async function getCompanyById(id: number) {
   try {
@@ -144,7 +145,6 @@ export async function createCompany(data: companySchemaT) {
             configData.regionalSetting.currencyString = countryData[0].currencyString;
             configData.regionalSetting.currencySymbol = countryData[0].currencySymbol;
             configData.regionalSetting.currencySubString = countryData[0].currencySubString;
-            configData.regionalSetting.currencyCharacter = countryData[0].currencyCharacter;
             configData.regionalSetting.dateFormat = countryData[0].date_format;
           }
 
@@ -209,7 +209,7 @@ export async function updateCompany(data: companySchemaT) {
 
           const regionalData: regionalSettingSchemaT = JSON.parse(regionalDataRes.config);
           
-          if (data.country_id !== 0) {
+          if (data.country && data.country_id !== 0) {
             regionalData.country = data.country;
             regionalData.country_id = data.country_id ?? 0;
             regionalData.state = data.state;
@@ -217,7 +217,6 @@ export async function updateCompany(data: companySchemaT) {
             regionalData.currencyString = countryData[0].currencyString ?? regionalData.currencyString;
             regionalData.currencySymbol = countryData[0].currencySymbol ?? regionalData.currencySymbol;
             regionalData.currencySubString = countryData[0].currencySubString ?? regionalData.currencySubString;
-            regionalData.currencyCharacter = countryData[0].currencyCharacter ?? regionalData.currencyCharacter;
             regionalData.dateFormat = countryData[0].date_format ?? regionalData.dateFormat;
           }
 
@@ -281,7 +280,15 @@ export async function getCompanies(
         filter,
         limit as number
       );
-
+      for(const company of dbData){
+        const companyRoles = await getAllRolesDB(company.dbName);
+        let role = "none";
+        if(company.roleId && companyRoles.length>0){
+          role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
+        }
+        company.role = role;
+      }
+      
       getCompanies = {
         status: true,
         data: dbData.map(bigIntToNum) as companySchemaT[],
