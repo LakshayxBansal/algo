@@ -71,6 +71,11 @@ export default function ProductGrid({
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
   const [isButtonFocused, setIsButtonFocused] = useState(false);
 
+  // Track column visibility dynamically
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState({
+    errorMessages: false, // Initially hide the error messages column
+  });
+
   const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     ".MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal": {
       opacity: 0.8,
@@ -110,8 +115,14 @@ export default function ProductGrid({
 
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Set column visibility based on dgProductFormError
+    setColumnVisibilityModel((prevModel) => ({
+      ...prevModel,
+      errorMessages: Object.keys(dgProductFormError).length > 0, // Show column if there are errors
+    }));
+
     return () => observer.disconnect();
-  }, []);
+  }, [dgProductFormError, setColumnVisibilityModel]);
 
   function onSelectDataGridRowStateChange(
     event: React.SyntheticEvent,
@@ -393,6 +404,33 @@ export default function ProductGrid({
         ];
       },
     },
+    {
+      field: "errorMessages",
+      headerName: "Error Messages",
+      width: 300,
+      renderCell: (params) => {
+        const rowIndex = params.row.id - 1;
+        const rowErrors = dgProductFormError[rowIndex];
+
+        if (rowErrors) {
+          return (
+            <div style={{ marginTop: "0.5rem" }}>
+              {Object.keys(rowErrors).map((errorKey, index) => (
+                <Typography
+                  key={index}
+                  variant="body2"
+                  color="error"
+                  sx={{ fontSize: "0.8rem" }}
+                >
+                  {rowErrors[errorKey]?.msg}
+                </Typography>
+              ))}
+            </div>
+          );
+        }
+        return null; // Return null if no errors for the row
+      },
+    },
   ];
 
   const handleFocus = () => setIsButtonFocused(true);
@@ -404,7 +442,13 @@ export default function ProductGrid({
   return (
     <>
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6" component="div" sx={{ position: 'relative', backgroundColor: 'white' }}>Product List</Typography>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ position: "relative", backgroundColor: "white" }}
+        >
+          Product List
+        </Typography>
         <Button
           color="primary"
           startIcon={<AddIcon />}
@@ -423,9 +467,9 @@ export default function ProductGrid({
         className={isButtonFocused ? "button-focused" : ""}
         rowHeight={
           dgFormError.product ||
-            dgFormError.quantity ||
-            dgFormError.unit ||
-            dgFormError.remark
+          dgFormError.quantity ||
+          dgFormError.unit ||
+          dgFormError.remark
             ? 70
             : 50
         }
@@ -436,6 +480,7 @@ export default function ProductGrid({
             ? `super-app-theme--Rejected`
             : ""
         }
+        columnVisibilityModel={columnVisibilityModel} // Apply column visibility model
       />
     </>
   );
