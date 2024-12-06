@@ -6,7 +6,6 @@ import DialogContent from '@mui/material/DialogContent';
 import { type DialogProps } from "@mui/material";
 import Divider from '@mui/material/Divider';
 
-
 type dialogPropsT = {
   title: string,
   open: boolean,

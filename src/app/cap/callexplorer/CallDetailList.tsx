@@ -5,7 +5,7 @@ import { StripedDataGrid } from "../../utils/styledComponents";
 import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 
-export default function CallDetailList({ selectedRow, refresh , callType }: { selectedRow: any, refresh: any, callType:number }) {
+export default function CallDetailList({ selectedRow, refresh , callType , dateTimeFormat}: { selectedRow: any, refresh: any, callType:number, dateTimeFormat: string }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
     const [data, setData] = useState([]);
     const [pageSize, setPageSize] = useState(10); // Default page size
@@ -38,7 +38,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
     }, [selectedRow, refresh, callType]);
 
     const truncateText = (text: string, maxLength: number) => {
-        if (text.length > maxLength) {
+        if (text?.length > maxLength) {
             return text.substring(0, maxLength) + '...';
         }
         return text;
@@ -68,21 +68,16 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
         },
         {
             field: "date", headerName: "Date", width: 130, renderCell: (params) => {
-                return adjustToLocal(params.row.date).toDate().toString().slice(0, 15);
-            },
-        },
-        {
-            field: "time", headerName: "Time", width: 100,
-            renderCell: (params) => {
-                return adjustToLocal(params.row.date).format("hh:mm A");
+                return params.row.date ? adjustToLocal(params.row.date).format(dateTimeFormat):"";
             },
         },
         {
             field: "executive",
-            headerName: "Executive",
+            headerName: "Allocated To",
             width: 100,
         },
         { field: "actionTaken", headerName: "Action Taken", width: 100 },
+        { field: "status", headerName: "Call Status", width: 100 },
         { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "nextAction", headerName: "Next Action", width: 100 },
         {
@@ -90,13 +85,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
             headerName: "Next Action Date",
             width: 130,
             renderCell: (params) => {
-                return params.row.actionDate ? adjustToLocal(params.row.actionDate).toDate().toString().slice(0, 15): "";
-            },
-        },
-        {
-            field: "actionTime", headerName: "Next Action Time", width: 100,
-            renderCell: (params) => {
-                return params.row.actionDate ? adjustToLocal(params.row.actionDate).format("hh:mm A"):"";
+                return params.row.actionDate ? adjustToLocal(params.row.actionDate).format(dateTimeFormat) : "";
             },
         },
         {
@@ -104,7 +93,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
             renderCell: (params) => {
                 const fullRemark = params.row.status_id == 1
                     ? params.row.suggested_action_remark
-                    : params.row.closure_remark;
+                    : params.row.closure_remark ?? "";
 
                 const truncatedRemark = truncateText(fullRemark, 120); // Limit to 120 characters
 
@@ -187,7 +176,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
     overflowY: 'auto',
     fontSize: '12px', 
     '& .MuiDataGrid-row': {
-      fontSize: '12px', 
+      fontSize: '11px', 
     },
     '& .MuiDataGrid-columnHeaders': {
       fontSize: 'inherit', 
@@ -199,6 +188,12 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
     '& .MuiTablePagination-root': {
       display: 'none', // Ensure pagination is completely hidden
     },
+    "& .MuiDataGrid-cell:focus": {
+        outline: "none", // Removes the default focus outline
+      },
+      "& .MuiDataGrid-cell:focus-within": {
+        outline: "none", // Removes the outline when the cell has child focus
+      },
   }}
 />
 

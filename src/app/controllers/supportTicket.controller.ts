@@ -16,6 +16,7 @@ import {
   getProductDataAction,
   getSupportDataByPageDb,
   getSupportDataCount,
+  getSupportTicketDescriptionDb,
   updateSupportDataDb,
 } from "../services/supportTicket.service";
 import { logger } from "../utils/logger.utils";
@@ -205,7 +206,7 @@ export async function getSupportDataByPage(
 ){
   let result={
     status: false,
-    data: {} ,
+    data: [] as supportTicketSchemaT[],
     count: 0,
     error: {},
   };
@@ -213,7 +214,7 @@ export async function getSupportDataByPage(
   try {
     const session = await getSession();
     if(session?.user.dbInfo){
-      const conts= await getSupportDataByPageDb(session,
+      const dbData= await getSupportDataByPageDb(session,
         page as number,
         filter,
         limit as number
@@ -226,7 +227,7 @@ export async function getSupportDataByPage(
   );
  result = {
     status: true,
-    data: conts.map(bigIntToNum) ,
+    data: dbData.map(bigIntToNum) as supportTicketSchemaT[],
     count: Number(rowCount[0]["rowCount"]),
     error: {},
   };
@@ -238,7 +239,7 @@ export async function getSupportDataByPage(
     result = {
       ...result,
       status: false,
-      data: {} ,
+      data: [] as supportTicketSchemaT[],
       error: err,
     };
   }
@@ -272,6 +273,18 @@ export async function delSupportDataById(ticketId: number) {
     }
     return result;
   } catch (error: any) {
+    throw error;
+  }
+}
+
+
+export async function getSupportTicketDescription(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getSupportTicketDescriptionDb(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
     throw error;
   }
 }

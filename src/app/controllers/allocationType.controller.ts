@@ -192,7 +192,7 @@ export async function getAllocationTypeByPage(
 ) {
   let getAllocationType = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -200,7 +200,7 @@ export async function getAllocationTypeByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getAllocationTypeByPageDb(
+      const dbData = await getAllocationTypeByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -212,7 +212,7 @@ export async function getAllocationTypeByPage(
       );
       getAllocationType = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -223,7 +223,7 @@ export async function getAllocationTypeByPage(
     getAllocationType = {
       ...getAllocationType,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

@@ -6,6 +6,8 @@ import {
   getLedgerDataAction,
   getConfigDataDB,
   getLoggedInUserDetailsDB,
+  createEnquiryLedgerDB,
+  getEnquiryDescriptionDb,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -123,7 +125,6 @@ export async function getConfigData() {
     logger.error(e);
   }
 }
-
 export async function getLoggedInUserDetails() {
   let result;
 
@@ -173,5 +174,43 @@ export async function updateEnquiryById({
     }
   } catch (error) {
     logger.error(error);
+  }
+}
+
+export async function createEnquiryLedger(ledgerId: number, statusId: number, subStatusId: number, actionTakenId: number, nextActionId: number, suggestedActionRemark: string, actionTakenRemark: string, closureRemark: string, nextActionDate: String) {
+  try {
+    const session = await getSession();
+    if (session) {
+      const ledgerData = {
+        id: ledgerId,
+        status_id: statusId,
+        sub_status_id: subStatusId,
+        action_taken_id: actionTakenId,
+        next_action_id: nextActionId,
+        suggested_action_remark: suggestedActionRemark,
+        action_taken_remark: actionTakenRemark,
+        closure_remark: closureRemark,
+        next_action_date: nextActionDate
+      }
+      
+      const ledgerRes = createEnquiryLedgerDB(session, ledgerData as enquiryLedgerSchemaT);
+      return {
+        status: true
+      }
+    }
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+
+export async function getEnquiryDescription(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getEnquiryDescriptionDb(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
   }
 }

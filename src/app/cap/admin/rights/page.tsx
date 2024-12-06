@@ -3,6 +3,11 @@ import { getSession } from "@/app/services/session.service";
 import { getRightsData } from "@/app/controllers/rights.controller";
 import RightPage from "./RightPage";
 import { redirect } from "next/navigation";
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+    title: 'Manage Rights'
+}
 
 type DataState = {
     id: number,

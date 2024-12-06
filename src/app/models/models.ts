@@ -67,8 +67,31 @@ export type masterUploadFormT = {
 export type masterFormPropsT = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
+  metaData?: formMetaDataPropT;
   data?: any;
 };
+
+
+export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
+export type rightSchemaT = z.infer<typeof zs.rightSchema>;
+export type loggedInUserDataT= z.infer<typeof zs.loggedInUserData>;
+export type FieldItemT= customFieldsMasterSchemaT & {
+  modified_by: number | null;
+  modified_on: string | null;
+  created_by: number | null;
+  created_on: string | null;
+  column_order: number;
+}
+
+
+// this type is for fetching meta info for custom fields
+export type formMetaDataPropT = {
+  fields: customFieldsMasterSchemaT[],
+  rights: rightSchemaT,
+  regionalSettingsConfigData: regionalSettingSchemaT,
+  loggedInUserData: loggedInUserDataT
+}
+
 
 export type masterFormPropsWithParentT = masterFormPropsT & {
   parentData?: number;
@@ -86,11 +109,12 @@ export type masterFormPropsWithExecutive = masterFormPropsT & {
 // }
 
 // // Added parentData property of type number
-export type masterFormPropsWithDataT = {
+export type masterFormPropsWithDataT<T> = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
-  data?: any;
-  parentData?: any;
+  data?: T;
+  parentData?: number;
+  metaData?: formMetaDataPropT;
 };
 
 //Enquiry Schemas
@@ -110,17 +134,7 @@ export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArrayS
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
-export type getDeptsT = [{
-    id: number;
-    name: string;
-    rowID: number;
-    stamp: number }]
-    //jp mail files
-    export type getDeptT = [{
-        id: number;
-        name: string;
-        stamp: number }]
-    //jp_dev
+
 
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;
@@ -159,47 +173,46 @@ export type dbInfoT = {
   roleId: number;
 };
 
-export type getOrgansT = [
-  {
-    id: string;
-    name: string;
-    printName: string;
-    alias: string;
-    rowID: number;
-    stamp: string;
-  }
-];
+// export type getOrgansT = [
+//   {
+//     id: string;
+//     name: string;
+//     printName: string;
+//     alias: string;
+//     rowID: number;
+//     stamp: string;
+//   }
+// ];
 
 export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContactByPageT = [
-  {
-    id: number;
-    name: string;
-    whatsapp: string;
-    email: string;
-  }
-];
 
-export type getProductT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getContactByPageT = [
+//   {
+//     id: number;
+//     name: string;
+//     whatsapp: string;
+//     email: string;
+//   }
+// ];
 
-export type getUnitT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getProductT = 
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   };
+
+// export type getUnitT = 
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   };
 
 export type configSchemaT = z.infer<typeof zs.configSchema>;
 
@@ -244,9 +257,11 @@ export type iconCompT = {
   setIds:(props: any) => void;
   delete:any;
   modify:any;
- link ?:string;
+  link ?:string;
+  setMetaData:(props: any) => void;
 };
 export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
 export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;
+

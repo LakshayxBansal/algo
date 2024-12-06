@@ -17,15 +17,16 @@ export async function getCallEnquiriesDb(
   try {
     let query: string =
       "select eh.id,eh.enq_number as description , ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
-                essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate, el.modified_on\
+                essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate, el.modified_on , om.name as organisation\
                 from enquiry_header_tran eh \
                 left join enquiry_ledger_tran el on el.enquiry_id=eh.id \
                 left join contact_master cm on eh.contact_id=cm.id\
+                left join organisation_master om on eh.contact_id=cm.id and cm.organisation_id=om.id\
                 left join enquiry_category_master ecm on eh.category_id=ecm.id\
                 left join enquiry_status_master esm on el.status_id=esm.id\
                 left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
                 left join enquiry_action_master eam on el.action_taken_id=eam.id\
-                left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
+                left join enquiry_action_master eaxm on el.next_action_id=eaxm.id\
                 left join area_master am on am.id=cm.area_id\
                 left join executive_master em on em.id=el.allocated_to\
                 where el.id = (SELECT MAX(lt.id) from enquiry_ledger_tran lt\
@@ -37,6 +38,18 @@ export async function getCallEnquiriesDb(
     if (filterValueState.callCategory) {
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`eh.enq_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`eam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -135,6 +148,7 @@ export async function getCallEnquiriesDb(
       );
       query += ` ORDER BY ${sortClauses.join(', ')}`;
     }
+    else { query += ` ORDER BY callStatus DESC , eh.date  `; }
 
     const offset = (page-1) * pageSize;
     query += ` LIMIT ? OFFSET ?`;
@@ -163,15 +177,16 @@ export async function getAllCallEnquiriesDb(
   try {
     let query: string =
       "select eh.id,eh.enq_number as description , ecm.name callCategory, cm.name contactParty, eh.date, em.name executive,esm.name callStatus,\
-                essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate, el.modified_on\
+                essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, am.name area,  el.next_action_date actionDate, el.modified_on, om.name as organisation\
                 from enquiry_header_tran eh \
                 left join enquiry_ledger_tran el on el.enquiry_id=eh.id \
                 left join contact_master cm on eh.contact_id=cm.id\
+                left join organisation_master om on eh.contact_id=cm.id and cm.organisation_id=om.id\
                 left join enquiry_category_master ecm on eh.category_id=ecm.id\
                 left join enquiry_status_master esm on el.status_id=esm.id\
                 left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
                 left join enquiry_action_master eam on el.action_taken_id=eam.id\
-                left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
+                left join enquiry_action_master eaxm on el.next_action_id=eaxm.id\
                 left join area_master am on am.id=cm.area_id\
                 left join executive_master em on em.id=el.allocated_to\
                 where el.id = (SELECT MAX(lt.id) from enquiry_ledger_tran lt\
@@ -183,6 +198,18 @@ export async function getAllCallEnquiriesDb(
     if (filterValueState.callCategory) {
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`eh.enq_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`eam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -294,13 +321,14 @@ export async function getCallEnquiriesDetailsDb(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate,el.status_id,el.closure_remark,el.suggested_action_remark, etm.name as tranType\
+        "select el.id as id, el.date, em.name executive, essm.name subStatus,eam.name actionTaken,eaxm.name nextAction, el.next_action_date actionDate,el.status_id,el.closure_remark,el.suggested_action_remark, etm.name as tranType, esm.name as status,el.action_taken_remark\
     from enquiry_ledger_tran el\
     left join enquiry_sub_status_master essm on el.sub_status_id=essm.id\
     left join enquiry_action_master eam on el.action_taken_id=eam.id\
-    left join enquiry_action_master eaxm on el.action_taken_id=eaxm.id\
+    left join enquiry_action_master eaxm on el.next_action_id=eaxm.id\
     left join executive_master em on em.id=el.allocated_to \
     LEFT JOIN enquiry_tran_type_master etm ON etm.id = el.enquiry_tran_type_id \
+    LEFT JOIN enquiry_status_master esm ON esm.id = el.status_id \
     where el.enquiry_id = ?",
       values: [id],
     });
@@ -341,6 +369,18 @@ export async function getCallEnquiriesCountDb(
     if (filterValueState.callCategory) {
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`eh.enq_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`eam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -500,11 +540,25 @@ export async function getCallSupportTicketsDb(
 ) {
   try {
     let query: string =
-      "SELECT th.id, th.tkt_number AS description, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
-       tssm.name AS subStatus, tam.name AS actionTaken, taxm.name AS nextAction, am.name AS area, tl.next_action_date AS actionDate, ttm.name AS tranType \
+      "SELECT th.id, \
+       th.tkt_number AS description, \
+       tcm.name AS callCategory, \
+       cm.name AS contactParty, \
+       th.date, \
+       em.name AS executive, \
+       tsm.name AS callStatus, \
+       tssm.name AS subStatus, \
+       tam.name AS actionTaken, \
+       taxm.name AS nextAction, \
+       am.name AS area, \
+       tl.next_action_date AS actionDate, \
+       ttm.name AS tranType, \
+       tl.modified_on, \
+       om.name AS organisation \
 FROM ticket_header_tran th \
 LEFT JOIN ticket_ledger_tran tl ON tl.ticket_id = th.id \
 LEFT JOIN contact_master cm ON th.contact_id = cm.id \
+LEFT JOIN organisation_master om ON th.contact_id = cm.id AND cm.organisation_id = om.id \
 LEFT JOIN ticket_category_master tcm ON th.category_id = tcm.id \
 LEFT JOIN ticket_status_master tsm ON tl.status_id = tsm.id \
 LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \
@@ -513,9 +567,12 @@ LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
 LEFT JOIN area_master am ON am.id = cm.area_id \
 LEFT JOIN executive_master em ON em.id = tl.allocated_to \
 LEFT JOIN ticket_tran_type_master ttm ON ttm.id = tl.ticket_tran_type_id \
-WHERE tl.id = (SELECT MAX(lt.id) \
-               FROM ticket_ledger_tran lt \
-               WHERE lt.ticket_id = tl.ticket_id)";
+WHERE tl.id = ( \
+    SELECT MAX(lt.id) \
+    FROM ticket_ledger_tran lt \
+    WHERE lt.ticket_id = tl.ticket_id )";
+
+
 
     const whereConditions: string[] = [];
     let values = [];
@@ -523,6 +580,18 @@ WHERE tl.id = (SELECT MAX(lt.id) \
     if (filterValueState.callCategory) {
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`th.tkt_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`tam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -592,7 +661,7 @@ WHERE tl.id = (SELECT MAX(lt.id) \
       const final = filterValueState.modified_on?.final
         ? filterValueState.modified_on?.final
         : new Date().toISOString();;
-      whereConditions.push(` el.modified_on BETWEEN '${initial}' AND '${final}'`);
+      whereConditions.push(` tl.modified_on BETWEEN '${initial}' AND '${final}'`);
     }
 
 
@@ -604,10 +673,15 @@ WHERE tl.id = (SELECT MAX(lt.id) \
      //  sorting logic
      if (sortBy.length > 0) {
       const sortClauses = sortBy.map(
-        (sort) => `${sort.field} ${sort.sort ? sort.sort.toUpperCase():"ASC"}`
+        (sort) =>
+        {
+          const sortingField = sort.field === 'modified_on' ? 'tl.modified_on' :sort.field ;
+          return `${sortingField} ${sort.sort ? sort.sort.toUpperCase():"ASC"}`
+        }
       );
       query += ` ORDER BY ${sortClauses.join(', ')}`;
     }
+    else { query += ` ORDER BY  callStatus DESC, th.date `; }
 
     const offset = (page - 1) * pageSize;
     query += ` LIMIT ? OFFSET ?`;
@@ -634,11 +708,25 @@ export async function getAllCallSupportTicketsDb(
 ) {
   try {
     let query: string =
-      "SELECT th.id, th.tkt_number AS description, tcm.name AS callCategory, cm.name AS contactParty, th.date, em.name AS executive, tsm.name AS callStatus, \
-       tssm.name AS subStatus, tam.name AS actionTaken, taxm.name AS nextAction, am.name AS area, tl.next_action_date AS actionDate, ttm.name AS tranType \
+      "SELECT th.id, \
+       th.tkt_number AS description, \
+       tcm.name AS callCategory, \
+       cm.name AS contactParty, \
+       th.date, \
+       em.name AS executive, \
+       tsm.name AS callStatus, \
+       tssm.name AS subStatus, \
+       tam.name AS actionTaken, \
+       taxm.name AS nextAction, \
+       am.name AS area, \
+       tl.next_action_date AS actionDate, \
+       ttm.name AS tranType, \
+       tl.modified_on, \
+       om.name AS organisation \
 FROM ticket_header_tran th \
 LEFT JOIN ticket_ledger_tran tl ON tl.ticket_id = th.id \
 LEFT JOIN contact_master cm ON th.contact_id = cm.id \
+LEFT JOIN organisation_master om ON th.contact_id = cm.id AND cm.organisation_id = om.id \
 LEFT JOIN ticket_category_master tcm ON th.category_id = tcm.id \
 LEFT JOIN ticket_status_master tsm ON tl.status_id = tsm.id \
 LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \
@@ -647,9 +735,10 @@ LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
 LEFT JOIN area_master am ON am.id = cm.area_id \
 LEFT JOIN executive_master em ON em.id = tl.allocated_to \
 LEFT JOIN ticket_tran_type_master ttm ON ttm.id = tl.ticket_tran_type_id \
-WHERE tl.id = (SELECT MAX(lt.id) \
-               FROM ticket_ledger_tran lt \
-               WHERE lt.ticket_id = tl.ticket_id)";
+WHERE tl.id = ( \
+    SELECT MAX(lt.id) \
+    FROM ticket_ledger_tran lt \
+    WHERE lt.ticket_id = tl.ticket_id )";
 
     const whereConditions: string[] = [];
     let values = [];
@@ -657,6 +746,18 @@ WHERE tl.id = (SELECT MAX(lt.id) \
     if (filterValueState.callCategory) {
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
+    }
+    if (filterValueState.description) {
+      whereConditions.push(`th.tkt_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`tam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
     }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
@@ -778,6 +879,18 @@ export async function getCallSupportTicketsCountDb(
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
+    if (filterValueState.description) {
+      whereConditions.push(`th.tkt_number = ?`);
+      values.push(filterValueState.description.name);
+    }
+    if (filterValueState.contactParty) {
+      whereConditions.push(`cm.name = ?`);
+      values.push(filterValueState.contactParty.name);
+    }
+    if(filterValueState.actionTaken){
+      whereConditions.push(`tam.name = ?`);
+      values.push(filterValueState.actionTaken.name);
+    }
     if (filterValueState.area) {
       whereConditions.push(`am.name = ?`);
       values.push(filterValueState.area.name);
@@ -884,12 +997,15 @@ export async function getCallSupportDetailsDb(crmDb: string, id: number) {
           tl.status_id, \
           tl.closure_remark, \
           tl.suggested_action_remark ,\
+          tsm.name AS status, \
+          tl.action_taken_remark, \
           ttm.name AS tranType \
         FROM ticket_ledger_tran tl \
         LEFT JOIN ticket_sub_status_master tssm ON tl.sub_status_id = tssm.id \
         LEFT JOIN ticket_action_master tam ON tl.action_taken_id = tam.id \
         LEFT JOIN ticket_action_master taxm ON tl.next_action_id = taxm.id \
         LEFT JOIN executive_master em ON em.id = tl.allocated_to \
+        LEFT JOIN ticket_status_master tsm ON tsm.id = tl.status_id \
         LEFT JOIN ticket_tran_type_master ttm ON ttm.id = tl.ticket_tran_type_id \
         WHERE tl.ticket_id = ? \
       `,

@@ -81,11 +81,12 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 
 interface customprop extends masterFormPropsT {
   userDetails: {
-    id: string | number; 
+    id: string | number;
     name: string;
   };
-  status: string | string[] | undefined ;
+  status: string | string[] | undefined;
 }
+
 
 const SupportTicketForm = (props: customprop) => {
 
@@ -96,8 +97,8 @@ const SupportTicketForm = (props: customprop) => {
   >({});
 
   const [snackOpen, setSnackOpen] = useState(false);
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>(props?.data?.tkt_number?masterData: { received_by:props?.userDetails });
-  const [status, setStatus] = useState(masterData?.status?.id!= null ? masterData.status.id.toString() : "1");
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>(props?.data?.tkt_number ? masterData : { received_by: props?.userDetails });
+  const [status, setStatus] = useState(masterData?.status?.id != null ? masterData.status.id.toString() : "1");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props?.data?.docData ?? []);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
@@ -110,14 +111,14 @@ const SupportTicketForm = (props: customprop) => {
     next_action: masterData?.next_action
   });
   const [data, setData] = useState<suppportProductArraySchemaT>(props?.data?.productData ?? []);
- 
-  
+
+
 
   const router = useRouter();
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await supportDataFormat({ formData, selectValues , otherData : props?.data});
+    const formatedData = await supportDataFormat({ formData, selectValues, otherData: props?.data });
 
-    let result:any;
+    let result: any;
 
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
@@ -183,19 +184,20 @@ const SupportTicketForm = (props: customprop) => {
      data.id = props.data.ticket_id;
      data.created_by= props.data.created_by;
      data.stamp = props.data.stamp;
-     data.ticket_tran_type = props?.status 
-     ? (masterData.allocated_to === selectValues.allocated_to.id 
+     
+     data.ticket_tran_type = props?.status ==="true"
+     ? ( masterData.allocated_to.id === selectValues.allocated_to.id 
          ? 4 // If status exists and allocation matches, assign 4
          : 2 // If status exists but allocation doesn't match, assign 2
        ) 
      : 3; // If no status then it is full update, assign 3
       result = await updateSupportData(data, productData);
     } else {
-    result = await createSupportTicket({
-      supportData: data,
-      productData: productData,
-      docData : newDocsData
-    });
+      result = await createSupportTicket({
+        supportData: data,
+        productData: productData,
+        docData: newDocsData
+      });
     }
     return result;
   }
@@ -214,17 +216,18 @@ const SupportTicketForm = (props: customprop) => {
   function onStatusChange(event: React.SyntheticEvent, value: any) {
 
     setDefaultValues({
-        sub_status: {id:0,name:""},
-        next_action:{id:0,name:""},
-      }
+      sub_status: { id: 0, name: "" },
+      next_action: { id: 0, name: "" },
+    }
     )
-    setSelectValues((prev)=>{
-      return { ...prev, 
-       next_action:{id:0, name:""},
-       sub_status :{id:0,name: ""}
+    setSelectValues((prev) => {
+      return {
+        ...prev,
+        next_action: { id: 0, name: "" },
+        sub_status: { id: 0, name: "" }
       }
-     })
-     
+    })
+
     setStatus(value);
 
   }
@@ -265,14 +268,15 @@ const SupportTicketForm = (props: customprop) => {
                       required
                       formError={formError?.contact ?? formError.contact}
                       defaultValue={masterData.contact}
-                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                      renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
                         <ContactForm
                           setDialogOpen={fnDialogOpen}
                           setDialogValue={fnDialogValue}
+                          metaData={metaData}
                           data={data}
                         />
                       )}
-                      disable= {props?.status === "true" ? true : false }
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
 
@@ -283,8 +287,8 @@ const SupportTicketForm = (props: customprop) => {
                       id="date"
                       name="date"
                       defaultValue={masterData?.date ?
-                       adjustToLocal(masterData.date)
-                      : dayjs()}
+                        adjustToLocal(masterData.date)
+                        : dayjs()}
                       required
                       error={formError?.date?.error}
                       helperText={formError?.date?.msg}
@@ -294,7 +298,7 @@ const SupportTicketForm = (props: customprop) => {
                           tabIndex: -1,
                         }
                       }}
-                      disabled= {props?.status === "true" ? true : false }
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={12}>
@@ -314,7 +318,7 @@ const SupportTicketForm = (props: customprop) => {
                           alignItems: "start",
                         },
                       }}
-                      disabled= {props?.status === "true" ? true : false }
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6} md={6}>
@@ -331,7 +335,7 @@ const SupportTicketForm = (props: customprop) => {
                       required
                       formError={formError?.category ?? formError.category}
                       defaultValue={
-                       masterData.category
+                        masterData.category
                       }
                       renderForm={(fnDialogOpen, fnDialogValue, data) => (
                         <SupportCategoryForm
@@ -340,7 +344,7 @@ const SupportTicketForm = (props: customprop) => {
                           data={data}
                         />
                       )}
-                      disable = {props?.status === "true" ? true : false }
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
 
@@ -361,16 +365,17 @@ const SupportTicketForm = (props: customprop) => {
                         formError?.received_by ?? formError.received_by
                       }
                       defaultValue={
-                        props?.data?.tkt_number?masterData.received_by: props.userDetails
+                        props?.data?.tkt_number ? masterData.received_by : props.userDetails
                       }
-                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                      renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
                         <ExecutiveForm
                           setDialogOpen={fnDialogOpen}
                           setDialogValue={fnDialogValue}
+                          metaData={metaData}
                           data={data}
                         />
                       )}
-                      disable= {props?.status === "true" ? true : false }
+                      disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
                   {/* <Grid item xs={12} sm={6} md={12}>
@@ -408,8 +413,8 @@ const SupportTicketForm = (props: customprop) => {
                     dgFormError={formError}
                     setdgFormError={setFormError}
                     dgProductFormError={productFormError}
-                    isDisable= {props?.status === "true" ? true : false }
-                    />
+                    isDisable={props?.status === "true" ? true : false}
+                  />
                 </Box>
               </Grid>
             </Grid>
@@ -430,11 +435,11 @@ const SupportTicketForm = (props: customprop) => {
                     name="call_receipt_remark"
                     id="call_receipt_remark"
                     error={formError?.call_receipt_remark?.error}
-                      helperText={formError?.call_receipt_remark?.msg}
+                    helperText={formError?.call_receipt_remark?.msg}
                     defaultValue={props.data?.call_receipt_remark}
                     rows={6}
                     fullWidth
-                    disabled = {props?.status === "true" ? true : false }
+                    disabled={props?.status === "true" ? true : false}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -447,30 +452,30 @@ const SupportTicketForm = (props: customprop) => {
                     defaultValue={props.data?.suggested_action_remark}
                     id="suggested_action_remark"
                     error={formError?.suggested_action_remark?.error}
-                      helperText={formError?.suggested_action_remark?.msg}
+                    helperText={formError?.suggested_action_remark?.msg}
                     rows={6}
                     fullWidth
-                    disabled = {props?.status === "true" ? true : false }
+                    disabled={props?.status === "true" ? true : false}
                   />
                 </Grid>
-                {props?.status === "true" && 
-                <Grid item xs={12} md={12}>
-                  <InputControl
-                    placeholder=" Action Taken Remarks"
-                    label=" Action Taken Remarks"
-                    multiline
-                    inputType={InputType.TEXTFIELD}
-                    name="action_taken_remark"
-                    defaultValue={props.data?.action_taken_remark}
-                    id="action_taken_remark"
-                    error={formError?.action_taken_remark?.error}
+                {props?.status === "true" &&
+                  <Grid item xs={12} md={12}>
+                    <InputControl
+                      placeholder=" Action Taken Remarks"
+                      label=" Action Taken Remarks"
+                      multiline
+                      inputType={InputType.TEXTFIELD}
+                      name="action_taken_remark"
+                      defaultValue={props.data?.action_taken_remark}
+                      id="action_taken_remark"
+                      error={formError?.action_taken_remark?.error}
                       helperText={formError?.action_taken_remark?.msg}
-                    rows={6}
-                    fullWidth
-                    
-                  />
-                </Grid>
-}
+                      rows={6}
+                      fullWidth
+
+                    />
+                  </Grid>
+                }
               </Grid>
             </Grid>
 
@@ -529,7 +534,7 @@ const SupportTicketForm = (props: customprop) => {
       <SupportSubStatusForm
         setDialogOpen={fnDialogOpen}
         setDialogValue={fnDialogValue}
-        parentData={status}
+        parentData={parseInt(status)}
         data={data}
       />
     )}
@@ -546,14 +551,15 @@ const SupportTicketForm = (props: customprop) => {
     required
     formError={formError?.allocated_to ?? formError.allocated_to}
     defaultValue={masterData?.allocated_to}
-    renderForm={(fnDialogOpen, fnDialogValue, data) => (
+    renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
       <ExecutiveForm
         setDialogOpen={fnDialogOpen}
         setDialogValue={fnDialogValue}
+        metaData={metaData}
         data={data}
       />
     )}
-    disable={status === "2"}
+    disabled={status === "2"}
   />
 }
   <SelectMasterWrapper
@@ -592,7 +598,7 @@ const SupportTicketForm = (props: customprop) => {
         data={data}
       />
     )}
-    disable={status === "2"}
+    disabled={status === "2"}
   />
 
   <InputControl
@@ -667,21 +673,21 @@ const SupportTicketForm = (props: customprop) => {
                   <AttachFileIcon></AttachFileIcon>
                 </Badge>
 
-              </IconButton>
-            </Tooltip>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  m={1}
-                >
-                  <Button onClick = {handleCancel} tabIndex={-1}>Cancel</Button>
-                  <Button type="submit" variant="contained">
-                    Submit
-                  </Button>
+                  </IconButton>
+                </Tooltip>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                    m={1}
+                  >
+                    <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+                    <Button type="submit" variant="contained">
+                      Submit
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
               </Box>
             </Grid>
           </Grid>
@@ -709,7 +715,7 @@ const SupportTicketForm = (props: customprop) => {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={props.data ?"Ticket Details updated successfully!" :"Ticket Details saved successfully!"}
+        message={props.data ? "Ticket Details updated successfully!" : "Ticket Details saved successfully!"}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
