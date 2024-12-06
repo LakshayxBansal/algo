@@ -98,11 +98,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     }
   }
 
-  if (props.name === 'received_by') {
-    console.log("Value : ", props.defaultValue);
-
-  }
-
   async function onModifyDialog() {
     if (allowModify) {
       if (props.fnFetchDataByID && dialogValue.id) {
@@ -199,9 +194,10 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       </Grid>
       {dialogOpen && (
         <AddDialog
-          title={props.dialogTitle}
+          title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${props.dialogTitle}`}
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
+          type="sub"
         >
           {props.renderForm
             ? metaData?.fields.length > 0 ? (

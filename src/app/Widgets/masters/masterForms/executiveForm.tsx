@@ -65,8 +65,6 @@ import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
-  console.log("executive prop", props?.setDialogOpen);
-
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -585,9 +583,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   ]);
 
 
-  entityData.executive_dept_id = props.data?.executive_dept_id;
-  entityData.executive_group = props.data?.executive_group;
-  entityData.executive_group_id = props.data?.executive_group_id;
+  // entityData.executive_dept_id = props.data?.executive_dept_id;
+  // entityData.executive_group = props.data?.executive_group;
+  // entityData.executive_group_id = props.data?.executive_group_id;
 
 
 
@@ -611,9 +609,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
-      console.log("this is formdata", data);
-
-
+      
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
       data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
@@ -642,12 +638,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
-        console.log("result :", result);
         const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Error encountered", error: true };
-        console.log("issue :", issues);
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
@@ -766,10 +760,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       return rest;
     });
   };
-
-  console.log('731 : ', props.metaData);
-
-
   props.metaData?.fields.map((field: any) => {
     if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
@@ -841,13 +831,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     }
   });
 
-  console.log(entityData);
-
-
-
   return (
     <Box>
-      <Box
+      {/* <Box
         sx={{
           position: "sticky",
           top: "0px",
@@ -869,7 +855,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           </>
           )
         }
-      </Box>
+      </Box> */}
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

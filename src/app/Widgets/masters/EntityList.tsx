@@ -220,9 +220,7 @@ export default function EntityList(props: entitiyCompT) {
     else {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
-        console.log("!12 : ", data);
         if (data[0]?.length > 0) {
-          console.log("221 : ", data[0][0]);
           setMetaData({
             fields: data[0][0] || [],
             rights: data[0][1] || {},
@@ -230,7 +228,6 @@ export default function EntityList(props: entitiyCompT) {
             loggedInUserData: data[0][3] || {}
           });
         }
-        // console.log("dialogmode.ADD",metaData);
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
@@ -255,12 +252,21 @@ export default function EntityList(props: entitiyCompT) {
     setOpen(false);
   };
 
-
+  const title = props.title.split(' ');
+  let formTitle : string = ""; 
+  title.forEach((item)=>{
+    if(item !== 'Master')
+    {
+      formTitle += item;
+      formTitle += ' ';
+    }
+  })
+  
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
-          <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+          <AddDialog title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${formTitle}`} open={dialogOpen} setDialogOpen={setDialogOpen} type="main">
             {props.fileUploadFeatureReqd &&
               dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
