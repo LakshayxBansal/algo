@@ -252,9 +252,9 @@ export default function EntityList(props: entitiyCompT) {
     setOpen(false);
   };
 
-  const title = props.title.split(' ');
+  const title = props.title?.split(' ');
   let formTitle : string = ""; 
-  title.forEach((item)=>{
+  title?.forEach((item)=>{
     if(item !== 'Master')
     {
       formTitle += item;
