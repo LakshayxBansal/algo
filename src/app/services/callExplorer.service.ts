@@ -1018,3 +1018,56 @@ export async function getCallSupportDetailsDb(crmDb: string, id: number) {
   }
 }
 
+export async function getUserPreferenceDb(
+  crmDb: string,
+  userId: number
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: `select * from callExplorer_metaData where user_id=?`,
+      values: [userId],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function updateUserPreferenceDb(
+  crmDb: string,
+  userId: number,
+  metaData: string
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: `update callExplorer_metaData set meta_data=? where user_id=?`,
+      values: [metaData, userId],
+    });
+    return result[0];
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function insertUserPreferenceDb(
+  crmDb: string,
+  userId: number,
+  metaData: string
+) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: `
+        INSERT INTO callExplorer_metaData (user_id, meta_data) 
+        VALUES (?, ?)
+      `,
+      values: [userId, metaData],
+    });
+    return result[0];
+  } catch (e) {
+    console.log(e);
+  }
+}
+
