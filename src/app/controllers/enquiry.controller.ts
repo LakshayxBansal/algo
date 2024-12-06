@@ -32,7 +32,7 @@ export async function createEnquiry({
 }: {
   enqData: enquiryDataSchemaT;
   product: enquiryProductSchemaT[];
-  docData: docDescriptionSchemaT[]
+  docData: docDescriptionSchemaT[];
 }) {
   let result;
   try {
@@ -55,23 +55,35 @@ export async function createEnquiry({
         };
 
         const dbResult = await createEnquiryDB(session, enqActionData);
-        if (dbResult.length > 0 && dbResult[0][0].error === 0) {
-          result = { status: true, data: dbResult[1] };
+        if (dbResult[0].length === 0 && dbResult[1].length === 0) {
+          result = { status: true, data: dbResult[2] };
           const objectDetails = await getObjectByName("Enquiry");
           await uploadDocument(
             docData,
-            dbResult[1][0].id,
+            dbResult[2][0].id,
             objectDetails[0].object_id
           );
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          let errorStateForProduct: { path: (string | number)[]; message: string }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          dbResult[1].forEach((error: any) => {
+            if (error.error_path.length > 1) {
+              errorStateForProduct.push({
+                path: [Number(error.error_path[0])-1, error.error_path[1]], // Convert first element to number
+                message: error.error_text,
+              });
+            }
+          });
           result = {
             status: false,
-            data: [
-              {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
-              },
-            ],
+            data: [{ enqDataIssue: errorState.length > 0 ? errorState : null },
+            { productIssue: errorStateForProduct.length > 0 ? errorStateForProduct : null }],
           };
         }
       } else {
@@ -94,7 +106,11 @@ export async function createEnquiry({
     } else {
       result = {
         status: false,
-        data: [{ path: ["form"], message: "Error: Server Error" }],
+        data: [
+          {
+            enqDataIssue: [{ path: ["form"], message: "Error: Server Error" }],
+          },
+        ],
       };
     }
     return result;
@@ -104,7 +120,9 @@ export async function createEnquiry({
 
   result = {
     status: false,
-    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+    data: [
+      { enqDataIssue: [{ path: ["form"], message: "Error: Server Error" }] },
+    ],
   };
   return result;
 }

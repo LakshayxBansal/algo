@@ -8,6 +8,7 @@ import { getSession } from '../services/session.service';
 import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from 'mariadb';
 import { getCompanyDbByIdList, getCompanyDetailsById } from '../services/company.service';
+import { getAllRoles } from './executiveRole.controller';
 
 
 export async function registerUser(formData: userSchemaT) {
@@ -55,11 +56,15 @@ export async function registerUser(formData: userSchemaT) {
 }
 
 
-export async function getBizAppUser(searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
+export async function getBizAppUser(searchString: string,mappedUser:{id: number | undefined,name: string | undefined} ,invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getBizAppUserList(session.user.dbInfo.id, searchString, invited, accepted, mapped, admin);
+      let result = await getBizAppUserList(session.user.dbInfo.id, searchString, invited, accepted, mapped, admin);
+      if(mappedUser.id){
+        result = [mappedUser,...result];
+      }
+      return result;
     }
   } catch (error) {
     throw error;
@@ -123,9 +128,9 @@ export async function deleteUser(userId: number | undefined) {
   return null;
 }
 
-export async function deRegisterFromCompany(id: number | null, userId: number | null, companyId: number | null) {
+export async function deRegisterFromCompany(userId: number, companyId: number) {
   try {
-    await deRegisterFromCompanyDB(id, userId, companyId);
+    await deRegisterFromCompanyDB(userId, companyId);
   } catch (e) {
     throw e;
   }
@@ -180,12 +185,11 @@ export async function getCompanyUser(
         companyId,
         filter
       );
+      const roles = await getAllRoles();
       for (const ele of companyUsers) {
-        if (ele.admin === 1) {
-          ele.role = "Admin"
-        } else {
-          ele.role = "User";
-        }
+        const userRole = roles.filter((role:{id:number,name:string})=>role.id===ele.roleId)[0]
+        ele.roleId = userRole ? userRole.id : 0;
+        ele.role = userRole ? userRole.name : "none";
       }
       getCompanyUsers = {
         status: true,

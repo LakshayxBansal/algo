@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
+  Alert,
   Badge,
+  Collapse,
   FormControl,
   FormControlLabel,
   Grid,
@@ -68,6 +70,7 @@ import ExecutiveForm from "@/app/Widgets/masters/masterForms/executiveForm";
 import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
+import { GridCloseIcon } from "@mui/x-data-grid";
 
 export interface InputFormProps {
   baseData: {
@@ -363,7 +366,9 @@ export default function InputForm({ baseData }: InputFormProps) {
       <InputControl
         format={dateTimeFormat}
         key={status}
-        defaultValue={status === "2" ? "11/22/2024 11:09 PM" : dayjs(new Date())}
+        defaultValue={
+          status === "2" ? "11/22/2024 11:09 PM" : dayjs(new Date())
+        }
         label="When"
         required={false}
         inputType={InputType.DATETIMEINPUT}
@@ -408,7 +413,14 @@ export default function InputForm({ baseData }: InputFormProps) {
   ]);
 
   const handleSubmit = async (formData: FormData) => {
-    const formatedData = await enquiryDataFormat({ formData, selectValues, timeFormat });
+    setFormError({});
+    setProductFormError({});
+    const formatedData = await enquiryDataFormat({
+      formData,
+      selectValues,
+      dateFormat,
+      timeFormat,
+    });
 
     let result;
     let issues = [];
@@ -422,7 +434,6 @@ export default function InputForm({ baseData }: InputFormProps) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
       setTimeout(function () {
-        setFormError;
         location.reload();
       }, 3000);
     } else {
@@ -431,11 +442,11 @@ export default function InputForm({ baseData }: InputFormProps) {
       let formIssue: ZodIssue[] = [];
       let productIssue = [];
 
-      formIssue = issues[0]?.enqDataIssue ? issues[0].enqDataIssue : issues;
+      formIssue = issues[0]?.enqDataIssue;
       productIssue = issues[1]?.productIssue;
 
+      // set errors for form inputs
       if (formIssue?.length > 0) {
-        // set errors for form inputs
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         for (const issue of formIssue) {
           errorState[issue.path[0]] = { msg: issue.message, error: true };
@@ -493,6 +504,13 @@ export default function InputForm({ baseData }: InputFormProps) {
     setSelectValues(values);
   }
 
+  const clearFormError = () => {
+    setFormError((curr) => {
+      const { form, ...rest } = curr;
+      return rest;
+    });
+  };
+
   function fieldPropertiesById(id: string) {
     const field = baseData.fields.find(
       (item: any) => item.column_name_id === id
@@ -501,11 +519,11 @@ export default function InputForm({ baseData }: InputFormProps) {
     if (field) {
       return {
         label: field.column_label,
-        required: field.is_mandatory === 1, // True if mandatory, otherwise false
-        disabled: field.is_disabled,
+        required: field.is_mandatory === 1,
+        disabled: field.is_disabled === 1,
       };
     }
-    return { label: "default label", required: false }; // Default if no match is found
+    return { label: "default label", required: false, disabled: false }; // Default if no match is found
   }
 
   let fieldArr: React.ReactElement[] = [];
@@ -516,8 +534,7 @@ export default function InputForm({ baseData }: InputFormProps) {
     "suggested_action_remark",
   ];
 
-  const enquiryMaintainProducts =
-    baseData.config_data.maintainProducts;
+  const enquiryMaintainProducts = baseData.config_data.maintainProducts;
 
   baseData.fields.map((field: any, index) => {
     if (field.is_default_column) {
@@ -628,11 +645,13 @@ export default function InputForm({ baseData }: InputFormProps) {
           field.column_name_id
         ) as React.ReactElement;
 
-        const fld = React.cloneElement(baseElement, {
+        let fld;
+
+        fld = React.cloneElement(baseElement, {
           ...baseElement.props,
           label: field.column_label,
           required: field.is_mandatory === 1,
-          disabled: field.is_disabled,
+          disabled: field.is_disabled ? true : baseElement.props.disabled,
           key: `field-default-${field.column_name_id}`,
         });
 
@@ -653,6 +672,24 @@ export default function InputForm({ baseData }: InputFormProps) {
 
   return (
     <Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <GridCloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
       <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
         <Grid item xs={12}>
           <Seperator>
@@ -704,6 +741,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         <Grid container>
           <Grid item xs={12} md={12}>
             <Box>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                  my={2}
+                >
               <Tooltip
                 title={
                   docData.length > 0 ? (
@@ -720,7 +764,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                 }
               >
                 <IconButton
-                  sx={{ float: "left", position: "relative", paddingRight: 0 }}
+                  sx={{ marginRight: "3rem" }}
                   onClick={() => setDocDialogOpen(true)}
                   aria-label="file"
                 >
@@ -729,13 +773,6 @@ export default function InputForm({ baseData }: InputFormProps) {
                   </Badge>
                 </IconButton>
               </Tooltip>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Box
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  my={2}
-                >
                   <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
                   <Button type="submit" variant="contained">
                     Submit
