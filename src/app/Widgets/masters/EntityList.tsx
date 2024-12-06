@@ -252,21 +252,12 @@ export default function EntityList(props: entitiyCompT) {
     setOpen(false);
   };
 
-  const title = props.title?.split(' ');
-  let formTitle : string = ""; 
-  title?.forEach((item)=>{
-    if(item !== 'Master')
-    {
-      formTitle += item;
-      formTitle += ' ';
-    }
-  })
   
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
-          <AddDialog title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${formTitle}`} open={dialogOpen} setDialogOpen={setDialogOpen} type="main">
+          <AddDialog title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${props.title}`} open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.fileUploadFeatureReqd &&
               dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm

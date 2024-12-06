@@ -197,7 +197,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
           title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${props.dialogTitle}`}
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
-          type="sub"
         >
           {props.renderForm
             ? metaData?.fields.length > 0 ? (

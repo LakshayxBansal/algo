@@ -410,7 +410,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.doj?.error,
             helperText: formError?.doj?.msg,
-            fullWidth: true
           },
           openPickerButton: {
             tabIndex: -1,
@@ -432,7 +431,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.dob?.error,
             helperText: formError?.dob?.msg,
-            fullwidth: true,
           },
           openPickerButton: {
             tabIndex: -1,
@@ -456,7 +454,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.doa?.error,
             helperText: formError?.doa?.msg,
-            fullWidth: true,
           },
           openPickerButton: {
             tabIndex: -1,

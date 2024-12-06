@@ -11,7 +11,7 @@ import Draggable from 'react-draggable';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-function PaperComponent(props: PaperProps & { handleId: string }) {
+function PaperComponent(props: PaperProps & { handleid: string }) {
   let paperRef = useRef<HTMLDivElement | null>(null);
   const [bounds, setBounds] = useState({ left: 0, top: 0, right: 0, bottom: 0 });
 
@@ -30,7 +30,7 @@ function PaperComponent(props: PaperProps & { handleId: string }) {
 
   return (
     <Draggable
-      handle={`#${props.handleId}`}
+      handle={`#${props.handleid}`}
       cancel={'[class*="MuiDialogContent-root"]'}
       bounds={bounds}
     >
@@ -46,12 +46,11 @@ type dialogPropsT = {
   open: boolean,
   setDialogOpen: (props: any) => void,
   children: React.ReactNode,
-  type?: string
 }
 
 // open, data, setDialogOpen, setDialogValue
-export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, children, type}) => {
-
+export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, children}) => {
+  const randomNumber = Math.floor(Math.random()*10);
 
   const handleCancel = ()=> {
     setDialogOpen(false);
@@ -68,14 +67,15 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
     setDialogOpen(false);
   }
 
-  const uniqueHandleId = `draggable-dialog-title-${type}`
+  const uniqueHandleId = `draggable-dialog-title-${title.split(' ').join('')}`;
+
 
   if (open) {
     return (
       <>
         <Dialog maxWidth="lg" open={open} onClose={handleClose} 
         PaperComponent={(props) => (
-        <PaperComponent {...props} handleId={uniqueHandleId} />
+        <PaperComponent {...props} handleid={uniqueHandleId} />
       )}>
           <DialogTitle style={{ 
             cursor: 'move',
