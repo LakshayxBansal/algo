@@ -50,7 +50,6 @@ type dialogPropsT = {
 
 // open, data, setDialogOpen, setDialogValue
 export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, children}) => {
-  const randomNumber = Math.floor(Math.random()*10);
 
   const handleCancel = ()=> {
     setDialogOpen(false);
@@ -67,7 +66,7 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
     setDialogOpen(false);
   }
 
-  const uniqueHandleId = `draggable-dialog-title-${title.split(' ').join('')}`;
+  const uniqueHandleId = `draggable-dialog-title-${title.replaceAll(" ", "")}`;
 
 
   if (open) {

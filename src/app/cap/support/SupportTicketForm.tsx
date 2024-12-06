@@ -281,7 +281,7 @@ const SupportTicketForm = (props: customprop) => {
                       id="contact"
                       label="Contact"
                       showDetails={true}
-                      dialogTitle="Add Contact"
+                      dialogTitle="Contact"
                       onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
                       fetchDataFn={getContact}
                       fnFetchDataByID={getContactById}
@@ -327,7 +327,7 @@ const SupportTicketForm = (props: customprop) => {
                       name="category"
                       id="category"
                       label="Category"
-                      dialogTitle="Add Category"
+                      dialogTitle="Category"
                       onChange={(e, v, s) =>
                         onSelectChange(e, v, s, "category")
                       }
@@ -355,7 +355,7 @@ const SupportTicketForm = (props: customprop) => {
                       id="received_by"
                       label="Received By"
                       showDetails={true}
-                      dialogTitle="Add Executive"
+                      dialogTitle="Executive"
                       onChange={(e, v, s) =>
                         onSelectChange(e, v, s, "received_by")
                       }
@@ -515,7 +515,7 @@ const SupportTicketForm = (props: customprop) => {
                 name={"sub_status"}
                 id={"sub_status"}
                 label={"Call Sub-Status"}
-                dialogTitle={"Add Sub-Status for " + status}
+                dialogTitle={`Sub-Status for ${status === '1' ? 'Open' : 'Closed'}`}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
                 fetchDataFn={getSubStatusforStatus}
                 fnFetchDataByID={getSupportSubSatusById}
@@ -538,7 +538,7 @@ const SupportTicketForm = (props: customprop) => {
                   name={"allocated_to"}
                   id={"allocated_to"}
                   label={"Allocate to"}
-                  dialogTitle={"Assign Executive"}
+                  dialogTitle={"Executive"}
                   onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
                   fetchDataFn={getExecutive}
                   fnFetchDataByID={getExecutiveById}
@@ -560,7 +560,7 @@ const SupportTicketForm = (props: customprop) => {
                 name={"action_taken"}
                 id={"action_taken"}
                 label={"Action Taken"}
-                dialogTitle={"Add Action"}
+                dialogTitle={"Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
                 fetchDataFn={getSupportAction}
                 fnFetchDataByID={getSupportActionById}
@@ -580,7 +580,7 @@ const SupportTicketForm = (props: customprop) => {
                 name={"next_action"}
                 id={"next_action"}
                 label={"Next Action"}
-                dialogTitle={"Add Action"}
+                dialogTitle={"Action"}
                 onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
                 fetchDataFn={getSupportAction}
                 formError={formError?.next_action ?? formError.next_action}

@@ -144,7 +144,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"area"}
         id={"area"}
         label={"Area"}
-        dialogTitle={"Add Area"}
+        dialogTitle={"Area"}
         width={365}
         defaultValue={
           {
@@ -174,7 +174,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         id={"department"}
         label={"Department"}
         required
-        dialogTitle={"Add Department"}
+        dialogTitle={"Department"}
         width={365}
         defaultValue={
           {
@@ -231,7 +231,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"executive_group"}
         id={"group"}
         label={"Executive Group"}
-        dialogTitle={"Add Executive Group"}
+        dialogTitle={"Executive Group"}
         width={365}
         disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         defaultValue={
@@ -303,7 +303,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"crm_user"}
         id={"crm_user"}
         label={"Map to App User"}
-        dialogTitle={"Add App User"}
+        dialogTitle={"App User"}
         defaultValue={
           {
             id: entityData.crm_user_id,
@@ -512,7 +512,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"country"}
         id={"country"}
         label={"Country"}
-        dialogTitle={"Add country"}
+        dialogTitle={"Country"}
         width={365}
         defaultValue={
           {
@@ -539,7 +539,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"state"}
         id={"state"}
         label={"State"}
-        dialogTitle={"Add State"}
+        dialogTitle={"State"}
         width={365}
         defaultValue={defaultState}
         allowModify={!stateDisable}
@@ -578,13 +578,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       />
     ],
   ]);
-
-
-  // entityData.executive_dept_id = props.data?.executive_dept_id;
-  // entityData.executive_group = props.data?.executive_group;
-  // entityData.executive_group_id = props.data?.executive_group_id;
-
-
 
   async function getApplicationUser(searchStr: string) {
     const mappedUser = { id: entityData.crm_user_id, name: entityData.crm_user };
