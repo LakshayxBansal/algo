@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { Collapse, IconButton } from "@mui/material";
@@ -26,7 +25,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function AddDocsForm(props: any) {
+export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : React.Dispatch<React.SetStateAction<boolean>>,setData : React.Dispatch<React.SetStateAction<docDescriptionSchemaT[]>>}) {
     const [formError, setFormError] = useState<
         Record<string, { msg: string; error: boolean }>
     >({});
@@ -35,30 +34,38 @@ export default function AddDocsForm(props: any) {
     const [selectedFileName, setSelectedFileName] = React.useState("");
     const [fileType, setFileType] = React.useState("");
     const handleCancel = () => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
+        setDialogOpen(false);
     };
 
     const handleSubmit = async (formData: FormData) => {
         let data: { [key: string]: any } = {}; // Initialize an empty object
-
+        if(!file){
+            const errorState: Record<string, { msg: string; error: boolean }> = {};
+            errorState["form"] = { msg: "Please upload file", error: true };
+            setFormError(errorState);
+        }
         data["description"] = formData.get("description");
         data["fileName"] = selectedFileName;
-        data["file"] = file;
+        data["file"] = file as string;
         data["fileType"] = fileType;
         data["type"] = "state";
+
         const parsed = zs.docDescriptionSchema.safeParse(data);
         if (parsed.success) {
-            props.setData
-                ? props.setData((prevData: docDescriptionSchemaT[]) => [
+            if(file){
+            setData((prevData: docDescriptionSchemaT[]) => [
                     ...prevData,
-                    { id: (0 - prevData.length - 1), ...data },
-                ])
-                : null;
-            props.setDialogOpen ? props.setDialogOpen(false) : null;
+                    { id: (0 - prevData.length - 1), ...data as docDescriptionSchemaT},
+                ]);
+            setDialogOpen(false);
+            }
         } else {
             const issues = parsed.error.issues;
             const errorState: Record<string, { msg: string; error: boolean }> = {};
             errorState["form"] = { msg: "Error encountered", error: true };
+            if(!file){
+                errorState["form"] = { msg: "Please upload file", error: true };
+            }
             for (const issue of issues) {
                 for (const path of issue.path) {
                     errorState[path] = { msg: issue.message, error: true };
@@ -76,7 +83,6 @@ export default function AddDocsForm(props: any) {
 
         if (files && files.length > 0) {
             const file = files[0];
-            console.log("upload file : ", file);
             setSelectedFileName(file.name);
             setFileType(file.type);
 
@@ -111,7 +117,7 @@ export default function AddDocsForm(props: any) {
             >
                 <Seperator>
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        Add Document
+                        Upload Document
                         <IconButton onClick={handleCancel}>
                             <CloseIcon />
                         </IconButton>
@@ -136,7 +142,7 @@ export default function AddDocsForm(props: any) {
                     {formError?.form?.msg}
                 </Alert>
             </Collapse>
-            <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+            <Box id="sourceForm" sx={{ m: 2, p: 1,width: "500px" }}>
                 <form action={handleSubmit} noValidate>
                     <Box
                         sx={{
@@ -149,10 +155,12 @@ export default function AddDocsForm(props: any) {
                     >
                         <InputControl
                             required
-                            inputType={InputType.TEXT}
+                            inputType={InputType.TEXTFIELD}
                             name="description"
                             id="description"
                             label="Description"
+                            rows={6}
+                            fullWidth
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
                         />
@@ -164,7 +172,7 @@ export default function AddDocsForm(props: any) {
                             startIcon={<CloudUploadIcon />}
                             sx={{ width: '200px', height: '35px' }}
                         >
-                            Upload files
+                            Upload file
                             <VisuallyHiddenInput
                                 type="file"
                                 onChange={handleFileChange}
@@ -183,9 +191,9 @@ export default function AddDocsForm(props: any) {
                         <Button
                             type="submit"
                             variant="contained"
-                            sx={{ width: "15%", marginLeft: "5%" }}
+                            sx={{ width: "20%", marginLeft: "5%" }}
                         >
-                            Submit
+                            Upload
                         </Button>
                     </Box>
                 </form>

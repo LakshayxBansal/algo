@@ -65,7 +65,7 @@ import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
-  console.log("executive prop", props);
+  console.log("executive prop", props?.setDialogOpen);
 
   const router = useRouter();
   const [formError, setFormError] = useState<
@@ -110,12 +110,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
         defaultValue={entityData.name}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { name, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
     [
@@ -130,12 +130,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
         defaultValue={entityData.alias}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { alias, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { alias, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
     ],
@@ -184,7 +184,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             name: entityData.executive_dept,
           } as optionsDataT
         }
-        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         formError={formError?.executive_dept ?? formError.executive_dept}
@@ -215,7 +215,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         allowNewAdd={false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
         required
-        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         formError={formError?.role ?? formError.role}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
@@ -235,7 +235,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"Executive Group"}
         dialogTitle={"Add Executive Group"}
         width={365}
-        disabled={(props?.setDialogOpen === null && entityData.role_id !== 1) ? true : false}
+        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         defaultValue={
           {
             id: entityData.executive_group_id,
@@ -268,12 +268,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
         defaultValue={entityData.pan}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pan, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { pan, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
     ],
@@ -289,12 +289,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
         defaultValue={entityData.aadhaar}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { aadhaar, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { aadhaar, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
     ],
@@ -341,12 +341,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
         defaultValue={entityData.email}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { email, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { email, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
     ],
@@ -362,12 +362,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
         defaultValue={entityData.mobile}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { mobile, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { mobile, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
     ],
@@ -389,12 +389,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1
           },
         }}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { whatsapp, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { whatsapp, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
 
@@ -546,8 +546,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label={"State"}
         dialogTitle={"Add State"}
         width={365}
-        disabled={stateDisable}
         defaultValue={defaultState}
+        allowModify={!stateDisable}
+        allowNewAdd={!stateDisable}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
@@ -573,12 +574,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.pincode}
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pincode, ...rest } = curr;
-            return rest;
-          });
-        }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { pincode, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       />
     ],
   ]);
@@ -591,7 +592,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
 
   async function getApplicationUser(searchStr: string) {
-    let dbResult = await getBizAppUser(searchStr, true, true, false, false);
+    const mappedUser = { id: entityData.crm_user_id, name: entityData.crm_user };
+    let dbResult = await getBizAppUser(searchStr, mappedUser, true, true, false, false);
     return dbResult;
   }
 
@@ -779,24 +781,39 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-address-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false
       });
       fieldArr.push(fld);
     }
     else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
+      if (field.column_name_id === 'state') {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
 
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-subAddress-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
-      });
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-subAddress-${field.column_name_id}-${stateKey}`,
+        });
 
-      fieldArr.push(fld);
+        fieldArr.push(fld);
+      } else {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-subAddress-${field.column_name_id}`,
+          disabled: field.is_disabled === 1 ? true : false
+        });
+
+        fieldArr.push(fld);
+      }
     }
     else if (field.is_default_column) {
       const baseElement = defaultComponentMap.get(
@@ -808,7 +825,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false
       });
 
       fieldArr.push(fld);
@@ -871,33 +888,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Tooltip
-        title={docData?.length > 0 ? (
-          docData.map((file: any, index: any) => (
-            <Typography variant="body2" key={index}>
-              {file.description}
-            </Typography>
-          ))
-        ) : (
-          <Typography variant="body2" color="white">
-            No files available
-          </Typography>
-        )}
-      >
-        <IconButton
-          sx={{ float: "right", position: "relative", paddingRight: 0 }}
-          onClick={() => setDialogOpen(true)}
-          aria-label="file"
-        >
-          <Badge badgeContent={docData?.length} color="primary">
-            <AttachFileIcon></AttachFileIcon>
-          </Badge>
-
-        </IconButton>
-      </Tooltip>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-address")) {
@@ -948,30 +941,57 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             }
 
             )}
-          </Grid>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 2
-            }}
-          >
-            <Button onClick={() => {
-              if (props.setDialogOpen === undefined) {
-                router.push('/cap');
-              }
-              else {
-                handleCancel();
-              }
-            }} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
+            <Grid xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // marginTop: 2,
+                paddingLeft: "2rem"
+              }}
             >
-              Submit
-            </Button>
-          </Box>
+                <Tooltip
+                  title={docData?.length > 0 ? (
+                    docData.map((file: any, index: any) => (
+                      <Typography variant="body2" key={index}>
+                        {file.description}
+                      </Typography>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="white">
+                      No files available
+                    </Typography>
+                  )}
+                >
+                  <IconButton
+                    sx={{ marginRight: "3rem" }}
+                    onClick={() => setDialogOpen(true)}
+                    aria-label="file"
+                  >
+                    <Badge badgeContent={docData?.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+    
+                  </IconButton>
+                </Tooltip>
+              <Button onClick={() => {
+                if (props.setDialogOpen === undefined) {
+                  router.push('/cap');
+                }
+                else {
+                  handleCancel();
+                }
+              }} tabIndex={-1}>Cancel</Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
+            </Grid>
+          </Grid>
           {dialogOpen && (
             <AddDialog
               title=""
@@ -981,6 +1001,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
               <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
             </AddDialog>
           )}
+
         </form>
         <Snackbar
           open={snackOpen}

@@ -341,8 +341,10 @@ export default function AuthPage(props: authPagePropsType) {
                     type="button"
                     sx={{
                       marginLeft: "-65px",
-                      marginTop: "0.5rem",
-                      mb: "0.5rem",
+                      marginTop: "0.8rem",
+                      // mb: "0.5rem",
+                      // border: "2px solid black",
+                      maxHeight: "fit-content"
                     }}
                     onClick={() => setShowPassword(!showPassword)}
                     tabIndex={-1}
