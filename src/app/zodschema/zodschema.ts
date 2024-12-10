@@ -17,11 +17,11 @@ const passwordRegex = new RegExp(
 
 export const docDescriptionSchema = z.object({
   id: z.number().optional(),
-  description: z.string().min(1).max(255).optional(),
+  description: z.string().min(1,"Description can't be empty").max(255),
   fileName: z.string().optional(),
   objectId: z.number().optional(),
   objectTypeId: z.number().optional(),
-  file: z.string().optional(),
+  file: z.string().min(1,"please choose file").optional(),
   fileType: z.string().optional(),
   docId: z.string().optional(),
 });
@@ -951,15 +951,14 @@ export const regionalSettingSchema = z.object({
   id: z.number().optional(),
   country_id: z.number(),
   state_id: z.number(),
-  country: z.string().optional(),
+  country: z.string().min(1,"Required"),
   state: z.string().optional(),
   decimalPlaces: z.string(),
-  timeFormat: z.string(),
-  currencyString: z.string().max(20,"Field string should not be greater than 20 character").optional(),
-  currencySymbol: z.string().max(1,"Field should not be greater than 1 character").optional(),
-  currencySubString: z.string().max(5,"Field should not be greater than 5 character").optional(),
-  currencyCharacter: z.string().max(5,"Field should not be greater than 5 character").optional(),
-  dateFormat: z.string(),
+  timeFormat: z.string().min(1,"Required"),
+  currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
+  currencySymbol: z.string().max(2,"Currency symbol should not be greater than 2 character").optional(),
+  currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
+  dateFormat: z.string().min(1,"Required"),
   voucher : voucherSchema.optional()
 });
 
@@ -1108,16 +1107,16 @@ export const customFieldsMasterSchema = z.object ({
 })
 
 export const rightSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  objectName: z.string(),
+  id: z.number().optional(),
+  name: z.string().optional(),
+  objectName: z.string().optional(),
   objectId: z.number(),
-  category: z.string(),
-  categoryId: z.number(),
+  category: z.string().optional(),
+  categoryId: z.number().optional(),
   roleId: z.number(),
-  roleName: z.string(),
+  roleName: z.string().optional(),
   deptId: z.number(),
-  deptName: z.string(),
+  deptName: z.string().optional(),
   createRight: z.boolean(),
   readRight: z.boolean(),
   updateRight: z.boolean(),
@@ -1134,4 +1133,6 @@ export const configDeptMapSchema = z.object({
   support : z.array(z.number()),
   contract : z.array(z.number())
 })
+
+
 

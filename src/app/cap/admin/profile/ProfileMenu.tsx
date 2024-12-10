@@ -41,7 +41,7 @@ export default function ProfileMenu(props: profileModalT) {
         redirectToPage("/signin");
     }
     const handleDeregisterFormCompany = async function () {
-        await Promise.all([deRegisterFromCompany(null, props.userId, props.companyId), deleteSession(props.userId)]);
+        await Promise.all([deRegisterFromCompany(props.userId, props.companyId), deleteSession(props.userId)]);
         handleClose();
         redirectToPage("/company");
     }
@@ -130,12 +130,12 @@ export default function ProfileMenu(props: profileModalT) {
                     setDialogOpen(true)
                     setTitle(`Do you want De Register from ${props.companyName} ?`)
                     setFnController(() => handleDeregisterFormCompany)
-                }}>De register with {props.companyName}</MenuItem>
+                }}>De-register with {props.companyName}</MenuItem>
                 <MenuItem onClick={() => {
                     setDialogOpen(true)
                     setTitle(`Do you want De Register from App ?`)
                     setFnController(() => handleDeregisterFormApp)
-                }}>De register from App</MenuItem>
+                }}>De-register from App</MenuItem>
                 <MenuItem onClick={() => {
                     setDialogOpen(true)
                     setTitle(`Do you want to Logout ?`)

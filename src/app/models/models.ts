@@ -256,5 +256,6 @@ export type iconCompT = {
 };
 export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
 export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
+// export type rightSchemaT = z.infer<typeof zs.rightSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;

@@ -55,26 +55,32 @@ export default function AddProductToListForm(props: customprop) {
     if (parsed.success) {
       props.setData
         ? props.setData((prevData: any) => {
-          prevDataPresent = prevData.some(
-            (item: any) => item.product_id === data.product_id
-          );
-          if (prevDataPresent) {
-            const errorState: Record<
-              string,
-              { msg: string; error: boolean }
-            > = {};
-            errorState["form"] = {
-              msg: "Product already exists in the list",
-              error: true,
-            };
-            setFormError((curr: any) => {
-              return { ...curr, ...errorState };
-            });
-            return prevData;
-          } else {
-            return [...prevData, { id: prevData.length + 1, ...data }];
-          }
-        })
+            prevDataPresent = prevData.some(
+              (item: any) => item.product_id === data.product_id
+            );
+            if (prevDataPresent) {
+              const errorState: Record<
+                string,
+                { msg: string; error: boolean }
+              > = {};
+              errorState["form"] = {
+                msg: "Product already exists in the list",
+                error: true,
+              };
+              setFormError((curr: any) => {
+                return { ...curr, ...errorState };
+              });
+              return prevData;
+            } else {
+              return [
+                ...prevData,
+                {
+                  id: Math.max(0, ...prevData.map((item : any) => item.id)) + 1,
+                  ...data,
+                },
+              ];
+            }
+          })
         : null;
 
       if (prevDataPresent) return;
