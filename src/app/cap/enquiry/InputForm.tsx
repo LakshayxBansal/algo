@@ -797,7 +797,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         )}
         {docDialogOpen && (
           <AddDialog
-            title=""
+            title="Document List"
             open={docDialogOpen}
             setDialogOpen={setDocDialogOpen}
           >

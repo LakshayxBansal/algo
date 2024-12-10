@@ -599,7 +599,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           </Grid>
           {dialogOpen && (
             <AddDialog
-              title=""
+              title="Document List"
               open={dialogOpen}
               setDialogOpen={setDialogOpen}
             >

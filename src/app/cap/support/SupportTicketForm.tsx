@@ -697,7 +697,7 @@ const SupportTicketForm = (props: customprop) => {
         )}
         {docDialogOpen && (
           <AddDialog
-            title=""
+            title="Document List"
             open={docDialogOpen}
             setDialogOpen={setDocDialogOpen}
           >

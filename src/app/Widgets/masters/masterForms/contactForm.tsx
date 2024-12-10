@@ -896,30 +896,6 @@ export default function ContactForm(
                 );
               }
             })}
-            {/* </Grid> */}
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 1,
-              }}
-            >
-            </Grid>
-            {dialogOpen && (
-              <AddDialog
-                title=""
-                open={dialogOpen}
-                setDialogOpen={setDialogOpen}
-              >
-                <DocModal
-                  docData={docData}
-                  setDocData={setDocData}
-                  setDialogOpen={setDialogOpen}
-                />
-              </AddDialog>
-            )}
           </Grid>
           <Grid xs={12}>
           <Box
@@ -966,7 +942,7 @@ export default function ContactForm(
           </Box>
           </Grid>
           {dialogOpen && (
-            <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+            <AddDialog title="Document List" open={dialogOpen} setDialogOpen={setDialogOpen}>
               <DocModal
                 docData={docData}
                 setDocData={setDocData}
