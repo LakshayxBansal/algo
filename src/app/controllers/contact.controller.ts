@@ -256,7 +256,18 @@ export async function getContactById(id: number) {
         userId : session.user.userId
       }
       if(id){
-        const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
+      let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
+      for(const field of desc){
+        if(field.column_type_id===7){
+          const parts = field.column_format.split(".");
+          let tableName = "";
+          let fieldName = "";
+          if (parts) {
+            customMasterListData[field.column_name] = { table_name: tableName, field: fieldName }
+          }
+        }
+      }
+          const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id, customMasterListData);
         if(contactDetails?.length>0){
           const objectDetails = await getObjectByName("Contact");
           const docData = await getDocs(id,objectDetails[0].object_id);

@@ -6,13 +6,6 @@ import { logger } from "../utils/logger.utils";
 import { customFieldsMasterSchema } from "../zodschema/zodschema";
 import { customFieldsMasterSchemaT, FieldItemT } from "../models/models";
 
-type FieldItem = customFieldsMasterSchemaT & {
-  modified_by: number | null;
-  modified_on: string | null;
-  created_by: number | null;
-  created_on: string | null;
-  column_order: number;
-}
 
 export async function createCustomFields(objectID: number,data: FieldItemT[]) {
     const session = await getSession();

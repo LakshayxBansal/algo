@@ -59,7 +59,7 @@ export async function updateContactDB(
   session: Session,
   data: zm.contactSchemaT
 ) {
-  try {
+  try {    
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
@@ -134,7 +134,7 @@ export async function getContactList(crmDb: string, searchString: string) {
  * @param id id to search in contact_master
  * @returns
  */
-export async function getContactDetailsById(crmDb: string, id: number) {
+export async function getContactDetailsById(crmDb: string, id: number,customMasterListData: {[key: string]: { table_name: string, field: string } }) {
   try {
     const result = await excuteQuery({
       host: crmDb,
@@ -148,7 +148,7 @@ export async function getContactDetailsById(crmDb: string, id: number) {
         left outer join area_master a on c.area_id =  a.id \
         left outer join country_master co on c.country_id = co.id \
         left outer join department_master d on c.department_id = d.id \
-        left outer join  organisation_master o on c.organisation_id = o.id \
+        left outer join organisation_master o on c.organisation_id = o.id \
         left outer join custom_fields_data cfd on cfd.object_id=c.id and cfd.object_type_id=5\
         where c.id=?;",
       values: [id],

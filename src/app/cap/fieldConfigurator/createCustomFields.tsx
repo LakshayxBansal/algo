@@ -69,7 +69,6 @@ const FieldConfigurator = () => {
     // const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
 
 
-    const dateFormat = "DD.MM.YYYY";
 
     const options = {
         Form: [

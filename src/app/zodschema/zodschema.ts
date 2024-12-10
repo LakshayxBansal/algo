@@ -303,16 +303,16 @@ export const contactSchema = z.object({
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
   stamp: z.number().optional(),
-  c_col1: z.string().optional(),
-  c_col2: z.string().optional(),
-  c_col3: z.string().optional(),
-  c_col4: z.string().optional(),
-  c_col5: z.string().optional(),
-  c_col6: z.string().optional(),
-  c_col7: z.string().optional(),
-  c_col8: z.string().optional(),
-  c_col9: z.string().optional(),
-  c_col10: z.string().optional(),
+  c_col1: z.union([z.string(), z.number()]).optional(),
+  c_col2: z.union([z.string(), z.number()]).optional(),
+  c_col3: z.union([z.string(), z.number()]).optional(),
+  c_col4: z.union([z.string(), z.number()]).optional(),
+  c_col5: z.union([z.string(), z.number()]).optional(),
+  c_col6: z.union([z.string(), z.number()]).optional(),
+  c_col7: z.union([z.string(), z.number()]).optional(),
+  c_col8: z.union([z.string(), z.number()]).optional(),
+  c_col9: z.union([z.string(), z.number()]).optional(),
+  c_col10: z.union([z.string(), z.number()]).optional(),
 });
 
 export const areaSchema = z.object({

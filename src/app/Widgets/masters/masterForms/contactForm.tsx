@@ -54,23 +54,13 @@ import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 
-export default function ContactForm(
-  props: masterFormPropsWithDataT<contactSchemaT>
-) {
-  // console.log("props : ", props)
-  const [formError, setFormError] = useState<
-    Record<string, { msg: string; error: boolean }>
-  >({});
+export default function ContactForm(props: masterFormPropsWithDataT<contactSchemaT>) {
+  const [formError, setFormError] = useState<Record<string, { msg: string; error: boolean }>>({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
-    props.data?.docData ? props?.data?.docData : []
-  );
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props.data?.docData ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
-  // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
-  const entityData: contactSchemaT = props.data
-    ? props.data
-    : ({} as contactSchemaT);
+  const entityData: contactSchemaT = props.data ? props.data : ({} as contactSchemaT);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -79,7 +69,7 @@ export default function ContactForm(
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
   const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
-
+  let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
 
@@ -205,7 +195,10 @@ export default function ContactForm(
       : entityData.state_id
         ? entityData.state_id
         : 0;
-
+    Object.keys(customMasterListData).forEach((key) => {
+      data[key] = selectValues[key] ? selectValues[key].id : 0;
+    });
+    console.log(data);
     return data;
   };
 
@@ -776,10 +769,15 @@ export default function ContactForm(
   let fieldArr: React.ReactElement[] = [];
 
   props.metaData?.fields.map((field: any) => {
-    if (
-      field.column_name_id === "address1" ||
-      field.column_name_id === "address2"
-    ) {
+    if (field.column_type_id === 7) {
+      const parts = field.column_format.split(".");
+      let tableName = "";
+      let fieldName = "";
+      if (parts) {
+        customMasterListData[field.column_name] = { table_name: tableName, field: fieldName }
+      }
+    }
+    if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -845,6 +843,7 @@ export default function ContactForm(
           defaultValue={
             entityData[field.column_name_id as keyof contactSchemaT]
           }
+          setSelectValues={setSelectValues}
         />
       );
       fieldArr.push(fld);

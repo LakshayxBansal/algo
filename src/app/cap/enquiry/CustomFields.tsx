@@ -1,5 +1,5 @@
 import getMasterForTable from "@/app/controllers/masterForTable.controller";
-import { optionsDataT } from "@/app/models/models";
+import { optionsDataT, selectKeyValueT } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
 import { Autocomplete, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
@@ -28,7 +28,7 @@ type CustomFieldT = {
     is_disabled: number
 }
 
-export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any }) {
+export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void }) {
     console.log("props.defaultValue", props.desc.column_name_id, props.defaultValue);
     const [status, setStatus] = useState(0);
     const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: undefined, name: "" });
@@ -46,12 +46,15 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
 
 
 
-    function handleMasterValueChange(val: optionsDataT) {
-        const value = {
-            id: val.id,
-            name: val.name
+    function handleMasterValueChange(val: any) {
+        if (props.setSelectValues) {
+            props.setSelectValues((prevState: selectKeyValueT) => {
+                const updatedState = { ...prevState };
+                updatedState[props.desc.column_name] = val;
+                return updatedState;
+            });
         }
-        setSelectedMasterValue(value);
+        setSelectedMasterValue(val);
     }
 
 
