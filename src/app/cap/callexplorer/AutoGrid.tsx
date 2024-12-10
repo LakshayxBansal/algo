@@ -135,6 +135,8 @@ export default function AutoGrid(props: any) {
   const [selectedStatusRows, setSelectedStatusRows] =
     React.useState<GridRowSelectionModel>([]);
   const [lastSelectedIndex, setLastSelectedIndex] = React.useState(null);
+  const descriptionRef = React.useRef(null);
+    
 
   const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
   const apiRef = useGridApiRef();
@@ -721,35 +723,17 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
           field={"description"}
           headerName={"Description"}
           tooltipTitle={"Filter by Description"}
+          inputValue={descriptionRef}
         >
           <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
-            <AutocompleteDB
-              name={"description"}
-              id={"description"}
-              label={"Description"}
-              // onChange={(e, val, s) => setCategorySearchText(val)}
-              onChange={(e, val, s) =>{handleFilterChange("description", val)}}
-              fetchDataFn={tabOptions[value].getDescription}
-              defaultValue={
-                filterValueState?.description
-                  ? {
-                      id: filterValueState.description.id,
-                      name: filterValueState.description.name,
-                    }
-                  : undefined // Set default value to null if no data exists
-              }
-              diaglogVal={{
-                id: filterValueState?.description?.id,
-                name: filterValueState?.description?.name,
-                detail: undefined,
-              }}
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {
-                
-                
-              }}
-              fnSetModifyMode={function (id: string): void {}}
+            <TextField
+              // inputType={InputType.TEXT}
+              id="description"
+              label="Description"
+              name="description"
+              defaultValue={filterValueState?.description}
+              inputRef={descriptionRef}
+              
             />
           </MenuItem>
         </FilterMenu>

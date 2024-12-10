@@ -39,10 +39,7 @@ export async function getCallEnquiriesDb(
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
-    if (filterValueState.description) {
-      whereConditions.push(`eh.enq_number = ?`);
-      values.push(filterValueState.description.name);
-    }
+    
     if (filterValueState.contactParty) {
       whereConditions.push(`cm.name = ?`);
       values.push(filterValueState.contactParty.name);
@@ -134,6 +131,9 @@ export async function getCallEnquiriesDb(
     if (whereConditions.length > 0) {
       query += " AND ";
       query += whereConditions.join(" AND ");
+    }
+    if (filterValueState.description) {
+      query += ` AND eh.enq_number LIKE '%${filterValueState.description}%'`;
     }
 
      //  sorting logic
@@ -370,10 +370,6 @@ export async function getCallEnquiriesCountDb(
       whereConditions.push(`ecm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
-    if (filterValueState.description) {
-      whereConditions.push(`eh.enq_number = ?`);
-      values.push(filterValueState.description.name);
-    }
     if (filterValueState.contactParty) {
       whereConditions.push(`cm.name = ?`);
       values.push(filterValueState.contactParty.name);
@@ -465,6 +461,11 @@ export async function getCallEnquiriesCountDb(
       query += " AND ";
       query += whereConditions.join(" AND ");
     }
+
+    if (filterValueState.description) {
+      query += ` AND eh.enq_number LIKE '%${filterValueState.description}%'`;
+    }
+
 
     const result = await excuteQuery({
       host: crmDb,
@@ -581,10 +582,7 @@ WHERE tl.id = ( \
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
-    if (filterValueState.description) {
-      whereConditions.push(`th.tkt_number = ?`);
-      values.push(filterValueState.description.name);
-    }
+    
     if (filterValueState.contactParty) {
       whereConditions.push(`cm.name = ?`);
       values.push(filterValueState.contactParty.name);
@@ -670,6 +668,10 @@ WHERE tl.id = ( \
       query += whereConditions.join(" AND ");
     }
 
+    if (filterValueState.description) {
+      query += ` AND th.tkt_number LIKE '%${filterValueState.description}%'`;
+    }
+
      //  sorting logic
      if (sortBy.length > 0) {
       const sortClauses = sortBy.map(
@@ -746,10 +748,6 @@ WHERE tl.id = ( \
     if (filterValueState.callCategory) {
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
-    }
-    if (filterValueState.description) {
-      whereConditions.push(`th.tkt_number = ?`);
-      values.push(filterValueState.description.name);
     }
     if (filterValueState.contactParty) {
       whereConditions.push(`cm.name = ?`);
@@ -879,10 +877,6 @@ export async function getCallSupportTicketsCountDb(
       whereConditions.push(`tcm.name = ?`);
       values.push(filterValueState.callCategory.name);
     }
-    if (filterValueState.description) {
-      whereConditions.push(`th.tkt_number = ?`);
-      values.push(filterValueState.description.name);
-    }
     if (filterValueState.contactParty) {
       whereConditions.push(`cm.name = ?`);
       values.push(filterValueState.contactParty.name);
@@ -966,6 +960,10 @@ export async function getCallSupportTicketsCountDb(
     if (whereConditions.length > 0) {
       query += " AND ";
       query += whereConditions.join(" AND ");
+    }
+
+    if (filterValueState.description) {
+      query += ` AND th.tkt_number LIKE '%${filterValueState.description}%'`;
     }
 
     const result = await excuteQuery({
