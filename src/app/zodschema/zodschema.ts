@@ -7,7 +7,7 @@ const phoneRegex = new RegExp(
 // const panRegEx = new RegExp(/^[a-zA-Z0-9]{5}[0-9]{4}[a-zA-Z0-9]$/);
 const panRegEx = new RegExp(/^[A-Z]{5}[0-9]{4}[A-Z]$/);
 
-const emailRegex = new RegExp(
+export const emailRegex = new RegExp(
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 );
 const aadhaarRegex = new RegExp(/^\d{12}$/); //AADHAR REGEX CHANGED
@@ -1047,8 +1047,7 @@ export const companySchema = z.object({
   stamp: z.number().optional(),
 });
 
-export const inviteUserSchema = z
-  .object({
+export const inviteUserSchema = z.object({
     id: z.number().optional(),
     name: z.string().min(1, "Please enter Name").max(45, "Name is too long"),
     email: z
@@ -1065,7 +1064,7 @@ export const inviteUserSchema = z
       .optional(),
     contact: z.string().optional(),
     companyId: z.number(),
-    executiveId: z.number().optional(),
+    status: z.number().optional(),
     inviteDate: z.date().optional(),
   })
   .refine(

@@ -7,6 +7,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import {
   inviteUserSchemaT,
+  masterFormPropsT,
   masterFormPropsWithExecutive,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -14,11 +15,11 @@ import Seperator from "@/app/Widgets/seperator";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { Collapse, IconButton } from "@mui/material";
-import { createUserToInvite } from "@/app/controllers/user.controller";
+import { createUserToInvite, updateInvitedUser } from "@/app/controllers/user.controller";
 import axios from "axios";
 import { getSession } from "@/app/services/session.service";
 
-export default function InviteUserForm(props: masterFormPropsWithExecutive) {
+export default function InviteUserForm(props: masterFormPropsT) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -48,8 +49,8 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
-
-      const result = await createUserToInvite(data as inviteUserSchemaT);
+      const result = await persistEntity(data as inviteUserSchemaT);
+      // const result = await createUserToInvite(data as inviteUserSchemaT);
       if (result.status) {
         // let notifyBody;
         // if(result.data[0].usercontact.includes('@')){
@@ -83,13 +84,28 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
             errorState[path] = { msg: issue.message, error: true };
           }
         }
-        errorState["form"] = { msg: "Error encountered", error: true };
+        if(!errorState["form"]){
+          errorState["form"] = { msg: "Error encountered", error: true };
+        }
         setFormError(errorState);
       }
     } catch (error) {
       throw error;
     }
   };
+
+  async function persistEntity(data : inviteUserSchemaT){
+    let result;
+    if(props.data){
+      data["id"] = entityData.id;
+      data["status"] = entityData.status;
+      result = updateInvitedUser(data,false);
+    }else{
+      result = await createUserToInvite(data);
+    }
+    return result;
+  }
+
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -127,7 +143,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
       >
         <Seperator>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Add Invite User
+            Invite User
             <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
             </IconButton>
@@ -171,6 +187,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
               autoFocus
               style={{ width: "100%" }}
               required
+              defaultValue={entityData?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
               onKeyDown={() => {
@@ -190,6 +207,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
                 required
                 style={{ width: "100%" }}
                 id="email"
+                defaultValue={entityData?.email}
                 label="Email Address"
                 name="email"
                 onKeyDown={() => {
@@ -210,6 +228,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
                 name="phone"
                 style={{ width: "100%" }}
                 required
+                defaultValue={entityData?.phone}
                 error={formError?.phone?.error}
                 helperText={formError?.phone?.msg}
                 country={"in"}

@@ -22,9 +22,8 @@ export default async function AddUser() {
   if (session) {
     return (
       <Box>
-        <UserList />
-        <Box sx={{ height:"10vh",margin:"20px 20px" }}>
-          <Accordion>
+        <Box sx={{margin:"20px 20px" }}>
+          <Accordion sx={{ padding: "0px 0px 0px" }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -32,11 +31,12 @@ export default async function AddUser() {
             >
               Invited User
             </AccordionSummary>
-            <AccordionDetails sx={{marginBottom:"3em"}}>
+            <AccordionDetails sx={{ bgcolor: "white", width: "100%", padding: "8px 0px 16px" }}>
               <InviteList companyId={session.user.dbInfo.id} />
             </AccordionDetails>
           </Accordion>
         </Box>
+        <UserList />
       </Box>
     );
   } else {

@@ -82,6 +82,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   let fieldArr: React.ReactElement[] = [];
 
 
+  const [email, setEmail] = useState(entityData.email);
+  const [mobile, setMobile] = useState(entityData.mobile);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -313,8 +315,23 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           } as optionsDataT
         }
         width={365}
-        onChange={(e, val, s) =>
+        onChange={(e, val, s) => {
           setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
+          const emailRegex = new RegExp(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          );
+          if (Object.keys(entityData).length===0 && val) {
+            if (emailRegex.test(val.contact)) {
+              if(!email){
+                setEmail(val.contact);
+              }
+            } else {
+              if(!mobile){
+                setMobile(val.contact);
+              }
+            }
+          }
+        }
         }
         fetchDataFn={getApplicationUser}
         formError={formError.crm_user}
@@ -340,7 +357,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
-        defaultValue={entityData.email}
+        value={email}
+        onChange={(e : React.ChangeEvent<HTMLInputElement>)=>{
+          console.log("event : ",e.target.value);
+          setEmail(e.target.value);
+        }}
       // onKeyDown={() => {
       //   setFormError((curr) => {
       //     const { email, ...rest } = curr;
@@ -361,7 +382,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
-        defaultValue={entityData.mobile}
+        defaultValue={mobile}
       // onKeyDown={() => {
       //   setFormError((curr) => {
       //     const { mobile, ...rest } = curr;
@@ -585,9 +606,9 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   ]);
 
 
-  entityData.executive_dept_id = props.data?.executive_dept_id;
-  entityData.executive_group = props.data?.executive_group;
-  entityData.executive_group_id = props.data?.executive_group_id;
+  // entityData.executive_dept_id = props.data?.executive_dept_id;
+  // entityData.executive_group = props.data?.executive_group;
+  // entityData.executive_group_id = props.data?.executive_group_id;
 
 
 
@@ -942,14 +963,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
             )}
             <Grid xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                // marginTop: 2,
-                paddingLeft: "2rem"
-              }}
-            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  // marginTop: 2,
+                  paddingLeft: "2rem"
+                }}
+              >
                 <Tooltip
                   title={docData?.length > 0 ? (
                     docData.map((file: any, index: any) => (
@@ -971,25 +992,25 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
                     <Badge badgeContent={docData?.length} color="primary">
                       <AttachFileIcon></AttachFileIcon>
                     </Badge>
-    
+
                   </IconButton>
                 </Tooltip>
-              <Button onClick={() => {
-                if (props.setDialogOpen === undefined) {
-                  router.push('/cap');
-                }
-                else {
-                  handleCancel();
-                }
-              }} tabIndex={-1}>Cancel</Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
-            </Box>
+                <Button onClick={() => {
+                  if (props.setDialogOpen === undefined) {
+                    router.push('/cap');
+                  }
+                  else {
+                    handleCancel();
+                  }
+                }} tabIndex={-1}>Cancel</Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
+              </Box>
             </Grid>
           </Grid>
           {dialogOpen && (
