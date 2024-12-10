@@ -9,6 +9,7 @@ import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from 'mariadb';
 import { getCompanyDbByIdList, getCompanyDetailsById } from '../services/company.service';
 import { getAllRoles } from './executiveRole.controller';
+import { emailRegex } from '../zodschema/zodschema';
 
 
 export async function registerUser(formData: userSchemaT) {
@@ -427,9 +428,6 @@ export async function getInviteUserById(id: number) {
     if (session) {
       const result = await getInviteUserByIdList(id);
       if (result && result.length > 0) {
-        const emailRegex = new RegExp(
-          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        );
         if (emailRegex.test(result[0].usercontact)) {
           result[0].email = result[0].usercontact;
         } else {

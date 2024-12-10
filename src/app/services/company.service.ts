@@ -268,8 +268,8 @@ export async function getCompaniesDb(
   }
 }
 
-export async function getCompanyCount(
-  userContact: string
+export async function getCompanyCountDB(
+  userId: number
 ) {
   try {
     return excuteQuery({
@@ -279,9 +279,8 @@ export async function getCompanyCount(
           userCompany as uc, \
           user as u\
           where \
-          u.contact = ? and \
-          u.id = uc.user_id",
-      values: [userContact],
+          uc.user_id = ?",
+      values: [userId],
     });
   } catch (e) {
     console.log(e);

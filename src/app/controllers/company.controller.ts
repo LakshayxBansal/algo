@@ -12,6 +12,7 @@ import {
   getCompaniesDb,
   updateCompanyDB,
   dropCompanyDatabase,
+  getCompanyCountDB,
 } from "../services/company.service";
 import {
   createRegionalSettingDb,
@@ -31,6 +32,7 @@ import os from "os";
 import { isIP } from "net";
 import { count } from "console";
 import { getAllRolesDB } from "../services/executiveRole.service";
+import { logger } from "../utils/logger.utils";
 
 export async function getCompanyById(id: number) {
   try {
@@ -282,7 +284,7 @@ export async function getCompanies(
       );
       for(const company of dbData){
         const companyRoles = await getAllRolesDB(company.dbName);
-        let role = "none";
+        let role = "You can't access company, action pending from Admin side";
         if(company.roleId && companyRoles.length>0){
           role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
         }
@@ -307,6 +309,18 @@ export async function getCompanies(
     };
   }
   return getCompanies;
+}
+
+export async function getCompanyCount() {
+  try{
+    const session = await getSession();
+    if(session){
+      const result = await getCompanyCountDB(session.user.userId);
+      return result;
+    }
+  }catch(error){
+    logger.error(error);
+  }
 }
 
 export async function deleteCompanyById(id: number) {

@@ -73,13 +73,13 @@ export default function AuthPage(props: authPagePropsType) {
       }).then(async(status) => {
         if (status?.ok) {
           // setTimeout(() => {
-            const totalInvites = await getTotalInvite();
-            const totalCompanies = await getCompanyCount(data.contact);
-            if(totalInvites.rowCount===0 && Number(totalCompanies[0].rowCount)===0){
-              router.push("/addcompany");
-            }else{
+            // const totalInvites = await getTotalInvite();
+            // const totalCompanies = await getCompanyCount(data.contact);
+            // if(totalInvites.rowCount===0 && Number(totalCompanies[0].rowCount)===0){
+            //   router.push("/addcompany");
+            // }else{
               router.push(successCallBackUrl);
-            }
+            // }
           // }, 1000);
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
