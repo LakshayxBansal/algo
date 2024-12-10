@@ -86,6 +86,19 @@ const FieldConfigurator = () => {
         Mode: [
             { label: 'Create', value: 1 },
             { label: 'Update', value: 2 }
+        ],
+        ListOption: [
+            { label: 'List of Executives', value: "executive.name" },
+            { label: 'List of Contacts', value: "contact.name" }
+        ],
+        ColumnType: [
+            { label: 'Text', value: 1 },
+            { label: 'Options', value: 2 },
+            { label: 'Numeric', value: 3 },
+            { label: 'Date', value: 4 },
+            { label: 'List', value: 5 },
+            { label: 'Currency', value: 6 },
+            { label: 'Master List', value: 7 },
         ]
     };
 
@@ -471,28 +484,34 @@ const FieldConfigurator = () => {
                                     <Select
                                         value={item.column_type_id}
                                         label="Column Type"
-                                        onChange={(e) => handleChange(index, "column_type_id", e.target.value)}
+                                        onChange={(e) => {
+                                            handleChange(index, "column_type_id", e.target.value)
+                                            const updatedFields: FieldItem[] = [...fields];
+                                            updatedFields[index]["column_format"] = null;
+                                        }}
                                     >
-                                        <MenuItem value={1}>Text</MenuItem>
-                                        <MenuItem value={3}>Numeric</MenuItem>
-                                        <MenuItem value={4}>Date</MenuItem>
-                                        <MenuItem value={6}>Currency</MenuItem>
-                                        <MenuItem value={5}>List</MenuItem>
-                                        <MenuItem value={2}>Options</MenuItem>
+                                        {options.ColumnType.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             )}
 
-                            {item.is_default_column !== 1 && (
+                            {item.is_default_column !== 1 && (item.column_type_id === 2 || item.column_type_id === 5) && (
                                 <InputControl
                                     inputType={InputType.TEXT}
                                     id="format"
                                     key="format"
-                                    label={item.column_type_id !== 4 ? "Format" : dateFormat}
+                                    label="Format"
                                     value={item.column_format || ""}
                                     error={!!fieldHelperState[item.column_name_id]?.formError.column_format} // Show error state if there's an error       
                                     helperText={fieldHelperState[item.column_name_id]?.formError?.column_format} // Display error message if it exists      
                                     name="format"
+                                    sx={{
+                                        width: "280px",
+                                    }}
                                     defaultValue={item.column_format}
                                     onChange={(e: any) => handleChange(index, "column_format", e.target.value)}
                                     disabled={
@@ -500,13 +519,28 @@ const FieldConfigurator = () => {
                                         item.column_type_id !== 5 && // Numeric
                                         item.column_type_id !== 6    // Date
                                     }
-                                    placeholder={item.column_type_id === 6
-                                        ? "Number of decimal places"
-                                        : item.column_type_id === 5
-                                            ? "Enter semi-colon separated list items"
-                                            : item.column_type_id === 2 ? "Enter semi-colon seperated options" : ""}
+                                    placeholder={item.column_type_id === 2 ? "Enter semi-colon seperated options" : "Enter semi-colon seperated List Items"}
                                 />
                             )}
+
+                            {item.column_type_id === 7 &&
+                                <FormControl sx={{ width: 215 }} size="small" variant="outlined">
+                                    <InputLabel>Select the Master Form</InputLabel>
+                                    <Select
+                                        value={item.column_format}
+                                        label="Select the Master Form"
+                                        onChange={(e) => {
+                                            handleChange(index, "column_format", e.target.value)
+                                        }}
+                                    >
+                                        {options.ListOption.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            }
 
                             <FormControlLabel
                                 disabled={item.is_default_mandatory === 1}

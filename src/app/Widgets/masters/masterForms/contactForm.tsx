@@ -946,13 +946,13 @@ export default function ContactForm(
             )}
           </Grid>
           <Grid xs={12}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 2
-            }}
-          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: 2
+              }}
+            >
               <Tooltip
                 title={docData?.length > 0 ? (
                   docData.map((file: any, index: any) => (
@@ -967,27 +967,27 @@ export default function ContactForm(
                 )}
               >
                 <IconButton
-                  sx={{ marginRight:"3rem"}}
+                  sx={{ marginRight: "3rem" }}
                   onClick={() => setDialogOpen(true)}
                   aria-label="file"
                 >
                   <Badge badgeContent={docData?.length} color="primary">
                     <AttachFileIcon></AttachFileIcon>
                   </Badge>
-    
+
                 </IconButton>
               </Tooltip>
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
           </Grid>
           {dialogOpen && (
             <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>

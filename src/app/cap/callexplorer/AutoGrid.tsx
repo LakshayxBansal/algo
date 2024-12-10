@@ -650,8 +650,6 @@ export default function AutoGrid(props: any) {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void {
-
-
               }}
               fnSetModifyMode={function (id: string): void { }}
             />

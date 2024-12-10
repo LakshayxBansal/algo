@@ -1,7 +1,10 @@
+import getMasterForTable from "@/app/controllers/masterForTable.controller";
+import { optionsDataT } from "@/app/models/models";
+import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
 import { Autocomplete, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type CustomFieldT = {
     key: number,
@@ -28,6 +31,29 @@ type CustomFieldT = {
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any }) {
     console.log("props.defaultValue", props.desc.column_name_id, props.defaultValue);
     const [status, setStatus] = useState(0);
+    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: undefined, name: "" });
+    const [labelFetch, setLabelFetch] = useState();
+    const columnType = {
+        Text: 1,
+        Options: 2,
+        Numeric: 3,
+        Date: 4,
+        List: 5,
+        Currency: 6,
+        MasterList: 7
+    }
+
+
+
+
+    function handleMasterValueChange(val: optionsDataT) {
+        const value = {
+            id: val.id,
+            name: val.name
+        }
+        setSelectedMasterValue(value);
+    }
+
 
     function onStatusChange(event: React.SyntheticEvent, value: any) {
         setStatus(value);
@@ -35,7 +61,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
 
     const renderField = () => {
         switch (props.desc.column_type_id) {
-            case 1:
+            case columnType.Text:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -48,7 +74,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         fullWidth
                     />
                 );
-            case 3:
+            case columnType.Numeric:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -62,7 +88,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         fullWidth
                     />
                 );
-            case 4:
+            case columnType.Date:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -76,7 +102,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         fullWidth
                     />
                 )
-            case 5:
+            case columnType.List:
                 const list_item = props.desc.column_format?.split(",") || [];
                 return (
                     <Autocomplete
@@ -97,7 +123,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         fullWidth
                     />
                 )
-            case 2:
+            case columnType.Options:
                 const option = props.desc.column_format?.split(",") || [];
                 return (
                     <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
@@ -123,6 +149,51 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                             ))}
                         </RadioGroup>
                     </FormControl>
+                )
+            case columnType.MasterList:
+                return (
+                    // <Autocomplete
+                    //     id={props.desc.column_name_id}
+                    //     options={[]}
+                    //     defaultValue={props.defaultValue}
+                    //     disabled={props.desc.is_disabled === 1 ? true : false}
+                    //     renderInput={(params) => (
+                    //         <InputControl
+                    //             {...params}
+                    //             inputType={InputType.TEXT}
+                    //             label={props.desc.column_label}
+                    //             name={props.desc.column_name}
+                    //             required={props.desc.is_mandatory === 1}
+                    //             fullWidth
+                    //         />
+                    //     )}
+                    //     fullWidth
+                    // />
+                    <AutocompleteDB
+                        name={props.desc.column_name}
+                        id={props.desc.column_name_id}
+                        label={props.desc.column_label}
+                        onChange={(e, val, s) => { handleMasterValueChange(val) }}
+                        fetchDataFn={(arg: any) => getMasterForTable(props.desc.column_format, arg)}
+                        defaultValue={
+                            props.defaultValue
+                                ? {
+                                    id: props.defaultValue.id,
+                                    name: props.defaultValue.name,
+                                }
+                                : undefined // Set default value to null if no data exists
+                        }
+                        diaglogVal={{
+                            id: selectedMasterValue?.id,
+                            name: selectedMasterValue.name,
+                            detail: undefined,
+                        }}
+                        setDialogVal={function (
+                            value: React.SetStateAction<optionsDataT>
+                        ): void {
+                        }}
+                        fnSetModifyMode={function (id: string): void { }}
+                    />
                 )
         }
     }
