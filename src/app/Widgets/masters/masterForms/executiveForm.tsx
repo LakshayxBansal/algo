@@ -823,29 +823,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
   return (
     <Box>
-      {/* <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        {
-          props?.setDialogOpen === undefined ? (<></>) : (<>
-            <Seperator>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                {props.data ? "Update Executive" : "Add Executive"}
-                <IconButton onClick={handleCancel} tabIndex={-1}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </Seperator>
-          </>
-          )
-        }
-      </Box> */}
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
