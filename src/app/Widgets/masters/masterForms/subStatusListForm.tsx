@@ -23,6 +23,7 @@ import {
   masterFormPropsWithDataT,
 } from "@/app/models/models";
 import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
+import { usePathname } from "next/navigation";
 
 export default function SubStatusListForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
   const [formError, setFormError] = useState<
@@ -33,6 +34,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
     props.data?.enquiry_status_id
   );
   const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -53,9 +56,17 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/subStatusList") {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+        // setStatus("");
+      }
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -136,19 +147,19 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
         </Alert>
       </Collapse>
       <Box id="subStatusForm">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
-              <FormControl sx={{ marginLeft: "2rem", marginTop: "1rem" }}>
+              <FormControl sx={{ marginLeft: "1rem", marginTop: "1rem" }}>
                 <Grid container alignItems="center">
-                  <Grid item xs={12} sm="auto">
+                  <Grid item sm="auto">
                     <FormControlLabel
                       value="Status"
                       control={<label />}
                       label="Status :"
                     />
                   </Grid>
-                  <Grid item xs={12} sm="auto">
+                  <Grid item sm="auto">
                     <RadioGroup
                       row
                       name="status"

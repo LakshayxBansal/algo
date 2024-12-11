@@ -22,6 +22,7 @@ import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
+import { usePathname } from "next/navigation";
 
 export default function ProductGroupForm(props: masterFormPropsWithDataT<productGroupSchemaT>) {
   const [formError, setFormError] = useState<
@@ -30,6 +31,8 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: productGroupSchemaT = props.data ? props.data : {} as productGroupSchemaT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
   console.log("value in form", selectValues);
 
   const handleCancel = () => {
@@ -50,9 +53,16 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
+      if (pathName !== "/cap/admin/lists/productGroupList") {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -140,7 +150,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
         </Alert>
       </Collapse>
       <Box id="productGroupForm">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl

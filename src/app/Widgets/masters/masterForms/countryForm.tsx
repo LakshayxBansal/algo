@@ -13,6 +13,7 @@ import Seperator from "../../seperator";
 import { Collapse, IconButton, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
 export default function CountryForm(props: masterFormPropsWithDataT<countrySchemaT>) {
   const [formError, setFormError] = useState<
@@ -20,6 +21,8 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: countrySchemaT = props.data ? props.data : {} as countrySchemaT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (formData: FormData) => {
     const data = {
@@ -30,11 +33,18 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
       setFormError({});
+      setSnackOpen(true);
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
+      if (pathName !== "/cap/admin/lists/countryList") {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -112,7 +122,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit} noValidate>
+      <form key={formKey} action={handleSubmit} noValidate>
         <Grid container spacing={1}>
           <Grid item xs={12} sm={6} md={6} lg={6}>
             <InputControl

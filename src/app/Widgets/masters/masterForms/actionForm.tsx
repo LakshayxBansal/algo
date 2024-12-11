@@ -14,6 +14,7 @@ import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
 export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
@@ -21,6 +22,8 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (formData: FormData) => {
     // const data = { name: formData.get("name") as string };
@@ -66,9 +69,16 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      // setTimeout(() => {
+        //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+        // }, 1000);
+        if (pathName !== "/cap/admin/lists/actionList") {
+          setTimeout(() => {
+            props.setDialogOpen ? props.setDialogOpen(false) : null;
+          }, 1000);
+        } else {
+          setFormKey(formKey + 1); 
+        }
     } else {
       const issues = result.data;
 
@@ -147,7 +157,7 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
         </Alert>
       </Collapse>
       <Box id="actionForm">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl

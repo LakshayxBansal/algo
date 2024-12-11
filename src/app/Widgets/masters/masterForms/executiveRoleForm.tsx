@@ -22,6 +22,7 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
+import { usePathname } from "next/navigation";
 
 export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<executiveRoleSchemaT>) {
   const [formError, setFormError] = useState<
@@ -31,6 +32,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveRoleSchemaT = props.data ? props.data : {} as executiveRoleSchemaT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -75,9 +78,16 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
+      if (pathName !== "/cap/admin/lists/executiveRoleList") {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -165,7 +175,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
         </Alert>
       </Collapse>
       <Box id="executiveRole">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
