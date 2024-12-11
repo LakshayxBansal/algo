@@ -51,6 +51,7 @@ type autocompleteDBT = {
   showDetails?: boolean;
   autoFocus?: boolean;
   iconControl?: React.ReactNode | null;
+  setFormError ?: (props: any) => void
   //children: React.FunctionComponentElements
 };
 
@@ -217,6 +218,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             required={props.required}
             error={props.formError?.error}
             helperText={props.formError?.msg}
+            setFormError={props.setFormError}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
@@ -291,6 +293,18 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
+        if(props.formError?.error && props.setFormError){
+          props.setFormError((prevFormError:any) => {
+    
+            return {
+              ...prevFormError,
+              [props.name]: {
+                error: false,
+                msg: "",
+              },
+            };
+           })
+        }
         if (reason != "blur") {
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)

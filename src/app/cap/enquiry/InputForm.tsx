@@ -136,6 +136,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         required={false}
         error={formError?.enq_number?.error}
         helperText={formError?.enq_number?.msg}
+        setFormError={setFormError}
       />,
     ],
     [
@@ -175,6 +176,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getContactById}
         required={false}
         formError={formError?.contact ?? formError.contact}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
@@ -198,6 +200,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getCategoryById}
         required={false}
         formError={formError?.category ?? formError.category}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CategoryForm
             setDialogOpen={fnDialogOpen}
@@ -220,6 +223,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getEnquirySourceById}
         required={false}
         formError={formError?.source ?? formError.source}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SourceForm
             setDialogOpen={fnDialogOpen}
@@ -243,6 +247,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getExecutiveById}
         required={false}
         formError={formError?.received_by ?? formError.received_by}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
@@ -305,6 +310,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getEnquirySubSatusById}
         required={false}
         formError={formError?.sub_status ?? formError.sub_status}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SubStatusForm
             setDialogOpen={fnDialogOpen}
@@ -350,6 +356,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
         fetchDataFn={getEnquiryAction}
         formError={formError?.next_action ?? formError.next_action}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ActionForm
             setDialogOpen={fnDialogOpen}
@@ -375,6 +382,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         id="next_action_date"
         name="next_action_date"
         disabled={status === "2"}
+        setFormError={setFormError}
         slotProps={{
           textField: {
             error: formError?.next_action_date?.error,
@@ -403,6 +411,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         disabled={status === "1"}
         error={formError?.closure_remark?.error}
         helperText={formError?.closure_remark?.msg}
+        setFormError={setFormError}
         sx={{
           "& .MuiFormHelperText-root": {
             margin: 0,

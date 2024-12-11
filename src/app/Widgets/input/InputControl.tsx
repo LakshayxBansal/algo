@@ -69,6 +69,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   custLabel = "",
   decPlaces,
   titleCase = false,
+  setFormError,
   ...props
 }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
@@ -101,6 +102,20 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   }
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
+
+  if(setFormError && props.error ){
+   setFormError((prevFormError:any) => {
+    
+    return {
+      ...prevFormError,
+      [props.name]: {
+        error: false,
+        msg: "",
+      },
+    };
+   })
+  }
+
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;

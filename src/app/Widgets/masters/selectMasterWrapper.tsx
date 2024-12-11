@@ -44,6 +44,7 @@ type selectMasterWrapperT = {
   defaultOptions?: optionsDataT[]
   showDetails?: boolean;
   autoFocus?: boolean;
+  setFormError?: (props: any) => void;
 };
 
 enum dialogMode {
@@ -141,6 +142,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             diaglogVal={dialogValue}
             setDialogVal={setDialogValue}
             formError={props.formError}
+            setFormError= {props.setFormError}
             required={props.required}
             notEmpty={props.notEmpty}
             defaultValue={props.defaultValue}
