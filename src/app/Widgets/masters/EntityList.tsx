@@ -252,12 +252,11 @@ export default function EntityList(props: entitiyCompT) {
     setOpen(false);
   };
 
-  
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
-          <AddDialog title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${props.title}`} open={dialogOpen} setDialogOpen={setDialogOpen}>
+          <AddDialog title={`${dlgMode === dialogMode.FileUpload ? 'Upload File' : dlgMode === dialogMode.Add ? `Add ${props.title}` : dlgMode === dialogMode.Delete ? `Delete ${props.title}` : `Update ${props.title}`}`} open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.fileUploadFeatureReqd &&
               dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
