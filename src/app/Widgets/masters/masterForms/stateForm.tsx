@@ -131,6 +131,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
               name="name"
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               style={{ width: "100%" }}
             />
           </Grid>
@@ -143,6 +144,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
               name="alias"
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+ setFormError={setFormError}
               style={{ width: "100%" }}
             />
           </Grid>

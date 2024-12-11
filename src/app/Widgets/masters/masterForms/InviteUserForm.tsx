@@ -173,6 +173,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
               required
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -187,6 +188,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
                 inputType={InputType.EMAIL}
                 error={formError?.email?.error}
                 helperText={formError?.email?.msg}
+ setFormError={setFormError}
                 required
                 style={{ width: "100%" }}
                 id="email"
@@ -212,6 +214,7 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
                 required
                 error={formError?.phone?.error}
                 helperText={formError?.phone?.msg}
+ setFormError={setFormError}
                 country={"in"}
                 preferredCountries={["in", "gb"]}
                 dropdownClass={["in", "gb"]}

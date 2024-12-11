@@ -145,6 +145,7 @@ export default function StateFormList(props: masterFormPropsWithDataT<stateListS
             id={"country"}
             label={"Country"}
             formError={formError.country}
+            setFormError={setFormError}
             dialogTitle={"country"}
             onChange={(e, val, s) => {
               setSelectValues((prevSelectValues) => ({
@@ -183,6 +184,7 @@ export default function StateFormList(props: masterFormPropsWithDataT<stateListS
               name="name"
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               required
               style={{ width: "100%" }}
             />
@@ -196,6 +198,7 @@ export default function StateFormList(props: masterFormPropsWithDataT<stateListS
               name="alias"
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+ setFormError={setFormError}
               style={{ width: "100%" }}
             />
           </Grid>

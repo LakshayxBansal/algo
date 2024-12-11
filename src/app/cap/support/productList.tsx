@@ -151,6 +151,7 @@ export default function ProductList(props: any) {
             fnFetchDataByID={getProductById}
             required
             formError={formError?.product ?? formError.product}
+ setFormError={setFormError}
             onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
             renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <ProductForm

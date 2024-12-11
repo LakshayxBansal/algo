@@ -172,6 +172,7 @@ export default function SubStatusForm(props: masterFormPropsWithDataT<enquirySub
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;

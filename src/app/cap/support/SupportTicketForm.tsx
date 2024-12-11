@@ -205,6 +205,7 @@ const SupportTicketForm = (props: customprop) => {
         defaultValue={props.data?.tkt_number}
         error={formError?.tkt_number?.error}
         helperText={formError?.tkt_number?.msg}
+ setFormError={setFormError}
         // sx={{
         //   "& .MuiInputBase-root": {
         //     height: 100,
@@ -227,6 +228,7 @@ const SupportTicketForm = (props: customprop) => {
         required
         error={formError?.date?.error}
         helperText={formError?.date?.msg}
+ setFormError={setFormError}
         sx={{ display: "flex", flexGrow: 1 }}
         slotProps={{
           openPickerButton: {
@@ -249,6 +251,7 @@ const SupportTicketForm = (props: customprop) => {
         fnFetchDataByID={getContactById}
         required
         formError={formError?.contact ?? formError.contact}
+ setFormError={setFormError}
         defaultValue={masterData.contact}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ContactForm
@@ -273,6 +276,7 @@ const SupportTicketForm = (props: customprop) => {
         fnFetchDataByID={getSupportCategoryById}
         required
         formError={formError?.category ?? formError.category}
+ setFormError={setFormError}
         defaultValue={masterData.category}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SupportCategoryForm
@@ -351,6 +355,7 @@ const SupportTicketForm = (props: customprop) => {
         required
         key={`sub_status_${status}`}
         formError={formError?.sub_status ?? formError.sub_status}
+ setFormError={setFormError}
         defaultValue={defaultValues.sub_status}
         allowNewAdd={status === "1"}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -374,6 +379,7 @@ const SupportTicketForm = (props: customprop) => {
         fetchDataFn={getSupportAction}
         fnFetchDataByID={getSupportActionById}
         formError={formError?.action_taken ?? formError.action_taken}
+ setFormError={setFormError}
         defaultValue={masterData.action}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SupportActionForm
@@ -395,6 +401,7 @@ const SupportTicketForm = (props: customprop) => {
         onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
         fetchDataFn={getSupportAction}
         formError={formError?.next_action ?? formError.next_action}
+ setFormError={setFormError}
         defaultValue={defaultValues.next_action}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SupportActionForm
@@ -416,6 +423,7 @@ const SupportTicketForm = (props: customprop) => {
         name="next_action_date"
         error={formError?.next_action_date?.error}
         helperText={formError?.next_action_date?.msg}
+ setFormError={setFormError}
         defaultValue={
           status === "1"
             ? masterData?.next_action_date
@@ -448,6 +456,7 @@ const SupportTicketForm = (props: customprop) => {
         disabled={status === "1"}
         error={formError?.closure_remark?.error}
         helperText={formError?.closure_remark?.msg}
+ setFormError={setFormError}
         sx={{
           "& .MuiFormHelperText-root": {
             margin: 0,
@@ -613,6 +622,7 @@ const SupportTicketForm = (props: customprop) => {
         id="call_receipt_remark"
         error={formError?.call_receipt_remark?.error}
         helperText={formError?.call_receipt_remark?.msg}
+ setFormError={setFormError}
         defaultValue={props.data?.call_receipt_remark}
         rows={6}
         fullWidth
@@ -634,6 +644,7 @@ const SupportTicketForm = (props: customprop) => {
         id="suggested_action_remark"
         error={formError?.suggested_action_remark?.error}
         helperText={formError?.suggested_action_remark?.msg}
+ setFormError={setFormError}
         defaultValue={props.data?.suggested_action_remark}
         rows={6}
         fullWidth

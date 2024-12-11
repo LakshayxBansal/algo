@@ -609,6 +609,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     disabled={propsForCallReceiptField.disabled}
                     error={formError?.call_receipt_remark?.error}
                     helperText={formError?.call_receipt_remark?.msg}
+ setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
@@ -636,6 +637,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     disabled={propsForSugActionField.disabled}
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
+ setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,

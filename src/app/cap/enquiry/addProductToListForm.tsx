@@ -197,7 +197,8 @@ export default function AddProductToListForm(props: customprop) {
             fnFetchDataByID={getProductById}
             required
             formError={formError?.product ?? formError.product}
- setFormError={setFormError} setFormError={setFormError}            onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
+ setFormError={setFormError}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
             renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <ProductForm
                 setDialogOpen={fnDialogOpen}
@@ -241,6 +242,7 @@ export default function AddProductToListForm(props: customprop) {
               }}
               error={formError?.quantity?.error}
               helperText={formError?.quantity?.msg}
+ setFormError={setFormError}
             />
             <SelectMasterWrapper
               key={defaultValueForUnitUsingProduct.id}
@@ -252,7 +254,8 @@ export default function AddProductToListForm(props: customprop) {
               fnFetchDataByID={getUnitById}
               required
               formError={formError?.unit ?? formError.unit}
- setFormError={setFormError} setFormError={setFormError}              onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
+ setFormError={setFormError}
+       onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <UnitForm
                   setDialogOpen={fnDialogOpen}

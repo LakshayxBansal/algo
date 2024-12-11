@@ -133,6 +133,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
               defaultValue={props.data?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
