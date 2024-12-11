@@ -144,7 +144,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             defaultOptions={props.defaultOptions}
             showDetails={props.showDetails ? props.showDetails : false}
             iconControl = {!props.disabled && (
-              <IconButton tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
+              <IconButton title="title" tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
                 <span
                   style={{
                     display: "flex",

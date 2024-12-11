@@ -222,6 +222,7 @@ export default function MenuBar(props: propsType) {
         <AppBar open={open}>
           <Toolbar sx={{ pr: "24px", height:55 }}>
             <IconButton
+              title="Title"
               edge="start"
               color="inherit"
               aria-label="open drawer"
@@ -314,7 +315,7 @@ export default function MenuBar(props: propsType) {
                       }}
                     />
                   ) : (
-                    <IconButton onClick={() => setSearchIcon(true)}>
+                    <IconButton title="Title" onClick={() => setSearchIcon(true)}>
                       <SearchIcon fontSize="medium" style={{ color: "#fff" }} />
                     </IconButton>
                   )}
@@ -329,7 +330,7 @@ export default function MenuBar(props: propsType) {
                 </Typography>
               </Box>
             </Box>
-            <IconButton color="inherit">
+            <IconButton title="title" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
               </Badge>
@@ -359,7 +360,7 @@ export default function MenuBar(props: propsType) {
                 px: [1],
               }}
             >
-              <IconButton onClick={toggleDrawer}>
+              <IconButton title="Title" onClick={toggleDrawer}>
                 <ChevronLeftIcon />
               </IconButton>
             </Toolbar>
