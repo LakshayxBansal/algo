@@ -77,6 +77,11 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   );
   const inputRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(()=>{
+    setValue(props.defaultValue)
+
+  },[props.defaultValue])
+
   let prevKey = "",
     currentKey = "",
     first = true;
@@ -101,6 +106,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   }
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
+   
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
@@ -133,6 +139,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           }
         }
         if (inputProps.onChange) {
+          inputProps.onChange(event);
+        }
+        break;
+      }
+      case InputType.EMAIL:{
+        const inputProps = props as TextFieldProps;
+        if(inputProps.onChange){
           inputProps.onChange(event);
         }
         break;

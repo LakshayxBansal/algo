@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -63,6 +63,8 @@ import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { emailRegex } from "@/app/zodschema/zodschema";
+import { boolean } from "zod";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
   console.log("executive prop", props?.setDialogOpen);
@@ -82,8 +84,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   let fieldArr: React.ReactElement[] = [];
 
 
-  const [email, setEmail] = useState(entityData.email);
-  const [mobile, setMobile] = useState(entityData.mobile);
+  // const [email, setEmail] = useState(entityData.email);
+  const email = useRef<HTMLInputElement | null>(null);
+  const [mobile, setMobile] = useState(entityData.mobile );
+  // const [keyDownEmail,setKeyDownEmail] = useState(false);
+  // const [keyDownMobile,setKeyDownMobile] = useState(false);
+  const keyDownEmail = useRef<boolean | undefined>(false);
+  const  keyDownMobile = useRef<boolean | undefined>(false);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -96,7 +103,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   const [roleKey, setRoleKey] = useState(0);
   const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
   const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
-
+  console.log("mobile : ", mobile);
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
@@ -317,17 +324,20 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         width={365}
         onChange={(e, val, s) => {
           setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
-          const emailRegex = new RegExp(
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-          );
           if (Object.keys(entityData).length===0 && val) {
             if (emailRegex.test(val.contact)) {
-              if(!email){
-                setEmail(val.contact);
+              if(!keyDownEmail.current && email?.current){
+                email.current.value = val.contact;
+              }
+              if(!keyDownMobile.current){
+                setMobile('');
               }
             } else {
-              if(!mobile){
+              if(!keyDownMobile.current){
                 setMobile(val.contact);
+              }
+              if(!keyDownEmail.current && email.current){
+                email.current.value ="";
               }
             }
           }
@@ -357,16 +367,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
-        value={email}
+        inputRef={email}
         onChange={(e : React.ChangeEvent<HTMLInputElement>)=>{
-          console.log("event : ",e.target.value);
-          setEmail(e.target.value);
+          // setEmail(e.target.value);
+          if (keyDownEmail.current === undefined || keyDownEmail.current=== false) {
+            keyDownEmail.current = true; 
+          }
         }}
       // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { email, ...rest } = curr;
-      //     return rest;
-      //   });
+      //   setKeyDown(true);
       // }}
       // fullWidth
       />
@@ -374,21 +383,22 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     [
       "mobile",
       <InputControl
-        key="mobile"
+        key={mobile}
         inputType={InputType.PHONE}
         id="mobile"
         label="Phone No"
         name="mobile"
         fullWidth
+        value={mobile}
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
         defaultValue={mobile}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { mobile, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
+        onChange={(val:string)=>{
+          setMobile(val);
+          if (keyDownMobile.current === undefined || keyDownMobile.current === false) {
+            keyDownMobile.current = true; 
+          }
+        }}
       // fullWidth
       />
     ],
