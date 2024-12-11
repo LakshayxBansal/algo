@@ -276,8 +276,7 @@ export async function getCompanyCountDB(
       host: "userDb",
       query:
         "Select count(*) as rowCount from \
-          userCompany as uc, \
-          user as u\
+          userCompany uc \
           where \
           uc.user_id = ?",
       values: [userId],

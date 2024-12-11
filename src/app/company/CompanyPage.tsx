@@ -9,6 +9,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
 import { Metadata } from "next";
+import { AddDialog } from "../Widgets/masters/addDialog";
+import CreateCompany from "./CreateCompany";
 
 export const metadata: Metadata = {
   title: 'Manage Company'
@@ -51,7 +53,17 @@ export default function CompanyPage({totalInvites,totalCompanies}:{totalInvites:
               <CompanyEntityList />
             </Box>
           </Box>
-          {dialogOpen && <h6>hi</h6>}
+          {dialogOpen && (
+            <AddDialog
+              title=""
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
+            <CreateCompany
+            setDialogOpen={setDialogOpen}
+          />
+            </AddDialog>
+          )}
         </>
       );
 }
