@@ -62,7 +62,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/currencyList") {
+      if (pathName !== "/cap/admin/lists/currencyList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

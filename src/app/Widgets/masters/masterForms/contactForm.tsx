@@ -162,7 +162,7 @@ export default function ContactForm(
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      if (pathName !== "/cap/admin/lists/contactList") {
+      if (pathName !== "/cap/admin/lists/contactList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

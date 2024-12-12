@@ -36,7 +36,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
       // setTimeout(()=>{
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/areaList") {
+      if (pathName !== "/cap/admin/lists/areaList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

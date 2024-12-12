@@ -56,7 +56,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/productGroupList") {
+      if (pathName !== "/cap/admin/lists/productGroupList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

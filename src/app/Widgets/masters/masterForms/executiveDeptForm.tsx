@@ -72,7 +72,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      if (pathName !== "/cap/admin/lists/executiveDeptList") {
+      if (pathName !== "/cap/admin/lists/executiveDeptList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

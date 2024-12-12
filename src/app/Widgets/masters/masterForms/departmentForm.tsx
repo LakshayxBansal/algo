@@ -45,7 +45,7 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/departmentList") {
+      if (pathName !== "/cap/admin/lists/departmentList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

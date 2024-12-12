@@ -62,7 +62,7 @@ export default function StateFormList(props: masterFormPropsWithDataT<stateListS
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/stateList") {
+      if (pathName !== "/cap/admin/lists/stateList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

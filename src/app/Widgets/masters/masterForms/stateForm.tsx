@@ -82,7 +82,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
 
   return (
     <>
-      <Box
+      {/* <Box
         sx={{
           position: "sticky",
           top: "0px",
@@ -99,7 +99,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
             </IconButton>
           </Box>
         </Seperator>
-      </Box>
+      </Box> */}
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

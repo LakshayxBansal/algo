@@ -60,7 +60,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/contactGroupList") {
+      if (pathName !== "/cap/admin/lists/contactGroupList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

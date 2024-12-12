@@ -39,7 +39,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/allocationTypeList") {
+      if (pathName !== "/cap/admin/lists/allocationTypeList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

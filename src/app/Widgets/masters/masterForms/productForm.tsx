@@ -63,7 +63,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/productList") {
+      if (pathName !== "/cap/admin/lists/productList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

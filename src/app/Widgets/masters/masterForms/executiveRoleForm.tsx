@@ -81,7 +81,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/executiveRoleList") {
+      if (pathName !== "/cap/admin/lists/executiveRoleList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

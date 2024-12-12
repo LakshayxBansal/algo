@@ -55,7 +55,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<execu
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/executiveGroupList") {
+      if (pathName !== "/cap/admin/lists/executiveGroupList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

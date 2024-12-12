@@ -37,7 +37,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      if (pathName !== "/cap/admin/lists/sourceList") {
+      if (pathName !== "/cap/admin/lists/sourceList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

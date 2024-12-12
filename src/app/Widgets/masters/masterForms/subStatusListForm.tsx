@@ -56,7 +56,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
       props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
-      if (pathName !== "/cap/admin/lists/subStatusList") {
+      if (pathName !== "/cap/admin/lists/subStatusList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

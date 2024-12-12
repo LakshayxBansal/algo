@@ -638,7 +638,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         // setTimeout(() => {
         //   props.setDialogOpen ? props.setDialogOpen(false) : null;
         // }, 1000); 
-        if (pathName !== "/cap/admin/lists/executiveList") {
+        if (pathName !== "/cap/admin/lists/executiveList" || entityData.id) {
           setTimeout(() => {
             props.setDialogOpen ? props.setDialogOpen(false) : null;
           }, 1000);

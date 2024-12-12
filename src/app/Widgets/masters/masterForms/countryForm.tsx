@@ -38,7 +38,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/countryList") {
+      if (pathName !== "/cap/admin/lists/countryList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

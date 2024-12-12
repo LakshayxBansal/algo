@@ -72,7 +72,7 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
       // setTimeout(() => {
         //   props.setDialogOpen ? props.setDialogOpen(false) : null;
         // }, 1000);
-        if (pathName !== "/cap/admin/lists/actionList") {
+        if (pathName !== "/cap/admin/lists/actionList" || entityData.id) {
           setTimeout(() => {
             props.setDialogOpen ? props.setDialogOpen(false) : null;
           }, 1000);

@@ -48,7 +48,7 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      if (pathName !== "/cap/admin/lists/categoryList") {
+      if (pathName !== "/cap/admin/lists/categoryList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

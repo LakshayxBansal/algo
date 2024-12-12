@@ -49,7 +49,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000);
-      if (pathName !== "/cap/admin/lists/unitList") {
+      if (pathName !== "/cap/admin/lists/unitList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);

@@ -99,7 +99,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
       // setTimeout(() => {
       //   props.setDialogOpen ? props.setDialogOpen(false) : null;
       // }, 1000); 
-      if (pathName !== "/cap/admin/lists/organisationList") {
+      if (pathName !== "/cap/admin/lists/organisationList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
