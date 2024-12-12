@@ -103,23 +103,6 @@ export default function ProductList(props: any) {
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          Add Product
-          <IconButton onClick={handleCancel}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </Box>
-
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

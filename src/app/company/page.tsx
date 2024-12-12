@@ -30,11 +30,11 @@ export default async function Companies() {
       return (
         <>
           <Box>
-            <Box>
+            {/* <Box>
               <Paper style={{ margin: "20px 20px", padding: "10px" }}>
                 <Typography variant="h6">Company List</Typography>
               </Paper>
-            </Box>
+            </Box> */}
             <Box>
               <CompanyEntityList />
             </Box>

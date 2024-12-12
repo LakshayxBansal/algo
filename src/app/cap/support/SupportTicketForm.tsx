@@ -688,7 +688,7 @@ const SupportTicketForm = (props: customprop) => {
         </Grid>
         {dialogOpen && (
           <AddDialog
-            title="Add Product to Product List"
+            title="Add Product"
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
