@@ -21,7 +21,7 @@ export default function ProductGroup() {
   return (
     <>
       <EntityList
-        title="Product Group Master"
+        title="Product Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ProductGroupForm
             setDialogOpen={fnDialogOpen}

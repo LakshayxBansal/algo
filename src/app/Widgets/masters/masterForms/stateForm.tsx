@@ -82,24 +82,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
 
   return (
     <>
-      {/* <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update State" : "Add State"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box> */}
+
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"

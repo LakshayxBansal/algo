@@ -23,7 +23,7 @@ export default function Action() {
   return (
     <>
       <EntityList
-        title="Action Master"
+        title="Action"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ActionForm
             setDialogOpen={fnDialogOpen}
