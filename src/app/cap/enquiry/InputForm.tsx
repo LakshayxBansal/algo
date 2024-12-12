@@ -170,7 +170,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         id="contact"
         label="contact"
         showDetails={true}
-        dialogTitle={"Add Contact"}
+        dialogTitle={"Contact"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
         fetchDataFn={getContact}
         fnFetchDataByID={getContactById}
@@ -194,7 +194,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="category"
         id="category"
         label="category"
-        dialogTitle={"Add Category"}
+        dialogTitle={"Category"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
         fetchDataFn={getEnquiryCategory}
         fnFetchDataByID={getCategoryById}
@@ -217,7 +217,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="source"
         id="source"
         label="source"
-        dialogTitle={"Add Source"}
+        dialogTitle={"Source"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
         fetchDataFn={getEnquirySource}
         fnFetchDataByID={getEnquirySourceById}
@@ -241,7 +241,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         id="received_by"
         label="received_by"
         showDetails={true}
-        dialogTitle={"Add Executive"}
+        dialogTitle={"Executive"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
         fetchDataFn={getExecutive}
         fnFetchDataByID={getExecutiveById}
@@ -304,7 +304,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="sub_status"
         id="sub_status"
         label="sub_status"
-        dialogTitle={"Add Sub-Status for " + status}
+        dialogTitle={`Sub-Status for ${status === '1' ? 'Open' : 'Closed'}`}
         onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
         fetchDataFn={getSubStatusforStatus}
         fnFetchDataByID={getEnquirySubSatusById}
@@ -330,7 +330,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="action_taken"
         id="action_taken"
         label="action_taken"
-        dialogTitle={"Add Action"}
+        dialogTitle={"Action"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
         fetchDataFn={getEnquiryAction}
         fnFetchDataByID={getActionById}
@@ -352,7 +352,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="next_action"
         id="next_action"
         label="next_action"
-        dialogTitle={"Add Action"}
+        dialogTitle={"Action"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
         fetchDataFn={getEnquiryAction}
         formError={formError?.next_action ?? formError.next_action}
@@ -808,7 +808,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         )}
         {docDialogOpen && (
           <AddDialog
-            title=""
+            title="Document List"
             open={docDialogOpen}
             setDialogOpen={setDocDialogOpen}
           >

@@ -334,7 +334,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         name={"country"}
         id={"country"}
         label={"Country"}
-        dialogTitle={"Add country"}
+        dialogTitle={"Country"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
         fetchDataFn={getCountries}
         fnFetchDataByID={getCountryById}
@@ -361,7 +361,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         id={"state"}
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        dialogTitle={"Add State"}
+        dialogTitle={"State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}
@@ -496,24 +496,6 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Organisation" : "Add Organisation"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
-
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -626,7 +608,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           </Grid>
           {dialogOpen && (
             <AddDialog
-              title=""
+              title="Document List"
               open={dialogOpen}
               setDialogOpen={setDialogOpen}
             >

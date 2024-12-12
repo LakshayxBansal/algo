@@ -98,9 +98,8 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
 
         return (
             <GridToolbarContainer
-                sx={{ display: "flex", justifyContent: "space-between" }}
+                sx={{ display: "flex", justifyContent: "flex-end" }}
             >
-                <Seperator>Document List</Seperator>
                 <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
                     Add Document
                 </Button>
@@ -362,7 +361,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
             </Box>
             {openAddDocDialog && (
                 <AddDialog
-                    title=""
+                    title="Upload Document"
                     open={openAddDocDialog}
                     setDialogOpen={setOpenAddDocDialog}
                 >

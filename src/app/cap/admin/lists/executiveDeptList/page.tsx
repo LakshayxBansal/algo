@@ -21,7 +21,7 @@ export default function executiveDept() {
   return (
     <>
       <EntityList
-        title="Executive Dept Master"
+        title="Executive Department"
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
             setDialogOpen={fnDialogOpen}
