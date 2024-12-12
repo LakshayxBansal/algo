@@ -1049,7 +1049,7 @@ export const companySchema = z.object({
     .optional(),
   state: z.string().optional(),
   state_id: z.number().optional(),
-  country: z.string().optional(),
+  country: z.string().min(1,"Required"),
   country_id: z.number().optional(),
   pincode: z
     .string()
