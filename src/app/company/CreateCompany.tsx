@@ -283,6 +283,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   }}
                   // width={352}
                   // width={{ xs: "100%", sm: 290, md: 290 }}
+                  formError={formError?.country}
                   fetchDataFn={getCountriesMaster}
                   diaglogVal={
                     entityData.country
