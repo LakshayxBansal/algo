@@ -158,7 +158,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
           // padding: "10px",
         }}
       >
-        <Box
+        {/* <Box
           sx={{
             position: "sticky",
             top: "0px",
@@ -175,7 +175,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
               </IconButton>
             </Box>
           </Seperator>
-        </Box>
+        </Box> */}
         <Collapse in={formError?.form ? true : false}>
           <Alert
             severity="error"
