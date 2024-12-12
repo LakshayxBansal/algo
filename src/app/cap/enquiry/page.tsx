@@ -70,8 +70,8 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
 
     // Step 4: Proceed with remaining calls if the ID is present
     let enqData: Record<string, any> | undefined = {};
-    if (1) {
-      enqData = await getEnquiryById(Number(153));
+    if (decryptedId) {
+      enqData = await getEnquiryById(Number(decryptedId));
       enqData = await getSuggestedRemark(enqData, status, configData[1].config);
       enqData = await formatedData(enqData);
     }
