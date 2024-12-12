@@ -293,18 +293,24 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
-        if(props.formError?.error && props.setFormError){
-          props.setFormError((prevFormError:any) => {
-    
+        if (props.formError?.error && props.setFormError) {
+          props.setFormError((prevFormError: Record<string, any>) => {
+            const updatedFormError = { ...prevFormError };
+        
+            if (updatedFormError['form']) {
+              delete updatedFormError['form']; // Remove the 'formError' property
+            }
+        
             return {
-              ...prevFormError,
+              ...updatedFormError,
               [props.name]: {
                 error: false,
                 msg: "",
               },
             };
-           })
+          });
         }
+        
         if (reason != "blur") {
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)

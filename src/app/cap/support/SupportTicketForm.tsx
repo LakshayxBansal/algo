@@ -196,6 +196,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "tkt_number",
       <InputControl
+        key = "tkt_number"
         label="Ticket Description"
         id="tkt_number"
         inputType={InputType.TEXT}
@@ -218,6 +219,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "date",
       <InputControl
+        key = "date"
         label="Received on"
         inputType={InputType.DATETIMEINPUT}
         id="date"
@@ -241,6 +243,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "contact",
       <SelectMasterWrapper
+        key={"contact"}
         name="contact"
         id="contact"
         label="Contact"
@@ -267,6 +270,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "category",
       <SelectMasterWrapper
+      key={"category"}
         name="category"
         id="category"
         label="Category"
@@ -291,6 +295,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "received_by",
       <SelectMasterWrapper
+      key={"received_by"}
       name="received_by"
       id="received_by"
       label="Received By"
@@ -321,7 +326,7 @@ const SupportTicketForm = (props: customprop) => {
     ],
     [
       "status",
-      <FormControl sx={{ pl: "0.625em" }}>
+      <FormControl sx={{ pl: "0.625em" }} key={"status"}>
         <RadioGroup
           row
           name="status"
@@ -371,6 +376,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "action_taken",
       <SelectMasterWrapper
+      key={`action_taken_${status}`}
         name={"action_taken"}
         id={"action_taken"}
         label={"Action Taken"}
