@@ -259,10 +259,14 @@ export async function getContactById(id: number) {
       let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
       for(const field of desc){
         if(field.column_type_id===7){
+          console.log("dekhio zra",field.column_format);
+          
           const parts = field.column_format.split(".");
           let tableName = "";
           let fieldName = "";
           if (parts) {
+            tableName = parts[0];
+            fieldName = parts[1];
             customMasterListData[field.column_name] = { table_name: tableName, field: fieldName }
           }
         }

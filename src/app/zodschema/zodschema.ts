@@ -313,6 +313,8 @@ export const contactSchema = z.object({
   c_col8: z.union([z.string(), z.number()]).optional(),
   c_col9: z.union([z.string(), z.number()]).optional(),
   c_col10: z.union([z.string(), z.number()]).optional(),
+  c_col1_id:z.number().optional(),
+  c_col1_name:z.string().optional()
 });
 
 export const areaSchema = z.object({

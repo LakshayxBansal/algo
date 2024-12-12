@@ -840,8 +840,8 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue={
-            entityData[field.column_name_id as keyof contactSchemaT]
+          defaultValue={field.column_type_id !== 7 ?
+            entityData[field.column_name_id as keyof contactSchemaT] : { id: entityData.c_col1_id, name: entityData.c_col1_name }
           }
           setSelectValues={setSelectValues}
         />

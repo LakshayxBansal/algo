@@ -29,9 +29,9 @@ type CustomFieldT = {
 }
 
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void }) {
-    console.log("props.defaultValue", props.desc.column_name_id, props.defaultValue);
+    console.log("props.defaultValue", props.defaultValue);
     const [status, setStatus] = useState(0);
-    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: undefined, name: "" });
+    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue.id, name: props.defaultValue.name });
     const [labelFetch, setLabelFetch] = useState();
     const columnType = {
         Text: 1,
