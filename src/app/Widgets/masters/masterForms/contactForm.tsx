@@ -714,7 +714,7 @@ export default function ContactForm(
         name={"country"}
         id={"country"}
         label={"Country"}
-        dialogTitle={"Add country"}
+        dialogTitle={"Country"}
         width={375}
         onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
         fetchDataFn={getCountries}
@@ -903,30 +903,6 @@ export default function ContactForm(
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        {props.parentData ? (
-          <></>
-        ) : (
-          <>
-            <Seperator>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                {props.data ? "Update Contacts" : "Add Contacts"}
-                <IconButton onClick={handleCancel} tabIndex={-1}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </Seperator>
-          </>
-        )}
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -1040,7 +1016,7 @@ export default function ContactForm(
           </Box>
           </Grid>
           {dialogOpen && (
-            <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+            <AddDialog title="Document List" open={dialogOpen} setDialogOpen={setDialogOpen}>
               <DocModal
                 docData={docData}
                 setDocData={setDocData}

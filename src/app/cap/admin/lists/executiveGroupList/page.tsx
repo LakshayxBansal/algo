@@ -26,7 +26,7 @@ export default function executiveGroup() {
   return (
     <>
       <EntityList
-        title="Executive Group Master"
+        title="Executive Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveGroupForm
             setDialogOpen={fnDialogOpen}

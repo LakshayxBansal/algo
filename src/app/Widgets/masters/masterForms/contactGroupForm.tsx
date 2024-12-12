@@ -116,25 +116,6 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-          // mt: 0,
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Contact Group" : "Add Contact Group"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
