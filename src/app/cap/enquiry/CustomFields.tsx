@@ -26,7 +26,6 @@ type CustomFieldT = {
 }
 
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any }) {
-    console.log("props.defaultValue", props.desc.column_name_id, props.defaultValue);
     const [status, setStatus] = useState(0);
 
     function onStatusChange(event: React.SyntheticEvent, value: any) {

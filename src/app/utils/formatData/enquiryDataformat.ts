@@ -7,7 +7,7 @@ export async function enquiryDataFormat({
   formData,
   selectValues,
   dateFormat,
-  timeFormat
+  timeFormat,
 }: {
   formData: FormData;
   selectValues: selectKeyValueT;
@@ -19,12 +19,17 @@ export async function enquiryDataFormat({
   const toISOString = (dateStr: string): string => {
     // Parse the input format and convert to ISO 8601
     if (!dateStr || dateStr === " ") return "";
-    const timeFormatString = timeFormat === "12 Hours" ? `${dateFormat} hh:mm A` : `${dateFormat} HH:mm`;
+    const timeFormatString =
+      timeFormat === "12 Hours"
+        ? `${dateFormat} hh:mm A`
+        : `${dateFormat} HH:mm`;
     const dt = dayjs(dateStr, timeFormatString);
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
 
-  const date = toISOString(formData.get("date") as string);
+  const date = formData.get("date")
+    ? toISOString(formData.get("date") as string)
+    : null;
   const nextActionDate = formData.get("next_action_date")
     ? toISOString(formData.get("next_action_date") as string)
     : null;
