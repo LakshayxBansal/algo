@@ -86,7 +86,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
 
   // const [email, setEmail] = useState(entityData.email);
   const email = useRef<HTMLInputElement | null>(null);
-  const [mobile, setMobile] = useState(entityData.mobile );
+  const [mobile, setMobile] = useState(entityData.mobile);
   // const [keyDownEmail,setKeyDownEmail] = useState(false);
   // const [keyDownMobile,setKeyDownMobile] = useState(false);
   const keyDownEmail = useRef<boolean | undefined>(false);
@@ -384,18 +384,17 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     [
       "mobile",
       <InputControl
-        key={mobile}
+        key="mobile"
         inputType={InputType.PHONE}
         id="mobile"
         label="Phone No"
         name="mobile"
         fullWidth
-        value={mobile}
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
         defaultValue={mobile}
         onChange={(val:string)=>{
-          setMobile(val);
+          // setMobile(val);
           if (keyDownMobile.current === undefined || keyDownMobile.current === false) {
             keyDownMobile.current = true; 
           }
@@ -848,19 +847,35 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       }
     }
     else if (field.is_default_column) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
-
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false
-      });
-
-      fieldArr.push(fld);
+      if(field.column_name_id === 'mobile'){
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+  
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}-${mobile}`,
+          disabled: field.is_disabled === 1 ? true : false
+        });
+  
+        fieldArr.push(fld);
+      }else{
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+  
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}`,
+          disabled: field.is_disabled === 1 ? true : false
+        });
+  
+        fieldArr.push(fld);
+      }
     } else {
       const fld = (
         <CustomField

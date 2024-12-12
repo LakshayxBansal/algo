@@ -77,11 +77,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   );
   const inputRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(()=>{
-    setValue(props.defaultValue)
-
-  },[props.defaultValue])
-
   let prevKey = "",
     currentKey = "",
     first = true;
