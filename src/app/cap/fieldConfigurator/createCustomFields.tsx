@@ -15,7 +15,9 @@ import {
     Stack,
     FormControl,
     InputLabel,
-    Snackbar
+    Snackbar,
+    Collapse,
+    Alert
 } from "@mui/material";
 import {
     DragHandle as DragHandleIcon,
@@ -109,6 +111,13 @@ const FieldConfigurator = () => {
     // const handleFormModeChange = (event: any) => {
     //     setSelectedFormModeValue(event.target.value);
     // };
+
+    const clearFormError = () => {
+        setFieldHelperState((curr) => {
+            const { form, ...rest } = curr;
+            return rest;
+        });
+    };
 
     useEffect(() => {
         async function getFieldData() {
@@ -317,6 +326,25 @@ const FieldConfigurator = () => {
         //     return; // Prevent form submission if there are errors
         // }
 
+
+        const grouped = fields.reduce<Record<string, string[]>>((acc, item: FieldItem) => {
+            if (!acc[item.column_label]) {
+                acc[item.column_label] = [];
+            }
+            acc[item.column_label].push(item.column_name);
+            return acc;
+        }, {});
+
+        const duplicates = Object.entries(grouped)
+            .filter(([label, values]) => values.length > 1)
+            .map(([label, values]) => ({ label, values }));
+
+        if (duplicates.length > 0) {
+            updateErrorState("form", "column_label", "Labels Cannot be Same")
+            return;
+        }
+
+
         // Proceed with form submission if there are no errors
         try {
             const result = await createCustomFields(Number(selectedFormValue), fields);
@@ -340,6 +368,35 @@ const FieldConfigurator = () => {
 
     return (
         <Box sx={{ maxWidth: 1200, margin: "auto", p: 3 }}>
+            <Collapse in={fieldHelperState?.form ? true : false}>
+                <Alert
+                    sx={{
+                        position: "fixed", // Makes it stay on top of the screen
+                        top: 75, // Positions it at the top
+                        left: 40,
+                        right: 30,
+                        zIndex: 9999, // Ensures it's above other content
+                        display: "flex",
+                        justifyContent: "center", // Centers the alert horizontally
+                        p: 2,
+                        mb: 2
+                    }}
+                    severity="error"
+                    action={
+                        <IconButton
+                            aria-label="close"
+                            color="inherit"
+                            size="small"
+                            onClick={clearFormError}
+                        >
+                            <CloseIcon fontSize="inherit" />
+                        </IconButton>
+                    }
+                // sx={{ mb: 2 }}
+                >
+                    {fieldHelperState?.form?.formError.column_label}
+                </Alert>
+            </Collapse>
             <Typography variant="h6" gutterBottom>
                 Configure Form Fields :
             </Typography>

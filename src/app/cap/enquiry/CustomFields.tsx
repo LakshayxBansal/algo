@@ -32,7 +32,6 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
     console.log("props.defaultValue", props.defaultValue);
     const [status, setStatus] = useState(0);
     const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue.id, name: props.defaultValue.name });
-    const [labelFetch, setLabelFetch] = useState();
     const columnType = {
         Text: 1,
         Options: 2,
@@ -42,9 +41,6 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
         Currency: 6,
         MasterList: 7
     }
-
-
-
 
     function handleMasterValueChange(val: any) {
         if (props.setSelectValues) {
