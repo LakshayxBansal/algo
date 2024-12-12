@@ -56,6 +56,9 @@ import {
   getAllCallSupportEnquiries,
   getCallEnquiries,
   getCallSupportEnquiries,
+  getUserPreference,
+  insertUserPreference,
+  updateUserPreference,
 } from "../../controllers/callExplorer.controller";
 import { AddDialog } from "../../Widgets/masters/addDialog";
 import AllocateCall from "./AllocateCall";
@@ -80,6 +83,12 @@ import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { getEnquiryDescription } from "@/app/controllers/enquiry.controller";
 import { getSupportTicketDescription } from "@/app/controllers/supportTicket.controller";
 import { getContact } from "@/app/controllers/contact.controller";
+import { columnsStateInitializer } from "@mui/x-data-grid/internals";
+
+
+type ColumnWidths = {
+  [key: string]: number; // Key is the column field name, value is the width
+};
 
 // type FilterKey = "Open-Unallocated" | "Open-Allocated" | "Closed-Failure" | "Closed-Success";
 
@@ -116,6 +125,7 @@ export default function AutoGrid(props: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [value, setValue] = React.useState(0);
   const [sortBy, setSortBy] = React.useState<GridSortModel>([]);
+  const [columnWidths, setColumnWidths] = React.useState<ColumnWidths>( {})
   // const [selectedStatuses, setSelectedStatuses] = React.useState<Record<FilterKey, boolean>>({
   //   "Open-Unallocated": false,
   //   "Open-Allocated": false,
@@ -125,6 +135,10 @@ export default function AutoGrid(props: any) {
   const [selectedStatusRows, setSelectedStatusRows] =
     React.useState<GridRowSelectionModel>([]);
   const [lastSelectedIndex, setLastSelectedIndex] = React.useState(null);
+  const descriptionRef = React.useRef(null);
+    
+
+  const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
   const apiRef = useGridApiRef();
 
   const router = useRouter();
@@ -161,6 +175,47 @@ export default function AutoGrid(props: any) {
   //   }));
 
   // }
+
+  React.useEffect(() => {
+    const fetchAndSetPreferences = async () => {
+      try {
+        const data = await getUserPreference();
+        let userColumnPreference = data[0]?JSON.parse(data[0]?.meta_data):{};
+  
+        if (!Object.keys(userColumnPreference).length) {
+          // Get default column widths from apiRef
+          const currentColumns = apiRef.current.getAllColumns();
+          userColumnPreference = currentColumns.reduce((acc: any, column: any) => {
+            acc[column.field] = column.computedWidth || column.width || 100; 
+            return acc;
+          }, {});
+          
+          await insertUserPreference(userColumnPreference);
+  
+          // Set column widths in the state
+          setColumnWidths(userColumnPreference);
+        } else {
+          // If meta_data exists, parse and set it
+          setColumnWidths(userColumnPreference || {});
+        }
+
+      const columnVisibilityModel = apiRef.current
+        .getAllColumns()
+        .reduce((visibility: any, column: any) => {
+          visibility[column.field] = column.field in userColumnPreference;
+          return visibility;
+        }, {});
+      setColumnVisibilityModel(columnVisibilityModel);
+
+      } catch (error) {
+        console.error('Error fetching or setting column preferences:', error);
+      }
+    };
+  
+    fetchAndSetPreferences();
+  }, []);
+
+
 
   const tabOptions = [
     {
@@ -279,6 +334,30 @@ export default function AutoGrid(props: any) {
     }
   };
 
+
+const handleColumnVisibilityModelChange=(newModel: any) => {
+    // Create a new columnWidths object by including only visible columns
+    const updatedColumnWidths = { ...columnWidths };
+  
+    Object.keys(newModel).forEach((column) => {
+      if (newModel[column]) {
+        // Add column with default width if not already present
+        if (!(column in updatedColumnWidths)) {
+          updatedColumnWidths[column] = 100; // Default width
+        }
+      } else {
+        // Remove column if it is not visible
+        delete updatedColumnWidths[column];
+      }
+    });
+  
+    // Update user preferences in the database
+    updateUserPreference(updatedColumnWidths);
+  
+    // Update the local state
+    setColumnWidths(updatedColumnWidths);
+    setColumnVisibilityModel(newModel);
+  }
   
 
   const toggleColBtn = () => {
@@ -436,7 +515,6 @@ export default function AutoGrid(props: any) {
 
     if (!sortIconClicked) {
       event.defaultMuiPrevented = true;
-      console.log("i am here");
     }
   };
 
@@ -562,6 +640,24 @@ export default function AutoGrid(props: any) {
     }
   };
 
+  const handleColumnResize = async (params: any) => {
+    
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+  
+    // Set a timeout
+    debounceTimeout.current = setTimeout(() => {
+      let  updatedWidths= columnWidths;
+      setColumnWidths((prev) => {
+         updatedWidths= { ...prev, [params.colDef.field]: params.width };
+        // updateUserPreference(updatedWidths); 
+        return updatedWidths;
+      });
+      updateUserPreference(updatedWidths); 
+    }, 600);
+  };
+  
   const checkboxSelectionWithColor = (params: any) => {
     let color;
     if (params.row.callStatus === "Open") {
@@ -580,7 +676,7 @@ export default function AutoGrid(props: any) {
     {
       field: "statusColor",
       headerName: "Status",
-      width: 80,
+      width: columnWidths?.statusColor ?? 80,
       sortable: false,
       renderCell: (params) => {
         let color;
@@ -617,7 +713,8 @@ export default function AutoGrid(props: any) {
       field: "description",
       headerName: "Description",
       hideable: false,
-      width: 130,
+      width: columnWidths?.description ?? 130,
+
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -626,35 +723,17 @@ export default function AutoGrid(props: any) {
           field={"description"}
           headerName={"Description"}
           tooltipTitle={"Filter by Description"}
+          inputValue={descriptionRef}
         >
           <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
-            <AutocompleteDB
-              name={"description"}
-              id={"description"}
-              label={"Description"}
-              // onChange={(e, val, s) => setCategorySearchText(val)}
-              onChange={(e, val, s) =>{handleFilterChange("description", val)}}
-              fetchDataFn={tabOptions[value].getDescription}
-              defaultValue={
-                filterValueState?.description
-                  ? {
-                      id: filterValueState.description.id,
-                      name: filterValueState.description.name,
-                    }
-                  : undefined // Set default value to null if no data exists
-              }
-              diaglogVal={{
-                id: filterValueState?.description?.id,
-                name: filterValueState?.description?.name,
-                detail: undefined,
-              }}
-              setDialogVal={function (
-                value: React.SetStateAction<optionsDataT>
-              ): void {
-                
-                
-              }}
-              fnSetModifyMode={function (id: string): void {}}
+            <TextField
+              // inputType={InputType.TEXT}
+              id="description"
+              label="Description"
+              name="description"
+              defaultValue={filterValueState?.description}
+              inputRef={descriptionRef}
+              
             />
           </MenuItem>
         </FilterMenu>
@@ -665,7 +744,7 @@ export default function AutoGrid(props: any) {
       field: "contactParty",
       headerName: "Contact",
       hideable: false,
-      width: 130,
+      width: columnWidths?.contactParty ?? 130,
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -710,7 +789,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "date",
-      width: 140,
+      width: columnWidths?.date ?? 140,
       headerName: "Date",
       hideable: false,
       renderCell: (params) => {
@@ -768,7 +847,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "callCategory",
-      width: 120,
+      width: columnWidths?.callCategory ?? 120,
       headerName: "Call Category",
       renderHeader: () => (
         <FilterMenu
@@ -809,7 +888,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "area",
-      width: 100,
+      width: columnWidths?.area ?? 100,
       headerName: "Area",
       renderHeader: () => (
         <FilterMenu
@@ -850,7 +929,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "executive",
-      width: 100,
+      width: columnWidths?.executive ?? 100,
       headerName: "Allocated To",
       renderHeader: () => (
         <FilterMenu
@@ -919,7 +998,7 @@ export default function AutoGrid(props: any) {
       field: "actionTaken",
       headerName: "Action Taken",
       hideable: true,
-      width: 130,
+      width: columnWidths?.actionTaken ?? 130,
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -965,7 +1044,7 @@ export default function AutoGrid(props: any) {
     {
       field: "callStatus",
       headerName: "Call Status",
-      width: 100,
+      width: columnWidths?.callStatus ?? 100,
       renderCell: (params) => <span>{params.row.callStatus}</span>,
       renderHeader: () => (
         <FilterMenu
@@ -1038,7 +1117,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "subStatus",
-      width: 100,
+      width: columnWidths?.subStatus ?? 100,
       headerName: "Sub Status",
       renderHeader: () => (
         <FilterMenu
@@ -1095,7 +1174,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "nextAction",
-      width: 100,
+      width: columnWidths?.nextAction ?? 100,
       headerName: "Next Action",
       renderHeader: () => (
         <FilterMenu
@@ -1135,7 +1214,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "actionDate",
-      width: 140,
+      width: columnWidths?.actionDate ?? 140,
       headerName: " Next Action Date",
       renderCell: (params) => {
         return params.row.actionDate
@@ -1227,7 +1306,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "modified_on",
-      width: 100,
+      width: columnWidths?.modified_on ?? 100,
       headerName: "Last Updated",
       hideable: true,
       renderCell: (params) => {
@@ -1482,6 +1561,7 @@ export default function AutoGrid(props: any) {
             keepNonExistentRowsSelected
             disableMultipleRowSelection={true}
             onColumnHeaderClick={handleHeaderClick}
+            onColumnResize={handleColumnResize}
             rows={data ? data : []}
             columns={column1}
             sortingMode="server" // Disable default sorting
@@ -1489,9 +1569,7 @@ export default function AutoGrid(props: any) {
             onCellKeyDown={handleCellKeyDown}
             columnVisibilityModel={columnVisibilityModel}
             hideFooterSelectedRowCount
-            onColumnVisibilityModelChange={(newModel: any) =>
-              setColumnVisibilityModel(newModel)
-            }
+            onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
             onCellClick={handleCellClick}
             onRowSelectionModelChange={handleRowSelection}
             rowSelectionModel={rowSelectionModel}
