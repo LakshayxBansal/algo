@@ -26,7 +26,7 @@ export default function organisation() {
   return (
     <>
       <EntityList
-        title="Organisation Master"
+        title="Organisation"
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <OrganisationForm
             setDialogOpen={fnDialogOpen}

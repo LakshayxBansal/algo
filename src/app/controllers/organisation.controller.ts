@@ -128,6 +128,7 @@ export async function updateOrganisation(data: zm.organisationSchemaT, docData :
     return result;
   } catch (e: any) {
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      console.log(e.message, "-", e.cause, "-", e.sqlMessage);
       result = {
         status: false,
         data: [{ path: ["name"], message: "Error: Value already exist" }],

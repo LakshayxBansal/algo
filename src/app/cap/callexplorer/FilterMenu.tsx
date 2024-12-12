@@ -14,9 +14,10 @@ interface customprop {
     tooltipTitle: string;
     filterReset?: (props: any) => void;
     resetValue?: string;
+    inputValue?: React.RefObject<HTMLInputElement>;
 }
 
-export default function FilterMenu(props: customprop,) {
+export default function FilterMenu(props: customprop,) {   
     type DlgState = {
         [key: string]: HTMLElement | null;
     };
@@ -32,6 +33,22 @@ export default function FilterMenu(props: customprop,) {
     };
 
     const handleCloseFilter = (field: string) => {
+        if(field ==="description" ){
+            props.setFilterValueState((prevState: any) => ({
+                ...prevState,
+                [field]: props.inputValue?.current?.value || ""
+            }))            
+        }
+        setDlgState((prevState) => ({
+            ...prevState,
+            [field]: null,
+        }));
+    };
+
+    const handleResetCloseFilter = (field: string) => {
+        if(field ==="description" && props.inputValue?.current){
+            props.inputValue.current.value = "";
+        }
         setDlgState((prevState) => ({
             ...prevState,
             [field]: null,
@@ -43,7 +60,7 @@ export default function FilterMenu(props: customprop,) {
             ...prevState,
             [field]: null,
         }));
-        handleCloseFilter(field);
+        handleResetCloseFilter(field);
     };
 
 

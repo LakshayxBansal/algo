@@ -134,7 +134,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
     if (valueChange || autoSelect) {
       if (open) {
         // setLoading(true)
-        getData(inputValue);
+        getData(inputValue?.trim() ?? "");
       }
     }
   }, [inputValue, autoSelect, open]);
@@ -186,7 +186,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
           // option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
           `${option.detail ?? ""}${option.name ?? ""}`
             .toLowerCase()
-            .includes(inputValue.toLowerCase())
+            .includes((inputValue.toLowerCase()).trim())
         )
       }
       renderOption={(p, option) => {
