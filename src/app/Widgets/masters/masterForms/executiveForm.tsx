@@ -107,6 +107,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.name}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -127,6 +128,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.alias}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -186,6 +188,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         formError={formError?.executive_dept ?? formError.executive_dept}
+ setFormError={setFormError}
         fnFetchDataByID={getDeptById}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
@@ -215,6 +218,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         required
         disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         formError={formError?.role ?? formError.role}
+ setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
             setDialogOpen={fnDialogOpen}
@@ -265,6 +269,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pan}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -286,6 +291,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.aadhaar}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -316,6 +322,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }
         fetchDataFn={getApplicationUser}
         formError={formError.crm_user}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <InviteUserForm
             setDialogOpen={fnDialogOpen}
@@ -338,6 +345,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.email}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -359,6 +367,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.mobile}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -381,6 +390,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.whatsapp}
         slotprops={{
           flagButton: {
@@ -415,6 +425,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1,
           }
         }}
+        setFormError={setFormError}
         sx={{ width: "100%" }}
       />
     ],
@@ -437,6 +448,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           }
         }}
         sx={{ width: "100%" }}
+        setFormError={setFormError}
       />
     ],
     [
@@ -459,6 +471,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1,
           }
         }}
+        setFormError={setFormError}
         sx={{ width: "100%" }}
       />
     ],
@@ -474,6 +487,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.address1}
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
+ setFormError={setFormError}
       // fullWidth
       />
     ],
@@ -489,6 +503,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.address2}
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
+        setFormError={setFormError}
       // fullWidth
       />
     ],
@@ -503,6 +518,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.city}
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
+ setFormError={setFormError}
       />
     ],
     [
@@ -569,6 +585,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.pincode}
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+ setFormError={setFormError}
       // onKeyDown={() => {
       //   setFormError((curr) => {
       //     const { pincode, ...rest } = curr;

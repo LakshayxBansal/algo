@@ -217,6 +217,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   style={{ width: "100%" }}
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
+ setFormError={setFormError}
                   defaultValue={entityData.name}
                   FormHelperTextProps={{
                     sx: { backgroundColor: "white", margin: 0 },
@@ -239,6 +240,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   style={{ width: "100%" }}
                   error={formError?.alias?.error}
                   helperText={formError?.alias?.msg}
+ setFormError={setFormError}
                   defaultValue={entityData.alias}
                   sx={{ height: "fit-content" }}
                   onKeyDown={() => {
@@ -369,6 +371,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   style={{ width: "100%" }}
                   error={formError?.city?.error}
                   helperText={formError?.city?.msg}
+ setFormError={setFormError}
                   defaultValue={entityData.city}
                   onKeyDown={() => {
                     setFormError((curr) => {
@@ -387,6 +390,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   style={{ width: "100%" }}
                   error={formError?.pincode?.error}
                   helperText={formError?.pincode?.msg}
+ setFormError={setFormError}
                   defaultValue={entityData.pincode}
                   onKeyDown={() => {
                     setFormError((curr) => {

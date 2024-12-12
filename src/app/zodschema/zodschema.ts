@@ -587,6 +587,17 @@ export const supportLedgerSchema = z.object({
   created_by_name: z.string().max(60).optional(),
   allocated_to_name: z.string().max(60).optional(),
   stamp: z.number().optional(),
+  custom_id: z.number().optional(),
+  c_col1: z.string(),
+  c_col2: z.string(),
+  c_col3: z.string(),
+  c_col4: z.string(),
+  c_col5: z.string(),
+  c_col6: z.string(),
+  c_col7: z.string(),
+  c_col8: z.string(),
+  c_col9: z.string(),
+  c_col10: z.string(),
 });
 
 export const supportTicketSchema =
