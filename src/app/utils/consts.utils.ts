@@ -7,6 +7,7 @@ export const ORGANISATION_OBJECT_ID = 19;
 export const EXECUTIVE_DEPT_OBJECT_ID = 10;
 export const ENQUIRY_ID = 26;
 export const CONTACT_OBJECT_ID = 5;
+export const SUPPORT_ID= 28;
 
 
 

@@ -106,25 +106,6 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-          // mt: 0,
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Contact Group" : "Add Contact Group"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -158,6 +139,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -176,6 +158,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 defaultValue={entityData.alias}
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { alias, ...rest } = curr;
@@ -207,6 +190,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 fetchDataFn={getContactGroup}
                 fnFetchDataByID={getContactGroupById}
                 formError={formError?.parentgroup}
+                setFormError={setFormError}
                 allowNewAdd={false}
                 allowModify={false}
               />

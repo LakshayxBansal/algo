@@ -44,6 +44,7 @@ type selectMasterWrapperT = {
   defaultOptions?: optionsDataT[]
   showDetails?: boolean;
   autoFocus?: boolean;
+  setFormError?: (props: any) => void;
 };
 
 enum dialogMode {
@@ -73,8 +74,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
       }
-      setDialogOpen(true);
-      setDlgMode(dialogMode.Add);
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
         if (data[0]?.length > 0)
@@ -85,6 +84,8 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             loggedInUserData: data[0][3] || {}
           });
       }
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
 
     }
     // getDescriptionData();
@@ -96,11 +97,6 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     if (props.onChange) {
       props.onChange(null, val, setDialogValue);
     }
-  }
-
-  if (props.name === 'received_by') {
-    console.log("Value : ", props.defaultValue);
-
   }
 
   async function onModifyDialog() {
@@ -141,6 +137,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             diaglogVal={dialogValue}
             setDialogVal={setDialogValue}
             formError={props.formError}
+            setFormError= {props.setFormError}
             required={props.required}
             notEmpty={props.notEmpty}
             defaultValue={props.defaultValue}
@@ -149,7 +146,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             defaultOptions={props.defaultOptions}
             showDetails={props.showDetails ? props.showDetails : false}
             iconControl = {!props.disabled && (
-              <IconButton tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
+              <IconButton title="title" tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
                 <span
                   style={{
                     display: "flex",
@@ -199,7 +196,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
       </Grid>
       {dialogOpen && (
         <AddDialog
-          title={props.dialogTitle}
+          title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${props.dialogTitle}`}
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
         >

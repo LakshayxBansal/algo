@@ -142,24 +142,6 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: 2,
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Currency" : "Add Currency"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -194,6 +176,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.symbol}
                 error={formError?.symbol?.error}
                 helperText={formError?.symbol?.msg}
+ setFormError={setFormError}
                 onChange={onSymbolChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
@@ -213,6 +196,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -232,6 +216,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.shortForm}
                 error={formError?.shortForm?.error}
                 helperText={formError?.shortForm?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { shortForm, ...rest } = curr;

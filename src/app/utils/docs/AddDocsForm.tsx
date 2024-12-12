@@ -106,24 +106,6 @@ export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : Rea
 
     return (
         <>
-            <Box
-                sx={{
-                    position: "sticky",
-                    top: "0px",
-                    zIndex: 2,
-                    paddingY: "10px",
-                    bgcolor: "white",
-                }}
-            >
-                <Seperator>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        Upload Document
-                        <IconButton onClick={handleCancel}>
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                </Seperator>
-            </Box>
             <Collapse in={formError?.form ? true : false}>
                 <Alert
                     severity="error"
@@ -163,6 +145,7 @@ export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : Rea
                             fullWidth
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
+ setFormError={setFormError}
                         />
                         {file ? selectedFileName : <Button
                             component="label"

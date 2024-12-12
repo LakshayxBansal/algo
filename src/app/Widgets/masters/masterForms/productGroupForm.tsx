@@ -103,24 +103,6 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Product Group" : "Add Product Group"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -154,6 +136,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -172,6 +155,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 defaultValue={entityData.alias}
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { alias, ...rest } = curr;
@@ -205,6 +189,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 allowNewAdd={false}
                 allowModify={false}
                 formError={formError?.parentgroup}
+                setFormError={setFormError}
                 renderForm={(fnDialogOpen, fnDialogValue) => (
                   <ProductGroupForm
                     setDialogOpen={fnDialogOpen}

@@ -80,24 +80,6 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Modify Area" : "Add Area"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -130,6 +112,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
               inputType={InputType.TEXT}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               style={{ width: "100%" }}
             />
           </Grid>

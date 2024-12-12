@@ -136,6 +136,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         required={false}
         error={formError?.enq_number?.error}
         helperText={formError?.enq_number?.msg}
+        setFormError={setFormError}
       />,
     ],
     [
@@ -169,12 +170,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         id="contact"
         label="contact"
         showDetails={true}
-        dialogTitle={"Add Contact"}
+        dialogTitle={"Contact"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
         fetchDataFn={getContact}
         fnFetchDataByID={getContactById}
         required={false}
         formError={formError?.contact ?? formError.contact}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
@@ -192,12 +194,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="category"
         id="category"
         label="category"
-        dialogTitle={"Add Category"}
+        dialogTitle={"Category"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
         fetchDataFn={getEnquiryCategory}
         fnFetchDataByID={getCategoryById}
         required={false}
         formError={formError?.category ?? formError.category}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CategoryForm
             setDialogOpen={fnDialogOpen}
@@ -214,12 +217,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="source"
         id="source"
         label="source"
-        dialogTitle={"Add Source"}
+        dialogTitle={"Source"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "source")}
         fetchDataFn={getEnquirySource}
         fnFetchDataByID={getEnquirySourceById}
         required={false}
         formError={formError?.source ?? formError.source}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SourceForm
             setDialogOpen={fnDialogOpen}
@@ -237,12 +241,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         id="received_by"
         label="received_by"
         showDetails={true}
-        dialogTitle={"Add Executive"}
+        dialogTitle={"Executive"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
         fetchDataFn={getExecutive}
         fnFetchDataByID={getExecutiveById}
         required={false}
         formError={formError?.received_by ?? formError.received_by}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
@@ -299,12 +304,13 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="sub_status"
         id="sub_status"
         label="sub_status"
-        dialogTitle={"Add Sub-Status for " + status}
+        dialogTitle={`Sub-Status for ${status === '1' ? 'Open' : 'Closed'}`}
         onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
         fetchDataFn={getSubStatusforStatus}
         fnFetchDataByID={getEnquirySubSatusById}
         required={false}
         formError={formError?.sub_status ?? formError.sub_status}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SubStatusForm
             setDialogOpen={fnDialogOpen}
@@ -324,7 +330,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="action_taken"
         id="action_taken"
         label="action_taken"
-        dialogTitle={"Add Action"}
+        dialogTitle={"Action"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
         fetchDataFn={getEnquiryAction}
         fnFetchDataByID={getActionById}
@@ -346,10 +352,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="next_action"
         id="next_action"
         label="next_action"
-        dialogTitle={"Add Action"}
+        dialogTitle={"Action"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
         fetchDataFn={getEnquiryAction}
         formError={formError?.next_action ?? formError.next_action}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ActionForm
             setDialogOpen={fnDialogOpen}
@@ -375,6 +382,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         id="next_action_date"
         name="next_action_date"
         disabled={status === "2"}
+        setFormError={setFormError}
         slotProps={{
           textField: {
             error: formError?.next_action_date?.error,
@@ -403,6 +411,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         disabled={status === "1"}
         error={formError?.closure_remark?.error}
         helperText={formError?.closure_remark?.msg}
+        setFormError={setFormError}
         sx={{
           "& .MuiFormHelperText-root": {
             margin: 0,
@@ -600,6 +609,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     disabled={propsForCallReceiptField.disabled}
                     error={formError?.call_receipt_remark?.error}
                     helperText={formError?.call_receipt_remark?.msg}
+ setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
@@ -627,6 +637,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     disabled={propsForSugActionField.disabled}
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
+ setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
@@ -797,7 +808,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         )}
         {docDialogOpen && (
           <AddDialog
-            title=""
+            title="Document List"
             open={docDialogOpen}
             setDialogOpen={setDocDialogOpen}
           >

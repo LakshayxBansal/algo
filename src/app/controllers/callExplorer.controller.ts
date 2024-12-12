@@ -9,12 +9,19 @@ import {
   getCallSupportDetailsDb,
   getCallSupportTicketsCountDb,
   getCallSupportTicketsDb,
+  getUserPreferenceDb,
+  insertUserPreferenceDb,
   updateCallAllocationDb,
   updateSupportCallAllocationDb,
+  updateUserPreferenceDb,
 } from "../services/callExplorer.service";
 import { GridSortModel } from "@mui/x-data-grid";
 import { adjustToLocal } from "../utils/utcToLocal";
 import { regionalDateFormat } from "../utils/getRegionalFormat";
+
+type ColumnWidths = {
+  [key: string]: number; // Key is the column field name, value is the width
+};
 
 export async function getCallEnquiries(
   filterValueState: any,
@@ -259,6 +266,57 @@ export async function getCallSupportDetails(id: number) {
       );
 
       // console.log("res", result);
+      return result;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getUserPreference() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo && session?.user.userId) {
+      const result = await getUserPreferenceDb(
+        session.user.dbInfo.dbName,
+        session.user.userId
+      );
+
+      // console.log("res", result);
+      return result;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function insertUserPreference(data:ColumnWidths) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo && session?.user.userId) {
+      const result = await insertUserPreferenceDb(
+        session.user.dbInfo.dbName,
+        session.user.userId,
+       JSON.stringify(data)
+      );
+
+      // console.log("res", result);
+      return result;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateUserPreference(data: ColumnWidths) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo && session?.user.userId) {
+      const result = await updateUserPreferenceDb(
+        session.user.dbInfo.dbName,
+        session.user.userId,
+        JSON.stringify(data)
+      );
       return result;
     }
   } catch (error) {

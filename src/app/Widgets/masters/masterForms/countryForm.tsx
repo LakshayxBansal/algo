@@ -76,24 +76,6 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Country" : "Add Country"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -126,6 +108,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -144,6 +127,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
               defaultValue={entityData.alias}
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { alias, ...rest } = curr;

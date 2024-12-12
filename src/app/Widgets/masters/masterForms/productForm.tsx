@@ -111,24 +111,6 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Product" : "Add Product"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -161,6 +143,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {
@@ -179,6 +162,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 name="alias"
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.alias}
                 onKeyDown={() => {
                   setFormError((curr) => {
@@ -211,6 +195,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                   })
                 }
                 formError={formError?.productGroup}
+                setFormError={setFormError}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <ProductGroupForm
                     setDialogOpen={fnDialogOpen}
@@ -243,6 +228,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 fetchDataFn={getUnit}
                 fnFetchDataByID={getUnitById}
                 formError={formError.unit}
+                setFormError={setFormError}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <UnitForm
                     setDialogOpen={fnDialogOpen}
@@ -261,6 +247,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 label="HSN Code"
                 error={formError?.hsn_code?.error}
                 helperText={formError?.hsn_code?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.hsn_code}
                 onKeyDown={() => {
                   setFormError((curr) => {

@@ -190,6 +190,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
       // onKeyDown={() => {
@@ -211,6 +212,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.alias}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -231,6 +233,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.printName?.error}
         helperText={formError?.printName?.msg}
+ setFormError={setFormError}
         defaultValue={printNameFn}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -251,6 +254,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pan}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -271,6 +275,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.gstin?.error}
         helperText={formError?.gstin?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.gstin}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -291,6 +296,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.address1}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -311,6 +317,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.address2}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -327,7 +334,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         name={"country"}
         id={"country"}
         label={"Country"}
-        dialogTitle={"Add country"}
+        dialogTitle={"Country"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
         fetchDataFn={getCountries}
         fnFetchDataByID={getCountryById}
@@ -354,7 +361,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         id={"state"}
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        dialogTitle={"Add State"}
+        dialogTitle={"State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}
@@ -381,6 +388,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.city}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -401,6 +409,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pincode}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -487,24 +496,6 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Organisation" : "Add Organisation"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
-
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -617,7 +608,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           </Grid>
           {dialogOpen && (
             <AddDialog
-              title=""
+              title="Document List"
               open={dialogOpen}
               setDialogOpen={setDialogOpen}
             >

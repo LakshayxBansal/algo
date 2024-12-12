@@ -26,7 +26,7 @@ export default function executiveRole() {
   return (
     <>
       <EntityList
-        title="Executive Role Master"
+        title="Executive Role"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
             setDialogOpen={fnDialogOpen}
