@@ -67,8 +67,6 @@ import { emailRegex } from "@/app/zodschema/zodschema";
 import { boolean } from "zod";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
-  console.log("executive prop", props?.setDialogOpen);
-
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -155,7 +153,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"area"}
         id={"area"}
         label={"Area"}
-        dialogTitle={"Add Area"}
+        dialogTitle={"Area"}
         width={365}
         defaultValue={
           {
@@ -185,7 +183,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         id={"department"}
         label={"Department"}
         required
-        dialogTitle={"Add Department"}
+        dialogTitle={"Department"}
         width={365}
         defaultValue={
           {
@@ -242,7 +240,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"executive_group"}
         id={"group"}
         label={"Executive Group"}
-        dialogTitle={"Add Executive Group"}
+        dialogTitle={"Executive Group"}
         width={365}
         disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         defaultValue={
@@ -314,7 +312,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"crm_user"}
         id={"crm_user"}
         label={"Map to App User"}
-        dialogTitle={"Add App User"}
+        dialogTitle={"App User"}
         defaultValue={
           {
             id: entityData.crm_user_id,
@@ -443,7 +441,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.doj?.error,
             helperText: formError?.doj?.msg,
-            fullWidth: true
           },
           openPickerButton: {
             tabIndex: -1,
@@ -465,7 +462,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.dob?.error,
             helperText: formError?.dob?.msg,
-            fullwidth: true,
           },
           openPickerButton: {
             tabIndex: -1,
@@ -489,7 +485,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           textField: {
             error: formError?.doa?.error,
             helperText: formError?.doa?.msg,
-            fullWidth: true,
           },
           openPickerButton: {
             tabIndex: -1,
@@ -548,7 +543,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"country"}
         id={"country"}
         label={"Country"}
-        dialogTitle={"Add country"}
+        dialogTitle={"Country"}
         width={365}
         defaultValue={
           {
@@ -575,7 +570,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         name={"state"}
         id={"state"}
         label={"State"}
-        dialogTitle={"Add State"}
+        dialogTitle={"State"}
         width={365}
         defaultValue={defaultState}
         allowModify={!stateDisable}
@@ -615,13 +610,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     ],
   ]);
 
-
-  // entityData.executive_dept_id = props.data?.executive_dept_id;
-  // entityData.executive_group = props.data?.executive_group;
-  // entityData.executive_group_id = props.data?.executive_group_id;
-
-
-
   async function getApplicationUser(searchStr: string) {
     const mappedUser = { id: entityData.crm_user_id, name: entityData.crm_user };
     let dbResult = await getBizAppUser(searchStr, mappedUser, true, true, false, false);
@@ -642,9 +630,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
-      console.log("this is formdata", data);
-
-
+      
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
       data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
@@ -673,12 +659,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           props.setDialogOpen ? props.setDialogOpen(false) : null;
         }, 1000);
       } else {
-        console.log("result :", result);
         const issues = result?.data;
         // show error on screen
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Error encountered", error: true };
-        console.log("issue :", issues);
         for (const issue of issues) {
           for (const path of issue.path) {
             errorState[path] = { msg: issue.message, error: true };
@@ -797,10 +781,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       return rest;
     });
   };
-
-  console.log('731 : ', props.metaData);
-
-
   props.metaData?.fields.map((field: any) => {
     if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
@@ -888,35 +868,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     }
   });
 
-  console.log(entityData);
-
-
-
   return (
     <Box>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        {
-          props?.setDialogOpen === undefined ? (<></>) : (<>
-            <Seperator>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                {props.data ? "Update Executive" : "Add Executive"}
-                <IconButton onClick={handleCancel} tabIndex={-1}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </Seperator>
-          </>
-          )
-        }
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -1041,7 +994,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           </Grid>
           {dialogOpen && (
             <AddDialog
-              title=""
+              title="Document List"
               open={dialogOpen}
               setDialogOpen={setDialogOpen}
             >

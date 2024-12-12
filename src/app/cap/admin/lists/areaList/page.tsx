@@ -21,7 +21,7 @@ export default function Area() {
   return (
     <>
       <EntityList
-        title="Area Master"
+        title="Area"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <AreaForm
             setDialogOpen={fnDialogOpen}

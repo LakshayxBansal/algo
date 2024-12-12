@@ -134,24 +134,6 @@ export default function UploadFileForm({
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {"Upload Form"}
-            <IconButton onClick={handleCancel}>
-              <GridCloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Button
         component="label"
         role={undefined}
