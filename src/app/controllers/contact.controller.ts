@@ -258,9 +258,7 @@ export async function getContactById(id: number) {
       if(id){
       let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
       for(const field of desc){
-        if(field.column_type_id===7){
-          console.log("dekhio zra",field.column_format);
-          
+        if(field.column_type_id===7){          
           const parts = field.column_format.split(".");
           let tableName = "";
           let fieldName = "";

@@ -162,7 +162,6 @@ export async function getContactDetailsById(crmDb: string, id: number,customMast
 
     query+=" where c.id=?;";
 
-    console.log("dekh le bhai contact",query);
     
 
     const result = await excuteQuery({
