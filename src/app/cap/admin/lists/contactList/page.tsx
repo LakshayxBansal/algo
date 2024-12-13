@@ -63,18 +63,18 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
   {
     field: "email",
     headerName: "Email",
-    editable: true,
+    editable: false,
   },
   {
     field: "whatsapp",
     headerName: "Whatsapp",
     type: "number",
-    editable: true,
+    editable: false,
   },
 ];
 

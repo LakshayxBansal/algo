@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useRef } from "react";
-import { Popper, Grow,Paper } from "@mui/material";
+import { Popper, Grow, Paper, Typography, Box, Slide } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Collapse from "@mui/material/Collapse";
 import List from "@mui/material/List";
@@ -12,19 +12,28 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
-
+import { useRouter } from "next/navigation";
+// import "./globals.css";
 
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
   openDrawer: boolean;
   setOpenDrawer?: any;
+  isHover?: boolean;
+  setLoading:any;
 }) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
-  
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // const [loading,setLoading]  = useState(false);
+  const [hover, setHover] = useState(false);
+
+  const router = useRouter();
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
   let arra1 = [0, 2, 5, 9, 12, 51, 54];
   const pages = props.pages;
@@ -51,12 +60,14 @@ export default function LeftMenuTree(props: {
     };
   }, [props.openDrawer, openPopper]);
 
-  function handleHeaderMenuClick(id: number) {
+  function handleHeaderMenuClick(id: number, href:string) {
     const idToOpenMap: Map<number, boolean> = new Map(open);
     idToOpenMap.set(id, !idToOpenMap.get(id));
     props.setOpenDrawer(true);
     setOpen(idToOpenMap);
     setSelectedId(id);
+    router.push(href);
+    props.setLoading(true);
   }
 
   function handleSubMenuHover(
@@ -100,12 +111,12 @@ export default function LeftMenuTree(props: {
   const handleMousePopper = (
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
-  )=>{
+  ) => {
     // setHoverId(page.id);
     idToOpenPop.current.clear();
     // setOpenPopper((prevState) => new Map(prevState.clear()));
     openPopper.clear();
-  }
+  };
 
   function handleCollapse(id: number): boolean {
     return props.openDrawer ? open?.get(id) ?? false : false;
@@ -118,6 +129,17 @@ export default function LeftMenuTree(props: {
     }
     return href;
   }
+
+  const handleTransiton =  (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    href: string
+  ) => {
+    // props.setLoading(true);
+    // document.body.classList.add('cursor-wait');
+    router.push(href);
+     
+  };
+
 
   function ShowMenu(levelData: {
     pages: menuTreeT[];
@@ -145,12 +167,13 @@ export default function LeftMenuTree(props: {
                 <Tooltip title={page.name} placement="right">
                   <ListItemButton
                     sx={{ pl: indent }}
-                    onClick={(e) => handleHeaderMenuClick(page.id)}
+                    onClick={(e) => handleHeaderMenuClick(page.id,page.href)}
                     component="a"
-                    href={
-                      page.href !== "#" ? page.href : generateHref(page.name)
-                    }
+                    // href={
+                    //   page.href !== "#" ? page.href : generateHref(page.name)
+                    // }
                     selected={selectedId === page.id}
+                    tabIndex={-1}
                   >
                     <ListItemIcon
                       style={{
@@ -214,13 +237,14 @@ export default function LeftMenuTree(props: {
       return { icon };
     }
 
+
+
     return (
       <div>
         {pages.map((page, index) => (
           <div key={index}>
             {page.parent_id === level && (
-              <div>
-                {/* <Tooltip title={page.name} placement="right-start"> */}
+              <Box>
                 <ListItemButton
                   sx={{ pl: indent }}
                   onMouseEnter={(e) => {
@@ -230,8 +254,15 @@ export default function LeftMenuTree(props: {
                     handleMouseLeave(e, page);
                   }}
                   component="a"
-                  href={page.href}
+                  onClick={(e) => handleTransiton(e, page.href)}
+                  // href={page.href}
                   selected={selectedId === page.id}
+                  tabIndex={-1}
+                  style={
+                    page.parent_id == 0 && props.isHover
+                      ? { display: "flex", flexDirection: "column" }
+                      : { margin: "7px 0" }
+                  }
                 >
                   <ListItemIcon
                     style={{
@@ -245,8 +276,24 @@ export default function LeftMenuTree(props: {
                       selected: selectedId === page.id,
                     })}
                   </ListItemIcon>
-                  <ListItemText primary={page.name} />
-                  {page.children.length ? (
+
+                  {/* {
+                    (page.parent_id ==0 && hover) ? (
+                      <Typography variant="caption">
+                      {page.name}
+                      </Typography> 
+                      ) :(<ListItemText primary={page.name} />)
+                  } */}
+
+                  {page.parent_id == 0 && props.isHover ? (
+                    <Typography variant="caption">{page.name}</Typography>
+                  ) : (
+                    <></>
+                  )}
+
+                  {page.parent_id > 0 && <ListItemText primary={page.name} />}
+
+                  {page.children.length && page.parent_id > 0 ? (
                     openPopper?.get(page.id) ? (
                       <ChevronRightIcon />
                     ) : (
@@ -256,40 +303,38 @@ export default function LeftMenuTree(props: {
                     <></>
                   )}
                 </ListItemButton>
-                {/* </Tooltip> */}
                 {
                   <>
                     {/*Boolean(hoverId) &&  (page.parent_id===0 && hoverId===page.id)|| */}
                     <Popper
                       // open={idToOpenPop.current.has(page.id)}
                       // open={hoverId === page.id || hoverId === page.parent_id}
-                      open={openPopper.get(page.id)?true:false}
+                      open={openPopper.get(page.id) ? true : false}
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
-                      style={{position:"absolute", zIndex:"9999"}}
+                      style={{ position: "absolute", zIndex: "9999" }}
                     >
                       {({ TransitionProps }) => (
                         <Grow {...TransitionProps}>
-                            <Paper
-                              elevation={8}
-                              style={{ maxHeight: "20em", overflowY: "auto" }}
-                            >
-                              {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
+                          <Paper
+                            elevation={8}
+                            style={{ maxHeight: "20em", overflowY: "auto" }}
+                          >
+                            {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
 
-                              {ShowPopper({
-                                pages: page.children,
-                                level: page.id,
-                                menuLevel: 0,
-                              })}
-                              {/* </div> */}
-                            </Paper>
+                            {ShowPopper({
+                              pages: page.children,
+                              level: page.id,
+                              menuLevel: 0,
+                            })}
+                          </Paper>
                         </Grow>
                       )}
                     </Popper>
                   </>
                 }
-              </div>
+              </Box>
             )}
           </div>
         ))}

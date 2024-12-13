@@ -10,6 +10,7 @@ import {
   useGridApiRef,
   gridClasses,
   GridColumnVisibilityModel,
+  DEFAULT_GRID_AUTOSIZE_OPTIONS,
 } from "@mui/x-data-grid";
 import {
   Box,
@@ -25,6 +26,7 @@ import {
   Popper,
   Tooltip,
   TextField,
+  useStepContext,
 } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
@@ -41,6 +43,7 @@ import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
+import React from "react";
 const pgSize = 10;
 
 enum dialogMode {
@@ -63,7 +66,32 @@ export default function EntityList(props: entitiyCompT) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState<GridColumnVisibilityModel>({});
+  const [dfltcols, setdfltcols] = useState<string[]>([]);
+
+  // const [includeHeaders, setIncludeHeaders] = React.useState(
+  //   DEFAULT_GRID_AUTOSIZE_OPTIONS.includeHeaders
+  // );
+  // const [includeOutliers, setExcludeOutliers] = React.useState(
+  //   DEFAULT_GRID_AUTOSIZE_OPTIONS.includeOutliers
+  // );
+  // const [outliersFactor, setOutliersFactor] = React.useState(
+  //   String(DEFAULT_GRID_AUTOSIZE_OPTIONS.outliersFactor)
+  // );
+
+  // const [expand, setExpand] = React.useState(
+  //   DEFAULT_GRID_AUTOSIZE_OPTIONS.expand
+  // );
+
+  // const autosizeOptions = {
+  //   includeHeaders,
+  //   includeOutliers,
+  //   outliersFactor: Number.isNaN(parseFloat(outliersFactor))
+  //     ? 1
+  //     : parseFloat(outliersFactor),
+  //   expand,
+  // };
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -77,7 +105,17 @@ export default function EntityList(props: entitiyCompT) {
   // console.log("url",url);
   //for navbar search
 
+  const autoSizeColumns = async () => {
+    if (apiRef.current) {
+      // Wait for the grid to finish rendering
+      await new Promise(resolve => setTimeout(resolve, 100)); // Delay for rendering
+      const allColumns = apiRef.current.getAllColumns();
+      apiRef.current.autosizeColumns({columns:allColumns.map(col => col.field),includeHeaders:true,includeOutliers:true });
+    }
+  };
+
   useEffect(() => {
+    
     const fetchData = debounce(async (searchText) => {
       const rows: any = await props.fetchDataFn(
         PageModel.page,
@@ -96,6 +134,8 @@ export default function EntityList(props: entitiyCompT) {
           headerName: "More Options",
           minWidth: 50,
           hideable: false,
+          sortable: false,
+          editable: false,
           renderCell: (params) => {
             return (
               <IconComponent
@@ -117,6 +157,8 @@ export default function EntityList(props: entitiyCompT) {
       //if roleid is 1(admin) show options columns
       let allDfltCols: GridColDef[];
 
+
+    
       // if (roleId == 1) {
       //   allDfltCols = optionsColumn.concat(props.customCols);
       // } else {
@@ -126,12 +168,14 @@ export default function EntityList(props: entitiyCompT) {
 
       allDfltCols = optionsColumn.concat(props.customCols);
       const dfltColFields: string[] = allDfltCols.map((col) => col.field);
+      setdfltcols(dfltColFields);
       if (props.fnFetchColumns) {
         const columnsData = await props.fnFetchColumns();
         if (columnsData) {
           const dbColumns = columnsData.map((col: any) => ({
             field: col.column_name,
             headerName: col.column_label,
+            editable: false,
           }));
           // filter on columns not to showinitially
           const filteredColumns = dbColumns.filter(
@@ -143,27 +187,42 @@ export default function EntityList(props: entitiyCompT) {
             model[col.field] = dfltColFields.includes(col.field);
             return model;
           }, {});
+          
+          autoSizeColumns();
           setColumnVisibilityModel(visibleColumns);
           setAllColumns(allColumns);
+
           // setColumnsChanged(true);
           // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
         }
       } else {
+        autoSizeColumns();
         setAllColumns(allDfltCols);
+
       }
-      //for title
-      let newUrl: string;
-      if (searchParams.size > 0) {
-        // newUrl = url+`&pgTitle=${props.title}`
-        const newSearchParams = new URLSearchParams(searchParams.toString());
-        newSearchParams.set("pgTitle", props.title);
-        // router.push(url+`?${newSearchParams.toString()}`);
-        newUrl = url + `?${newSearchParams.toString()}`;
-      } else {
-        newUrl = url + `?pgTitle=${props.title}`;
+      // for title
+      if(props.title){
+        let newUrl: string;
+        if (searchParams.size > 0) {
+          // newUrl = url+`&pgTitle=${props.title}`
+          const newSearchParams = new URLSearchParams(searchParams.toString());
+          newSearchParams.set("pgTitle", props.title);
+          // router.push(url+`?${newSearchParams.toString()}`);
+          newUrl = url + `?${newSearchParams.toString()}`;
+        } else {
+          newUrl = url + `?pgTitle=${props.title}`;
+        }
+        router.push(newUrl);
       }
-      router.push(newUrl);
-      //for title
+      // for title
+
+      const headers = document.querySelectorAll(
+        ".MuiDataGrid-columnHeader.MuiDataGrid-withBorderColor"
+      );
+      headers.forEach((header) => {
+        header.setAttribute("tabindex", "-1");
+      });
+      console.log(headers);
     }, 400);
 
     if (searchData) {
@@ -331,6 +390,7 @@ export default function EntityList(props: entitiyCompT) {
                         aria-label="select merge strategy"
                         aria-haspopup="menu"
                         onClick={handleDropDownBtn}
+                        tabIndex={-1}
                       >
                         <ArrowDropDownIcon />
                       </Button>
@@ -362,6 +422,18 @@ export default function EntityList(props: entitiyCompT) {
                               arrow
                             >
                               <Button
+                                onClick={() => {
+                                  setDialogOpen(true);
+                                  setDlgMode(dialogMode.FileUpload);
+                                }}
+                              >
+                                <CloudUploadIcon
+                                  fontSize="small"
+                                  style={{ marginRight: "5px" }}
+                                />
+                                Upload File
+                              </Button>
+                              {/* <Button
                                 key={"Upload File"}
                                 onClick={hideUploadBtn}
                                 component="label"
@@ -383,7 +455,7 @@ export default function EntityList(props: entitiyCompT) {
                                   multiple
                                 />
                                 Upload File
-                              </Button>
+                              </Button> */}
                             </Tooltip>
                           </ClickAwayListener>
                         </Paper>
@@ -422,6 +494,7 @@ export default function EntityList(props: entitiyCompT) {
                   aria-haspopup="true"
                   ref={(ref) => setAnchorEl(ref)}
                   onClick={toggleColBtn}
+                  tabIndex={-1}
                 >
                   <TuneIcon fontSize="medium" />
                 </IconButton>
@@ -430,6 +503,7 @@ export default function EntityList(props: entitiyCompT) {
           </Grid>
           <Seperator />
           <StripedDataGrid
+            apiRef={apiRef}
             disableColumnMenu
             rows={data ? data : []}
             rowHeight={40}
@@ -437,14 +511,14 @@ export default function EntityList(props: entitiyCompT) {
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
-            pageSizeOptions={[5,pgSize,20]}
+            pageSizeOptions={[5, pgSize, 20]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}
             filterMode="server"
             onFilterModelChange={setFilterModel}
             loading={!data}
-            apiRef={apiRef}
+            // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel) => {
               setColumnVisibilityModel(newModel);

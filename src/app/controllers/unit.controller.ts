@@ -265,7 +265,7 @@ export async function getUnitByPage(
 export async function getUnitData(id: number) {
   let getUnit = {
     status: false,
-    data: [{}] as mdl.getUnitT,
+    data: {} as mdl.getUnitT,
     error: {},
   };
   try {

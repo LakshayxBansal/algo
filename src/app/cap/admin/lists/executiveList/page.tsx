@@ -14,22 +14,22 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
   {
     field: "alias",
     headerName: "Alias",
-    editable: true,
+    editable: false,
   },
   {
     field: "email",
     headerName: "Email",
-    editable: true,
+    editable: false,
   },
   {
     field: "mobile",
     headerName: "Mobile",
-    editable: true,
+    editable: false,
   },
 ];
 
@@ -49,7 +49,7 @@ export default function executive() {
         fetchDataFn={getExecutiveByPage}
         fnFetchDataByID={getExecutiveById}
         fnDeleteDataByID={delExecutiveById}
-        // fnFetchColumns={getExecutiveColumns}
+        fnFetchColumns={getExecutiveColumns}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

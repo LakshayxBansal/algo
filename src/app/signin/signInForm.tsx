@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { Box, TextField, Divider, Paper, Typography } from "@mui/material";
+import { Box, TextField, Divider, Paper, Typography, styled } from "@mui/material";
 import Link from "@mui/material/Link";
 import ProviderButton from "../Widgets/providerButton";
 import { ClientSafeProvider, getCsrfToken } from "next-auth/react";
@@ -18,10 +18,23 @@ import styles from "../signup/SignUpForm.module.css";
 import * as zs from "../zodschema/zodschema";
 import { getTotalInvite } from "../controllers/user.controller";
 import { getCompanyCount } from "../services/company.service";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
 }
+
+const OrCircle = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '40px',
+  height: '40px',
+  border:"1px solid #e0e0e0",
+  borderRadius: '50%',
+  fontWeight: 'bold',
+  // color: '#e0e0e0',
+});
 
 /**
  *
@@ -35,6 +48,7 @@ export default function AuthPage(props: authPagePropsType) {
 
   const [email, setEmail] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const router = useRouter();
   let csrfToken;
@@ -47,8 +61,9 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
-    // document.body.classList.add("cursor-wait");
-    let data: { [key: string]: any } = {};
+    setLoading(true);
+    document.body.classList.add("cursor-wait");
+      let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
@@ -78,7 +93,9 @@ export default function AuthPage(props: authPagePropsType) {
             if(totalInvites.rowCount===0 && Number(totalCompanies[0].rowCount)===0){
               router.push("/addcompany");
             }else{
+              // console.log("router before",router);
               router.push(successCallBackUrl);
+              console.log("router after",router);
             }
           // }, 1000);
         } else {
@@ -99,6 +116,7 @@ export default function AuthPage(props: authPagePropsType) {
       }
       setFormError(errorState);
     }
+       
   }
 
   // useEffect(() => {
@@ -209,6 +227,7 @@ export default function AuthPage(props: authPagePropsType) {
                     label="Email Address"
                     name="email"
                     autoComplete="off"
+                    disabled={loading}
                     onKeyDown={() => {
                       setFormError((curr) => {
                         const { email, form, ...rest } = curr;
@@ -220,6 +239,7 @@ export default function AuthPage(props: authPagePropsType) {
                         height: "45px",
                         padding: "0 14px",
                         backgroundColor: "#E8F0FE",
+                        cursor: loading ? 'wait' : 'pointer',
                       },
                       "& .MuiOutlinedInput-root": {
                         height: "45px",
@@ -242,6 +262,7 @@ export default function AuthPage(props: authPagePropsType) {
                     label="Phone No"
                     name="phone"
                     autoComplete="off"
+                    disabled={loading}
                     fullWidth
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
@@ -261,6 +282,8 @@ export default function AuthPage(props: authPagePropsType) {
                         height: "45px",
                         padding: "0 14px",
                         backgroundColor: "#E8F0FE",
+                        cursor: loading ? 'wait' : 'pointer',
+
                       },
                       "& .MuiOutlinedInput-root": {
                         height: "45px",
@@ -281,6 +304,8 @@ export default function AuthPage(props: authPagePropsType) {
                   style={{
                     fontSize: "small",
                     fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                    cursor: loading ? 'wait' : 'pointer',
+                    pointerEvents: loading ? 'none' : 'auto',
                   }}
                   sx={{
                     display: "inline-block",
@@ -313,6 +338,8 @@ export default function AuthPage(props: authPagePropsType) {
                     type={!showPassword ? "password" : "text"}
                     id="password"
                     autoComplete="off"
+                    disabled={loading}
+ 
                     error={formError?.password?.error}
                     helperText={formError?.password?.msg}
                     onKeyDown={() => {
@@ -326,6 +353,7 @@ export default function AuthPage(props: authPagePropsType) {
                         height: "45px",
                         padding: "0 14px",
                         backgroundColor: "#E8F0FE",
+                        cursor: loading ? 'wait' : 'pointer',
                       },
                       "& .MuiOutlinedInput-root": {
                         height: "45px",
@@ -358,6 +386,9 @@ export default function AuthPage(props: authPagePropsType) {
                   style={{
                     fontSize: "small",
                     fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                    cursor: loading ? 'wait' : 'pointer',
+                    pointerEvents: loading ? 'none' : 'auto',
+
                   }}
                   sx={{
                     display: "inline-block",
@@ -378,29 +409,33 @@ export default function AuthPage(props: authPagePropsType) {
               <Grid item xs={12} sm={12} md={12} sx={{ mt: 3 }}>
                 <Grid container>
                   <Grid item xs={12} sm={5.5} md={5.5}>
-                    <Button
+                    <LoadingButton
                       type="submit"
                       fullWidth
                       variant="contained"
                       size="medium"
+                      loading={loading}
                     >
                       Sign In
-                    </Button>
+                    </LoadingButton>
                   </Grid>
                   <Grid
                     item
                     xs={12}
                     sm={1}
                     md={1}
-                    sx={{ paddingTop: "10px" }}
-                    style={{
-                      fontSize: "smaller",
-                      fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                    }}
+                    sx={{ display:"flex", justifyContent:"center"}}
+                    // style={{
+                    //   fontSize: "smaller",
+                    //   fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                    // }}
+                    
                   >
-                    <Divider orientation="horizontal" flexItem>
-                      Or
-                    </Divider>
+                    {/* <Divider orientation="horizontal" flexItem> */}
+                    <OrCircle>
+                      OR
+                    </OrCircle>
+                    {/* </Divider> */}
                   </Grid>
                   <Grid
                     item
@@ -415,6 +450,8 @@ export default function AuthPage(props: authPagePropsType) {
                         provider={provider}
                         callbackUrl="/company"
                         tabIndex={-1}
+                        disabled={loading}
+                        style={{cursor: loading ? 'wait' : 'pointer'}} // not working
                       >
                         Sign In With
                       </GoogleSignUpButton>
@@ -429,7 +466,7 @@ export default function AuthPage(props: authPagePropsType) {
                 md={12}
                 sx={{ display: "flex", justifyContent: "center", mt: "5%" }}
               >
-                <Link href="/signup" variant="body2" tabIndex={-1}>
+                <Link href="/signup" variant="body2" tabIndex={-1} style={{cursor: loading ? 'wait' : 'pointer', pointerEvents: loading ? 'none' : 'auto',}}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

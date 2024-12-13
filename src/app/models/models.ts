@@ -192,14 +192,14 @@ export type getProductT = [
   }
 ];
 
-export type getUnitT = [
+export type getUnitT = 
   {
     id: number;
     name: string;
     phone: string;
     email: string;
-  }
-];
+  };
+
 
 export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
 
@@ -212,7 +212,7 @@ export type deleteCompT={
 };
 
 export type  entitiyCompT = {
-  title: string;
+  title?: string;
   // setTitlee:(props: any) => void;
   renderForm?: RenderFormFunctionT;
   fileUploadFeatureReqd?: boolean;
@@ -231,6 +231,8 @@ export type  entitiyCompT = {
   AddAllowed?: boolean;
   uploadAllowed?:boolean;
   height?: string;
+  loading?:any, 
+  setLoading?:any
 };
 
 export type iconCompT = {

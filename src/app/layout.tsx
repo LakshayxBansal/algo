@@ -1,8 +1,8 @@
-// "use client"
+"use client"
 
 import { Suspense, useEffect,useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';// import '../styles/globals.css'; // Adjust the path if your styles are in a different directory
+// Adjust the path if your styles are in a different directory
 import { AppProps } from 'next/app';
 import { Box } from "@mui/material";
 

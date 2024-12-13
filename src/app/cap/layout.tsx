@@ -4,13 +4,33 @@ import {theme} from '@/app/utils/theme.util'
 import { ThemeProvider } from "@mui/material/styles";
 import Footer from './navbar/Footer';
 import SecondNavbar from './navbar/SecondNavbar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function CapLayout({children} : {children?: React.ReactNode}) {
 
 
   const navbarToShow =["cap",""];
   // const [titlee, setTitlee] = useState("")
+
+  //   const pathname = usePathname();
+  
+
+  // useEffect(() => {
+  //   document.body.classList.add('cursor-wait');
+
+  //   const handleComplete = () => {
+  //     document.body.classList.remove('cursor-wait');
+  //   };
+
+  //   const timeout = setTimeout(handleComplete, 1000); // Adjust the timeout as necessary
+
+  //   return () => {
+  //     clearTimeout(timeout);
+  //     document.body.classList.remove('cursor-wait');
+  //   };
+  // }, [pathname]);
+
 
   return (
     <section>
