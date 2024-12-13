@@ -78,7 +78,7 @@ export default function ContactForm(
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
   const [formKey, setFormKey] = useState(0);
 

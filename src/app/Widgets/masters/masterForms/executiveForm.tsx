@@ -79,7 +79,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {} as executiveSchemaT;
   const pathName = usePathname();
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
   const [formKey, setFormKey] = useState(0);
 
   const handleWhatsappChange = (val: string) => {
