@@ -104,6 +104,15 @@ export default function ContactForm(
 
   const handleWhatsappChange = (val: string) => {
     setWhatsappFn(val);
+    // if (!whatsappFn || whatsappFn === entityData.whatsapp) {
+      // if (val.startsWith("+91")) {  
+        // setWhatsappFn(val); 
+      // }
+    // }
+    // if (val === '') {
+    //   setWhatsappFn('');
+    //   return;
+    // }
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -568,6 +577,7 @@ export default function ContactForm(
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length===0? "": "IN"}
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
         // fullWidth

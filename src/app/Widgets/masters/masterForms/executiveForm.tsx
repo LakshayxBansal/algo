@@ -388,6 +388,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length===0? "": "IN"}
         fullWidth
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
