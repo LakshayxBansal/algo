@@ -63,6 +63,7 @@ import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { usePathname } from "next/navigation";
 
 export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
   const router = useRouter();
@@ -77,6 +78,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {} as executiveSchemaT;
+  const pathName = usePathname();
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
+  const [formKey, setFormKey] = useState(0);
+
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
+  };
+
   let fieldArr: React.ReactElement[] = [];
 
 
@@ -369,6 +378,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         helperText={formError?.mobile?.msg}
  setFormError={setFormError}
         defaultValue={entityData.mobile}
+        onChange={handleWhatsappChange}
       // onKeyDown={() => {
       //   setFormError((curr) => {
       //     const { mobile, ...rest } = curr;
@@ -387,11 +397,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length===0? "": "IN"}
         fullWidth
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
  setFormError={setFormError}
-        defaultValue={entityData.whatsapp}
+        // defaultValue={entityData.whatsapp}
+        defaultValue={whatsappFn}
         slotprops={{
           flagButton: {
             tabIndex: -1
@@ -641,9 +653,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         props.setDialogValue ? props.setDialogValue(newVal) : null;
         setFormError({});
         setSnackOpen(true);
-        setTimeout(() => {
-          props.setDialogOpen ? props.setDialogOpen(false) : null;
-        }, 1000);
+        // setTimeout(() => {
+        //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+        // }, 1000); 
+        if (pathName !== "/cap/admin/lists/executiveList" || entityData.id) {
+          setTimeout(() => {
+            props.setDialogOpen ? props.setDialogOpen(false) : null;
+          }, 1000);
+        } else {
+          setFormKey(formKey + 1); 
+          setWhatsappFn("");
+          setDocData([]); 
+        }
       } else {
         const issues = result?.data;
         // show error on screen
@@ -813,6 +834,22 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       }
     }
     else if (field.is_default_column) {
+      if(field.column_name_id === 'whatsapp')
+        {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
+    
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-default-${field.column_name_id}-${whatsappFn}`,
+            disabled: field.is_disabled === 1 ? true : false,
+          });
+    
+          fieldArr.push(fld);
+        } else {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -826,6 +863,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       });
 
       fieldArr.push(fld);
+    }
     } else {
       const fld = (
         <CustomField
@@ -858,8 +896,8 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit} noValidate>
+      <Box id="sourceForm">
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
@@ -916,7 +954,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
-                // marginTop: 2,
+                marginTop: 2,
                 paddingLeft: "2rem"
               }}
             >

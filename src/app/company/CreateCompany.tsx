@@ -270,6 +270,42 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  name="city"
+                  id="city"
+                  label="City"
+                  style={{ width: "100%" }}
+                  error={formError?.city?.error}
+                  helperText={formError?.city?.msg}
+                  defaultValue={entityData.city}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { city, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  name="pincode"
+                  id="pincode"
+                  label="Pin Code"
+                  style={{ width: "100%" }}
+                  error={formError?.pincode?.error}
+                  helperText={formError?.pincode?.msg}
+                  defaultValue={entityData.pincode}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { pincode, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
                 <AutocompleteDB
                   name={"country"}
                   id={"country"}
@@ -291,6 +327,10 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                           id: entityData.country_id,
                           name: entityData.country,
                         }
+                      : selectValues.country ? {
+                        id: selectValues.country?.id,
+                        name: selectValues.country?.name ?? "",
+                      } 
                       : ({
                           id: defaultCountryId,
                           name: defaultCountry,
@@ -344,44 +384,6 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   fnSetModifyMode={function (id: string): void {}}
                 />
                 {/* </div> */}
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6}>
-                <InputControl
-                  inputType={InputType.TEXT}
-                  name="city"
-                  id="city"
-                  label="City"
-                  style={{ width: "100%" }}
-                  error={formError?.city?.error}
-                  helperText={formError?.city?.msg}
- setFormError={setFormError}
-                  defaultValue={entityData.city}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { city, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6}>
-                <InputControl
-                  inputType={InputType.TEXT}
-                  name="pincode"
-                  id="pincode"
-                  label="Pin Code"
-                  style={{ width: "100%" }}
-                  error={formError?.pincode?.error}
-                  helperText={formError?.pincode?.msg}
- setFormError={setFormError}
-                  defaultValue={entityData.pincode}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { pincode, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
-                />
               </Grid>
               <Grid
                 item
