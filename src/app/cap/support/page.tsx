@@ -8,6 +8,8 @@ import { decrypt } from "@/app/utils/encrypt.utils";
 import { getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { Metadata } from "next";
+import { getScreenDescription } from "@/app/controllers/object.controller";
+import { SUPPORT_ID } from "@/app/utils/consts.utils";
 
 export const metadata : Metadata = {
   title : ''
@@ -30,6 +32,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
       const status = searchParams.status;
       let supportData: any = {};
       let formatedSupportData: any;
+      const fields = await getScreenDescription(SUPPORT_ID);
       if (id) {
         const decryptedId = await decrypt(id);
 
@@ -49,6 +52,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
             name: userDetails.name,
           }}
           status={status}
+          fields={fields}
         />
       );
     }

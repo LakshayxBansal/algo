@@ -112,6 +112,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
               inputType={InputType.TEXT}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               style={{ width: "100%" }}
             />
           </Grid>

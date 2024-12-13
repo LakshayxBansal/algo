@@ -123,6 +123,7 @@ export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryProductSchemaT = z.infer<typeof zs.productToListFormSchema>;
 export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
+export type enquiryProductArraySchemaT = z.infer<typeof zs.productToListFormArraySchema>;
 
 //Support ticket schemas
 export type supportTicketSchemaT = z.infer<typeof zs.supportTicketSchema>;

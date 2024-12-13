@@ -140,6 +140,7 @@ export default function SupportActionForm(props: masterFormPropsWithDataT<nameMa
                 fullWidth
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
               />
             </Grid>
             <Grid

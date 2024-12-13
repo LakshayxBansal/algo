@@ -2,6 +2,7 @@
 import { Session } from "next-auth";
 import {  supportTicketSchemaT } from "../models/models";
 import excuteQuery from "../utils/db/db";
+import { SUPPORT_ID } from "../utils/consts.utils";
 
 export async function createSupportTicketDB(
     session: Session,
@@ -12,7 +13,7 @@ export async function createSupportTicketDB(
      const result = await  excuteQuery({
         host: session.user.dbInfo.dbName,
         query:
-          "call createSupportTicket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);",
+          "call createSupportTicket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?);",
         values: [
           supportData.tkt_number,
           supportData.date,
@@ -32,7 +33,18 @@ export async function createSupportTicketDB(
           supportData.ticket_tran_type,
           supportData.active,
           session.user.userId,
-          productData
+          productData,
+          supportData.c_col1,
+          supportData.c_col2,
+          supportData.c_col3,
+          supportData.c_col4,
+          supportData.c_col5,
+          supportData.c_col6,
+          supportData.c_col7,
+          supportData.c_col8,
+          supportData.c_col9,
+          supportData.c_col10
+
         ],
       });
 
@@ -75,6 +87,8 @@ export async function createSupportTicketDB(
         host: session.user.dbInfo.dbName,
         query:
           "SELECT l.*, \
+          cfd.id AS custom_id, \
+          cfd.c_col1,cfd.c_col2,cfd.c_col3,cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10, \
          st.name AS status, \
          sub_st.name AS sub_status, \
          tam.name AS action_taken, \
@@ -88,8 +102,9 @@ export async function createSupportTicketDB(
     LEFT JOIN ticket_action_master next_action ON next_action.id = l.next_action_id \
     LEFT JOIN executive_master em2 ON em2.crm_user_id = l.modified_by \
     LEFT JOIN executive_master em3 ON em3.id =l.allocated_to \
+    LEFT JOIN custom_fields_data cfd on cfd.object_id=l.id and cfd.object_type_id=? \
     WHERE l.ticket_id = ? order by l.id;",
-        values: [id],
+        values: [SUPPORT_ID,id],
       });
       return result;
     } catch (error) {
@@ -119,7 +134,7 @@ export async function createSupportTicketDB(
       const result = await excuteQuery({
         host: session.user.dbInfo.dbName,
         query:
-          "call updateSupportTicket(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);",
+          "call updateSupportTicket(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?);",
         values: [
           supportData.id,
           supportData.tkt_number,
@@ -141,7 +156,17 @@ export async function createSupportTicketDB(
           supportData.created_by,
           session.user.userId,
           productData,
-          supportData.stamp
+          supportData.stamp,
+          supportData.c_col1,
+          supportData.c_col2,
+          supportData.c_col3,
+          supportData.c_col4,
+          supportData.c_col5,
+          supportData.c_col6,
+          supportData.c_col7,
+          supportData.c_col8,
+          supportData.c_col9,
+          supportData.c_col10
         ],
       });
       return result;

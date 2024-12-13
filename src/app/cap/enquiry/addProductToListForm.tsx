@@ -149,24 +149,6 @@ export default function AddProductToListForm(props: customprop) {
   };
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Add Product To Product List
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -197,7 +179,8 @@ export default function AddProductToListForm(props: customprop) {
             fnFetchDataByID={getProductById}
             required
             formError={formError?.product ?? formError.product}
-            onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
+ setFormError={setFormError}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
             renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <ProductForm
                 setDialogOpen={fnDialogOpen}
@@ -241,6 +224,7 @@ export default function AddProductToListForm(props: customprop) {
               }}
               error={formError?.quantity?.error}
               helperText={formError?.quantity?.msg}
+ setFormError={setFormError}
             />
             <SelectMasterWrapper
               key={defaultValueForUnitUsingProduct.id}
@@ -252,7 +236,8 @@ export default function AddProductToListForm(props: customprop) {
               fnFetchDataByID={getUnitById}
               required
               formError={formError?.unit ?? formError.unit}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
+ setFormError={setFormError}
+       onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <UnitForm
                   setDialogOpen={fnDialogOpen}
