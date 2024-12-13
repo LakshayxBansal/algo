@@ -1,3 +1,4 @@
+
 import getMasterForTable from "@/app/controllers/masterForTable.controller";
 import { optionsDataT, selectKeyValueT } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
@@ -31,7 +32,7 @@ type CustomFieldT = {
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void }) {
     console.log("props.defaultValue", props.defaultValue);
     const [status, setStatus] = useState(0);
-    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue.id, name: props.defaultValue.name });
+    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue?.id, name: props.defaultValue?.name });
     const columnType = {
         Text: 1,
         Options: 2,
