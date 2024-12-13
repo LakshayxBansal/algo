@@ -66,7 +66,7 @@ export default function CompanyEntityList() {
   return (
     <AuthWrapper>
       <EntityList
-        title="Company List"
+        title="Company"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CreateCompany
             setDialogOpen={fnDialogOpen}

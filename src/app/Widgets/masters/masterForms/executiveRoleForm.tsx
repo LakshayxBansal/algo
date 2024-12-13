@@ -170,6 +170,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {

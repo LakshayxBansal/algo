@@ -84,6 +84,7 @@ export default function SignUpForm() {
             autoFocus
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
+ setFormError={setFormError}
           />
         </Grid>
         {emailElement && (
@@ -92,6 +93,7 @@ export default function SignUpForm() {
               inputType={InputType.EMAIL}
               error={formError?.email?.error}
               helperText={formError?.email?.msg}
+ setFormError={setFormError}
               required
               fullWidth
               id="email"
@@ -111,6 +113,7 @@ export default function SignUpForm() {
               required
               error={formError?.phone?.error}
               helperText={formError?.phone?.msg}
+ setFormError={setFormError}
               country={"in"}
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
@@ -148,6 +151,7 @@ export default function SignUpForm() {
             id="password"
             error={formError?.password?.error}
             helperText={formError?.password?.msg}
+ setFormError={setFormError}
           />
           <Button
             type="button"
@@ -162,6 +166,7 @@ export default function SignUpForm() {
             inputType={InputType.TEXT}
             error={formError?.repassword?.error}
             helperText={formError?.repassword?.msg}
+ setFormError={setFormError}
             required
             fullWidth
             name="repassword"

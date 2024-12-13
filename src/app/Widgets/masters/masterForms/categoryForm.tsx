@@ -122,6 +122,7 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={props.data?.name}
                 onKeyDown={() => {
                   setFormError((curr) => {

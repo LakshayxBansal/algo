@@ -284,6 +284,7 @@ export default function ContactForm(
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
       // onKeyDown={() => {
@@ -306,6 +307,7 @@ export default function ContactForm(
         name="alias"
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.alias}
         fullWidth
       // onKeyDown={() => {
@@ -328,6 +330,7 @@ export default function ContactForm(
         name="print_name"
         error={formError?.print_name?.error}
         helperText={formError?.print_name?.msg}
+ setFormError={setFormError}
         defaultValue={printNameFn}
         fullWidth
       // onKeyDown={() => {
@@ -385,6 +388,7 @@ export default function ContactForm(
         name="pan"
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pan}
         fullWidth
       // onKeyDown={() => {
@@ -407,6 +411,7 @@ export default function ContactForm(
         name="aadhaar"
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.aadhaar}
         fullWidth
       // onKeyDown={() => {
@@ -444,6 +449,7 @@ export default function ContactForm(
           })
         }
         formError={formError?.contactGroup}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data?) => (
           <ContactGroupForm
             setDialogOpen={fnDialogOpen}
@@ -532,6 +538,7 @@ export default function ContactForm(
         placeholder="Email address"
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.email}
         fullWidth
       // onKeyDown={() => {
@@ -555,6 +562,7 @@ export default function ContactForm(
         size="small"
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.mobile}
         onChange={handleWhatsappChange}
         fullWidth
@@ -580,6 +588,7 @@ export default function ContactForm(
         defaultCountry={whatsappFn?.length===0? "": "IN"}
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
+ setFormError={setFormError}
         // fullWidth
         // defaultValue={whatsappFn}
         // key={whatsappFn}
@@ -613,6 +622,7 @@ export default function ContactForm(
         id="address1"
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.address1}
         fullWidth
       // onKeyDown={() => {
@@ -635,6 +645,7 @@ export default function ContactForm(
         id="address2"
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.address2}
         fullWidth
       // onKeyDown={() => {
@@ -685,6 +696,7 @@ export default function ContactForm(
         label="City"
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
         onKeyDown={() => {
@@ -706,6 +718,7 @@ export default function ContactForm(
         label="Pin Code"
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
         onKeyDown={() => {
@@ -781,6 +794,7 @@ export default function ContactForm(
         label="City"
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
       // onKeyDown={() => {
@@ -803,6 +817,7 @@ export default function ContactForm(
         label="Pin Code"
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
       // onKeyDown={() => {

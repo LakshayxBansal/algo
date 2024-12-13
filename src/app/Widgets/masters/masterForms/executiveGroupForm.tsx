@@ -141,6 +141,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<execu
               defaultValue={entityData.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -158,6 +159,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<execu
               defaultValue={entityData.alias}
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { alias, ...rest } = curr;
@@ -184,6 +186,7 @@ export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<execu
               dialogTitle={"Parent Executive Group"}
               fetchDataFn={getExecutiveGroup}
               formError={formError?.parentgroup}
+              setFormError={setFormError}
               allowModify={false}
               allowNewAdd={false}
               width={350}

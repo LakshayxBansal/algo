@@ -154,6 +154,7 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
               defaultValue={props.data?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+            setFormError={setFormError}
               style={{width: "100%"}}
             />
           </Grid>

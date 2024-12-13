@@ -203,6 +203,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
       // onKeyDown={() => {
@@ -224,6 +225,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.alias}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -244,6 +246,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.printName?.error}
         helperText={formError?.printName?.msg}
+ setFormError={setFormError}
         defaultValue={printNameFn}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -264,6 +267,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pan}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -284,6 +288,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.gstin?.error}
         helperText={formError?.gstin?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.gstin}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -304,6 +309,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.address1}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -324,6 +330,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.address2}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -394,6 +401,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.city}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -414,6 +422,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.pincode}
       // onKeyDown={() => {
       //   setFormError((curr) => {

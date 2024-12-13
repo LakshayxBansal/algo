@@ -126,6 +126,7 @@ export default function DocModal({ docData, setDocData, setDialogOpen }: { docDa
                             defaultValue={params.row.description}
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
+ setFormError={setFormError}
                             onChange={(event:React.ChangeEvent<HTMLInputElement>) => {
                                 setModifiedRowData((prevState) => ({
                                     ...prevState,

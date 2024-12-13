@@ -41,6 +41,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         required
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.name}
         onKeyDown={() => {
           setFormError((curr) => {

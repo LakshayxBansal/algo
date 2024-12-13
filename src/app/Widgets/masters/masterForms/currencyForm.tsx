@@ -187,6 +187,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.symbol}
                 error={formError?.symbol?.error}
                 helperText={formError?.symbol?.msg}
+ setFormError={setFormError}
                 onChange={onSymbolChange}
                 onKeyDown={() => {
                   setFormError((curr) => {
@@ -206,6 +207,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;
@@ -225,6 +227,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.shortForm}
                 error={formError?.shortForm?.error}
                 helperText={formError?.shortForm?.msg}
+ setFormError={setFormError}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { shortForm, ...rest } = curr;

@@ -120,6 +120,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {

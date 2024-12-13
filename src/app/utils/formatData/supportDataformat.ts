@@ -46,7 +46,17 @@ export async function supportDataFormat({
     suggested_action_remark: (formData.get("suggested_action_remark")?? "" ) as string ?? otherData?.suggested_action_remark,
     action_taken_remark: (formData.get("action_taken_remark" )?? "") as string ,
     closure_remark: (formData.get("closure_remark") ?? "") as string ?? otherData?.closure_remark,
-    allocated_to_id: selectValues.allocated_to?.id ?? otherData?.ledger_allocated_to
+    allocated_to_id: selectValues.allocated_to?.id ?? otherData?.ledger_allocated_to,
+    c_col1: (formData.get("c_col1") ?? "") as string,
+    c_col2: (formData.get("c_col2") ?? "") as string,
+    c_col3: (formData.get("c_col3") ?? "") as string,
+    c_col4: (formData.get("c_col4") ?? "") as string,
+    c_col5: (formData.get("c_col5") ?? "") as string,
+    c_col6: (formData.get("c_col6") ?? "") as string,
+    c_col7: (formData.get("c_col7") ?? "") as string,
+    c_col8: (formData.get("c_col8") ?? "") as string,
+    c_col9: (formData.get("c_col9") ?? "") as string,
+    c_col10: (formData.get("c_col10") ?? "") as string,
   };
 
   return { ...headerData, ...ledgerData};

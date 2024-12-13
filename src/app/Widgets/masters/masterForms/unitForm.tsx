@@ -130,6 +130,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {
