@@ -123,7 +123,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                     />
                 )
             case columnType.Options:
-                const option = props.desc.column_format?.split(",") || [];
+                const option = props.desc.column_format?.split(";") || [];
                 return (
                     <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
                         <RadioGroup
@@ -184,7 +184,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         }
                         diaglogVal={{
                             id: selectedMasterValue?.id,
-                            name: selectedMasterValue.name,
+                            name: selectedMasterValue?.name,
                             detail: undefined,
                         }}
                         setDialogVal={function (
