@@ -53,6 +53,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { usePathname } from "next/navigation";
 
 export default function ContactForm(
   props: masterFormPropsWithDataT<contactSchemaT>
@@ -77,11 +78,13 @@ export default function ContactForm(
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
+  const [formKey, setFormKey] = useState(0);
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-
+  const pathName = usePathname();
+  const formRef =  useRef<HTMLFormElement>(null);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -97,6 +100,19 @@ export default function ContactForm(
     debounceTimeout.current = setTimeout(() => {
       setPrintNameFn(value); // Update the state after 300ms of inactivity
     }, 300);
+  };
+
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
+    // if (!whatsappFn || whatsappFn === entityData.whatsapp) {
+      // if (val.startsWith("+91")) {  
+        // setWhatsappFn(val); 
+      // }
+    // }
+    // if (val === '') {
+    //   setWhatsappFn('');
+    //   return;
+    // }
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -151,12 +167,37 @@ export default function ContactForm(
         name: result.data[0].name,
         // reloadOpts: true,
       };
-      setSnackOpen(true);
+      // setFormError({});
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
       setFormError({});
+      setSnackOpen(true);
+      if (pathName !== "/cap/admin/lists/contactList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        // if (formRef.current) {
+          // formRef.current.reset();
+        // }
+        // setSelectValues({
+        //   ...selectValues,
+        //   contactGroup: { id: 0, name: " "},
+        //   // organisation: { id: 0, name: " " }, 
+        //   organisation: {id: 0, name: " "},
+          
+        // });
+        // setSelectValues({});
+        setFormKey(formKey + 1); 
+        setPrintNameFn(""); 
+        setWhatsappFn(""); 
+        setDocData([]); 
+        // setFormError({});
+      } 
+      // setSnackOpen(true);
+      // props.setDialogValue ? props.setDialogValue(newVal) : null;
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -310,7 +351,7 @@ export default function ContactForm(
         id={"organisation"}
         label={"Organisation"}
         showDetails={true}
-        onChange={(e, val, s) =>
+        onChange={(e, val, s) => 
           setSelectValues({
             ...selectValues,
             organisation: val ? val : { id: 0, name: "" },
@@ -523,6 +564,7 @@ export default function ContactForm(
         helperText={formError?.mobile?.msg}
  setFormError={setFormError}
         defaultValue={entityData.mobile}
+        onChange={handleWhatsappChange}
         fullWidth
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -543,6 +585,7 @@ export default function ContactForm(
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length===0? "": "IN"}
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
  setFormError={setFormError}
@@ -839,19 +882,36 @@ export default function ContactForm(
 
     }
     else if (field.is_default_column) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
-
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
-
-      fieldArr.push(fld);
+      if(field.column_name_id === 'whatsapp')
+        {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
+    
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-default-${field.column_name_id}-${whatsappFn}`,
+            disabled: field.is_disabled === 1 ? true : false,
+          });
+    
+          fieldArr.push(fld);
+        } else {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
+    
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-default-${field.column_name_id}`,
+            disabled: field.is_disabled === 1 ? true : false,
+          });
+    
+          fieldArr.push(fld);
+        }
     } else {
       const fld = (
         <CustomField
@@ -886,8 +946,8 @@ export default function ContactForm(
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactForm" sx={{ p: 3 }}>
-        <form action={handleSubmit} noValidate>
+      <Box id="contactForm">
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
@@ -911,13 +971,37 @@ export default function ContactForm(
                 );
               }
             })}
+            {/* </Grid> */}
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // mt: 1,
+              }}
+            >
+            </Grid>
+            {dialogOpen && (
+              <AddDialog
+                title=""
+                open={dialogOpen}
+                setDialogOpen={setDialogOpen}
+              >
+                <DocModal
+                  docData={docData}
+                  setDocData={setDocData}
+                  setDialogOpen={setDialogOpen}
+                />
+              </AddDialog>
+            )}
           </Grid>
           <Grid xs={12}>
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              marginTop: 2
+              marginTop: 1
             }}
           >
               <Tooltip

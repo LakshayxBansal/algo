@@ -41,6 +41,7 @@ import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const pgSize = 10;
 
@@ -166,19 +167,19 @@ export default function EntityList(props: entitiyCompT) {
     }, 400);
 
     // for title
-    if (props.title) {
-      let newUrl: string;
-      if (searchParams.size > 0) {
-        // newUrl = url+`&pgTitle=${props.title}`
-        const newSearchParams = new URLSearchParams(searchParams.toString());
-        newSearchParams.set("pgTitle", props.title);
-        // router.push(url+`?${newSearchParams.toString()}`);
-        newUrl = url + `?${newSearchParams.toString()}`;
-      } else {
-        newUrl = url + `?pgTitle=${props.title}`;
-      }
-      router.push(newUrl);
-    }
+    // if (props.title) {
+    //   let newUrl: string;
+    //   if (searchParams.size > 0) {
+    //     // newUrl = url+`&pgTitle=${props.title}`
+    //     const newSearchParams = new URLSearchParams(searchParams.toString());
+    //     newSearchParams.set("pgTitle", props.title);
+    //     // router.push(url+`?${newSearchParams.toString()}`);
+    //     newUrl = url + `?${newSearchParams.toString()}`;
+    //   } else {
+    //     newUrl = url + `?pgTitle=${props.title}`;
+    //   }
+    //   router.push(newUrl);
+    // }
     //for title
 
     if (searchData) {
@@ -278,6 +279,7 @@ export default function EntityList(props: entitiyCompT) {
             ) : null}
           </AddDialog>
         )}
+        <SecondNavbar title={props.title}/>
         <Paper
           elevation={3}
           sx={{

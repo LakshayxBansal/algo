@@ -23,6 +23,7 @@ import {
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
 export default function CurrencyForm(props: masterFormPropsWithDataT<currencySchemaT>) {
   const [formError, setFormError] = useState<
@@ -34,7 +35,8 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
   const [symbol, setSymbol] = useState("");
   const [sample, setSample] = useState("");
   const entityData: currencySchemaT = props.data ? props.data : {} as currencySchemaT;
-
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
   // if (props.data) {
   //   setCurrencySystem(entityData.currency_system);
   //   setDecimalPlaces(entityData.decimal_places);
@@ -57,9 +59,18 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
+      if (pathName !== "/cap/admin/lists/currencyList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+        setSample("");
+        // setFormError({});
+      }
     } else {
       const issues = result.data;
 
@@ -161,7 +172,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
         </Alert>
       </Collapse>
       <Box id="currencyForm">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl

@@ -26,7 +26,7 @@ function PaperComponent(props: PaperProps & { handleid: string }) {
         bottom: (window.innerHeight + offsetHeight) / 2 - 64,
       });
     }
-  }, []);
+  }, [props.handleid]);
 
   return (
     <Draggable

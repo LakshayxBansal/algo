@@ -14,6 +14,7 @@ import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
 export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
@@ -21,6 +22,8 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   async function persistEntity(data: nameMasterDataT) {
     let result;
@@ -45,9 +48,16 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/categoryList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -98,7 +108,7 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
         </Alert>
       </Collapse>
       <Box>
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
