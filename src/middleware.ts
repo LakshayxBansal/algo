@@ -1,7 +1,17 @@
-export { default } from 'next-auth/middleware';
-export const config = {
-  matcher: ["/cap", "/cap/enquiry"]
+import { NextResponse } from 'next/server';
+// export { default } from 'next-auth/middleware';
+// export const config = {
+//   matcher: ["/cap", "/cap/enquiry"]
+// }
+export function middleware(request: Request) {
+  const url = new URL(request.url);
+
+  const response = NextResponse.next();
+  // Pass pathname and query string as headers
+  response.headers.set('x-nextjs-pathname', url.pathname);
+  return response;
 }
+
 
 
 // import { withAuth } from "next-auth/middleware"
