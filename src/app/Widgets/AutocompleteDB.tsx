@@ -33,7 +33,7 @@ type autocompleteDBT = {
   name: string;
   id: string;
   label: string;
-  fetchDataFn: any;
+  fetchDataFn: (arg0: string) => Promise<any>;
   onChange?: OnChangeFunction;
   renderOptions?: SelectOptionsFunction;
   labelOptions?: SelectOptionsFunction;
@@ -51,7 +51,7 @@ type autocompleteDBT = {
   showDetails?: boolean;
   autoFocus?: boolean;
   iconControl?: React.ReactNode | null;
-  setFormError ?: (props: any) => void
+  setFormError?: (props: any) => void
   //children: React.FunctionComponentElements
 };
 
@@ -298,11 +298,11 @@ export function AutocompleteDB(props: autocompleteDBT) {
         if (props.formError?.error && props.setFormError) {
           props.setFormError((prevFormError: Record<string, any>) => {
             const updatedFormError = { ...prevFormError };
-        
+
             if (updatedFormError['form']) {
               delete updatedFormError['form']; // Remove the 'formError' property
             }
-        
+
             return {
               ...updatedFormError,
               [props.name]: {
@@ -312,7 +312,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             };
           });
         }
-        
+
         if (reason != "blur") {
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)
