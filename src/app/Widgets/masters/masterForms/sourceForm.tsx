@@ -14,6 +14,7 @@ import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
 export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
@@ -21,6 +22,8 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -34,9 +37,16 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/sourceList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -96,7 +106,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
         </Alert>
       </Collapse>
       <Box id="sourceForm">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
@@ -110,6 +120,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {

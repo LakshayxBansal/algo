@@ -24,7 +24,10 @@ import Button from "@mui/material/Button";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import DocModal from "@/app/utils/docs/DocModal";
 
-import { createEnquiry } from "@/app/controllers/enquiry.controller";
+import {
+  createEnquiry,
+  updateEnquiry,
+} from "@/app/controllers/enquiry.controller";
 import {
   getEnquirySource,
   getEnquirySourceById,
@@ -54,6 +57,8 @@ import dayjs from "dayjs";
 import { ZodIssue } from "zod";
 import {
   docDescriptionSchemaT,
+  enquiryDataSchemaT,
+  enquiryProductArraySchemaT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
@@ -71,6 +76,7 @@ import SubStatusForm from "@/app/Widgets/masters/masterForms/subStatusForm";
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 import { GridCloseIcon } from "@mui/x-data-grid";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
 
 export interface InputFormProps {
   baseData: {
@@ -80,32 +86,47 @@ export interface InputFormProps {
     config_data: Record<string, any>;
     regional_setting: Record<string, any>;
     loggedInUserData: Record<string, any>;
+    statusFromURL: string | string[] | undefined;
   };
 }
 
-const rows: any = [];
-
 export default function InputForm({ baseData }: InputFormProps) {
-  const [status, setStatus] = useState("1");
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({
-    received_by: {
-      id: baseData.loggedInUserData.id,
-      name: baseData.loggedInUserData.name,
-    },
-  });
+  const defaultData = baseData.enqData.defaultData ?? {};
+  const enqData = baseData.enqData;
+
+  // console.log("Enquiry Data for enquiry no 119 ", baseData.enqData);
+  const [status, setStatus] = useState(
+    defaultData?.status?.id != null ? defaultData.status.id.toString() : "1"
+  );
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>(
+    enqData?.enquiry_id
+      ? defaultData
+      : {
+          received_by: {
+            id: baseData.loggedInUserData.id,
+            name: baseData.loggedInUserData.name,
+          },
+        }
+  );
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [productFormError, setProductFormError] = useState<
     Record<number, Record<string, { msg: string; error: boolean }>>
   >({});
-  const [data, setData] = React.useState(rows);
+  const [data, setData] = useState<enquiryProductArraySchemaT>(
+    baseData?.enqData?.updatedProducts ?? []
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
-  const [subStatus, setSubStatus] = useState<optionsDataT>();
-  const [nextAction, setNextAction] = useState<optionsDataT>();
+  const [subStatus, setSubStatus] = useState<optionsDataT>(
+    defaultData?.sub_status ?? {}
+  );
+  const [nextAction, setNextAction] = useState<optionsDataT>(
+    defaultData?.next_action ?? {}
+  );
 
   const router = useRouter();
 
@@ -136,6 +157,9 @@ export default function InputForm({ baseData }: InputFormProps) {
         required={false}
         error={formError?.enq_number?.error}
         helperText={formError?.enq_number?.msg}
+        setFormError={setFormError}
+        defaultValue={enqData?.enq_number ?? ""}
+        // disabled={baseData?.status === "true" ? true : false}
       />,
     ],
     [
@@ -147,7 +171,6 @@ export default function InputForm({ baseData }: InputFormProps) {
         inputType={InputType.DATETIMEINPUT}
         id="date"
         name="date"
-        defaultValue={dayjs(new Date())}
         required={false}
         sx={{ display: "flex", flexGrow: 1 }}
         slotProps={{
@@ -159,6 +182,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             tabIndex: -1,
           },
         }}
+        defaultValue={enqData?.date ? adjustToLocal(enqData.date) : dayjs()}
       />,
     ],
     [
@@ -175,6 +199,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getContactById}
         required={false}
         formError={formError?.contact ?? formError.contact}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ContactForm
             setDialogOpen={fnDialogOpen}
@@ -183,6 +208,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
+        defaultValue={defaultData?.contact ?? {}}
       />,
     ],
     [
@@ -198,6 +224,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getCategoryById}
         required={false}
         formError={formError?.category ?? formError.category}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CategoryForm
             setDialogOpen={fnDialogOpen}
@@ -205,6 +232,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
+        defaultValue={defaultData?.category ?? {}}
       />,
     ],
     [
@@ -220,6 +248,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getEnquirySourceById}
         required={false}
         formError={formError?.source ?? formError.source}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SourceForm
             setDialogOpen={fnDialogOpen}
@@ -227,6 +256,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
+        defaultValue={defaultData?.source ?? {}}
       />,
     ],
     [
@@ -243,6 +273,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getExecutiveById}
         required={false}
         formError={formError?.received_by ?? formError.received_by}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
@@ -252,10 +283,12 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={
-          {
-            id: baseData?.loggedInUserData?.id,
-            name: baseData?.loggedInUserData?.name,
-          } as optionsDataT
+          enqData?.enquiry_id
+            ? defaultData?.received_by ?? {}
+            : ({
+                id: baseData?.loggedInUserData?.id,
+                name: baseData?.loggedInUserData?.name,
+              } as optionsDataT)
         }
       />,
     ],
@@ -267,7 +300,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           row
           name="status"
           id="status"
-          defaultValue="1"
+          defaultValue={defaultData?.status?.id?.toString() ?? "1"}
           onChange={onStatusChange}
           sx={{ color: "black" }}
         >
@@ -305,6 +338,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         fnFetchDataByID={getEnquirySubSatusById}
         required={false}
         formError={formError?.sub_status ?? formError.sub_status}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SubStatusForm
             setDialogOpen={fnDialogOpen}
@@ -336,13 +370,13 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         required={false}
+        defaultValue={defaultData?.action_taken ?? {}}
       />,
     ],
     [
       "next_action",
       <SelectMasterWrapper
         key={`next-action-${status}`}
-        defaultValue={nextAction}
         name="next_action"
         id="next_action"
         label="next_action"
@@ -350,6 +384,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
         fetchDataFn={getEnquiryAction}
         formError={formError?.next_action ?? formError.next_action}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ActionForm
             setDialogOpen={fnDialogOpen}
@@ -359,6 +394,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         )}
         disabled={status === "2"}
         required={false}
+        defaultValue={nextAction}
       />,
     ],
     [
@@ -366,15 +402,11 @@ export default function InputForm({ baseData }: InputFormProps) {
       <InputControl
         format={dateTimeFormat}
         key={status}
-        defaultValue={
-          status === "2" ? "11/22/2024 11:09 PM" : dayjs(new Date())
-        }
         label="When"
-        required={false}
         inputType={InputType.DATETIMEINPUT}
         id="next_action_date"
         name="next_action_date"
-        disabled={status === "2"}
+        setFormError={setFormError}
         slotProps={{
           textField: {
             error: formError?.next_action_date?.error,
@@ -384,6 +416,15 @@ export default function InputForm({ baseData }: InputFormProps) {
             tabIndex: -1,
           },
         }}
+        disabled={status === "2"}
+        required={false}
+        defaultValue={
+          status === "1"
+            ? enqData?.next_action_date
+              ? adjustToLocal(enqData.next_action_date)
+              : dayjs()
+            : null
+        }
       />,
     ],
     [
@@ -391,23 +432,24 @@ export default function InputForm({ baseData }: InputFormProps) {
       <InputControl
         inputType={InputType.TEXTFIELD}
         key={`closure-remark-${status}`}
-        defaultValue={""}
         placeholder="Closure remarks"
         label="closure_remark"
-        required={false}
         multiline
         name="closure_remark"
         id="closure_remark"
         rows={1}
         fullWidth
-        disabled={status === "1"}
         error={formError?.closure_remark?.error}
         helperText={formError?.closure_remark?.msg}
+        setFormError={setFormError}
         sx={{
           "& .MuiFormHelperText-root": {
             margin: 0,
           },
         }}
+        disabled={status === "1"}
+        required={false}
+        defaultValue={status === "1" ? "" : enqData?.closure_remark ?? ""}
       />,
     ],
   ]);
@@ -425,13 +467,12 @@ export default function InputForm({ baseData }: InputFormProps) {
     let result;
     let issues = [];
 
-    result = await createEnquiry({
-      enqData: formatedData,
-      product: data,
-      docData: docData,
-    });
+    result = await persistEntity(
+      formatedData as enquiryDataSchemaT,
+      data as enquiryProductArraySchemaT
+    );
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
+      // const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
       setTimeout(function () {
         location.reload();
@@ -474,6 +515,38 @@ export default function InputForm({ baseData }: InputFormProps) {
       }
     }
   };
+
+  async function persistEntity(
+    enquirydata: enquiryDataSchemaT,
+    productData: enquiryProductArraySchemaT
+  ) {
+    let result;
+    const newDocsData = docData.filter((row: any) => row.type !== "db");
+    if (enqData?.enquiry_id) {
+      enquirydata.id = enqData.enquiry_id;
+      enquirydata.stamp = enqData.stamp;
+      enquirydata.enquiry_tran_type =
+        baseData.statusFromURL === "true"
+          ? baseData.enqData.allocated_to.id === selectValues.allocated_to.id
+            ? 4 // If status exists and allocation matches, assign 4
+            : 2 // If status exists but allocation doesn't match, assign 2
+          : 3; // If no status then it is full update, assign 3
+      enquirydata.allocated_to_id = defaultData.allocated_to?.id;
+      enquirydata.created_by = enqData.created_by;
+      enquirydata.status_version = 0;
+      result = await updateEnquiry({
+        enqData: enquirydata,
+        product: productData,
+      });
+    } else {
+      result = await createEnquiry({
+        enqData: enquirydata,
+        product: productData,
+        docData: newDocsData,
+      });
+    }
+    return result;
+  }
 
   const handleCancel = () => {
     router.back();
@@ -596,15 +669,17 @@ export default function InputForm({ baseData }: InputFormProps) {
                     id="call_receipt_remark"
                     rows={6}
                     fullWidth
-                    required={propsForCallReceiptField.required}
-                    disabled={propsForCallReceiptField.disabled}
                     error={formError?.call_receipt_remark?.error}
                     helperText={formError?.call_receipt_remark?.msg}
+ setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
                       },
                     }}
+                    disabled={Boolean(propsForCallReceiptField.disabled)}
+                    required={propsForCallReceiptField.required}
+                    defaultValue={enqData?.call_receipt_remark ?? ""}
                   />
                 </Grid>
                 <Grid
@@ -623,15 +698,17 @@ export default function InputForm({ baseData }: InputFormProps) {
                     id="suggested_action_remark"
                     rows={6}
                     fullWidth
-                    required={propsForSugActionField.required}
-                    disabled={propsForSugActionField.disabled}
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
+ setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
                       },
                     }}
+                    disabled={Boolean(propsForSugActionField.disabled)}
+                    required={propsForSugActionField.required}
+                    defaultValue={enqData.suggested_action_remark}
                   />
                 </Grid>
               </Grid>
@@ -649,10 +726,10 @@ export default function InputForm({ baseData }: InputFormProps) {
 
         fld = React.cloneElement(baseElement, {
           ...baseElement.props,
+          key: `field-default-${field.column_name_id}`,
           label: field.column_label,
           required: field.is_mandatory === 1,
           disabled: field.is_disabled ? true : baseElement.props.disabled,
-          key: `field-default-${field.column_name_id}`,
         });
 
         fieldArr.push(fld);
@@ -662,7 +739,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue=""
+          defaultValue={enqData[field.column_name_id]}
         />
       );
       fieldArr.push(fld);
@@ -748,32 +825,34 @@ export default function InputForm({ baseData }: InputFormProps) {
                   alignItems="flex-end"
                   my={2}
                 >
-              <Tooltip
-                title={
-                  docData.length > 0 ? (
-                    docData.map((file: any, index: any) => (
-                      <Typography variant="body2" key={index}>
-                        {file.description}
-                      </Typography>
-                    ))
-                  ) : (
-                    <Typography variant="body2" color="white">
-                      No files available
-                    </Typography>
-                  )
-                }
-              >
-                <IconButton
-                  sx={{ marginRight: "3rem" }}
-                  onClick={() => setDocDialogOpen(true)}
-                  aria-label="file"
-                >
-                  <Badge badgeContent={docData.length} color="primary">
-                    <AttachFileIcon></AttachFileIcon>
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-                  <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+                  <Tooltip
+                    title={
+                      docData.length > 0 ? (
+                        docData.map((file: any, index: any) => (
+                          <Typography variant="body2" key={index}>
+                            {file.description}
+                          </Typography>
+                        ))
+                      ) : (
+                        <Typography variant="body2" color="white">
+                          No files available
+                        </Typography>
+                      )
+                    }
+                  >
+                    <IconButton
+                      sx={{ marginRight: "3rem" }}
+                      onClick={() => setDocDialogOpen(true)}
+                      aria-label="file"
+                    >
+                      <Badge badgeContent={docData.length} color="primary">
+                        <AttachFileIcon></AttachFileIcon>
+                      </Badge>
+                    </IconButton>
+                  </Tooltip>
+                  <Button onClick={handleCancel} tabIndex={-1}>
+                    Cancel
+                  </Button>
                   <Button type="submit" variant="contained">
                     Submit
                   </Button>

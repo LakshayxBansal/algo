@@ -24,6 +24,7 @@ import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateProduct } from "@/app/controllers/product.controller";
+import { usePathname } from "next/navigation";
 
 export default function ProductForm(props: masterFormPropsWithDataT<productSchemaT>) {
   const [formError, setFormError] = useState<
@@ -32,6 +33,8 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: productSchemaT = props.data ? props.data : {} as productSchemaT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   entityData.group = props.data?.group;
   entityData.unit = props.data?.unit;
@@ -57,9 +60,16 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
+      if (pathName !== "/cap/admin/lists/productList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -130,7 +140,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
         </Alert>
       </Collapse>
       <Box id="sourceForm">
-        <form action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
@@ -143,6 +153,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {
@@ -161,6 +172,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 name="alias"
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.alias}
                 onKeyDown={() => {
                   setFormError((curr) => {
@@ -193,6 +205,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                   })
                 }
                 formError={formError?.productGroup}
+                setFormError={setFormError}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <ProductGroupForm
                     setDialogOpen={fnDialogOpen}
@@ -225,6 +238,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 fetchDataFn={getUnit}
                 fnFetchDataByID={getUnitById}
                 formError={formError.unit}
+                setFormError={setFormError}
                 renderForm={(fnDialogOpen, fnDialogValue, data?) => (
                   <UnitForm
                     setDialogOpen={fnDialogOpen}
@@ -243,6 +257,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 label="HSN Code"
                 error={formError?.hsn_code?.error}
                 helperText={formError?.hsn_code?.msg}
+ setFormError={setFormError}
                 defaultValue={entityData.hsn_code}
                 onKeyDown={() => {
                   setFormError((curr) => {

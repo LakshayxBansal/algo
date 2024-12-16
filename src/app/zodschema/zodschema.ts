@@ -485,9 +485,9 @@ export const enquiryLedgerSchema = z.object({
   status_id: z.number().min(1),
   sub_status: z.string().min(1, { message: "Field must not be empty" }),
   sub_status_id: z.number().min(1),
-  action_taken_id: z.number().optional(),
+  action_taken_id: z.number().nullable().optional(),
   action_taken: z.string().optional(),
-  next_action_id: z.number().optional(),
+  next_action_id: z.number().nullable().optional(),
   next_action: z.string().optional(),
   next_action_date: z.string().min(0).max(20).nullable().optional(),
   suggested_action_remark: z
@@ -565,7 +565,7 @@ export const supportLedgerSchema = z.object({
   status_id: z.number().min(1),
   sub_status: z.string().min(1, "Field must not be empty").max(50),
   sub_status_id: z.number().min(1, "Field must not be empty"),
-  action_taken_id: z.number().min(0).optional(),
+  action_taken_id: z.number().min(0).nullable().optional(),
   action_taken: z.string().min(0).max(60).optional(),
   next_action_id: z.number().min(0).nullable().optional(),
   next_action: z.string().max(60).optional(),
@@ -587,6 +587,17 @@ export const supportLedgerSchema = z.object({
   created_by_name: z.string().max(60).optional(),
   allocated_to_name: z.string().max(60).optional(),
   stamp: z.number().optional(),
+  custom_id: z.number().optional(),
+  c_col1: z.string(),
+  c_col2: z.string(),
+  c_col3: z.string(),
+  c_col4: z.string(),
+  c_col5: z.string(),
+  c_col6: z.string(),
+  c_col7: z.string(),
+  c_col8: z.string(),
+  c_col9: z.string(),
+  c_col10: z.string(),
 });
 
 export const supportTicketSchema =
@@ -1038,7 +1049,7 @@ export const companySchema = z.object({
     .optional(),
   state: z.string().optional(),
   state_id: z.number().optional(),
-  country: z.string().optional(),
+  country: z.string().min(1,"Required"),
   country_id: z.number().optional(),
   pincode: z
     .string()

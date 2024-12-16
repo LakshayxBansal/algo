@@ -19,7 +19,8 @@ import {
 import {
     DragHandle as DragHandleIcon,
     ArrowUpward as ArrowUpwardIcon,
-    ArrowDownward as ArrowDownwardIcon
+    ArrowDownward as ArrowDownwardIcon,
+    Label
 } from "@mui/icons-material";
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { createCustomFields } from "@/app/controllers/customField.controller";
@@ -73,8 +74,8 @@ const FieldConfigurator = () => {
             { label: 'Contact', value: 5 },
             { label: 'Organisation', value: 19 },
             { label: 'Executive', value: 11 },
-            { label: 'Executive Department', value: 10 }
-            // { label: 'Item', value: 16 },
+            { label: 'Executive Department', value: 10 },
+            { label: 'Support', value: 28 },
             // { label: 'Source', value: 2 },
             // { label: 'Executive Group', value: 12 },
             // { label: 'Contact Group', value: 6 },

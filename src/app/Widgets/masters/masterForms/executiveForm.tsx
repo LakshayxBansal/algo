@@ -63,6 +63,7 @@ import { AddDialog } from "../addDialog";
 import { useRouter } from "next/navigation";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { usePathname } from "next/navigation";
 import { emailRegex } from "@/app/zodschema/zodschema";
 import { boolean } from "zod";
 
@@ -79,6 +80,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const entityData: executiveSchemaT = props.data ? props.data : {} as executiveSchemaT;
+  const pathName = usePathname();
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
+  const [formKey, setFormKey] = useState(0);
+
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
+  };
+
   let fieldArr: React.ReactElement[] = [];
 
 
@@ -88,7 +97,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   // const [keyDownEmail,setKeyDownEmail] = useState(false);
   // const [keyDownMobile,setKeyDownMobile] = useState(false);
   const keyDownEmail = useRef<boolean | undefined>(false);
-  const  keyDownMobile = useRef<boolean | undefined>(false);
+  const keyDownMobile = useRef<boolean | undefined>(false);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -116,6 +125,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.name}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -136,6 +146,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.alias}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -195,6 +206,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         formError={formError?.executive_dept ?? formError.executive_dept}
+        setFormError={setFormError}
         fnFetchDataByID={getDeptById}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
@@ -224,6 +236,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         required
         disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
         formError={formError?.role ?? formError.role}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
             setDialogOpen={fnDialogOpen}
@@ -274,6 +287,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.pan}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -295,6 +309,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
+        setFormError={setFormError}
         defaultValue={entityData.aadhaar}
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -322,20 +337,20 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         width={365}
         onChange={(e, val, s) => {
           setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
-          if (Object.keys(entityData).length===0 && val) {
+          if (Object.keys(entityData).length === 0 && val) {
             if (emailRegex.test(val.contact)) {
-              if(!keyDownEmail.current && email?.current){
+              if (!keyDownEmail.current && email?.current) {
                 email.current.value = val.contact;
               }
-              if(!keyDownMobile.current){
+              if (!keyDownMobile.current) {
                 setMobile('');
               }
             } else {
-              if(!keyDownMobile.current){
+              if (!keyDownMobile.current) {
                 setMobile(val.contact);
               }
-              if(!keyDownEmail.current && email.current){
-                email.current.value ="";
+              if (!keyDownEmail.current && email.current) {
+                email.current.value = "";
               }
             }
           }
@@ -343,6 +358,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         }
         fetchDataFn={getApplicationUser}
         formError={formError.crm_user}
+        setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <InviteUserForm
             setDialogOpen={fnDialogOpen}
@@ -365,12 +381,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         fullWidth
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
+        setFormError={setFormError}
         inputRef={email}
         defaultValue={entityData.email}
-        onChange={(e : React.ChangeEvent<HTMLInputElement>)=>{
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           // setEmail(e.target.value);
-          if (keyDownEmail.current === undefined || keyDownEmail.current=== false) {
-            keyDownEmail.current = true; 
+          if (keyDownEmail.current === undefined || keyDownEmail.current === false) {
+            keyDownEmail.current = true;
           }
         }}
       // onKeyDown={() => {
@@ -391,12 +408,20 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
         defaultValue={mobile}
-        onChange={(val:string)=>{
+        setFormError={setFormError}
+        onChange={(val: string) => {
           // setMobile(val);
+          handleWhatsappChange
           if (keyDownMobile.current === undefined || keyDownMobile.current === false) {
-            keyDownMobile.current = true; 
+            keyDownMobile.current = true;
           }
         }}
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { mobile, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
       // fullWidth
       />
     ],
@@ -409,10 +434,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length === 0 ? "" : "IN"}
         fullWidth
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
-        defaultValue={entityData.whatsapp}
+        setFormError={setFormError}
+        // defaultValue={entityData.whatsapp}
+        defaultValue={whatsappFn}
         slotprops={{
           flagButton: {
             tabIndex: -1
@@ -446,6 +474,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1,
           }
         }}
+        setFormError={setFormError}
         sx={{ width: "100%" }}
       />
     ],
@@ -468,6 +497,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           }
         }}
         sx={{ width: "100%" }}
+        setFormError={setFormError}
       />
     ],
     [
@@ -490,6 +520,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             tabIndex: -1,
           }
         }}
+        setFormError={setFormError}
         sx={{ width: "100%" }}
       />
     ],
@@ -505,6 +536,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.address1}
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
+        setFormError={setFormError}
       // fullWidth
       />
     ],
@@ -520,6 +552,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.address2}
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
+        setFormError={setFormError}
       // fullWidth
       />
     ],
@@ -534,6 +567,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.city}
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
+        setFormError={setFormError}
       />
     ],
     [
@@ -600,6 +634,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={entityData.pincode}
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
+        setFormError={setFormError}
       // onKeyDown={() => {
       //   setFormError((curr) => {
       //     const { pincode, ...rest } = curr;
@@ -630,7 +665,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
-      
+
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
       data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
@@ -655,9 +690,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         props.setDialogValue ? props.setDialogValue(newVal) : null;
         setFormError({});
         setSnackOpen(true);
-        setTimeout(() => {
-          props.setDialogOpen ? props.setDialogOpen(false) : null;
-        }, 1000);
+        // setTimeout(() => {
+        //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+        // }, 1000); 
+        if (pathName !== "/cap/admin/lists/executiveList" || entityData.id) {
+          setTimeout(() => {
+            props.setDialogOpen ? props.setDialogOpen(false) : null;
+          }, 1000);
+        } else {
+          setFormKey(formKey + 1);
+          setWhatsappFn("");
+          setDocData([]);
+        }
       } else {
         const issues = result?.data;
         // show error on screen
@@ -782,22 +826,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     });
   };
   props.metaData?.fields.map((field: any) => {
-    if (field.column_name_id === "address1" || field.column_name_id === "address2") {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
-
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-address-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false
-      });
-      fieldArr.push(fld);
-    }
-    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
-      if (field.column_name_id === 'state') {
+      if (field.column_name_id === "address1" || field.column_name_id === "address2") {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -806,32 +835,61 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           ...baseElement.props,
           label: field.column_label,
           required: field.is_mandatory === 1,
-          key: `field-subAddress-${field.column_name_id}-${stateKey}`,
-        });
-
-        fieldArr.push(fld);
-      } else {
-        const baseElement = defaultComponentMap.get(
-          field.column_name_id
-        ) as React.ReactElement;
-
-        const fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          key: `field-subAddress-${field.column_name_id}`,
+          key: `field-address-${field.column_name_id}`,
           disabled: field.is_disabled === 1 ? true : false
         });
-
         fieldArr.push(fld);
       }
-    }
-    else if (field.is_default_column) {
-      if(field.column_name_id === 'mobile'){
+      else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
+        if (field.column_name_id === 'state') {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
+
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-subAddress-${field.column_name_id}-${stateKey}`,
+          });
+
+          fieldArr.push(fld);
+        } else {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
+
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-subAddress-${field.column_name_id}`,
+            disabled: field.is_disabled === 1 ? true : false
+          });
+
+          fieldArr.push(fld);
+        }
+      }
+      // else if (field.is_default_column) {
+      else if (field.column_name_id === 'whatsapp') {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
-  
+
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}-${whatsappFn}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
+
+        fieldArr.push(fld);
+      } else if (field.column_name_id === 'mobile') {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+
         const fld = React.cloneElement(baseElement, {
           ...baseElement.props,
           label: field.column_label,
@@ -839,13 +897,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           key: `field-default-${field.column_name_id}-${mobile}`,
           disabled: field.is_disabled === 1 ? true : false
         });
-  
+
         fieldArr.push(fld);
-      }else{
+      } else if (field.is_default_column) {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
-  
+
         const fld = React.cloneElement(baseElement, {
           ...baseElement.props,
           label: field.column_label,
@@ -853,164 +911,164 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           key: `field-default-${field.column_name_id}`,
           disabled: field.is_disabled === 1 ? true : false
         });
-  
+
         fieldArr.push(fld);
+      } else {
+        const fld = (
+          <CustomField
+            key={`field-custom-${field.column_name_id}`}
+            desc={field}
+            defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]}
+          />
+        );
+        fieldArr.push(fld);
+        
       }
-    } else {
-      const fld = (
-        <CustomField
-          key={`field-custom-${field.column_name_id}`}
-          desc={field}
-          defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]}
-        />
-      );
-      fieldArr.push(fld);
-    }
-  });
+    });
 
-  return (
-    <Box>
-      <Collapse in={formError?.form ? true : false}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={clearFormError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {formError?.form?.msg}
-        </Alert>
-      </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit} noValidate>
-          <Grid container spacing={1}>
-            {fieldArr.map((field, index) => {
-              const fieldKey = field.key as string;
-              if (fieldKey.includes("field-address")) {
-                return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
+return (
+  <Box>
+    <Collapse in={formError?.form ? true : false}>
+      <Alert
+        severity="error"
+        action={
+          <IconButton
+            aria-label="close"
+            color="inherit"
+            size="small"
+            onClick={clearFormError}
+          >
+            <CloseIcon fontSize="inherit" />
+          </IconButton>
+        }
+        sx={{ mb: 2 }}
+      >
+        {formError?.form?.msg}
+      </Alert>
+    </Collapse>
+    <Box id="sourceForm">
+      <form key={formKey} action={handleSubmit} noValidate>
+        <Grid container spacing={1}>
+          {fieldArr.map((field, index) => {
+            const fieldKey = field.key as string;
+            if (fieldKey.includes("field-address")) {
+              return (
+                <Grid key={fieldKey}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={6}
 
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
-                  </Grid>
-                )
-              }
-              else if (fieldKey.includes("field-subAddress")) {
-                return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={3}
-
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
-                  </Grid>
-                )
-              }
-              else {
-                return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
-                  </Grid>
-                )
-              }
+                >
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
             }
+            else if (fieldKey.includes("field-subAddress")) {
+              return (
+                <Grid key={fieldKey}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
 
-            )}
-            <Grid xs={12}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  // marginTop: 2,
-                  paddingLeft: "2rem"
-                }}
-              >
-                <Tooltip
-                  title={docData?.length > 0 ? (
-                    docData.map((file: any, index: any) => (
-                      <Typography variant="body2" key={index}>
-                        {file.description}
-                      </Typography>
-                    ))
-                  ) : (
-                    <Typography variant="body2" color="white">
-                      No files available
-                    </Typography>
-                  )}
                 >
-                  <IconButton
-                    sx={{ marginRight: "3rem" }}
-                    onClick={() => setDialogOpen(true)}
-                    aria-label="file"
-                  >
-                    <Badge badgeContent={docData?.length} color="primary">
-                      <AttachFileIcon></AttachFileIcon>
-                    </Badge>
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
+            }
+            else {
+              return (
+                <Grid key={fieldKey}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
 
-                  </IconButton>
-                </Tooltip>
-                <Button onClick={() => {
-                  if (props.setDialogOpen === undefined) {
-                    router.push('/cap');
-                  }
-                  else {
-                    handleCancel();
-                  }
-                }} tabIndex={-1}>Cancel</Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{ width: "15%", marginLeft: "5%" }}
                 >
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-          {dialogOpen && (
-            <AddDialog
-              title="Document List"
-              open={dialogOpen}
-              setDialogOpen={setDialogOpen}
-            >
-              <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
-            </AddDialog>
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
+            }
+          }
+
           )}
+          <Grid xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: 2,
+                paddingLeft: "2rem"
+              }}
+            >
+              <Tooltip
+                title={docData?.length > 0 ? (
+                  docData.map((file: any, index: any) => (
+                    <Typography variant="body2" key={index}>
+                      {file.description}
+                    </Typography>
+                  ))
+                ) : (
+                  <Typography variant="body2" color="white">
+                    No files available
+                  </Typography>
+                )}
+              >
+                <IconButton
+                  sx={{ marginRight: "3rem" }}
+                  onClick={() => setDialogOpen(true)}
+                  aria-label="file"
+                >
+                  <Badge badgeContent={docData?.length} color="primary">
+                    <AttachFileIcon></AttachFileIcon>
+                  </Badge>
 
-        </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
-      </Box>
+                </IconButton>
+              </Tooltip>
+              <Button onClick={() => {
+                if (props.setDialogOpen === undefined) {
+                  router.push('/cap');
+                }
+                else {
+                  handleCancel();
+                }
+              }} tabIndex={-1}>Cancel</Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+        {dialogOpen && (
+          <AddDialog
+            title="Document List"
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+          </AddDialog>
+        )}
+
+      </form>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </Box>
-  );
+  </Box>
+);
 }

@@ -30,6 +30,7 @@ import {
 } from "@mui/base/Unstable_NumberInput";
 import { CustomTextField } from "@/app/utils/styledComponents";
 import capitalizeFirstChar from "@/app/utils/titleCase.utils";
+import { error } from "console";
 
 // for number
 // inputtype = TEXT
@@ -69,6 +70,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   custLabel = "",
   decPlaces,
   titleCase = false,
+  setFormError,
   ...props
 }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
@@ -101,7 +103,27 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   }
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-   
+
+    if (setFormError && props.error) {
+      setFormError((prevFormError: Record<string, any>) => {
+        const updatedFormError = { ...prevFormError };
+        
+        if (updatedFormError['form']) {
+          delete updatedFormError['form']; // Remove the 'form' property
+        }
+    
+        return {
+          ...updatedFormError,
+          [props.name]: {
+            error: false,
+            msg: "",
+          },
+        };
+      });
+    }
+    
+    
+
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;

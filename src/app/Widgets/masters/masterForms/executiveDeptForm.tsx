@@ -14,6 +14,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
 import CustomField from '@/app/cap/enquiry/CustomFields';
+import { usePathname } from "next/navigation";
 
 export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<executiveDeptSchemaT>) {
   console.log(props);
@@ -23,6 +24,9 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
 
   const [snackOpen, setSnackOpen] = React.useState(false);
   const entityData: executiveDeptSchemaT = props.data ? props.data : {} as executiveDeptSchemaT;
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
+
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
@@ -37,6 +41,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         required
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
+ setFormError={setFormError}
         defaultValue={entityData.name}
         onKeyDown={() => {
           setFormError((curr) => {
@@ -63,14 +68,21 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
     }
     const result = await persistEntity(data as executiveDeptSchemaT);
     if (result.status) {
-      setSnackOpen(true);
+      // setSnackOpen(true);
       const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
       props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/executiveDeptList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1); 
+      }
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -160,9 +172,9 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+      <Box id="sourceForm">
+        <form key={formKey} action={handleSubmit} noValidate>
+          <Grid container spacing={1}>
             {
               fieldArr.map((field, index) => {
                 const fieldKey = field.key as string;
@@ -185,7 +197,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2
+              // mt: 2
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>

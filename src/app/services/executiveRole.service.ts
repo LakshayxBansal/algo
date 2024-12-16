@@ -31,6 +31,7 @@ export async function getExecutiveRoleList(
     if (searchString !== "") {
       query = query + " where name like '%" + searchString + "%'";
     }
+    
     const result = await excuteQuery({
       host: crmDb,
       query: query,
