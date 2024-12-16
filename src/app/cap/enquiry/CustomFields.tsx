@@ -3,7 +3,7 @@ import getMasterForTable from "@/app/controllers/masterForTable.controller";
 import { optionsDataT, selectKeyValueT } from "@/app/models/models";
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
-import { Autocomplete, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
+import { Autocomplete, Box, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -32,7 +32,7 @@ type CustomFieldT = {
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void }) {
     console.log("props.defaultValue", props.defaultValue);
     const [status, setStatus] = useState(0);
-    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue.id ? props.defaultValue.id : undefined, name: props.defaultValue?.name });
+    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue?.id ? props.defaultValue.id : undefined, name: props.defaultValue?.name });
     const columnType = {
         Text: 1,
         Options: 2,
@@ -125,29 +125,35 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
             case columnType.Options:
                 const option = props.desc.column_format?.split(";") || [];
                 return (
-                    <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
-                        <RadioGroup
-                            row
-                            name={props.desc.column_name}
-                            id={props.desc.column_name_id}
-                            onChange={onStatusChange}
-                            defaultValue={props.defaultValue !== undefined ? props.defaultValue : 1}
-                            value={status || (props.defaultValue !== undefined ? props.defaultValue : 1)}
-                        >
-                            <FormControlLabel
-                                control={<label />}
-                                label={props.desc.column_label + " :"}
-                            />
-                            {option.map((option, index) => (
+                    <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", ml: 3, mt: 1 }}>
+                        <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
+                            <RadioGroup
+                                row
+                                name={props.desc.column_name}
+                                id={props.desc.column_name_id}
+                                onChange={onStatusChange}
+                                defaultValue={props.defaultValue !== undefined ? props.defaultValue : 1}
+                                value={status || (props.defaultValue !== undefined ? props.defaultValue : 1)}
+                            >
                                 <FormControlLabel
-                                    key={index}
-                                    value={index + 1}
-                                    control={<Radio />}
-                                    label={option}
+                                    control={<label />}
+                                    label={props.desc.column_label + " :"}
                                 />
-                            ))}
-                        </RadioGroup>
-                    </FormControl>
+                                <Box sx={{
+                                    display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
+                                }}>
+                                    {option.map((option, index) => (
+                                        <FormControlLabel
+                                            key={index}
+                                            value={index + 1}
+                                            control={<Radio />}
+                                            label={option}
+                                        />
+                                    ))}
+                                </Box>
+                            </RadioGroup>
+                        </FormControl>
+                    </Box>
                 )
             case columnType.MasterList:
                 return (

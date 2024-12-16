@@ -146,7 +146,7 @@ const FieldConfigurator = () => {
             is_default_column: 0,
             is_default_mandatory: null,
             is_disabled: 0,
-            is_mandatory: 1,
+            is_mandatory: 0,
             modified_by: null,
             modified_on: null,
             object_type_id: parseInt(selectedFormValue)
