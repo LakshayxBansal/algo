@@ -111,12 +111,12 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
               helperText={formError?.name?.msg}
  setFormError={setFormError}
               defaultValue={props.data?.name}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
             />
           </Grid>
           <Grid

@@ -145,12 +145,12 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -164,12 +164,12 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 helperText={formError?.alias?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.alias}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { alias, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { alias, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -249,12 +249,12 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 helperText={formError?.hsn_code?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.hsn_code}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { hsn_code, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { hsn_code, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>

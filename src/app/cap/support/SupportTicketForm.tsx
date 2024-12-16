@@ -836,7 +836,7 @@ const SupportTicketForm = (props: customprop) => {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={"Enquiry saved successfully!"}
+        message={props.data ?"Ticket Details updated successfully!" :"Ticket Details saved successfully!"}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
