@@ -239,7 +239,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
     Object.keys(customMasterListData).forEach((key) => {
       data[key] = selectValues[key] ? selectValues[key].id : 0;
     });
-    console.log(data);
     return data;
   };
 
