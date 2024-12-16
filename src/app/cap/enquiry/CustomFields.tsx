@@ -95,11 +95,10 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         label={props.desc.column_label}
                         inputType={InputType.DATEINPUT}
                         name={props.desc.column_name}
-                        style={{ width: "100%" }}
+                        sx={{ width: "100%" }}
                         required={props.desc.is_mandatory}
                         defaultValue={props.defaultValue ? dayjs(props.defaultValue) : null}
                         disabled={props.desc.is_disabled === 1 ? true : false}
-                        fullWidth
                     />
                 )
             case columnType.List:

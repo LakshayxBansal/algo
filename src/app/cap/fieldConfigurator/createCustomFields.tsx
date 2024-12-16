@@ -527,7 +527,7 @@ const FieldConfigurator = () => {
                                 inputType={InputType.TEXT}
                                 id="label"
                                 key="label"
-                                label="Label"
+                                label={"Label" + `  (${item.column_label})`}
                                 name="label"
                                 error={!!fieldHelperState[item.column_name_id]?.formError.column_label} // Show error state if there's an error       
                                 helperText={fieldHelperState[item.column_name_id]?.formError?.column_label} // Display error message if it exists      
