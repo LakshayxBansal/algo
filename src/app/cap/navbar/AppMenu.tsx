@@ -63,7 +63,7 @@ export default async function AppMenu(props: {pathname: string,children: React.R
           <MenuBar
             pages= {menuOptions}
             username = {session.user?.name!}
-            companyName = {title}
+            companyName = {session.user?.dbInfo?.dbName!}
             userId = {session.user.userId}
             companyId = {session.user.dbInfo.id}
             profileImg = {img_src ? img_src : session.user.image}
