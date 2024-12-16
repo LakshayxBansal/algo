@@ -699,12 +699,12 @@ export default function ContactForm(
  setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { city, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { city, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />,
     ],
     [
@@ -721,12 +721,12 @@ export default function ContactForm(
  setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pincode, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pincode, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />,
     ],
     [

@@ -189,12 +189,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 helperText={formError?.symbol?.msg}
  setFormError={setFormError}
                 onChange={onSymbolChange}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { symbol, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { symbol, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -208,12 +208,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -228,12 +228,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 error={formError?.shortForm?.error}
                 helperText={formError?.shortForm?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { shortForm, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { shortForm, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
