@@ -142,12 +142,12 @@ export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<execu
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
  setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -160,12 +160,12 @@ export default function ExecutiveGroupForm(props: masterFormPropsWithDataT<execu
               error={formError?.alias?.error}
               helperText={formError?.alias?.msg}
  setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { alias, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { alias, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
               style={{ width: "100%" }}
             />
           </Grid>

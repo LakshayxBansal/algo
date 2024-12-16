@@ -172,12 +172,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{width:"100%"}}
               />
             </Grid>
