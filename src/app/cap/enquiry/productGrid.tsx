@@ -319,7 +319,7 @@ export default function ProductGrid({
       },
     },
     {
-      field: "remarks",
+      field: "remark",
       headerName: "Remarks",
       width: editMode ? 200 : 91,
       renderCell: (params) => {
@@ -327,10 +327,10 @@ export default function ProductGrid({
           return (
             <InputControl
               inputType={InputType.TEXTFIELD}
-              name="remarks"
-              id="remarks"
-              defaultValue={params.row.remarks}
-              error={dgFormError?.remarks ?? dgFormError.remark}
+              name="remark"
+              id="remark"
+              defaultValue={params.row.remark}
+              error={dgFormError?.remark ?? dgFormError.remark}
               helperText={dgFormError?.remarks?.msg}
               onChange={(e: any) => {
                 setModifiedRowData((prevState) => ({
