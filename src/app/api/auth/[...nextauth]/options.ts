@@ -79,33 +79,37 @@ export const options: NextAuthOptions = {
         else if (account.provider === "credentials") {
           userId = user.id as unknown as number;
         }
-        const sessionDbData = await getDbSession(userId as number);
-        if (sessionDbData) {
-          token.dbInfo = sessionDbData;
-        }
         token.userid = userId;
       }
-      if(trigger === 'update'){                       
-        const sessionDbData = await getDbSession(token.userid as number);
-        if (sessionDbData) {
-          token.dbInfo = sessionDbData;
-        }
-      }
+      // if(userId===0){
+      //   userId = token.userid as number;
+      // }
+      // token.dbInfo = null;
+      // const sessionDbData = await getDbSession(userId as number);
+      // if (sessionDbData) {
+      //   token.dbInfo = sessionDbData;
+      // }
+      // if(trigger === 'update'){                       
+      //   const sessionDbData = await getDbSession(token.userid as number);
+      //   if (sessionDbData) {
+      //     token.dbInfo = sessionDbData;
+      //   }
+      // }
       return token;
     },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
       if (token) {
         session.user.userId = token.userid as number;
-        if (!token.dbInfo) {
+        // if (!token.dbInfo) {
           const dbInfo = await getDbSession(session.user.userId);
-          if (dbInfo) {
-            token.dbInfo = dbInfo;
-          }
-        }
-        if (token.dbInfo) {
-          session.user.dbInfo = token.dbInfo as dbInfoT;
-        }
+          // if (dbInfo) {
+          //   token.dbInfo = dbInfo;
+          // }
+        // }
+        // if (token.dbInfo) {
+          session.user.dbInfo = dbInfo as dbInfoT;
+        // }
       }
       return session;
     },

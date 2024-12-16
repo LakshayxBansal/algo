@@ -167,14 +167,14 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
             bgcolor: "white",
           }}
         >
-          <Seperator>
+          {/* <Seperator>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               {entityData.id ? "Update Company" : "Add Company"}
               <IconButton onClick={handleCancel} tabIndex={-1}>
                 <CloseIcon />
               </IconButton>
             </Box>
-          </Seperator>
+          </Seperator> */}
         </Box>
         <Collapse in={formError?.form ? true : false}>
           <Alert

@@ -55,7 +55,7 @@ export default function CompanyPage({totalInvites,totalCompanies}:{totalInvites:
           </Box>
           {dialogOpen && (
             <AddDialog
-              title=""
+              title="Add Company"
               open={dialogOpen}
               setDialogOpen={setDialogOpen}
             >
