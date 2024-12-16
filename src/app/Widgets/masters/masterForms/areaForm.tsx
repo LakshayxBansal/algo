@@ -108,47 +108,49 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form key={formKey} action={handleSubmit} noValidate>
-        <Grid container spacing={1}>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              autoFocus
-              id="name"
-              name="name"
-              label="Area Name"
-              required
-              titleCase={true}
-              defaultValue={entityData.name}
-              inputType={InputType.TEXT}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
- setFormError={setFormError}
-              style={{ width: "100%" }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
+      <Box id="areaForm" sx= {{m : 1, p : 3}}>
+        <form key={formKey} action={handleSubmit} noValidate>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                autoFocus
+                id="name"
+                name="name"
+                label="Area Name"
+                required
+                titleCase={true}
+                defaultValue={entityData.name}
+                inputType={InputType.TEXT}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+  setFormError={setFormError}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </form>
+        </form>
+      </Box>
       <Snackbar
         open={snackOpen}
         autoHideDuration={1000}

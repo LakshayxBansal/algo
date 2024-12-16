@@ -115,7 +115,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m:1, p:3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>

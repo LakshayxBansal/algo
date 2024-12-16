@@ -171,7 +171,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="currencyForm">
+      <Box id="currencyForm" sx={{m : 1, p : 3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>

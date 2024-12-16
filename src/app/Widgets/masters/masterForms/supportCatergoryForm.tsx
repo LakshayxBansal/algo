@@ -95,6 +95,7 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Box id="supportCategoryForm" sx={{m:1, p:3}}>
       <form action={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -142,6 +143,7 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
           </Grid>
         </Grid>
       </form>
+      </Box>
       <Snackbar
         open={snackOpen}
         autoHideDuration={1000}

@@ -139,7 +139,7 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="actionForm">
+      <Box id="actionForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>

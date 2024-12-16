@@ -105,7 +105,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm">
+      <Box id="sourceForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>

@@ -172,9 +172,9 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm">
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             {
               fieldArr.map((field, index) => {
                 const fieldKey = field.key as string;

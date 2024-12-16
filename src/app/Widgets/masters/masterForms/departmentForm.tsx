@@ -104,7 +104,7 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="departmentForm">
+      <Box id="departmentForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -119,8 +119,8 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
-                defaultValue={entityData.name}
+                setFormError={setFormError}
+                  defaultValue={entityData.name}
                 onKeyDown={() => {
                   setFormError((curr) => {
                     const { name, ...rest } = curr;

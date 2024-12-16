@@ -18,8 +18,6 @@ const columns: GridColDef[] = [
   },
 ];
 
-// const reqcols = ["name"]
-
 export default function Department() {
   return (
     <>

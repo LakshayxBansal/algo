@@ -139,7 +139,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm">
+      <Box id="sourceForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>

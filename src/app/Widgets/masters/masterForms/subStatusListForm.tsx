@@ -128,7 +128,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="subStatusForm">
+      <Box id="subStatusForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>

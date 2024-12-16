@@ -946,7 +946,7 @@ export default function ContactForm(
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactForm">
+      <Box id="contactForm" sx={{m : 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {

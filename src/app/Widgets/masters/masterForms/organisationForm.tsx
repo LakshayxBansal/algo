@@ -527,7 +527,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m: 1, p:3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {

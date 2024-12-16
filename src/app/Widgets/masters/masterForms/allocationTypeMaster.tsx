@@ -109,54 +109,55 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-
-      <form key={formKey} action={handleSubmit} noValidate>
-        <Grid container >
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              inputType={InputType.TEXT}
-              autoFocus
-              id="name"
-              label="Name"
-              name="name"
-              required
-              style={{width: "100%"}}
-              titleCase={true}
-              defaultValue={props.data?.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
- setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+      <Box id="allocationForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
+          <Grid container >
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                inputType={InputType.TEXT}
+                autoFocus
+                id="name"
+                label="Name"
+                name="name"
+                required
+                style={{width: "100%"}}
+                titleCase={true}
+                defaultValue={props.data?.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+  setFormError={setFormError}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </form>
+        </form>
+      </Box>
       <Snackbar
         open={snackOpen}
         autoHideDuration={1000}
