@@ -53,6 +53,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { usePathname } from "next/navigation";
 
 export default function ContactForm(props: masterFormPropsWithDataT<contactSchemaT>) {
   const [formError, setFormError] = useState<Record<string, { msg: string; error: boolean }>>({});
@@ -67,11 +68,13 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
   const [stateDisable, setStateDisable] = useState(!entityData.country);
+  const [formKey, setFormKey] = useState(0);
   let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-
+  const pathName = usePathname();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -87,6 +90,19 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
     debounceTimeout.current = setTimeout(() => {
       setPrintNameFn(value); // Update the state after 300ms of inactivity
     }, 300);
+  };
+
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
+    // if (!whatsappFn || whatsappFn === entityData.whatsapp) {
+    // if (val.startsWith("+91")) {  
+    // setWhatsappFn(val); 
+    // }
+    // }
+    // if (val === '') {
+    //   setWhatsappFn('');
+    //   return;
+    // }
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -141,12 +157,37 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         name: result.data[0].name,
         // reloadOpts: true,
       };
-      setSnackOpen(true);
+      // setFormError({});
       props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
       setFormError({});
+      setSnackOpen(true);
+      if (pathName !== "/cap/admin/lists/contactList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+        }, 1000);
+      } else {
+        // if (formRef.current) {
+        // formRef.current.reset();
+        // }
+        // setSelectValues({
+        //   ...selectValues,
+        //   contactGroup: { id: 0, name: " "},
+        //   // organisation: { id: 0, name: " " }, 
+        //   organisation: {id: 0, name: " "},
+
+        // });
+        // setSelectValues({});
+        setFormKey(formKey + 1);
+        setPrintNameFn("");
+        setWhatsappFn("");
+        setDocData([]);
+        // setFormError({});
+      }
+      // setSnackOpen(true);
+      // props.setDialogValue ? props.setDialogValue(newVal) : null;
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
     } else {
       const issues = result.data;
       // show error on screen
@@ -236,7 +277,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
       // onKeyDown={() => {
@@ -259,7 +300,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         name="alias"
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.alias}
         fullWidth
       // onKeyDown={() => {
@@ -282,7 +323,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         name="print_name"
         error={formError?.print_name?.error}
         helperText={formError?.print_name?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={printNameFn}
         fullWidth
       // onKeyDown={() => {
@@ -340,7 +381,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         name="pan"
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pan}
         fullWidth
       // onKeyDown={() => {
@@ -363,7 +404,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         name="aadhaar"
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.aadhaar}
         fullWidth
       // onKeyDown={() => {
@@ -490,7 +531,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         placeholder="Email address"
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.email}
         fullWidth
       // onKeyDown={() => {
@@ -514,8 +555,9 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         size="small"
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.mobile}
+        onChange={handleWhatsappChange}
         fullWidth
       // onKeyDown={() => {
       //   setFormError((curr) => {
@@ -536,9 +578,10 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length === 0 ? "" : "IN"}
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         // fullWidth
         // defaultValue={whatsappFn}
         // key={whatsappFn}
@@ -646,7 +689,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label="City"
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
         onKeyDown={() => {
@@ -668,7 +711,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label="Pin Code"
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
         onKeyDown={() => {
@@ -744,7 +787,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label="City"
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
       // onKeyDown={() => {
@@ -767,7 +810,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         label="Pin Code"
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
       // onKeyDown={() => {
@@ -837,19 +880,35 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
 
     }
     else if (field.is_default_column) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
+      if (field.column_name_id === 'whatsapp') {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
 
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}-${whatsappFn}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
 
-      fieldArr.push(fld);
+        fieldArr.push(fld);
+      } else {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
+
+        fieldArr.push(fld);
+      }
     } else {
       const fld = (
         <CustomField
@@ -885,8 +944,8 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactForm" sx={{ p: 3 }}>
-        <form action={handleSubmit} noValidate>
+      <Box id="contactForm">
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
@@ -910,13 +969,37 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
                 );
               }
             })}
+            {/* </Grid> */}
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // mt: 1,
+              }}
+            >
+            </Grid>
+            {dialogOpen && (
+              <AddDialog
+                title=""
+                open={dialogOpen}
+                setDialogOpen={setDialogOpen}
+              >
+                <DocModal
+                  docData={docData}
+                  setDocData={setDocData}
+                  setDialogOpen={setDialogOpen}
+                />
+              </AddDialog>
+            )}
           </Grid>
           <Grid xs={12}>
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
-                marginTop: 2
+                marginTop: 1
               }}
             >
               <Tooltip
