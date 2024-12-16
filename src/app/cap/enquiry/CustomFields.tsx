@@ -32,7 +32,7 @@ type CustomFieldT = {
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void }) {
     console.log("props.defaultValue", props.defaultValue);
     const [status, setStatus] = useState(0);
-    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue?.id, name: props.defaultValue?.name });
+    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue.id ? props.defaultValue.id : undefined, name: props.defaultValue?.name });
     const columnType = {
         Text: 1,
         Options: 2,
@@ -152,23 +152,6 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                 )
             case columnType.MasterList:
                 return (
-                    // <Autocomplete
-                    //     id={props.desc.column_name_id}
-                    //     options={[]}
-                    //     defaultValue={props.defaultValue}
-                    //     disabled={props.desc.is_disabled === 1 ? true : false}
-                    //     renderInput={(params) => (
-                    //         <InputControl
-                    //             {...params}
-                    //             inputType={InputType.TEXT}
-                    //             label={props.desc.column_label}
-                    //             name={props.desc.column_name}
-                    //             required={props.desc.is_mandatory === 1}
-                    //             fullWidth
-                    //         />
-                    //     )}
-                    //     fullWidth
-                    // />
                     <AutocompleteDB
                         name={props.desc.column_name}
                         id={props.desc.column_name_id}

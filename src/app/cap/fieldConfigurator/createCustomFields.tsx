@@ -99,7 +99,7 @@ const FieldConfigurator = () => {
             { label: 'Numeric', value: 3 },
             { label: 'Date', value: 4 },
             { label: 'List', value: 5 },
-            { label: 'Currency', value: 6 },
+            // { label: 'Currency', value: 6 },
             { label: 'Master List', value: 7 },
         ]
     };
