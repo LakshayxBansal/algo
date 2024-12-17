@@ -237,7 +237,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         ? entityData.state_id
         : 0;
     Object.keys(customMasterListData).forEach((key) => {
-      data[key] = selectValues[key] ? selectValues[key].id : 0;
+      data[key] = selectValues[key] ? selectValues[key].id : null;
     });
     return data;
   };

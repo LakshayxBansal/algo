@@ -96,6 +96,11 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         inputType={InputType.DATEINPUT}
                         name={props.desc.column_name}
                         sx={{ width: "100%" }}
+                        slotProps={{
+                            openPickerButton: {
+                                tabIndex: 1,
+                            }
+                        }}
                         required={props.desc.is_mandatory}
                         defaultValue={props.defaultValue ? dayjs(props.defaultValue) : null}
                         disabled={props.desc.is_disabled === 1 ? true : false}
