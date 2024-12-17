@@ -13,6 +13,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Portal,
   Select,
   SelectChangeEvent,
 } from "@mui/material";
@@ -316,13 +317,15 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

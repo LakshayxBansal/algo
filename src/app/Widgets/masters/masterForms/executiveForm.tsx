@@ -53,6 +53,7 @@ import {
   Collapse,
   Grid,
   IconButton,
+  Portal,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -1011,13 +1012,15 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           )}
 
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </Box>
   );

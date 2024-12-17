@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { Box, Grid, Link } from "@mui/material";
+import { Box, Grid, Link, Portal } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import {
@@ -255,13 +255,15 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
           </Grid>
         </form>
       </Box>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </Box>
     // </Box>
     // </Paper>

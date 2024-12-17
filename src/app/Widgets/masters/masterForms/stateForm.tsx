@@ -11,7 +11,7 @@ import {
 } from "@/app/models/models";
 import { nameMasterData } from "@/app/zodschema/zodschema";
 import Seperator from "../../seperator";
-import { Collapse, IconButton, Snackbar } from "@mui/material";
+import { Collapse, IconButton, Portal, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -173,13 +173,15 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
           </Grid>
         </form>
       </Box>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </>
   );
 }

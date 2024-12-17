@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Typography, Button, Snackbar, Collapse, Alert, IconButton } from "@mui/material";
+import { Box, Typography, Button, Snackbar, Collapse, Alert, IconButton, Portal } from "@mui/material";
 import { deleteCompT } from "@/app/models/models";
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -91,13 +91,15 @@ const DeleteComponent = (props: deleteCompT) => {
           </Button>
         </Box>
       </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message={"Record Deleted Successfully"}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+      <Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={1000}
+          onClose={() => setSnackOpen(false)}
+          message={"Record Deleted Successfully"}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </Box>
   );
 };

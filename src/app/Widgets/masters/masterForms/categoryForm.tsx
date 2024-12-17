@@ -8,6 +8,7 @@ import {
   updateEnquiryCategory,
 } from "../../../controllers/enquiryCategory.controller";
 import Snackbar from "@mui/material/Snackbar";
+import { Portal }from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
@@ -155,13 +156,15 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

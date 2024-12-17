@@ -8,7 +8,7 @@ import {
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
 import { executiveDeptSchemaT, masterFormPropsT, masterFormPropsWithDataT } from "@/app/models/models";
-import { Grid, Snackbar } from "@mui/material";
+import { Grid, Portal, Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -37,11 +37,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         id="name"
         label="Department Name"
         name="name"
-        fullWidth
+        style={{ width: "100%" }}
         required
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.name}
         onKeyDown={() => {
           setFormError((curr) => {
@@ -174,7 +174,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
       </Collapse>
       <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             {
               fieldArr.map((field, index) => {
                 const fieldKey = field.key as string;
@@ -184,6 +184,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
                     xs={12}
                     sm={12}
                     md={12}
+                    lg={12}
                   >
                     <div key={index}>
                       {field}
@@ -192,32 +193,39 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
                 )
               })
             }
-          </Grid>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              // mt: 2
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
+          <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
 
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

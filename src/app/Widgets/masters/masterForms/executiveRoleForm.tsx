@@ -16,7 +16,7 @@ import {
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { Grid, Snackbar } from "@mui/material";
+import { Grid, Portal, Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
@@ -236,13 +236,15 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );
