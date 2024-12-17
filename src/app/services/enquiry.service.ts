@@ -194,7 +194,7 @@ export async function getLoggedInUserDetailsDB(crmDb: string, userId: number) {
   }
 }
 
-export async function getHeaderDataAction(session: Session, id: number) {
+export async function getHeaderDataAction(session: Session, id: number | undefined) {
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
@@ -222,7 +222,7 @@ export async function getHeaderDataAction(session: Session, id: number) {
   }
 }
 
-export async function getLedgerDataAction(session: Session, id: number) {
+export async function getLedgerDataAction(session: Session, id: number| undefined) {
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
@@ -254,7 +254,7 @@ export async function getLedgerDataAction(session: Session, id: number) {
   }
 }
 
-export async function getProductDataAction(session: Session, id: number) {
+export async function getProductDataAction(session: Session, id: number| undefined) {
   try {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
@@ -273,6 +273,93 @@ export async function getProductDataAction(session: Session, id: number) {
   }
 }
 
+export async function getEnquiryDataByPageDb(
+  session: Session,
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  try {
+    const offset = page * limit;
+    const vals: any = [limit, offset];
+    if (filter) {
+      vals.unshift(filter);
+    }
+
+    const result = await excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: `
+        SELECT h.*, 
+               cm.name AS contact, 
+               em.name AS received_by, 
+               ecm.name AS category, 
+               esm.name AS source,
+               created.name AS created_by_name,
+               modified.name AS modified_by_name, 
+               l.id AS ledger_id, 
+               allocate.name AS allocated_to_name, 
+               l.suggested_action_remark, 
+               st.name AS status, 
+               sub_st.name AS sub_status, 
+               eam.name AS action_taken, 
+               next_action.name AS next_action
+        FROM enquiry_header_tran h 
+        LEFT JOIN contact_master cm ON cm.id = h.contact_id 
+        LEFT JOIN executive_master em ON em.id = h.received_by_id 
+        LEFT JOIN enquiry_category_master ecm ON ecm.id = h.category_id
+        LEFT JOIN enquiry_source_master esm ON esm.id = h.source_id
+        LEFT JOIN executive_master created ON created.id = h.created_by 
+        LEFT JOIN executive_master modified ON modified.id = h.modified_by 
+        LEFT JOIN enquiry_ledger_tran l ON l.enquiry_id = h.id AND l.active = 1 
+        LEFT JOIN executive_master allocate ON allocate.id = l.allocated_to 
+        LEFT JOIN enquiry_status_master st ON st.id = l.status_id 
+        LEFT JOIN enquiry_sub_status_master sub_st ON sub_st.id = l.sub_status_id 
+        LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id 
+        LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id 
+        ${filter ? "WHERE enq_number LIKE CONCAT('%', ?, '%')" : ""}
+        ORDER BY h.id
+        LIMIT ? OFFSET ?;
+      `,
+      values: vals,
+    });
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getEnquiryDataCount(
+  crmDb: string,
+  value: string | undefined
+) {
+  try {
+    return excuteQuery({
+      host: crmDb,
+      query:
+        "SELECT count(*) as rowCount from enquiry_header_tran " +
+        (value ? "WHERE enq_number LIKE CONCAT('%',?,'%') " : ""),
+      values: [value],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function delEnquiryDataByIdDb(session: Session, enquiryID: number) {
+  try {
+    const result = await excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query: "call deleteEnquiry(?);",
+      values: [enquiryID],
+    });
+
+    return result;
+  } catch (error:any) {
+    console.log(error);
+    return { success: false, error: error.message };
+  }
+}
 
 export async function getEnquiryDescriptionDb(crmDb: string, searchString: string) {
   try {
