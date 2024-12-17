@@ -43,12 +43,12 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         helperText={formError?.name?.msg}
         setFormError={setFormError}
         defaultValue={entityData.name}
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { name, ...rest } = curr;
-            return rest;
-          });
-        }}
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { name, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
       />
     ]
   ])

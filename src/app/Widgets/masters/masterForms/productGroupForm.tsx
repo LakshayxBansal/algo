@@ -147,12 +147,12 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -166,12 +166,12 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { alias, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { alias, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
