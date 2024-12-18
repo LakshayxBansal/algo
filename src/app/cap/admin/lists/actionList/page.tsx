@@ -11,6 +11,7 @@ import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { Box } from "@mui/material";
 
 const columns: GridColDef[] = [
   {
@@ -23,7 +24,9 @@ const columns: GridColDef[] = [
 export default function Action() {
   return (
     <>
-    <SecondNavbar title={"Action"}/>
+    <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Action"}/>
+    </Box>
       <EntityList
         title="Action"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

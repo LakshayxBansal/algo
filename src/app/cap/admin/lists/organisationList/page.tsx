@@ -8,6 +8,8 @@ import {
   getOrganisationByPage,
 } from "@/app/controllers/organisation.controller";
 import OrganisationForm from "@/app/Widgets/masters/masterForms/organisationForm";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -25,6 +27,9 @@ const columns: GridColDef[] = [
 export default function organisation() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Organisation"}/>
+      </Box>
       <EntityList
         title="Organisation"
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
