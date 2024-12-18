@@ -11,7 +11,7 @@ import {
 } from "@/app/models/models";
 import { nameMasterData } from "@/app/zodschema/zodschema";
 import Seperator from "../../seperator";
-import { Collapse, IconButton, Snackbar } from "@mui/material";
+import { Collapse, IconButton, Portal, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -34,12 +34,11 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
 
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
-      // props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
       }, 1000);
     } else {
       const issues = result.data;
@@ -118,66 +117,70 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit}>
-        <Grid container spacing={1}>
-          <Grid item xs={12} sm={12} md={6} lg={6}>
-            <InputControl
-              autoFocus
-              id="name"
-              label="State Name"
-              titleCase={true}
-              inputType={InputType.TEXT}
-              defaultValue={entityData.name}
-              name="name"
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
- setFormError={setFormError}
-              style={{ width: "100%" }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={6}>
-            <InputControl
-              id="alias"
-              label="Alias"
-              defaultValue={entityData.alias}
-              inputType={InputType.TEXT}
-              name="alias"
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
- setFormError={setFormError}
-              style={{ width: "100%" }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              // mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
+      <Box id="stateForm" sx={{m:1, p:3}}>
+        <form action={handleSubmit}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+              <InputControl
+                autoFocus
+                id="name"
+                label="State Name"
+                titleCase={true}
+                inputType={InputType.TEXT}
+                defaultValue={entityData.name}
+                name="name"
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+  setFormError={setFormError}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+              <InputControl
+                id="alias"
+                label="Alias"
+                defaultValue={entityData.alias}
+                inputType={InputType.TEXT}
+                name="alias"
+                error={formError?.alias?.error}
+                helperText={formError?.alias?.msg}
+  setFormError={setFormError}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // mt: 1,
+              }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        </form>
+      </Box>
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </>
   );
 }

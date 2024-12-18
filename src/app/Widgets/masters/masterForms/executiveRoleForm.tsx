@@ -16,7 +16,7 @@ import {
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { Grid, Snackbar } from "@mui/material";
+import { Grid, Portal, Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
@@ -75,15 +75,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/executiveRoleList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -156,7 +153,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="executiveRole">
+      <Box id="executiveRole" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -172,12 +169,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{width:"100%"}}
               />
             </Grid>
@@ -236,13 +233,15 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

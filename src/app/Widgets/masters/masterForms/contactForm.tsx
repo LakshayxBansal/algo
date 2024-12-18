@@ -14,6 +14,7 @@ import {
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
+import { Portal } from "@mui/material";
 import {
   createContact,
   updateContact,
@@ -55,13 +56,20 @@ import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 import { usePathname } from "next/navigation";
 
-export default function ContactForm(props: masterFormPropsWithDataT<contactSchemaT>) {
-  const [formError, setFormError] = useState<Record<string, { msg: string; error: boolean }>>({});
+export default function ContactForm(
+  props: masterFormPropsWithDataT<contactSchemaT>
+) {
+  const [formError, setFormError] = useState<
+    Record<string, { msg: string; error: boolean }>
+  >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props.data?.docData ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: contactSchemaT = props.data ? props.data : ({} as contactSchemaT);
+
+  const entityData: contactSchemaT = props.data
+    ? props.data
+    : ({} as contactSchemaT);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -88,21 +96,12 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
 
     // Set a new timeout
     debounceTimeout.current = setTimeout(() => {
-      setPrintNameFn(value); // Update the state after 300ms of inactivity
+      setPrintNameFn(value);
     }, 300);
   };
 
   const handleWhatsappChange = (val: string) => {
     setWhatsappFn(val);
-    // if (!whatsappFn || whatsappFn === entityData.whatsapp) {
-    // if (val.startsWith("+91")) {  
-    // setWhatsappFn(val); 
-    // }
-    // }
-    // if (val === '') {
-    //   setWhatsappFn('');
-    //   return;
-    // }
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -140,7 +139,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {};
     for (let i = 1; i <= 10; ++i) {
       data[`c_col${i}`] = "";
     }
@@ -155,42 +154,22 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
       const newVal = {
         id: result.data[0].id,
         name: result.data[0].name,
-        // reloadOpts: true,
       };
-      // setFormError({});
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/contactList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        // if (formRef.current) {
-        // formRef.current.reset();
-        // }
-        // setSelectValues({
-        //   ...selectValues,
-        //   contactGroup: { id: 0, name: " "},
-        //   // organisation: { id: 0, name: " " }, 
-        //   organisation: {id: 0, name: " "},
-
-        // });
-        // setSelectValues({});
         setFormKey(formKey + 1);
         setPrintNameFn("");
         setWhatsappFn("");
         setDocData([]);
-        // setFormError({});
       }
-      // setSnackOpen(true);
-      // props.setDialogValue ? props.setDialogValue(newVal) : null;
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
     } else {
       const issues = result.data;
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
@@ -280,12 +259,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { name, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -303,12 +276,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.alias}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { alias, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -326,12 +293,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={printNameFn}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { print_name, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -384,12 +345,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.pan}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pan, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -407,12 +362,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.aadhaar}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { aadhaar, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
+
       />
 
     ],
@@ -534,12 +484,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.email}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { email, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -559,12 +503,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         defaultValue={entityData.mobile}
         onChange={handleWhatsappChange}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { mobile, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -582,25 +520,8 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
         setFormError={setFormError}
-        // fullWidth
-        // defaultValue={whatsappFn}
-        // key={whatsappFn}
-        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        //   const value = e.target.value;
-        //   setWhatsappFn(value);
-        //   setFormError((curr) => {
-        //     const { whatsapp, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
         defaultValue={whatsappFn}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { whatsapp, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -618,12 +539,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.address1}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { address1, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -641,43 +556,9 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.address2}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { address2, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
-    // [
-    //   "address3",
-
-    //   <InputControl
-    //     inputType={InputType.TEXT}
-    //     label="Address Line 3"
-    //     name="address3"
-    //     id="address3"
-    //     error={formError?.address3?.error}
-    //     helperText={formError?.address3?.msg}
-    //     defaultValue={entityData.address3}
-    //     sx={{
-    //       width: {
-    //         xs: "90%",  // Full width for extra-small screens (mobile)
-    //         sm: "90%",   // Slightly smaller width for small screens (tablets)
-    //         md: "80%",   // Moderate width for medium screens (small laptops)
-    //         lg: "405px", // Fixed width for large screens (desktops)
-    //       },
-    //     }}
-    //     onKeyDown={() => {
-    //       setFormError((curr) => {
-    //         const { address3, ...rest } = curr;
-    //         return rest;
-    //       });
-    //     }}
-    //   />
-
-    // ],
     [
       "city",
 
@@ -692,12 +573,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { city, ...rest } = curr;
-            return rest;
-          });
-        }}
       />,
     ],
     [
@@ -714,12 +589,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pincode, ...rest } = curr;
-            return rest;
-          });
-        }}
       />,
     ],
     [
@@ -790,12 +659,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { city, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ],
@@ -813,12 +676,6 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
         setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pincode, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
       />
 
     ]
@@ -945,7 +802,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactForm">
+      <Box id="contactForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
@@ -1049,13 +906,15 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
             </AddDialog>
           )}
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

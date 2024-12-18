@@ -18,7 +18,7 @@ import {
 } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { Collapse, Grid, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
@@ -50,15 +50,12 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
     const result = await persistEntity(data as productGroupSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/productGroupList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -131,7 +128,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="productGroupForm">
+      <Box id="productGroupForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -147,12 +144,12 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -166,12 +163,12 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { alias, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { alias, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -231,13 +228,15 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

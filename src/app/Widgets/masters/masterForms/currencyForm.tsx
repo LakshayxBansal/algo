@@ -13,6 +13,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Portal,
   Select,
   SelectChangeEvent,
 } from "@mui/material";
@@ -56,7 +57,6 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
     const result = await persistEntity(data as currencySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       // setTimeout(() => {
@@ -65,6 +65,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
       if (pathName !== "/cap/admin/lists/currencyList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -171,7 +172,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="currencyForm">
+      <Box id="currencyForm" sx={{m : 1, p : 3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -189,12 +190,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 helperText={formError?.symbol?.msg}
  setFormError={setFormError}
                 onChange={onSymbolChange}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { symbol, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { symbol, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -208,12 +209,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -228,12 +229,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 error={formError?.shortForm?.error}
                 helperText={formError?.shortForm?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { shortForm, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { shortForm, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -316,13 +317,15 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

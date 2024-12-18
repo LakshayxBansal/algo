@@ -5,7 +5,7 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
-import { Collapse, Grid, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Snackbar from "@mui/material/Snackbar";
@@ -33,15 +33,12 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/allocationTypeList" || entityData.id) {
-        setTimeout(() => {
+        setTimeout(()=>{
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -49,7 +46,6 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     } else {
       const issues = result.data;
 
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       // for (const issue of issues) {
       //   for (const path of issue.path) {
@@ -109,61 +105,64 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-
-      <form key={formKey} action={handleSubmit} noValidate>
-        <Grid container >
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              inputType={InputType.TEXT}
-              autoFocus
-              id="name"
-              label="Name"
-              name="name"
-              required
-              style={{width: "100%"}}
-              titleCase={true}
-              defaultValue={props.data?.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
- setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+      <Box id="allocationForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
+          <Grid container >
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                inputType={InputType.TEXT}
+                autoFocus
+                id="name"
+                label="Name"
+                name="name"
+                required
+                style={{width: "100%"}}
+                titleCase={true}
+                defaultValue={props.data?.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+  setFormError={setFormError}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        </form>
+      </Box>
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </>
   );
 }

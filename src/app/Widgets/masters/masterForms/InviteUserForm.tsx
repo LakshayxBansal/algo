@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { Box, Grid, Link } from "@mui/material";
+import { Box, Grid, Link, Portal } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import {
@@ -104,7 +104,6 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
   };
 
   return (
-    // <Paper elevation={3} sx={{ mt: 2, p: 2,width: "500px" }} square={false}>
     <Box
       sx={{
         width: {
@@ -116,24 +115,6 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
         // padding: "10px", 
       }}
     >
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Add Invite User
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -152,149 +133,118 @@ export default function InviteUserForm(props: masterFormPropsWithExecutive) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      {/* <Box sx={{ m: 1 }}> */}
-      <form action={handleSubmit} noValidate>
-        <Grid
-          container
-          style={{
-            borderRadius: "13%",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Grid item xs={12} sm={6} md={12}>
-            <InputControl
-              inputType={InputType.TEXT}
-              name="name"
-              id="name"
-              label="Name"
-              autoFocus
-              style={{ width: "100%" }}
-              required
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
- setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={12}>
-            {emailElement && (
+      <Box id="inviteForm" sx={{m:1, p:3}}>
+        <form action={handleSubmit} noValidate>
+          <Grid
+            container
+            style={{
+              borderRadius: "13%",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Grid item xs={12} sm={6} md={12}>
               <InputControl
-                inputType={InputType.EMAIL}
-                error={formError?.email?.error}
-                helperText={formError?.email?.msg}
- setFormError={setFormError}
-                required
-                style={{ width: "100%" }}
-                id="email"
-                label="Email Address"
-                name="email"
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { email, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-              />
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6} md={12}>
-            {!emailElement && (
-              <InputControl
-                inputType={InputType.PHONE}
-                id="phone"
-                label="Phone No"
-                name="phone"
+                inputType={InputType.TEXT}
+                name="name"
+                id="name"
+                label="Name"
+                autoFocus
                 style={{ width: "100%" }}
                 required
-                error={formError?.phone?.error}
-                helperText={formError?.phone?.msg}
- setFormError={setFormError}
-                country={"in"}
-                preferredCountries={["in", "gb"]}
-                dropdownClass={["in", "gb"]}
-                disableDropdown={false}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { phone, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                setFormError={setFormError}
               />
-            )}
-          </Grid>
-          <Grid item xs={12} sm={12} md={12} sx={{ textAlign: "right" }}>
-            <Link
-              onClick={contactHandler}
-              style={{
-                fontSize: "smaller",
-                fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-              }}
+            </Grid>
+            <Grid item xs={12} sm={6} md={12}>
+              {emailElement && (
+                <InputControl
+                  inputType={InputType.EMAIL}
+                  error={formError?.email?.error}
+                  helperText={formError?.email?.msg}
+  setFormError={setFormError}
+                  required
+                  style={{ width: "100%" }}
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6} md={12}>
+              {!emailElement && (
+                <InputControl
+                  inputType={InputType.PHONE}
+                  id="phone"
+                  label="Phone No"
+                  name="phone"
+                  style={{ width: "100%" }}
+                  required
+                  error={formError?.phone?.error}
+                  helperText={formError?.phone?.msg}
+  setFormError={setFormError}
+                  country={"in"}
+                  preferredCountries={["in", "gb"]}
+                  dropdownClass={["in", "gb"]}
+                  disableDropdown={false}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} sx={{ textAlign: "right" }}>
+              <Link
+                onClick={contactHandler}
+                style={{
+                  fontSize: "smaller",
+                  fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                }}
+                sx={{
+                  display: "inline-block",
+                  textAlign: "right",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  marginBottom: "1px",
+                  ":hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                Use {contact} instead
+              </Link>
+            </Grid>
+            <Grid
+              item
+              xs={12}
               sx={{
-                display: "inline-block",
-                textAlign: "right",
-                cursor: "pointer",
-                textDecoration: "none",
-                marginBottom: "1px",
-                ":hover": {
-                  textDecoration: "underline",
-                },
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 0.5,
               }}
             >
-              Use {contact} instead
-            </Link>
-          </Grid>
-          {/* <Grid item xs={12} sm={12} md={12} sx={{ mt: 1 }}> */}
-          {/* <Grid container> */}
-          {/* <Box sx={{marginLeft: "13rem"}}> */}
-          {/* <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 variant="contained"
+                color="primary"
                 sx={{ width: "15%", marginLeft: "5%" }}
-                >
+              >
                 Submit
-                </Button> */}
-          {/* </Box> */}
-          {/* </Grid> */}
-          {/* </Grid/> */}
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 0.5,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        </form>
+      </Box>
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </Box>
-    // </Box>
-    // </Paper>
   );
 }

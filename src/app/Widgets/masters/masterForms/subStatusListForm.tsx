@@ -13,6 +13,7 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
+  Portal,
   Radio,
   RadioGroup,
 } from "@mui/material";
@@ -53,20 +54,16 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/subStatusList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
-        // setStatus("");
       }
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -128,7 +125,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="subStatusForm">
+      <Box id="subStatusForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -192,12 +189,12 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 sx={{ marginTop: "1rem" }}
               />
             </Grid>
@@ -224,13 +221,15 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

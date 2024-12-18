@@ -76,7 +76,7 @@ export default function InviteList({companyId}:{companyId : number}) {
 
   return <Box>
     <EntityList
-    // title="Invite User"
+    title="Pending User"
     renderForm={(fnDialogOpen, fnDialogValue, data) => (
       <InviteUserForm
       setDialogOpen={fnDialogOpen}

@@ -23,7 +23,7 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Badge, Collapse, Grid, IconButton, Snackbar, Tooltip, Typography } from "@mui/material";
+import { Badge, Collapse, Grid, IconButton, Portal, Snackbar, Tooltip, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import StateForm from "./stateForm";
@@ -93,15 +93,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
     const result = await persistEntity(data as organisationSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000); 
       if (pathName !== "/cap/admin/lists/organisationList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -527,7 +524,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2 }}>
+      <Box id="sourceForm" sx={{ m: 1, p:3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
@@ -630,13 +627,15 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           )}
 
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

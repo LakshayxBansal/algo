@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
-import { Box, Button, Grid, Snackbar, Typography } from "@mui/material";
+import { Box, Button, Grid, Portal, Snackbar, Typography } from "@mui/material";
 import { masterFormPropsT } from "@/app/models/models";
 
 export default function DeleteForm(props: masterFormPropsT) {
@@ -61,13 +61,15 @@ export default function DeleteForm(props: masterFormPropsT) {
           </Button>
         </Box> */}
       </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Deleted!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </Box>
   );
 }

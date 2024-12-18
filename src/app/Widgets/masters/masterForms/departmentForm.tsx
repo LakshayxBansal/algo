@@ -11,7 +11,7 @@ import { nameMasterDataT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsWithDataT } from "@/app/models/models";
-import { Collapse, Grid, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
@@ -39,15 +39,12 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/departmentList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -104,7 +101,7 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="departmentForm">
+      <Box id="departmentForm" sx={{m:1, p:3}}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -121,12 +118,12 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid
@@ -152,13 +149,15 @@ export default function DepartmentForm(props: masterFormPropsWithDataT<nameMaste
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

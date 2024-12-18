@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -37,45 +37,14 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enq
 
     data["status"] = statusName;
 
-    // let result;
-    // let issues;
-    // let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    // for (const [key, value] of formData.entries()) {
-    //   data[key] = value;
-    // }
-    // const parsed = enquirySubStatusMaster.safeParse(data);
-    // if (parsed.success) {
-    //   result = await createEnquirySubStatus(formData);
-    //   if (result.status){
-    //     const newVal = {id: result.data[0].id, name: result.data[0].name};
-    //     props.setDialogValue? props.setDialogValue(newVal.name) : null;
-    //     setSnackOpen(true);
-    //   } else {
-    //     issues = result?.data;
-    //   }
-    // } else {
-    //   issues = parsed.error.issues;
-    // }
-
-    // if (parsed.success && result?.status) {
-    //   props.setDialogOpen? props.setDialogOpen(false) : null;
-    // } else {
-    //   // show error on screen
-    //   const errorState: Record<string, {msg: string, error: boolean}> = {};
-    //   for (const issue of issues) {
-    //     errorState[issue.path[0]] = {msg: issue.message, error: true};
-    //   }
-    //   setFormError(errorState);
-    // }
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
       }, 1000);
     } else {
       const issues = result.data;
@@ -136,7 +105,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enq
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm">
+      <Box id="sourceForm" sx={{m:1, p:3}}>
         <form action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -153,12 +122,12 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enq
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid
@@ -184,13 +153,15 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enq
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

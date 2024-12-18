@@ -94,7 +94,6 @@ export default function InputForm({ baseData }: InputFormProps) {
   const defaultData = baseData.enqData.defaultData ?? {};
   const enqData = baseData.enqData;
 
-  // console.log("Enquiry Data for enquiry no 119 ", baseData.enqData);
   const [status, setStatus] = useState(
     defaultData?.status?.id != null ? defaultData.status.id.toString() : "1"
   );
@@ -332,7 +331,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="sub_status"
         id="sub_status"
         label="sub_status"
-        dialogTitle={`Sub-Status for ${status === '1' ? 'Open' : 'Closed'}`}
+        dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
         onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
         fetchDataFn={getSubStatusforStatus}
         fnFetchDataByID={getEnquirySubSatusById}
@@ -671,7 +670,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     fullWidth
                     error={formError?.call_receipt_remark?.error}
                     helperText={formError?.call_receipt_remark?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
@@ -700,7 +699,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     fullWidth
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
@@ -892,7 +891,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={"Enquiry saved successfully!"}
+        message={
+          enqData?.enquiry_id
+            ? "Enquiry details updated successfully!"
+            : "Enquiry details saved successfully!"
+        }
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>

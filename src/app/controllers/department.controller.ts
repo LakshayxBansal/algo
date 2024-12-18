@@ -221,7 +221,6 @@ export async function getDepartmentByPage(
 export async function getDepartmentColumns(){
   try{
     const session = await getSession();
-    console.log("session", session);
     if(session){
       const result = await getDepartmentColumnsDb(session.user.dbInfo.dbName as string);
       return result;
