@@ -181,6 +181,8 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
       // for (const element of dynamicStructureArray) {
       //   dynamicStructure[element.column_name]=element.column_type;
       // }
+      console.log("data",data);
+      
       const dynamicSchema = createSchemaZod(dynamicStructureArray);
       
       const combinedSchema = contactSchema.merge(dynamicSchema);

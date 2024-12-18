@@ -24,7 +24,30 @@ export const createSchemaZod = (structure: any) => {
               break;
 
           case "date":
-              schema = z.string().datetime();
+            schema = z.preprocess(
+              (value) => {
+                  // Convert empty strings to `undefined`
+                  if (typeof value === "string" && value.trim() === "") {
+                      return undefined;
+                  }
+                  // Convert valid date strings to Date objects
+                  if (typeof value === "string") {
+                      const parsedDate = new Date(value);
+                      if (!isNaN(parsedDate.getTime())) {
+                          return parsedDate;
+                      }
+                  }
+                  return value; // Pass through existing Date objects
+              },
+              element.is_mandatory === 1
+                  ? z
+                        .date({ invalid_type_error: "Field must be a valid date" })
+                        .refine((value) => value !== undefined, {
+                            message: "Field must not be empty",
+                        })
+                  : z.date().optional()
+          );
+          break;
               break;
 
           case "master list":

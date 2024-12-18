@@ -100,10 +100,12 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         label={props.desc.column_label}
                         inputType={InputType.DATEINPUT}
                         name={props.desc.column_name}
-                        error={props.formError?.[column_name]?.error}
-                        helperText={props.formError?.[column_name]?.msg}
                         sx={{ width: "100%" }}
                         slotProps={{
+                            textField: {
+                                error: props.formError?.[column_name]?.error,
+                                helperText: props.formError?.[column_name]?.msg
+                            },
                             openPickerButton: {
                                 tabIndex: 1,
                             }
