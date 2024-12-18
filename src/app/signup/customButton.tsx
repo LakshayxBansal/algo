@@ -4,7 +4,6 @@ import { signIn } from "next-auth/react";
 import { ClientSafeProvider } from "next-auth/react";
 import { ButtonProps, styled, useMediaQuery, useTheme } from "@mui/material";
   import googleImage from "../../../public/google.svg";
-// import googleIcon from "../../../public/googleIcon.svg";
 
 interface IButtonProps extends ButtonProps {
   provider: ClientSafeProvider;
@@ -59,7 +58,7 @@ export function GoogleSignUpButton({
 }: IButtonProps) {
   const theme = useTheme();
   const isMediumScreen = useMediaQuery(
-    `(min-width:${theme.breakpoints.values.sm}px) and (max-width:1000px)`
+    `(min-width:${theme.breakpoints.values.sm}px) and (max-width:1050px)`
   );
 
   return (
