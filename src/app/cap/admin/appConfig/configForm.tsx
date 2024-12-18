@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Snackbar from "@mui/material/Snackbar";
 import { updateConfigData } from "../../../controllers/configData.controller";
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Chip, Collapse, FormControl, IconButton, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Chip, Collapse, FormControl, IconButton, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography, Portal } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Voucher from "./voucherNumberForm";
 import RegionalInfo from "./regionalInfoForm";
@@ -320,13 +320,15 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
             </Button>
           </Box>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message={"Configuration saved successfully!"}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message={"Configuration saved successfully!"}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </Paper>
   );

@@ -10,7 +10,7 @@ import {
   getProduct,
   getProductById,
 } from "@/app/controllers/product.controller";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
@@ -122,53 +122,67 @@ export default function ProductList(props: any) {
         </Alert>
       </Collapse>
 
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm" sx={{ m: 1, p: 3,  }} >
         <form action={handleSubmit} noValidate>
-          <SelectMasterWrapper
-            name={"product"}
-            id={"product"}
-            label={"Product Name"}
-            showDetails={true}
-            dialogTitle={"Add Product"}
-            fetchDataFn={getProduct}
-            fnFetchDataByID={getProductById}
-            required
-            formError={formError?.product ?? formError.product}
- setFormError={setFormError}
-            onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
-            renderForm={(fnDialogOpen, fnDialogValue, data) => (
-              <ProductForm
-                setDialogOpen={fnDialogOpen}
-                setDialogValue={fnDialogValue}
-                data={data}
-              />
-            )}
-          />
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 3,
-            }}
-          >
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Box>
+          <Grid container spacing={1} sx={{width: "350"}}> 
+            <Grid item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+                sx={{p:0}}
+                >
+                    <SelectMasterWrapper
+                      name={"product"}
+                      id={"product"}
+                      label={"Product Name"}
+                      showDetails={true}
+                      dialogTitle={"Product"}
+                      fetchDataFn={getProduct}
+                      // width={350}
+                      fnFetchDataByID={getProductById}
+                      required
+                      formError={formError?.product ?? formError.product}
+                      setFormError={setFormError}
+                      onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
+                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                        <ProductForm
+                          setDialogOpen={fnDialogOpen}
+                          setDialogValue={fnDialogValue}
+                          data={data}
+                        />
+                      )}
+                    />
+            </Grid>
+            <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 1,
+                }}
+              >
+              <Button onClick={handleCancel}>Cancel</Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Product Added!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={1000}
+            onClose={() => setSnackOpen(false)}
+            message="Product Added!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

@@ -8,7 +8,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, Grid, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { createSupportCategory, updateSupportCategory } from "@/app/controllers/supportCategory.controller";
@@ -40,11 +40,11 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
       }, 1000);
     } else {
       const issues = result.data;
@@ -95,6 +95,7 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
           {formError?.form?.msg}
         </Alert>
       </Collapse>
+      <Box id="supportCategoryForm" sx={{m:1, p:3}}>
       <form action={handleSubmit} noValidate>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -142,13 +143,16 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
           </Grid>
         </Grid>
       </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+      </Box>
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </>
   );
 }

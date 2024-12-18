@@ -18,8 +18,6 @@ const columns: GridColDef[] = [
   },
 ];
 
-// const reqcols = ["name"]
-
 export default function Department() {
   return (
     <>
@@ -35,7 +33,7 @@ export default function Department() {
         fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         fnDeleteDataByID={delDepartmentById}
-        fnFetchColumns={getDepartmentColumns}
+        // fnFetchColumns={getDepartmentColumns}
         customCols={columns}
         AddAllowed={false}
         uploadAllowed={true}
