@@ -11,6 +11,7 @@ import { logger } from "../utils/logger.utils";
 import { Metadata } from "next";
 import { AddDialog } from "../Widgets/masters/addDialog";
 import CreateCompany from "./CreateCompany";
+import SecondNavbar from "../cap/navbar/SecondNavbar";
 
 export const metadata: Metadata = {
   title: 'Manage Company'
@@ -23,6 +24,7 @@ export default function CompanyPage({totalInvites,totalCompanies}:{totalInvites:
         <>
           <Box>
             <Box sx={{ margin: "20px 20px" }}>
+            <SecondNavbar title={"Company"}/>
               <Accordion sx={{ padding: "0px 0px 0px" }}>
                 <AccordionSummary
                   sx={{
@@ -44,11 +46,11 @@ export default function CompanyPage({totalInvites,totalCompanies}:{totalInvites:
                 </AccordionDetails>
               </Accordion>
             </Box>
-            <Box>
+            {/* <Box>
               <Paper style={{ margin: "20px 20px 5px 20px", padding: "10px" }}>
                 <Typography variant="h6">Company List</Typography>
               </Paper>
-            </Box>
+            </Box> */}
             <Box>
               <CompanyEntityList />
             </Box>

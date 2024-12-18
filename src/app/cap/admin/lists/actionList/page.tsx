@@ -10,6 +10,7 @@ import {
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -22,6 +23,7 @@ const columns: GridColDef[] = [
 export default function Action() {
   return (
     <>
+    <SecondNavbar title={"Action"}/>
       <EntityList
         title="Action"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -31,7 +33,7 @@ export default function Action() {
             data={data}
           />
         )}
-        fileUploadFeatureReqd={true} 
+        fileUploadFeatureReqd={true}
         fnFileUpad={createContactsBatch} 
         sampleFileName=""
         fetchDataFn={getEnquiryActionByPage}
