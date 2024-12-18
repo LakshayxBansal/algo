@@ -975,6 +975,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
                     sx={{ marginRight: "3rem" }}
                     onClick={() => setDialogOpen(true)}
                     aria-label="file"
+                    tabIndex={-1}
                   >
                     <Badge badgeContent={docData?.length} color="primary">
                       <AttachFileIcon></AttachFileIcon>

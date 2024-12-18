@@ -64,7 +64,7 @@ const DeleteComponent = (props: deleteCompT) => {
         </Alert>
       </Collapse>
       <form>
-        <Typography variant={"h5"} style={{ paddingBottom: "10px" }}>
+        <Typography variant={"h6"} style={{ paddingBottom: "10px" }}>
           Are you sure you want to delete?
         </Typography>
         <Box
