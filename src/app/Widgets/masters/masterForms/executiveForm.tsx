@@ -53,6 +53,7 @@ import {
   Collapse,
   Grid,
   IconButton,
+  Portal,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -670,13 +671,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
       data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
       data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
-      // if (parsed.success) {
-      // const inviteUser = data.crm_user;
-      // let inviteId;
-      // if( session && inviteUser ){
-      //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
-      //   inviteId = invite.id;
-      // }
 
       const result = await persistEntity(data as executiveSchemaT);
       if (result?.status) {
@@ -684,18 +678,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           id: result?.data[0].id,
           name: result?.data[0].name,
         };
-        // if(inviteId){
-        //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
-        // }
-        props.setDialogValue ? props.setDialogValue(newVal) : null;
         setFormError({});
         setSnackOpen(true);
-        // setTimeout(() => {
-        //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-        // }, 1000); 
         if (pathName !== "/cap/admin/lists/executiveList" || entityData.id) {
           setTimeout(() => {
             props.setDialogOpen ? props.setDialogOpen(false) : null;
+            props.setDialogValue ? props.setDialogValue(newVal) : null;
           }, 1000);
         } else {
           setFormKey(formKey + 1);
@@ -796,13 +784,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       else setStateDisable(false);
       setStateKey(prev => 1 - prev);
     }
-    // if (name === "department") {
-    //   values["role"] = {};
-    //   setDefaultRole(undefined);
-    //   if (values.department.id === 0) setRoleDisable(true);
-    //   else setRoleDisable(false);
-    //   setRoleKey(prev => 1 - prev);
-    // }
     setSelectValues(values);
   }
 
@@ -926,38 +907,38 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       }
     });
 
-return (
-  <Box>
-    <Collapse in={formError?.form ? true : false}>
-      <Alert
-        severity="error"
-        action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            size="small"
-            onClick={clearFormError}
-          >
-            <CloseIcon fontSize="inherit" />
-          </IconButton>
-        }
-        sx={{ mb: 2 }}
-      >
-        {formError?.form?.msg}
-      </Alert>
-    </Collapse>
-    <Box id="sourceForm">
-      <form key={formKey} action={handleSubmit} noValidate>
-        <Grid container spacing={1}>
-          {fieldArr.map((field, index) => {
-            const fieldKey = field.key as string;
-            if (fieldKey.includes("field-address")) {
-              return (
-                <Grid key={fieldKey}
-                  item
-                  xs={12}
-                  sm={6}
-                  md={6}
+  return (
+    <Box>
+      <Collapse in={formError?.form ? true : false}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={clearFormError}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {formError?.form?.msg}
+        </Alert>
+      </Collapse>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
+          <Grid container spacing={1}>
+            {fieldArr.map((field, index) => {
+              const fieldKey = field.key as string;
+              if (fieldKey.includes("field-address")) {
+                return (
+                  <Grid key={fieldKey}
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
 
                 >
                   <div key={index}>
@@ -1060,15 +1041,17 @@ return (
           </AddDialog>
         )}
 
-      </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        </form>
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
+      </Box>
     </Box>
-  </Box>
-);
+  );
 }

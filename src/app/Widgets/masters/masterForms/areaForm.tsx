@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid";
 import { nameMasterData } from "../../../zodschema/zodschema";
 import { masterFormPropsWithDataT, areaSchemaT } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Collapse, IconButton, Snackbar } from "@mui/material";
+import { Collapse, IconButton, Snackbar, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
@@ -22,7 +22,6 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
   // submit function. Save to DB and set value to the dropdown control
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
-  console.log(entityData);
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
@@ -30,15 +29,11 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
     const result = await persistEntity(data);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setFormError({});
       setSnackOpen(true);
-      // setTimeout(()=>{
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/areaList" || entityData.id) {
-        setTimeout(() => {
+        setTimeout(()=>{
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -108,54 +103,58 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form key={formKey} action={handleSubmit} noValidate>
-        <Grid container spacing={1}>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              autoFocus
-              id="name"
-              name="name"
-              label="Area Name"
-              required
-              titleCase={true}
-              defaultValue={entityData.name}
-              inputType={InputType.TEXT}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
- setFormError={setFormError}
-              style={{ width: "100%" }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: "15%", marginLeft: "5%" }}
+      <Box id="areaForm" sx= {{m : 1, p : 3}}>
+        <form key={formKey} action={handleSubmit} noValidate>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                autoFocus
+                id="name"
+                name="name"
+                label="Area Name"
+                required
+                titleCase={true}
+                defaultValue={entityData.name}
+                inputType={InputType.TEXT}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+                setFormError={setFormError}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
             >
-              Submit
-            </Button>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </form>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={1000}
-        onClose={() => setSnackOpen(false)}
-        message="Record Saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
+        </form>
+      </Box>
+      <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
     </>
   );
 }

@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Seperator from "@/app/Widgets/seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from '@mui/material/styles';
@@ -180,13 +180,15 @@ export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : Rea
                         </Button>
                     </Box>
                 </form>
-                <Snackbar
-                    open={snackOpen}
-                    autoHideDuration={1000}
-                    onClose={() => setSnackOpen(false)}
-                    message="Item Added (See the end of the list)!"
-                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                />
+                <Portal>
+                    <Snackbar
+                        open={snackOpen}
+                        autoHideDuration={1000}
+                        onClose={() => setSnackOpen(false)}
+                        message="Item Added (See the end of the list)!"
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    />
+                </Portal>
             </Box>
         </>
     );

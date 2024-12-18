@@ -68,7 +68,7 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     regionalSettingsConfigData: {} as regionalSettingSchemaT,
     loggedInUserData: {} as loggedInUserDataT
   });
-
+  
   async function openDialog() {
     if (allowNewAdd) {
       if (props.fnFetchDataByID) {

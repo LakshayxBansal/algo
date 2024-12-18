@@ -68,14 +68,14 @@ export default function InviteList({ companyId }: { companyId: number }) {
 
   return <Box>
     <EntityList
-      // title="Invite User"
-      renderForm={(fnDialogOpen, fnDialogValue, data) => (
-        <InviteUserForm
-          setDialogOpen={fnDialogOpen}
-          setDialogValue={fnDialogValue}
-          data={data}
-        />
-      )}
+    title="Pending User"
+    renderForm={(fnDialogOpen, fnDialogValue, data) => (
+      <InviteUserForm
+      setDialogOpen={fnDialogOpen}
+      setDialogValue={fnDialogValue}
+      data={data}
+      />
+    )} 
       fetchDataFn={getInviteUserByCompany}
       fnFetchDataByID={getInviteUserById}
       fnDeleteDataByID={delInviteById}

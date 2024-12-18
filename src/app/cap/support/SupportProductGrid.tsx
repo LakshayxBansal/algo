@@ -215,7 +215,7 @@ export default function SupportProductGrid({
               name={"product"}
               id={"product"}
               label={""}
-              dialogTitle={"Add Product"}
+              dialogTitle={"Product"}
               fetchDataFn={getProduct}
               fnFetchDataByID={getProductById}
               required
