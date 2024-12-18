@@ -196,6 +196,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          console.log("errorState", errorState);
           if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
@@ -917,6 +918,7 @@ export default function ContactForm(props: masterFormPropsWithDataT<contactSchem
             entityData[field.column_name_id as keyof contactSchemaT] : { id: entityData.c_col1_id, name: entityData.c_col1_name }
           }
           setSelectValues={setSelectValues}
+          formError={formError}
         />
       );
       fieldArr.push(fld);

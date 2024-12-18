@@ -22,8 +22,9 @@ import { convertData } from "../utils/validateType.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
 import { getRegionalSettings } from "./config.controller";
-import { getScreenDescription } from "./object.controller";
+import { getFieldTypeStructure, getScreenDescription } from "./object.controller";
 import { CONTACT_OBJECT_ID } from "../utils/consts.utils";
+import { createSchemaZod } from "../zodschema/customfieldschema.zod";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -110,6 +111,12 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
     if (session) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
+      const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
+      let dynamicStructure:{ [key: string]: string }={};
+      for (const element of dynamicStructureArray) {
+        dynamicStructure[element.column_name]=element.column_type;
+      }
+      console.log("dynamicStructure",dynamicStructure);
       
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
@@ -169,10 +176,22 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
     if (session) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
+      const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
+      // let dynamicStructure:{ [key: string]: string }={};
+      // for (const element of dynamicStructureArray) {
+      //   dynamicStructure[element.column_name]=element.column_type;
+      // }
+      const dynamicSchema = createSchemaZod(dynamicStructureArray);
+      
+      const combinedSchema = contactSchema.merge(dynamicSchema);
 
+      const preparsed=combinedSchema.safeParse(data)
+      if(!preparsed.success){
+        console.log("dynamicSchema",preparsed.error.issues);        
+      }
       const parsed = contactSchema.safeParse(data);
       
-      if (parsed.success) {
+      if (preparsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
         console.log(dbResult);
         if (dbResult[0].length === 0) {
@@ -194,7 +213,7 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
+        for (const issue of preparsed.error.issues) {
           errorState.push({ path: issue.path, message: issue.message });
         }
         result = { status: false, data: errorState };

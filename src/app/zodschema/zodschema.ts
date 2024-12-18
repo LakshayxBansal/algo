@@ -303,7 +303,7 @@ export const contactSchema = z.object({
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
   stamp: z.number().optional(),
-  c_col1: z.union([z.string(), z.number()]).optional(),
+  c_col1: z.union([z.string(), z.number()]).optional().nullish(),
   c_col2: z.union([z.string(), z.number()]).optional(),
   c_col3: z.union([z.string(), z.number()]).optional(),
   c_col4: z.union([z.string(), z.number()]).optional(),
@@ -313,7 +313,7 @@ export const contactSchema = z.object({
   c_col8: z.union([z.string(), z.number()]).optional(),
   c_col9: z.union([z.string(), z.number()]).optional(),
   c_col10: z.union([z.string(), z.number()]).optional(),
-  c_col1_id:z.number().optional(),
+  c_col1_id:z.number().optional().nullish(),
   c_col1_name:z.string().optional()
 });
 
