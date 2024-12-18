@@ -60,9 +60,9 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
     }
 
     const renderField = () => {
+        const column_name = props.desc.column_name;
         switch (props.desc.column_type_id) {
             case columnType.Text:
-                const column_name = props.desc.column_name;
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -87,8 +87,8 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         name={props.desc.column_name}
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
-                        error={props.formError?.column_name?.error}
-                        helperText={props.formError?.column_name?.msg}
+                        error={props.formError?.[column_name]?.error}
+                        helperText={props.formError?.[column_name]?.msg}
                         disabled={props.desc.is_disabled === 1 ? true : false}
                         fullWidth
                     />
@@ -100,8 +100,8 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         label={props.desc.column_label}
                         inputType={InputType.DATEINPUT}
                         name={props.desc.column_name}
-                        error={props.formError?.column_name?.error}
-                        helperText={props.formError?.column_name?.msg}
+                        error={props.formError?.[column_name]?.error}
+                        helperText={props.formError?.[column_name]?.msg}
                         sx={{ width: "100%" }}
                         slotProps={{
                             openPickerButton: {

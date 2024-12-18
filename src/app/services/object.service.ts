@@ -20,7 +20,7 @@ export async function getScreenDescriptionDB(crmDb: string, object_type_id: numb
 
 export async function getFieldTypeStructureDB(crmDb: string, object_type_id: number) {
   try {
-    let query = "select cfm.column_name,cctm.column_type from custom_fields_master cfm\
+    let query = "select cfm.column_name,cctm.column_type,cfm.is_mandatory from custom_fields_master cfm\
                  left outer join custom_column_type_master cctm on cfm.column_type_id=cctm.id\
                  where cfm.is_default_column=0 and cfm.object_type_id=?;";
     let values: any[] = [object_type_id];
