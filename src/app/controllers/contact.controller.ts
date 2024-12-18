@@ -177,23 +177,18 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
-      // let dynamicStructure:{ [key: string]: string }={};
-      // for (const element of dynamicStructureArray) {
-      //   dynamicStructure[element.column_name]=element.column_type;
-      // }
-      console.log("data",data);
       
       const dynamicSchema = createSchemaZod(dynamicStructureArray);
       
       const combinedSchema = contactSchema.merge(dynamicSchema);
 
-      const preparsed=combinedSchema.safeParse(data)
-      if(!preparsed.success){
-        console.log("dynamicSchema",preparsed.error.issues);        
+      const parsed=combinedSchema.safeParse(data)
+      if(!parsed.success){
+        console.log("dynamicSchema",parsed.error.issues);        
       }
-      const parsed = contactSchema.safeParse(data);
+      // const parsed = contactSchema.safeParse(data);
       
-      if (preparsed.success) {
+      if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
         console.log(dbResult);
         if (dbResult[0].length === 0) {
@@ -215,7 +210,7 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of preparsed.error.issues) {
+        for (const issue of parsed.error.issues) {
           errorState.push({ path: issue.path, message: issue.message });
         }
         result = { status: false, data: errorState };
