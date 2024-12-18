@@ -42,7 +42,7 @@ export async function createEnquiry({
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const updatedEnqData = {
         ...enqData,
         status_version: 0,
@@ -150,7 +150,7 @@ export async function updateEnquiry({
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const enqDataParsed = enquiryDataSchema.safeParse(enqData);
       const productParsed = productToListFormArraySchema.safeParse(product);
       if (enqDataParsed.success && productParsed.success) {
@@ -245,7 +245,7 @@ export async function getConfigData() {
 
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const dbResult = await getConfigDataDB(session.user.dbInfo.dbName);
       if (dbResult) {
         result = dbResult;
@@ -261,7 +261,7 @@ export async function getLoggedInUserDetails() {
 
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const dbResult = await getLoggedInUserDetailsDB(
         session.user.dbInfo.dbName,
         session.user.userId
@@ -300,7 +300,7 @@ export async function updateEnquiryById({
 }) {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const updateDataParsed = enquiryLedgerSchema.safeParse(ledgerData);
     }
   } catch (error) {
@@ -321,7 +321,7 @@ export async function createEnquiryLedger(
 ) {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const ledgerData = {
         id: ledgerId,
         status_id: statusId,

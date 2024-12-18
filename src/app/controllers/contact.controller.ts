@@ -107,7 +107,7 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       
@@ -166,7 +166,7 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
 
@@ -306,7 +306,7 @@ export async function getContactByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getContactByPageDb(
         // appSession.dbSession?.dbInfo.dbName as string,
         appSession.user.dbInfo.dbName as string,

@@ -81,35 +81,15 @@ export const options: NextAuthOptions = {
         }
         token.userid = userId;
       }
-      // if(userId===0){
-      //   userId = token.userid as number;
-      // }
-      // token.dbInfo = null;
-      // const sessionDbData = await getDbSession(userId as number);
-      // if (sessionDbData) {
-      //   token.dbInfo = sessionDbData;
-      // }
-      // if(trigger === 'update'){                       
-      //   const sessionDbData = await getDbSession(token.userid as number);
-      //   if (sessionDbData) {
-      //     token.dbInfo = sessionDbData;
-      //   }
-      // }
+      
       return token;
     },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
       if (token) {
         session.user.userId = token.userid as number;
-        // if (!token.dbInfo) {
-          const dbInfo = await getDbSession(session.user.userId);
-          // if (dbInfo) {
-          //   token.dbInfo = dbInfo;
-          // }
-        // }
-        // if (token.dbInfo) {
-          session.user.dbInfo = dbInfo as dbInfoT;
-        // }
+        const dbInfo = await getDbSession(session.user.userId);
+        session.user.dbInfo = dbInfo as dbInfoT;
       }
       return session;
     },

@@ -235,7 +235,7 @@ export async function createUserToInvite(data: inviteUserSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       Object.assign(data, { companyId: session.user.dbInfo.id });
       const parsed = zs.inviteUserSchema.safeParse(data);
       if (parsed.success) {
@@ -293,7 +293,7 @@ export async function updateInvitedUser(data: inviteUserSchemaT,newDate:boolean)
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       Object.assign(data, { companyId: session.user.dbInfo.id });
       const parsed = zs.inviteUserSchema.safeParse(data);
       if (parsed.success) {
@@ -557,7 +557,7 @@ export async function delInviteById(id: number) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const res = await deleteInvite(id);
       if (res) {
         result = { status: true };

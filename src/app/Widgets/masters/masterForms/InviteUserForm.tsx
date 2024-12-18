@@ -45,7 +45,7 @@ export default function InviteUserForm(props: masterFormPropsT) {
   const handleSubmit = async (formData: FormData) => {
     try {
       let data: { [key: string]: any } = {}; // Initialize an empty object
-      const session = await getSession();
+      // const session = await getSession();
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }

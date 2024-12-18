@@ -37,7 +37,7 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
   try {
     const session = await getSession();
 
-    if (!session) {
+    if (!session?.user.dbInfo) {
       redirect("/signin");
       return null; // Ensures no further code executes
     }

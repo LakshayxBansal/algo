@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export default async function Footer() {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             let statusData = await getStatusData(session.user.userId);
             const jsonStr = statusData?.data;
             if(jsonStr){
