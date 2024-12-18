@@ -278,7 +278,7 @@ export default function EntityList(props: entitiyCompT) {
             ) : null}
           </AddDialog>
         )}
-        <SecondNavbar title={props.title}/>
+        {/* <SecondNavbar title={props.title}/> */}
         <Paper
           elevation={3}
           sx={{

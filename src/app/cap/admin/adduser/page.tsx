@@ -13,6 +13,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import { Metadata } from "next";
 import { logger } from "@/app/utils/logger.utils";
+import SecondNavbar from "../../navbar/SecondNavbar";
 
 export const metadata: Metadata = {
   title: 'Manage User'
@@ -25,6 +26,7 @@ export default async function AddUser() {
       return (
         <Box>
           <Box sx={{ margin: "20px 20px" }}>
+          <SecondNavbar title={"User Management"}/>
             <Accordion sx={{ padding: "0px 0px 0px" }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
