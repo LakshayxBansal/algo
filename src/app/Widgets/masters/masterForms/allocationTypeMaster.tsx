@@ -33,15 +33,12 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/allocationTypeList" || entityData.id) {
-        setTimeout(() => {
+        setTimeout(()=>{
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -49,7 +46,6 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
     } else {
       const issues = result.data;
 
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       // for (const issue of issues) {
       //   for (const path of issue.path) {

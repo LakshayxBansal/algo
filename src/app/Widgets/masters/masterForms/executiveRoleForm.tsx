@@ -75,15 +75,12 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/executiveRoleList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 

@@ -26,55 +26,20 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
   const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (formData: FormData) => {
-    // const data = { name: formData.get("name") as string };
-    // console.log(data);
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {};
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    // const parsed = nameMasterData.safeParse(data);
-    // let result;
-    // let issues;
-
-    // if (parsed.success) {
-    //   let id;
-    //   if (props.data) id = props.data.id;
-    //   result = await createEnquiryAction(formData, id);
-    //   if (result.status) {
-    //     const newVal = { id: result.data[0].id, name: result.data[0].name };
-    //     props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-    //     setSnackOpen(true);
-    //   } else {
-    //     issues = result?.data;
-    //   }
-    // } else {
-    //   issues = parsed.error.issues;
-    // }
-
-    // if (parsed.success && result?.status) {
-    //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-    // } else {
-    //   // show error on screen
-    //   const errorState: Record<string, { msg: string; error: boolean }> = {};
-    //   for (const issue of issues) {
-    //     errorState[issue.path[0]] = { msg: issue.message, error: true };
-    //   }
-    //   setFormError(errorState);
-    // }
     const result = await persistEntity(data as nameMasterDataT);
-    console.log(result);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-        //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-        // }, 1000);
         if (pathName !== "/cap/admin/lists/actionList" || entityData.id) {
-          setTimeout(() => {
+          setTimeout(()=>{
             props.setDialogOpen ? props.setDialogOpen(false) : null;
+            props.setDialogValue ? props.setDialogValue(newVal) : null;
           }, 1000);
         } else {
           setFormKey(formKey + 1); 
@@ -82,7 +47,6 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
     } else {
       const issues = result.data;
 
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {

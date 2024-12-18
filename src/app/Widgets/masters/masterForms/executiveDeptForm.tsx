@@ -70,19 +70,16 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
     if (result.status) {
       // setSnackOpen(true);
       const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/executiveDeptList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
       }
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
     } else {
       const issues = result.data;
       // show error on screen

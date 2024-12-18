@@ -37,7 +37,6 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
     return result;
   }
 
-  // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
@@ -46,22 +45,18 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/categoryList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
       }
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
     } else {
       const issues = result.data;
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
 
       errorState["form"] = { msg: "Error encountered", error: true };
@@ -125,12 +120,6 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
                 defaultValue={props.data?.name}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
               />
             </Grid>
             <Grid

@@ -33,7 +33,7 @@ export default function Department() {
         fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         fnDeleteDataByID={delDepartmentById}
-        fnFetchColumns={getDepartmentColumns}
+        // fnFetchColumns={getDepartmentColumns}
         customCols={columns}
         AddAllowed={false}
         uploadAllowed={true}

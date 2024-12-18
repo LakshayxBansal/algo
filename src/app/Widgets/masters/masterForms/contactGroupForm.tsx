@@ -39,7 +39,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {}; 
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -54,15 +54,12 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
         id: result.data[0].id,
         name: result.data[0].name,
       };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/contactGroupList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -150,12 +147,6 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -169,12 +160,6 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
  setFormError={setFormError}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { alias, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
                 style={{ width: "100%" }}
               />
             </Grid>

@@ -43,22 +43,18 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
     const result = await persistEntity(data as unitSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/unitList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
       }
     } else {
       const issues = result.data;
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
@@ -132,12 +128,6 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
                 helperText={formError?.name?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.name}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
               />
             </Grid>
             <Grid

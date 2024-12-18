@@ -634,13 +634,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
       data["doa"] = data["doa"] != "" ? new Date(data["doa"]) : "";
       data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
-      // if (parsed.success) {
-      // const inviteUser = data.crm_user;
-      // let inviteId;
-      // if( session && inviteUser ){
-      //   const invite = await getInviteDetailByContact(inviteUser,session?.user.dbInfo.id);
-      //   inviteId = invite.id;
-      // }
 
       const result = await persistEntity(data as executiveSchemaT);
       if (result?.status) {
@@ -648,18 +641,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           id: result?.data[0].id,
           name: result?.data[0].name,
         };
-        // if(inviteId){
-        //   await insertExecutiveIdToInviteUser(result.data[0].id,inviteId);
-        // }
-        props.setDialogValue ? props.setDialogValue(newVal) : null;
         setFormError({});
         setSnackOpen(true);
-        // setTimeout(() => {
-        //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-        // }, 1000); 
         if (pathName !== "/cap/admin/lists/executiveList" || entityData.id) {
           setTimeout(() => {
             props.setDialogOpen ? props.setDialogOpen(false) : null;
+            props.setDialogValue ? props.setDialogValue(newVal) : null;
           }, 1000);
         } else {
           setFormKey(formKey + 1); 
@@ -760,13 +747,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       else setStateDisable(false);
       setStateKey(prev => 1 - prev);
     }
-    // if (name === "department") {
-    //   values["role"] = {};
-    //   setDefaultRole(undefined);
-    //   if (values.department.id === 0) setRoleDisable(true);
-    //   else setRoleDisable(false);
-    //   setRoleKey(prev => 1 - prev);
-    // }
     setSelectValues(values);
   }
 

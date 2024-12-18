@@ -32,7 +32,6 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
     const result = await persistEntity(data as countrySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       // setTimeout(() => {
@@ -41,6 +40,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
       if (pathName !== "/cap/admin/lists/countryList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 

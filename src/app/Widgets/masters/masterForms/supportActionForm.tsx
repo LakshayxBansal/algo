@@ -27,44 +27,15 @@ export default function SupportActionForm(props: masterFormPropsWithDataT<nameMa
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    // const parsed = nameMasterData.safeParse(data);
-    // let result;
-    // let issues;
-
-    // if (parsed.success) {
-    //   let id;
-    //   if (props.data) id = props.data.id;
-    //   result = await createEnquiryAction(formData, id);
-    //   if (result.status) {
-    //     const newVal = { id: result.data[0].id, name: result.data[0].name };
-    //     props.setDialogValue ? props.setDialogValue(newVal.name) : null;
-    //     setSnackOpen(true);
-    //   } else {
-    //     issues = result?.data;
-    //   }
-    // } else {
-    //   issues = parsed.error.issues;
-    // }
-
-    // if (parsed.success && result?.status) {
-    //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-    // } else {
-    //   // show error on screen
-    //   const errorState: Record<string, { msg: string; error: boolean }> = {};
-    //   for (const issue of issues) {
-    //     errorState[issue.path[0]] = { msg: issue.message, error: true };
-    //   }
-    //   setFormError(errorState);
-    // }
     const result = await persistEntity(data as nameMasterDataT);
     console.log(result)
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
       }, 1000);
     } else {
       const issues = result.data;

@@ -40,11 +40,11 @@ export default function SupportCategoryForm(props: masterFormPropsWithDataT<name
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
       }, 1000);
     } else {
       const issues = result.data;

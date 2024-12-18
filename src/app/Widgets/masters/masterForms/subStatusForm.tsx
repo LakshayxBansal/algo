@@ -38,46 +38,14 @@ export default function SubStatusForm(props: masterFormPropsWithDataT<enquirySub
     }
 
     data["status"] = statusName;
-
-    // let result;
-    // let issues;
-    // let data: { [key: string]: any } = {}; // Initialize an empty object
-
-    // for (const [key, value] of formData.entries()) {
-    //   data[key] = value;
-    // }
-    // const parsed = enquirySubStatusMaster.safeParse(data);
-    // if (parsed.success) {
-    //   result = await createEnquirySubStatus(formData);
-    //   if (result.status){
-    //     const newVal = {id: result.data[0].id, name: result.data[0].name};
-    //     props.setDialogValue? props.setDialogValue(newVal.name) : null;
-    //     setSnackOpen(true);
-    //   } else {
-    //     issues = result?.data;
-    //   }
-    // } else {
-    //   issues = parsed.error.issues;
-    // }
-
-    // if (parsed.success && result?.status) {
-    //   props.setDialogOpen? props.setDialogOpen(false) : null;
-    // } else {
-    //   // show error on screen
-    //   const errorState: Record<string, {msg: string, error: boolean}> = {};
-    //   for (const issue of issues) {
-    //     errorState[issue.path[0]] = {msg: issue.message, error: true};
-    //   }
-    //   setFormError(errorState);
-    // }
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
+        props.setDialogValue ? props.setDialogValue(newVal) : null;
       }, 1000);
     } else {
       const issues = result.data;

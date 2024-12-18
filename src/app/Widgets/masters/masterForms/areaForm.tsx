@@ -22,7 +22,6 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
   // submit function. Save to DB and set value to the dropdown control
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
-  console.log(entityData);
   const handleSubmit = async (formData: FormData) => {
     const data = {
       name: formData.get("name") as string,
@@ -30,15 +29,11 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
     const result = await persistEntity(data);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setFormError({});
       setSnackOpen(true);
-      // setTimeout(()=>{
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/areaList" || entityData.id) {
-        setTimeout(() => {
+        setTimeout(()=>{
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -123,7 +118,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
                 inputType={InputType.TEXT}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
-  setFormError={setFormError}
+                setFormError={setFormError}
                 style={{ width: "100%" }}
               />
             </Grid>

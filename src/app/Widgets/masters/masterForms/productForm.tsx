@@ -57,15 +57,12 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
         name: result.data[0].name,
         stamp: result.data[0].stamp,
       };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      // setTimeout(() => {
-      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
-      // }, 1000);
       if (pathName !== "/cap/admin/lists/productList" || entityData.id) {
         setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
         setFormKey(formKey + 1); 
@@ -153,14 +150,8 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.name}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -174,12 +165,6 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 helperText={formError?.alias?.msg}
  setFormError={setFormError}
                 defaultValue={entityData.alias}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { alias, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -257,43 +242,11 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 label="HSN Code"
                 error={formError?.hsn_code?.error}
                 helperText={formError?.hsn_code?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.hsn_code}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { hsn_code, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
-            {/* </Box>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          ></Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Box> */}
             <Grid
               item
               xs={12}
