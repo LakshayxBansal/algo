@@ -9,6 +9,9 @@ import {
   createEnquiryLedgerDB,
   getEnquiryDescriptionDb,
   updateEnquiryDB,
+  getEnquiryDataByPageDb,
+  getEnquiryDataCount,
+  delEnquiryDataByIdDb,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -25,6 +28,7 @@ import {
 import { logger } from "@/app/utils/logger.utils";
 import { getObjectByName } from "./rights.controller";
 import { uploadDocument } from "./document.controller";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function createEnquiry({
   enqData,
@@ -350,6 +354,84 @@ export async function getEnquiryDescription(searchString: string) {
       return getEnquiryDescriptionDb(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
+    throw error;
+  }
+}
+
+
+export async function getEnquiryDataByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+) {
+  let result = {
+    status: false,
+    data: {},
+    count: 0,
+    error: {},
+  };
+
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const conts = await getEnquiryDataByPageDb(
+        session,
+        page as number,
+        filter,
+        limit as number
+      );
+
+      const rowCount = await getEnquiryDataCount(
+        session.user.dbInfo.dbName as string,
+        filter
+      );
+      result = {
+        status: true,
+        data: conts.map(bigIntToNum),
+        count: Number(rowCount[0]["rowCount"]),
+        error: {},
+      };
+    }
+  } catch (error) {
+    let err = "Executive Admin, E-Code:369";
+
+    result = {
+      ...result,
+      status: false,
+      data: {},
+      error: err,
+    };
+  }
+  return result;
+}
+
+export async function delEnquiryDataById(enquiryID: number) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await delEnquiryDataByIdDb(session, enquiryID);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (error: any) {
     throw error;
   }
 }

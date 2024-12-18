@@ -191,12 +191,12 @@ export default function InviteUserForm(props: masterFormPropsT) {
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
  setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { name, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={12}>
@@ -212,12 +212,12 @@ export default function InviteUserForm(props: masterFormPropsT) {
                 defaultValue={entityData?.email}
                 label="Email Address"
                 name="email"
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { email, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { email, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             )}
           </Grid>
@@ -238,12 +238,12 @@ export default function InviteUserForm(props: masterFormPropsT) {
                 preferredCountries={["in", "gb"]}
                 dropdownClass={["in", "gb"]}
                 disableDropdown={false}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { phone, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { phone, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             )}
           </Grid>
