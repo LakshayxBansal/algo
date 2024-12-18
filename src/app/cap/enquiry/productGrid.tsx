@@ -49,6 +49,7 @@ type ProductGridProps = {
   dgFormError: any;
   setdgFormError: any;
   dgProductFormError: any;
+  disabled?: boolean;
   // Add other props here as needed
 };
 
@@ -66,6 +67,7 @@ export default function ProductGrid({
   dgFormError,
   setdgFormError,
   dgProductFormError,
+  disabled,
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -393,6 +395,7 @@ export default function ProductGrid({
             className="textPrimary"
             onClick={handleEditClick(params.row.id)}
             color="inherit"
+            disabled={disabled}
           />,
           <GridActionsCellItem
             key={params.row.id}
@@ -400,6 +403,7 @@ export default function ProductGrid({
             label="Delete"
             onClick={handleDeleteClick(params.row.id)}
             color="inherit"
+            disabled={disabled}
           />,
         ];
       },
@@ -455,6 +459,7 @@ export default function ProductGrid({
           onClick={handleClick}
           onFocus={handleFocus} // Track focus
           onBlur={handleBlur} // Track blur
+          disabled = {disabled}
         >
           Add Product
         </Button>
