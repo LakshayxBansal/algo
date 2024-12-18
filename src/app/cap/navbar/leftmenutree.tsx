@@ -336,8 +336,8 @@ const SelectIcon: React.FC<{ Page: menuTreeT; selected: boolean }> = ({
             color: selected
               ? "primary.main"
               : Page.children.length > 0
-              ? "secondary"
-              : "info",
+                ? "secondary"
+                : "info",
           }}
         >
           <selectedIcon.icon

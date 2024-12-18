@@ -1,16 +1,16 @@
 "use server";
-import { getScreenDescriptionDB } from "../services/object.service";
+import { getFieldTypeStructureDB, getScreenDescriptionDB } from "../services/object.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
 
-export async function getScreenDescription(objectID: number) {
+export async function getScreenDescription(objectTypeID: number) {
   let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
       result = await getScreenDescriptionDB(
         session.user.dbInfo.dbName,
-        objectID
+        objectTypeID
       );
       return result;
     }
@@ -24,15 +24,12 @@ export async function getScreenDescription(objectID: number) {
   return result;
 }
 
-export async function getObjectList(objectID: number) {
+export async function getFieldTypeStructure(object_type_id:number) {
   let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      result = await getScreenDescriptionDB(
-        session.user.dbInfo.dbName,
-        objectID
-      );
+      result = await getFieldTypeStructureDB(session.user.dbInfo.dbName,object_type_id);
       return result;
     }
   } catch (e) {
