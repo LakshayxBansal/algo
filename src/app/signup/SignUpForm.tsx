@@ -228,11 +228,11 @@ export default function SignupForm1(props: any) {
                   autoFocus
                   fullWidth
                   required
-                  titleCase = {true}
+                  titleCase={true}
                   autoComplete="off"
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
- setFormError={setFormError}
+                  setFormError={setFormError}
                   onKeyDown={() => {
                     setFormError((curr) => {
                       const { name, ...rest } = curr;
@@ -262,7 +262,7 @@ export default function SignupForm1(props: any) {
                     inputType={InputType.EMAIL}
                     error={formError?.email?.error}
                     helperText={formError?.email?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     required
                     fullWidth
                     id="email"
@@ -305,7 +305,7 @@ export default function SignupForm1(props: any) {
                     autoComplete="off"
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     country={"in"}
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
@@ -378,7 +378,7 @@ export default function SignupForm1(props: any) {
                       autoComplete="off"
                       error={formError?.password?.error}
                       helperText={formError?.password?.msg}
- setFormError={setFormError}
+                      setFormError={setFormError}
                       onKeyDown={() => {
                         setFormError((curr) => {
                           const { password, ...rest } = curr;
@@ -419,7 +419,7 @@ export default function SignupForm1(props: any) {
                       inputType={InputType.TEXT}
                       error={formError?.repassword?.error}
                       helperText={formError?.repassword?.msg}
- setFormError={setFormError}
+                      setFormError={setFormError}
                       required
                       fullWidth
                       onCopy={(event: any) => handleDefault(event)}

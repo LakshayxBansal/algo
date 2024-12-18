@@ -27,7 +27,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
 
-  const entityData: unitSchemaT = props.data ? props.data : {} as unitSchemaT;
+  const entityData: unitSchemaT = props.data ? props.data : ({} as unitSchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -51,7 +51,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -111,7 +111,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m:1, p:3 }}>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -126,7 +126,7 @@ export default function UnitForm(props: masterFormPropsWithDataT<unitSchemaT>) {
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.name}
               />
             </Grid>

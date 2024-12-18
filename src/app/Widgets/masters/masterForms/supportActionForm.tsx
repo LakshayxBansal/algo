@@ -10,14 +10,21 @@ import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
 import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
-import { createSupportAction, updateSupportAction } from "@/app/controllers/supportAction.controller";
+import {
+  createSupportAction,
+  updateSupportAction,
+} from "@/app/controllers/supportAction.controller";
 
-export default function SupportActionForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
+export default function SupportActionForm(
+  props: masterFormPropsWithDataT<nameMasterDataT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const entityData: nameMasterDataT = props.data
+    ? props.data
+    : ({} as nameMasterDataT);
 
   const handleSubmit = async (formData: FormData) => {
     // const data = { name: formData.get("name") as string };
@@ -28,7 +35,7 @@ export default function SupportActionForm(props: masterFormPropsWithDataT<nameMa
       data[key] = value;
     }
     const result = await persistEntity(data as nameMasterDataT);
-    console.log(result)
+    console.log(result);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setFormError({});
@@ -96,7 +103,7 @@ export default function SupportActionForm(props: masterFormPropsWithDataT<nameMa
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="supportActionForm" sx={{m:1, p:3}}>
+      <Box id="supportActionForm" sx={{ m: 1, p: 3 }}>
         <form action={handleSubmit}>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -111,7 +118,7 @@ export default function SupportActionForm(props: masterFormPropsWithDataT<nameMa
                 fullWidth
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
               />
             </Grid>
             <Grid

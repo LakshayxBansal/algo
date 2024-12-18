@@ -24,13 +24,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
 import { usePathname } from "next/navigation";
 
-export default function ProductGroupForm(props: masterFormPropsWithDataT<productGroupSchemaT>) {
+export default function ProductGroupForm(
+  props: masterFormPropsWithDataT<productGroupSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: productGroupSchemaT = props.data ? props.data : {} as productGroupSchemaT;
+  const entityData: productGroupSchemaT = props.data
+    ? props.data
+    : ({} as productGroupSchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
   console.log("value in form", selectValues);
@@ -49,7 +53,11 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
 
     const result = await persistEntity(data as productGroupSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        stamp: result.data[0].stamp,
+      };
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/productGroupList" || entityData.id) {
@@ -58,7 +66,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -81,8 +89,8 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
       : entityData.parent_id
-        ? entityData.parent_id
-        : 0;
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -128,7 +136,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="productGroupForm" sx={{m:1, p:3}}>
+      <Box id="productGroupForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -143,7 +151,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { name, ...rest } = curr;
@@ -162,7 +170,7 @@ export default function ProductGroupForm(props: masterFormPropsWithDataT<product
                 defaultValue={entityData.alias}
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { alias, ...rest } = curr;

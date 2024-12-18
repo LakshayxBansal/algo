@@ -48,7 +48,7 @@ export default function AuthPage(props: authPagePropsType) {
       password: formData.get("password"),
     }).then((status) => {
       if (status?.ok) {
-        console.log("status : ",status)
+        console.log("status : ", status);
         // const totalInvites = await getTotalInvite();
         // const totalCompanies = await getCompanyCount()
         // console.log("totat invites : ",totalInvites);
@@ -93,7 +93,7 @@ export default function AuthPage(props: authPagePropsType) {
             inputType={InputType.EMAIL}
             error={formError?.email?.error}
             helperText={formError?.email?.msg}
- setFormError={setFormError}
+            setFormError={setFormError}
             required
             fullWidth
             id="usercontact"
@@ -113,7 +113,7 @@ export default function AuthPage(props: authPagePropsType) {
             required
             error={formError?.phone?.error}
             helperText={formError?.phone?.msg}
- setFormError={setFormError}
+            setFormError={setFormError}
             country={"in"}
             preferredCountries={["in", "gb"]}
             dropdownClass={["in", "gb"]}
