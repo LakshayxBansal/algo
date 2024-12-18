@@ -63,9 +63,7 @@ export default function ContactForm(
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
-    props.data?.docData ? props?.data?.docData : []
-  );
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props.data?.docData ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
 
@@ -83,7 +81,7 @@ export default function ContactForm(
   );
   const [stateDisable, setStateDisable] = useState(!entityData.country);
   const [formKey, setFormKey] = useState(0);
-
+  let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const pathName = usePathname();
   const formRef = useRef<HTMLFormElement>(null);
@@ -179,6 +177,7 @@ export default function ContactForm(
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          console.log("errorState", errorState);
           if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
@@ -217,9 +216,11 @@ export default function ContactForm(
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-      ? entityData.state_id
-      : 0;
-
+        ? entityData.state_id
+        : 0;
+    Object.keys(customMasterListData).forEach((key) => {
+      data[key] = selectValues[key] ? selectValues[key].id : null;
+    });
     return data;
   };
 
@@ -671,10 +672,15 @@ export default function ContactForm(
   let fieldArr: React.ReactElement[] = [];
 
   props.metaData?.fields.map((field: any) => {
-    if (
-      field.column_name_id === "address1" ||
-      field.column_name_id === "address2"
-    ) {
+    if (field.column_type_id === 7) {
+      const parts = field.column_format.split(".");
+      let tableName = "";
+      let fieldName = "";
+      if (parts) {
+        customMasterListData[field.column_name] = { table_name: tableName, field: fieldName }
+      }
+    }
+    if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -720,8 +726,10 @@ export default function ContactForm(
 
         fieldArr.push(fld);
       }
-    } else if (field.is_default_column) {
-      if (field.column_name_id === "whatsapp") {
+
+    }
+    else if (field.is_default_column) {
+      if (field.column_name_id === 'whatsapp') {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -755,9 +763,11 @@ export default function ContactForm(
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue={
-            entityData[field.column_name_id as keyof contactSchemaT]
+          defaultValue={field.column_type_id !== 7 ?
+            entityData[field.column_name_id as keyof contactSchemaT] : { id: entityData.c_col1_id, name: entityData.c_col1_name }
           }
+          setSelectValues={setSelectValues}
+          formError={formError}
         />
       );
       fieldArr.push(fld);
@@ -838,7 +848,7 @@ export default function ContactForm(
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
-                marginTop: 1,
+                marginTop: 1
               }}
             >
               <Tooltip
@@ -865,6 +875,7 @@ export default function ContactForm(
                   <Badge badgeContent={docData?.length} color="primary">
                     <AttachFileIcon></AttachFileIcon>
                   </Badge>
+
                 </IconButton>
               </Tooltip>
               <Button onClick={handleCancel} tabIndex={-1}>
