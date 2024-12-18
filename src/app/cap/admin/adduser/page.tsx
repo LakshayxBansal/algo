@@ -30,7 +30,7 @@ export default async function AddUser() {
               aria-controls="panel1-content"
               id="panel1-header"
             >
-              Invited User
+              Pending User
             </AccordionSummary>
             <AccordionDetails sx={{marginBottom:"3em"}}>
               <InviteList companyId={session.user.dbInfo.id} />
