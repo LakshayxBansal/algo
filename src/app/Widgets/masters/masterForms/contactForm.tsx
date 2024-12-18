@@ -877,6 +877,7 @@ export default function ContactForm(
                   sx={{ marginRight: "3rem" }}
                   onClick={() => setDialogOpen(true)}
                   aria-label="file"
+                  tabIndex={-1}
                 >
                   <Badge badgeContent={docData?.length} color="primary">
                     <AttachFileIcon></AttachFileIcon>

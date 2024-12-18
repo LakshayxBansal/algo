@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useEffect, useState, useRef } from "react";
 import { Popper, Grow, Paper } from "@mui/material";
+import { Popper, Grow, Paper } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Collapse from "@mui/material/Collapse";
 import List from "@mui/material/List";
@@ -13,7 +14,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
 
-
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
   openDrawer: boolean;
@@ -24,7 +24,9 @@ export default function LeftMenuTree(props: {
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
 
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
   let arra1 = [0, 2, 5, 9, 12, 51, 54, 61];
   const pages = props.pages;
@@ -109,7 +111,7 @@ export default function LeftMenuTree(props: {
     idToOpenPop.current.clear();
     // setOpenPopper((prevState) => new Map(prevState.clear()));
     openPopper.clear();
-  }
+  };
 
   function handleCollapse(id: number): boolean {
     return props.openDrawer ? open?.get(id) ?? false : false;
