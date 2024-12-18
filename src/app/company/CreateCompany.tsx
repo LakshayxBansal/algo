@@ -26,10 +26,12 @@ import {
   getStates,
   getStatesMaster,
 } from "../controllers/masters.controller";
-import { Collapse, IconButton, Grid } from "@mui/material";
+import { Collapse, IconButton, Grid, Portal } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsWithDataT<companySchemaT>) {
+export default function CreateCompany(
+  props: masterFormPropsWithDataT<companySchemaT>
+) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -38,7 +40,9 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [defaultCountry, setdefaultCountry] = useState("");
   const [defaultCountryId, setdefaultCountryId] = useState(0);
-  const entityData: companySchemaT = props.data ? props.data : {} as companySchemaT;
+  const entityData: companySchemaT = props.data
+    ? props.data
+    : ({} as companySchemaT);
 
   useEffect(() => {
     const fetchCountryData = async () => {
@@ -196,10 +200,11 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   label="Name"
                   name="name"
                   required
+                  titleCase={true}
                   style={{ width: "100%" }}
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
- setFormError={setFormError}
+                  setFormError={setFormError}
                   defaultValue={entityData.name}
                   FormHelperTextProps={{
                     sx: { backgroundColor: "white", margin: 0 },
@@ -222,7 +227,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   style={{ width: "100%" }}
                   error={formError?.alias?.error}
                   helperText={formError?.alias?.msg}
- setFormError={setFormError}
+                  setFormError={setFormError}
                   defaultValue={entityData.alias}
                   sx={{ height: "fit-content" }}
                   onKeyDown={() => {
@@ -310,6 +315,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   name={"country"}
                   id={"country"}
                   label={"Country"}
+                  required
                   onChange={(e, val, s) => {
                     setSelectValues({ country: val, state: null });
                     entityData.country_id = undefined;
@@ -327,10 +333,11 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                           id: entityData.country_id,
                           name: entityData.country,
                         }
-                      : selectValues.country ? {
-                        id: selectValues.country?.id,
-                        name: selectValues.country?.name ?? "",
-                      } 
+                      : selectValues.country
+                      ? {
+                          id: selectValues.country?.id,
+                          name: selectValues.country?.name ?? "",
+                        }
                       : ({
                           id: defaultCountryId,
                           name: defaultCountry,
@@ -398,7 +405,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   onClick={() => {
                     if (props?.setDialogOpen === undefined) {
                       router.push("/signin");
-                    }  else {
+                    } else {
                       handleCancel();
                     }
                   }}
@@ -416,13 +423,15 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
               </Grid>
             </Grid>
           </form>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={1000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
+          <Portal>
+            <Snackbar
+              open={snackOpen}
+              autoHideDuration={1000}
+              onClose={() => setSnackOpen(false)}
+              message="Record Saved!"
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            />
+          </Portal>
         </Box>
       </Box>
     </>

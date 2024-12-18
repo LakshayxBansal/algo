@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useRef } from "react";
-import { Popper, Grow,Paper } from "@mui/material";
+import { Popper, Grow, Paper } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Collapse from "@mui/material/Collapse";
 import List from "@mui/material/List";
@@ -13,7 +13,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
 
-
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
   openDrawer: boolean;
@@ -23,10 +22,12 @@ export default function LeftMenuTree(props: {
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
-  
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
-  let arra1 = [0, 2, 5, 9, 12, 51, 54];
+  let arra1 = [0, 2, 5, 9, 12, 51, 54, 61];
   const pages = props.pages;
 
   useEffect(() => {
@@ -80,6 +81,10 @@ export default function LeftMenuTree(props: {
         setOpenPopper((prevState) => new Map(prevState.set(5, true)));
         setOpenPopper((prevState) => new Map(prevState.set(9, true)));
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
+      } else if (page.parent_id == 61) {
+        openPopper.clear();
+        setOpenPopper((prevState) => new Map(prevState.set(61, true)));
+        setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
       }
     }
   }
@@ -100,12 +105,12 @@ export default function LeftMenuTree(props: {
   const handleMousePopper = (
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
-  )=>{
+  ) => {
     // setHoverId(page.id);
     idToOpenPop.current.clear();
     // setOpenPopper((prevState) => new Map(prevState.clear()));
     openPopper.clear();
-  }
+  };
 
   function handleCollapse(id: number): boolean {
     return props.openDrawer ? open?.get(id) ?? false : false;
@@ -263,27 +268,27 @@ export default function LeftMenuTree(props: {
                     <Popper
                       // open={idToOpenPop.current.has(page.id)}
                       // open={hoverId === page.id || hoverId === page.parent_id}
-                      open={openPopper.get(page.id)?true:false}
+                      open={openPopper.get(page.id) ? true : false}
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
-                      style={{position:"absolute", zIndex:"9999"}}
+                      style={{ position: "absolute", zIndex: "9999" }}
                     >
                       {({ TransitionProps }) => (
                         <Grow {...TransitionProps}>
-                            <Paper
-                              elevation={8}
-                              style={{ maxHeight: "20em", overflowY: "auto" }}
-                            >
-                              {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
+                          <Paper
+                            elevation={8}
+                            style={{ maxHeight: "20em", overflowY: "auto" }}
+                          >
+                            {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
 
-                              {ShowPopper({
-                                pages: page.children,
-                                level: page.id,
-                                menuLevel: 0,
-                              })}
-                              {/* </div> */}
-                            </Paper>
+                            {ShowPopper({
+                              pages: page.children,
+                              level: page.id,
+                              menuLevel: 0,
+                            })}
+                            {/* </div> */}
+                          </Paper>
                         </Grow>
                       )}
                     </Popper>

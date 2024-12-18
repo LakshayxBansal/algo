@@ -989,30 +989,31 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
                 paddingLeft: "2rem"
               }}
             >
-              <Tooltip
-                title={docData?.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
+                <Tooltip
+                  title={docData?.length > 0 ? (
+                    docData.map((file: any, index: any) => (
+                      <Typography variant="body2" key={index}>
+                        {file.description}
+                      </Typography>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="white">
+                      No files available
                     </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )}
-              >
-                <IconButton
-                  sx={{ marginRight: "3rem" }}
-                  onClick={() => setDialogOpen(true)}
-                  aria-label="file"
+                  )}
                 >
-                  <Badge badgeContent={docData?.length} color="primary">
-                    <AttachFileIcon></AttachFileIcon>
-                  </Badge>
-
-                </IconButton>
-              </Tooltip>
+                  <IconButton
+                    sx={{ marginRight: "3rem" }}
+                    onClick={() => setDialogOpen(true)}
+                    aria-label="file"
+                    tabIndex={-1}
+                  >
+                    <Badge badgeContent={docData?.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+    
+                  </IconButton>
+                </Tooltip>
               <Button onClick={() => {
                 if (props.setDialogOpen === undefined) {
                   router.push('/cap');
