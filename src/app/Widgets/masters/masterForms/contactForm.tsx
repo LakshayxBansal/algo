@@ -498,7 +498,7 @@ export default function ContactForm(
         size="small"
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.mobile}
         onChange={handleWhatsappChange}
         fullWidth
@@ -870,6 +870,7 @@ export default function ContactForm(
                   sx={{ marginRight:"3rem"}}
                   onClick={() => setDialogOpen(true)}
                   aria-label="file"
+                  tabIndex={-1}
                 >
                   <Badge badgeContent={docData?.length} color="primary">
                     <AttachFileIcon></AttachFileIcon>
