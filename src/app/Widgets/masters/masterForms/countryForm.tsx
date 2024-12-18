@@ -15,12 +15,16 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function CountryForm(props: masterFormPropsWithDataT<countrySchemaT>) {
+export default function CountryForm(
+  props: masterFormPropsWithDataT<countrySchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: countrySchemaT = props.data ? props.data : {} as countrySchemaT;
+  const entityData: countrySchemaT = props.data
+    ? props.data
+    : ({} as countrySchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -43,7 +47,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -104,7 +108,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="countryForm" sx={{m:1 ,p:3}}>
+      <Box id="countryForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -119,7 +123,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
-  setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { name, ...rest } = curr;
@@ -138,7 +142,7 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
                 defaultValue={entityData.alias}
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
-  setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { alias, ...rest } = curr;
@@ -173,14 +177,14 @@ export default function CountryForm(props: masterFormPropsWithDataT<countrySchem
         </form>
       </Box>
       <Portal>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
-        </Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </>
   );
 }

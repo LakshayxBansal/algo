@@ -70,16 +70,19 @@ export default function AuthPage(props: authPagePropsType) {
         redirect: false,
         userContact: data.contact,
         password: data.password,
-      }).then(async(status) => {
+      }).then(async (status) => {
         if (status?.ok) {
           // setTimeout(() => {
-            const totalInvites = await getTotalInvite();
-            const totalCompanies = await getCompanyCount(data.contact);
-            if(totalInvites.rowCount===0 && Number(totalCompanies[0].rowCount)===0){
-              router.push("/addcompany");
-            }else{
-              router.push(successCallBackUrl);
-            }
+          const totalInvites = await getTotalInvite();
+          const totalCompanies = await getCompanyCount(data.contact);
+          if (
+            totalInvites.rowCount === 0 &&
+            Number(totalCompanies[0].rowCount) === 0
+          ) {
+            router.push("/addcompany");
+          } else {
+            router.push(successCallBackUrl);
+          }
           // }, 1000);
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
@@ -204,7 +207,7 @@ export default function AuthPage(props: authPagePropsType) {
                     autoFocus
                     error={formError?.email?.error}
                     helperText={formError?.email?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     fullWidth
                     id="usercontact"
                     label="Email Address"
@@ -246,7 +249,7 @@ export default function AuthPage(props: authPagePropsType) {
                     fullWidth
                     error={formError?.phone?.error}
                     helperText={formError?.phone?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     country={"in"}
                     preferredCountries={["in", "gb"]}
                     dropdownClass={["in", "gb"]}
@@ -317,7 +320,7 @@ export default function AuthPage(props: authPagePropsType) {
                     autoComplete="off"
                     error={formError?.password?.error}
                     helperText={formError?.password?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     onKeyDown={() => {
                       setFormError((curr) => {
                         const { password, form, ...rest } = curr;
@@ -347,7 +350,7 @@ export default function AuthPage(props: authPagePropsType) {
                       marginTop: "0.8rem",
                       // mb: "0.5rem",
                       // border: "2px solid black",
-                      maxHeight: "fit-content"
+                      maxHeight: "fit-content",
                     }}
                     onClick={() => setShowPassword(!showPassword)}
                     tabIndex={-1}

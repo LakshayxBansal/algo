@@ -18,7 +18,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: areaSchemaT = props.data ? props.data : {} as areaSchemaT;
+  const entityData: areaSchemaT = props.data ? props.data : ({} as areaSchemaT);
   // submit function. Save to DB and set value to the dropdown control
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
@@ -31,12 +31,12 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/areaList" || entityData.id) {
-        setTimeout(()=>{
+        setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     }
     // } else {
@@ -103,7 +103,7 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="areaForm" sx= {{m : 1, p : 3}}>
+      <Box id="areaForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -147,14 +147,14 @@ export default function AreaForm(props: masterFormPropsWithDataT<areaSchemaT>) {
         </form>
       </Box>
       <Portal>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
-        </Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </>
   );
 }

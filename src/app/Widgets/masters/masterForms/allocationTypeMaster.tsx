@@ -36,12 +36,12 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/allocationTypeList" || entityData.id) {
-        setTimeout(()=>{
+        setTimeout(() => {
           props.setDialogOpen ? props.setDialogOpen(false) : null;
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -107,7 +107,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
       </Collapse>
       <Box id="allocationForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
-          <Grid container >
+          <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
                 inputType={InputType.TEXT}
@@ -116,12 +116,12 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
                 label="Name"
                 name="name"
                 required
-                style={{width: "100%"}}
+                style={{ width: "100%" }}
                 titleCase={true}
                 defaultValue={props.data?.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
-  setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { name, ...rest } = curr;
@@ -155,14 +155,14 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
         </form>
       </Box>
       <Portal>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
-        </Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </>
   );
 }

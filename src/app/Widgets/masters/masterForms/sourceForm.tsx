@@ -16,12 +16,16 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
+export default function SourceForm(
+  props: masterFormPropsWithDataT<nameMasterDataT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const entityData: nameMasterDataT = props.data
+    ? props.data
+    : ({} as nameMasterDataT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -33,7 +37,11 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
 
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        stamp: result.data[0].stamp,
+      };
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/sourceList" || entityData.id) {
@@ -42,7 +50,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -102,7 +110,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{m:1, p:3}}>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -117,7 +125,7 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.name}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
