@@ -128,6 +128,7 @@ export default function ExecutiveForm(
         key="name"
         inputType={InputType.TEXT}
         autoFocus
+        titleCase={true}
         id="name"
         label="Name"
         name="name"
@@ -242,7 +243,7 @@ export default function ExecutiveForm(
         name={"role"}
         id={"role"}
         label={"Role"}
-        dialogTitle={"Add Role"}
+        dialogTitle={"Role"}
         width={365}
         fetchDataFn={getExecutiveRole}
         fnFetchDataByID={getExecutiveRoleById}

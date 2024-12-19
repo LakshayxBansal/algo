@@ -252,6 +252,7 @@ export default function ContactForm(
         key="name"
         autoFocus
         id="name"
+        titleCase={true}
         label="Name"
         name="name"
         required
@@ -619,7 +620,7 @@ export default function ContactForm(
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
         width={375}
-        dialogTitle={"Add State"}
+        dialogTitle={"State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}

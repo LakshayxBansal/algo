@@ -77,7 +77,6 @@ export default function EntityList(props: entitiyCompT) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
   const router = useRouter();
-  const url = usePathname();
   let searchText;
 
   //for navbar search
@@ -85,102 +84,79 @@ export default function EntityList(props: entitiyCompT) {
   const searchData: string | null = searchParams.get("searchText");
   //for navbar search
 
+  const optionsColumn: GridColDef[] = [
+    {
+      field: "Icon menu",
+      headerName: "More Options",
+      minWidth: 50,
+      hideable: false,
+      renderCell: (params) => {
+        return (
+          <IconComponent
+            id={params.row.id}
+            fnDeleteDataByID={props.fnDeleteDataByID}
+            fnFetchDataByID={props.fnFetchDataByID}
+            setDlgMode={setDlgMode}
+            setDialogOpen={setDialogOpen}
+            setModData={setModData}
+            setMetaData={setMetaData}
+            setIds={setIds}
+            modify={dialogMode.Modify}
+            delete={dialogMode.Delete}
+            link={props.link}
+          />
+        );
+      },
+    },
+  ];
+
+  let allDfltCols: GridColDef[];
+  allDfltCols = optionsColumn.concat(props.customCols);
+  const dfltColFields: string[] = allDfltCols.map((col) => col.field);
+
+
+  const fetchData = debounce(async (searchText) => {
+    const rows: any = await props.fetchDataFn(
+      PageModel.page,
+      searchText as string,
+      pgSize as number
+    );
+
+    if (rows.data) {
+      setData(rows.data);
+      setNRows(rows.count as number);
+    }
+    if (props.fnFetchColumns) {
+      const columnsData = await props.fnFetchColumns();
+      if (columnsData) {
+        const dbColumns = columnsData.map((col: any) => ({
+          field: col.column_name,
+          headerName: col.column_label,
+        }));
+        // filter on columns not to showinitially
+        const filteredColumns = dbColumns.filter(
+          (col: any) => !dfltColFields.includes(col.field)
+        );
+        //columns not to showinitially
+        const allColumns = allDfltCols.concat(filteredColumns);
+        const visibleColumns = allColumns.reduce((model: any, col: any) => {
+          model[col.field] = dfltColFields.includes(col.field);
+          return model;
+        }, {});
+        setColumnVisibilityModel(visibleColumns);
+        setAllColumns(allColumns);
+        // setColumnsChanged(true);
+        // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
+      }
+    }
+     else {
+      setAllColumns(allDfltCols);
+    }
+
+  }, 100);
+
+
   useEffect(() => {
-    const fetchData = debounce(async (searchText) => {
-      const rows: any = await props.fetchDataFn(
-        PageModel.page,
-        searchText as string,
-        pgSize as number
-      );
-
-      // const roleId = await getRoleID();
-      if (rows.data) {
-        setData(rows.data);
-        setNRows(rows.count as number);
-      }
-
-
-      const optionsColumn: GridColDef[] = [
-        {
-          field: "Icon menu",
-          headerName: "More Options",
-          minWidth: 50,
-          hideable: false,
-          renderCell: (params) => {
-            return (
-              <IconComponent
-                id={params.row.id}
-                fnDeleteDataByID={props.fnDeleteDataByID}
-                fnFetchDataByID={props.fnFetchDataByID}
-                setDlgMode={setDlgMode}
-                setDialogOpen={setDialogOpen}
-                setModData={setModData}
-                setMetaData={setMetaData}
-                setIds={setIds}
-                modify={dialogMode.Modify}
-                delete={dialogMode.Delete}
-                link={props.link}
-              />
-            );
-          },
-        },
-      ];
-
-      //if roleid is 1(admin) show options columns
-      let allDfltCols: GridColDef[];
-
-      // if (roleId == 1) {
-      //   allDfltCols = optionsColumn.concat(props.customCols);
-      // } else {
-      //   allDfltCols = props.customCols;
-      // }
-      //if roleid is 1(admin) show options columns
-
-      allDfltCols = optionsColumn.concat(props.customCols);
-      const dfltColFields: string[] = allDfltCols.map((col) => col.field);
-      if (props.fnFetchColumns) {
-        const columnsData = await props.fnFetchColumns();
-        if (columnsData) {
-          const dbColumns = columnsData.map((col: any) => ({
-            field: col.column_name,
-            headerName: col.column_label,
-          }));
-          // filter on columns not to showinitially
-          const filteredColumns = dbColumns.filter(
-            (col: any) => !dfltColFields.includes(col.field)
-          );
-          //columns not to showinitially
-          const allColumns = allDfltCols.concat(filteredColumns);
-          const visibleColumns = allColumns.reduce((model: any, col: any) => {
-            model[col.field] = dfltColFields.includes(col.field);
-            return model;
-          }, {});
-          setColumnVisibilityModel(visibleColumns);
-          setAllColumns(allColumns);
-          // setColumnsChanged(true);
-          // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
-        }
-      } else {
-        setAllColumns(allDfltCols);
-      }
-    }, 400);
-
-    // for title
-    // if (props.title) {
-    //   let newUrl: string;
-    //   if (searchParams.size > 0) {
-    //     // newUrl = url+`&pgTitle=${props.title}`
-    //     const newSearchParams = new URLSearchParams(searchParams.toString());
-    //     newSearchParams.set("pgTitle", props.title);
-    //     // router.push(url+`?${newSearchParams.toString()}`);
-    //     newUrl = url + `?${newSearchParams.toString()}`;
-    //   } else {
-    //     newUrl = url + `?pgTitle=${props.title}`;
-    //   }
-    //   router.push(newUrl);
-    // }
-    //for title
-
     if (searchData) {
       fetchData(searchData);
     } else {
@@ -193,7 +169,6 @@ export default function EntityList(props: entitiyCompT) {
     search,
     dialogOpen,
     searchData,
-    apiRef,
     props
   ]);
 
@@ -251,6 +226,7 @@ export default function EntityList(props: entitiyCompT) {
   const hideUploadBtn = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setOpen(false);
   };
+
 
   return (
     <Box>

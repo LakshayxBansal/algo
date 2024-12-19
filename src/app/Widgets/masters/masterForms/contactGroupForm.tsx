@@ -191,7 +191,7 @@ export default function ContactGroupForm(
                     parent: val ? val : { id: 0, name: "" },
                   })
                 }
-                dialogTitle={"Add Parent Group"}
+                dialogTitle={"Parent Group"}
                 fetchDataFn={getContactGroup}
                 fnFetchDataByID={getContactGroupById}
                 formError={formError?.parentgroup}

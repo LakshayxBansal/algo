@@ -198,9 +198,9 @@ export default function CreateCompany(
                   autoFocus
                   id="name"
                   label="Name"
+                  titleCase={true}
                   name="name"
                   required
-                  titleCase={true}
                   style={{ width: "100%" }}
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
@@ -370,9 +370,9 @@ export default function CreateCompany(
                       selectValues.country?.name ?? entityData.country;
                     return getStatesMaster(stateStr, country);
                   }}
-                  disable={
-                    selectValues.country || entityData.country ? false : true
-                  }
+                  // disable={
+                  //   selectValues.country || entityData.country ? false : true
+                  // }
                   diaglogVal={
                     selectValues.state
                       ? {

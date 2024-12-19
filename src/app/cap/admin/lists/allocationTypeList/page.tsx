@@ -26,7 +26,7 @@ export default function AllocationType() {
       <SecondNavbar title={"List of Allocation"}/>
     </Box>
       <EntityList
-        title="Allocation"
+        title="Allocation Type"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <AllocationTypeMasterForm
             setDialogOpen={fnDialogOpen}

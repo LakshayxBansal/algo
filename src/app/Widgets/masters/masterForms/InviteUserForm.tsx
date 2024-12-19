@@ -163,6 +163,7 @@ export default function InviteUserForm(props: masterFormPropsT) {
               <InputControl
                 inputType={InputType.TEXT}
                 name="name"
+                titleCase={true}
                 id="name"
                 label="Name"
                 autoFocus

@@ -807,7 +807,7 @@ const SupportTicketForm = (props: customprop) => {
 
         {dialogOpen && (
           <AddDialog
-            title="Add Product"
+            title="Product"
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
