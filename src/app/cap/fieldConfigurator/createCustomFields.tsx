@@ -555,7 +555,7 @@ const FieldConfigurator = () => {
                                 </FormControl>
                             }
 
-                            <FormControlLabel
+                            {item.column_type_id !== 2 && <FormControlLabel
                                 disabled={item.is_default_mandatory === 1}
                                 control={
                                     <Checkbox
@@ -564,8 +564,7 @@ const FieldConfigurator = () => {
                                     />
                                 }
                                 label="Mandatory"
-                            />
-
+                            />}
                             {item.is_default_column ? (<FormControlLabel
                                 disabled={item.is_default_mandatory === 1 || item.is_mandatory === 1}
                                 control={
