@@ -79,7 +79,7 @@ export default function UserList() {
     </EntityList>
     {dialogOpen && (
       <AddDialog
-        title={"Modal"}
+        title={"Action"}
         open={dialogOpen}
         setDialogOpen={setDialogOpen}
       >
