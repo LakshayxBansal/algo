@@ -553,8 +553,6 @@ export default function InputForm({ baseData }: InputFormProps) {
     }
   };
 
-  console.log(enqData);
-
   async function persistEntity(
     enquirydata: enquiryDataSchemaT,
     productData: enquiryProductArraySchemaT
@@ -701,33 +699,35 @@ export default function InputForm({ baseData }: InputFormProps) {
                 sx={{ display: "flex", flexDirection: "column" }}
                 key={`remarks-grid-${index}`}
               >
-                <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
-                  <InputControl
-                    inputType={InputType.TEXTFIELD}
-                    key={`call-receipt-field-${index}`}
-                    placeholder="Call receipt remarks"
-                    label={propsForCallReceiptField.label}
-                    multiline
-                    name="call_receipt_remark"
-                    id="call_receipt_remark"
-                    rows={baseData.statusUpdate ? 4 : 6}
-                    fullWidth
-                    error={formError?.call_receipt_remark?.error}
-                    helperText={formError?.call_receipt_remark?.msg}
-                    setFormError={setFormError}
-                    sx={{
-                      "& .MuiFormHelperText-root": {
-                        margin: 0,
-                      },
-                    }}
-                    disabled={
-                      baseData.statusUpdate ||
-                      Boolean(propsForCallReceiptField.disabled)
-                    }
-                    required={propsForCallReceiptField.required}
-                    defaultValue={enqData?.call_receipt_remark ?? ""}
-                  />
-                </Grid>
+                {!baseData.statusUpdate && (
+                  <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
+                    <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`call-receipt-field-${index}`}
+                      placeholder="Call receipt remarks"
+                      label={propsForCallReceiptField.label}
+                      multiline
+                      name="call_receipt_remark"
+                      id="call_receipt_remark"
+                      rows={6}
+                      fullWidth
+                      error={formError?.call_receipt_remark?.error}
+                      helperText={formError?.call_receipt_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{
+                        "& .MuiFormHelperText-root": {
+                          margin: 0,
+                        },
+                      }}
+                      disabled={
+                        baseData.statusUpdate ||
+                        Boolean(propsForCallReceiptField.disabled)
+                      }
+                      required={propsForCallReceiptField.required}
+                      defaultValue={enqData?.call_receipt_remark ?? ""}
+                    />
+                  </Grid>
+                )}
                 <Grid
                   item
                   xs={12}
@@ -742,7 +742,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     multiline
                     name="suggested_action_remark"
                     id="suggested_action_remark"
-                    rows={baseData.statusUpdate ? 4 : 6}
+                    rows={6}
                     fullWidth
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
@@ -770,7 +770,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                       multiline
                       name="action_taken_remark"
                       id="action_taken_remark"
-                      rows={baseData.statusUpdate ? 4 : 6}
+                      rows={6}
                       fullWidth
                       error={formError?.action_taken_remark?.error}
                       helperText={formError?.action_taken_remark?.msg}
