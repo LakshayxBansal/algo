@@ -33,7 +33,7 @@ export async function createContactGroup(data: contactGroupSchemaT) {
   try {
     const session = await getSession();
 
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.contactGroupSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactGroupDb(
@@ -95,7 +95,7 @@ export async function updateContactGroup(data: contactGroupSchemaT) {
   try {
     const session = await getSession();
 
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.contactGroupSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateContactGroupDb(
@@ -214,7 +214,7 @@ export async function getContactGroupByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       
       const dbData = await getContactGroupByPageDb(
         appSession.user.dbInfo.dbName as string,

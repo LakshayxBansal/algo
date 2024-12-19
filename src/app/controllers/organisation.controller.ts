@@ -26,7 +26,7 @@ export async function createOrganisation(data: zm.organisationSchemaT,docData : 
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.organisationSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createOrganisationDB(
@@ -86,7 +86,7 @@ export async function updateOrganisation(data: zm.organisationSchemaT, docData :
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.organisationSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateOrganisationDB(
@@ -223,7 +223,7 @@ export async function getOrganisationByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getOrganisationByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

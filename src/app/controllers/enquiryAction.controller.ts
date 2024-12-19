@@ -91,7 +91,7 @@ export async function getEnquiryActionByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getEnquiryActionByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -133,7 +133,7 @@ export async function createEnquiryAction(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -185,7 +185,7 @@ export async function updateEnquiryAction(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -241,7 +241,7 @@ export async function uploadCsvData(data: string) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       
       const csvData = data; 
 

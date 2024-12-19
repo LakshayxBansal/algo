@@ -8,6 +8,8 @@ import {
   getExecutiveGroupById,
   getExecutiveGroupByPage,
 } from "@/app/controllers/executiveGroup.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -25,6 +27,9 @@ const columns: GridColDef[] = [
 export default function executiveGroup() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Executive Group"}/>
+      </Box>
       <EntityList
         title="Executive Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

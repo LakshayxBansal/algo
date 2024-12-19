@@ -75,7 +75,7 @@ export async function createEnquiryCategory(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await createEnquiryCategoryDb(session, data);
@@ -124,7 +124,7 @@ export async function updateEnquiryCategory(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
 
       if (parsed.success) {
@@ -193,7 +193,7 @@ export async function getEnquiryCategoryByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getEnquiryCategoryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

@@ -8,6 +8,8 @@ import {
   getStateByPage,
 } from "@/app/controllers/masters.controller";
 import StateFormList from "@/app/Widgets/masters/masterForms/stateFormList";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -25,6 +27,9 @@ const columns: GridColDef[] = [
 export default function State() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of State"}/>
+      </Box>
       <EntityList
         title="State"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

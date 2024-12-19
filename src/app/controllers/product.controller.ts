@@ -20,7 +20,7 @@ export async function createProduct(data: productSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.ProductSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createProductDB(session, data as productSchemaT);
@@ -74,7 +74,7 @@ export async function updateProduct(data: productSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.ProductSchema.safeParse(data);
 
       if (parsed.success) {
@@ -205,7 +205,7 @@ export async function getProductByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getProductByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -246,7 +246,7 @@ export async function getProductData(id: number) {
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dep = await fetchProductById(
         appSession.user.dbInfo.dbName as string,
         id as number

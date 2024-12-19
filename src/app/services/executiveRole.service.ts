@@ -30,7 +30,6 @@ export async function getExecutiveRoleList(
 
     if (searchString !== "") {
       query = query + " where name like '%" + searchString + "%'";
-      values = [];
     }
     
     const result = await excuteQuery({

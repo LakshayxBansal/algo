@@ -39,7 +39,6 @@ import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
-import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
@@ -94,7 +93,7 @@ export default function EntityList(props: entitiyCompT) {
         pgSize as number
       );
 
-      const roleId = await getRoleID();
+      // const roleId = await getRoleID();
       if (rows.data) {
         setData(rows.data);
         setNRows(rows.count as number);
@@ -279,7 +278,7 @@ export default function EntityList(props: entitiyCompT) {
             ) : null}
           </AddDialog>
         )}
-        <SecondNavbar title={props.title}/>
+        {/* <SecondNavbar title={props.title}/> */}
         <Paper
           elevation={3}
           sx={{

@@ -16,8 +16,6 @@ import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
 import styles from "../signup/SignUpForm.module.css";
 import * as zs from "../zodschema/zodschema";
-import { getTotalInvite } from "../controllers/user.controller";
-import { getCompanyCount } from "../services/company.service";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -72,18 +70,7 @@ export default function AuthPage(props: authPagePropsType) {
         password: data.password,
       }).then(async (status) => {
         if (status?.ok) {
-          // setTimeout(() => {
-          const totalInvites = await getTotalInvite();
-          const totalCompanies = await getCompanyCount(data.contact);
-          if (
-            totalInvites.rowCount === 0 &&
-            Number(totalCompanies[0].rowCount) === 0
-          ) {
-            router.push("/addcompany");
-          } else {
-            router.push(successCallBackUrl);
-          }
-          // }, 1000);
+              router.push(successCallBackUrl);
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};

@@ -11,9 +11,6 @@ import { useRouter } from "next/navigation";
 import { InputControl, InputType } from "../Widgets/input/InputControl";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { getTotalInvite } from "../controllers/user.controller";
-import { getInvitesCount } from "../services/user.service";
-import { getCompanyCount } from "../services/company.service";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -48,11 +45,8 @@ export default function AuthPage(props: authPagePropsType) {
       password: formData.get("password"),
     }).then((status) => {
       if (status?.ok) {
-        console.log("status : ", status);
-        // const totalInvites = await getTotalInvite();
-        // const totalCompanies = await getCompanyCount()
-        // console.log("totat invites : ",totalInvites);
-        // router.push(successCallBackUrl);
+        console.log("status : ",status)
+        router.push(successCallBackUrl);
       } else {
         const errorState: Record<string, { msg: string; error: boolean }> = {};
         errorState["form"] = { msg: "Invalid Credentials", error: true };

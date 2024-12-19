@@ -12,7 +12,7 @@ export async function updateRegionalSetting(
   const result = {status: false};
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       return await updateteRegionalSettingDb(session.user.dbInfo.dbName, data, config_id);
     }
   } catch (e: any) {
@@ -23,7 +23,7 @@ export async function updateRegionalSetting(
 export async function getRegionalSetting() {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const result = await getRegionalSettingDb(session.user.dbInfo.dbName);
       return result;
     }

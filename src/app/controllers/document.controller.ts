@@ -12,7 +12,7 @@ import axios from "axios";
 export async function uploadDocument(docData: mdl.docDescriptionSchemaT[], objectId: number, objectTypeId : number) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             for (const doc of docData) {
                 const formData = new FormData();
 
@@ -49,7 +49,7 @@ export async function addDocument(data: mdl.docDescriptionSchemaT, objectTypeId 
     let result;
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const parsed = zs.docDescriptionSchema.safeParse(data);
             if (parsed.success) {
                 result = await addDocumentDB(
@@ -69,7 +69,7 @@ export async function addDocument(data: mdl.docDescriptionSchemaT, objectTypeId 
 export async function getDocs(objectId: number,objectTypeId : number) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const result = await getDocsDB(session.user.dbInfo.dbName, objectId, objectTypeId);
             return result;
         }
@@ -81,7 +81,7 @@ export async function getDocs(objectId: number,objectTypeId : number) {
 export async function updateExecutiveDoc(description: string, id: number) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             await updateExecutiveDocDB(session.user.dbInfo.dbName, description, id);
         }
     } catch (error) {
@@ -92,7 +92,7 @@ export async function updateExecutiveDoc(description: string, id: number) {
 export async function deleteExecutiveDoc(id: number, docId: string) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const body = {
                 "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
                 "doc_id": docId
@@ -117,7 +117,7 @@ export async function deleteExecutiveDoc(id: number, docId: string) {
 export async function viewExecutiveDoc(documentId: string) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const body = {
                 "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
                 "doc_id": documentId
