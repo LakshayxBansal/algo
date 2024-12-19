@@ -10,7 +10,7 @@ import {
 } from "@/app/controllers/enquiry.controller";
 import { getRightsData } from "@/app/controllers/rights.controller";
 import { getScreenDescription } from "@/app/controllers/object.controller";
-import { ENQUIRY_ID , ENQUIRY_STATUS_UPDATE_ID} from "@/app/utils/consts.utils";
+import { ENQUIRY_ID } from "@/app/utils/consts.utils";
 import { Metadata } from "next";
 import { decrypt } from "@/app/utils/encrypt.utils";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
@@ -30,7 +30,7 @@ interface MasterData {
   config_data: Record<string, any>;
   regional_setting: Record<string, any>;
   loggedInUserData: Record<string, any>;
-  statusFromURL: string | string[] | undefined;
+  statusUpdate: boolean;
 }
 
 export default async function MyForm({ searchParams }: searchParamsProps) {
@@ -50,7 +50,7 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
 
     // Step 2: Fetch the necessary data in parallel
     const [fields, configData, loggedInUserData] = await Promise.all([
-      getScreenDescription(status === "true" ? ENQUIRY_STATUS_UPDATE_ID: ENQUIRY_ID),
+      getScreenDescription(ENQUIRY_ID),
       getConfigData(),
       getLoggedInUserDetails(),
     ]);
@@ -83,7 +83,7 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
       config_data: JSON.parse(configData[0].config) ?? {},
       regional_setting: JSON.parse(configData[1].config) ?? {},
       loggedInUserData: loggedInUserData ?? {},
-      statusFromURL: status,
+      statusUpdate: status === "true" ? true : false,
     };
 
     // Step 6: Return the component
@@ -96,19 +96,35 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
   }
 }
 
-async function getSuggestedRemark(data: Record<string, any> | undefined, status: string | string[] | undefined, dateTimeFormat: any) {
+async function getSuggestedRemark(
+  data: Record<string, any> | undefined,
+  status: string | string[] | undefined,
+  dateTimeFormat: any
+) {
   let ledgerData = data?.ledgerData;
   const headerData = data?.headerData;
 
   const { dateFormat, timeFormat } = dateTimeFormat;
-  const timeFormatString = timeFormat ? timeFormat === "12 Hours" ? "hh:mm A" : "HH:mm": "HH:mm";
+  const timeFormatString = timeFormat
+    ? timeFormat === "12 Hours"
+      ? "hh:mm A"
+      : "HH:mm"
+    : "HH:mm";
   const modifiedDateTimeFormat = [
     dateFormat || "DD/MM/YYYY", // Add dateFormat if it exists
     timeFormatString, // Add timeFormatString if timeFormat is valid
-  ].filter(Boolean).join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   if (status === "true") {
-    let suggested_action_remark = `Call Receipt Remarks:-${ headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).format(modifiedDateTimeFormat)} ; ${headerData[0].call_receipt_remark} \n__________________________________________________________________________________________________________\n`;
+    let suggested_action_remark = `Call Receipt Remarks:-${
+      headerData[0].created_by_name
+    } ; ${adjustToLocal(headerData[0].created_on).format(
+      modifiedDateTimeFormat
+    )} ; ${
+      headerData[0].call_receipt_remark
+    } \n_______________________________________________________________________________________\n`;
 
     // formating suggested action remark and action taken reamark
     //format-   modified_by , date , remark
@@ -120,7 +136,7 @@ async function getSuggestedRemark(data: Record<string, any> | undefined, status:
           modifiedDateTimeFormat
         )} ; ${
           ledgerData[i].suggested_action_remark
-        } \n__________________________________________________________________________________________________________\n`;
+        } \n_______________________________________________________________________________________\n`;
       }
       if (ledgerData[i].action_taken_remark) {
         suggested_action_remark += `Action Taken Remarks:-${
@@ -129,7 +145,7 @@ async function getSuggestedRemark(data: Record<string, any> | undefined, status:
           modifiedDateTimeFormat
         )} ; ${
           ledgerData[i].action_taken_remark
-        } \n__________________________________________________________________________________________________________\n`;
+        } \n_______________________________________________________________________________________\n`;
       }
     }
     ledgerData = ledgerData[ledgerData.length - 1];
@@ -138,8 +154,8 @@ async function getSuggestedRemark(data: Record<string, any> | undefined, status:
   } else {
     ledgerData = ledgerData[ledgerData.length - 1];
   }
-  data?.ledgerData? data.ledgerData = ledgerData : undefined;
-  data?.headerData? data.headerData = headerData[0] : undefined;
+  data?.ledgerData ? (data.ledgerData = ledgerData) : undefined;
+  data?.headerData ? (data.headerData = headerData[0]) : undefined;
   return data;
 }
 
@@ -222,9 +238,9 @@ async function formatedData(enqData: any) {
   };
 
   //Convert all the quantity fields from String to Number format
-  const updatedProducts = productData.map((product: { quantity: string; }) => ({
+  const updatedProducts = productData.map((product: { quantity: string }) => ({
     ...product,
-    quantity: parseFloat(product.quantity) // Convert quantity to a number
+    quantity: parseFloat(product.quantity), // Convert quantity to a number
   }));
 
   const result = {

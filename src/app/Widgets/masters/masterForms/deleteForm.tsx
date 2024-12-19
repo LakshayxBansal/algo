@@ -6,7 +6,7 @@ import { masterFormPropsT } from "@/app/models/models";
 export default function DeleteForm(props: masterFormPropsT) {
   const [snackOpen, setSnackOpen] = useState(false);
 
-  console.log("thsi is delete form",props.data);
+  console.log("thsi is delete form", props.data);
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -24,8 +24,7 @@ export default function DeleteForm(props: masterFormPropsT) {
 
         <Grid container>
           <Grid item xs={6} md={6}>
-            <Box margin={1} sx={{ display: "flex" }}>
-            </Box>
+            <Box margin={1} sx={{ display: "flex" }}></Box>
           </Grid>
           <Grid item xs={6} md={6}>
             <Box
@@ -33,12 +32,13 @@ export default function DeleteForm(props: masterFormPropsT) {
               justifyContent="flex-end"
               alignItems="flex-end"
               m={1}
-              >
+            >
               <Button onClick={handleCancel}>Cancel</Button>
-              <Button 
-              // type="submit" 
-              onClick={handleSubmit}
-              variant="contained">
+              <Button
+                // type="submit"
+                onClick={handleSubmit}
+                variant="contained"
+              >
                 Delete
               </Button>
             </Box>
@@ -62,14 +62,14 @@ export default function DeleteForm(props: masterFormPropsT) {
         </Box> */}
       </form>
       <Portal>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
-        </Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </Box>
   );
 }

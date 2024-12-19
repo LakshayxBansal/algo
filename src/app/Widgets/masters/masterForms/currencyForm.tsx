@@ -26,16 +26,24 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function CurrencyForm(props: masterFormPropsWithDataT<currencySchemaT>) {
+export default function CurrencyForm(
+  props: masterFormPropsWithDataT<currencySchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
-  const [currencySystem, setCurrencySystem] = useState(props.data ? props.data.currency_system : "ind");
-  const [decimalPlaces, setDecimalPlaces] = useState(props.data ? props.data.decimal_places : "2");
+  const [currencySystem, setCurrencySystem] = useState(
+    props.data ? props.data.currency_system : "ind"
+  );
+  const [decimalPlaces, setDecimalPlaces] = useState(
+    props.data ? props.data.decimal_places : "2"
+  );
   const [symbol, setSymbol] = useState("");
   const [sample, setSample] = useState("");
-  const entityData: currencySchemaT = props.data ? props.data : {} as currencySchemaT;
+  const entityData: currencySchemaT = props.data
+    ? props.data
+    : ({} as currencySchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
   // if (props.data) {
@@ -68,7 +76,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
         setSample("");
         // setFormError({});
       }
@@ -79,7 +87,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
-        if (issue.path === 'refresh') {
+        if (issue.path === "refresh") {
           errorState["form"] = { msg: issue.message, error: true };
         }
       }
@@ -172,7 +180,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="currencyForm" sx={{m : 1, p : 3}}>
+      <Box id="currencyForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -188,7 +196,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.symbol}
                 error={formError?.symbol?.error}
                 helperText={formError?.symbol?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 onChange={onSymbolChange}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
@@ -208,7 +216,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { name, ...rest } = curr;
@@ -228,7 +236,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.shortForm}
                 error={formError?.shortForm?.error}
                 helperText={formError?.shortForm?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { shortForm, ...rest } = curr;
@@ -266,10 +274,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 size="small"
                 sx={{
                   marginTop: "1.3vh",
-                  width: "100%"
+                  width: "100%",
                 }}
               >
-                <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
+                <InputLabel id="decimal-places-label">
+                  Decimal Places
+                </InputLabel>
                 <Select
                   labelId="decmal-place-label"
                   id="decimal-place"

@@ -15,12 +15,16 @@ import { Collapse, IconButton, Portal, Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>) {
+export default function StateForm(
+  props: masterFormPropsWithDataT<stateSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: stateSchemaT = props.data ? props.data : {} as stateSchemaT;
+  const entityData: stateSchemaT = props.data
+    ? props.data
+    : ({} as stateSchemaT);
   const parentData: any = props.parentData ? props.parentData : null;
 
   const handleSubmit = async (formData: FormData) => {
@@ -117,7 +121,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="stateForm" sx={{m:1, p:3}}>
+      <Box id="stateForm" sx={{ m: 1, p: 3 }}>
         <form action={handleSubmit}>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={12} md={6} lg={6}>
@@ -131,7 +135,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
                 name="name"
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
-  setFormError={setFormError}
+                setFormError={setFormError}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -144,7 +148,7 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
                 name="alias"
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
-  setFormError={setFormError}
+                setFormError={setFormError}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -173,14 +177,14 @@ export default function StateForm(props: masterFormPropsWithDataT<stateSchemaT>)
         </form>
       </Box>
       <Portal>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
-        </Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </>
   );
 }

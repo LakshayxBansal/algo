@@ -76,7 +76,9 @@ export default function ContactForm(
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(
+    entityData.whatsapp?.length === 0 ? "+91" : entityData.whatsapp
+  );
   const [stateDisable, setStateDisable] = useState(!entityData.country);
   const [formKey, setFormKey] = useState(0);
   let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
@@ -189,28 +191,28 @@ export default function ContactForm(
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-        ? entityData.contactGroup_id
-        : 0;
+      ? entityData.contactGroup_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-        ? entityData.organisation_id
-        : 0;
+      ? entityData.organisation_id
+      : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-        ? entityData.department_id
-        : 0;
+      ? entityData.department_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
@@ -259,8 +261,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-      />
-
+      />,
     ],
     [
       "alias",
@@ -276,8 +277,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.alias}
         fullWidth
-      />
-
+      />,
     ],
     [
       "print_name",
@@ -293,8 +293,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={printNameFn}
         fullWidth
-      />
-
+      />,
     ],
     [
       "organisation",
@@ -345,8 +344,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.pan}
         fullWidth
-      />
-
+      />,
     ],
     [
       "aadhaar",
@@ -362,9 +360,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.aadhaar}
         fullWidth
-
-      />
-
+      />,
     ],
     [
       "contactGroup",
@@ -484,8 +480,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.email}
         fullWidth
-      />
-
+      />,
     ],
     [
       "mobile",
@@ -503,8 +498,7 @@ export default function ContactForm(
         defaultValue={entityData.mobile}
         onChange={handleWhatsappChange}
         fullWidth
-      />
-
+      />,
     ],
     [
       "whatsapp",
@@ -522,8 +516,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={whatsappFn}
         fullWidth
-      />
-
+      />,
     ],
     [
       "address1",
@@ -539,8 +532,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.address1}
         fullWidth
-      />
-
+      />,
     ],
     [
       "address2",
@@ -556,8 +548,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.address2}
         fullWidth
-      />
-
+      />,
     ],
     [
       "city",
@@ -642,8 +633,7 @@ export default function ContactForm(
             parentData={selectValues.country?.id || entityData.country_id}
           />
         )}
-      />
-
+      />,
     ],
     [
       "city",
@@ -659,8 +649,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
-      />
-
+      />,
     ],
     [
       "pincode",
@@ -676,10 +665,9 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
-      />
-
-    ]
-  ])
+      />,
+    ],
+  ]);
 
   let fieldArr: React.ReactElement[] = [];
 
@@ -705,9 +693,13 @@ export default function ContactForm(
         disabled: field.is_disabled === 1 ? true : false,
       });
       fieldArr.push(fld);
-    }
-    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
-      if (field.column_name_id === 'state') {
+    } else if (
+      field.column_name_id === "country" ||
+      field.column_name_id === "state" ||
+      field.column_name_id === "city" ||
+      field.column_name_id === "pincode"
+    ) {
+      if (field.column_name_id === "state") {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -836,8 +828,7 @@ export default function ContactForm(
                 justifyContent: "flex-end",
                 // mt: 1,
               }}
-            >
-            </Grid>
+            ></Grid>
             {dialogOpen && (
               <AddDialog
                 title=""
@@ -861,17 +852,19 @@ export default function ContactForm(
               }}
             >
               <Tooltip
-                title={docData?.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
+                title={
+                  docData?.length > 0 ? (
+                    docData.map((file: any, index: any) => (
+                      <Typography variant="body2" key={index}>
+                        {file.description}
+                      </Typography>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="white">
+                      No files available
                     </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )}
+                  )
+                }
               >
                 <IconButton
                   sx={{ marginRight: "3rem" }}
@@ -898,7 +891,11 @@ export default function ContactForm(
             </Box>
           </Grid>
           {dialogOpen && (
-            <AddDialog title="Document List" open={dialogOpen} setDialogOpen={setDialogOpen}>
+            <AddDialog
+              title="Document List"
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
               <DocModal
                 docData={docData}
                 setDocData={setDocData}

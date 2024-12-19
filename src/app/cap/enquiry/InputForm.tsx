@@ -85,8 +85,8 @@ export interface InputFormProps {
     // rights: Record<string, any>;
     config_data: Record<string, any>;
     regional_setting: Record<string, any>;
-    loggedInUserData: Record<string, any>;
-    statusFromURL: string | string[] | undefined;
+    loggedInUserData?: Record<string, any>;
+    statusUpdate?: boolean;
   };
 }
 
@@ -102,8 +102,8 @@ export default function InputForm({ baseData }: InputFormProps) {
       ? defaultData
       : {
           received_by: {
-            id: baseData.loggedInUserData.id,
-            name: baseData.loggedInUserData.name,
+            id: baseData.loggedInUserData?.id,
+            name: baseData.loggedInUserData?.name,
           },
         }
   );
@@ -158,7 +158,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         helperText={formError?.enq_number?.msg}
         setFormError={setFormError}
         defaultValue={enqData?.enq_number ?? ""}
-        // disabled={baseData?.status === "true" ? true : false}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -182,6 +182,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           },
         }}
         defaultValue={enqData?.date ? adjustToLocal(enqData.date) : dayjs()}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -208,6 +209,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={defaultData?.contact ?? {}}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -232,6 +234,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={defaultData?.category ?? {}}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -256,6 +259,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={defaultData?.source ?? {}}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -289,6 +293,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                 name: baseData?.loggedInUserData?.name,
               } as optionsDataT)
         }
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -348,6 +353,39 @@ export default function InputForm({ baseData }: InputFormProps) {
         )}
         allowNewAdd={status === "1"}
         defaultValue={subStatus}
+      />,
+    ],
+    [
+      "allocate_to",
+      <SelectMasterWrapper
+        key="allocated_to"
+        name="allocated_to"
+        id="allocated_to"
+        label="allocated_to"
+        showDetails={true}
+        dialogTitle={"Allocated To"}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
+        fetchDataFn={getExecutive}
+        fnFetchDataByID={getExecutiveById}
+        required={false}
+        formError={formError?.allocated_to ?? formError.allocated_to}
+        setFormError={setFormError}
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+          <ExecutiveForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            metaData={metaData}
+            data={data}
+          />
+        )}
+        defaultValue={
+          enqData?.enquiry_id
+            ? defaultData?.allocated_to ?? {}
+            : ({
+                id: baseData?.loggedInUserData?.id,
+                name: baseData?.loggedInUserData?.name,
+              } as optionsDataT)
+        }
       />,
     ],
     [
@@ -452,7 +490,6 @@ export default function InputForm({ baseData }: InputFormProps) {
       />,
     ],
   ]);
-
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
@@ -461,6 +498,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       selectValues,
       dateFormat,
       timeFormat,
+      otherData: enqData,
     });
 
     let result;
@@ -515,6 +553,8 @@ export default function InputForm({ baseData }: InputFormProps) {
     }
   };
 
+  console.log(enqData);
+
   async function persistEntity(
     enquirydata: enquiryDataSchemaT,
     productData: enquiryProductArraySchemaT
@@ -524,13 +564,11 @@ export default function InputForm({ baseData }: InputFormProps) {
     if (enqData?.enquiry_id) {
       enquirydata.id = enqData.enquiry_id;
       enquirydata.stamp = enqData.stamp;
-      enquirydata.enquiry_tran_type =
-        baseData.statusFromURL === "true"
-          ? baseData.enqData.allocated_to.id === selectValues.allocated_to.id
-            ? 4 // If status exists and allocation matches, assign 4
-            : 2 // If status exists but allocation doesn't match, assign 2
-          : 3; // If no status then it is full update, assign 3
-      enquirydata.allocated_to_id = defaultData.allocated_to?.id;
+      enquirydata.enquiry_tran_type = baseData.statusUpdate
+        ? defaultData.allocated_to.id === selectValues.allocated_to.id
+          ? 4 // If status exists and allocation matches, assign 4
+          : 2 // If status exists but allocation doesn't match, assign 2
+        : 3; // If no status then it is full update, assign 3
       enquirydata.created_by = enqData.created_by;
       enquirydata.status_version = 0;
       result = await updateEnquiry({
@@ -604,6 +642,7 @@ export default function InputForm({ baseData }: InputFormProps) {
     "product_grid",
     "call_receipt_remark",
     "suggested_action_remark",
+    "action_taken_remark",
   ];
 
   const enquiryMaintainProducts = baseData.config_data.maintainProducts;
@@ -617,7 +656,9 @@ export default function InputForm({ baseData }: InputFormProps) {
         let propsForSugActionField = fieldPropertiesById(
           "suggested_action_remark"
         );
-
+        let propsForActionTakenRemField = fieldPropertiesById(
+          "action_taken_remark"
+        );
         let fld = (
           <Grid item xs={12} key={`field-default-product-remarks-grid`}>
             <Grid container spacing={2} key={`grid-container-${index}`}>
@@ -645,6 +686,9 @@ export default function InputForm({ baseData }: InputFormProps) {
                       dgFormError={formError}
                       setdgFormError={setFormError}
                       dgProductFormError={productFormError}
+                      disabled={
+                        baseData.statusUpdate || Boolean(field.is_disabled)
+                      }
                     />
                   </Box>
                 </Grid>
@@ -666,7 +710,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     multiline
                     name="call_receipt_remark"
                     id="call_receipt_remark"
-                    rows={6}
+                    rows={baseData.statusUpdate ? 4 : 6}
                     fullWidth
                     error={formError?.call_receipt_remark?.error}
                     helperText={formError?.call_receipt_remark?.msg}
@@ -676,7 +720,10 @@ export default function InputForm({ baseData }: InputFormProps) {
                         margin: 0,
                       },
                     }}
-                    disabled={Boolean(propsForCallReceiptField.disabled)}
+                    disabled={
+                      baseData.statusUpdate ||
+                      Boolean(propsForCallReceiptField.disabled)
+                    }
                     required={propsForCallReceiptField.required}
                     defaultValue={enqData?.call_receipt_remark ?? ""}
                   />
@@ -695,7 +742,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                     multiline
                     name="suggested_action_remark"
                     id="suggested_action_remark"
-                    rows={6}
+                    rows={baseData.statusUpdate ? 4 : 6}
                     fullWidth
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
@@ -705,11 +752,40 @@ export default function InputForm({ baseData }: InputFormProps) {
                         margin: 0,
                       },
                     }}
-                    disabled={Boolean(propsForSugActionField.disabled)}
+                    disabled={
+                      baseData.statusUpdate ||
+                      Boolean(propsForSugActionField.disabled)
+                    }
                     required={propsForSugActionField.required}
                     defaultValue={enqData.suggested_action_remark}
                   />
                 </Grid>
+                {baseData.statusUpdate && (
+                  <Grid item xs={12} md={12} key={`action-taken-grid-${index}`}>
+                    <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`action-taken-field-${index}`}
+                      placeholder="Action Taken Remarks"
+                      label={propsForActionTakenRemField.label}
+                      multiline
+                      name="action_taken_remark"
+                      id="action_taken_remark"
+                      rows={baseData.statusUpdate ? 4 : 6}
+                      fullWidth
+                      error={formError?.action_taken_remark?.error}
+                      helperText={formError?.action_taken_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{
+                        "& .MuiFormHelperText-root": {
+                          margin: 0,
+                        },
+                      }}
+                      disabled={Boolean(propsForActionTakenRemField.disabled)}
+                      required={propsForActionTakenRemField.required}
+                      defaultValue={enqData.action_taken_remark}
+                    />
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -717,6 +793,11 @@ export default function InputForm({ baseData }: InputFormProps) {
 
         fieldArr.push(fld);
       } else if (!skipColumns.includes(field.column_name_id)) {
+        if (field.column_name_id === "allocate_to" && !baseData.statusUpdate) {
+          //skip this field
+          return null;
+        }
+
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;

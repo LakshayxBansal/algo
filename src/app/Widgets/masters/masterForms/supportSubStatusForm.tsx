@@ -15,14 +15,21 @@ import {
   enquirySubStatusMasterT,
   masterFormPropsWithDataT,
 } from "@/app/models/models";
-import { createSupportSubStatus, updateSupportSubStatus } from "@/app/controllers/supportSubStatus.controller";
+import {
+  createSupportSubStatus,
+  updateSupportSubStatus,
+} from "@/app/controllers/supportSubStatus.controller";
 
-export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
+export default function SupportSubStatusForm(
+  props: masterFormPropsWithDataT<enquirySubStatusMasterT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
+  const entityData: enquirySubStatusMasterT = props.data
+    ? props.data
+    : ({} as enquirySubStatusMasterT);
   const statusName = props.parentData === 1 ? "Open" : "Closed";
 
   // submit function. Save to DB and set value to the dropdown control
@@ -105,7 +112,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enq
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{m:1, p:3}}>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -121,7 +128,7 @@ export default function SupportSubStatusForm(props: masterFormPropsWithDataT<enq
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { name, ...rest } = curr;
