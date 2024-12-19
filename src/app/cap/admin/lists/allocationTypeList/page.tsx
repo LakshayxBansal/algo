@@ -21,7 +21,7 @@ export default function AllocationType() {
   return (
     <>
       <EntityList
-        title="Allocation"
+        title="Allocation Type"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <AllocationTypeMasterForm
             setDialogOpen={fnDialogOpen}

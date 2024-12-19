@@ -119,6 +119,7 @@ export default function ExecutiveForm(
         key="name"
         inputType={InputType.TEXT}
         autoFocus
+        titleCase={true}
         id="name"
         label="Name"
         name="name"

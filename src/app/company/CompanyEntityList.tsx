@@ -61,6 +61,7 @@ export default function CompanyEntityList() {
     }
   ];
 
+  console.log("customCols : ", columns)
   // const companyDefaultColumns=["companyName","companyAlias","createdBy","createdOn"];
 
   return (
