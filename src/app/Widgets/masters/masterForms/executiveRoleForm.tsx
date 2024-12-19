@@ -186,38 +186,6 @@ export default function ExecutiveRoleForm(
                 style={{ width: "100%" }}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={12} md={6} lg={6}>
-              <SelectMasterWrapper
-                name={"parentrole"}
-                id={"parentrole"}
-                label={"Parent Executive Role"}
-                dialogTitle={"Add Executive Role"}
-                fetchDataFn={getExecutiveRole}
-                fnFetchDataByID={getExecutiveRoleById}
-                defaultValue={
-                  {
-                    id: entityData.parent_id,
-                    name: entityData.parentRole,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    parentRole: val ? val : { id: 0, name: "" },
-                  })
-                }
-                allowNewAdd={false}
-                allowModify={false}
-                renderForm={(fnDialogOpen, fnDialogValue, data, parentData) => (
-                  <ExecutiveRoleForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                    parentData={selectValues.parent?.parent_id}
-                  />
-                )}
-              />
-            </Grid> */}
             <Grid
               item
               xs={12}

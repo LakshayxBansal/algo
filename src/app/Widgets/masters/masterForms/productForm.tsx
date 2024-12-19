@@ -177,7 +177,7 @@ export default function ProductForm(
                 name={"productGroup"}
                 id={"productGroup"}
                 label={"Product Group Name"}
-                dialogTitle={"Add Product Group"}
+                dialogTitle={"Product Group"}
                 fetchDataFn={getProductGroup}
                 fnFetchDataByID={getProductGroupById}
                 allowModify={true}
@@ -210,7 +210,7 @@ export default function ProductForm(
                 name={"unit"}
                 id={"unit"}
                 label={"Unit Name"}
-                dialogTitle={"Add Unit"}
+                dialogTitle={"Unit"}
                 allowModify={true}
                 defaultValue={
                   {

@@ -186,7 +186,7 @@ export default function ProductGroupForm(
                 id={"parent"}
                 label={"Parent Group"}
                 width={350}
-                dialogTitle={"Add Parent Group"}
+                dialogTitle={"Parent Group"}
                 defaultValue={
                   {
                     id: entityData.parent_id,

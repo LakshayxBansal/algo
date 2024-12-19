@@ -234,7 +234,7 @@ export default function ExecutiveForm(
         name={"role"}
         id={"role"}
         label={"Role"}
-        dialogTitle={"Add Role"}
+        dialogTitle={"Role"}
         width={365}
         fetchDataFn={getExecutiveRole}
         fnFetchDataByID={getExecutiveRoleById}
