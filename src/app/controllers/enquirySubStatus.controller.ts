@@ -52,7 +52,7 @@ export async function createEnquirySubStatus(data: enquirySubStatusMasterT) {
 
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.enquirySubStatusMaster.safeParse(data);
 
       if (parsed.success) {
@@ -104,7 +104,7 @@ export async function updateEnquirySubStatus(data: enquirySubStatusMasterT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -158,7 +158,7 @@ export async function updateEnquirySubStatusList(data: enquirySubStatusMasterT) 
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -223,7 +223,7 @@ export async function getEnquirySubStatusByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getEnquirySubStatusByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

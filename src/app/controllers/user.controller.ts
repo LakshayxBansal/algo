@@ -1,6 +1,6 @@
 "use server"
 
-import { addUser, getBizAppUserList,checkInActiveUserDB,makeUserActiveDB, getCompanyUserCount, checkUserInCompanyDB, getUserDetailsByEmailList, getCompanyUserDB, getUserDetailsByIdList, deRegisterFromAppDB, deRegisterFromCompanyDB, deRegisterFromAllCompanyDB, deleteUserDB, createUserToInviteDb, insertExecutiveIdToInviteUserList, getInviteDetailByContactList, getInviteDetailByIdList, updateInUsercompany, deleteInvite, createInUsercompany, getInviteUserByIdList, getInviteUserDb, getInvitesDb, getInvitesCount, createUserInStatusBarDB } from '../services/user.service';
+import { addUser, getBizAppUserList, checkInActiveUserDB, makeUserActiveDB, getCompanyUserCount, checkUserInCompanyDB, getUserDetailsByEmailList, getCompanyUserDB, getUserDetailsByIdList, deRegisterFromAppDB, deRegisterFromCompanyDB, deRegisterFromAllCompanyDB, deleteUserDB, createUserToInviteDb, insertExecutiveIdToInviteUserList, getInviteDetailByContactList, getInviteDetailByIdList, updateInUsercompany, deleteInvite, createInUsercompany, getInviteUserByIdList, getInviteUserDb, getInvitesDb, getInvitesCount, createUserInStatusBarDB, updateInvitedUserDb, rejectInviteDB } from '../services/user.service';
 import { hashText } from '../utils/encrypt.utils';
 import * as zs from '../zodschema/zodschema';
 import { inviteUserSchemaT, userSchemaT } from '@/app/models/models';
@@ -9,44 +9,45 @@ import { bigIntToNum } from "../utils/db/types";
 import { SqlError } from 'mariadb';
 import { getCompanyDbByIdList, getCompanyDetailsById } from '../services/company.service';
 import { getAllRoles } from './executiveRole.controller';
+import { emailRegex } from '../zodschema/zodschema';
 
 
 export async function registerUser(formData: userSchemaT) {
   let result;
   try {
-      const parsed = zs.userSchema.safeParse(formData);
-      if (parsed.success) {
-        let contact;
-        if (formData.email) {
-          contact = formData.email;
-          delete formData.email;
-        }
-        else {
-          contact = formData.phone;
-          contact = contact?.replace(/ +/g, '');
-          delete formData?.phone;
-        }
-        formData.contact = contact;
-        
-
-          const hashedPassword = await hashText(formData.password);
-          formData.password = hashedPassword;
-
-          const dbResult = await addUser(formData as userSchemaT);
-          if (dbResult[0][0].error === 0) {
-            result = { status: true, data: dbResult[1] };
-          } else {
-            result = { status: false, data: [{ path: [dbResult[0][0].error_path], message: dbResult[0][0].error_text }] };
-          }
-        // }
-      } else {
-        let errorState: { path: (string | number)[], message: string }[] = [];
-        for (const issue of parsed.error.issues) {
-          errorState.push({ path: issue.path, message: issue.message });
-        }
-        result = { status: false, data: errorState };
-        return result;
+    const parsed = zs.userSchema.safeParse(formData);
+    if (parsed.success) {
+      let contact;
+      if (formData.email) {
+        contact = formData.email;
+        delete formData.email;
       }
+      else {
+        contact = formData.phone;
+        contact = contact?.replace(/ +/g, '');
+        delete formData?.phone;
+      }
+      formData.contact = contact;
+
+
+      const hashedPassword = await hashText(formData.password);
+      formData.password = hashedPassword;
+
+      const dbResult = await addUser(formData as userSchemaT);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true, data: dbResult[1] };
+      } else {
+        result = { status: false, data: [{ path: [dbResult[0][0].error_path], message: dbResult[0][0].error_text }] };
+      }
+      // }
+    } else {
+      let errorState: { path: (string | number)[], message: string }[] = [];
+      for (const issue of parsed.error.issues) {
+        errorState.push({ path: issue.path, message: issue.message });
+      }
+      result = { status: false, data: errorState };
+      return result;
+    }
     return result;
   } catch (e) {
     console.log(e);
@@ -56,13 +57,13 @@ export async function registerUser(formData: userSchemaT) {
 }
 
 
-export async function getBizAppUser(searchString: string,mappedUser:{id: number | undefined,name: string | undefined} ,invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
+export async function getBizAppUser(searchString: string, mappedUser: { id: number | undefined, name: string | undefined }, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
       let result = await getBizAppUserList(session.user.dbInfo.id, searchString, invited, accepted, mapped, admin);
-      if(mappedUser.id){
-        result = [mappedUser,...result];
+      if (mappedUser.id) {
+        result = [mappedUser, ...result];
       }
       return result;
     }
@@ -187,7 +188,7 @@ export async function getCompanyUser(
       );
       const roles = await getAllRoles();
       for (const ele of companyUsers) {
-        const userRole = roles.filter((role:{id:number,name:string})=>role.id===ele.roleId)[0]
+        const userRole = roles.filter((role: { id: number, name: string }) => role.id === ele.roleId)[0]
         ele.roleId = userRole ? userRole.id : 0;
         ele.role = userRole ? userRole.name : "none";
       }
@@ -234,7 +235,7 @@ export async function createUserToInvite(data: inviteUserSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       Object.assign(data, { companyId: session.user.dbInfo.id });
       const parsed = zs.inviteUserSchema.safeParse(data);
       if (parsed.success) {
@@ -278,14 +279,66 @@ export async function createUserToInvite(data: inviteUserSchemaT) {
       };
     }
     return result;
-  } catch (e) {
-    // if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
-    //   result = {
-    //     status: false,
-    //     data: [{ path: ["name"], message: "Error: Value already exist" }],
-    //   };
-    //   return result;
-    // }
+  } catch (error) {
+    console.log(error);
+  }
+  result = {
+    status: false,
+    data: [{ path: ["form"], message: "Error: Unknown Error" }],
+  };
+  return result;
+}
+
+export async function updateInvitedUser(data: inviteUserSchemaT,newDate:boolean) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      Object.assign(data, { companyId: session.user.dbInfo.id });
+      const parsed = zs.inviteUserSchema.safeParse(data);
+      if (parsed.success) {
+        let contact;
+        if (data.email) {
+          contact = data.email;
+          delete data.email;
+        }
+        else {
+          contact = data.phone;
+          contact = contact?.replace(/ +/g, '');
+          delete data?.phone;
+        }
+        data.contact = contact;
+        const dbResult = await updateInvitedUserDb(data,newDate);
+        if (dbResult[0][0].error === 0) {
+          result = { status: true, data: dbResult[1] };
+        } else {
+          result = {
+            status: false,
+            data: [
+              {
+                path: [dbResult[0][0].error_path],
+                message: dbResult[0][0].error_text,
+              },
+            ],
+          };
+        }
+      } else {
+        let errorState: { path: (string | number)[]; message: string }[] = [];
+        for (const issue of parsed.error.issues) {
+          errorState.push({ path: issue.path, message: issue.message });
+        }
+        result = { status: false, data: errorState };
+        return result;
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (error) {
+    console.log(error);
   }
   result = {
     status: false,
@@ -340,80 +393,29 @@ export async function acceptInvite(inviteDetail: inviteUserSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      // if(inviteDetail.executiveId){
-      //   const companyDb = await getCompanyDbById(inviteDetail.companyId);
-      //   await Promise.all([createInUsercompany(true,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId), insertUserIdInExecutive(companyDb as string,inviteDetail.executiveId,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-      // }else{
-      const user = await checkUserInCompany(
-        session.user.userId,
-        inviteDetail.companyId
-      );
-      await createUserInStatusBar(session.user.userId,inviteDetail.companyId);
-      if (user.length > 0) {
-        await Promise.all([
-          updateInUsercompany(
-            true,
-            null,
-            inviteDetail.companyId,
-            inviteDetail.inviteDate,
-            session.user.userId
-          ),
-          deleteInvite(inviteDetail.id as number),
-        ]);
-      } else {
-        await Promise.all([
-          createInUsercompany(
-            true,
-            null,
-            inviteDetail.companyId,
-            inviteDetail.inviteDate,
-            session.user.userId
-          ),
-          deleteInvite(inviteDetail.id as number),
-        ]);
-      }
-      // }
+
+      await createUserInStatusBar(session.user.userId, inviteDetail.companyId);
+
+      await Promise.all([
+        createInUsercompany(
+          inviteDetail.companyId,
+          inviteDetail.inviteDate,
+          session.user.userId
+        ),
+        deleteInvite(inviteDetail.id as number),
+      ]);
+
     }
   } catch (error) {
     throw error;
   }
 }
 
-export async function rejectInvite(inviteDetail: inviteUserSchemaT) {
+export async function rejectInvite(inviteId: number) {
   try {
     const session = await getSession();
     if (session) {
-      // if(inviteDetail.executiveId){
-      // const companyDb = await getCompanyDbById(inviteDetail.companyId);
-      // await Promise.all([createInUsercompany(false,inviteDetail.executiveId,inviteDetail.companyId,inviteDetail.inviteDate,session.user.userId),deleteInvite(inviteDetail.id as number)]);
-      // }else{
-        const user = await checkUserInCompany(
-          session.user.userId,
-          inviteDetail.companyId
-        );
-        if (user.length > 0) {
-          await Promise.all([
-            updateInUsercompany(
-              false,
-              null,
-              inviteDetail.companyId,
-              inviteDetail.inviteDate,
-              session.user.userId
-            ),
-            deleteInvite(inviteDetail.id as number),
-          ]);
-        } else {
-          await Promise.all([
-            createInUsercompany(
-              false,
-              null,
-              inviteDetail.companyId,
-              inviteDetail.inviteDate,
-              session.user.userId
-            ),
-            deleteInvite(inviteDetail.id as number),
-          ]);
-      }
+      await rejectInviteDB(inviteId);
     }
   } catch (error) {
     throw error;
@@ -424,7 +426,16 @@ export async function getInviteUserById(id: number) {
   try {
     const session = await getSession();
     if (session) {
-      return getInviteUserByIdList(id);
+      const result = await getInviteUserByIdList(id);
+      if (result && result.length > 0) {
+        if (emailRegex.test(result[0].usercontact)) {
+          result[0].email = result[0].usercontact;
+        } else {
+          result[0].phone = result[0].usercontact;
+        }
+        delete result[0].usercontact;
+      }
+      return result;
     }
   } catch (error) {
     throw error;
@@ -453,6 +464,14 @@ export async function getInviteUserByCompany(
         filter,
         limit as number
       );
+
+      for (const inviteUser of inviteUsers) {
+        if (inviteUser.status === 1) {
+          inviteUser.status = "Pending";
+        } else {
+          inviteUser.status = "Rejected";
+        }
+      }
 
       getInviteUsers = {
         status: true,
@@ -496,15 +515,8 @@ export async function getInviteByUserContact(
         page as number,
         filter,
         limit as number
-      );            
+      );
 
-      // for (const ele of invites) {
-      //   if(ele.executiveId){
-      //     ele.inviteType = "Executive"
-      //   }else{
-      //     ele.inviteType = "User"
-      //   }
-      // }
       getInvites = {
         status: true,
         data: invites.map(bigIntToNum) as inviteUserSchemaT,
@@ -538,5 +550,29 @@ export async function getTotalInvite() {
     }
   } catch (error) {
     throw error;
+  }
+}
+
+export async function delInviteById(id: number) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const res = await deleteInvite(id);
+      if (res) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false, data: [
+            {
+              path: [""],
+              message: ""
+            }]
+        };
+      }
+      return result;
+    }
+  } catch (error) {
+    throw (error);
   }
 }

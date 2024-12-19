@@ -42,7 +42,7 @@ export async function createSupportTicket({
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const updatedSupportData = {
         ...supportData,
         status_version: 0,

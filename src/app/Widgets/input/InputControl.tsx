@@ -160,6 +160,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         }
         break;
       }
+      case InputType.EMAIL:{
+        const inputProps = props as TextFieldProps;
+        if(inputProps.onChange){
+          inputProps.onChange(event);
+        }
+        break;
+      }
 
       case InputType.CHECKBOX: {
         const inputProps = props as CheckboxProps;

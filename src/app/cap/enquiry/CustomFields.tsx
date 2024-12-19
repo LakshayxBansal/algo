@@ -116,7 +116,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                     />
                 )
             case columnType.List:
-                const list_item = props.desc.column_format?.split(",") || [];
+                const list_item = props.desc.column_format?.split(";") || [];
                 return (
                     <Autocomplete
                         id={props.desc.column_name_id}
@@ -130,6 +130,8 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                                 label={props.desc.column_label}
                                 name={props.desc.column_name}
                                 required={props.desc.is_mandatory === 1}
+                                error={props.formError?.[column_name]?.error}
+                                helperText={props.formError?.[column_name]?.msg}
                                 fullWidth
                             />
                         )}
@@ -177,6 +179,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         label={props.desc.column_label}
                         onChange={(e, val, s) => { handleMasterValueChange(val) }}
                         fetchDataFn={(arg: any) => getMasterForTable(props.desc.column_format, arg)}
+                        formError={props.formError?.[column_name]}
                         defaultValue={
                             props.defaultValue
                                 ? {

@@ -172,7 +172,7 @@ export async function createCountry(data: zm.countrySchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.countrySchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createCountryDb(
@@ -230,7 +230,7 @@ export async function updateCountry(data: zm.countrySchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.countrySchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateCountryDb(
@@ -293,7 +293,7 @@ export async function createState(data: zm.stateSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.stateSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createStateDb(session, data as zm.stateSchemaT);
@@ -348,7 +348,7 @@ export async function updateState(data: zm.stateSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.stateSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateStateDb(session, data as zm.stateSchemaT);
@@ -413,7 +413,7 @@ export async function getCountryByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getCountryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -459,7 +459,7 @@ export async function getStateByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getStateByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

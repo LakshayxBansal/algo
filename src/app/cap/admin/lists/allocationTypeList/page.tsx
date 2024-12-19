@@ -8,6 +8,8 @@ import {
   getAllocationTypeById,
   getAllocationTypeByPage,
 } from "@/app/controllers/allocationType.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -20,6 +22,9 @@ const columns: GridColDef[] = [
 export default function AllocationType() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Allocation"}/>
+    </Box>
       <EntityList
         title="Allocation Type"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

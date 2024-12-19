@@ -80,7 +80,7 @@ export async function createAllocationType(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -133,7 +133,7 @@ export async function updateAllocationType(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -199,7 +199,7 @@ export async function getAllocationTypeByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getAllocationTypeByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

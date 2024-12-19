@@ -75,7 +75,7 @@ export async function createExecutiveGroup(data: executiveGroupSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // let data: { [key: string]: any } = {}; // Initialize an empty object
 
       // for (const [key, value] of data.entries()) {
@@ -139,7 +139,7 @@ export async function updateExecutiveGroup(data: executiveGroupSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // let data: { [key: string]: any } = {}; // Initialize an empty object
 
       // for (const [key, value] of data.entries()) {
@@ -213,7 +213,7 @@ export async function getExecutiveGroupByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getExecutiveGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

@@ -42,7 +42,7 @@ export async function createEnquirySource(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await createEnquirySourceDb(session, data);
@@ -89,7 +89,7 @@ export async function updateEnquirySource(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateEnquirySourceDb(session, data);
@@ -146,7 +146,7 @@ export async function getEnquirySourceByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getEnquirySourceByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

@@ -1,5 +1,7 @@
 "use server";
 import { selectKeyValueT } from "@/app/models/models";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export async function enquiryDataFormat({
   formData,
@@ -12,21 +14,30 @@ export async function enquiryDataFormat({
   selectValues: selectKeyValueT;
   dateFormat: string;
   timeFormat: string;
-  otherData?: any
+  otherData?: any;
 }) {
+  dayjs.extend(customParseFormat);
 
   const toISOString = (dateStr: string): string => {
-    const dt = new Date(dateStr);
+    // Parse the input format and convert to ISO 8601
+    if (!dateStr || dateStr === " ") return "";
+    const timeFormatString =
+      timeFormat === "12 Hours"
+        ? `${dateFormat} hh:mm A`
+        : `${dateFormat} HH:mm`;
+    let dt = dayjs(dateStr, timeFormatString).toDate();
     return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
   };
+  
+  const date = formData.get("date")
+    ? toISOString(formData.get("date") as string)
+    : dayjs(otherData?.date).format('YYYY-MM-DD HH:mm:ss');
 
-  const date =  toISOString( formData.get("date") ? formData.get("date") as string: otherData?.date );
-   
   const nextActionDate = formData.get("next_action_date")
     ? toISOString(formData.get("next_action_date") as string)
     : null;
   const headerData = {
-    enq_number: formData.get("enq_number") as string ?? otherData?.enq_number,
+    enq_number: (formData.get("enq_number") as string) ?? otherData?.enq_number,
     date,
     contact_id: selectValues.contact?.id,
     received_by_id: selectValues.received_by?.id,
@@ -36,7 +47,9 @@ export async function enquiryDataFormat({
     received_by: selectValues.received_by?.name ?? "",
     category: selectValues.category?.name ?? "",
     source: selectValues.source?.name ?? "",
-    call_receipt_remark: (formData.get("call_receipt_remark") ?? "") as string?? otherData?.call_receipt_remark,
+    call_receipt_remark:
+      ((formData.get("call_receipt_remark") ?? "") as string) ??
+      otherData?.call_receipt_remark,
   };
 
   let ledgerData = {
@@ -49,8 +62,8 @@ export async function enquiryDataFormat({
     next_action_id: selectValues.next_action?.id,
     next_action: selectValues.next_action?.name ?? "",
     next_action_date: nextActionDate,
-    suggested_action_remark: (formData.get("suggested_action_remark") ??
-      "") as string ?? null,
+    suggested_action_remark:
+      ((formData.get("suggested_action_remark") ?? "") as string) ?? null,
     action_taken_remark: (formData.get("action_taken_remark") ?? "") as string,
     closure_remark: (formData.get("closure_remark") ?? "") as string,
     allocated_to_id: selectValues.allocated_to?.id,

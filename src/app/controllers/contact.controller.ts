@@ -108,7 +108,7 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
@@ -173,7 +173,7 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
@@ -184,7 +184,7 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
 
       const parsed=combinedSchema.safeParse(data)
       if(!parsed.success){
-        console.log("dynamicSchema",parsed.error.issues);        
+        console.log("dynamicSchema",  parsed.error.issues);        
       }
       // const parsed = contactSchema.safeParse(data);
       
@@ -335,7 +335,7 @@ export async function getContactByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getContactByPageDb(
         // appSession.dbSession?.dbInfo.dbName as string,
         appSession.user.dbInfo.dbName as string,
