@@ -16,12 +16,16 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
+export default function ActionForm(
+  props: masterFormPropsWithDataT<nameMasterDataT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const entityData: nameMasterDataT = props.data
+    ? props.data
+    : ({} as nameMasterDataT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -36,14 +40,14 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setFormError({});
       setSnackOpen(true);
-        if (pathName !== "/cap/admin/lists/actionList" || entityData.id) {
-          setTimeout(()=>{
-            props.setDialogOpen ? props.setDialogOpen(false) : null;
-            props.setDialogValue ? props.setDialogValue(newVal) : null;
-          }, 1000);
-        } else {
-          setFormKey(formKey + 1); 
-        }
+      if (pathName !== "/cap/admin/lists/actionList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+      }
     } else {
       const issues = result.data;
 
@@ -84,67 +88,67 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
 
   return (
     <>
-    <Box>
-      <Collapse in={formError?.form ? true : false}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={clearFormError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {formError?.form?.msg}
-        </Alert>
-      </Collapse>
-      <Box id="actionForm" sx={{m:1, p:3}}>
-        <form key={formKey} action={handleSubmit} noValidate>
-        <Grid container>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <InputControl
-              autoFocus
-              id="name"
-              required
-              label="Action Name"
-              inputType={InputType.TEXT}
-              name="name"
-              titleCase={true}
-              defaultValue={props.data?.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-            setFormError={setFormError}
-              style={{width: "100%"}}
-            />
-          </Grid>
-          <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 1
-              }}
-            >
-              <Button onClick={handleCancel} tabIndex={-1}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ width: "15%", marginLeft: "5%" }}
+      <Box>
+        <Collapse in={formError?.form ? true : false}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={clearFormError}
               >
-                Submit
-              </Button>
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {formError?.form?.msg}
+          </Alert>
+        </Collapse>
+        <Box id="actionForm" sx={{ m: 1, p: 3 }}>
+          <form key={formKey} action={handleSubmit} noValidate>
+            <Grid container>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+                <InputControl
+                  autoFocus
+                  id="name"
+                  required
+                  label="Action Name"
+                  inputType={InputType.TEXT}
+                  name="name"
+                  titleCase={true}
+                  defaultValue={props.data?.name}
+                  error={formError?.name?.error}
+                  helperText={formError?.name?.msg}
+                  setFormError={setFormError}
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 1,
+                }}
+              >
+                <Button onClick={handleCancel} tabIndex={-1}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
+              </Grid>
             </Grid>
-        </Grid>
-        </form>
+          </form>
         </Box>
         <Portal>
           <Snackbar
@@ -155,7 +159,7 @@ export default function ActionForm(props: masterFormPropsWithDataT<nameMasterDat
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           />
         </Portal>
-        </Box>
+      </Box>
     </>
   );
 }

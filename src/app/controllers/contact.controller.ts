@@ -22,8 +22,9 @@ import { convertData } from "../utils/validateType.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
 import { getRegionalSettings } from "./config.controller";
-import { getScreenDescription } from "./object.controller";
+import { getFieldTypeStructure, getScreenDescription } from "./object.controller";
 import { CONTACT_OBJECT_ID } from "../utils/consts.utils";
+import { createSchemaZod } from "../zodschema/customfieldschema.zod";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -110,6 +111,12 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
     if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
+      const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
+      let dynamicStructure:{ [key: string]: string }={};
+      for (const element of dynamicStructureArray) {
+        dynamicStructure[element.column_name]=element.column_type;
+      }
+      console.log("dynamicStructure",dynamicStructure);
       
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
@@ -169,8 +176,17 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
     if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
+      const dynamicStructureArray=await getFieldTypeStructure(CONTACT_OBJECT_ID);
+      
+      const dynamicSchema = createSchemaZod(dynamicStructureArray);
+      
+      const combinedSchema = contactSchema.merge(dynamicSchema);
 
-      const parsed = contactSchema.safeParse(data);
+      const parsed=combinedSchema.safeParse(data)
+      if(!parsed.success){
+        console.log("dynamicSchema",parsed.error.issues);        
+      }
+      // const parsed = contactSchema.safeParse(data);
       
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
@@ -256,7 +272,20 @@ export async function getContactById(id: number) {
         userId : session.user.userId
       }
       if(id){
-        const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
+      let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
+      for(const field of desc){
+        if(field.column_type_id===7){          
+          const parts = field.column_format.split(".");
+          let tableName = "";
+          let fieldName = "";
+          if (parts) {
+            tableName = parts[0];
+            fieldName = parts[1];
+            customMasterListData[field.column_name] = { table_name: tableName, field: fieldName }
+          }
+        }
+      }
+          const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id, customMasterListData);
         if(contactDetails?.length>0){
           const objectDetails = await getObjectByName("Contact");
           const docData = await getDocs(id,objectDetails[0].object_id);

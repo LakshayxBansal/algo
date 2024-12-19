@@ -87,7 +87,7 @@ export default function AuthPage(props: authPagePropsType) {
             inputType={InputType.EMAIL}
             error={formError?.email?.error}
             helperText={formError?.email?.msg}
- setFormError={setFormError}
+            setFormError={setFormError}
             required
             fullWidth
             id="usercontact"
@@ -107,7 +107,7 @@ export default function AuthPage(props: authPagePropsType) {
             required
             error={formError?.phone?.error}
             helperText={formError?.phone?.msg}
- setFormError={setFormError}
+            setFormError={setFormError}
             country={"in"}
             preferredCountries={["in", "gb"]}
             dropdownClass={["in", "gb"]}

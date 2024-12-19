@@ -123,12 +123,12 @@ export default function InviteUserForm(props: masterFormPropsT) {
     <Box
       sx={{
         width: {
-          xs: "100%", 
-          sm: "100%", 
+          xs: "100%",
+          sm: "100%",
           md: "100%",
-          lg: "400px"
+          lg: "400px",
         },
-        // padding: "10px", 
+        // padding: "10px",
       }}
     >
       <Collapse in={formError?.form ? true : false}>
@@ -149,7 +149,7 @@ export default function InviteUserForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="inviteForm" sx={{m:1, p:3}}>
+      <Box id="inviteForm" sx={{ m: 1, p: 3 }}>
         <form action={handleSubmit} noValidate>
           <Grid
             container
@@ -180,7 +180,7 @@ export default function InviteUserForm(props: masterFormPropsT) {
                   inputType={InputType.EMAIL}
                   error={formError?.email?.error}
                   helperText={formError?.email?.msg}
-  setFormError={setFormError}
+                  setFormError={setFormError}
                   required
                   defaultValue={entityData?.email}
                   style={{ width: "100%" }}
@@ -256,14 +256,14 @@ export default function InviteUserForm(props: masterFormPropsT) {
         </form>
       </Box>
       <Portal>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
-        </Portal>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackOpen(false)}
+          message="Record Saved!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        />
+      </Portal>
     </Box>
   );
 }

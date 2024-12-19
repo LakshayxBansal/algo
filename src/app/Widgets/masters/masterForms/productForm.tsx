@@ -26,13 +26,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import { updateProduct } from "@/app/controllers/product.controller";
 import { usePathname } from "next/navigation";
 
-export default function ProductForm(props: masterFormPropsWithDataT<productSchemaT>) {
+export default function ProductForm(
+  props: masterFormPropsWithDataT<productSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: productSchemaT = props.data ? props.data : {} as productSchemaT;
+  const entityData: productSchemaT = props.data
+    ? props.data
+    : ({} as productSchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -65,7 +69,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -88,13 +92,13 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
     data.group = selectValues.productGroup
       ? selectValues.productGroup.id
       : entityData.group
-        ? entityData.group
-        : 0;
+      ? entityData.group
+      : 0;
     data.unit = selectValues.unit
       ? selectValues.unit.id
       : entityData.unit
-        ? entityData.unit
-        : 0;
+      ? entityData.unit
+      : 0;
     return data;
   };
 
@@ -136,7 +140,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{m:1, p:3}}>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -163,7 +167,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 name="alias"
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.alias}
                 style={{ width: "100%" }}
               />

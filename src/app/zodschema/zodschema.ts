@@ -303,16 +303,18 @@ export const contactSchema = z.object({
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
   stamp: z.number().optional(),
-  c_col1: z.string().optional(),
-  c_col2: z.string().optional(),
-  c_col3: z.string().optional(),
-  c_col4: z.string().optional(),
-  c_col5: z.string().optional(),
-  c_col6: z.string().optional(),
-  c_col7: z.string().optional(),
-  c_col8: z.string().optional(),
-  c_col9: z.string().optional(),
-  c_col10: z.string().optional(),
+  c_col1: z.union([z.string(), z.number()]).optional().nullish(),
+  c_col2: z.union([z.string(), z.number()]).optional(),
+  c_col3: z.union([z.string(), z.number()]).optional(),
+  c_col4: z.union([z.string(), z.number()]).optional(),
+  c_col5: z.union([z.string(), z.number()]).optional(),
+  c_col6: z.union([z.string(), z.number()]).optional(),
+  c_col7: z.union([z.string(), z.number()]).optional(),
+  c_col8: z.union([z.string(), z.number()]).optional(),
+  c_col9: z.union([z.string(), z.number()]).optional(),
+  c_col10: z.union([z.string(), z.number()]).optional(),
+  c_col1_id:z.number().optional().nullish(),
+  c_col1_name:z.string().optional()
 });
 
 export const areaSchema = z.object({
@@ -1098,23 +1100,40 @@ export const configBaseSchema = z.object({
     prefillWithZero: z.boolean().optional(),
   });
   
-export const customFieldsMasterSchema = z.object ({
-  id : z.number().optional(),
-  objectTypeId : z.number(),    // form id
-  columnNameId: z.string().min(1).max(45),
-  columnLabel:  z.string().min(1).max(45),
-  columnName:  z.string().min(1).max(45),
-  columnId:  z.string().min(1).max(45),
-  columnTypeId:  z.string().min(1).max(45),
-  columnFormat: z.string().min(1).max(1000),    // special handling required. blank or 1000 max
-  form_section:  z.string().optional(),
-  isMandatory:  z.number(),
-  isDefaultColumn:  z.number(),
-  isDefaultMandatory:  z.number(),
-  columnOrder:  z.number(),
-  actionId:  z.number().optional(),
-  isDisabled:  z.number().optional()
-})
+  export const customFieldsMasterSchema = z.object ({
+    id : z.number().optional(),
+    object_type_id : z.number(),    // form id
+    column_name_id: z.string().min(1).max(45),
+    column_label:  z.string().min(1, "Please enter Label").max(45,"Enter Smaller Label"),
+    column_name:  z.string().min(1).max(45),
+    column_id:  z.string().min(1).max(45),
+    column_type_id:  z.number(),
+    column_format: z.string().max(1000).nullish(),    // special handling required. blank or 1000 max
+    form_section:  z.string().optional().nullish(),
+    is_mandatory:  z.number(),
+    is_default_column:  z.number(),
+    is_default_mandatory:  z.number().nullable(),
+    column_order:  z.number(),
+    is_disabled:  z.number().optional(),
+    action_id:  z.number().optional(),
+  })
+  .refine(
+    (data) => {
+      const columnFormat = data.column_format ?? ""; // Treat undefined as an empty string
+      if (data.column_type_id === 2) {
+        // If column_type_id is 2, column_format must be non-empty and follow the semicolon-separated alphanumeric format.
+        const semicolonSeparatedPattern = /^([a-zA-Z0-9]+)(;[a-zA-Z0-9]+)*$/;
+        return columnFormat.length > 0 && semicolonSeparatedPattern.test(columnFormat);
+      }
+      return true; // Allow other cases, including when column_type_id is null
+    },
+    {
+      message:
+        "Enter semi-colon seperated options.",
+      path: ["column_format"], // Point the error to column_format
+    }
+  );
+
 
 export const rightSchema = z.object({
   id: z.number().optional(),

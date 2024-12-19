@@ -68,7 +68,9 @@ import { usePathname } from "next/navigation";
 import { emailRegex } from "@/app/zodschema/zodschema";
 import { boolean } from "zod";
 
-export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveSchemaT>) {
+export default function ExecutiveForm(
+  props: masterFormPropsWithDataT<executiveSchemaT>
+) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -80,9 +82,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const entityData: executiveSchemaT = props.data ? props.data : {} as executiveSchemaT;
+  const entityData: executiveSchemaT = props.data
+    ? props.data
+    : ({} as executiveSchemaT);
   const pathName = usePathname();
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp?.length === 0 ? '+91' : entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(
+    entityData.whatsapp?.length === 0 ? "+91" : entityData.whatsapp
+  );
   const [formKey, setFormKey] = useState(0);
 
   const handleWhatsappChange = (val: string) => {
@@ -90,7 +96,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   };
 
   let fieldArr: React.ReactElement[] = [];
-
 
   // const [email, setEmail] = useState(entityData.email);
   const email = useRef<HTMLInputElement | null>(null);
@@ -109,14 +114,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [roleKey, setRoleKey] = useState(0);
-  const [stateDisable, setStateDisable] = useState<boolean>(!entityData.country);
-  const [roleDisable, setRoleDisable] = useState<boolean>(!entityData.executive_dept);
-  console.log("mobile : ", mobile);
+  const [stateDisable, setStateDisable] = useState<boolean>(
+    !entityData.country
+  );
+  const [roleDisable, setRoleDisable] = useState<boolean>(
+    !entityData.executive_dept
+  );
+
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
       <InputControl
-        key='name'
+        key="name"
         inputType={InputType.TEXT}
         autoFocus
         id="name"
@@ -128,18 +137,18 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         helperText={formError?.name?.msg}
         setFormError={setFormError}
         defaultValue={entityData.name}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { name, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { name, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "alias",
       <InputControl
-        key='alias'
+        key="alias"
         inputType={InputType.TEXT}
         id="alias"
         label="Alias"
@@ -149,19 +158,19 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         helperText={formError?.alias?.msg}
         setFormError={setFormError}
         defaultValue={entityData.alias}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { alias, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      // fullWidth
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { alias, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+        // fullWidth
+      />,
     ],
     [
       "area",
       <SelectMasterWrapper
-        key='area'
+        key="area"
         name={"area"}
         id={"area"}
         label={"Area"}
@@ -174,7 +183,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           } as optionsDataT
         }
         onChange={(e, val, s) =>
-          setSelectValues({ ...selectValues, area: val ? val : { id: 0, name: "" } })
+          setSelectValues({
+            ...selectValues,
+            area: val ? val : { id: 0, name: "" },
+          })
         }
         fetchDataFn={getArea}
         fnFetchDataByID={getAreaById}
@@ -185,12 +197,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             data={data}
           />
         )}
-      />
+      />,
     ],
     [
       "executive_dept",
       <SelectMasterWrapper
-        key='executive_dept'
+        key="executive_dept"
         name={"executive_dept"}
         id={"department"}
         label={"Department"}
@@ -203,7 +215,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             name: entityData.executive_dept,
           } as optionsDataT
         }
-        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
+        disabled={
+          props?.setDialogOpen === undefined && entityData.role_id !== 1
+            ? true
+            : false
+        }
         onChange={(e, v, s) => onSelectChange(e, v, s, "department")}
         fetchDataFn={getExecutiveDept}
         formError={formError?.executive_dept ?? formError.executive_dept}
@@ -217,7 +233,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             data={data}
           />
         )}
-      />
+      />,
     ],
     [
       "role",
@@ -235,7 +251,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         allowNewAdd={false}
         onChange={(e, v, s) => onSelectChange(e, v, s, "role")}
         required
-        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
+        disabled={
+          props?.setDialogOpen === undefined && entityData.role_id !== 1
+            ? true
+            : false
+        }
         formError={formError?.role ?? formError.role}
         setFormError={setFormError}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -245,18 +265,22 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             data={data}
           />
         )}
-      />
+      />,
     ],
     [
       "group",
       <SelectMasterWrapper
-        key='executive_group'
+        key="executive_group"
         name={"executive_group"}
         id={"group"}
         label={"Executive Group"}
         dialogTitle={"Executive Group"}
         width={365}
-        disabled={(props?.setDialogOpen === undefined && entityData.role_id !== 1) ? true : false}
+        disabled={
+          props?.setDialogOpen === undefined && entityData.role_id !== 1
+            ? true
+            : false
+        }
         defaultValue={
           {
             id: entityData.executive_group_id,
@@ -264,7 +288,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           } as optionsDataT
         }
         onChange={(e, val, s) =>
-          setSelectValues({ ...selectValues, executive_group: val ? val : { id: 0, name: "" } })
+          setSelectValues({
+            ...selectValues,
+            executive_group: val ? val : { id: 0, name: "" },
+          })
         }
         fetchDataFn={getExecutiveGroup}
         fnFetchDataByID={getExecutiveGroupById}
@@ -275,12 +302,12 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             data={data}
           />
         )}
-      />
+      />,
     ],
     [
       "pan",
       <InputControl
-        key='pan'
+        key="pan"
         inputType={InputType.TEXT}
         id="pan"
         label="PAN"
@@ -290,19 +317,19 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         helperText={formError?.pan?.msg}
         setFormError={setFormError}
         defaultValue={entityData.pan}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pan, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      // fullWidth
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pan, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+        // fullWidth
+      />,
     ],
     [
       "aadhaar",
       <InputControl
-        key='aadhaar'
+        key="aadhaar"
         inputType={InputType.TEXT}
         id="aadhaar"
         label="AADHAAR"
@@ -312,14 +339,14 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         helperText={formError?.aadhaar?.msg}
         setFormError={setFormError}
         defaultValue={entityData.aadhaar}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { aadhaar, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      // fullWidth
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { aadhaar, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+        // fullWidth
+      />,
     ],
     [
       "crm_user",
@@ -365,10 +392,10 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
             data={data}
-          // isExecutive={true}
+            // isExecutive={true}
           />
         )}
-      />
+      />,
     ],
     [
       "email",
@@ -444,18 +471,17 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         defaultValue={whatsappFn}
         slotprops={{
           flagButton: {
-            tabIndex: -1
+            tabIndex: -1,
           },
         }}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { whatsapp, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      // fullWidth
-      />
-
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { whatsapp, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+        // fullWidth
+      />,
     ],
     [
       "doj",
@@ -473,11 +499,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           },
           openPickerButton: {
             tabIndex: -1,
-          }
+          },
         }}
         setFormError={setFormError}
         sx={{ width: "100%" }}
-      />
+      />,
     ],
     [
       "dob",
@@ -495,11 +521,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           },
           openPickerButton: {
             tabIndex: -1,
-          }
+          },
         }}
         sx={{ width: "100%" }}
         setFormError={setFormError}
-      />
+      />,
     ],
     [
       "doa",
@@ -519,16 +545,16 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           },
           openPickerButton: {
             tabIndex: -1,
-          }
+          },
         }}
         setFormError={setFormError}
         sx={{ width: "100%" }}
-      />
+      />,
     ],
     [
       "address1",
       <InputControl
-        key='address1'
+        key="address1"
         inputType={InputType.TEXT}
         label="Address Line 1"
         name="address1"
@@ -554,10 +580,11 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
         error={formError?.address2?.error}
         helperText={formError?.address2?.msg}
         setFormError={setFormError}
-      // fullWidth
-      />
+        // fullWidth
+      />,
     ],
-    ["city",
+    [
+      "city",
       <InputControl
         key="city"
         inputType={InputType.TEXT}
@@ -596,7 +623,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             data={data}
           />
         )}
-      />
+      />,
     ],
     [
       "state",
@@ -621,7 +648,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             parentData={selectValues.country?.id || entityData.country_id}
           />
         )}
-      />
+      />,
     ],
     [
       "pincode",
@@ -647,13 +674,22 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
   ]);
 
   async function getApplicationUser(searchStr: string) {
-    const mappedUser = { id: entityData.crm_user_id, name: entityData.crm_user };
-    let dbResult = await getBizAppUser(searchStr, mappedUser, true, true, false, false);
+    const mappedUser = {
+      id: entityData.crm_user_id,
+      name: entityData.crm_user,
+    };
+    let dbResult = await getBizAppUser(
+      searchStr,
+      mappedUser,
+      true,
+      true,
+      false,
+      false
+    );
     return dbResult;
   }
 
   const handleSubmit = async (formData: FormData) => {
-
     try {
       let data: { [key: string]: any } = {}; // Initialize an empty object
 
@@ -666,6 +702,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
+
 
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
@@ -714,45 +751,45 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
     data.executive_group_id = selectValues.executive_group
       ? selectValues.executive_group.id
       : entityData.executive_group_id
-        ? entityData.executive_group_id
-        : 0;
+      ? entityData.executive_group_id
+      : 0;
     data.role_id = selectValues.role
       ? selectValues.role.id
       : entityData.role_id
-        ? entityData.role_id
-        : 0;
+      ? entityData.role_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.crm_user_id = selectValues.crm_user
       ? selectValues.crm_user.id
       : entityData.crm_user_id
-        ? entityData.crm_user_id
-        : 0;
+      ? entityData.crm_user_id
+      : 0;
     data.executive_dept_id = selectValues.department
       ? selectValues.department.id
       : entityData.executive_dept_id
-        ? entityData.executive_dept_id
-        : 0;
+      ? entityData.executive_dept_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
     data.prev_crm_user_id = entityData.crm_user_id ? entityData.crm_user_id : 0;
 
     data.role = selectValues.role
       ? selectValues.role.name
       : entityData.role
-        ? entityData.role
-        : "";
+      ? entityData.role
+      : "";
     return data;
   };
 
@@ -782,7 +819,7 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
       setDefaultState(undefined);
       if (values.country.id === 0) setStateDisable(true);
       else setStateDisable(false);
-      setStateKey(prev => 1 - prev);
+      setStateKey((prev) => 1 - prev);
     }
     setSelectValues(values);
   }
@@ -812,20 +849,24 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           field.column_name_id
         ) as React.ReactElement;
 
-        const fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          key: `field-address-${field.column_name_id}`,
-          disabled: field.is_disabled === 1 ? true : false
-        });
-        fieldArr.push(fld);
-      }
-      else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
-        if (field.column_name_id === 'state') {
-          const baseElement = defaultComponentMap.get(
-            field.column_name_id
-          ) as React.ReactElement;
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-address-${field.column_name_id}`,
+        disabled: field.is_disabled === 1 ? true : false,
+      });
+      fieldArr.push(fld);
+    } else if (
+      field.column_name_id === "country" ||
+      field.column_name_id === "state" ||
+      field.column_name_id === "city" ||
+      field.column_name_id === "pincode"
+    ) {
+      if (field.column_name_id === "state") {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
 
           const fld = React.cloneElement(baseElement, {
             ...baseElement.props,
@@ -840,13 +881,13 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
             field.column_name_id
           ) as React.ReactElement;
 
-          const fld = React.cloneElement(baseElement, {
-            ...baseElement.props,
-            label: field.column_label,
-            required: field.is_mandatory === 1,
-            key: `field-subAddress-${field.column_name_id}`,
-            disabled: field.is_disabled === 1 ? true : false
-          });
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-subAddress-${field.column_name_id}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
 
           fieldArr.push(fld);
         }
@@ -893,19 +934,19 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
           disabled: field.is_disabled === 1 ? true : false
         });
 
-        fieldArr.push(fld);
-      } else {
-        const fld = (
-          <CustomField
-            key={`field-custom-${field.column_name_id}`}
-            desc={field}
-            defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]}
-          />
-        );
-        fieldArr.push(fld);
-        
-      }
-    });
+      fieldArr.push(fld);
+
+    } else {
+      const fld = (
+        <CustomField
+          key={`field-custom-${field.column_name_id}`}
+          desc={field}
+          defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]}
+        />
+      );
+      fieldArr.push(fld);
+    }
+  });
 
   return (
     <Box>
@@ -990,17 +1031,19 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
               }}
             >
                 <Tooltip
-                  title={docData?.length > 0 ? (
-                    docData.map((file: any, index: any) => (
-                      <Typography variant="body2" key={index}>
-                        {file.description}
+                  title={
+                    docData?.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
                       </Typography>
-                    ))
-                  ) : (
-                    <Typography variant="body2" color="white">
-                      No files available
-                    </Typography>
-                  )}
+                    )
+                  }
                 >
                   <IconButton
                     sx={{ marginRight: "3rem" }}
@@ -1011,7 +1054,6 @@ export default function ExecutiveForm(props: masterFormPropsWithDataT<executiveS
                     <Badge badgeContent={docData?.length} color="primary">
                       <AttachFileIcon></AttachFileIcon>
                     </Badge>
-    
                   </IconButton>
                 </Tooltip>
               <Button onClick={() => {

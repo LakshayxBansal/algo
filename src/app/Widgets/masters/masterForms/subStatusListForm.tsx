@@ -26,7 +26,9 @@ import {
 import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
 import { usePathname } from "next/navigation";
 
-export default function SubStatusListForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
+export default function SubStatusListForm(
+  props: masterFormPropsWithDataT<enquirySubStatusMasterT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -34,7 +36,9 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
   const [status_id, setStatus] = useState<number | undefined>(
     props.data?.enquiry_status_id
   );
-  const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
+  const entityData: enquirySubStatusMasterT = props.data
+    ? props.data
+    : ({} as enquirySubStatusMasterT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -48,8 +52,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
     data["enquiry_status_id"] = status_id
       ? status_id
       : entityData.enquiry_status_id
-        ? entityData.enquiry_status_id
-        : 0;
+      ? entityData.enquiry_status_id
+      : 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
@@ -62,7 +66,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -125,7 +129,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="subStatusForm" sx={{m:1, p:3}}>
+      <Box id="subStatusForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -188,7 +192,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // onKeyDown={() => {
                 //   setFormError((curr) => {
                 //     const { name, ...rest } = curr;
