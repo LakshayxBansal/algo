@@ -201,7 +201,6 @@ export default function CreateCompany(
                   titleCase={true}
                   name="name"
                   required
-                  titleCase={true}
                   style={{ width: "100%" }}
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}

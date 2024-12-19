@@ -39,7 +39,6 @@ import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
-import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
@@ -55,7 +54,6 @@ enum dialogMode {
 
 
 export default function EntityList(props: entitiyCompT) {
-  console.log("Props : ",props);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [data, setData] = useState([]);
   const [allColumns, setAllColumns] = useState([] as any);
@@ -79,7 +77,6 @@ export default function EntityList(props: entitiyCompT) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
   const router = useRouter();
-  const url = usePathname();
   let searchText;
 
   //for navbar search
@@ -115,7 +112,7 @@ export default function EntityList(props: entitiyCompT) {
 
   let allDfltCols: GridColDef[];
   allDfltCols = optionsColumn.concat(props.customCols);
- const dfltColFields: string[] = allDfltCols.map((col) => col.field);
+  const dfltColFields: string[] = allDfltCols.map((col) => col.field);
 
 
   const fetchData = debounce(async (searchText) => {
@@ -125,56 +122,41 @@ export default function EntityList(props: entitiyCompT) {
       pgSize as number
     );
 
-    const roleId = await getRoleID();
     if (rows.data) {
       setData(rows.data);
       setNRows(rows.count as number);
     }
+    if (props.fnFetchColumns) {
+      const columnsData = await props.fnFetchColumns();
+      if (columnsData) {
+        const dbColumns = columnsData.map((col: any) => ({
+          field: col.column_name,
+          headerName: col.column_label,
+        }));
+        // filter on columns not to showinitially
+        const filteredColumns = dbColumns.filter(
+          (col: any) => !dfltColFields.includes(col.field)
+        );
+        //columns not to showinitially
+        const allColumns = allDfltCols.concat(filteredColumns);
+        const visibleColumns = allColumns.reduce((model: any, col: any) => {
+          model[col.field] = dfltColFields.includes(col.field);
+          return model;
+        }, {});
+        setColumnVisibilityModel(visibleColumns);
+        setAllColumns(allColumns);
+        // setColumnsChanged(true);
+        // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
+      }
+    }
+     else {
+      setAllColumns(allDfltCols);
+    }
 
- 
-
-    // if (props.fnFetchColumns) {
-    //   const columnsData = await props.fnFetchColumns();
-    //   if (columnsData) {
-    //     const dbColumns = columnsData.map((col: any) => ({
-    //       field: col.column_name,
-    //       headerName: col.column_label,
-    //     }));
-    //     // filter on columns not to showinitially
-    //     const filteredColumns = dbColumns.filter(
-    //       (col: any) => !dfltColFields.includes(col.field)
-    //     );
-    //     //columns not to showinitially
-    //     const allColumns = allDfltCols.concat(filteredColumns);
-    //     const visibleColumns = allColumns.reduce((model: any, col: any) => {
-    //       model[col.field] = dfltColFields.includes(col.field);
-    //       return model;
-    //     }, {});
-    //     setColumnVisibilityModel(visibleColumns);
-    //     setAllColumns(allColumns);
-    //     // setColumnsChanged(true);
-    //     // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
-    //   }
-
-
-    // }
-    //  else {
-    //   setAllColumns(allDfltCols);
-    // }
-
-    setAllColumns(allDfltCols);
   }, 100);
 
-  let dhhh = [PageModel,
-    filterModel,
-    searchText,
-    search,
-    dialogOpen,
-    searchData,
-    props];
 
   useEffect(() => {
-    console.log("Inside UseEffect",dhhh);
     if (searchData) {
       fetchData(searchData);
     } else {
