@@ -23,7 +23,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
   try {
     const session = await getSession();
 
-    if (session) {
+    if (session?.user.dbInfo) {
       const masterData = {
         userName: session.user?.name as string,
       };

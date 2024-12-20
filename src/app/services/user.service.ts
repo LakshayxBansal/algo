@@ -98,7 +98,7 @@ export async function deleteUserDB(id: number | undefined) {
 
 export async function getBizAppUserList(companyId: number, searchString: string, invited: boolean, accepted: boolean, mapped: boolean, admin: boolean){
   try {
-    let query = 'select uc.user_id as id, u.name as name from userCompany uc, company co, user u where \
+    let query = 'select uc.user_id as id, u.name as name, u.contact as contact from userCompany uc, company co, user u where \
                     co.id = ? and \
                     co.id = uc.company_id and \
                     uc.user_id = u.id and \
@@ -313,6 +313,19 @@ export async function createUserToInviteDb(data: inviteUserSchemaT) {
   return null;
 }
 
+export async function updateInvitedUserDb(data: inviteUserSchemaT,newDate:boolean) {
+  try {
+    return excuteQuery({
+      host: "userDb",
+      query: "call updateInviteUser(?,?,?,?,?,?);",
+      values: [data.id,data.name, data.contact, data.companyId,data.status,newDate],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
 export async function insertExecutiveIdToInviteUserList(executiveId: number, inviteId: number) {
   try {
     return excuteQuery({
@@ -352,25 +365,25 @@ export async function getInviteDetailByIdList(inviteId: number) {
   return null;
 }
 
-export async function createInUsercompany(accept: boolean, executiveId: number | null, companyId: number, inviteDate: Date | undefined, userId: number) {
+export async function createInUsercompany(companyId: number, inviteDate: Date | undefined, userId: number) {
   try {
-    let query;
-    if (accept) {
+    // let query;
+    // if (accept) {
       // if(executiveId){
       //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate,mappedDate) values (?,?,0,1,1,1,?,now(),now());"
       // }else{
-      query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate) values (?,?,0,1,1,0,?,now());"
+      // query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate) values (?,?,0,1,1,0,?,now());"
       // }
-    } else {
+    // } else {
       // if(executiveId){
       //   query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
       // }else{
-      query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
+      // query = "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate) values (?,?,0,1,-1,0,?);"
       // }
-    }
+    // }
     return excuteQuery({
       host: "userDb",
-      query: query,
+      query: "insert into userCompany (user_id,company_id,isAdmin,isInvited,isAccepted,isMapped,invitedDate,acceptedDate) values (?,?,0,1,1,0,?,now());",
       values: [userId, companyId, inviteDate],
     });
   } catch (error) {
@@ -398,13 +411,29 @@ export async function updateInUsercompany(accept: boolean,executiveId: number | 
 
 export async function deleteInvite(inviteId: number) {
   try {
-    return excuteQuery({
+    await excuteQuery({
       host: "userDb",
       query: "delete from inviteUser where id = ?",
       values: [inviteId],
     });
+    return true;
   } catch (error) {
     console.log(error);
+    return false;
+  }
+}
+
+export async function rejectInviteDB(inviteId: number) {
+  try {
+    await excuteQuery({
+      host: "userDb",
+      query: "update inviteUser set status = -1 where id = ?;",
+      values: [inviteId],
+    });
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 }
 
@@ -438,7 +467,7 @@ export async function getInviteUserDb(
       host: "userDb",
       query:
         "SELECT * \
-       FROM (SELECT iu.id as id,iu.name as name, iu.usercontact as contact, iu.company_id as companyId,iu.inviteDate as inviteDate ,'pending' AS status, ROW_NUMBER() OVER () AS RowID, count(1) over () total_count \
+       FROM (SELECT iu.id as id,iu.name as name, iu.usercontact as contact, iu.company_id as companyId,iu.inviteDate as inviteDate ,iu.status as status, ROW_NUMBER() OVER () AS RowID, count(1) over () total_count \
           FROM inviteUser iu where iu.company_id = ? " +
         (filter ? "and iu.name LIKE CONCAT('%',?,'%') " : "") +
         "order by iu.name\
@@ -493,8 +522,8 @@ export async function getInvitesDb(
       host: "userDb",
       query:
         "SELECT * \
-       FROM (SELECT iu.id as id,iu.executive_id as executiveId, iu.company_id as companyId,iu.inviteDate as inviteDate ,c.name as companyName,ROW_NUMBER() OVER () AS RowID, count(1) over () total_count \
-          FROM inviteUser iu left join company c on iu.company_id = c.id where iu.usercontact = ? " +
+       FROM (SELECT iu.id as id,iu.name as name, iu.usercontact as contact, iu.status as status, iu.company_id as companyId,iu.inviteDate as inviteDate ,c.name as companyName,ROW_NUMBER() OVER () AS RowID, count(1) over () total_count \
+          FROM inviteUser iu left join company c on iu.company_id = c.id where iu.usercontact = ? and iu.status = 1 " +
         (filter ? "and c.name LIKE CONCAT('%',?,'%') " : "") +
         "order by c.name\
       ) AS NumberedRows\
@@ -521,7 +550,7 @@ export async function getInvitesCount(
     return excuteQuery({
       host: "userDb",
       query:
-        "SELECT count(*) as rowCount from inviteUser where usercontact = ?" +
+        "SELECT count(*) as rowCount from inviteUser where usercontact = ? and status = 1" +
         (filter ? "and name LIKE CONCAT('%',?,'%'); " : ";"),
       values: [vals],
     });

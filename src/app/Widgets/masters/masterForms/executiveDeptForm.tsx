@@ -7,23 +7,31 @@ import {
   createExecutiveDept,
   updateExecutiveDept,
 } from "@/app/controllers/executiveDept.controller";
-import { executiveDeptSchemaT, masterFormPropsT, masterFormPropsWithDataT } from "@/app/models/models";
+import {
+  executiveDeptSchemaT,
+  masterFormPropsT,
+  masterFormPropsWithDataT,
+} from "@/app/models/models";
 import { Grid, Portal, Snackbar } from "@mui/material";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Seperator from "../../seperator";
-import CustomField from '@/app/cap/enquiry/CustomFields';
+import CustomField from "@/app/cap/enquiry/CustomFields";
 import { usePathname } from "next/navigation";
 
-export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<executiveDeptSchemaT>) {
+export default function ExecutiveDeptForm(
+  props: masterFormPropsWithDataT<executiveDeptSchemaT>
+) {
   console.log(props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: executiveDeptSchemaT = props.data ? props.data : {} as executiveDeptSchemaT;
+  const entityData: executiveDeptSchemaT = props.data
+    ? props.data
+    : ({} as executiveDeptSchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -31,10 +39,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
     [
       "name",
       <InputControl
-        key='name'
+        key="name"
         autoFocus
         inputType={InputType.TEXT}
         id="name"
+        titleCase={true}
         label="Department Name"
         name="name"
         style={{ width: "100%" }}
@@ -49,9 +58,9 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         //     return rest;
         //   });
         // }}
-      />
-    ]
-  ])
+      />,
+    ],
+  ]);
 
   let fieldArr: React.ReactElement[] = [];
 
@@ -69,7 +78,11 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
     const result = await persistEntity(data as executiveDeptSchemaT);
     if (result.status) {
       // setSnackOpen(true);
-      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        stamp: result.data[0].stamp,
+      };
       setFormError({});
       setSnackOpen(true);
       if (pathName !== "/cap/admin/lists/executiveDeptList" || entityData.id) {
@@ -78,7 +91,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -132,7 +145,7 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled===1?true:false
+        disabled: field.is_disabled === 1 ? true : false,
       });
 
       fieldArr.push(fld);
@@ -141,13 +154,15 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue={entityData[field.column_name_id as keyof executiveDeptSchemaT]}
+          defaultValue={
+            entityData[field.column_name_id as keyof executiveDeptSchemaT]
+          }
         />
       );
       fieldArr.push(fld);
     }
     return null;
-  })
+  });
 
   return (
     <>
@@ -172,25 +187,15 @@ export default function ExecutiveDeptForm(props: masterFormPropsWithDataT<execut
       <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
-            {
-              fieldArr.map((field, index) => {
-                const fieldKey = field.key as string;
-                return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
-                  </Grid>
-                )
-              })
-            }
-          <Grid
+            {fieldArr.map((field, index) => {
+              const fieldKey = field.key as string;
+              return (
+                <Grid key={fieldKey} item xs={12} sm={12} md={12} lg={12}>
+                  <div key={index}>{field}</div>
+                </Grid>
+              );
+            })}
+            <Grid
               item
               xs={12}
               sx={{

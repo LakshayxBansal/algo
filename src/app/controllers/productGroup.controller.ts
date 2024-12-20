@@ -33,7 +33,7 @@ export async function createProductGroup(data: productGroupSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.productGroupSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createProductGroupDb(
@@ -92,7 +92,7 @@ export async function updateProductGroup(data: productGroupSchemaT) {
   try {
     const session = await getSession();
 
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.productGroupSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateProductGroupDb(
@@ -210,7 +210,7 @@ export async function getProductGroupByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getProductGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

@@ -37,7 +37,7 @@ export async function createExecutiveDept(data: executiveDeptSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.executiveDeptSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createExecutiveDeptDb(
@@ -88,7 +88,7 @@ export async function updateExecutiveDept(data: executiveDeptSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // let data: { [key: string]: any } = {}; // Initialize an empty object
 
       // for (const [key, value] of data.entries()) {
@@ -232,7 +232,7 @@ export async function getExecutiveDeptByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getExecutiveDeptByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

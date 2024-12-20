@@ -32,7 +32,7 @@ export async function searchMainData(searchData: string) {
 export async function getStatusData(userId : number) {
   try{
     const session = await getSession();
-    if(session){
+    if(session?.user.dbInfo){
       const result = await getStatusDataDB(session.user.dbInfo.dbName,userId);
       return result;
     }
@@ -44,7 +44,7 @@ export async function getStatusData(userId : number) {
 export async function updateStatusData(data : string, id : number) {
   try{
     const session = await getSession();
-    if(session){
+    if(session?.user.dbInfo){
       const result = await updateStatusDataDB(session.user.dbInfo.dbName,data,id);
       return result;
     }

@@ -208,7 +208,7 @@ export default function ProductGrid({
               name={"product"}
               id={"product"}
               label={""}
-              dialogTitle={"Add Product"}
+              dialogTitle={"Product"}
               fetchDataFn={getProduct}
               fnFetchDataByID={getProductById}
               required
@@ -294,7 +294,7 @@ export default function ProductGrid({
               name={"unit"}
               id={"unit"}
               label={""}
-              dialogTitle={"Add Unit"}
+              dialogTitle={"Unit"}
               fetchDataFn={getUnit}
               fnFetchDataByID={getUnitById}
               required

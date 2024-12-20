@@ -1,7 +1,7 @@
 "use client"
 import { GridColDef, GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import EntityList from "../Widgets/masters/EntityList"
-import { acceptInvite, getInviteByUserContact, rejectInvite } from "../controllers/user.controller";
+import { acceptInvite, delInviteById, getInviteByUserContact, getInviteUserById, rejectInvite } from "../controllers/user.controller";
 import { Button } from "@mui/material";
 import { revalidatePage, redirectToPage } from "./SelectCompany";
 // import { useRouter } from "next/navigation";
@@ -41,7 +41,8 @@ async function handleAccept(params: any) {
     await acceptInvite(params.row);
   } catch (error) {
     throw (error);
-  }finally{
+  }
+  finally{
     window.location.reload();
   }
 
@@ -49,10 +50,11 @@ async function handleAccept(params: any) {
 
 async function handleReject(params: any) {
   try {
-    await rejectInvite(params.row);
+    await rejectInvite(params.row.id);
   } catch (error) {
     throw (error);
-  }finally{
+  }
+  finally{
     window.location.reload();
   }
 }

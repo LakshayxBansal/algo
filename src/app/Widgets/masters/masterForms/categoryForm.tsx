@@ -8,7 +8,7 @@ import {
   updateEnquiryCategory,
 } from "../../../controllers/enquiryCategory.controller";
 import Snackbar from "@mui/material/Snackbar";
-import { Portal }from "@mui/material";
+import { Portal } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
 import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
@@ -17,12 +17,16 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
+export default function CategoryForm(
+  props: masterFormPropsWithDataT<nameMasterDataT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const entityData: nameMasterDataT = props.data
+    ? props.data
+    : ({} as nameMasterDataT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -53,7 +57,7 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -103,7 +107,7 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="categoryForm" sx = {{m:1, p:3}}>
+      <Box id="categoryForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -118,7 +122,7 @@ export default function CategoryForm(props: masterFormPropsWithDataT<nameMasterD
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={props.data?.name}
               />
             </Grid>

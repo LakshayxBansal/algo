@@ -19,18 +19,28 @@ import {
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT } from "@/app/models/models";
-import { Autocomplete, Collapse, Grid, IconButton, Portal } from "@mui/material";
+import {
+  Autocomplete,
+  Collapse,
+  Grid,
+  IconButton,
+  Portal,
+} from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
-export default function ContactGroupForm(props: masterFormPropsWithDataT<contactGroupSchemaT>) {
+export default function ContactGroupForm(
+  props: masterFormPropsWithDataT<contactGroupSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: contactGroupSchemaT = props.data ? props.data : {} as contactGroupSchemaT;
+  const entityData: contactGroupSchemaT = props.data
+    ? props.data
+    : ({} as contactGroupSchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
 
@@ -39,7 +49,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; 
+    let data: { [key: string]: any } = {};
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -62,7 +72,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
           props.setDialogValue ? props.setDialogValue(newVal) : null;
         }, 1000);
       } else {
-        setFormKey(formKey + 1); 
+        setFormKey(formKey + 1);
       }
     } else {
       const issues = result.data;
@@ -85,8 +95,8 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
       : entityData.parent_id
-        ? entityData.parent_id
-        : 0;
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -131,7 +141,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactGroup" sx={{m : 1, p : 3}}>
+      <Box id="contactGroup" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -146,7 +156,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -159,7 +169,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                 defaultValue={entityData.alias}
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -181,7 +191,7 @@ export default function ContactGroupForm(props: masterFormPropsWithDataT<contact
                     parent: val ? val : { id: 0, name: "" },
                   })
                 }
-                dialogTitle={"Add Parent Group"}
+                dialogTitle={"Parent Group"}
                 fetchDataFn={getContactGroup}
                 fnFetchDataByID={getContactGroupById}
                 formError={formError?.parentgroup}

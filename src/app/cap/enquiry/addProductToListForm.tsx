@@ -174,7 +174,7 @@ export default function AddProductToListForm(props: customprop) {
             id={"product"}
             label={"Product Name"}
             showDetails={true}
-            dialogTitle={"Add Product"}
+            dialogTitle={"Product"}
             fetchDataFn={getProduct}
             fnFetchDataByID={getProductById}
             required
@@ -231,7 +231,7 @@ export default function AddProductToListForm(props: customprop) {
               name={"unit"}
               id={"unit"}
               label={"Unit Name"}
-              dialogTitle={"Add Unit"}
+              dialogTitle={"Unit"}
               fetchDataFn={getUnit}
               fnFetchDataByID={getUnitById}
               required
