@@ -54,6 +54,10 @@ export const createSchemaZod = (structure: any) => {
               schema = z.number().nullish();
               break;
 
+          case "list":
+          schema = z.string()
+          break;
+              
           default:
               schema = z.any();
               break;

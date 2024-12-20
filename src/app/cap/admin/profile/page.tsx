@@ -21,7 +21,7 @@ export const metadata : Metadata = {
 export default async function Profile() {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const executiveData = await getProfileById(session.user.userId);
             const fields = await getScreenDescription(EXECUTIVE_OBJECT_ID);
             const rights = {};

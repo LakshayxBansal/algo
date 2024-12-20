@@ -39,7 +39,7 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
@@ -106,7 +106,7 @@ export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDe
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       data.mobile = modifyPhone(data.mobile as string);
       data.whatsapp = modifyPhone(data.whatsapp as string);
       const parsed = zs.executiveSchema.safeParse(data);
@@ -197,7 +197,7 @@ function inviteUser(data: executiveSchemaT) {
 async function getCrmUserId(user: string) {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const result = await getBizAppUserList(
         session.user.dbInfo.id,
         user,
@@ -300,7 +300,7 @@ export async function insertUserIdInExecutive(
 ) {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       return insertUserIdInExecutiveDb(crmDb, executiveId, userId);
     }
   } catch (error) {
@@ -365,7 +365,7 @@ export async function getExecutiveByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getExecutiveByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -418,7 +418,7 @@ export async function getExecutiveColumns() {
   try {
     const session = await getSession();
     console.log("session", session);
-    if (session) {
+    if (session?.user.dbInfo) {
       const result = await getExecutiveColumnsDb(session.user.dbInfo.dbName as string);
       return result;
     }
@@ -430,7 +430,7 @@ export async function getExecutiveColumns() {
 export async function mapExecutiveToDept(executiveId: number, deptsArray: number[]) {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       await mapExecutiveToDeptDb(session.user.dbInfo.dbName, executiveId, deptsArray);
     }
   } catch (e) {
@@ -441,7 +441,7 @@ export async function mapExecutiveToDept(executiveId: number, deptsArray: number
 export async function getEnquiriesByExecutiveId() {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       return getEnquiriesByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);
     }
   } catch (error) {

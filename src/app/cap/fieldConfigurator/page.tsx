@@ -12,7 +12,7 @@ export const metadata : Metadata = {
 export default async function formFieldsConfiguration() {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       return (
         <FieldConfigurator />
       );

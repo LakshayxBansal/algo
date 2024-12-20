@@ -14,7 +14,7 @@ function normalToCamelCaseString(normalString: string) {
 export async function manageRights(dataArray : Array<rightSchemaT>) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             let parseSuccess = true;
             dataArray.map((data : rightSchemaT)=>{
                 parseSuccess &&= zs.rightSchema.safeParse(data).success;
@@ -39,7 +39,7 @@ export async function manageRights(dataArray : Array<rightSchemaT>) {
 export async function getRightsData() {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const result = await getRightsDataDb(session.user.dbInfo.dbName);
             return result;
         }
@@ -51,7 +51,7 @@ export async function getRightsData() {
 export async function getAllObjects() {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const objects = await getAllObjectsDB(session.user.dbInfo.dbName);
             return objects;
         }
@@ -63,7 +63,7 @@ export async function getAllObjects() {
 export async function getObjectByName(name: string) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const objects = await getObjectByNameDb(session.user.dbInfo.dbName, name);
             return objects;
         }
@@ -75,7 +75,7 @@ export async function getObjectByName(name: string) {
 export async function createDeptInRightsTable(deptId: number) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const objects = await getAllObjects();
             const roles = await getAllRoles();
             await createDeptInRightsTableDB(session.user.dbInfo.dbName, deptId, objects, roles);
@@ -88,7 +88,7 @@ export async function createDeptInRightsTable(deptId: number) {
 export async function delDeptFromRightTable(deptId: number) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             await delDeptFromRightTableDB(session.user.dbInfo.dbName, deptId);
         }
     } catch (error) {
@@ -99,7 +99,7 @@ export async function delDeptFromRightTable(deptId: number) {
 export async function getRight(objectId: number, roleId: number, deptId: number) {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const right = await getRightDB(session.user.dbInfo.dbName, objectId, roleId, deptId);
             return right[0];
         }

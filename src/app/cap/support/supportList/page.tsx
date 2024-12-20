@@ -60,7 +60,7 @@ export default function Action() {
   return (
     <>
       <EntityList
-        title="Support Ticket List"
+        title="Support Ticket"
         // renderForm={(fnDialogOpen, fnDialogValue, data) => (
         //   <SupportTicketForm
         //     setDialogOpen={fnDialogOpen}

@@ -82,7 +82,7 @@ export async function getSupportActionByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getSupportActionByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -124,7 +124,7 @@ export async function createSupportAction(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -176,7 +176,7 @@ export async function updateSupportAction(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: formData.get("name") as string,
       // };
@@ -232,7 +232,7 @@ export async function uploadSupportCsvData(data: string) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       
       const csvData = data; 
 

@@ -8,6 +8,8 @@ import {
   getEnquirySourceById,
   getEnquirySourceByPage,
 } from "@/app/controllers/enquirySource.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -20,6 +22,9 @@ const columns: GridColDef[] = [
 export default function enquirySource() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Source"}/>
+      </Box>
       <EntityList
         title="Source"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

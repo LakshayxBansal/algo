@@ -36,18 +36,6 @@ export default function CompanyEntityList() {
       field: "role",
       headerName: "Role",
       width: 150,
-      // renderCell: (params) => {
-      //   let role = "none";
-      //   if(params.row.roleId===1){
-      //     role = "Admin";
-      //   }else if(params.row.roleId===2){
-      //     role = "Manager";
-      //   }else if(params.row.roleId===3){
-      //     role = "Executive";
-      //   }
-      //   return (
-      //     <h6>{role}</h6>
-      // )},
     },
     {
       field: "createdBy",
