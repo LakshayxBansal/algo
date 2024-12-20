@@ -30,7 +30,7 @@ export async function supportDataFormat({
     contact: selectValues.contact?.name ?? "",
     received_by: selectValues.received_by?.name ?? "",
     category: selectValues.category?.name ?? "",
-    call_receipt_remark: (formData.get("call_receipt_remark") ?? "") as string ?? otherData?.call_receipt_remark,
+    call_receipt_remark: (formData.get("call_receipt_remark")) as string ?? otherData?.call_receipt_remark ?? "",
   };
 
   let ledgerData = {
@@ -43,9 +43,9 @@ export async function supportDataFormat({
     next_action_id: selectValues.next_action?.id,
     next_action: selectValues.next_action?.name ?? "",
     next_action_date: nextActionDate,
-    suggested_action_remark: (formData.get("suggested_action_remark")?? "" ) as string ?? otherData?.suggested_action_remark,
+    suggested_action_remark: (formData.get("suggested_action_remark")?? "" ) as string ,
     action_taken_remark: (formData.get("action_taken_remark" )?? "") as string ,
-    closure_remark: (formData.get("closure_remark") ?? "") as string ?? otherData?.closure_remark,
+    closure_remark: (formData.get("closure_remark") ) as string ?? otherData?.closure_remark? otherData?.closure_remark : "",
     allocated_to_id: selectValues.allocated_to?.id ?? otherData?.ledger_allocated_to,
     c_col1: (formData.get("c_col1") ?? "") as string,
     c_col2: (formData.get("c_col2") ?? "") as string,

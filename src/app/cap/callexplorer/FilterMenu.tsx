@@ -15,6 +15,8 @@ interface customprop {
     filterReset?: (props: any) => void;
     resetValue?: string;
     inputValue?: React.RefObject<HTMLInputElement>;
+    selectedStatus ?: string | null;
+    setSelectedStatus ?: (props: any) => void;
 }
 
 export default function FilterMenu(props: customprop,) {   
@@ -60,14 +62,14 @@ export default function FilterMenu(props: customprop,) {
             ...prevState,
             [field]: null,
         }));
+        if(props.setSelectedStatus && field === "callStatus" && props.selectedStatus) props.setSelectedStatus("");
         handleResetCloseFilter(field);
-    };
-
+    };    
 
     return (
         <Box>
             <OutlinedButton
-                sx={{ color: props.filterValueState[props.field] ? "blue" : "black", textTransform: "none" }}
+                sx={{ color: props.filterValueState[props.field] || (props.selectedStatus )? "blue" : "black", textTransform: "none" }}
                 startIcon={
                     <Tooltip title={props.tooltipTitle} arrow>
                         <GridFilterListIcon style={{ fontSize:12}} />
