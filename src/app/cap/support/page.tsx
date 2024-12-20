@@ -68,13 +68,22 @@ async function getSuggestedRemark(data: any, status: any) {
   let ledgerData = data.ledgerData;
   const headerData = data.headerData;
   if (status === "true") {
-    let suggested_action_remark = `Call Receipt Remarks:-${
+    let suggested_action_remark = headerData[0]?`Call Receipt Remarks:-${
       headerData[0].created_by_name
     } ; ${adjustToLocal(headerData[0].created_on)
       .toDate()
           .toString()
           .slice(0, 15)
-    } ; ${headerData[0].call_receipt_remark} \n__________________________________________________________________________________________________________\n`;
+    } ; ${headerData[0].call_receipt_remark} \n__________________________________________________________________________________________________________\n`:"";
+
+    if(ledgerData[0].suggested_action_remark){
+    suggested_action_remark += `Suggested Action Remarks:- ${
+      ledgerData[0].modified_by_name
+    } ; ${adjustToLocal(ledgerData[0].modified_on)
+      .toDate()
+      .toString()
+      .slice(0, 15)} ; ${ledgerData[0].suggested_action_remark} \n__________________________________________________________________________________________________________\n`;
+    }
 
     // formating suggested action remark and action taken reamark 
     //format-   modified_by , date , remark

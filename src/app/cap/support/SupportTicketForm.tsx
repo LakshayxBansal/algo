@@ -136,6 +136,8 @@ const SupportTicketForm = (props: customprop) => {
 
     let result: any;
 
+   
+
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
       // const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -393,6 +395,32 @@ const SupportTicketForm = (props: customprop) => {
       />,
     ],
     [
+      "allocate_to",
+        <SelectMasterWrapper
+         key="allocated_to"
+          name={"allocated_to"}
+          id={"allocated_to"}
+          label={"Allocate to"}
+          showDetails={true}
+          dialogTitle={"Assign Executive"}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
+          fetchDataFn={getExecutive}
+          fnFetchDataByID={getExecutiveById}
+          required
+          formError={formError?.allocated_to ?? formError.allocated_to}
+          defaultValue={masterData?.allocated_to}
+          renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+            <ExecutiveForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              metaData={metaData}
+              data={data}
+            />
+          )}
+          disabled={status === "2"}
+        />
+    ],
+    [
       "next_action",
       <SelectMasterWrapper
         key={`next_action_${status}`}
@@ -430,7 +458,7 @@ const SupportTicketForm = (props: customprop) => {
           status === "1"
             ? masterData?.next_action_date
               ? adjustToLocal(masterData.next_action_date)
-              : dayjs()
+              : props.status ?"":dayjs()
             : null
         }
         slotProps={{
@@ -446,7 +474,7 @@ const SupportTicketForm = (props: customprop) => {
       <InputControl
         inputType={InputType.TEXTFIELD}
         key={`closure-remark-${status}`}
-        defaultValue={""}
+        defaultValue={status === "1" ? "" : props.data?.closure_remark}
         placeholder="Closure remarks"
         label="closure_remark"
         required={false}
@@ -558,6 +586,7 @@ const SupportTicketForm = (props: customprop) => {
     "product_grid",
     "call_receipt_remark",
     "suggested_action_remark",
+    "action_taken_remark",
   ];
 
   // const enquiryMaintainProducts = .config_data.maintainProducts;
@@ -570,6 +599,9 @@ const SupportTicketForm = (props: customprop) => {
         );
         let propsForSugActionField = fieldPropertiesById(
           "suggested_action_remark"
+        );
+        let propsForActionTakenRemField = fieldPropertiesById(
+          "action_taken_remark"
         );
 
         let fld = (
@@ -594,7 +626,7 @@ const SupportTicketForm = (props: customprop) => {
                       key={`product-grid-component-${index}`}
                       // id="product_grid"
                       // name="product_grid"
-                      isDisable={false}
+                      isDisable={props?.status === "true" ? true : false}
                       dgData={data}
                       setdgData={setData}
                       setdgDialogOpen={setDialogOpen}
@@ -604,8 +636,7 @@ const SupportTicketForm = (props: customprop) => {
                     />
                   </Box>
                 </Grid>
-              }
-
+              }       
               <Grid
                 item
                 xs={12}
@@ -614,12 +645,13 @@ const SupportTicketForm = (props: customprop) => {
                 sx={{ display: "flex", flexDirection: "column" }}
                 key={`remarks-grid-${index}`}
               >
+                {props.status !== "true" && (
                 <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
                   <InputControl
-                    placeholder="Call receipt remarks"
-                    label="Call receipt remarks"
+                    placeholder="Call Receipt Remarks"
                     multiline
                     inputType={InputType.TEXTFIELD}
+                    label={propsForCallReceiptField.label}
                     name="call_receipt_remark"
                     id="call_receipt_remark"
                     error={formError?.call_receipt_remark?.error}
@@ -631,6 +663,7 @@ const SupportTicketForm = (props: customprop) => {
                     disabled={props?.status === "true" ? true : false}
                   />
                 </Grid>
+              )}
                 <Grid
                   item
                   xs={12}
@@ -639,9 +672,9 @@ const SupportTicketForm = (props: customprop) => {
                 >
                   <InputControl
                     placeholder="Suggested Action Remarks"
-                    label="Suggested Action Remarks"
                     multiline
                     inputType={InputType.TEXTFIELD}
+                    label={propsForSugActionField.label}
                     name="suggested_action_remark"
                     id="suggested_action_remark"
                     error={formError?.suggested_action_remark?.error}
@@ -653,6 +686,39 @@ const SupportTicketForm = (props: customprop) => {
                     disabled={props?.status === "true" ? true : false}
                   />
                 </Grid>
+              {
+                props?.status === "true" && (
+                  <Grid
+                    item
+                    xs={12}
+                    md={12}
+                    key={`action-taken-remarks-grid-${index}`}
+                  >
+                     <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`action-taken-field-${index}`}
+                      placeholder="Action Taken Remarks"
+                      label={propsForActionTakenRemField.label}
+                      multiline
+                      name="action_taken_remark"
+                      id="action_taken_remark"
+                      rows={6}
+                      fullWidth
+                      error={formError?.action_taken_remark?.error}
+                      helperText={formError?.action_taken_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{
+                        "& .MuiFormHelperText-root": {
+                          margin: 0,
+                        },
+                      }}
+                      disabled={Boolean(propsForActionTakenRemField.disabled)}
+                      required={propsForActionTakenRemField.required}
+                      defaultValue={props.data?.action_taken_remark}
+                    />
+                    </Grid>
+                )
+              }
               </Grid>
             </Grid>
           </Grid>
@@ -660,6 +726,10 @@ const SupportTicketForm = (props: customprop) => {
 
         fieldArr.push(fld);
       } else if (!skipColumns.includes(field.column_name_id)) {
+        if (field.column_name_id === "allocate_to" && props.status!=="true") {
+          //skip this field
+          return null;
+        }
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;

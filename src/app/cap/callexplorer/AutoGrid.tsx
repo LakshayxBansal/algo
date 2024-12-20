@@ -74,7 +74,7 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { encrypt } from "@/app/utils/encrypt.utils";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
-import { set } from "lodash";
+import { set, values } from "lodash";
 import dayjs from "dayjs";
 export let handleRefresh: any;
 import { exportToExcel } from "@/app/utils/exportExcel";
@@ -134,6 +134,8 @@ export default function AutoGrid(props: any) {
   const [selectedStatusRows, setSelectedStatusRows] =
     React.useState<GridRowSelectionModel>([]);
   const [lastSelectedIndex, setLastSelectedIndex] = React.useState(null);
+  const [isAllocated ,setIsAllocated] = React.useState(false);  // To check if the call is allocated or not
+
   const descriptionRef = React.useRef(null);
 
 
@@ -323,14 +325,17 @@ export default function AutoGrid(props: any) {
     // Set enableAllocate state
     setEnableAllocate(isAllocatable);
 
-    if (deSelect && selectedRow?.id === params.row.id) {
-      setSelectedRow(null);
-      setRowSelectionModel([]);
-    } else {
+    /***  commented this code to keep the history of last mouse click whether its select of deselect   ** */
+
+    // if (deSelect && selectedRow?.id === params.row.id) {
+    //   const firstSelectedRow= selectedStatusRows.length>0 ?data.find((row:any)=>row.id === selectedStatusRows[0]):null
+    //   setSelectedRow(firstSelectedRow);
+    //   setRowSelectionModel([selectedStatusRows[0]]);
+    // } else {
       const selectedRowData = data.find((row: any) => row.id === params.row.id);
       setSelectedRow(selectedRowData);
       setRowSelectionModel([params.row.id]);
-    }
+    // }
   };
 
 
@@ -369,10 +374,17 @@ export default function AutoGrid(props: any) {
       apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
     }
   };
-
+  
+  
   const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // const value = parseInt(event.target.value, 10);
-    const value = Number(event.target.value);
+
+    if(event.target.value==="0") event.target.value ="1"; // to prevent setting interval to 0
+    
+    let value = Number(event.target.value);
+   
+    if(value <1){
+      value =1;
+    }
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
   const handleStatusClick = async () => {
@@ -1053,6 +1065,8 @@ export default function AutoGrid(props: any) {
           field={"callStatus"}
           headerName={"Call Status"}
           tooltipTitle={"Filter by Call Status"}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
         >
           <MenuItem>
             <FormControl component="fieldset">
@@ -1305,7 +1319,7 @@ export default function AutoGrid(props: any) {
     },
     {
       field: "modified_on",
-      width: columnWidths?.modified_on ?? 100,
+      width: columnWidths?.modified_on ?? 140,
       headerName: "Last Updated",
       hideable: true,
       renderCell: (params) => {
@@ -1502,7 +1516,7 @@ export default function AutoGrid(props: any) {
                     alignItems: "center",
                   }}
                 >
-                  <CallType text="Open-Unallocated" color="blue" />
+                  <CallType text="Unallocated" color="blue" />
                 </Grid>
                 <Grid
                   item
@@ -1513,7 +1527,7 @@ export default function AutoGrid(props: any) {
                     alignItems: "center",
                   }}
                 >
-                  <CallType text="Open-Allocated" color="purple" />
+                  <CallType text="Allocated" color="purple" />
                 </Grid>
                 <Grid
                   item
@@ -1524,14 +1538,14 @@ export default function AutoGrid(props: any) {
                     alignItems: "center",
                   }}
                 >
-                  <CallType text="Closed-Failure" color="red" />
+                  <CallType text="Dropped" color="red" />
                 </Grid>
                 <Grid
                   item
                   xs="auto"
                   sx={{ display: "flex", alignItems: "center" }}
                 >
-                  <CallType text="Closed-Success" color="green" />
+                  <CallType text="Mature" color="green" />
                 </Grid>
               </Grid>
             </Box>
@@ -1567,7 +1581,7 @@ export default function AutoGrid(props: any) {
             onSortModelChange={(sortModel) => handleCustomSort(sortModel)}
             onCellKeyDown={handleCellKeyDown}
             columnVisibilityModel={columnVisibilityModel}
-            hideFooterSelectedRowCount
+            hideFooterSelectedRowCount={false}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
             onCellClick={handleCellClick}
             onRowSelectionModelChange={handleRowSelection}
@@ -1580,6 +1594,9 @@ export default function AutoGrid(props: any) {
             checkboxSelection
             apiRef={apiRef}
             loading={loading}
+            localeText={{
+              footerRowSelected: (count) => `${selectedStatusRows.length ? selectedStatusRows.length : rowSelectionModel.length} rows selected`,
+            }}
             slotProps={{
               columnsPanel: {
                 sx: {
@@ -1792,7 +1809,7 @@ export default function AutoGrid(props: any) {
                   Auto refresh in
                 </Typography>
                 <TextField
-                  value={refreshInterval}
+                  
                   onChange={handleIntervalChange}
                   variant="standard"
                   size="small"
@@ -1802,6 +1819,7 @@ export default function AutoGrid(props: any) {
                     style: { width: "35px", textAlign: "center" },
                   }}
                   sx={{ mx: 1, width: "auto" }} // Fixed width for TextField
+                  defaultValue={refreshInterval}
                 />
                 <Typography variant="body2" component="span">
                   mins.
@@ -1851,6 +1869,9 @@ export default function AutoGrid(props: any) {
                 }
                 setRefresh={setRefresh}
                 formName={tabOptions[value].name}
+                setSelectedRow={setSelectedRow}
+                setSelectedStatusRows= {setSelectedStatusRows}
+                setRowSelectionModel = {setRowSelectionModel}
               />
             </AddDialog>
           )}

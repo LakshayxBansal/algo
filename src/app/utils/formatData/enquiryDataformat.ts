@@ -36,7 +36,7 @@ export async function enquiryDataFormat({
     received_by: selectValues.received_by?.name ?? "",
     category: selectValues.category?.name ?? "",
     source: selectValues.source?.name ?? "",
-    call_receipt_remark: (formData.get("call_receipt_remark") ?? "") as string?? otherData?.call_receipt_remark,
+    call_receipt_remark: (formData.get("call_receipt_remark") ) as string?? otherData?.call_receipt_remark ?? "",
   };
 
   let ledgerData = {
