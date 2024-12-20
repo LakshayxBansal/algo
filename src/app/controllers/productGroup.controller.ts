@@ -164,35 +164,37 @@ export async function getProductGroupById(id: number) {
 }
 
 export async function delProductGroupById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if (check[0].count > 0) {
-        return "Can't Be DELETED!";
+      const dbResult = await delProductGroupDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
       } else {
-        const result = await delProductGroupDetailsById(
-          session.user.dbInfo.dbName,
-          id
-        );
-        return "Record Deleted";
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getProductGroupByPage(
   page: number,
@@ -201,7 +203,7 @@ export async function getProductGroupByPage(
 ) {
   let getProductGroup = {
     status: false,
-    data: {} as mdl.productGroupSchemaT,
+    data: [] as mdl.productGroupSchemaT[],
     count: 0,
     error: {},
   };
@@ -209,7 +211,7 @@ export async function getProductGroupByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getProductGroupByPageDb(
+      const dbData = await getProductGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -222,7 +224,7 @@ export async function getProductGroupByPage(
       );
       getProductGroup = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.productGroupSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.productGroupSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -233,7 +235,7 @@ export async function getProductGroupByPage(
     getProductGroup = {
       ...getProductGroup,
       status: false,
-      data: {} as mdl.productGroupSchemaT,
+      data: [] as mdl.productGroupSchemaT[],
       error: err,
     };
   }

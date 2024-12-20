@@ -12,23 +12,24 @@ import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import { getProductGroup } from "@/app/controllers/productGroup.controller";
 import {
   productGroupSchemaT,
-  masterFormPropsT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import AutocompleteDB from "../../AutocompleteDB";
 
-export default function ProductGroupForm(props: masterFormPropsT) {
+export default function ProductGroupForm(props: masterFormPropsWithDataT<productGroupSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: productGroupSchemaT = props.data ? props.data : {};
+  const entityData: productGroupSchemaT = props.data ? props.data : {} as productGroupSchemaT;
   console.log("value in form", selectValues);
 
   const handleCancel = () => {
@@ -60,7 +61,7 @@ export default function ProductGroupForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
+          if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
         }
@@ -73,8 +74,8 @@ export default function ProductGroupForm(props: masterFormPropsT) {
     data.parent_id = selectValues.parent
       ? selectValues.parent.id
       : entityData.parent_id
-      ? entityData.parent_id
-      : 0;
+        ? entityData.parent_id
+        : 0;
     return data;
   };
 
@@ -102,24 +103,6 @@ export default function ProductGroupForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Product Group" : "Add Product Group"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -138,100 +121,105 @@ export default function ProductGroupForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="productGroupForm" sx={{ m: 2 }}>
+      <Box id="productGroupForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="name"
-              label="Group Name"
-              name="name"
-              required
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="name"
+                label="Group Name"
+                name="name"
+                required
+                titleCase={true}
+                defaultValue={entityData.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+ setFormError={setFormError}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="alias"
+                label="Alias"
+                name="alias"
+                defaultValue={entityData.alias}
+                error={formError?.alias?.error}
+                helperText={formError?.alias?.msg}
+ setFormError={setFormError}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { alias, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <SelectMasterWrapper
+                name={"parent"}
+                id={"parent"}
+                label={"Parent Group"}
+                width={350}
+                dialogTitle={"Add Parent Group"}
+                defaultValue={
+                  {
+                    id: entityData.parent_id,
+                    name: entityData.parent,
+                  } as optionsDataT
+                }
+                onChange={(e, val, s) => {
+                  setSelectValues({
+                    ...selectValues,
+                    parent: val ? val : { id: 0, name: "" },
+                  });
+                }}
+                fetchDataFn={getProductGroup}
+                fnFetchDataByID={getProductGroupById}
+                allowNewAdd={false}
+                allowModify={false}
+                formError={formError?.parentgroup}
+                setFormError={setFormError}
+                renderForm={(fnDialogOpen, fnDialogValue) => (
+                  <ProductGroupForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="alias"
-              label="Alias"
-              name="alias"
-              defaultValue={entityData.alias}
-              error={formError?.alias?.error}
-              helperText={formError?.alias?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { alias, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <SelectMasterWrapper
-              name={"parent"}
-              id={"parent"}
-              label={"Parent Group"}
-              width={210}
-              dialogTitle={"Add Parent Group"}
-              defaultValue={
-                {
-                  id: entityData.id,
-                  name: entityData.parent,
-                } as optionsDataT
-              }
-              // defaultValue={
-              //   {
-              //     id: entityData.parent_id,
-              //     name: entityData.name,
-              //   } as optionsDataT
-              // }
-              onChange={(e, val, s) => {
-                setSelectValues({
-                  ...selectValues,
-                  parent: val ? val : { id: 0, name: "" },
-                });
-              }}
-              fetchDataFn={getProductGroup}
-              fnFetchDataByID={getProductGroupById}
-              allowNewAdd={false}
-              allowModify={false}
-              formError={formError?.parentgroup}
-              renderForm={(fnDialogOpen, fnDialogValue) => (
-                <ProductGroupForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                />
-              )}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}

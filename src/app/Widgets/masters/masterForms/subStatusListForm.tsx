@@ -11,6 +11,7 @@ import {
   Collapse,
   FormControl,
   FormControlLabel,
+  Grid,
   IconButton,
   Radio,
   RadioGroup,
@@ -23,7 +24,7 @@ import {
 } from "@/app/models/models";
 import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
 
-export default function SubStatusListForm(props: masterFormPropsWithDataT) {
+export default function SubStatusListForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -31,7 +32,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   const [status_id, setStatus] = useState<number | undefined>(
     props.data?.enquiry_status_id
   );
-  const entityData: enquirySubStatusMasterT = props.data ? props.data : {};
+  const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -43,8 +44,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
     data["enquiry_status_id"] = status_id
       ? status_id
       : entityData.enquiry_status_id
-      ? entityData.enquiry_status_id
-      : 0;
+        ? entityData.enquiry_status_id
+        : 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
@@ -62,8 +63,8 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"]={ msg: issue.message, error: true };
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -97,25 +98,7 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
   };
 
   return (
-    <Paper>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Sub-Status" : "Add Sub-Status"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
+    <>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -134,92 +117,101 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="subStatusForm" sx={{ m: 2 }}>
+      <Box id="subStatusForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <FormControl>
-              <RadioGroup
-                row
-                name="status"
-                id="status"
-                value={status_id}
-                onChange={onStatusChange}
-              >
-                <FormControlLabel
-                  value="Status"
-                  control={<label />}
-                  label="Status :"
-                />
-                <FormControlLabel
-                  value={1}
-                  control={
-                    <Radio
-                      inputProps={{
-                        tabIndex: -1,
-                        "aria-label": "Open status",
-                      }}
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              <FormControl sx={{ marginLeft: "2rem", marginTop: "1rem" }}>
+                <Grid container alignItems="center">
+                  <Grid item xs={12} sm="auto">
+                    <FormControlLabel
+                      value="Status"
+                      control={<label />}
+                      label="Status :"
                     />
-                  }
-                  label="Open"
-                />
-                <FormControlLabel
-                  value={2}
-                  control={
-                    <Radio
-                      inputProps={{
-                        tabIndex: -1,
-                        "aria-label": "Closed status",
-                      }}
-                    />
-                  }
-                  label="Closed"
-                />
-              </RadioGroup>
-            </FormControl>
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="name"
-              label="Sub-Status Name"
-              name="name"
-              fullWidth
-              required
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+                  </Grid>
+                  <Grid item xs={12} sm="auto">
+                    <RadioGroup
+                      row
+                      name="status"
+                      id="status"
+                      value={status_id}
+                      onChange={onStatusChange}
+                    >
+                      <FormControlLabel
+                        value={1}
+                        control={
+                          <Radio
+                            inputProps={{
+                              tabIndex: -1,
+                              "aria-label": "Open status",
+                            }}
+                          />
+                        }
+                        label="Open"
+                      />
+                      <FormControlLabel
+                        value={2}
+                        control={
+                          <Radio
+                            inputProps={{
+                              tabIndex: -1,
+                              "aria-label": "Closed status",
+                            }}
+                          />
+                        }
+                        label="Closed"
+                      />
+                    </RadioGroup>
+                  </Grid>
+                </Grid>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="name"
+                label="Sub-Status Name"
+                name="name"
+                fullWidth
+                required
+                titleCase={true}
+                defaultValue={entityData.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+ setFormError={setFormError}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                sx={{ marginTop: "1rem" }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -229,6 +221,6 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+    </>
   );
 }

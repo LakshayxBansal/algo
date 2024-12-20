@@ -1,15 +1,27 @@
 "use server";
 import { getSession } from "../services/session.service";
 import {
+  getAllCallEnquiriesDb,
+  getAllCallSupportTicketsDb,
   getCallEnquiriesCountDb,
   getCallEnquiriesDb,
   getCallEnquiriesDetailsDb,
   getCallSupportDetailsDb,
   getCallSupportTicketsCountDb,
   getCallSupportTicketsDb,
+  getUserPreferenceDb,
+  insertUserPreferenceDb,
   updateCallAllocationDb,
   updateSupportCallAllocationDb,
+  updateUserPreferenceDb,
 } from "../services/callExplorer.service";
+import { GridSortModel } from "@mui/x-data-grid";
+import { adjustToLocal } from "../utils/utcToLocal";
+import { regionalDateFormat } from "../utils/getRegionalFormat";
+
+type ColumnWidths = {
+  [key: string]: number; // Key is the column field name, value is the width
+};
 
 export async function getCallEnquiries(
   filterValueState: any,
@@ -18,7 +30,8 @@ export async function getCallEnquiries(
   callFilter: string,
   dateFilter: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  sortBy: GridSortModel
 ) {
   try {
     const session = await getSession();
@@ -31,7 +44,8 @@ export async function getCallEnquiries(
         callFilter,
         dateFilter,
         page,
-        pageSize
+        pageSize,
+        sortBy
       );
 
       // Fetch the total row count (with the same filters applied)
@@ -48,6 +62,44 @@ export async function getCallEnquiries(
       return {
         result,
         count,
+      };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllCallEnquiries(
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string,
+  // sortBy: GridSortModel
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const res = await getAllCallEnquiriesDb(
+        session.user.dbInfo.dbName,
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter,
+        // sortBy
+      );
+      const dateFormat = await regionalDateFormat();
+      const result = res.map((item: any) => ({
+        ...item, // Copy all other fields
+        date: adjustToLocal(item.date).format(dateFormat), // Update 'date'
+        next_action_date: adjustToLocal(item.next_action_date).format(dateFormat), // Update 'next_action_date'
+      }));
+      
+
+      // Return both result and count as separate variables in an object
+      return {
+        result,
       };
     }
   } catch (error) {
@@ -124,7 +176,8 @@ export async function getCallSupportEnquiries(
   callFilter: string,
   dateFilter: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  sortBy: GridSortModel
 ) {
   try {
     const session = await getSession();
@@ -137,7 +190,8 @@ export async function getCallSupportEnquiries(
         callFilter,
         dateFilter,
         page,
-        pageSize
+        pageSize,
+        sortBy
       );
 
       // Fetch the total row count (with the same filters applied)
@@ -163,6 +217,45 @@ export async function getCallSupportEnquiries(
   }
 }
 
+export async function getAllCallSupportEnquiries(
+  filterValueState: any,
+  filterType: string,
+  selectedStatus: string | null,
+  callFilter: string,
+  dateFilter: string
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const res = await getAllCallSupportTicketsDb(
+        session.user.dbInfo.dbName,
+        filterValueState,
+        filterType,
+        selectedStatus,
+        callFilter,
+        dateFilter
+      );
+
+      const dateFormat = await regionalDateFormat();
+      const result = res.map((item: any) => ({
+        ...item, // Copy all other fields
+        date: adjustToLocal(item.date).format(dateFormat), // Update 'date'
+        next_action_date: adjustToLocal(item.next_action_date).format(dateFormat), // Update 'next_action_date'
+      }));
+
+      // const count = result.length;
+      // Return both result and count as separate variables in an object
+      return {
+        result
+      };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
 export async function getCallSupportDetails(id: number) {
   try {
     const session = await getSession();
@@ -173,6 +266,57 @@ export async function getCallSupportDetails(id: number) {
       );
 
       // console.log("res", result);
+      return result;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getUserPreference() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo && session?.user.userId) {
+      const result = await getUserPreferenceDb(
+        session.user.dbInfo.dbName,
+        session.user.userId
+      );
+
+      // console.log("res", result);
+      return result;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function insertUserPreference(data:ColumnWidths) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo && session?.user.userId) {
+      const result = await insertUserPreferenceDb(
+        session.user.dbInfo.dbName,
+        session.user.userId,
+       JSON.stringify(data)
+      );
+
+      // console.log("res", result);
+      return result;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateUserPreference(data: ColumnWidths) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo && session?.user.userId) {
+      const result = await updateUserPreferenceDb(
+        session.user.dbInfo.dbName,
+        session.user.userId,
+        JSON.stringify(data)
+      );
       return result;
     }
   } catch (error) {

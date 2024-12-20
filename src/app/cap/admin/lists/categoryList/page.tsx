@@ -21,7 +21,7 @@ export default function Category() {
   return (
     <>
       <EntityList
-        title="Enquiry Category Master"
+        title="Enquiry Category"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CategoryForm
             setDialogOpen={fnDialogOpen}

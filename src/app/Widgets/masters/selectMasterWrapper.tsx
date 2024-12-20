@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { AddDialog } from "./addDialog";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import AddIcon from '@mui/icons-material/Add';
+import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import AutocompleteDB from "../AutocompleteDB";
-import { formErrorT } from "../../models/models";
+import { formErrorT, formMetaDataPropT, loggedInUserDataT, regionalSettingSchemaT, rightSchemaT } from "../../models/models";
 import EditIcon from "@mui/icons-material/Edit";
 import { optionsDataT } from "@/app/models/models";
 import { RenderFormFunctionT } from "@/app/models/models";
@@ -38,10 +40,11 @@ type selectMasterWrapperT = {
   required?: boolean;
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
-  disable?: boolean;
-  defaultOptions?:optionsDataT[]
-  showDetails?: boolean ;
+  disabled?: boolean;
+  defaultOptions?: optionsDataT[]
+  showDetails?: boolean;
   autoFocus?: boolean;
+  setFormError?: (props: any) => void;
 };
 
 enum dialogMode {
@@ -59,12 +62,33 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
   const [modData, setModData] = useState({});
   const allowNewAdd = props.allowNewAdd === false ? false : true;
   const allowModify = props.allowModify === false ? false : true;
+  const [metaData, setMetaData] = useState<formMetaDataPropT>({
+    fields: [],
+    rights: {} as rightSchemaT,
+    regionalSettingsConfigData: {} as regionalSettingSchemaT,
+    loggedInUserData: {} as loggedInUserDataT
+  });
 
-  function openDialog() {
+  async function openDialog() {
     if (allowNewAdd) {
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+      }
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        if (data[0]?.length > 0)
+          setMetaData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            regionalSettingsConfigData: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
+      }
       setDialogOpen(true);
       setDlgMode(dialogMode.Add);
+
     }
+    // getDescriptionData();
   }
 
   // this is a wrapper function to enable a call the the parent controls onchange
@@ -75,18 +99,27 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
     }
   }
 
-
   async function onModifyDialog() {
     if (allowModify) {
       if (props.fnFetchDataByID && dialogValue.id) {
         const data = await props.fnFetchDataByID(dialogValue.id);
-        setModData(data[0]);
+        if (data[0]?.length > 0) {
+          setModData(data[0][1]);
+          setMetaData({
+            fields: data[0][0] || [],
+            rights: data[0][2] || {},
+            regionalSettingsConfigData: data[0][3] || [],
+            loggedInUserData: data[0][4] || {}
+          });
+        } else {
+          setModData(data[0]);
+        }
       }
       setDialogOpen(true);
       setDlgMode(dialogMode.Modify);
     }
+    // getDescriptionData();
   }
-
   return (
     <>
       <Grid item xs={12} md={12}>
@@ -104,70 +137,80 @@ export function SelectMasterWrapper(props: selectMasterWrapperT) {
             diaglogVal={dialogValue}
             setDialogVal={setDialogValue}
             formError={props.formError}
+            setFormError= {props.setFormError}
             required={props.required}
             notEmpty={props.notEmpty}
             defaultValue={props.defaultValue}
             fnSetModifyMode={onModifyDialog}
-            disable={props.disable}
+            disable={props.disabled}
             defaultOptions={props.defaultOptions}
-            showDetails = {props.showDetails? props.showDetails : false}
-          />
-          {!props.disable && (
-            <IconButton tabIndex={-1} size="small">
-              <span
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "Center",
-                  alignItems: "Center",
-                  marginLeft: "3px",
-                  gap: "0px",
-                }}
-              >
-                <Tooltip
-                  title={
-                    allowNewAdd ? "Click to add new" : "Not allowed to add"
-                  }
-                  placement="top"
+            showDetails={props.showDetails ? props.showDetails : false}
+            iconControl = {!props.disabled && (
+              <IconButton title="title" tabIndex={-1} size="small" sx={{ padding:0, margin:0 }}>
+                <span
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "Left",
+                    alignItems: "Center",
+                    marginLeft: "1px",
+                    gap: "0px",
+                  }}
                 >
-                  <AddBoxIcon
-                    onClick={openDialog}
-                    color="action"
-                    fontSize="small"
-                  />
-                </Tooltip>
-                {(dialogValue.id ? true : false) && (
+                  {!(dialogValue?.id ? true : false) && (
                   <Tooltip
                     title={
-                      allowModify ? "Click to modify" : "Not allowed to modify"
+                      allowNewAdd ? "Click to add new" : "Not allowed to add"
                     }
-                    placement="bottom"
+                    placement="top"
                   >
-                    {
-                      <EditIcon
-                        onClick={onModifyDialog}
-                        color="action"
-                        fontSize="small"
-                      />
-                    }
+                    <AddIcon
+                      onClick={openDialog}
+                      color="action"
+                      fontSize="small"
+                      sx={{ padding:0, margin:0 }}
+                    />
                   </Tooltip>
-                )}
-              </span>
-            </IconButton>
-          )}
+                  )}
+                  {(dialogValue?.id ? true : false) && (
+                    <Tooltip
+                      title={
+                        allowModify ? "Click to modify" : "Not allowed to modify"
+                      }
+                      placement="bottom"
+                    >
+                      {
+                        <EditTwoToneIcon
+                          onClick={onModifyDialog}
+                          color="action"
+                          fontSize="small"
+                        />
+                      }
+                    </Tooltip>
+                  )}
+                </span>
+              </IconButton>
+            )}
+          />        
         </Box>
       </Grid>
       {dialogOpen && (
         <AddDialog
-          title={props.dialogTitle}
+          title={`${dlgMode === dialogMode.Add ? 'Add' : 'Update'} ${props.dialogTitle}`}
           open={dialogOpen}
           setDialogOpen={setDialogOpen}
         >
           {props.renderForm
-            ? dlgMode === dialogMode.Add
-              ? props.renderForm(setDialogOpen, changeDialogValue)
-              : props.renderForm(setDialogOpen, changeDialogValue, modData)
-            : 1}
+            ? metaData?.fields.length > 0 ? (
+              dlgMode === dialogMode.Add
+                ? props.renderForm(setDialogOpen, changeDialogValue, metaData)
+                : props.renderForm(setDialogOpen, changeDialogValue, metaData, modData)
+            ) : (
+              dlgMode === dialogMode.Add
+                ? props.renderForm(setDialogOpen, changeDialogValue)
+                : props.renderForm(setDialogOpen, changeDialogValue, modData)
+            ) : 1
+          }
         </AddDialog>
       )}
     </>

@@ -15,7 +15,7 @@ export async function createRegionalSettingDb(dbName: string, data: any) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "INSERT INTO app_config (config_type_id, config) VALUES (?, ?) returning *;",
+        "INSERT INTO app_config_new (config_type_id, config) VALUES (?, ?) returning *;",
       values: [configResult[0].id, JSON.stringify(data)],
     });
 
@@ -37,10 +37,10 @@ export async function updateteRegionalSettingDb(
       values: [JSON.stringify(data), config_id],
     });
 
-    return {status: true};
+    return { status: true };
   } catch (error) {
     logger.error(error);
-    return {status: false};
+    return { status: false };
   }
 }
 export async function getRegionalSettingDb(dbName: string) {
@@ -48,7 +48,7 @@ export async function getRegionalSettingDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "select * from app_config where config_type_id = (select id from config_meta_data where config_type='regional_setting');",
+        "select * from app_config where config_type_id = (select id from config_meta_data where config_type='regionalSetting');",
       values: [],
     });
 
@@ -66,7 +66,7 @@ export async function getCountryWithCurrencyDb(
   try {
     let query =
       "select id as id, name as name, currency_string currencyString, currency_symbol currencySymbol, \
-      currency_substring currencySubString, currency_character currencyCharacter, locale, date_format from country_master";
+      currency_substring currencySubString, locale, date_format from country_master";
     let values: any[] = [];
 
     if (searchString !== "") {
@@ -92,112 +92,23 @@ export async function getCountryWithCurrencyDb(
   }
 }
 
-export async function getCurrencyStringDb(crmDb: string, searchString: string) {
-  try {
-    let query = "select id as id, currency_string as name from country_master";
-    let values: any[] = [];
-
-    if (searchString !== "") {
-      query = query + " where currency_string like '%" + searchString + "%'";
-      values = [];
-    }
-    const result = await excuteQuery({
-      host: crmDb,
-      query: query,
-      values: values,
-    });
-
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-export async function getCurrencySubStringDb(
-  crmDb: string,
-  searchString: string
+export async function getRegionalSettingsDb(
+  crmDb: string
 ) {
   try {
     let query =
-      "select id as id, currency_substring as name from country_master";
-    let values: any[] = [];
+    "select config from app_config acn join config_meta_data cmd where acn.config_type_id=cmd.id and cmd.config_type='regionalSetting'";
+        let values: any[] = [];
 
-    if (searchString !== "") {
-      query = query + " where currency_substring like '%" + searchString + "%'";
-      values = [];
-    }
     const result = await excuteQuery({
       host: crmDb,
       query: query,
       values: values,
     });
 
-    return result;
+    return result[0];
   } catch (e) {
     console.log(e);
   }
 }
-export async function getCurrencySymbolDb(crmDb: string, searchString: string) {
-  try {
-    let query = "select id as id, currency_symbol as name from country_master";
-    let values: any[] = [];
 
-    if (searchString !== "") {
-      query = query + " where currency_symbol like '%" + searchString + "%'";
-      values = [];
-    }
-    const result = await excuteQuery({
-      host: crmDb,
-      query: query,
-      values: values,
-    });
-
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
-export async function getDateFormatDb(crmDb: string, searchString: string) {
-  try {
-    let query = "select id as id, date_format as name from country_master";
-    let values: any[] = [];
-
-    if (searchString !== "") {
-      query = query + " where date_format like '%" + searchString + "%'";
-      values = [];
-    }
-    const result = await excuteQuery({
-      host: crmDb,
-      query: query,
-      values: values,
-    });
-
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
-export async function getCurrencyCharacterDb(
-  crmDb: string,
-  searchString: string
-) {
-  try {
-    let query =
-      "select id as id, currency_character as name from country_master";
-    let values: any[] = [];
-
-    if (searchString !== "") {
-      query = query + " where currency_character like '%" + searchString + "%'";
-      values = [];
-    }
-    const result = await excuteQuery({
-      host: crmDb,
-      query: query,
-      values: values,
-    });
-
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}

@@ -222,7 +222,7 @@ export async function getUnitByPage(
 ) {
   let getUnit = {
     status: false,
-    data: {} as mdl.getUnitT,
+    data: [] as mdl.unitSchemaT[],
     count: 0,
     error: {},
   };
@@ -230,19 +230,20 @@ export async function getUnitByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getUnitByPageDb(
+      const dbData = await getUnitByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
         limit as number
       );
+      console.log("Data from DB : ", dbData);
       const rowCount = await getUnitCount(
         appSession.user.dbInfo.dbName as string,
         filter
       );
       getUnit = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.getUnitT,
+        data: dbData.map(bigIntToNum) as mdl.unitSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -255,7 +256,7 @@ export async function getUnitByPage(
     getUnit = {
       ...getUnit,
       status: false,
-      data: {} as mdl.getUnitT,
+      data: [] as mdl.unitSchemaT[],
       error: err,
     };
   }
@@ -265,7 +266,7 @@ export async function getUnitByPage(
 export async function getUnitData(id: number) {
   let getUnit = {
     status: false,
-    data: {} as mdl.getUnitT,
+    data: {} as mdl.unitSchemaT,
     error: {},
   };
   try {
@@ -279,7 +280,7 @@ export async function getUnitData(id: number) {
 
       getUnit = {
         status: true,
-        data: dep.map(bigIntToNum) as mdl.getUnitT,
+        data: dep.map(bigIntToNum) as mdl.unitSchemaT,
         error: {},
       };
     }
@@ -291,7 +292,7 @@ export async function getUnitData(id: number) {
     getUnit = {
       ...getUnit,
       status: false,
-      data: {} as mdl.getUnitT,
+      data: {} as mdl.unitSchemaT,
       error: err,
     };
   }
@@ -299,31 +300,34 @@ export async function getUnitData(id: number) {
 }
 
 export async function delUnitById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checksIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0]?.count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delUnitDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-      const result = await delUnitDetailsById(session.user.dbInfo.dbName, id);
-      return ("Record Deleted");
-      }
-      //   if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result.affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Can't Be DELETED!",
-      //   };
-      // }
-      // return ("Record Deleted");
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }

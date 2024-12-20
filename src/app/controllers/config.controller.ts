@@ -1,6 +1,6 @@
 "use server";
 import { regionalSettingSchemaT } from "../models/models";
-import { getCountryWithCurrencyDb, getCurrencyCharacterDb, getCurrencyStringDb, getCurrencySubStringDb, getCurrencySymbolDb, getDateFormatDb, getRegionalSettingDb, updateteRegionalSettingDb } from "../services/config.service";
+import { getCountryWithCurrencyDb, getRegionalSettingDb, getRegionalSettingsDb, updateteRegionalSettingDb } from "../services/config.service";
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils";
 
@@ -42,52 +42,12 @@ export async function getCountryWithCurrency(searchString: string) {
     throw error;
   }
 }
-export async function getCurrencyString(searchString: string) {
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getCurrencyStringDb(session.user.dbInfo.dbName, searchString);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-export async function getCurrencySubString(searchString: string) {
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getCurrencySubStringDb(session.user.dbInfo.dbName, searchString);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-export async function getCurrencySymbol(searchString: string) {
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getCurrencySymbolDb(session.user.dbInfo.dbName, searchString);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-export async function getDateFormat(searchString: string) {
-  try {
-    const session = await getSession();
-    if (session?.user.dbInfo) {
-      return getDateFormatDb(session.user.dbInfo.dbName, searchString);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
 
-export async function getCurrencyCharacter(searchString: string) {
+export async function getRegionalSettings() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getCurrencyCharacterDb(session.user.dbInfo.dbName, searchString);
+      return getRegionalSettingsDb(session.user.dbInfo.dbName);
     }
   } catch (error) {
     throw error;

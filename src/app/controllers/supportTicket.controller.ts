@@ -1,4 +1,5 @@
 "use server";
+import dayjs from "dayjs";
 import {
   docDescriptionSchemaT,
   enquiryDataSchemaT,
@@ -9,9 +10,13 @@ import {
 import { getSession } from "../services/session.service";
 import {
   createSupportTicketDB,
+  delSupportDataByIdDb,
   getHeaderDataAction,
   getLedgerDataAction,
   getProductDataAction,
+  getSupportDataByPageDb,
+  getSupportDataCount,
+  getSupportTicketDescriptionDb,
   updateSupportDataDb,
 } from "../services/supportTicket.service";
 import { logger } from "../utils/logger.utils";
@@ -22,6 +27,8 @@ import {
 } from "../zodschema/zodschema";
 import { uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
+import { adjustToLocal } from "../utils/utcToLocal";
+import { bigIntToNum } from "../utils/db/types";
 
 export async function createSupportTicket({
   supportData,
@@ -104,6 +111,9 @@ export async function createSupportTicket({
   return result;
 }
 
+
+
+
 export async function getSupportDataById(id: number) {
   try {
     const session = await getSession();
@@ -111,8 +121,18 @@ export async function getSupportDataById(id: number) {
       let headerData = await getHeaderDataAction(session, id);
       let ledgerData = await getLedgerDataAction(session, id);
       const productData = await getProductDataAction(session, id);
-      ledgerData = ledgerData[ledgerData.length - 1];
-      headerData = headerData[0];
+      
+      // let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
+
+      // for (let i = 1; i < ledgerData.length; i++) {
+      //   if (ledgerData[i].suggested_action_remark) {
+      //     suggested_action_remark += `${ledgerData[i].modified_by_name} ; ${adjustToLocal(ledgerData[i].modified_on).toDate()} ; ${ledgerData[i].suggested_action_remark} \n`;
+      //   }
+      // }
+      // ledgerData = ledgerData[ledgerData.length - 1];
+
+      // ledgerData.suggested_action_remark = suggested_action_remark;
+      // headerData = headerData[0];
 
       return { headerData, ledgerData, productData };
     }
@@ -176,5 +196,95 @@ export async function updateSupportData(
     return result;
   } catch (error) {
     logger.error(error);
+  }
+}
+
+export async function getSupportDataByPage(
+  page: number,
+  filter: string | undefined,
+  limit: number
+){
+  let result={
+    status: false,
+    data: [] as supportTicketSchemaT[],
+    count: 0,
+    error: {},
+  };
+
+  try {
+    const session = await getSession();
+    if(session?.user.dbInfo){
+      const dbData= await getSupportDataByPageDb(session,
+        page as number,
+        filter,
+        limit as number
+  )
+
+  
+  const rowCount = await getSupportDataCount(
+    session.user.dbInfo.dbName as string,
+    filter
+  );
+ result = {
+    status: true,
+    data: dbData.map(bigIntToNum) as supportTicketSchemaT[],
+    count: Number(rowCount[0]["rowCount"]),
+    error: {},
+  };
+
+    }
+  } catch (error) {
+    let err = "Executive Admin, E-Code:369";
+
+    result = {
+      ...result,
+      status: false,
+      data: [] as supportTicketSchemaT[],
+      error: err,
+    };
+  }
+  return result
+}
+
+export async function delSupportDataById(ticketId: number) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await delSupportDataByIdDb(session, ticketId);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
+      }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (error: any) {
+    throw error;
+  }
+}
+
+
+export async function getSupportTicketDescription(searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getSupportTicketDescriptionDb(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
   }
 }

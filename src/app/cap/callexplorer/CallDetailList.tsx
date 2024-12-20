@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { getCallEnquiryDetails, getCallSupportDetails } from "../../controllers/callExplorer.controller";
 import { StripedDataGrid } from "../../utils/styledComponents";
 import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
+import { adjustToLocal } from "@/app/utils/utcToLocal";
 
-export default function CallDetailList({ selectedRow, refresh , callType }: { selectedRow: any, refresh: any, callType:number }) {
+export default function CallDetailList({ selectedRow, refresh , callType , dateTimeFormat}: { selectedRow: any, refresh: any, callType:number, dateTimeFormat: string }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = useState({} as any);
     const [data, setData] = useState([]);
     const [pageSize, setPageSize] = useState(10); // Default page size
@@ -37,61 +38,54 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
     }, [selectedRow, refresh, callType]);
 
     const truncateText = (text: string, maxLength: number) => {
-        if (text.length > maxLength) {
+        if (text?.length > maxLength) {
             return text.substring(0, maxLength) + '...';
         }
         return text;
     };
 
-    const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, content: string) => {
-        setAnchorEl(event.currentTarget);
-        setPopoverContent(content);
-        setOpen(true);
-    };
+    // const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, content: string) => {
+    //     setAnchorEl(event.currentTarget);
+    //     setPopoverContent(content);
+    //     setOpen(true);
+    // };
 
-    const handlePopoverClose = () => {
-        setOpen(false);
-        setAnchorEl(null);
-    };
+    // const handlePopoverClose = () => {
+    //     setOpen(false);
+    //     setAnchorEl(null);
+    // };
 
-    const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
-        const relatedTarget = event.relatedTarget as Node;
-        if (popoverRef.current && !popoverRef.current.contains(relatedTarget) && anchorEl && !anchorEl.contains(relatedTarget)) {
-            handlePopoverClose();
-        }
-    };
+    // const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
+    //     const relatedTarget = event.relatedTarget as Node;
+    //     if (popoverRef.current && !popoverRef.current.contains(relatedTarget)) {
+    //         handlePopoverClose();
+    //     }
+    // };
 
 
     const column2: GridColDef[] = [
-        { field: "type", headerName: "Type", width: 70 },
-        {
-            field: "date", headerName: "Date", width: 130, renderCell: (params) => {
-                return params.row.date.toDateString();
-            },
+        { field: "tranType", headerName: "Type", width: 70
         },
         {
-            field: "time", headerName: "Time", width: 100,
-            renderCell: (params) => {
-                return params.row.date.toLocaleString('en-IN', options);
+            field: "date", headerName: "Date", width: 130, renderCell: (params) => {
+                return params.row.date ? adjustToLocal(params.row.date).format(dateTimeFormat):"";
             },
         },
         {
             field: "executive",
-            headerName: "Executive",
+            headerName: "Allocated To",
             width: 100,
         },
-        { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "actionTaken", headerName: "Action Taken", width: 100 },
+        { field: "status", headerName: "Call Status", width: 100 },
+        { field: "subStatus", headerName: "Sub Status", width: 100 },
         { field: "nextAction", headerName: "Next Action", width: 100 },
         {
             field: "actionDate",
-            headerName: "Action Date",
+            headerName: "Next Action Date",
             width: 130,
-        },
-        {
-            field: "actionTime", headerName: "Action Time", width: 100,
             renderCell: (params) => {
-                return params.row.actionDate.toLocaleString('en-IN', options);
+                return params.row.actionDate ? adjustToLocal(params.row.actionDate).format(dateTimeFormat) : "";
             },
         },
         {
@@ -99,23 +93,36 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
             renderCell: (params) => {
                 const fullRemark = params.row.status_id == 1
                     ? params.row.suggested_action_remark
-                    : params.row.closure_remark;
+                    : params.row.closure_remark ?? "";
 
                 const truncatedRemark = truncateText(fullRemark, 120); // Limit to 120 characters
 
-                return (
-                    <Box onMouseEnter={(event) => handlePopoverOpen(event, fullRemark)}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        {truncatedRemark}
-                    </Box>
-                );
+                
+                    return (
+                        <Tooltip 
+                        title={
+                            <Box sx={{
+                                maxHeight: 150, 
+                                overflowY: 'auto', 
+                                whiteSpace: 'pre-wrap', 
+                            }}>
+                                {fullRemark}
+                            </Box>
+                        }
+                            arrow 
+                            placement="bottom-start"
+                        >
+                            <Box>
+                                {truncatedRemark}
+                            </Box>
+                        </Tooltip>
+                    );
             },
         }
     ];
 
     return (<>
-        <StripedDataGrid
+        {/* <StripedDataGrid
             disableColumnMenu
             rows={data ? data : []}
             rowHeight={30}
@@ -139,6 +146,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                 '& .MuiDataGrid-footerContainer': {
                     height: '28px', // Force footer container to 30px
                     minHeight: '28px', // Override any minimum height constraints
+                    display: "none",
                 },
                 '& .MuiTablePagination-root': {
                     height: '28px', // Ensure pagination component also respects 30px height
@@ -150,8 +158,46 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                     minHeight: '28px',
                 },
             }}
-        />
-        <Popover
+           
+        /> */}
+        <StripedDataGrid
+  disableColumnMenu
+  rows={data ? data : []}
+  rowHeight={25} 
+  columnHeaderHeight={30} 
+  columns={column2}
+  getRowId={(row) => row.id}
+  columnVisibilityModel={columnVisibilityModel}
+  onColumnVisibilityModelChange={(newModel: any) => setColumnVisibilityModel(newModel)}
+ 
+  sx={{
+    height: '140px',
+    minHeight: '140px',
+    overflowY: 'auto',
+    fontSize: '12px', 
+    '& .MuiDataGrid-row': {
+      fontSize: '11px', 
+    },
+    '& .MuiDataGrid-columnHeaders': {
+      fontSize: 'inherit', 
+      fontWeight: 'bold', 
+    },
+    '& .MuiDataGrid-footerContainer': {
+      display: 'none', // Hide footer container
+    },
+    '& .MuiTablePagination-root': {
+      display: 'none', // Ensure pagination is completely hidden
+    },
+    "& .MuiDataGrid-cell:focus": {
+        outline: "none", // Removes the default focus outline
+      },
+      "& .MuiDataGrid-cell:focus-within": {
+        outline: "none", // Removes the outline when the cell has child focus
+      },
+  }}
+/>
+
+        {/* <Popover
             open={open}
             anchorEl={anchorEl}
             onClose={handlePopoverClose}
@@ -188,7 +234,7 @@ export default function CallDetailList({ selectedRow, refresh , callType }: { se
                     {popoverContent}
                 </Typography>
             </Box>
-        </Popover>
+        </Popover> */}
     </>
     )
 }

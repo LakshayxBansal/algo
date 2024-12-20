@@ -12,24 +12,25 @@ import {
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
-  masterFormPropsWithParentT,
+  masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { Snackbar } from "@mui/material";
+import { Grid, Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import AutocompleteDB from "../../AutocompleteDB";
 
-export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
+export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<executiveRoleSchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: executiveRoleSchemaT = props.data ? props.data : {};
+  const entityData: executiveRoleSchemaT = props.data ? props.data : {} as executiveRoleSchemaT;
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -66,7 +67,7 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
     }
 
     formData = updateFormData(data);
-    data["department_id"] = props.parentData;
+    // data["department_id"] = props.parentData;
 
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
@@ -85,8 +86,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = { msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -98,8 +99,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
     data.parent_id = selectValues.parentRole
       ? selectValues.parentRole.id
       : entityData.parent_id
-      ? entityData.parent_id
-      : 0;
+        ? entityData.parent_id
+        : 0;
     return data;
   };
 
@@ -127,24 +128,6 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Executive Role" : "Add Executive Role"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -165,81 +148,83 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithParentT) {
       </Collapse>
       <Box id="executiveRole">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="name"
-              label="Executive Role Name"
-              name="name"
-              required
-              fullWidth
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="name"
+                label="Executive Role Name"
+                name="name"
+                required
+                titleCase={true}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+ setFormError={setFormError}
+                defaultValue={entityData.name}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{width:"100%"}}
+              />
+            </Grid>
+            {/* <Grid item xs={12} sm={12} md={6} lg={6}>
+              <SelectMasterWrapper
+                name={"parentrole"}
+                id={"parentrole"}
+                label={"Parent Executive Role"}
+                dialogTitle={"Add Executive Role"}
+                fetchDataFn={getExecutiveRole}
+                fnFetchDataByID={getExecutiveRoleById}
+                defaultValue={
+                  {
+                    id: entityData.parent_id,
+                    name: entityData.parentRole,
+                  } as optionsDataT
+                }
+                onChange={(e, val, s) =>
+                  setSelectValues({
+                    ...selectValues,
+                    parentRole: val ? val : { id: 0, name: "" },
+                  })
+                }
+                allowNewAdd={false}
+                allowModify={false}
+                renderForm={(fnDialogOpen, fnDialogValue, data, parentData) => (
+                  <ExecutiveRoleForm
+                    setDialogOpen={fnDialogOpen}
+                    setDialogValue={fnDialogValue}
+                    data={data}
+                    parentData={selectValues.parent?.parent_id}
+                  />
+                )}
+              />
+            </Grid> */}
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-            <SelectMasterWrapper
-              name={"parentrole"}
-              id={"parentrole"}
-              label={"Parent Executive Role"}
-              dialogTitle={"Add Executive Role"}
-              fetchDataFn={getExecutiveRole}
-              fnFetchDataByID={getExecutiveRoleById}
-              defaultValue={
-                {
-                  id: entityData.id,
-                  name: entityData.parentRole,
-                } as optionsDataT
-              }
-              onChange={(e, val, s) =>
-                setSelectValues({
-                  ...selectValues,
-                  parentRole: val ? val : { id: 0, name: "" },
-                })
-              }
-              allowNewAdd={false}
-              allowModify={false}
-              renderForm={(fnDialogOpen, fnDialogValue, data, parentData) => (
-                <ExecutiveRoleForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                  parentData={selectValues.parent?.parent_id}
-                />
-              )}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}

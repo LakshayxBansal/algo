@@ -139,7 +139,7 @@ export async function getEnquirySourceByPage(
 ) {
   let getEnquirySource = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -147,7 +147,7 @@ export async function getEnquirySourceByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getEnquirySourceByPageDb(
+      const dbData = await getEnquirySourceByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -159,7 +159,7 @@ export async function getEnquirySourceByPage(
       );
       getEnquirySource = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -171,7 +171,7 @@ export async function getEnquirySourceByPage(
     getEnquirySource = {
       ...getEnquirySource,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }
@@ -179,24 +179,34 @@ export async function getEnquirySourceByPage(
 }
 
 export async function delEnquirySourceById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await delEnquirySourceDetailsById(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result .affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
+      const dbResult = await delEnquirySourceDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
         };
       }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }

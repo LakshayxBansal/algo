@@ -11,6 +11,7 @@ import {
   getExecutiveRoleByPageDb,
   delExecutiveRoleDetailsById,
   checkIfUsed,
+  getAllRolesDB,
 } from "../services/executiveRole.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
@@ -19,7 +20,7 @@ import * as mdl from "../models/models";
 
 export async function getExecutiveRole(
   searchString: string,
-  department?: number
+  // department?: number
 ) {
   try {
     const session = await getSession();
@@ -27,8 +28,18 @@ export async function getExecutiveRole(
       return getExecutiveRoleList(
         session.user.dbInfo.dbName,
         searchString,
-        department
       );
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllRoles() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getAllRolesDB(session.user.dbInfo.dbName);
     }
   } catch (error) {
     throw error;
@@ -46,35 +57,38 @@ export async function getExecutiveRoleById(id: number) {
     throw error;
   }
 }
-
 export async function delExecutiveRoleById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delExecutiveRoleDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-        const result = await delExecutiveRoleDetailsById(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
-      }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function createExecutiveRole(data: executiveRoleSchemaT) {
   let result;
@@ -191,7 +205,7 @@ export async function getExecutiveRoleByPage(
 ) {
   let getExecutiveRole = {
     status: false,
-    data: {} as mdl.executiveRoleSchemaT,
+    data: [] as mdl.executiveRoleSchemaT[],
     count: 0,
     error: {},
   };
@@ -199,7 +213,7 @@ export async function getExecutiveRoleByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveRoleByPageDb(
+      const dbData = await getExecutiveRoleByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -211,7 +225,7 @@ export async function getExecutiveRoleByPage(
       );
       getExecutiveRole = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveRoleSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveRoleSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -223,7 +237,7 @@ export async function getExecutiveRoleByPage(
     getExecutiveRole = {
       ...getExecutiveRole,
       status: false,
-      data: {} as mdl.executiveRoleSchemaT,
+      data: [] as mdl.executiveRoleSchemaT[],
       error: err,
     };
   }

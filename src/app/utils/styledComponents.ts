@@ -1,7 +1,7 @@
 "use client";
 import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
-import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import { DataGrid, DataGridProps, gridClasses } from "@mui/x-data-grid";
 import { Box, Button, Menu, TextField } from "@mui/material";
 import MuiAppBar, {
   AppBarProps,

@@ -10,17 +10,17 @@ import {
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
-import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function SourceForm(props: masterFormPropsT) {
+export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {};
+  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -45,8 +45,8 @@ export default function SourceForm(props: masterFormPropsT) {
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"]={msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -76,25 +76,7 @@ export default function SourceForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: 1 }} square={false}> 
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Source" : "Add Source"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
+    <>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -113,51 +95,53 @@ export default function SourceForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="source_master"
-              label="Source Name"
-              name="name"
-              required
-              fullWidth
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              defaultValue={entityData.name}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="source_master"
+                label="Source Name"
+                name="name"
+                required
+                fullWidth
+                titleCase={true}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+ setFormError={setFormError}
+                defaultValue={entityData.name}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -167,6 +151,6 @@ export default function SourceForm(props: masterFormPropsT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+    </>
   );
 }

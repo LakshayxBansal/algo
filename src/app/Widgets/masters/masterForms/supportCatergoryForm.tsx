@@ -7,18 +7,18 @@ import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
-import { masterFormPropsT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, IconButton } from "@mui/material";
+import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { createSupportCategory, updateSupportCategory } from "@/app/controllers/supportCategory.controller";
 
-export default function SupportCategoryForm(props: masterFormPropsT) {
+export default function SupportCategoryForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {};
+  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
 
   async function persistEntity(data: nameMasterDataT) {
     let result;
@@ -50,13 +50,13 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
       const issues = result.data;
       // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
-      
+
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
-          if(path==="refresh"){
-            errorState["form"] = {msg: issue.message, error: true};
+          if (path === "refresh") {
+            errorState["form"] = { msg: issue.message, error: true };
           }
         }
       }
@@ -76,25 +76,7 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Category" : "Add Category"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
+    <>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -113,16 +95,9 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ mt: 2, mb: 1, p: 1 }}>
-        <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
+      <form action={handleSubmit} noValidate>
+        <Grid container>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               autoFocus
               id="category_master"
@@ -131,8 +106,10 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
               name="name"
               fullWidth
               required
+              titleCase={true}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               defaultValue={props.data?.name}
               onKeyDown={() => {
                 setFormError((curr) => {
@@ -141,32 +118,37 @@ export default function SupportCategoryForm(props: masterFormPropsT) {
                 });
               }}
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2,
+              mt: 1,
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
-        </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
-      </Box>
-    </Paper>
+          </Grid>
+        </Grid>
+      </form>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
+    </>
   );
 }

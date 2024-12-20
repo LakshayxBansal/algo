@@ -168,33 +168,37 @@ export async function getContactGroupById(id: number) {
 }
 
 export async function delContactGroupById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checksIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delContactDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-        const result = await delContactDetailsById(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
-      }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getContactGroupByPage(
   page: number,
@@ -203,7 +207,7 @@ export async function getContactGroupByPage(
 ) {
   let getContactGroup = {
     status: false,
-    data: {} as mdl.contactGroupSchemaT,
+    data: [] as mdl.contactGroupSchemaT[],
     count: 0,
     error: {},
   };
@@ -212,7 +216,7 @@ export async function getContactGroupByPage(
 
     if (appSession) {
       
-      const conts = await getContactGroupByPageDb(
+      const dbData = await getContactGroupByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -225,7 +229,7 @@ export async function getContactGroupByPage(
       );
       getContactGroup = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.contactGroupSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.contactGroupSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -236,7 +240,7 @@ export async function getContactGroupByPage(
     getContactGroup = {
       ...getContactGroup,
       status: false,
-      data: {} as mdl.contactGroupSchemaT,
+      data: [] as mdl.contactGroupSchemaT[],
       error: err,
     };
   }

@@ -15,20 +15,26 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getTotalInvite } from "../controllers/user.controller";
 import { logger } from "../utils/logger.utils";
 import SnackModal from "../utils/SnackModalUtils";
+import { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'Manage Company'
+}
 
 export default async function Companies() {
   try {
     const session = await getSession();
     const totalInvites = await getTotalInvite();
-    if (session) {
+    
+    if (session) {      
       return (
         <>
           <Box>
-            <Box>
+            {/* <Box>
               <Paper style={{ margin: "20px 20px", padding: "10px" }}>
                 <Typography variant="h6">Company List</Typography>
               </Paper>
-            </Box>
+            </Box> */}
             <Box>
               <CompanyEntityList />
             </Box>

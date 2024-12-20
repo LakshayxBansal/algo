@@ -6,6 +6,7 @@ import {
   Dispatch,
   SetStateAction,
   HTMLAttributes,
+  Fragment,
 } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import { debounce } from "@mui/material/utils";
@@ -13,10 +14,12 @@ import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
-import { optionsDataT } from '@/app/models/models';
+import { optionsDataT } from "@/app/models/models";
 import { CustomStyledDiv } from "../utils/styledComponents";
 import { autocompleteTextfieldSx } from "../utils/theme.util";
 import { propagateServerField } from "next/dist/server/lib/render-server";
+import { IconButton, InputAdornment } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 type OnChangeFunction = (
   event: any,
@@ -35,7 +38,7 @@ type autocompleteDBT = {
   renderOptions?: SelectOptionsFunction;
   labelOptions?: SelectOptionsFunction;
   highlightOptions?: SelectOptionsFunction;
-  width?: number;
+  width?: number | string;
   diaglogVal: optionsDataT;
   setDialogVal: Dispatch<SetStateAction<optionsDataT>>;
   formError?: formErrorT;
@@ -44,58 +47,65 @@ type autocompleteDBT = {
   notEmpty?: boolean;
   fnSetModifyMode: (id: string) => void;
   disable?: boolean;
-  defaultOptions?: optionsDataT[]
-  showDetails?: boolean
-  autoFocus?: boolean
+  defaultOptions?: optionsDataT[];
+  showDetails?: boolean;
+  autoFocus?: boolean;
+  iconControl?: React.ReactNode | null;
+  setFormError ?: (props: any) => void
   //children: React.FunctionComponentElements
 };
 
 export function AutocompleteDB(props: autocompleteDBT) {
-  const filterOpts = async (opts:optionsDataT[],input:string) => {
-    return opts.filter(item => item.name.toLowerCase().includes(input?input.toLowerCase():''));
-  }
+  const filterOpts = async (opts: optionsDataT[], input: string) => {
+    return opts.filter((item) =>
+      item.name.toLowerCase().includes(input ? input.toLowerCase() : "")
+    );
+  };
 
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
-  const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(props.defaultOptions?props.defaultOptions:[]);
+  const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(
+    props.defaultOptions ? props.defaultOptions : []
+  );
   const [options, setOptions] = useState<optionsDataT[]>(defaultOpts);
-  const width = props.width ? props.width : 300;
+  const width = props.width ? props.width : '100%';
   const [valueChange, setvalueChange] = useState(true);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
-  const [defaultValue, setDefaultValue] = useState<optionsDataT | undefined>(props.defaultValue);
+  const [defaultValue, setDefaultValue] = useState<optionsDataT | undefined>(
+    props.defaultValue
+  );
   let hltIndex = -1;
   let isTabbingOut = 0;
   // const [selectDefault, setSelectDefault] = useState(
-    // Boolean(props.defaultValue? true: false)
+  // Boolean(props.defaultValue? true: false)
   // );
   // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const showDetails= props.showDetails ? props.showDetails : false;
+  const showDetails = props.showDetails ? props.showDetails : false;
 
   if (defaultValue?.name !== props.defaultValue?.name) {
     props.setDialogVal(props.defaultValue as optionsDataT);
     console.log("set the default value!");
-  } 
+  }
 
   // useEffect(() => {
 
   // }, [props.defaultValue]);
 
   useEffect(() => {
-
     const getData = debounce(async (input) => {
-      let results  
-      if(!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
-        results = (await props.fetchDataFn(props.defaultOptions?'':input)) as optionsDataT[];
-        if(props.diaglogVal.reloadOpts){
-          setDefaultOpts(results)
-          props.setDialogVal({...props.diaglogVal, reloadOpts:false})
-          return
+      let results;
+      if (!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
+        results = (await props.fetchDataFn(
+          props.defaultOptions ? "" : input
+        )) as optionsDataT[];
+        if (props.diaglogVal?.reloadOpts) {
+          setDefaultOpts(results);
+          props.setDialogVal({ ...props.diaglogVal, reloadOpts: false });
+          return;
         }
-      } 
-      else
-      {
-        results = await filterOpts(defaultOpts,input)
+      } else {
+        results = await filterOpts(defaultOpts, input);
       }
 
       setOptions([] as optionsDataT[]);
@@ -108,21 +118,25 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }
     }, 400);
     if (defaultValue?.name !== props.defaultValue?.name) {
-      console.log("in the defaultvalue condition ------", defaultValue, "- ", props.defaultValue);
+      console.log(
+        "in the defaultvalue condition ------",
+        defaultValue,
+        "- ",
+        props.defaultValue
+      );
       setvalueChange(true);
       props.setDialogVal(props.defaultValue as optionsDataT);
-      setDefaultValue(props.defaultValue);  
+      setDefaultValue(props.defaultValue);
       setOptions(defaultOpts);
     }
 
-    if(valueChange || autoSelect) {
+    if (valueChange || autoSelect) {
       if (open) {
         // setLoading(true)
-        getData(inputValue);
+        getData(inputValue?.trim() ?? "");
       }
     }
   }, [inputValue, autoSelect, open]);
-
 
   function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
     if (Object.keys(option).length > 0) {
@@ -135,15 +149,19 @@ export function AutocompleteDB(props: autocompleteDBT) {
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Tab') {
+    if (event.key === "Tab") {
       isTabbingOut = 1;
     }
   }
 
-  function onHighlightChange(event: SyntheticEvent, option: optionsDataT | null, reason: string) {
+  function onHighlightChange(
+    event: SyntheticEvent,
+    option: optionsDataT | null,
+    reason: string
+  ) {
     if (option) {
       hltIndex = options.indexOf(option);
-    }  
+    }
     const text = document.getElementById(
       "popper_textid_temp_5276"
     ) as HTMLInputElement;
@@ -162,9 +180,12 @@ export function AutocompleteDB(props: autocompleteDBT) {
       getOptionLabel={(option) => option.name ?? ""}
       autoHighlight
       onKeyDown={handleKeyDown}
-      filterOptions={(options, { inputValue }) => 
-        options.filter(option => 
-          option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
+      filterOptions={(options, { inputValue }) =>
+        options.filter((option) =>
+          // option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
+          `${option.detail ?? ""}${option.name ?? ""}`
+            .toLowerCase()
+            .includes((inputValue.toLowerCase()).trim())
         )
       }
       renderOption={(p, option) => {
@@ -177,7 +198,16 @@ export function AutocompleteDB(props: autocompleteDBT) {
         );
         //return <li>{getOptions(option, props.renderOptions)}</li>;
       }}
-      sx={{ width: { width } }}
+      sx={{
+        width: { width },
+        "&.MuiAutocomplete-hasPopupIcon .MuiAutocomplete-inputRoot": {
+          paddingRight: 1,
+        },
+        "&.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon .MuiAutocomplete-inputRoot":
+          {
+            paddingRight: 1,
+          },
+      }}
       renderInput={(params) => {
         return (
           <InputControl
@@ -188,62 +218,70 @@ export function AutocompleteDB(props: autocompleteDBT) {
             required={props.required}
             error={props.formError?.error}
             helperText={props.formError?.msg}
+            setFormError={props.setFormError}
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <Fragment>
+                  {props.iconControl ? (
+                    <InputAdornment position="end">
+                      {props.iconControl}
+                    </InputAdornment>
+                  ) : (
+                    params?.InputProps?.endAdornment
+                  )}
+                </Fragment>
+              ),
+            }}
           />
         );
       }}
       onHighlightChange={onHighlightChange}
       value={props.diaglogVal}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
+      isOptionEqualToValue={(option, value) => option.id === value?.id}
       PopperComponent={(props) =>
-
-       showDetails ? (
-          <Popper
-          {...props}
-        >
-         <CustomStyledDiv>
-            {props.children as ReactNode}
-        
-            <TextField
-              id="popper_textid_temp_5276"
-              variant="standard"
-              defaultValue={"Please select from Options"}
-              InputProps={{
-                style: {
-                  ...autocompleteTextfieldSx, 
-                  height: "100%"
-                },
-              }}
-              multiline
-              rows={3}
-              fullWidth 
-              
-            />
-           </CustomStyledDiv>
-        </Popper>
-        
-        ) : (
+        showDetails ? (
           <Popper {...props}>
             <CustomStyledDiv>
               {props.children as ReactNode}
+
+              <TextField
+                id="popper_textid_temp_5276"
+                variant="standard"
+                defaultValue={" "}
+                InputProps={{
+                  style: {
+                    ...autocompleteTextfieldSx,
+                    height: "100%",
+                  },
+                }}
+                multiline
+                rows={4}
+                fullWidth
+              />
             </CustomStyledDiv>
+          </Popper>
+        ) : (
+          <Popper {...props}>
+            <CustomStyledDiv>{props.children as ReactNode}</CustomStyledDiv>
           </Popper>
         )
       }
       onBlur={(e) => {
-        setAutoSelect(props.notEmpty)
+        setAutoSelect(props.notEmpty);
 
         if (isTabbingOut) {
           console.log("index ---:", hltIndex);
           if (hltIndex >= 0 && options.length > 0) {
-            setInputValue(options[hltIndex].name); 
+            setInputValue(options[hltIndex].name);
             props.setDialogVal(options[hltIndex]);
             if (props.onChange) {
-              props.onChange(e, options[hltIndex], props.setDialogVal)
+              props.onChange(e, options[hltIndex], props.setDialogVal);
             }
           }
           isTabbingOut = 0;
-          hltIndex = -1
-        } 
+          hltIndex = -1;
+        }
       }}
       onOpen={(e) => {
         setOpen(true);
@@ -255,6 +293,24 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setvalueChange(false);
       }}
       onChange={(event: any, newValue, reason) => {
+        if (props.formError?.error && props.setFormError) {
+          props.setFormError((prevFormError: Record<string, any>) => {
+            const updatedFormError = { ...prevFormError };
+        
+            if (updatedFormError['form']) {
+              delete updatedFormError['form']; // Remove the 'formError' property
+            }
+        
+            return {
+              ...updatedFormError,
+              [props.name]: {
+                error: false,
+                msg: "",
+              },
+            };
+          });
+        }
+        
         if (reason != "blur") {
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)
@@ -274,10 +330,11 @@ export function AutocompleteDB(props: autocompleteDBT) {
       }}
       forcePopupIcon={true}
       // autoHighlight
+      noOptionsText={" "}
       autoComplete
       includeInputInList
       disableClearable={
-        inputValue ? inputValue.length === 0 : !Boolean(props.diaglogVal.id)
+        inputValue ? inputValue.length === 0 : !Boolean(props.diaglogVal?.id)
       }
     />
   );

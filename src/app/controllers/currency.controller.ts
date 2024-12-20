@@ -164,27 +164,37 @@ export async function getCurrencyById(id: number) {
 }
 
 export async function delCurrencyById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await delCurrencyByIdDB(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result.affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
+      const dbResult = await delCurrencyByIdDB(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
         };
       }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getCurrencyByPage(
   page: number,
@@ -193,7 +203,7 @@ export async function getCurrencyByPage(
 ) {
   let getCurrency = {
     status: false,
-    data: {} as mdl.currencySchemaT,
+    data: [] as mdl.currencySchemaT[],
     count: 0,
     error: {},
   };
@@ -201,7 +211,7 @@ export async function getCurrencyByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getCurrencyByPageDb(
+      const dbData = await getCurrencyByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -214,7 +224,7 @@ export async function getCurrencyByPage(
       );
       getCurrency = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.currencySchemaT,
+        data: dbData.map(bigIntToNum) as mdl.currencySchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -225,7 +235,7 @@ export async function getCurrencyByPage(
     getCurrency = {
       ...getCurrency,
       status: false,
-      data: {} as mdl.currencySchemaT,
+      data: [] as mdl.currencySchemaT[],
       error: err,
     };
   }

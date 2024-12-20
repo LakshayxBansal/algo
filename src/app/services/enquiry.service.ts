@@ -17,7 +17,7 @@ export async function createEnquiryDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -39,8 +39,97 @@ export async function createEnquiryDB(
         enqData.headerLedger.active,
         session.user.userId,
         enqData.product,
+        enqData.headerLedger.c_col1,
+        enqData.headerLedger.c_col2,
+        enqData.headerLedger.c_col3,
+        enqData.headerLedger.c_col4,
+        enqData.headerLedger.c_col5,
+        enqData.headerLedger.c_col6,
+        enqData.headerLedger.c_col7,
+        enqData.headerLedger.c_col8,
+        enqData.headerLedger.c_col9,
+        enqData.headerLedger.c_col10,
       ],
     });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function updateEnquiryDB(
+  session: Session,
+  enqData: { headerLedger: enquiryDataSchemaT; product: any }
+) {
+  try {
+    return excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+        "call updateEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        enqData.headerLedger.id,
+        enqData.headerLedger.enq_number,
+        enqData.headerLedger.date,
+        enqData.headerLedger.contact_id,
+        enqData.headerLedger.received_by_id,
+        enqData.headerLedger.category_id,
+        enqData.headerLedger.source_id,
+        enqData.headerLedger.stamp,
+        enqData.headerLedger.call_receipt_remark,
+        enqData.headerLedger.allocated_to_id,
+        enqData.headerLedger.status_id,
+        enqData.headerLedger.sub_status_id,
+        enqData.headerLedger.action_taken_id,
+        enqData.headerLedger.next_action_id,
+        enqData.headerLedger.next_action_date,
+        enqData.headerLedger.suggested_action_remark,
+        enqData.headerLedger.action_taken_remark,
+        enqData.headerLedger.closure_remark,
+        enqData.headerLedger.enquiry_tran_type,
+        enqData.headerLedger.created_by,
+        session.user.userId,
+        enqData.product,
+        enqData.headerLedger.c_col1,
+        enqData.headerLedger.c_col2,
+        enqData.headerLedger.c_col3,
+        enqData.headerLedger.c_col4,
+        enqData.headerLedger.c_col5,
+        enqData.headerLedger.c_col6,
+        enqData.headerLedger.c_col7,
+        enqData.headerLedger.c_col8,
+        enqData.headerLedger.c_col9,
+        enqData.headerLedger.c_col10,
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}
+
+export async function createEnquiryLedgerDB(
+  session: Session,
+  ledgerData: enquiryLedgerSchemaT
+) {
+  try {
+    const result = excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+      "call createEnquiryLedger(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        ledgerData.id,
+        ledgerData.status_id,
+        ledgerData.sub_status_id,
+        ledgerData.action_taken_id,
+        ledgerData.next_action_id,
+        ledgerData.suggested_action_remark,
+        ledgerData.action_taken_remark,
+        ledgerData.closure_remark,
+        session.user.userId,
+        ledgerData.next_action_date
+      ],
+    });
+    return result;
   } catch (e) {
     console.log(e);
   }
@@ -71,10 +160,10 @@ export async function getEnquiryStatusList(
   }
 }
 
-export async function showProductGridDB(crmDb: string) {
+export async function getConfigDataDB(crmDb: string) {
   try {
     let query =
-      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type="enquiry_support"';
+      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type in("enquiry", "regionalSetting")';
     let values: any[] = [];
 
     const result = await excuteQuery({
@@ -110,21 +199,21 @@ export async function getHeaderDataAction(session: Session, id: number) {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "SELECT h.*, \
-       cm.name AS contact_name, \
-       em.name AS received_by_name, \
-       ecm.name AS category_name, \
-       esm.name AS source_name, \
-       created.name AS created_by_name, \
-       modified.name AS modified_by_name \
-  FROM enquiry_header_tran h \
-  JOIN contact_master cm ON cm.id = h.contact_id \
-  JOIN executive_master em ON em.id = h.received_by_id \
-  JOIN enquiry_category_master ecm ON ecm.id = h.category_id \
-  JOIN enquiry_source_master esm ON esm.id = h.source_id \
-  JOIN executive_master created ON created.id = h.created_by \
-  LEFT JOIN executive_master modified ON modified.id = h.modified_by \
-  WHERE h.id = ?;",
+      "SELECT h.*, \
+      cm.name AS contact, \
+      em.name AS received_by, \
+      ecm.name AS category, \
+      esm.name AS source, \
+      created.name AS created_by_name, \
+      modified.name AS modified_by_name \
+      FROM enquiry_header_tran h \
+      LEFT JOIN contact_master cm ON cm.id = h.contact_id \
+      LEFT JOIN executive_master em ON em.id = h.received_by_id \
+      LEFT JOIN enquiry_category_master ecm ON ecm.id = h.category_id \
+      LEFT JOIN enquiry_source_master esm ON esm.id = h.source_id \
+      LEFT JOIN executive_master created ON created.id = h.created_by \
+      LEFT JOIN executive_master modified ON modified.id = h.modified_by \
+      WHERE h.id = ?;",
       values: [id],
     });
     return result;
@@ -138,21 +227,25 @@ export async function getLedgerDataAction(session: Session, id: number) {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "SELECT l.*, \
-       st.name AS status_name, \
-       sub_st.name AS sub_status_name, \
-       eam.name AS action_taken_name, \
-       next_action.name AS next_action_name, \
-       em2.name AS modified_by_name, \
-       em3.name AS created_by_name \
-  FROM enquiry_ledger_tran l \
-  JOIN enquiry_status_master st ON st.id = l.status_id \
-  JOIN enquiry_sub_status_master sub_st ON sub_st.id = l.sub_status_id \
-  LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id \
-  LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id \
-  LEFT JOIN executive_master em2 ON em2.id = l.modified_by \
-  JOIN executive_master em3 ON em3.id = l.created_by \
-  WHERE l.enquiry_id = ?;",
+      "SELECT l.*, \
+      st.name AS status, \
+      sub_st.name AS sub_status, \
+      eam.name AS action_taken, \
+      next_action.name AS next_action, \
+      em1.name AS allocated_to_name, \
+      em2.name AS modified_by_name, \
+      em3.name AS created_by_name, \
+      cfd.c_col1, cfd.c_col2, cfd.c_col3, cfd.c_col4, cfd.c_col5, cfd.c_col6, cfd.c_col8, cfd.c_col7, cfd.c_col9, cfd.c_col10 \
+      FROM enquiry_ledger_tran l \
+      LEFT JOIN enquiry_status_master st ON st.id = l.status_id \
+      LEFT JOIN enquiry_sub_status_master sub_st ON sub_st.id = l.sub_status_id \
+      LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id \
+      LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id \
+      LEFT JOIN executive_master em1 ON em1.id = l.allocated_to \
+      LEFT JOIN executive_master em2 ON em2.id = l.modified_by \
+      LEFT JOIN executive_master em3 ON em3.id = l.created_by \
+      LEFT JOIN custom_fields_data cfd on cfd.object_id=l.id and cfd.object_type_id=26 \
+      WHERE l.enquiry_id = ?;",
       values: [id],
     });
     return result;
@@ -166,12 +259,12 @@ export async function getProductDataAction(session: Session, id: number) {
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "SELECT i.*, im.name AS product_name, \
-      um.name AS unit_name \
- FROM crmapp1.enquiry_product_tran i \
- JOIN crmapp1.unit_master um ON um.id = i.unit_id \
- JOIN crmapp1.product_master im ON im.id = i.product_id \
- WHERE i.enquiry_id = ?;",
+      "SELECT i.*, im.name AS product, \
+      um.name AS unit \
+      FROM enquiry_product_tran i \
+      LEFT JOIN unit_master um ON um.id = i.unit_id \
+      LEFT JOIN product_master im ON im.id = i.product_id \
+      WHERE i.enquiry_id = ?;",
       values: [id],
     });
     return result;
@@ -181,3 +274,22 @@ export async function getProductDataAction(session: Session, id: number) {
 }
 
 
+export async function getEnquiryDescriptionDb(crmDb: string, searchString: string) {
+  try {
+    let query = "select id as id, enq_number as name from enquiry_header_tran";
+    let values: any[] = [];
+    if (searchString !== "") {
+      query = query + " where enq_number like '%" + searchString + "%'";
+      values = [];
+    }
+    const result = await excuteQuery({
+      host: crmDb,
+      query: query,
+      values: values,
+    });
+    return result;
+  }
+  catch (e) {
+    console.log(e);
+  }
+}

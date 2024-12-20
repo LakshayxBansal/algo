@@ -21,11 +21,12 @@ export default function executiveDept() {
   return (
     <>
       <EntityList
-        title="Executive Dept Master"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        title="Executive Department"
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveDeptForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -35,7 +36,7 @@ export default function executiveDept() {
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );

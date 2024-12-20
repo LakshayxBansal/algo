@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { Paper, Grid, Typography } from "@mui/material";
 import { usePathname, useSearchParams } from "next/navigation";
 
-function SecondNavbar() {
-  const path = usePathname();
-  const searchParams = useSearchParams();
-  const title = searchParams.get("pgTitle")
+function SecondNavbar(props:{title?:string}) {
+  // const path = usePathname();
+  // const searchParams = useSearchParams();
+  // const title = searchParams.get("pgTitle")
 
   // const match1 = path.match(/\/([^/]+)$/);
 
@@ -23,11 +23,11 @@ function SecondNavbar() {
 
   return (
     <div>
-      <Paper elevation ={3} style={{ padding: 5, margin:20, marginTop:70, alignItems:"center" }}>
+      <Paper elevation ={3} style={{ padding: 5, marginTop:props.title == "Company"? 20:70,marginBottom:20, alignItems:"center" }}>
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h6" style={{ verticalAlign: "baseline" }}>
-              {title}
+              {`List of ${props.title}` }
             </Typography>
           </Grid>
           <Grid

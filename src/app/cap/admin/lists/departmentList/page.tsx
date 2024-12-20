@@ -24,7 +24,7 @@ export default function Department() {
   return (
     <>
       <EntityList
-        title="Department Master"
+        title="Department"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <DepartmentForm
             setDialogOpen={fnDialogOpen}

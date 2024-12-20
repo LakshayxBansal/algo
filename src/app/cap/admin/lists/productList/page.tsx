@@ -20,7 +20,7 @@ export default function Products() {
   return (
     <>
       <EntityList
-        title="Product Master"
+        title="Product"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ProductForm
             setDialogOpen={fnDialogOpen}

@@ -1,131 +1,110 @@
 "use server"
 import { getSession } from "../services/session.service";
 import { logger } from "../utils/logger.utils"
-import { getRightsDb, manageRightsDb,getObjectsDb, getMasterObjectsDb, getTransactionObjectsDb, getReportObjectsDb, getObjectByNameDb } from "../services/rights.service";
+import { manageRightsDb, getObjectByNameDb, getRightsDataDb, getAllObjectsDB, createDeptInRightsTableDB, delDeptFromRightTableDB, getRightDB } from "../services/rights.service";
+import { getAllRoles } from "./executiveRole.controller";
+import * as zs from "@/app/zodschema/zodschema"
+import { rightSchemaT } from "../models/models";
 
-type DataState = {
-    [key: string] : boolean;
-};
+function normalToCamelCaseString(normalString: string) {
+    const objectNameWithOutSpace = normalString.replace(/\s+/g, '');
+    return objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
+}
 
-export async function manageRights(data : any) {
-    try{
+export async function manageRights(dataArray : Array<rightSchemaT>) {
+    try {
         const session = await getSession();
-        if(session){
-            const objects = await getObjectsDb(session.user.dbInfo.dbName);
-            let objectMap: Map<string, number> = new Map();
-            objects.map((obj : any)=>{
-                const objectNameWithOutSpace = obj["object_name"].replace(/\s+/g, '');
-                const objectName = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
-                objectMap.set(objectName,obj.right_id);
+        if (session) {
+            let parseSuccess = true;
+            dataArray.map((data : rightSchemaT)=>{
+                parseSuccess &&= zs.rightSchema.safeParse(data).success;
             })
-            let dataMap: Map<number,any[]> = new Map();
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    const objectName = key.split("_")[0];
-                    const role = key.split("_")[1];
-                    const right = key.split("_")[2];
-                    if(dataMap.has(objectMap.get(objectName) as number)){
-                        dataMap.get(objectMap.get(objectName) as number)!.push(data[key]===true ? {"field":`${role}_${right}`,"value":1} : {"field":`${role}_${right}`,"value":0});
-                    }else{
-                        dataMap.set(objectMap.get(objectName) as number,[]);
-                        dataMap.get(objectMap.get(objectName) as number)!.push(data[key]===true ? {"field":`${role}_${right}`,"value":1} : {"field":`${role}_${right}`,"value":0});
-                    }
+            if (parseSuccess) {
+                const result = await manageRightsDb(session.user.dbInfo.dbName, dataArray);
+                if(result===true){
+                    return "Record saved!"
+                }else{
+                    return "Error encountered!"
                 }
+            } else {
+                return "Error in format of data!"
             }
-            dataMap.forEach(async(value, key) => {
-                await manageRightsDb(session.user.dbInfo.dbName,key,value);
-            });
-
-
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
+        return "Error encountered!"
     }
 }
 
 export async function getRightsData() {
-    try{
+    try {
         const session = await getSession();
-        if(session){
-            const result = await getRightsDb(session.user.dbInfo.dbName);
-            let resultObject : DataState = {};
-            const resultLength = result.length;
-            for(let i = 0;i<resultLength;i++){
-                for (let key in result[i]) {
-                    const first_key = key.split("_")[0];
-                    if(first_key==="admin" || first_key==="manager" || first_key==="executive"){
-                        const objectNameWithOutSpace = result[i]["object_name"].replace(/\s+/g, '');
-                        const objectName = objectNameWithOutSpace.charAt(0).toLowerCase() + objectNameWithOutSpace.slice(1);
-                        const newKey = `${objectName}_${key}`;
-                        if(result[i][key]===1){
-                            resultObject[newKey] = true;
-                        }else{
-                            resultObject[newKey] = false;
-                        }
-                    }
-                }
-            }
-            return resultObject;
+        if (session) {
+            const result = await getRightsDataDb(session.user.dbInfo.dbName);
+            return result;
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
     }
 }
 
-export async function getObjects() {
-    try{
+export async function getAllObjects() {
+    try {
         const session = await getSession();
-        if(session){
-            const objects = await getObjectsDb(session.user.dbInfo.dbName);
+        if (session) {
+            const objects = await getAllObjectsDB(session.user.dbInfo.dbName);
             return objects;
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
     }
 }
 
-export async function getObjectByName(name : string) {
-    try{
+export async function getObjectByName(name: string) {
+    try {
         const session = await getSession();
-        if(session){
+        if (session) {
             const objects = await getObjectByNameDb(session.user.dbInfo.dbName, name);
             return objects;
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
     }
 }
 
-export async function getMasterObjects() {
-    try{
+export async function createDeptInRightsTable(deptId: number) {
+    try {
         const session = await getSession();
-        if(session){
-            const objects = await getMasterObjectsDb(session.user.dbInfo.dbName);
-            return objects;
+        if (session) {
+            const objects = await getAllObjects();
+            const roles = await getAllRoles();
+            await createDeptInRightsTableDB(session.user.dbInfo.dbName, deptId, objects, roles);
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
     }
 }
-export async function getTransactionObjects() {
-    try{
+
+export async function delDeptFromRightTable(deptId: number) {
+    try {
         const session = await getSession();
-        if(session){
-            const objects = await getTransactionObjectsDb(session.user.dbInfo.dbName);
-            return objects;
+        if (session) {
+            await delDeptFromRightTableDB(session.user.dbInfo.dbName, deptId);
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
     }
 }
-export async function getReportObjects() {
-    try{
+
+export async function getRight(objectId: number, roleId: number, deptId: number) {
+    try {
         const session = await getSession();
-        if(session){
-            const objects = await getReportObjectsDb(session.user.dbInfo.dbName);
-            return objects;
+        if (session) {
+            const right = await getRightDB(session.user.dbInfo.dbName, objectId, roleId, deptId);
+            return right[0];
         }
-    }catch(error){
+    } catch (error) {
         logger.error(error);
     }
 }
+

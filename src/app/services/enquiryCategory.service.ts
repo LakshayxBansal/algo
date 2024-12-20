@@ -4,6 +4,8 @@ import * as zm from "../models/models";
 import { Session } from "next-auth";
 import excuteQuery from "../utils/db/db";
 
+
+
 export async function getEnquiryCategoryList(
   crmDb: string,
   searchString: string
@@ -46,7 +48,7 @@ export async function delCategoryDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "delete from enquiry_category_master where id=?;",
+      query: "call deleteCategory(?)",
       values: [id],
     });
 

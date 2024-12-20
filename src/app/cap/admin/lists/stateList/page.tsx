@@ -26,7 +26,7 @@ export default function State() {
   return (
     <>
       <EntityList
-        title="State Master"
+        title="State"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <StateFormList
             setDialogOpen={fnDialogOpen}

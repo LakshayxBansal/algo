@@ -11,11 +11,16 @@ import {
   getExecutiveDeptByPageDb,
   delExecutiveDeptByIdDB,
   checkIfUsed,
+  getAllDeptsDB,
 } from "../services/executiveDept.service";
 import { getSession } from "../services/session.service";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { createDeptInRightsTable, delDeptFromRightTable } from "./rights.controller";
+import { getRegionalSettings } from "./config.controller";
+import { EXECUTIVE_DEPT_OBJECT_ID } from "../utils/consts.utils";
+import { getScreenDescription } from "./object.controller";
 
 export async function getExecutiveDept(searchString: string) {
   try {
@@ -33,12 +38,6 @@ export async function createExecutiveDept(data: executiveDeptSchemaT) {
   try {
     const session = await getSession();
     if (session) {
-      // let data: { [key: string]: any } = {}; // Initialize an empty object
-
-      // for (const [key, value] of formData.entries()) {
-      //   data[key] = value;
-      // }
-
       const parsed = zs.executiveDeptSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createExecutiveDeptDb(
@@ -47,6 +46,7 @@ export async function createExecutiveDept(data: executiveDeptSchemaT) {
         );
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
+          await createDeptInRightsTable(dbResult[1][0].id);
         } else {
           result = {
             status: false,
@@ -149,41 +149,74 @@ export async function getDeptById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getDeptDetailsById(session.user.dbInfo.dbName, id);
+      const userRights={};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(EXECUTIVE_DEPT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
+      }
+      if(id){
+        const executiveDeptDetails = await getDeptDetailsById(session.user.dbInfo.dbName, id);
+      
+        const result = [
+          screenDesc,
+          executiveDeptDetails[0],
+          userRights,
+          configData,
+          loggedInUserData
+        ]
+        return[
+          result
+        ]
     }
+      const result=[
+        screenDesc,
+        userRights,
+        configData,
+        loggedInUserData
+      ]
+      return[
+        result
+      ]
+  }
   } catch (error) {
     throw error;
   }
 }
-
 export async function delExecutiveDeptById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        await delDeptFromRightTable(id);
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-        const result = await delExecutiveDeptByIdDB(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
-      }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 export async function getExecutiveDeptByPage(
   page: number,
@@ -192,7 +225,7 @@ export async function getExecutiveDeptByPage(
 ) {
   let getExecutiveDept = {
     status: false,
-    data: {} as mdl.executiveDeptSchemaT,
+    data: [] as mdl.executiveDeptSchemaT[],
     count: 0,
     error: {},
   };
@@ -200,7 +233,7 @@ export async function getExecutiveDeptByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getExecutiveDeptByPageDb(
+      const dbData = await getExecutiveDeptByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -212,7 +245,7 @@ export async function getExecutiveDeptByPage(
       );
       getExecutiveDept = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.executiveDeptSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.executiveDeptSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -223,9 +256,20 @@ export async function getExecutiveDeptByPage(
     getExecutiveDept = {
       ...getExecutiveDept,
       status: false,
-      data: {} as mdl.executiveDeptSchemaT,
+      data: [] as mdl.executiveDeptSchemaT[],
       error: err,
     };
   }
   return getExecutiveDept;
+}
+
+export async function getAllDepts() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getAllDeptsDB(session.user.dbInfo.dbName);
+    }
+  } catch (error) {
+    throw error;
+  }
 }

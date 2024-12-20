@@ -4,8 +4,12 @@ import {theme} from '@/app/utils/theme.util'
 import { ThemeProvider } from "@mui/material/styles";
 import Footer from './navbar/Footer';
 import SecondNavbar from './navbar/SecondNavbar';
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { Metadata } from 'next';
+
+export const metadata : Metadata = {
+  title : 'Dashboard'
+}
 
 export default function CapLayout({children} : {children?: React.ReactNode}) {
 
@@ -39,7 +43,6 @@ export default function CapLayout({children} : {children?: React.ReactNode}) {
         <AppMenu>
           <Box id="cap_layout">
             <ThemeProvider theme={theme}>
-              <SecondNavbar/>
               {children}
             </ThemeProvider>
           </Box>

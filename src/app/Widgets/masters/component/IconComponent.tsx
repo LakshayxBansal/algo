@@ -5,18 +5,47 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import { StyledMenu } from "@/app/utils/styledComponents";
 import { iconCompT } from "@/app/models/models";
+import { useRouter } from "next/navigation";
+import { encrypt } from "@/app/utils/encrypt.utils";
 
 function IconComponent(props: iconCompT) {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    async function onModifyDialog(modId: number) {
-        if (props.fnFetchDataByID && modId) {
-          const data = await props.fnFetchDataByID(modId);          
-          props.setModData(data[0]);
-          props.setDialogOpen(true);
-          props.setDlgMode(props.modify); //dialogMode.Modify
-          setAnchorEl(null);
-        }
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const router = useRouter();
+  async function onModifyDialog(modId: number) {
+    if (modId && props.link) {
+      const encryptedId = await encrypt(modId);
+      router.push(`${props.link}?id=${encryptedId}&status=false`);
+    }
+    else if (props.fnFetchDataByID && modId) {
+      const data = await props.fnFetchDataByID(modId);
+      console.log("Iconcomponent", data);
+
+      if (data[0]?.length > 0) {
+        props.setModData(data[0][1]);
+        props.setMetaData({
+          fields: data[0][0] || {},
+          rights: data[0][2] || {},
+          regionalSettingsConfigData: data[0][3] || {},
+          loggedInUserData: data[0][4] || {}
+        });
       }
+      else {
+        props.setModData(data[0])
+      }
+
+      props.setDialogOpen(true);
+      props.setDlgMode(props.modify); //dialogMode.Modify
+      setAnchorEl(null);
+    }
+
+  }
+  async function handleStatusUpdate(modId: number) {
+    if (modId && props.link) {
+      const encryptedId = await encrypt(modId);
+      router.push(`${props.link}?id=${encryptedId}&status=true`);
+    }
+  }
 
   function handleDeleteDialog(modId: number) {
     if (props.fnDeleteDataByID && modId) {
@@ -55,17 +84,28 @@ function IconComponent(props: iconCompT) {
             onModifyDialog(props.id);
           }}
         >
-          <EditIcon fontSize="large" />
-          <Typography variant="h6">Edit</Typography>
+          <EditIcon fontSize="small" />
+          <Typography variant="body2">Edit</Typography>
         </MenuItem>
         <MenuItem
           onClick={() => {
             handleDeleteDialog(props.id);
           }}
         >
-          <DeleteIcon />
-          <Typography variant="h6">Delete</Typography>
+          <DeleteIcon fontSize="small" />
+          <Typography variant="body2">Delete</Typography>
         </MenuItem>
+        {props.link && (
+          <MenuItem
+            onClick={() => {
+              handleStatusUpdate(props.id);
+            }}
+          >
+            <EditIcon fontSize="small" />
+
+            <Typography variant="body2">Update Status</Typography>
+          </MenuItem>
+        )}
       </StyledMenu>
     </Box>
   );

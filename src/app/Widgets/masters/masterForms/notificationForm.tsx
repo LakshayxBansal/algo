@@ -374,6 +374,7 @@ export default function NotificationForm(props: masterFormPropsT) {
                 }}
                 // error={formError?.message.error}
                 // helperText={formError?.message?.msg}
+ setFormError={setFormError}
                 // defaultValue={entityData.message}
                 />
 

@@ -5,7 +5,7 @@ import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Seperator from "../../seperator";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import Snackbar from "@mui/material/Snackbar";
@@ -80,25 +80,7 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: 1 }} square={false}>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "2px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Allocation type" : "Add Allocation Type"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
+    <>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -117,16 +99,10 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box sx={{ mt: 2, mb: 1, p: 1 }}>
-        <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(1, 1fr)",
-            }}
-          >
+
+      <form action={handleSubmit} noValidate>
+        <Grid container >
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <InputControl
               inputType={InputType.TEXT}
               autoFocus
@@ -134,10 +110,12 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
               label="Name"
               name="name"
               required
-              fullWidth
+              style={{width: "100%"}}
+              titleCase={true}
               defaultValue={props.data?.name}
               error={formError?.name?.error}
               helperText={formError?.name?.msg}
+ setFormError={setFormError}
               onKeyDown={() => {
                 setFormError((curr) => {
                   const { name, ...rest } = curr;
@@ -145,12 +123,14 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
                 });
               }}
             />
-          </Box>
-          <Box
+          </Grid>
+          <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              mt: 2,
+              mt: 1,
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
@@ -159,20 +139,21 @@ export default function AllocationTypeMasterForm(props: masterFormPropsT) {
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
               Submit
             </Button>
-          </Box>
-        </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
-      </Box>
-    </Paper>
+          </Grid>
+        </Grid>
+      </form>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={1000}
+        onClose={() => setSnackOpen(false)}
+        message="Record Saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
+    </>
   );
 }

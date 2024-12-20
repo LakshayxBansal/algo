@@ -30,6 +30,7 @@ import {
 } from "@mui/base/Unstable_NumberInput";
 import { CustomTextField } from "@/app/utils/styledComponents";
 import capitalizeFirstChar from "@/app/utils/titleCase.utils";
+import { error } from "console";
 
 // for number
 // inputtype = TEXT
@@ -49,6 +50,7 @@ export enum InputType {
   DATETIMEINPUT,
   EMAIL,
   PHONE,
+  TEXTFIELD,
 }
 // Define the additional props for the base control
 interface BaseControlProps {
@@ -68,6 +70,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   custLabel = "",
   decPlaces,
   titleCase = false,
+  setFormError,
   ...props
 }) => {
   const [ifEmail, setIfEmail] = useState({ status: true, msg: "" });
@@ -77,11 +80,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   let prevKey = "",
-    currentKey = "";
+    currentKey = "",
+    first = true;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
     currentKey = event.key;
+    if(props.onKeyDown){
+      props.onKeyDown(event);
+    }
   };
 
   if (inputRef.current) {
@@ -90,10 +97,33 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     )[0] as HTMLElement;
     if (flagButton) {
       flagButton.tabIndex = -1;
+      flagButton.style.width = "2.188rem";
+      flagButton.style.height = "0.813rem";
     }
   }
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
+
+    if (setFormError && props.error) {
+      setFormError((prevFormError: Record<string, any>) => {
+        const updatedFormError = { ...prevFormError };
+        
+        if (updatedFormError['form']) {
+          delete updatedFormError['form']; // Remove the 'form' property
+        }
+    
+        return {
+          ...updatedFormError,
+          [props.name]: {
+            error: false,
+            msg: "",
+          },
+        };
+      });
+    }
+    
+    
+
     switch (inputType) {
       case InputType.TEXT: {
         const inputProps = props as TextFieldProps;
@@ -138,6 +168,15 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         }
         break;
       }
+
+      case InputType.TEXTFIELD: {
+        const inputProps = props as TextFieldProps;
+
+        if (event.target.value.length === 1 && first) {
+          event.target.value = event.target.value.toUpperCase();
+          first = false;
+        }
+      }
     }
   }
 
@@ -145,8 +184,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     value: Dayjs | null,
     context: FieldChangeHandlerContext<DateValidationError>
   ) {
-    console.log("datechange");
-    console.log(value);
     const inputProps = props as DatePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -180,6 +217,26 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     }
   }
 
+  function handleFocus() {
+    switch (inputType) {
+      case InputType.PHONE: {
+        const inputElement = inputRef.current?.querySelector("input");
+        if (inputElement) {
+          const value = inputElement.value;
+          const countryCodeLength = value.indexOf(" ") + 1;
+          if (countryCodeLength > 0) {
+            inputElement.setSelectionRange(countryCodeLength, value.length);
+          }
+        }
+        break;
+      }
+      case InputType.TEXTFIELD: {
+        first = true;
+        break;
+      }
+    }
+  }
+
   // function onPhoneChange(value: string, data: {} | CountryData, event: ChangeEvent<HTMLInputElement>, formattedValue: string) {
   //   const inputProps = props as PhoneInputProps;
   //   if(inputProps.onChange) {
@@ -208,7 +265,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
       return (
         <FormControlLabel
           label={custLabel}
-          control={<Checkbox {...CheckboxProps} onChange={onChange} />}
+          control={<Checkbox {...CheckboxProps} onChange={onChange}/>}
         />
       );
       break;
@@ -255,6 +312,19 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           {...props}
           value={value}
           onChange={onPhoneChange}
+          onFocus={handleFocus}
+        />
+      );
+      break;
+    }
+    case InputType.TEXTFIELD: {
+      // It's a TextField
+      const textFieldProps = props as TextFieldProps;
+      return (
+        <TextField
+          {...textFieldProps}
+          onChange={onChange}
+          onFocus={handleFocus}
         />
       );
       break;

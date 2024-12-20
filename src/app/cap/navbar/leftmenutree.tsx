@@ -26,7 +26,7 @@ export default function LeftMenuTree(props: {
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
-  // const [loading,setLoading]  = useState(false);
+  const [loading,setLoading]  = useState(false);
   const [hover, setHover] = useState(false);
 
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function LeftMenuTree(props: {
     undefined
   );
   const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
-  let arra1 = [0, 2, 5, 9, 12, 51, 54];
+  let arra1 = [0, 2, 5, 9, 12, 51, 54,61];
   const pages = props.pages;
 
   useEffect(() => {
@@ -74,6 +74,9 @@ export default function LeftMenuTree(props: {
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) {
+    console.log("pageid", page.id);
+    console.log("parentid", page.parent_id);
+    console.log("this", page.children.length);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;
     // setHoverId(page.id);
@@ -82,7 +85,8 @@ export default function LeftMenuTree(props: {
       if (page.parent_id == 0) {
         openPopper.clear();
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
-      } else if (page.parent_id == 5) {
+      } 
+      else if (page.parent_id == 5) {
         openPopper.clear();
         setOpenPopper((prevState) => new Map(prevState.set(5, true)));
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
@@ -90,6 +94,11 @@ export default function LeftMenuTree(props: {
         openPopper.clear();
         setOpenPopper((prevState) => new Map(prevState.set(5, true)));
         setOpenPopper((prevState) => new Map(prevState.set(9, true)));
+        setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
+      } 
+      else if (page.parent_id == 61) {
+        openPopper.clear();
+        setOpenPopper((prevState) => new Map(prevState.set(61, true)));
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
       }
     }
@@ -136,7 +145,7 @@ export default function LeftMenuTree(props: {
   ) => {
     // props.setLoading(true);
     // document.body.classList.add('cursor-wait');
-    router.push(href);
+    // router.push(href);
      
   };
 
@@ -254,8 +263,8 @@ export default function LeftMenuTree(props: {
                     handleMouseLeave(e, page);
                   }}
                   component="a"
-                  onClick={(e) => handleTransiton(e, page.href)}
-                  // href={page.href}
+                  // onClick={(e) => handleTransiton(e, page.href)}
+                  href={page.href}
                   selected={selectedId === page.id}
                   tabIndex={-1}
                   style={
@@ -285,7 +294,7 @@ export default function LeftMenuTree(props: {
                       ) :(<ListItemText primary={page.name} />)
                   } */}
 
-                  {page.parent_id == 0 && props.isHover ? (
+                  {/* {page.parent_id == 0 && props.isHover ? (
                     <Typography variant="caption">{page.name}</Typography>
                   ) : (
                     <></>
@@ -294,6 +303,16 @@ export default function LeftMenuTree(props: {
                   {page.parent_id > 0 && <ListItemText primary={page.name} />}
 
                   {page.children.length && page.parent_id > 0 ? (
+                    openPopper?.get(page.id) ? (
+                      <ChevronRightIcon />
+                    ) : (
+                      <ExpandMore />
+                    )
+                  ) : (
+                    <></>
+                  )} */}
+                  <ListItemText primary={page.name} />
+                  {page.children.length > 0 ? (
                     openPopper?.get(page.id) ? (
                       <ChevronRightIcon />
                     ) : (

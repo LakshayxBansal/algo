@@ -1,7 +1,7 @@
 "use server";
 
 import { contactSchema } from "../zodschema/zodschema";
-import { contactSchemaT, docDescriptionSchemaT, getContactByPageT } from "../models/models";
+import { contactSchemaT, docDescriptionSchemaT } from "../models/models";
 import {
   createContactDB,
   DeleteContactList,
@@ -21,6 +21,9 @@ import { modifyPhone } from "../utils/phoneUtils";
 import { convertData } from "../utils/validateType.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
+import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
+import { CONTACT_OBJECT_ID } from "../utils/consts.utils";
 
 export async function createContactsBatch(data: any) {
   const errorMap = new Map();
@@ -105,9 +108,9 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data.mobile);
-      data.whatsapp = modifyPhone(data.whatsapp);
-
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
+      
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createContactDB(session, data as contactSchemaT);
@@ -130,7 +133,7 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
         }
       } else {
         let errorState: { path: (string | number)[]; message: string }[] = [];
-        for (const issue of parsed.error.issues) {
+        for (const issue of parsed.error.issues) {          
           errorState.push({ path: issue.path, message: issue.message });
         }
         result = { status: false, data: errorState };
@@ -164,12 +167,14 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
   try {
     const session = await getSession();
     if (session) {
-      data.mobile = modifyPhone(data.mobile);
-      data.whatsapp = modifyPhone(data.whatsapp);
+      data.mobile = modifyPhone(data.mobile as string);
+      data.whatsapp = modifyPhone(data.whatsapp as string);
 
       const parsed = contactSchema.safeParse(data);
+      
       if (parsed.success) {
         const dbResult = await updateContactDB(session, data as contactSchemaT);
+        console.log(dbResult);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           const objectDetails = await getObjectByName("Contact");
@@ -243,46 +248,48 @@ export async function getContactById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
-      if(contactDetails.length>0){
-        const objectDetails = await getObjectByName("Contact");
-        const docData = await getDocs(id,objectDetails[0].object_id);
-      if (contactDetails.length > 0 && docData.length > 0) {
-        contactDetails[0].docData = docData;
-      } else {
-        contactDetails[0].docData = [];
+      const rights={};
+      const config_data=await getRegionalSettings();
+      const desc = await getScreenDescription(CONTACT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
       }
-      return contactDetails;
+      if(id){
+        const contactDetails = await getContactDetailsById(session.user.dbInfo.dbName, id);
+        if(contactDetails?.length>0){
+          const objectDetails = await getObjectByName("Contact");
+          const docData = await getDocs(id,objectDetails[0].object_id);
+        if (contactDetails.length > 0 && docData.length > 0) {
+          contactDetails[0].docData = docData;
+        } else {
+          contactDetails[0].docData = [];
+        }
       }
+      const result = [
+        desc,
+        contactDetails[0],
+        rights,
+        config_data,
+        loggedInUserData
+      ]
+        return[
+          result
+        ]
+      }
+      const result=[
+        desc,
+        rights,
+        config_data,
+        loggedInUserData
+      ]
+      return[
+        result
+      ]
     }
   } catch (error) {
     throw error;
   }
-}
-
-// For Deleting Contact
-export async function DeleteContact(id: number) {
-  let errorResult = { status: false, error: {} };
-  try {
-    const session = await getSession();
-
-    if (session?.user.dbInfo) {
-      const result = await DeleteContactList(session.user.dbInfo.dbName, id);
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result.affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
-        };
-      }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
-  }
-  return errorResult;
 }
 
 export async function getContactByPage(
@@ -292,7 +299,7 @@ export async function getContactByPage(
 ) {
   let getContactByPage = {
     status: false,
-    data: {} as getContactByPageT,
+    data: [] as contactSchemaT[],
     count: 0,
     error: {},
   };
@@ -300,7 +307,7 @@ export async function getContactByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getContactByPageDb(
+      const dbData = await getContactByPageDb(
         // appSession.dbSession?.dbInfo.dbName as string,
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -313,7 +320,7 @@ export async function getContactByPage(
       );
       getContactByPage = {
         status: true,
-        data: conts.map(bigIntToNum) as getContactByPageT,
+        data: dbData.map(bigIntToNum) as contactSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -324,7 +331,7 @@ export async function getContactByPage(
     getContactByPage = {
       ...getContactByPage,
       status: false,
-      data: {} as getContactByPageT,
+      data: [] as contactSchemaT[],
       error: err,
     };
   }
@@ -353,3 +360,38 @@ export async function delContactById(id: number) {
   }
   return errorResult;
 }
+
+// For Deleting Contact
+export async function DeleteContact(id: number) {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await delContactByIdDB(session.user.dbInfo.dbName, id);
+      
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
+      }
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
+  }
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }

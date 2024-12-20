@@ -39,30 +39,37 @@ export async function getAllocationTypeById(id: number) {
 }
 
 export async function delAllocationTypeById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const result = await delAllocationDetailsById(
-        session.user.dbInfo.dbName,
-        id
-      );
-
-      if ((result.affectedRows = 1)) {
-        errorResult = { status: true, error: {} };
-      } else if ((result.affectedRows = 0)) {
-        errorResult = {
-          ...errorResult,
-          error: "Record Not Found",
+      const dbResult = await delAllocationDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
         };
       }
-    }
-  } catch (error: any) {
-    throw error;
-    errorResult = { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }
 
 /**
  *
@@ -185,7 +192,7 @@ export async function getAllocationTypeByPage(
 ) {
   let getAllocationType = {
     status: false,
-    data: {} as mdl.nameMasterDataT,
+    data: [] as mdl.nameMasterDataT[],
     count: 0,
     error: {},
   };
@@ -193,7 +200,7 @@ export async function getAllocationTypeByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getAllocationTypeByPageDb(
+      const dbData = await getAllocationTypeByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -205,7 +212,7 @@ export async function getAllocationTypeByPage(
       );
       getAllocationType = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.nameMasterDataT,
+        data: dbData.map(bigIntToNum) as mdl.nameMasterDataT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -216,7 +223,7 @@ export async function getAllocationTypeByPage(
     getAllocationType = {
       ...getAllocationType,
       status: false,
-      data: {} as mdl.nameMasterDataT,
+      data: [] as mdl.nameMasterDataT[],
       error: err,
     };
   }

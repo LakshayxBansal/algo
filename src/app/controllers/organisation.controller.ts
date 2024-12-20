@@ -18,6 +18,9 @@ import * as mdl from "../models/models";
 import { bigIntToNum } from "../utils/db/types";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
+import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
+import { ORGANISATION_OBJECT_ID } from "../utils/consts.utils";
 
 export async function createOrganisation(data: zm.organisationSchemaT,docData : zm.docDescriptionSchemaT[]) {
   let result;
@@ -90,6 +93,7 @@ export async function updateOrganisation(data: zm.organisationSchemaT, docData :
           session,
           data as zm.organisationSchemaT
         );
+        
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
           const objectDetails = await getObjectByName("Organisation");
@@ -124,6 +128,7 @@ export async function updateOrganisation(data: zm.organisationSchemaT, docData :
     return result;
   } catch (e: any) {
     if (e instanceof SqlError && e.code === "ER_DUP_ENTRY") {
+      console.log(e.message, "-", e.cause, "-", e.sqlMessage);
       result = {
         status: false,
         data: [{ path: ["name"], message: "Error: Value already exist" }],
@@ -158,17 +163,46 @@ export async function getOrganisationById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
-      if(organisationDetails.length>0){
-        const objectDetails = await getObjectByName("Organisation");
-        const docData = await getDocs(id,objectDetails[0].object_id);
-        if (organisationDetails.length > 0 && docData.length > 0) {
-          organisationDetails[0].docData = docData;
-        } else {
-          organisationDetails[0].docData = [];
-        }
-        return organisationDetails;
+      const userRights = {};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(ORGANISATION_OBJECT_ID);
+      const loggedInUserData = {
+        name: session.user.name,
+        userId : session.user.userId
       }
+      if(id)
+      {
+          const organisationDetails = await getOrganisationDetailsById(session.user.dbInfo.dbName, id);
+          if(organisationDetails.length>0){
+            const objectDetails = await getObjectByName("Organisation");
+            const docData = await getDocs(id,objectDetails[0].object_id);
+            if (organisationDetails.length > 0 && docData.length > 0) {
+              organisationDetails[0].docData = docData;
+            } else {
+              organisationDetails[0].docData = [];
+            }
+            const result = [
+              screenDesc,
+              organisationDetails[0],
+              userRights,
+              configData,
+              loggedInUserData
+            ]
+
+            return [
+              result
+            ]
+        }
+      }
+      const result=[
+        screenDesc,
+        userRights,
+        configData,
+        loggedInUserData
+      ]
+      return[
+        result
+      ]
     }
   } catch (error) {
     throw error;
@@ -182,7 +216,7 @@ export async function getOrganisationByPage(
 ) {
   let getOrg = {
     status: false,
-    data: {} as mdl.organisationSchemaT,
+    data: [] as mdl.organisationSchemaT[],
     count: 0,
     error: {},
   };
@@ -190,7 +224,7 @@ export async function getOrganisationByPage(
     const appSession = await getSession();
 
     if (appSession) {
-      const conts = await getOrganisationByPageDb(
+      const dbData = await getOrganisationByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
         filter,
@@ -202,7 +236,7 @@ export async function getOrganisationByPage(
       );
       getOrg = {
         status: true,
-        data: conts.map(bigIntToNum) as mdl.organisationSchemaT,
+        data: dbData.map(bigIntToNum) as mdl.organisationSchemaT[],
         count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
@@ -213,7 +247,7 @@ export async function getOrganisationByPage(
     getOrg = {
       ...getOrg,
       status: false,
-      data: {} as mdl.organisationSchemaT,
+      data: [] as mdl.organisationSchemaT[],
       error: err,
     };
   }
@@ -221,30 +255,34 @@ export async function getOrganisationByPage(
 }
 
 export async function delOrganisationById(id: number) {
-  let errorResult = { status: false, error: {} };
+  let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const check = await checkIfUsed(session.user.dbInfo.dbName, id);
-      if(check[0].count>0){
-        return ("Can't Be DELETED!");
+      const dbResult = await delOrganisationDetailsById(session.user.dbInfo.dbName, id);
+      if (dbResult[0][0].error === 0) {
+        result = { status: true };
+      } else {
+        result = {
+          status: false,
+          data: [
+            {
+              path: [dbResult[0][0].error_path],
+              message: dbResult[0][0].error_text,
+            },
+          ],
+        };
       }
-      else{
-        const result = await delOrganisationDetailsById(session.user.dbInfo.dbName, id);
-        return ("Record Deleted");
-      }
-      // if ((result.affectedRows = 1)) {
-      //   errorResult = { status: true, error: {} };
-      // } else if ((result .affectedRows = 0)) {
-      //   errorResult = {
-      //     ...errorResult,
-      //     error: "Record Not Found",
-      //   };
-      // }
-    }
-  } catch (error:any) {
-    throw error;
-    errorResult= { status: false, error: error };
+    } 
+    else {
+    result = {
+      status: false,
+      data: [{ path: ["form"], message: "Error: Server Error" }],
+    };
   }
-  return errorResult;
-}
+  return result;
+} 
+catch (error:any) {
+      throw error;
+    }
+  }

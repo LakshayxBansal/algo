@@ -15,13 +15,18 @@ const columns: GridColDef[] = [
     headerName: "Name",
     editable: false,
   },
+  {
+    field: "level",
+    headerName: "Level",
+    editable: true,
+  },
 ];
 
 export default function executiveRole() {
   return (
     <>
       <EntityList
-        title="Executive Role Master"
+        title="Executive Role"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ExecutiveRoleForm
             setDialogOpen={fnDialogOpen}
@@ -33,7 +38,7 @@ export default function executiveRole() {
         fnFetchDataByID={getExecutiveRoleById}
         fnDeleteDataByID={delExecutiveRoleById}
         customCols={columns}
-        uploadAllowed={true}
+        uploadAllowed={false}
         AddAllowed={false}
         height = "60vh"
       ></EntityList>

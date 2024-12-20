@@ -239,6 +239,7 @@ const Drawer = styled(MuiDrawer, {
         <AppBar open={open}>
           <Toolbar sx={{ pr: "24px", height:55 }}>
             <IconButton
+              title="Title"
               edge="start"
               color="inherit"
               aria-label="open drawer"
@@ -332,7 +333,7 @@ const Drawer = styled(MuiDrawer, {
                       }}
                     />
                   ) : (
-                    <IconButton onClick={() => setSearchIcon(true)} tabIndex={-1}>
+                    <IconButton title="Title" onClick={() => setSearchIcon(true)}>
                       <SearchIcon fontSize="medium" style={{ color: "#fff" }} />
                     </IconButton>
                   )}
@@ -347,7 +348,7 @@ const Drawer = styled(MuiDrawer, {
                 </Typography>
               </Box>
             </Box>
-            <IconButton color="inherit" tabIndex={-1}>
+            <IconButton title="title" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
               </Badge>
@@ -379,7 +380,7 @@ const Drawer = styled(MuiDrawer, {
                 px: [1],
               }}
             >
-              <IconButton onClick={toggleDrawer}>
+              <IconButton title="Title" onClick={toggleDrawer}>
                 <ChevronLeftIcon />
               </IconButton>
             </Toolbar>

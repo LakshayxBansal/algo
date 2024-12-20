@@ -6,10 +6,11 @@ import Box from "@mui/material/Box";
 import { currencySchemaT, selectKeyValueT } from "@/app/models/models";
 import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
-import { masterFormPropsT } from "@/app/models/models";
+import { masterFormPropsWithDataT } from "@/app/models/models";
 import Paper from "@mui/material/Paper";
 import {
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -23,7 +24,7 @@ import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function CurrencyForm(props: masterFormPropsT) {
+export default function CurrencyForm(props: masterFormPropsWithDataT<currencySchemaT>) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -32,7 +33,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
   const [decimalPlaces, setDecimalPlaces] = useState(props.data ? props.data.decimal_places : "2");
   const [symbol, setSymbol] = useState("");
   const [sample, setSample] = useState("");
-  const entityData: currencySchemaT = props.data ? props.data : {};
+  const entityData: currencySchemaT = props.data ? props.data : {} as currencySchemaT;
 
   // if (props.data) {
   //   setCurrencySystem(entityData.currency_system);
@@ -66,8 +67,8 @@ export default function CurrencyForm(props: masterFormPropsT) {
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
-        if(issue.path==='refresh'){
-          errorState["form"] = { msg: issue.message, error: true};
+        if (issue.path === 'refresh') {
+          errorState["form"] = { msg: issue.message, error: true };
         }
       }
       setFormError(errorState);
@@ -140,25 +141,7 @@ export default function CurrencyForm(props: masterFormPropsT) {
   };
 
   return (
-    <Paper sx={{ margin: "auto", width: "37vw" }}>
-      <Box
-        sx={{
-          position: "sticky",
-          top: 2,
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {entityData.id ? "Update Currency" : "Add Currency"}
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
+    <>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -177,158 +160,150 @@ export default function CurrencyForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="currencyForm" sx={{ mt: 2, p: 2 }}>
+      <Box id="currencyForm">
         <form action={handleSubmit} noValidate>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 0.5,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
-              autoFocus
-              inputType={InputType.TEXT}
-              id="Symbol"
-              label="Currency Symbol"
-              name="symbol"
-              fullWidth
-              required
-              defaultValue={entityData.symbol}
-              error={formError?.symbol?.error}
-              helperText={formError?.symbol?.msg}
-              onChange={onSymbolChange}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { symbol, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              inputType={InputType.TEXT}
-              id="Name"
-              label="Name"
-              name="name"
-              fullWidth
-              required
-              defaultValue={entityData.name}
-              error={formError?.name?.error}
-              helperText={formError?.name?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { name, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <InputControl
-              id="shortForm"
-              label="Currency Short Form"
-              inputType={InputType.TEXT}
-              name="shortForm"
-              fullWidth
-              defaultValue={entityData.shortForm}
-              error={formError?.shortForm?.error}
-              helperText={formError?.shortForm?.msg}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { shortForm, ...rest } = curr;
-                  return rest;
-                });
-              }}
-            />
-            <FormControl
-              fullWidth
-              size="small"
-              sx={{
-                marginTop: "0.9vh",
-              }}
-            >
-              <InputLabel id="demo-simple-select-label">
-                Currency System
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="currency_system"
-                value={currencySystem}
-                label="Currency System"
-                onChange={handleSystemChange}
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                autoFocus
+                inputType={InputType.TEXT}
+                id="Symbol"
+                label="Currency Symbol"
+                name="symbol"
+                fullWidth
+                required
+                titleCase={true}
+                defaultValue={entityData.symbol}
+                error={formError?.symbol?.error}
+                helperText={formError?.symbol?.msg}
+ setFormError={setFormError}
+                onChange={onSymbolChange}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { symbol, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                inputType={InputType.TEXT}
+                id="Name"
+                label="Name"
+                name="name"
+                required
+                defaultValue={entityData.name}
+                error={formError?.name?.error}
+                helperText={formError?.name?.msg}
+ setFormError={setFormError}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { name, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                id="shortForm"
+                label="Currency Short Form"
+                inputType={InputType.TEXT}
+                name="shortForm"
+                style={{ width: "100%" }}
+                defaultValue={entityData.shortForm}
+                error={formError?.shortForm?.error}
+                helperText={formError?.shortForm?.msg}
+ setFormError={setFormError}
+                onKeyDown={() => {
+                  setFormError((curr) => {
+                    const { shortForm, ...rest } = curr;
+                    return rest;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <FormControl
+                fullWidth
+                size="small"
+                sx={{
+                  marginTop: "0.9vh",
+                }}
               >
-                <MenuItem value="ind">Indian</MenuItem>
-                <MenuItem value="int">International</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl
-              fullWidth
-              size="small"
-              sx={{
-                marginTop: "1.3vh",
-              }}
-            >
-              <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
-              <Select
-                labelId="decmal-place-label"
-                id="decimal-place"
-                datatype="number"
-                name="decimal_places"
-                value={decimalPlaces}
-                label="Decimal Places"
-                onChange={handleDecimalChange}
-                sx={{ height: "6.1vh" }}
+                <InputLabel id="demo-simple-select-label">
+                  Currency System
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="currency_system"
+                  value={currencySystem}
+                  label="Currency System"
+                  onChange={handleSystemChange}
+                >
+                  <MenuItem value="ind">Indian</MenuItem>
+                  <MenuItem value="int">International</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <FormControl
+                size="small"
+                sx={{
+                  marginTop: "1.3vh",
+                  width: "100%"
+                }}
               >
-                <MenuItem value={2}>Two Digits</MenuItem>
-                <MenuItem value={3}>Three Digits</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box
-            sx={{
-              mt: 3,
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <InputControl
-              id="Sample"
-              // label="Sample"
-              inputType={InputType.TEXT}
-              name="Sample"
-              // defaultValue={sample}
-              value={sample}
-              // error={formError?.Name?.error}
-              // helperText={formError?.Name?.msg}
-              disabled
-            />
-
-            {/* sx={{
-                mt: 3,
-                display: "grid",
+                <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
+                <Select
+                  labelId="decmal-place-label"
+                  id="decimal-place"
+                  datatype="number"
+                  name="decimal_places"
+                  value={decimalPlaces}
+                  label="Decimal Places"
+                  onChange={handleDecimalChange}
+                >
+                  <MenuItem value={2}>Two Digits</MenuItem>
+                  <MenuItem value={3}>Three Digits</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={4}>
+              <InputControl
+                id="Sample"
+                inputType={InputType.TEXT}
+                name="Sample"
+                value={sample}
+                disabled
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
               }}
-              defaultValue={sample}
-              disabled
-            > */}
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Snackbar
           open={snackOpen}
@@ -338,6 +313,6 @@ export default function CurrencyForm(props: masterFormPropsT) {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         />
       </Box>
-    </Paper>
+    </>
   );
 }

@@ -26,11 +26,12 @@ export default function organisation() {
   return (
     <>
       <EntityList
-        title="Organisation Master"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        title="Organisation"
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <OrganisationForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -40,7 +41,7 @@ export default function organisation() {
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );

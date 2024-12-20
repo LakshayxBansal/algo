@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import Seperator from "../../Widgets/seperator";
-import Snackbar from "@mui/material/Snackbar";
 import {
   masterFormPropsT,
   optionsDataT,
@@ -23,12 +22,15 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 
-export default function AddProductToListForm(props: masterFormPropsT) {
+interface customprop extends masterFormPropsT {
+  setData: (props: any) => void;
+}
+
+export default function AddProductToListForm(props: customprop) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [snackOpen, setSnackOpen] = React.useState(false);
   const [defaultValueForUnitUsingProduct, setDefaultValueForUnitUsingProduct] =
     useState<selectKeyValueT>({});
   const handleCancel = () => {
@@ -70,18 +72,21 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               });
               return prevData;
             } else {
-              return [...prevData, { id: prevData.length + 1, ...data }];
+              return [
+                ...prevData,
+                {
+                  id: Math.max(0, ...prevData.map((item : any) => item.id)) + 1,
+                  ...data,
+                },
+              ];
             }
           })
         : null;
 
       if (prevDataPresent) return;
 
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      props.setDialogOpen ? props.setDialogOpen(false) : null;
       setFormError({});
-      setSnackOpen(true);
     } else {
       const issues = parsed.error.issues;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -144,24 +149,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
   };
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Add Product To Product List
-            <IconButton onClick={handleCancel} tabIndex={-1}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -182,6 +169,28 @@ export default function AddProductToListForm(props: masterFormPropsT) {
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
         <form action={handleSubmit} noValidate>
+          <SelectMasterWrapper
+            name={"product"}
+            id={"product"}
+            label={"Product Name"}
+            showDetails={true}
+            dialogTitle={"Add Product"}
+            fetchDataFn={getProduct}
+            fnFetchDataByID={getProductById}
+            required
+            formError={formError?.product ?? formError.product}
+ setFormError={setFormError}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
+            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              <ProductForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+                data={data}
+              />
+            )}
+            width={649}
+          />
+
           <Box
             sx={{
               display: "grid",
@@ -190,26 +199,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            <SelectMasterWrapper
-              name={"product"}
-              id={"product"}
-              label={"Product Name"}
-              showDetails={true}
-              dialogTitle={"Add Product"}
-              fetchDataFn={getProduct}
-              fnFetchDataByID={getProductById}
-              required
-              formError={formError?.product ?? formError.product}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
-                <ProductForm
-                  setDialogOpen={fnDialogOpen}
-                  setDialogValue={fnDialogValue}
-                  data={data}
-                />
-              )}
-            />
-
             <InputControl
               required
               inputType={InputType.TEXT}
@@ -220,16 +209,22 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               inputProps={{
                 min: 0,
                 max: 10000000,
-                style: { textAlign: "right" },
+                // style: { textAlign: "right" },
                 onKeyDown: (e: any) => {
                   // Prevent 'e' character
-                  if (e.key === "e" || e.key === "E") {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
                     e.preventDefault();
                   }
                 },
               }}
               error={formError?.quantity?.error}
               helperText={formError?.quantity?.msg}
+ setFormError={setFormError}
             />
             <SelectMasterWrapper
               key={defaultValueForUnitUsingProduct.id}
@@ -241,7 +236,8 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               fnFetchDataByID={getUnitById}
               required
               formError={formError?.unit ?? formError.unit}
-              onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
+ setFormError={setFormError}
+       onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <UnitForm
                   setDialogOpen={fnDialogOpen}
@@ -257,7 +253,8 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               }
             />
           </Box>
-          <TextField
+          <InputControl
+            inputType={InputType.TEXTFIELD}
             placeholder="Remarks"
             label="Remarks"
             multiline
@@ -273,7 +270,9 @@ export default function AddProductToListForm(props: masterFormPropsT) {
               justifyContent: "flex-end",
             }}
           >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
+            <Button onClick={handleCancel} tabIndex={-1}>
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
@@ -283,13 +282,6 @@ export default function AddProductToListForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Product Added (See the end of the list)!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
       </Box>
     </>
   );

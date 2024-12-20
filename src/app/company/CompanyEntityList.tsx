@@ -33,21 +33,21 @@ export default function CompanyEntityList() {
       width: 150,
     },
     {
-      field: "roleId",
+      field: "role",
       headerName: "Role",
       width: 150,
-      renderCell: (params) => {
-        let role = "none";
-        if(params.row.roleId===1){
-          role = "Admin";
-        }else if(params.row.roleId===2){
-          role = "Manager";
-        }else if(params.row.roleId===3){
-          role = "Executive";
-        }
-        return (
-          <h6>{role}</h6>
-      )},
+      // renderCell: (params) => {
+      //   let role = "none";
+      //   if(params.row.roleId===1){
+      //     role = "Admin";
+      //   }else if(params.row.roleId===2){
+      //     role = "Manager";
+      //   }else if(params.row.roleId===3){
+      //     role = "Executive";
+      //   }
+      //   return (
+      //     <h6>{role}</h6>
+      // )},
     },
     {
       field: "createdBy",
@@ -63,14 +63,14 @@ export default function CompanyEntityList() {
 
   // const companyDefaultColumns=["companyName","companyAlias","createdBy","createdOn"];
 
-  if(document.querySelector(".cursor-wait")){
-    document.body.classList.remove("cursor-wait");
-  }
+  // if(document.querySelector(".cursor-wait")){
+    // }
+      // document.body.classList.remove("cursor-wait");
 
   return (
     <AuthWrapper>
       <EntityList
-        title="Company List"
+        title="Company"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <CreateCompany
             setDialogOpen={fnDialogOpen}

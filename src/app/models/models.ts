@@ -1,3 +1,4 @@
+
 import * as z from "zod";
 import * as zs from "../zodschema/zodschema";
 import { GridColDef } from "@mui/x-data-grid";
@@ -64,11 +65,27 @@ export type masterUploadFormT = {
 };
 
 export type masterFormPropsT = {
-  [x: string]: any;
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
+  metaData?: formMetaDataPropT;
   data?: any;
 };
+
+
+export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
+export type rightSchemaT = z.infer<typeof zs.rightSchema>;
+export type loggedInUserDataT= z.infer<typeof zs.loggedInUserData>;
+
+
+
+// this type is for fetching meta info for custom fields
+export type formMetaDataPropT = {
+  fields: customFieldsMasterSchemaT[],
+  rights: rightSchemaT,
+  regionalSettingsConfigData: regionalSettingSchemaT,
+  loggedInUserData: loggedInUserDataT
+}
+
 
 export type masterFormPropsWithParentT = masterFormPropsT & {
   parentData?: number;
@@ -86,11 +103,12 @@ export type masterFormPropsWithExecutive = masterFormPropsT & {
 // }
 
 // // Added parentData property of type number
-export type masterFormPropsWithDataT = {
+export type masterFormPropsWithDataT<T> = {
   setDialogOpen?: (props: any) => void;
   setDialogValue?: (props: any) => void;
-  data?: any;
-  parentData?: any;
+  data?: T;
+  parentData?: number;
+  metaData?: formMetaDataPropT;
 };
 
 //Enquiry Schemas
@@ -99,6 +117,7 @@ export type enquiryHeaderSchemaT = z.infer<typeof zs.enquiryHeaderSchema>;
 export type enquiryLedgerSchemaT = z.infer<typeof zs.enquiryLedgerSchema>;
 export type enquiryProductSchemaT = z.infer<typeof zs.productToListFormSchema>;
 export type enquiryDataSchemaT= z.infer<typeof zs.enquiryDataSchema>;
+export type enquiryProductArraySchemaT = z.infer<typeof zs.productToListFormArraySchema>;
 
 //Support ticket schemas
 export type supportTicketSchemaT = z.infer<typeof zs.supportTicketSchema>;
@@ -110,17 +129,7 @@ export type suppportProductArraySchemaT = z.infer<typeof zs.supportProductArrayS
 
 //jp_dev
 export type deptT = z.infer<typeof zs.deptSchema>;
-export type getDeptsT = [{
-    id: number;
-    name: string;
-    rowID: number;
-    stamp: number }]
-    //jp mail files
-    export type getDeptT = [{
-        id: number;
-        name: string;
-        stamp: number }]
-    //jp_dev
+
 
 // executive schemas
 export type executiveSchemaT = z.infer<typeof zs.executiveSchema>;
@@ -159,49 +168,48 @@ export type dbInfoT = {
   roleId: number;
 };
 
-export type getOrgansT = [
-  {
-    id: string;
-    name: string;
-    printName: string;
-    alias: string;
-    rowID: number;
-    stamp: string;
-  }
-];
+// export type getOrgansT = [
+//   {
+//     id: string;
+//     name: string;
+//     printName: string;
+//     alias: string;
+//     rowID: number;
+//     stamp: string;
+//   }
+// ];
 
 export type selectKeyValueT = {
   [key: string]: any;
 };
 
-export type getContactByPageT = [
-  {
-    id: number;
-    name: string;
-    whatsapp: string;
-    email: string;
-  }
-];
 
-export type getProductT = [
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  }
-];
+// export type getContactByPageT = [
+//   {
+//     id: number;
+//     name: string;
+//     whatsapp: string;
+//     email: string;
+//   }
+// ];
 
-export type getUnitT = 
-  {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  };
+// export type getProductT = 
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   };
 
+// export type getUnitT = 
+//   {
+//     id: number;
+//     name: string;
+//     phone: string;
+//     email: string;
+//   };
 
-export type enquiryConfigSchemaT = z.infer<typeof zs.enquirySupportConfig>;
+export type configSchemaT = z.infer<typeof zs.configSchema>;
 
 export type deleteCompT={
   fnDeleteDataByID?: (id: number) => Promise<any>;
@@ -231,8 +239,7 @@ export type  entitiyCompT = {
   AddAllowed?: boolean;
   uploadAllowed?:boolean;
   height?: string;
-  loading?:any, 
-  setLoading?:any
+  link ?:string;
 };
 
 export type iconCompT = {
@@ -245,5 +252,11 @@ export type iconCompT = {
   setIds:(props: any) => void;
   delete:any;
   modify:any;
+  link ?:string;
+  setMetaData:(props: any) => void;
 };
 export type regionalSettingSchemaT = z.infer<typeof zs.regionalSettingSchema>;
+export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
+// export type rightSchemaT = z.infer<typeof zs.rightSchema>;
+// export type configSchemaT = z.infer<typeof zs.configSchema>;
+// export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;

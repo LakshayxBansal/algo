@@ -38,11 +38,12 @@ export default function executive() {
   return (
     <>
       <EntityList
-        title="Executive List Master"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        title="Executive"
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            metaData={metaData}
             data={data}
           />
         )}
@@ -53,7 +54,7 @@ export default function executive() {
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
-        height = "60vh"
+        height="60vh"
       ></EntityList>
     </>
   );

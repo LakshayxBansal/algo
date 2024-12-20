@@ -21,7 +21,7 @@ export default function subStatus() {
   return (
     <>
       <EntityList
-        title="Sub Status Master"
+        title="Sub Status"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SubStatusListForm
             setDialogOpen={fnDialogOpen}

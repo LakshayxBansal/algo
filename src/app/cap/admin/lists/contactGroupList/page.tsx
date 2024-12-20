@@ -21,7 +21,7 @@ export default function ContactGroup() {
   return (
     <>
       <EntityList
-        title="Contact Group Master"
+        title="Contact Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <ContactGroupForm
             setDialogOpen={fnDialogOpen}

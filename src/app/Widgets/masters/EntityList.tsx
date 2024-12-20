@@ -11,6 +11,7 @@ import {
   gridClasses,
   GridColumnVisibilityModel,
   DEFAULT_GRID_AUTOSIZE_OPTIONS,
+  GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import {
   Box,
@@ -34,16 +35,16 @@ import TuneIcon from "@mui/icons-material/Tune";
 import SearchIcon from "@mui/icons-material/Search";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AddDialog } from "./addDialog";
-import { entitiyCompT } from "@/app/models/models";
+import { entitiyCompT, formMetaDataPropT, loggedInUserDataT, regionalSettingSchemaT, rightSchemaT } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
-import { getRoleID } from "@/app/controllers/entityList.controller";
 import { useRouter } from "next/navigation";
-import React from "react";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+
 const pgSize = 10;
 
 enum dialogMode {
@@ -52,6 +53,8 @@ enum dialogMode {
   Delete,
   FileUpload,
 }
+
+
 
 export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -66,32 +69,15 @@ export default function EntityList(props: entitiyCompT) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] =
-    useState<GridColumnVisibilityModel>({});
-  const [dfltcols, setdfltcols] = useState<string[]>([]);
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [metaData, setMetaData] = useState<formMetaDataPropT>({
+    fields: [],
+    rights: {} as rightSchemaT,
+    regionalSettingsConfigData: {} as regionalSettingSchemaT,
+    loggedInUserData: {} as loggedInUserDataT
+  });
 
-  // const [includeHeaders, setIncludeHeaders] = React.useState(
-  //   DEFAULT_GRID_AUTOSIZE_OPTIONS.includeHeaders
-  // );
-  // const [includeOutliers, setExcludeOutliers] = React.useState(
-  //   DEFAULT_GRID_AUTOSIZE_OPTIONS.includeOutliers
-  // );
-  // const [outliersFactor, setOutliersFactor] = React.useState(
-  //   String(DEFAULT_GRID_AUTOSIZE_OPTIONS.outliersFactor)
-  // );
-
-  // const [expand, setExpand] = React.useState(
-  //   DEFAULT_GRID_AUTOSIZE_OPTIONS.expand
-  // );
-
-  // const autosizeOptions = {
-  //   includeHeaders,
-  //   includeOutliers,
-  //   outliersFactor: Number.isNaN(parseFloat(outliersFactor))
-  //     ? 1
-  //     : parseFloat(outliersFactor),
-  //   expand,
-  // };
+  const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
@@ -102,134 +88,147 @@ export default function EntityList(props: entitiyCompT) {
   //for navbar search
   const searchParams = useSearchParams();
   const searchData: string | null = searchParams.get("searchText");
-  // console.log("url",url);
   //for navbar search
 
-  const autoSizeColumns = async () => {
+
+let timeOut: string | number | NodeJS.Timeout | undefined;
+  const autoSizeColumns =  () => {
     if (apiRef.current) {
       // Wait for the grid to finish rendering
-      await new Promise(resolve => setTimeout(resolve, 100)); // Delay for rendering
-      const allColumns = apiRef.current.getAllColumns();
-      apiRef.current.autosizeColumns({columns:allColumns.map(col => col.field),includeHeaders:true,includeOutliers:true });
+      // await new Promise(resolve => setTimeout(resolve, 100)); // Delay for rendering
+      timeOut =  setTimeout(() => {
+        // ReactDOM.flushSync(() => {
+          const allColumns = apiRef.current.getAllColumns();
+              apiRef.current.autosizeColumns({columns:allColumns.map(col => col.field),includeHeaders:true,includeOutliers:true });
+        // });
+          
+        }, 100);
+      
     }
   };
 
-  useEffect(() => {
-    
-    const fetchData = debounce(async (searchText) => {
-      const rows: any = await props.fetchDataFn(
-        PageModel.page,
-        searchText as string,
-        pgSize as number
-      );
+  const handleCellKeyDown = (params: any, event: any, details: any) => {
+    const rowId = params.row.id;
+    const currentIndex = data.findIndex((row: any) => row.id === rowId);
 
-      const roleId = await getRoleID();
-      if (rows.data) {
-        setData(rows.data);
-        setNRows(rows.count as number);
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      nextIndex =
+        currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+    } else if (event.key === "Enter" || event.key === " ") { 
+      event.preventDefault();
+    }
+
+    if (nextIndex !== currentIndex) {
+      const nextRow = data[nextIndex];
+      if (nextRow) {
+        // setRowSelectionModel([nextRow.id]);
+        // setSelectedRow(nextRow);
       }
-      const optionsColumn: GridColDef[] = [
-        {
-          field: "Icon menu",
-          headerName: "More Options",
-          minWidth: 50,
-          hideable: false,
-          sortable: false,
-          editable: false,
-          renderCell: (params) => {
-            return (
-              <IconComponent
-                id={params.row.id}
-                fnDeleteDataByID={props.fnDeleteDataByID}
-                fnFetchDataByID={props.fnFetchDataByID}
-                setDlgMode={setDlgMode}
-                setDialogOpen={setDialogOpen}
-                setModData={setModData}
-                setIds={setIds}
-                modify={dialogMode.Modify}
-                delete={dialogMode.Delete}
-              />
-            );
-          },
-        },
-      ];
-
-      //if roleid is 1(admin) show options columns
-      let allDfltCols: GridColDef[];
-
-
+    }
+  };
     
-      // if (roleId == 1) {
-      //   allDfltCols = optionsColumn.concat(props.customCols);
-      // } else {
-      //   allDfltCols = props.customCols;
-      // }
-      //if roleid is 1(admin) show options columns
+  const fetchData = debounce(async (searchText) => {
+    const rows: any = await props.fetchDataFn(
+      PageModel.page,
+      searchText as string,
+      pgSize as number
+    );
 
-      allDfltCols = optionsColumn.concat(props.customCols);
-      const dfltColFields: string[] = allDfltCols.map((col) => col.field);
-      setdfltcols(dfltColFields);
-      if (props.fnFetchColumns) {
-        const columnsData = await props.fnFetchColumns();
-        if (columnsData) {
-          const dbColumns = columnsData.map((col: any) => ({
-            field: col.column_name,
-            headerName: col.column_label,
-            editable: false,
-          }));
-          // filter on columns not to showinitially
-          const filteredColumns = dbColumns.filter(
-            (col: any) => !dfltColFields.includes(col.field)
+    // const roleId = await getRoleID();
+    if (rows.data) {
+      setData(rows.data);
+      setNRows(rows.count as number);
+    }
+
+
+    const optionsColumn: GridColDef[] = [
+      {
+        field: "Icon menu",
+        headerName: "More Options",
+        minWidth: 50,
+        hideable: false,
+        sortable: false,
+        editable: false,
+        renderCell: (params) => {
+          return (
+            <IconComponent
+              id={params.row.id}
+              fnDeleteDataByID={props.fnDeleteDataByID}
+              fnFetchDataByID={props.fnFetchDataByID}
+              setDlgMode={setDlgMode}
+              setDialogOpen={setDialogOpen}
+              setModData={setModData}
+              setMetaData={setMetaData}
+              setIds={setIds}
+              modify={dialogMode.Modify}
+              delete={dialogMode.Delete}
+              link={props.link}
+            />
           );
-          //columns not to showinitially
-          const allColumns = allDfltCols.concat(filteredColumns);
-          const visibleColumns = allColumns.reduce((model: any, col: any) => {
-            model[col.field] = dfltColFields.includes(col.field);
-            return model;
-          }, {});
-          
-          autoSizeColumns();
-          setColumnVisibilityModel(visibleColumns);
-          setAllColumns(allColumns);
+        },
+      },
+    ];
 
-          // setColumnsChanged(true);
-          // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
-        }
-      } else {
-        autoSizeColumns();
-        setAllColumns(allDfltCols);
+    let allDfltCols: GridColDef[];
+    allDfltCols = optionsColumn.concat(props.customCols);
+    const dfltColFields: string[] = allDfltCols.map((col) => col.field);
+    // if (props.fnFetchColumns) {
+    //   const columnsData = await props.fnFetchColumns();
+    //   if (columnsData) {  
+    //     const dbColumns = columnsData.map((col: any) => ({
+    //       field: col.column_name,
+    //       headerName: col.column_label,
+    //       editable: false,
+    //     }));
+    //     // filter on columns not to showinitially
+    //     const filteredColumns = dbColumns.filter(
+    //       (col: any) => !dfltColFields.includes(col.field)
+    //     );
+    //     //columns not to showinitially
+    //     const allColumns = allDfltCols.concat(filteredColumns);
+    //     const visibleColumns = allColumns.reduce((model: any, col: any) => {
+    //       model[col.field] = dfltColFields.includes(col.field);
+    //       return model;
+    //     }, {});
+        
+    //     // autoSizeColumns();
+    //     setColumnVisibilityModel(visibleColumns);
+    //     setAllColumns(allColumns);
 
-      }
-      // for title
-      if(props.title){
-        let newUrl: string;
-        if (searchParams.size > 0) {
-          // newUrl = url+`&pgTitle=${props.title}`
-          const newSearchParams = new URLSearchParams(searchParams.toString());
-          newSearchParams.set("pgTitle", props.title);
-          // router.push(url+`?${newSearchParams.toString()}`);
-          newUrl = url + `?${newSearchParams.toString()}`;
-        } else {
-          newUrl = url + `?pgTitle=${props.title}`;
-        }
-        router.push(newUrl);
-      }
-      // for title
+    //     // setColumnsChanged(true);
+    //     // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
+    //   }
+    // } else {
+      // autoSizeColumns();
+      setAllColumns(allDfltCols);
 
-      const headers = document.querySelectorAll(
-        ".MuiDataGrid-columnHeader.MuiDataGrid-withBorderColor"
-      );
-      headers.forEach((header) => {
-        header.setAttribute("tabindex", "-1");
-      });
-      console.log(headers);
-    }, 400);
+    // }
+    const headers = document.querySelectorAll(
+      ".MuiDataGrid-columnHeader.MuiDataGrid-withBorderColor"
+    );
+    headers.forEach((header) => {
+      header.setAttribute("tabindex", "-1");
+    });
+    console.log(headers);
+  }, 400);
+
+  
+  useEffect(() => {
 
     if (searchData) {
       fetchData(searchData);
     } else {
       fetchData(search);
     }
+    // return () => {
+    //   clearInterval(timeOut);
+    // };
   }, [
     PageModel,
     filterModel,
@@ -238,7 +237,7 @@ export default function EntityList(props: entitiyCompT) {
     dialogOpen,
     searchData,
     apiRef,
-    props,
+    props
   ]);
 
   const toggleColBtn = () => {
@@ -256,9 +255,26 @@ export default function EntityList(props: entitiyCompT) {
     setSearch(e.target.value);
   };
 
-  const handleAddBtn = () => {
-    setDialogOpen(true);
-    setDlgMode(dialogMode.Add);
+  const handleAddBtn = async () => {
+    if (props?.link)
+    {
+      router.push(props.link);
+    }
+    else {
+      if (props.fnFetchDataByID) {
+        const data = await props.fnFetchDataByID(0);
+        if (data[0]?.length > 0) {
+          setMetaData({
+            fields: data[0][0] || [],
+            rights: data[0][1] || {},
+            regionalSettingsConfigData: data[0][2] || [],
+            loggedInUserData: data[0][3] || {}
+          });
+        }
+      }
+      setDialogOpen(true);
+      setDlgMode(dialogMode.Add);
+    }
   };
 
   const handleDropDownBtn = () => {
@@ -283,18 +299,18 @@ export default function EntityList(props: entitiyCompT) {
     <Box>
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
-          <AddDialog title="" open={dialogOpen} setDialogOpen={setDialogOpen}>
+          <AddDialog title={`${dlgMode === dialogMode.FileUpload ? 'Upload File' : dlgMode === dialogMode.Add ? `Add ${props.title}` : dlgMode === dialogMode.Delete ? `Delete ${props.title}` : `Update ${props.title}`}`} open={dialogOpen} setDialogOpen={setDialogOpen}>
             {props.fileUploadFeatureReqd &&
-            dlgMode === dialogMode.FileUpload ? (
+              dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
                 setDialogOpen={setDialogOpen}
                 fnFileUpad={props.fnFileUpad}
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              props.renderForm(setDialogOpen, (arg) => {})
+              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData) : props.renderForm(setDialogOpen, (arg) => { })
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              props.renderForm(setDialogOpen, (arg) => {}, modData)
+              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData, modData) : props.renderForm(setDialogOpen, (arg) => { }, modData)
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}
@@ -305,6 +321,7 @@ export default function EntityList(props: entitiyCompT) {
             ) : null}
           </AddDialog>
         )}
+        <SecondNavbar title={props.title}/>
         <Paper
           elevation={3}
           sx={{
@@ -344,7 +361,7 @@ export default function EntityList(props: entitiyCompT) {
                       backgroundColor: "#f5f5f5",
                     },
                   }}
-                  sx={{ marginLeft: "1.1em" }}
+                  sx={{ marginLeft: '1.1em' }}
                 />
               </Box>
             </Grid>
@@ -517,7 +534,10 @@ export default function EntityList(props: entitiyCompT) {
             onPaginationModelChange={setPageModel}
             filterMode="server"
             onFilterModelChange={setFilterModel}
+            rowSelectionModel={rowSelectionModel}
+
             loading={!data}
+            onCellKeyDown={handleCellKeyDown}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel) => {
@@ -542,7 +562,7 @@ export default function EntityList(props: entitiyCompT) {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;

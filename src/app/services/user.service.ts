@@ -170,22 +170,12 @@ export async function mapUser(map : boolean, userId : number,roleId : number | n
   }
 }
 
-export async function deRegisterFromCompanyDB(id : number | null, userId : number | null, companyId : number | null) {
+export async function deRegisterFromCompanyDB(userId : number, companyId : number) {
   try {
-    let query;
-    let values = [];
-    if(id){
-      query = "delete from userCompany where id = ?;"
-      values = [id];
-    }else{
-      query = "delete from userCompany where user_id = ? and company_id = ?;"
-      values = [userId,companyId]
-    }
-
     await excuteQuery({
       host: 'userDb',
-      query: query,
-      values: values,
+      query: "delete from userCompany where user_id = ? and company_id = ?;",
+      values: [userId,companyId],
     })
     // return user[0];
     return;
@@ -242,7 +232,7 @@ export async function getCompanyUserDB(
           host: "userDb",
           query:
                 "SELECT * \
-       FROM (SELECT uc.id as id,uc.user_id as userId, uc.isAdmin as admin ,u.name as name,u.contact as contact, ROW_NUMBER() OVER () AS RowID \
+       FROM (SELECT uc.id as id,uc.user_id as userId,uc.company_id as companyId, uc.isAdmin as admin,uc.role_id as roleId ,u.name as name,u.contact as contact, ROW_NUMBER() OVER () AS RowID \
           FROM userCompany uc left join user u on uc.user_id = u.id where uc.company_id = ? and uc.isAccepted = 1 " +
                 (filter ? "and u.name LIKE CONCAT('%',?,'%') " : "") +
                 "order by uc.isAdmin desc, u.name asc \
