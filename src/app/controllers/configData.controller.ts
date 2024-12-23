@@ -10,7 +10,7 @@ import { SqlError } from "mariadb";
 export async function getConfigType() {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const result = await getConfigTypeDB(session.user.dbInfo.dbName);
       return result;
     }
@@ -23,7 +23,7 @@ export async function updateConfigData(config: configSchemaT, configDept: config
   let result = { status: false, data: [] };
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const configParsedData = zs.configSchema.safeParse(config);
       const configDeptParsedData = zs.configDeptMapSchema.safeParse(configDept);
       if (configDeptParsedData.success) {

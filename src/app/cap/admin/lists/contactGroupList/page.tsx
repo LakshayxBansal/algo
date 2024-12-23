@@ -8,6 +8,8 @@ import {
   getContactGroupById,
   getContactGroupByPage,
 } from "@/app/controllers/contactGroup.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -20,6 +22,9 @@ const columns: GridColDef[] = [
 export default function ContactGroup() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Contact Group"}/>
+      </Box>
       <EntityList
         title="Contact Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

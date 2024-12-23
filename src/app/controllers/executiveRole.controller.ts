@@ -94,7 +94,7 @@ export async function createExecutiveRole(data: executiveRoleSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.executiveRoleSchema.safeParse(data);
 
       if (parsed.success) {
@@ -145,7 +145,7 @@ export async function updateExecutiveRole(data: executiveRoleSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
 
       if (parsed.success) {
@@ -212,7 +212,7 @@ export async function getExecutiveRoleByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getExecutiveRoleByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

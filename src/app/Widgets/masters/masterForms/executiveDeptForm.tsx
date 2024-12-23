@@ -43,6 +43,7 @@ export default function ExecutiveDeptForm(
         autoFocus
         inputType={InputType.TEXT}
         id="name"
+        titleCase={true}
         label="Department Name"
         name="name"
         style={{ width: "100%" }}

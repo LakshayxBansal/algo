@@ -72,9 +72,11 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
     return (
       <>
         <Dialog maxWidth="lg" open={open} onClose={handleClose} 
-        PaperComponent={(props) => (
-        <PaperComponent {...props} handleid={uniqueHandleId} />
-      )}>
+      //   PaperComponent={(props) => (
+      //   <PaperComponent {...props} handleid={uniqueHandleId} />
+      // )}
+      >
+
           <DialogTitle style={{ 
             cursor: 'move',
            }} id={uniqueHandleId}>

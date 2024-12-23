@@ -268,20 +268,18 @@ export async function getCompaniesDb(
   }
 }
 
-export async function getCompanyCount(
-  userContact: string
+export async function getCompanyCountDB(
+  userId: number
 ) {
   try {
     return excuteQuery({
       host: "userDb",
       query:
         "Select count(*) as rowCount from \
-          userCompany as uc, \
-          user as u\
+          userCompany uc \
           where \
-          u.contact = ? and \
-          u.id = uc.user_id",
-      values: [userContact],
+          uc.user_id = ?",
+      values: [userId],
     });
   } catch (e) {
     console.log(e);

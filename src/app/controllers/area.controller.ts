@@ -89,7 +89,7 @@ export async function createArea(data: areaSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.areaSchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await createAreaDb(session, data);
@@ -141,7 +141,7 @@ export async function updateArea(data: areaSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       // const data = {
       //   name: areadata.get("name") as string,
       // };
@@ -207,7 +207,7 @@ export async function getAreaByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getAreaByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

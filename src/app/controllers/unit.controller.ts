@@ -21,7 +21,7 @@ export async function createUnit(data: mdl.unitSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.UnitSchema.safeParse(data);
 
       if (parsed.success) {
@@ -77,7 +77,7 @@ export async function updateUnit(data: mdl.unitSchemaT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.ProductSchema.safeParse(data);
 
       if (parsed.success) {
@@ -229,7 +229,7 @@ export async function getUnitByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getUnitByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -272,7 +272,7 @@ export async function getUnitData(id: number) {
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dep = await fetchUnitById(
         appSession.user.dbInfo.dbName as string,
         id as number

@@ -15,7 +15,7 @@ export const metadata : Metadata = {
 export default async function callExplorer() {
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
         const result = await getCallEnquiries({}, "reset", "", "0", "0", 1, 10,[]);
         const config_data = await getConfigData();
         const regional_setting =JSON.parse(config_data[1].config)?? {};

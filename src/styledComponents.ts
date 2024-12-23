@@ -7,7 +7,6 @@ import MuiAppBar, {
   AppBarProps,
   AppBarProps as MuiAppBarProps,
 } from "@mui/material/AppBar";
-import { MuiTelInput } from "mui-tel-input";
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -452,10 +451,3 @@ export const CustomStyledDiv = styled('div')(({ theme }) => ({
   border: '1px solid #ddd',
 }));
 
-export const StyledTelInput = styled(MuiTelInput)(({ theme }) => ({
-  height: "fit-content",
-  "& .MuiFormHelperText-root": {
-    backgroundColor: "white",
-    margin: 0,
-  },
-}));

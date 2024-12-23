@@ -84,7 +84,7 @@ function getUniqueData(rightsData: rightSchemaArray, name: string, id: string) {
 export default async function Rights() {
     try {
         const session = await getSession();
-        if (session) {
+        if (session?.user.dbInfo) {
             const rightsData: rightSchemaArray = await getRightsData();
             const rightsDataObject = getRighsDataObject(rightsData);
             const depts = getUniqueData(rightsData, "deptName", "deptId");

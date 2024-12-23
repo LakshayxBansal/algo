@@ -33,6 +33,9 @@ import { set } from "lodash";
 interface customprop extends masterFormPropsT {
   setRefresh: (props: any) => void;
   formName: string;
+  setSelectedRow:(props: any) => void;
+  setSelectedStatusRows: (props: any) => void;
+  setRowSelectionModel :(props: any) => void;
 }
 
 export default function AllocateCall(props: customprop) {
@@ -109,6 +112,9 @@ export default function AllocateCall(props: customprop) {
     if (result > 0) {
       setSnackOpen(true);
       handleRefresh();
+      props.setRowSelectionModel([]);
+      props.setSelectedStatusRows([]);
+      props.setSelectedRow(null);
       setTimeout(() => {
         props.setDialogOpen ? props.setDialogOpen(false) : null;
       }, 1000);
@@ -176,6 +182,7 @@ export default function AllocateCall(props: customprop) {
           rows={6}
           fullWidth
           disabled
+          setFormError={setFormError}
         />
 
         <Seperator>
@@ -224,6 +231,7 @@ export default function AllocateCall(props: customprop) {
                   value: React.SetStateAction<optionsDataT>
                 ): void { }}
                 fnSetModifyMode={function (id: string): void { }}
+
               />
               {/* <InputControl
                             inputType={InputType.TEXT}

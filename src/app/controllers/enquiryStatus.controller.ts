@@ -28,7 +28,7 @@ export async function createEnquiryStatus(formData: FormData) {
   let result;
     try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const data = {
         name: formData.get("name") as string,
       };
