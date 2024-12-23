@@ -42,7 +42,7 @@ export async function createSupportTicket({
   let result;
   try {
     const session = await getSession();
-    if (session?.user.dbInfo) {
+    if (session) {
       const updatedSupportData = {
         ...supportData,
         status_version: 0,
@@ -56,22 +56,47 @@ export async function createSupportTicket({
       const productParsed = supportProductArraySchema.safeParse(productData);
 
       if (supportDataParsed.success && productParsed.success) {
-        const dbResult = await createSupportTicketDB(
-          session,
-          updatedSupportData,
-          JSON.stringify(productData)
-        );
-        if (dbResult?.length > 0 && dbResult[0][0].error === 0) {
-          result = { status: true, data: dbResult[1] };
+        const supportActionData = {
+          headerLedger: updatedSupportData,
+          product: JSON.stringify(productData),
+        };
+      
+        const dbResult = await createSupportTicketDB(session,  updatedSupportData,  JSON.stringify(productData));
+        if (dbResult[0].length === 0 && dbResult[1].length === 0) {
+          result = { status: true, data: dbResult[2] };
           const objectDetails = await getObjectByName("Support");
-          await uploadDocument(docData,dbResult[1][0].id,objectDetails[0].object_id);
+          await uploadDocument(
+            docData,
+            dbResult[2][0].id,
+            objectDetails[0].object_id
+          );
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          let errorStateForProduct: {
+            path: (string | number)[];
+            message: string;
+          }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          dbResult[1].forEach((error: any) => {
+            if (error.error_path.length > 1) {
+              errorStateForProduct.push({
+                path: [Number(error.error_path[0]) - 1, error.error_path[1]], // Convert first element to number
+                message: error.error_text,
+              });
+            }
+          });
           result = {
             status: false,
             data: [
+              { ticketDataIssue: errorState.length > 0 ? errorState : null },
               {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
+                productIssue:
+                  errorStateForProduct.length > 0 ? errorStateForProduct : null,
               },
             ],
           };
@@ -93,6 +118,7 @@ export async function createSupportTicket({
           ],
         };
       }
+      
     } else {
       result = {
         status: false,
@@ -157,15 +183,35 @@ export async function updateSupportData(
           data,
           JSON.stringify(productData)
         );
-        if (dbResult?.length > 0 ) {
-          result = { status: true, data: dbResult[1] };
+        if (dbResult[0].length === 0 && dbResult[1].length === 0) {
+          result = { status: true, data: dbResult[2] };
         } else {
+          let errorState: { path: (string | number)[]; message: string }[] = [];
+          let errorStateForProduct: {
+            path: (string | number)[];
+            message: string;
+          }[] = [];
+          dbResult[0].forEach((error: any) => {
+            errorState.push({
+              path: [error.error_path],
+              message: error.error_text,
+            });
+          });
+          dbResult[1].forEach((error: any) => {
+            if (error.error_path.length > 1) {
+              errorStateForProduct.push({
+                path: [Number(error.error_path[0]) - 1, error.error_path[1]], // Convert first element to number
+                message: error.error_text,
+              });
+            }
+          });
           result = {
             status: false,
             data: [
+              { ticketDataIssue: errorState.length > 0 ? errorState : null },
               {
-                path: [dbResult[0][0].error_path],
-                message: dbResult[0][0].error_text,
+                productIssue:
+                  errorStateForProduct.length > 0 ? errorStateForProduct : null,
               },
             ],
           };
