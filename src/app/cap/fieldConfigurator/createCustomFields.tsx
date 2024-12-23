@@ -257,18 +257,6 @@ const FieldConfigurator = () => {
         dragPositionRef.current = null;
     };
 
-    // const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
-    //     setDraggedItem(index);
-    //     const element = e.currentTarget as HTMLDivElement;
-    //     // element.classList.add("opacity-50");
-    //     element.style.opacity = "0"; // Make it completely transparent
-    // };
-
-    // const handleDragOver = (e: React.DragEvent) => {
-    //     e.preventDefault();
-    //     startAutoScroll(e.clientY); // Pass the current mouse Y position for scrolling
-    // };
-
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         setDraggedItem(index);
         const element = e.currentTarget as HTMLDivElement;
