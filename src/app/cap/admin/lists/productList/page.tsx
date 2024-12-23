@@ -8,6 +8,8 @@ import {
   getProductByPage,
 } from "@/app/controllers/product.controller";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "Name", editable: false },
@@ -19,6 +21,9 @@ const columns: GridColDef[] = [
 export default function Products() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Product"}/>
+      </Box>
       <EntityList
         title="Product"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

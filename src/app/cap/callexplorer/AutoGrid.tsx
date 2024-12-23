@@ -74,10 +74,9 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { encrypt } from "@/app/utils/encrypt.utils";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
-import { set } from "lodash";
+import { set, values } from "lodash";
 import dayjs from "dayjs";
 export let handleRefresh: any;
-import * as XLSX from "xlsx";
 import { exportToExcel } from "@/app/utils/exportExcel";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { getEnquiryDescription } from "@/app/controllers/enquiry.controller";
@@ -125,7 +124,7 @@ export default function AutoGrid(props: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [value, setValue] = React.useState(0);
   const [sortBy, setSortBy] = React.useState<GridSortModel>([]);
-  const [columnWidths, setColumnWidths] = React.useState<ColumnWidths>( {})
+  const [columnWidths, setColumnWidths] = React.useState<ColumnWidths>({})
   // const [selectedStatuses, setSelectedStatuses] = React.useState<Record<FilterKey, boolean>>({
   //   "Open-Unallocated": false,
   //   "Open-Allocated": false,
@@ -135,8 +134,10 @@ export default function AutoGrid(props: any) {
   const [selectedStatusRows, setSelectedStatusRows] =
     React.useState<GridRowSelectionModel>([]);
   const [lastSelectedIndex, setLastSelectedIndex] = React.useState(null);
+  const [isAllocated ,setIsAllocated] = React.useState(false);  // To check if the call is allocated or not
+
   const descriptionRef = React.useRef(null);
-    
+
 
   const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
   const apiRef = useGridApiRef();
@@ -155,7 +156,7 @@ export default function AutoGrid(props: any) {
   };
 
   const { dateFormat, timeFormat } = props.regional_setting;
-  
+
   const timeFormatString = timeFormat
     ? timeFormat === "12 Hours"
       ? "hh:mm A"
@@ -180,18 +181,18 @@ export default function AutoGrid(props: any) {
     const fetchAndSetPreferences = async () => {
       try {
         const data = await getUserPreference();
-        let userColumnPreference = data[0]?JSON.parse(data[0]?.meta_data):{};
-  
+        let userColumnPreference = data[0] ? JSON.parse(data[0]?.meta_data) : {};
+
         if (!Object.keys(userColumnPreference).length) {
           // Get default column widths from apiRef
           const currentColumns = apiRef.current.getAllColumns();
           userColumnPreference = currentColumns.reduce((acc: any, column: any) => {
-            acc[column.field] = column.computedWidth || column.width || 100; 
+            acc[column.field] = column.computedWidth || column.width || 100;
             return acc;
           }, {});
-          
+
           await insertUserPreference(userColumnPreference);
-  
+
           // Set column widths in the state
           setColumnWidths(userColumnPreference);
         } else {
@@ -199,19 +200,19 @@ export default function AutoGrid(props: any) {
           setColumnWidths(userColumnPreference || {});
         }
 
-      const columnVisibilityModel = apiRef.current
-        .getAllColumns()
-        .reduce((visibility: any, column: any) => {
-          visibility[column.field] = column.field in userColumnPreference;
-          return visibility;
-        }, {});
-      setColumnVisibilityModel(columnVisibilityModel);
+        const columnVisibilityModel = apiRef.current
+          .getAllColumns()
+          .reduce((visibility: any, column: any) => {
+            visibility[column.field] = column.field in userColumnPreference;
+            return visibility;
+          }, {});
+        setColumnVisibilityModel(columnVisibilityModel);
 
       } catch (error) {
         console.error('Error fetching or setting column preferences:', error);
       }
     };
-  
+
     fetchAndSetPreferences();
   }, []);
 
@@ -224,7 +225,7 @@ export default function AutoGrid(props: any) {
       getSubStatus: getEnquirySubStatus,
       getAction: getEnquiryAction,
       getCallData: getCallEnquiries,
-      getDescription:getEnquiryDescription,
+      getDescription: getEnquiryDescription,
       getContact: getContact,
       getAllData: getAllCallEnquiries,
     },
@@ -324,21 +325,24 @@ export default function AutoGrid(props: any) {
     // Set enableAllocate state
     setEnableAllocate(isAllocatable);
 
-    if (deSelect && selectedRow?.id === params.row.id) {
-      setSelectedRow(null);
-      setRowSelectionModel([]);
-    } else {
+    /***  commented this code to keep the history of last mouse click whether its select of deselect   ** */
+
+    // if (deSelect && selectedRow?.id === params.row.id) {
+    //   const firstSelectedRow= selectedStatusRows.length>0 ?data.find((row:any)=>row.id === selectedStatusRows[0]):null
+    //   setSelectedRow(firstSelectedRow);
+    //   setRowSelectionModel([selectedStatusRows[0]]);
+    // } else {
       const selectedRowData = data.find((row: any) => row.id === params.row.id);
       setSelectedRow(selectedRowData);
       setRowSelectionModel([params.row.id]);
-    }
+    // }
   };
 
 
-const handleColumnVisibilityModelChange=(newModel: any) => {
+  const handleColumnVisibilityModelChange = (newModel: any) => {
     // Create a new columnWidths object by including only visible columns
     const updatedColumnWidths = { ...columnWidths };
-  
+
     Object.keys(newModel).forEach((column) => {
       if (newModel[column]) {
         // Add column with default width if not already present
@@ -350,15 +354,15 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
         delete updatedColumnWidths[column];
       }
     });
-  
+
     // Update user preferences in the database
     updateUserPreference(updatedColumnWidths);
-  
+
     // Update the local state
     setColumnWidths(updatedColumnWidths);
     setColumnVisibilityModel(newModel);
   }
-  
+
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -370,10 +374,17 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
       apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
     }
   };
-
+  
+  
   const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // const value = parseInt(event.target.value, 10);
-    const value = Number(event.target.value);
+
+    if(event.target.value==="0") event.target.value ="1"; // to prevent setting interval to 0
+    
+    let value = Number(event.target.value);
+   
+    if(value <1){
+      value =1;
+    }
     setRefreshInterval(value !== undefined ? value : 5); // Set a minimum of 5 minute
   };
   const handleStatusClick = async () => {
@@ -641,23 +652,23 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
   };
 
   const handleColumnResize = async (params: any) => {
-    
+
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
-  
+
     // Set a timeout
     debounceTimeout.current = setTimeout(() => {
-      let  updatedWidths= columnWidths;
+      let updatedWidths = columnWidths;
       setColumnWidths((prev) => {
-         updatedWidths= { ...prev, [params.colDef.field]: params.width };
+        updatedWidths = { ...prev, [params.colDef.field]: params.width };
         // updateUserPreference(updatedWidths); 
         return updatedWidths;
       });
-      updateUserPreference(updatedWidths); 
+      updateUserPreference(updatedWidths);
     }, 600);
   };
-  
+
   const checkboxSelectionWithColor = (params: any) => {
     let color;
     if (params.row.callStatus === "Open") {
@@ -725,7 +736,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
           tooltipTitle={"Filter by Description"}
           inputValue={descriptionRef}
         >
-          <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()} >
             <TextField
               // inputType={InputType.TEXT}
               id="description"
@@ -733,7 +744,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               name="description"
               defaultValue={filterValueState?.description}
               inputRef={descriptionRef}
-              
+
             />
           </MenuItem>
         </FilterMenu>
@@ -754,20 +765,20 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
           headerName={"Contact"}
           tooltipTitle={"Filter by Contact"}
         >
-          <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()} >
             <AutocompleteDB
               name={"contactParty"}
               id={"contactParty"}
               label={"Contact"}
               // onChange={(e, val, s) => setCategorySearchText(val)}
-              onChange={(e, val, s) =>{handleFilterChange("contactParty", val)}}
+              onChange={(e, val, s) => { handleFilterChange("contactParty", val) }}
               fetchDataFn={tabOptions[value].getContact}
               defaultValue={
                 filterValueState?.contactParty
                   ? {
-                      id: filterValueState.contactParty.id,
-                      name: filterValueState.contactParty.name,
-                    }
+                    id: filterValueState.contactParty.id,
+                    name: filterValueState.contactParty.name,
+                  }
                   : undefined // Set default value to null if no data exists
               }
               diaglogVal={{
@@ -778,10 +789,10 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void {
-                
-                
+
+
               }}
-              fnSetModifyMode={function (id: string): void {}}
+              fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -793,7 +804,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
       headerName: "Date",
       hideable: false,
       renderCell: (params) => {
-        return params.row.date?adjustToLocal(params.row.date).format(dateTimeFormat) : "";
+        return params.row.date ? adjustToLocal(params.row.date).format(dateTimeFormat) : "";
       },
       renderHeader: () => (
         <FilterMenu
@@ -879,8 +890,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               }}
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -920,8 +931,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               }}
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -986,8 +997,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                 }}
                 setDialogVal={function (
                   value: React.SetStateAction<optionsDataT>
-                ): void {}}
-                fnSetModifyMode={function (id: string): void {}}
+                ): void { }}
+                fnSetModifyMode={function (id: string): void { }}
               />
             </MenuItem>
           )}
@@ -1008,20 +1019,20 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
           headerName={"Action Taken"}
           tooltipTitle={"Filter by Action Taken"}
         >
-          <MenuItem  onKeyDown={(e: any) => e.stopPropagation()} >
+          <MenuItem onKeyDown={(e: any) => e.stopPropagation()} >
             <AutocompleteDB
               name={"actionTaken"}
               id={"actionTaken"}
               label={"Action Taken"}
               // onChange={(e, val, s) => setCategorySearchText(val)}
-              onChange={(e, val, s) =>{handleFilterChange("actionTaken", val)}}
+              onChange={(e, val, s) => { handleFilterChange("actionTaken", val) }}
               fetchDataFn={tabOptions[value].getAction}
               defaultValue={
                 filterValueState?.actionTaken
                   ? {
-                      id: filterValueState.actionTaken.id,
-                      name: filterValueState.actionTaken.name,
-                    }
+                    id: filterValueState.actionTaken.id,
+                    name: filterValueState.actionTaken.name,
+                  }
                   : undefined // Set default value to null if no data exists
               }
               diaglogVal={{
@@ -1032,10 +1043,10 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void {
-                
-                
+
+
               }}
-              fnSetModifyMode={function (id: string): void {}}
+              fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -1054,6 +1065,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
           field={"callStatus"}
           headerName={"Call Status"}
           tooltipTitle={"Filter by Call Status"}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
         >
           <MenuItem>
             <FormControl component="fieldset">
@@ -1165,8 +1178,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               }}
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -1205,8 +1218,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               }}
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
-              ): void {}}
-              fnSetModifyMode={function (id: string): void {}}
+              ): void { }}
+              fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -1218,8 +1231,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
       headerName: " Next Action Date",
       renderCell: (params) => {
         return params.row.actionDate
-          ? adjustToLocal(params.row.actionDate).format( dateTimeFormat)
-              
+          ? adjustToLocal(params.row.actionDate).format(dateTimeFormat)
+
           : "";
       },
       renderHeader: () => (
@@ -1306,12 +1319,12 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
     },
     {
       field: "modified_on",
-      width: columnWidths?.modified_on ?? 100,
+      width: columnWidths?.modified_on ?? 140,
       headerName: "Last Updated",
       hideable: true,
       renderCell: (params) => {
         return params.row.modified_on
-          ? adjustToLocal(params.row.modified_on).format( dateTimeFormat)
+          ? adjustToLocal(params.row.modified_on).format(dateTimeFormat)
           : "";
       },
       renderHeader: () => (
@@ -1384,7 +1397,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
     setSelectedStatusRows([]);
     setSelectedRow(null);
     setRowSelectionModel([]);
-    
+
   };
 
   const CallType = (props: { text: string; color: string }) => {
@@ -1503,7 +1516,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                     alignItems: "center",
                   }}
                 >
-                  <CallType text="Open-Unallocated" color="blue" />
+                  <CallType text="Unallocated" color="blue" />
                 </Grid>
                 <Grid
                   item
@@ -1514,7 +1527,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                     alignItems: "center",
                   }}
                 >
-                  <CallType text="Open-Allocated" color="purple" />
+                  <CallType text="Allocated" color="purple" />
                 </Grid>
                 <Grid
                   item
@@ -1525,14 +1538,14 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                     alignItems: "center",
                   }}
                 >
-                  <CallType text="Closed-Failure" color="red" />
+                  <CallType text="Dropped" color="red" />
                 </Grid>
                 <Grid
                   item
                   xs="auto"
                   sx={{ display: "flex", alignItems: "center" }}
                 >
-                  <CallType text="Closed-Success" color="green" />
+                  <CallType text="Mature" color="green" />
                 </Grid>
               </Grid>
             </Box>
@@ -1568,7 +1581,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
             onSortModelChange={(sortModel) => handleCustomSort(sortModel)}
             onCellKeyDown={handleCellKeyDown}
             columnVisibilityModel={columnVisibilityModel}
-            hideFooterSelectedRowCount
+            hideFooterSelectedRowCount={false}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
             onCellClick={handleCellClick}
             onRowSelectionModelChange={handleRowSelection}
@@ -1581,6 +1594,9 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
             checkboxSelection
             apiRef={apiRef}
             loading={loading}
+            localeText={{
+              footerRowSelected: (count) => `${selectedStatusRows.length ? selectedStatusRows.length : rowSelectionModel.length} rows selected`,
+            }}
             slotProps={{
               columnsPanel: {
                 sx: {
@@ -1599,7 +1615,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
@@ -1636,9 +1652,9 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               },
 
               "& .MuiDataGrid-columnHeaderCheckbox, & .MuiDataGrid-cellCheckbox":
-                {
-                  display: "none",
-                },
+              {
+                display: "none",
+              },
               "& .MuiTablePagination-root": {
                 fontSize: "0.75rem", // Compact font size for footer
               },
@@ -1681,7 +1697,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
               selectedRow={selectedRow}
               refresh={refresh}
               callType={value}
-              dateTimeFormat ={dateTimeFormat}
+              dateTimeFormat={dateTimeFormat}
             />
           </Paper>
         )}
@@ -1748,8 +1764,8 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                     rowSelectionModel?.length == 0
                       ? "Please select a row first"
                       : enableAllocate
-                      ? ""
-                      : "Deselect Closed enquiries first"
+                        ? ""
+                        : "Deselect Closed enquiries first"
                   }
                   placement="top"
                 >
@@ -1793,7 +1809,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                   Auto refresh in
                 </Typography>
                 <TextField
-                  value={refreshInterval}
+                  
                   onChange={handleIntervalChange}
                   variant="standard"
                   size="small"
@@ -1803,6 +1819,7 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
                     style: { width: "35px", textAlign: "center" },
                   }}
                   sx={{ mx: 1, width: "auto" }} // Fixed width for TextField
+                  defaultValue={refreshInterval}
                 />
                 <Typography variant="body2" component="span">
                   mins.
@@ -1836,25 +1853,28 @@ const handleColumnVisibilityModelChange=(newModel: any) => {
             </Grid>
           </Grid>
         </Box>
-        {dialogOpen && 
-        (
-          <AddDialog
-            title={"Allocate Executive"}
-            open={dialogOpen}
-            setDialogOpen={setDialogOpen}
-          >
-            <AllocateCall
+        {dialogOpen &&
+          (
+            <AddDialog
+              title={"Allocate Executive"}
+              open={dialogOpen}
               setDialogOpen={setDialogOpen}
-              data={
-                selectedStatusRows.length > 1
-                  ? selectedStatusRows
-                  : rowSelectionModel
-              }
-              setRefresh={setRefresh}
-              formName={tabOptions[value].name}
-            />
-          </AddDialog>
-        )}
+            >
+              <AllocateCall
+                setDialogOpen={setDialogOpen}
+                data={
+                  selectedStatusRows.length > 1
+                    ? selectedStatusRows
+                    : rowSelectionModel
+                }
+                setRefresh={setRefresh}
+                formName={tabOptions[value].name}
+                setSelectedRow={setSelectedRow}
+                setSelectedStatusRows= {setSelectedStatusRows}
+                setRowSelectionModel = {setRowSelectionModel}
+              />
+            </AddDialog>
+          )}
       </Box>
     </Box>
   );

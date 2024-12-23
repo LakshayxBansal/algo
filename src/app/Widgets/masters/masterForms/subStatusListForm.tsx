@@ -13,6 +13,7 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
+  Portal,
   Radio,
   RadioGroup,
 } from "@mui/material";
@@ -23,8 +24,11 @@ import {
   masterFormPropsWithDataT,
 } from "@/app/models/models";
 import { updateEnquirySubStatusList } from "@/app/controllers/enquirySubStatus.controller";
+import { usePathname } from "next/navigation";
 
-export default function SubStatusListForm(props: masterFormPropsWithDataT<enquirySubStatusMasterT>) {
+export default function SubStatusListForm(
+  props: masterFormPropsWithDataT<enquirySubStatusMasterT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -32,7 +36,11 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
   const [status_id, setStatus] = useState<number | undefined>(
     props.data?.enquiry_status_id
   );
-  const entityData: enquirySubStatusMasterT = props.data ? props.data : {} as enquirySubStatusMasterT;
+  const entityData: enquirySubStatusMasterT = props.data
+    ? props.data
+    : ({} as enquirySubStatusMasterT);
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
@@ -44,18 +52,22 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
     data["enquiry_status_id"] = status_id
       ? status_id
       : entityData.enquiry_status_id
-        ? entityData.enquiry_status_id
-        : 0;
+      ? entityData.enquiry_status_id
+      : 0;
 
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal.name) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/subStatusList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+      }
     } else {
       const issues = result.data;
       const errorState: Record<string, { msg: string; error: boolean }> = {};
@@ -117,20 +129,20 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="subStatusForm">
-        <form action={handleSubmit} noValidate>
+      <Box id="subStatusForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
-              <FormControl sx={{ marginLeft: "2rem", marginTop: "1rem" }}>
+              <FormControl sx={{ marginLeft: "1rem", marginTop: "1rem" }}>
                 <Grid container alignItems="center">
-                  <Grid item xs={12} sm="auto">
+                  <Grid item sm="auto">
                     <FormControlLabel
                       value="Status"
                       control={<label />}
                       label="Status :"
                     />
                   </Grid>
-                  <Grid item xs={12} sm="auto">
+                  <Grid item sm="auto">
                     <RadioGroup
                       row
                       name="status"
@@ -180,13 +192,13 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                setFormError={setFormError}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 sx={{ marginTop: "1rem" }}
               />
             </Grid>
@@ -213,13 +225,15 @@ export default function SubStatusListForm(props: masterFormPropsWithDataT<enquir
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

@@ -49,6 +49,7 @@ type ProductGridProps = {
   dgFormError: any;
   setdgFormError: any;
   dgProductFormError: any;
+  disabled?: boolean;
   // Add other props here as needed
 };
 
@@ -66,6 +67,7 @@ export default function ProductGrid({
   dgFormError,
   setdgFormError,
   dgProductFormError,
+  disabled,
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -206,7 +208,7 @@ export default function ProductGrid({
               name={"product"}
               id={"product"}
               label={""}
-              dialogTitle={"Add Product"}
+              dialogTitle={"Product"}
               fetchDataFn={getProduct}
               fnFetchDataByID={getProductById}
               required
@@ -292,7 +294,7 @@ export default function ProductGrid({
               name={"unit"}
               id={"unit"}
               label={""}
-              dialogTitle={"Add Unit"}
+              dialogTitle={"Unit"}
               fetchDataFn={getUnit}
               fnFetchDataByID={getUnitById}
               required
@@ -319,7 +321,7 @@ export default function ProductGrid({
       },
     },
     {
-      field: "remarks",
+      field: "remark",
       headerName: "Remarks",
       width: editMode ? 200 : 91,
       renderCell: (params) => {
@@ -327,10 +329,10 @@ export default function ProductGrid({
           return (
             <InputControl
               inputType={InputType.TEXTFIELD}
-              name="remarks"
-              id="remarks"
-              defaultValue={params.row.remarks}
-              error={dgFormError?.remarks ?? dgFormError.remark}
+              name="remark"
+              id="remark"
+              defaultValue={params.row.remark}
+              error={dgFormError?.remark ?? dgFormError.remark}
               helperText={dgFormError?.remarks?.msg}
               onChange={(e: any) => {
                 setModifiedRowData((prevState) => ({
@@ -393,6 +395,7 @@ export default function ProductGrid({
             className="textPrimary"
             onClick={handleEditClick(params.row.id)}
             color="inherit"
+            disabled={disabled}
           />,
           <GridActionsCellItem
             key={params.row.id}
@@ -400,6 +403,7 @@ export default function ProductGrid({
             label="Delete"
             onClick={handleDeleteClick(params.row.id)}
             color="inherit"
+            disabled={disabled}
           />,
         ];
       },
@@ -455,6 +459,7 @@ export default function ProductGrid({
           onClick={handleClick}
           onFocus={handleFocus} // Track focus
           onBlur={handleBlur} // Track blur
+          disabled = {disabled}
         >
           Add Product
         </Button>

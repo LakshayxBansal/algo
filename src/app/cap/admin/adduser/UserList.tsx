@@ -70,7 +70,7 @@ export default function UserList() {
 
   return <>
     <EntityList
-      title="User List"
+      title="User Management"
       fetchDataFn={getCompanyUser}
       customCols={columns}
       AddAllowed={false}
@@ -79,7 +79,7 @@ export default function UserList() {
     </EntityList>
     {dialogOpen && (
       <AddDialog
-        title={"Modal"}
+        title={"Action"}
         open={dialogOpen}
         setDialogOpen={setDialogOpen}
       >

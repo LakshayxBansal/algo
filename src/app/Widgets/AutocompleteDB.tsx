@@ -51,7 +51,7 @@ type autocompleteDBT = {
   showDetails?: boolean;
   autoFocus?: boolean;
   iconControl?: React.ReactNode | null;
-  setFormError ?: (props: any) => void
+  setFormError?: (props: any) => void
   //children: React.FunctionComponentElements
 };
 
@@ -99,6 +99,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
         results = (await props.fetchDataFn(
           props.defaultOptions ? "" : input
         )) as optionsDataT[];
+        console.log("result", results);
+
         if (props.diaglogVal?.reloadOpts) {
           setDefaultOpts(results);
           props.setDialogVal({ ...props.diaglogVal, reloadOpts: false });
@@ -204,9 +206,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
           paddingRight: 1,
         },
         "&.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon .MuiAutocomplete-inputRoot":
-          {
-            paddingRight: 1,
-          },
+        {
+          paddingRight: 1,
+        },
       }}
       renderInput={(params) => {
         return (
@@ -296,11 +298,11 @@ export function AutocompleteDB(props: autocompleteDBT) {
         if (props.formError?.error && props.setFormError) {
           props.setFormError((prevFormError: Record<string, any>) => {
             const updatedFormError = { ...prevFormError };
-        
+
             if (updatedFormError['form']) {
               delete updatedFormError['form']; // Remove the 'formError' property
             }
-        
+
             return {
               ...updatedFormError,
               [props.name]: {
@@ -310,7 +312,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
             };
           });
         }
-        
+
         if (reason != "blur") {
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)

@@ -1,7 +1,11 @@
+
+import getMasterForTable from "@/app/controllers/masterForTable.controller";
+import { optionsDataT, selectKeyValueT } from "@/app/models/models";
+import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl"
-import { Autocomplete, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
+import { Autocomplete, Box, FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material"
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type CustomFieldT = {
     key: number,
@@ -25,16 +29,40 @@ type CustomFieldT = {
     is_disabled: number
 }
 
-export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any }) {
+export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void, formError?: any }) {
+    console.log("props.defaultValue", props.formError);
     const [status, setStatus] = useState(0);
+    const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue?.id ? props.defaultValue.id : undefined, name: props.defaultValue?.name });
+    const columnType = {
+        Text: 1,
+        Options: 2,
+        Numeric: 3,
+        Date: 4,
+        List: 5,
+        Currency: 6,
+        MasterList: 7
+    }
+
+    function handleMasterValueChange(val: any) {
+        if (props.setSelectValues) {
+            props.setSelectValues((prevState: selectKeyValueT) => {
+                const updatedState = { ...prevState };
+                updatedState[props.desc.column_name] = val;
+                return updatedState;
+            });
+        }
+        setSelectedMasterValue(val);
+    }
+
 
     function onStatusChange(event: React.SyntheticEvent, value: any) {
         setStatus(value);
     }
 
     const renderField = () => {
+        const column_name = props.desc.column_name;
         switch (props.desc.column_type_id) {
-            case 1:
+            case columnType.Text:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -43,11 +71,13 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         name={props.desc.column_name}
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
+                        error={props.formError?.[column_name]?.error}
+                        helperText={props.formError?.[column_name]?.msg}
                         disabled={props.desc.is_disabled === 1 ? true : false}
                         fullWidth
                     />
                 );
-            case 3:
+            case columnType.Numeric:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
@@ -57,25 +87,36 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                         name={props.desc.column_name}
                         required={!!props.desc.is_mandatory}
                         defaultValue={props.defaultValue}
+                        error={props.formError?.[column_name]?.error}
+                        helperText={props.formError?.[column_name]?.msg}
                         disabled={props.desc.is_disabled === 1 ? true : false}
                         fullWidth
                     />
                 );
-            case 4:
+            case columnType.Date:
                 return (
                     <InputControl
                         id={props.desc.column_name_id}
                         label={props.desc.column_label}
                         inputType={InputType.DATEINPUT}
                         name={props.desc.column_name}
+                        sx={{ width: "100%" }}
+                        slotProps={{
+                            textField: {
+                                error: props.formError?.[column_name]?.error,
+                                helperText: props.formError?.[column_name]?.msg
+                            },
+                            openPickerButton: {
+                                tabIndex: 1,
+                            }
+                        }}
                         required={props.desc.is_mandatory}
                         defaultValue={props.defaultValue ? dayjs(props.defaultValue) : null}
                         disabled={props.desc.is_disabled === 1 ? true : false}
-                        fullWidth
                     />
                 )
-            case 5:
-                const list_item = props.desc.column_format?.split(",") || [];
+            case columnType.List:
+                const list_item = props.desc.column_format?.split(";") || [];
                 return (
                     <Autocomplete
                         id={props.desc.column_name_id}
@@ -89,38 +130,75 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                                 label={props.desc.column_label}
                                 name={props.desc.column_name}
                                 required={props.desc.is_mandatory === 1}
+                                error={props.formError?.[column_name]?.error}
+                                helperText={props.formError?.[column_name]?.msg}
                                 fullWidth
                             />
                         )}
                         fullWidth
                     />
                 )
-            case 2:
-                const option = props.desc.column_format?.split(",") || [];
+            case columnType.Options:
+                const option = props.desc.column_format?.split(";") || [];
                 return (
-                    <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
-                        <RadioGroup
-                            row
-                            name={props.desc.column_name}
-                            id={props.desc.column_name_id}
-                            onChange={onStatusChange}
-                            defaultValue={props.defaultValue !== undefined ? props.defaultValue : 1}
-                            value={status || (props.defaultValue !== undefined ? props.defaultValue : 1)}
-                        >
-                            <FormControlLabel
-                                control={<label />}
-                                label={props.desc.column_label + " :"}
-                            />
-                            {option.map((option, index) => (
+                    <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", ml: 3, mt: 1 }}>
+                        <FormControl required={props.desc.is_mandatory === 1 ? true : false}>
+                            <RadioGroup
+                                row
+                                name={props.desc.column_name}
+                                id={props.desc.column_name_id}
+                                onChange={onStatusChange}
+                                defaultValue={props.defaultValue !== undefined ? props.defaultValue : 1}
+                                value={status || (props.defaultValue !== undefined ? props.defaultValue : 1)}
+                            >
                                 <FormControlLabel
-                                    key={index}
-                                    value={index + 1}
-                                    control={<Radio />}
-                                    label={option}
+                                    control={<label />}
+                                    label={props.desc.column_label + " :"}
                                 />
-                            ))}
-                        </RadioGroup>
-                    </FormControl>
+                                <Box sx={{
+                                    display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
+                                }}>
+                                    {option.map((option, index) => (
+                                        <FormControlLabel
+                                            key={index}
+                                            value={index + 1}
+                                            control={<Radio />}
+                                            label={option}
+                                        />
+                                    ))}
+                                </Box>
+                            </RadioGroup>
+                        </FormControl>
+                    </Box>
+                )
+            case columnType.MasterList:
+                return (
+                    <AutocompleteDB
+                        name={props.desc.column_name}
+                        id={props.desc.column_name_id}
+                        label={props.desc.column_label}
+                        onChange={(e, val, s) => { handleMasterValueChange(val) }}
+                        fetchDataFn={(arg: any) => getMasterForTable(props.desc.column_format, arg)}
+                        formError={props.formError?.[column_name]}
+                        defaultValue={
+                            props.defaultValue
+                                ? {
+                                    id: props.defaultValue.id,
+                                    name: props.defaultValue.name,
+                                }
+                                : undefined // Set default value to null if no data exists
+                        }
+                        diaglogVal={{
+                            id: selectedMasterValue?.id,
+                            name: selectedMasterValue?.name,
+                            detail: undefined,
+                        }}
+                        setDialogVal={function (
+                            value: React.SetStateAction<optionsDataT>
+                        ): void {
+                        }}
+                        fnSetModifyMode={function (id: string): void { }}
+                    />
                 )
         }
     }

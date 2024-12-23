@@ -13,6 +13,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Portal,
   Select,
   SelectChangeEvent,
 } from "@mui/material";
@@ -23,18 +24,28 @@ import {
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
-export default function CurrencyForm(props: masterFormPropsWithDataT<currencySchemaT>) {
+export default function CurrencyForm(
+  props: masterFormPropsWithDataT<currencySchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = useState(false);
-  const [currencySystem, setCurrencySystem] = useState(props.data ? props.data.currency_system : "ind");
-  const [decimalPlaces, setDecimalPlaces] = useState(props.data ? props.data.decimal_places : "2");
+  const [currencySystem, setCurrencySystem] = useState(
+    props.data ? props.data.currency_system : "ind"
+  );
+  const [decimalPlaces, setDecimalPlaces] = useState(
+    props.data ? props.data.decimal_places : "2"
+  );
   const [symbol, setSymbol] = useState("");
   const [sample, setSample] = useState("");
-  const entityData: currencySchemaT = props.data ? props.data : {} as currencySchemaT;
-
+  const entityData: currencySchemaT = props.data
+    ? props.data
+    : ({} as currencySchemaT);
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
   // if (props.data) {
   //   setCurrencySystem(entityData.currency_system);
   //   setDecimalPlaces(entityData.decimal_places);
@@ -54,12 +65,21 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
     const result = await persistEntity(data as currencySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      // setTimeout(() => {
+      //   props.setDialogOpen ? props.setDialogOpen(false) : null;
+      // }, 1000);
+      if (pathName !== "/cap/admin/lists/currencyList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+        setSample("");
+        // setFormError({});
+      }
     } else {
       const issues = result.data;
 
@@ -67,7 +87,7 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         errorState[issue.path] = { msg: issue.message, error: true };
-        if (issue.path === 'refresh') {
+        if (issue.path === "refresh") {
           errorState["form"] = { msg: issue.message, error: true };
         }
       }
@@ -160,8 +180,8 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="currencyForm">
-        <form action={handleSubmit} noValidate>
+      <Box id="currencyForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
@@ -176,14 +196,14 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.symbol}
                 error={formError?.symbol?.error}
                 helperText={formError?.symbol?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 onChange={onSymbolChange}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { symbol, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { symbol, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -196,13 +216,13 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.name}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                setFormError={setFormError}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -216,13 +236,13 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 defaultValue={entityData.shortForm}
                 error={formError?.shortForm?.error}
                 helperText={formError?.shortForm?.msg}
- setFormError={setFormError}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { shortForm, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                setFormError={setFormError}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { shortForm, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -254,10 +274,12 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
                 size="small"
                 sx={{
                   marginTop: "1.3vh",
-                  width: "100%"
+                  width: "100%",
                 }}
               >
-                <InputLabel id="decimal-places-label">Decimal Places</InputLabel>
+                <InputLabel id="decimal-places-label">
+                  Decimal Places
+                </InputLabel>
                 <Select
                   labelId="decmal-place-label"
                   id="decimal-place"
@@ -305,13 +327,15 @@ export default function CurrencyForm(props: masterFormPropsWithDataT<currencySch
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

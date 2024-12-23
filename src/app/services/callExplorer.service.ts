@@ -65,7 +65,6 @@ export async function getCallEnquiriesDb(
       }
     } else if (filterType === "unallocated") {
       whereConditions.push(`el.allocated_to = 0`);
-      
     }
     if (filterValueState.subStatus) {
       whereConditions.push(`essm.name = ?`);

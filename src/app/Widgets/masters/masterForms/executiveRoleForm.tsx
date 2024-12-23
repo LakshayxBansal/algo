@@ -16,21 +16,28 @@ import {
   optionsDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { Grid, Snackbar } from "@mui/material";
+import { Grid, Portal, Snackbar } from "@mui/material";
 import Seperator from "../../seperator";
 import { Collapse, IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import AutocompleteDB from "../../AutocompleteDB";
+import { usePathname } from "next/navigation";
 
-export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<executiveRoleSchemaT>) {
+export default function ExecutiveRoleForm(
+  props: masterFormPropsWithDataT<executiveRoleSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
 
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: executiveRoleSchemaT = props.data ? props.data : {} as executiveRoleSchemaT;
+  const entityData: executiveRoleSchemaT = props.data
+    ? props.data
+    : ({} as executiveRoleSchemaT);
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -71,13 +78,21 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
 
     const result = await persistEntity(data as executiveRoleSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        stamp: result.data[0].stamp,
+      };
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/executiveRoleList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -99,8 +114,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
     data.parent_id = selectValues.parentRole
       ? selectValues.parentRole.id
       : entityData.parent_id
-        ? entityData.parent_id
-        : 0;
+      ? entityData.parent_id
+      : 0;
     return data;
   };
 
@@ -146,8 +161,8 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="executiveRole">
-        <form action={handleSubmit} noValidate>
+      <Box id="executiveRole" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
@@ -160,49 +175,17 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
-                style={{width:"100%"}}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
+                style={{ width: "100%" }}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={12} md={6} lg={6}>
-              <SelectMasterWrapper
-                name={"parentrole"}
-                id={"parentrole"}
-                label={"Parent Executive Role"}
-                dialogTitle={"Add Executive Role"}
-                fetchDataFn={getExecutiveRole}
-                fnFetchDataByID={getExecutiveRoleById}
-                defaultValue={
-                  {
-                    id: entityData.parent_id,
-                    name: entityData.parentRole,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    parentRole: val ? val : { id: 0, name: "" },
-                  })
-                }
-                allowNewAdd={false}
-                allowModify={false}
-                renderForm={(fnDialogOpen, fnDialogValue, data, parentData) => (
-                  <ExecutiveRoleForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                    parentData={selectValues.parent?.parent_id}
-                  />
-                )}
-              />
-            </Grid> */}
             <Grid
               item
               xs={12}
@@ -226,13 +209,15 @@ export default function ExecutiveRoleForm(props: masterFormPropsWithDataT<execut
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

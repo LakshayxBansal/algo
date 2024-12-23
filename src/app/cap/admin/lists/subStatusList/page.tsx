@@ -8,6 +8,8 @@ import {
   getEnquirySubStatusByPage,
 } from "@/app/controllers/enquirySubStatus.controller";
 import SubStatusListForm from "@/app/Widgets/masters/masterForms/subStatusListForm";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -20,6 +22,9 @@ const columns: GridColDef[] = [
 export default function subStatus() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Sub Status"}/>
+      </Box>
       <EntityList
         title="Sub Status"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

@@ -136,6 +136,8 @@ const SupportTicketForm = (props: customprop) => {
 
     let result: any;
 
+   
+
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
       // const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -196,7 +198,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "tkt_number",
       <InputControl
-        key = "tkt_number"
+        key="tkt_number"
         label="Ticket Description"
         id="tkt_number"
         inputType={InputType.TEXT}
@@ -206,7 +208,7 @@ const SupportTicketForm = (props: customprop) => {
         defaultValue={props.data?.tkt_number}
         error={formError?.tkt_number?.error}
         helperText={formError?.tkt_number?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         // sx={{
         //   "& .MuiInputBase-root": {
         //     height: 100,
@@ -219,7 +221,7 @@ const SupportTicketForm = (props: customprop) => {
     [
       "date",
       <InputControl
-        key = "date"
+        key="date"
         label="Received on"
         inputType={InputType.DATETIMEINPUT}
         id="date"
@@ -230,7 +232,7 @@ const SupportTicketForm = (props: customprop) => {
         required
         error={formError?.date?.error}
         helperText={formError?.date?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         sx={{ display: "flex", flexGrow: 1 }}
         slotProps={{
           openPickerButton: {
@@ -248,13 +250,13 @@ const SupportTicketForm = (props: customprop) => {
         id="contact"
         label="Contact"
         showDetails={true}
-        dialogTitle="Add Contact"
+        dialogTitle="Contact"
         onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
         fetchDataFn={getContact}
         fnFetchDataByID={getContactById}
         required
         formError={formError?.contact ?? formError.contact}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={masterData.contact}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ContactForm
@@ -270,17 +272,17 @@ const SupportTicketForm = (props: customprop) => {
     [
       "category",
       <SelectMasterWrapper
-      key={"category"}
+        key={"category"}
         name="category"
         id="category"
         label="Category"
-        dialogTitle="Add Category"
+        dialogTitle="Category"
         onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
         fetchDataFn={getSupportCategory}
         fnFetchDataByID={getSupportCategoryById}
         required
         formError={formError?.category ?? formError.category}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={masterData.category}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SupportCategoryForm
@@ -295,34 +297,30 @@ const SupportTicketForm = (props: customprop) => {
     [
       "received_by",
       <SelectMasterWrapper
-      key={"received_by"}
-      name="received_by"
-      id="received_by"
-      label="Received By"
-      showDetails={true}
-      dialogTitle="Add Executive"
-      onChange={(e, v, s) =>
-        onSelectChange(e, v, s, "received_by")
-      }
-      fetchDataFn={getExecutive}
-      fnFetchDataByID={getExecutiveById}
-      required
-      formError={
-        formError?.received_by ?? formError.received_by
-      }
-      defaultValue={
-        props?.data?.tkt_number ? masterData.received_by : props.userDetails
-      }
-      renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
-        <ExecutiveForm
-          setDialogOpen={fnDialogOpen}
-          setDialogValue={fnDialogValue}
-          metaData={metaData}
-          data={data}
-        />
-      )}
-      disabled={props?.status === "true" ? true : false}
-    />,
+        key={"received_by"}
+        name="received_by"
+        id="received_by"
+        label="Received By"
+        showDetails={true}
+        dialogTitle="Executive"
+        onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
+        fetchDataFn={getExecutive}
+        fnFetchDataByID={getExecutiveById}
+        required
+        formError={formError?.received_by ?? formError.received_by}
+        defaultValue={
+          props?.data?.tkt_number ? masterData.received_by : props.userDetails
+        }
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+          <ExecutiveForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            metaData={metaData}
+            data={data}
+          />
+        )}
+        disabled={props?.status === "true" ? true : false}
+      />,
     ],
     [
       "status",
@@ -353,14 +351,14 @@ const SupportTicketForm = (props: customprop) => {
         name={"sub_status"}
         id={"sub_status"}
         label={"Call Sub-Status"}
-        dialogTitle={"Add Sub-Status for " + status}
+        dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
         onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
         fetchDataFn={getSubStatusforStatus}
         fnFetchDataByID={getSupportSubSatusById}
         required
         key={`sub_status_${status}`}
         formError={formError?.sub_status ?? formError.sub_status}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={defaultValues.sub_status}
         allowNewAdd={status === "1"}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -376,16 +374,16 @@ const SupportTicketForm = (props: customprop) => {
     [
       "action_taken",
       <SelectMasterWrapper
-      key={`action_taken_${status}`}
+        key={`action_taken_${status}`}
         name={"action_taken"}
         id={"action_taken"}
         label={"Action Taken"}
-        dialogTitle={"Add Action"}
+        dialogTitle={"Action"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
         fetchDataFn={getSupportAction}
         fnFetchDataByID={getSupportActionById}
         formError={formError?.action_taken ?? formError.action_taken}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={masterData.action}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SupportActionForm
@@ -397,17 +395,43 @@ const SupportTicketForm = (props: customprop) => {
       />,
     ],
     [
+      "allocate_to",
+        <SelectMasterWrapper
+         key="allocated_to"
+          name={"allocated_to"}
+          id={"allocated_to"}
+          label={"Allocate to"}
+          showDetails={true}
+          dialogTitle={"Assign Executive"}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
+          fetchDataFn={getExecutive}
+          fnFetchDataByID={getExecutiveById}
+          required
+          formError={formError?.allocated_to ?? formError.allocated_to}
+          defaultValue={masterData?.allocated_to}
+          renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+            <ExecutiveForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              metaData={metaData}
+              data={data}
+            />
+          )}
+          disabled={status === "2"}
+        />
+    ],
+    [
       "next_action",
       <SelectMasterWrapper
         key={`next_action_${status}`}
         name={"next_action"}
         id={"next_action"}
         label={"Next Action"}
-        dialogTitle={"Add Action"}
+        dialogTitle={"Action"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
         fetchDataFn={getSupportAction}
         formError={formError?.next_action ?? formError.next_action}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={defaultValues.next_action}
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
           <SupportActionForm
@@ -429,12 +453,12 @@ const SupportTicketForm = (props: customprop) => {
         name="next_action_date"
         error={formError?.next_action_date?.error}
         helperText={formError?.next_action_date?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={
           status === "1"
             ? masterData?.next_action_date
               ? adjustToLocal(masterData.next_action_date)
-              : dayjs()
+              : props.status ?"":dayjs()
             : null
         }
         slotProps={{
@@ -450,7 +474,7 @@ const SupportTicketForm = (props: customprop) => {
       <InputControl
         inputType={InputType.TEXTFIELD}
         key={`closure-remark-${status}`}
-        defaultValue={""}
+        defaultValue={status === "1" ? "" : props.data?.closure_remark}
         placeholder="Closure remarks"
         label="closure_remark"
         required={false}
@@ -462,7 +486,7 @@ const SupportTicketForm = (props: customprop) => {
         disabled={status === "1"}
         error={formError?.closure_remark?.error}
         helperText={formError?.closure_remark?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         sx={{
           "& .MuiFormHelperText-root": {
             margin: 0,
@@ -562,6 +586,7 @@ const SupportTicketForm = (props: customprop) => {
     "product_grid",
     "call_receipt_remark",
     "suggested_action_remark",
+    "action_taken_remark",
   ];
 
   // const enquiryMaintainProducts = .config_data.maintainProducts;
@@ -574,6 +599,9 @@ const SupportTicketForm = (props: customprop) => {
         );
         let propsForSugActionField = fieldPropertiesById(
           "suggested_action_remark"
+        );
+        let propsForActionTakenRemField = fieldPropertiesById(
+          "action_taken_remark"
         );
 
         let fld = (
@@ -598,7 +626,7 @@ const SupportTicketForm = (props: customprop) => {
                       key={`product-grid-component-${index}`}
                       // id="product_grid"
                       // name="product_grid"
-                      isDisable={false}
+                      isDisable={props?.status === "true" ? true : false}
                       dgData={data}
                       setdgData={setData}
                       setdgDialogOpen={setDialogOpen}
@@ -608,8 +636,7 @@ const SupportTicketForm = (props: customprop) => {
                     />
                   </Box>
                 </Grid>
-              }
-
+              }       
               <Grid
                 item
                 xs={12}
@@ -618,23 +645,25 @@ const SupportTicketForm = (props: customprop) => {
                 sx={{ display: "flex", flexDirection: "column" }}
                 key={`remarks-grid-${index}`}
               >
+                {props.status !== "true" && (
                 <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
-                <InputControl
-        placeholder="Call receipt remarks"
-        label="Call receipt remarks"
-        multiline
-        inputType={InputType.TEXTFIELD}
-        name="call_receipt_remark"
-        id="call_receipt_remark"
-        error={formError?.call_receipt_remark?.error}
-        helperText={formError?.call_receipt_remark?.msg}
- setFormError={setFormError}
-        defaultValue={props.data?.call_receipt_remark}
-        rows={6}
-        fullWidth
-        disabled={props?.status === "true" ? true : false}
-      />
+                  <InputControl
+                    placeholder="Call Receipt Remarks"
+                    multiline
+                    inputType={InputType.TEXTFIELD}
+                    label={propsForCallReceiptField.label}
+                    name="call_receipt_remark"
+                    id="call_receipt_remark"
+                    error={formError?.call_receipt_remark?.error}
+                    helperText={formError?.call_receipt_remark?.msg}
+                    setFormError={setFormError}
+                    defaultValue={props.data?.call_receipt_remark}
+                    rows={6}
+                    fullWidth
+                    disabled={props?.status === "true" ? true : false}
+                  />
                 </Grid>
+              )}
                 <Grid
                   item
                   xs={12}
@@ -642,21 +671,54 @@ const SupportTicketForm = (props: customprop) => {
                   key={`suggested-action-grid-${index}`}
                 >
                   <InputControl
-        placeholder="Suggested Action Remarks"
-        label="Suggested Action Remarks"
-        multiline
-        inputType={InputType.TEXTFIELD}
-        name="suggested_action_remark"
-        id="suggested_action_remark"
-        error={formError?.suggested_action_remark?.error}
-        helperText={formError?.suggested_action_remark?.msg}
- setFormError={setFormError}
-        defaultValue={props.data?.suggested_action_remark}
-        rows={6}
-        fullWidth
-        disabled={props?.status === "true" ? true : false}
-      />
+                    placeholder="Suggested Action Remarks"
+                    multiline
+                    inputType={InputType.TEXTFIELD}
+                    label={propsForSugActionField.label}
+                    name="suggested_action_remark"
+                    id="suggested_action_remark"
+                    error={formError?.suggested_action_remark?.error}
+                    helperText={formError?.suggested_action_remark?.msg}
+                    setFormError={setFormError}
+                    defaultValue={props.data?.suggested_action_remark}
+                    rows={6}
+                    fullWidth
+                    disabled={props?.status === "true" ? true : false}
+                  />
                 </Grid>
+              {
+                props?.status === "true" && (
+                  <Grid
+                    item
+                    xs={12}
+                    md={12}
+                    key={`action-taken-remarks-grid-${index}`}
+                  >
+                     <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`action-taken-field-${index}`}
+                      placeholder="Action Taken Remarks"
+                      label={propsForActionTakenRemField.label}
+                      multiline
+                      name="action_taken_remark"
+                      id="action_taken_remark"
+                      rows={6}
+                      fullWidth
+                      error={formError?.action_taken_remark?.error}
+                      helperText={formError?.action_taken_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{
+                        "& .MuiFormHelperText-root": {
+                          margin: 0,
+                        },
+                      }}
+                      disabled={Boolean(propsForActionTakenRemField.disabled)}
+                      required={propsForActionTakenRemField.required}
+                      defaultValue={props.data?.action_taken_remark}
+                    />
+                    </Grid>
+                )
+              }
               </Grid>
             </Grid>
           </Grid>
@@ -664,22 +726,26 @@ const SupportTicketForm = (props: customprop) => {
 
         fieldArr.push(fld);
       } else if (!skipColumns.includes(field.column_name_id)) {
+        if (field.column_name_id === "allocate_to" && props.status!=="true") {
+          //skip this field
+          return null;
+        }
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
-        
-        let fld;
-        if(baseElement){
-        fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          disabled: field.is_disabled ? true : baseElement.props.disabled,
-          key: `field-default-${field.column_name_id}`,
-        });
 
-        fieldArr.push(fld);
-      }
+        let fld;
+        if (baseElement) {
+          fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            disabled: field.is_disabled ? true : baseElement.props.disabled,
+            key: `field-default-${field.column_name_id}`,
+          });
+
+          fieldArr.push(fld);
+        }
       }
     } else {
       const fld = (
@@ -718,7 +784,7 @@ const SupportTicketForm = (props: customprop) => {
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-              Support Ticket 
+              Support Ticket
             </div>
           </Seperator>
         </Grid>
@@ -811,7 +877,7 @@ const SupportTicketForm = (props: customprop) => {
 
         {dialogOpen && (
           <AddDialog
-            title="Add Product"
+            title="Product"
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
@@ -836,7 +902,11 @@ const SupportTicketForm = (props: customprop) => {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={"Enquiry saved successfully!"}
+        message={
+          props.data
+            ? "Ticket Details updated successfully!"
+            : "Ticket Details saved successfully!"
+        }
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>

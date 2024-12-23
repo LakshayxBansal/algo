@@ -75,7 +75,13 @@ export type masterFormPropsT = {
 export type customFieldsMasterSchemaT = z.infer<typeof zs.customFieldsMasterSchema>;
 export type rightSchemaT = z.infer<typeof zs.rightSchema>;
 export type loggedInUserDataT= z.infer<typeof zs.loggedInUserData>;
-
+export type FieldItemT= customFieldsMasterSchemaT & {
+  modified_by: number | null;
+  modified_on: string | null;
+  created_by: number | null;
+  created_on: string | null;
+  column_order: number;
+}
 
 
 // this type is for fetching meta info for custom fields
@@ -260,3 +266,4 @@ export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
 // export type rightSchemaT = z.infer<typeof zs.rightSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;
+

@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import {
@@ -23,7 +29,16 @@ import {
   selectKeyValueT,
 } from "@/app/models/models";
 import Seperator from "../../seperator";
-import { Badge, Collapse, Grid, IconButton, Snackbar, Tooltip, Typography } from "@mui/material";
+import {
+  Badge,
+  Collapse,
+  Grid,
+  IconButton,
+  Portal,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import StateForm from "./stateForm";
@@ -31,8 +46,11 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { usePathname } from "next/navigation";
 
-export default function OrganisationForm(props: masterFormPropsWithDataT<organisationSchemaT>) {
+export default function OrganisationForm(
+  props: masterFormPropsWithDataT<organisationSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -42,7 +60,12 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
     props.data?.docData ? props?.data?.docData : []
   );
   const [dialogOpen, setDialogOpen] = useState(false);
-  const entityData: organisationSchemaT = props.data ? props.data : {} as organisationSchemaT;
+  const entityData: organisationSchemaT = props.data
+    ? props.data
+    : ({} as organisationSchemaT);
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
+
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
     id: entityData.state_id,
     name: entityData.state,
@@ -52,7 +75,6 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
   const [stateDisable, setStateDisable] = useState(!entityData.country);
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -89,12 +111,18 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
     const result = await persistEntity(data as organisationSchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/organisationList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+        setPrintNameFn("");
+        setDocData([]);
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -117,13 +145,13 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
-        ? entityData.state_id
-        : 0;
+      ? entityData.state_id
+      : 0;
 
     return data;
   };
@@ -183,6 +211,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         key="name"
         inputType={InputType.TEXT}
         autoFocus
+        titleCase={true}
         id="name"
         label="Name"
         name="name"
@@ -190,16 +219,16 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { name, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { name, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "alias",
@@ -212,15 +241,15 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.alias}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { alias, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { alias, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "print_name",
@@ -233,15 +262,15 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.printName?.error}
         helperText={formError?.printName?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={printNameFn}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { printName, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { printName, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "pan",
@@ -254,15 +283,15 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pan}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pan, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pan, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "gstin",
@@ -275,15 +304,15 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.gstin?.error}
         helperText={formError?.gstin?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.gstin}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { gstin, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { gstin, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "address1",
@@ -298,13 +327,13 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         helperText={formError?.address1?.msg}
         setFormError={setFormError}
         defaultValue={entityData.address1}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { address1, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { address1, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "address2",
@@ -319,18 +348,18 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         helperText={formError?.address2?.msg}
         setFormError={setFormError}
         defaultValue={entityData.address2}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { address2, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { address2, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "country",
       <SelectMasterWrapper
-        key='country'
+        key="country"
         name={"country"}
         id={"country"}
         label={"Country"}
@@ -351,7 +380,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
             data={data}
           />
         )}
-      />
+      />,
     ],
     [
       "state",
@@ -375,7 +404,7 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
             parentData={selectValues.country?.id || entityData.country_id}
           />
         )}
-      />
+      />,
     ],
     [
       "city",
@@ -388,15 +417,15 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.city}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { city, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { city, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
     ],
     [
       "pincode",
@@ -409,22 +438,26 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         fullWidth
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pincode}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pincode, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-    ]
-  ])
+        // onKeyDown={() => {
+        //   setFormError((curr) => {
+        //     const { pincode, ...rest } = curr;
+        //     return rest;
+        //   });
+        // }}
+      />,
+    ],
+  ]);
 
   let fieldArr: React.ReactElement[] = [];
 
   props.metaData?.fields.map((field: any) => {
-    if (field.column_name_id === 'name' || field.column_name_id === 'alias' || field.column_name_id === 'print_name') {
+    if (
+      field.column_name_id === "name" ||
+      field.column_name_id === "alias" ||
+      field.column_name_id === "print_name"
+    ) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -434,11 +467,14 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-name-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false
+        disabled: field.is_disabled === 1 ? true : false,
       });
 
       fieldArr.push(fld);
-    } else if (field.column_name_id === 'pan' || field.column_name_id === 'gstin') {
+    } else if (
+      field.column_name_id === "pan" ||
+      field.column_name_id === "gstin"
+    ) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -448,11 +484,14 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-number-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false
+        disabled: field.is_disabled === 1 ? true : false,
       });
 
       fieldArr.push(fld);
-    } else if (field.column_name_id === 'address1' || field.column_name_id === 'address2') {
+    } else if (
+      field.column_name_id === "address1" ||
+      field.column_name_id === "address2"
+    ) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -462,11 +501,16 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-address-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false
+        disabled: field.is_disabled === 1 ? true : false,
       });
 
       fieldArr.push(fld);
-    } else if (field.column_name_id === 'city' || field.column_name_id === 'pincode' || field.column_name_id === 'country' || field.column_name_id === 'state') {
+    } else if (
+      field.column_name_id === "city" ||
+      field.column_name_id === "pincode" ||
+      field.column_name_id === "country" ||
+      field.column_name_id === "state"
+    ) {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -476,23 +520,24 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
         label: field.column_label,
         required: field.is_mandatory === 1,
         key: `field-subAddress-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false
+        disabled: field.is_disabled === 1 ? true : false,
       });
 
       fieldArr.push(fld);
-    }
-    else {
+    } else {
       const fld = (
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue={entityData[field.column_name_id as keyof organisationSchemaT]}
+          defaultValue={
+            entityData[field.column_name_id as keyof organisationSchemaT]
+          }
         />
       );
       fieldArr.push(fld);
     }
     return null;
-  })
+  });
 
   return (
     <>
@@ -514,96 +559,80 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2 }}>
-        <form action={handleSubmit} noValidate>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
-              if (fieldKey.includes("field-number") || fieldKey.includes("field-address")) {
+              if (
+                fieldKey.includes("field-number") ||
+                fieldKey.includes("field-address")
+              ) {
                 return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
+                  <Grid key={fieldKey} item xs={12} sm={6} md={6}>
+                    <div key={index}>{field}</div>
                   </Grid>
-                )
+                );
               } else if (fieldKey.includes("field-subAddress")) {
                 return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={3}
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
+                  <Grid key={fieldKey} item xs={12} sm={6} md={3}>
+                    <div key={index}>{field}</div>
                   </Grid>
-                )
+                );
               } else {
                 return (
-                  <Grid key={fieldKey}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                  >
-                    <div key={index}>
-                      {field}
-                    </div>
+                  <Grid key={fieldKey} item xs={12} sm={6} md={4}>
+                    <div key={index}>{field}</div>
                   </Grid>
-                )
+                );
               }
             })}
             <Grid xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                // mt: 2,
-                paddingLeft: "2rem",
-              }}
-            >
-              <Tooltip
-                title={docData.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
-                    </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 2,
+                  paddingLeft: "2rem",
+                }}
               >
-                <IconButton
-                  sx={{ marginRight:"3rem" }}
-                  onClick={() => setDialogOpen(true)}
-                  aria-label="file"
+                <Tooltip
+                  title={
+                    docData.length > 0 ? (
+                      docData.map((file: any, index: any) => (
+                        <Typography variant="body2" key={index}>
+                          {file.description}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="body2" color="white">
+                        No files available
+                      </Typography>
+                    )
+                  }
                 >
-                  <Badge badgeContent={docData.length} color="primary">
-                    <AttachFileIcon></AttachFileIcon>
-                  </Badge>
-  
-                </IconButton>
-              </Tooltip>
-              <Button onClick={handleCancel} tabIndex={-1}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
-            </Box>
+                  <IconButton
+                    sx={{ marginRight: "3rem" }}
+                    onClick={() => setDialogOpen(true)}
+                    aria-label="file"
+                    tabIndex={-1}
+                  >
+                    <Badge badgeContent={docData.length} color="primary">
+                      <AttachFileIcon></AttachFileIcon>
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Button onClick={handleCancel} tabIndex={-1}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ width: "15%", marginLeft: "5%" }}
+                >
+                  Submit
+                </Button>
+              </Box>
             </Grid>
           </Grid>
           {dialogOpen && (
@@ -612,18 +641,23 @@ export default function OrganisationForm(props: masterFormPropsWithDataT<organis
               open={dialogOpen}
               setDialogOpen={setDialogOpen}
             >
-              <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+              <DocModal
+                docData={docData}
+                setDocData={setDocData}
+                setDialogOpen={setDialogOpen}
+              />
             </AddDialog>
           )}
-
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

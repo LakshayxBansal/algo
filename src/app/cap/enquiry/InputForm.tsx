@@ -85,8 +85,8 @@ export interface InputFormProps {
     // rights: Record<string, any>;
     config_data: Record<string, any>;
     regional_setting: Record<string, any>;
-    loggedInUserData: Record<string, any>;
-    statusFromURL: string | string[] | undefined;
+    loggedInUserData?: Record<string, any>;
+    statusUpdate?: boolean;
   };
 }
 
@@ -94,7 +94,6 @@ export default function InputForm({ baseData }: InputFormProps) {
   const defaultData = baseData.enqData.defaultData ?? {};
   const enqData = baseData.enqData;
 
-  // console.log("Enquiry Data for enquiry no 119 ", baseData.enqData);
   const [status, setStatus] = useState(
     defaultData?.status?.id != null ? defaultData.status.id.toString() : "1"
   );
@@ -103,8 +102,8 @@ export default function InputForm({ baseData }: InputFormProps) {
       ? defaultData
       : {
           received_by: {
-            id: baseData.loggedInUserData.id,
-            name: baseData.loggedInUserData.name,
+            id: baseData.loggedInUserData?.id,
+            name: baseData.loggedInUserData?.name,
           },
         }
   );
@@ -159,7 +158,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         helperText={formError?.enq_number?.msg}
         setFormError={setFormError}
         defaultValue={enqData?.enq_number ?? ""}
-        // disabled={baseData?.status === "true" ? true : false}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -183,6 +182,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           },
         }}
         defaultValue={enqData?.date ? adjustToLocal(enqData.date) : dayjs()}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -209,6 +209,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={defaultData?.contact ?? {}}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -233,6 +234,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={defaultData?.category ?? {}}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -257,6 +259,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={defaultData?.source ?? {}}
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -290,6 +293,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                 name: baseData?.loggedInUserData?.name,
               } as optionsDataT)
         }
+        disabled={baseData.statusUpdate}
       />,
     ],
     [
@@ -332,7 +336,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         name="sub_status"
         id="sub_status"
         label="sub_status"
-        dialogTitle={`Sub-Status for ${status === '1' ? 'Open' : 'Closed'}`}
+        dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
         onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
         fetchDataFn={getSubStatusforStatus}
         fnFetchDataByID={getEnquirySubSatusById}
@@ -349,6 +353,34 @@ export default function InputForm({ baseData }: InputFormProps) {
         )}
         allowNewAdd={status === "1"}
         defaultValue={subStatus}
+      />,
+    ],
+    [
+      "allocate_to",
+      <SelectMasterWrapper
+        key="allocated_to"
+        name="allocated_to"
+        id="allocated_to"
+        label="allocated_to"
+        showDetails={true}
+        dialogTitle={"Allocated To"}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
+        fetchDataFn={getExecutive}
+        fnFetchDataByID={getExecutiveById}
+        required={false}
+        formError={formError?.allocated_to ?? formError.allocated_to}
+        setFormError={setFormError}
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+          <ExecutiveForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            metaData={metaData}
+            data={data}
+          />
+        )}
+        defaultValue={
+          enqData?.enquiry_id ? defaultData?.allocated_to : {}
+        }
       />,
     ],
     [
@@ -453,7 +485,6 @@ export default function InputForm({ baseData }: InputFormProps) {
       />,
     ],
   ]);
-
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
@@ -462,6 +493,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       selectValues,
       dateFormat,
       timeFormat,
+      otherData: enqData,
     });
 
     let result;
@@ -525,13 +557,11 @@ export default function InputForm({ baseData }: InputFormProps) {
     if (enqData?.enquiry_id) {
       enquirydata.id = enqData.enquiry_id;
       enquirydata.stamp = enqData.stamp;
-      enquirydata.enquiry_tran_type =
-        baseData.statusFromURL === "true"
-          ? baseData.enqData.allocated_to.id === selectValues.allocated_to.id
-            ? 4 // If status exists and allocation matches, assign 4
-            : 2 // If status exists but allocation doesn't match, assign 2
-          : 3; // If no status then it is full update, assign 3
-      enquirydata.allocated_to_id = defaultData.allocated_to?.id;
+      enquirydata.enquiry_tran_type = baseData.statusUpdate
+        ? defaultData.allocated_to.id === selectValues.allocated_to.id
+          ? 4 // If status exists and allocation matches, assign 4
+          : 2 // If status exists but allocation doesn't match, assign 2
+        : 3; // If no status then it is full update, assign 3
       enquirydata.created_by = enqData.created_by;
       enquirydata.status_version = 0;
       result = await updateEnquiry({
@@ -605,6 +635,7 @@ export default function InputForm({ baseData }: InputFormProps) {
     "product_grid",
     "call_receipt_remark",
     "suggested_action_remark",
+    "action_taken_remark",
   ];
 
   const enquiryMaintainProducts = baseData.config_data.maintainProducts;
@@ -618,7 +649,9 @@ export default function InputForm({ baseData }: InputFormProps) {
         let propsForSugActionField = fieldPropertiesById(
           "suggested_action_remark"
         );
-
+        let propsForActionTakenRemField = fieldPropertiesById(
+          "action_taken_remark"
+        );
         let fld = (
           <Grid item xs={12} key={`field-default-product-remarks-grid`}>
             <Grid container spacing={2} key={`grid-container-${index}`}>
@@ -646,6 +679,9 @@ export default function InputForm({ baseData }: InputFormProps) {
                       dgFormError={formError}
                       setdgFormError={setFormError}
                       dgProductFormError={productFormError}
+                      disabled={
+                        baseData.statusUpdate || Boolean(field.is_disabled)
+                      }
                     />
                   </Box>
                 </Grid>
@@ -658,30 +694,35 @@ export default function InputForm({ baseData }: InputFormProps) {
                 sx={{ display: "flex", flexDirection: "column" }}
                 key={`remarks-grid-${index}`}
               >
-                <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
-                  <InputControl
-                    inputType={InputType.TEXTFIELD}
-                    key={`call-receipt-field-${index}`}
-                    placeholder="Call receipt remarks"
-                    label={propsForCallReceiptField.label}
-                    multiline
-                    name="call_receipt_remark"
-                    id="call_receipt_remark"
-                    rows={6}
-                    fullWidth
-                    error={formError?.call_receipt_remark?.error}
-                    helperText={formError?.call_receipt_remark?.msg}
- setFormError={setFormError}
-                    sx={{
-                      "& .MuiFormHelperText-root": {
-                        margin: 0,
-                      },
-                    }}
-                    disabled={Boolean(propsForCallReceiptField.disabled)}
-                    required={propsForCallReceiptField.required}
-                    defaultValue={enqData?.call_receipt_remark ?? ""}
-                  />
-                </Grid>
+                {!baseData.statusUpdate && (
+                  <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
+                    <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`call-receipt-field-${index}`}
+                      placeholder="Call receipt remarks"
+                      label={propsForCallReceiptField.label}
+                      multiline
+                      name="call_receipt_remark"
+                      id="call_receipt_remark"
+                      rows={6}
+                      fullWidth
+                      error={formError?.call_receipt_remark?.error}
+                      helperText={formError?.call_receipt_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{
+                        "& .MuiFormHelperText-root": {
+                          margin: 0,
+                        },
+                      }}
+                      disabled={
+                        baseData.statusUpdate ||
+                        Boolean(propsForCallReceiptField.disabled)
+                      }
+                      required={propsForCallReceiptField.required}
+                      defaultValue={enqData?.call_receipt_remark ?? ""}
+                    />
+                  </Grid>
+                )}
                 <Grid
                   item
                   xs={12}
@@ -700,17 +741,46 @@ export default function InputForm({ baseData }: InputFormProps) {
                     fullWidth
                     error={formError?.suggested_action_remark?.error}
                     helperText={formError?.suggested_action_remark?.msg}
- setFormError={setFormError}
+                    setFormError={setFormError}
                     sx={{
                       "& .MuiFormHelperText-root": {
                         margin: 0,
                       },
                     }}
-                    disabled={Boolean(propsForSugActionField.disabled)}
+                    disabled={
+                      baseData.statusUpdate ||
+                      Boolean(propsForSugActionField.disabled)
+                    }
                     required={propsForSugActionField.required}
                     defaultValue={enqData.suggested_action_remark}
                   />
                 </Grid>
+                {baseData.statusUpdate && (
+                  <Grid item xs={12} md={12} key={`action-taken-grid-${index}`}>
+                    <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`action-taken-field-${index}`}
+                      placeholder="Action Taken Remarks"
+                      label={propsForActionTakenRemField.label}
+                      multiline
+                      name="action_taken_remark"
+                      id="action_taken_remark"
+                      rows={6}
+                      fullWidth
+                      error={formError?.action_taken_remark?.error}
+                      helperText={formError?.action_taken_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{
+                        "& .MuiFormHelperText-root": {
+                          margin: 0,
+                        },
+                      }}
+                      disabled={Boolean(propsForActionTakenRemField.disabled)}
+                      required={propsForActionTakenRemField.required}
+                      defaultValue={enqData.action_taken_remark}
+                    />
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -718,6 +788,11 @@ export default function InputForm({ baseData }: InputFormProps) {
 
         fieldArr.push(fld);
       } else if (!skipColumns.includes(field.column_name_id)) {
+        if (field.column_name_id === "allocate_to" && !baseData.statusUpdate) {
+          //skip this field
+          return null;
+        }
+
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -892,7 +967,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         open={snackOpen}
         autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
-        message={"Enquiry saved successfully!"}
+        message={
+          enqData?.enquiry_id
+            ? "Enquiry details updated successfully!"
+            : "Enquiry details saved successfully!"
+        }
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>

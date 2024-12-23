@@ -21,7 +21,6 @@ import { Metadata } from "next";
 export default async function Dashboard() {
   try {
     const session = await getSession();
-    console.log("session : ",session);
     if (session?.user.dbInfo) {
         return (
           <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>

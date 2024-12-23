@@ -23,7 +23,7 @@ function SecondNavbar(props:{title?:string}) {
 
   return (
     <div>
-      <Paper elevation ={3} style={{ padding: 5, marginTop:props.title == "Company"? 20:70,marginBottom:20, alignItems:"center" }}>
+      <Paper elevation ={3} style={{ padding: 5, marginTop:props.title == "Company List"? 20:70,marginBottom:20, alignItems:"center" }}>
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h6" style={{ verticalAlign: "baseline" }}>

@@ -26,10 +26,12 @@ import {
   getStates,
   getStatesMaster,
 } from "../controllers/masters.controller";
-import { Collapse, IconButton, Grid } from "@mui/material";
+import { Collapse, IconButton, Grid, Portal } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
 
-export default function CreateCompany(props: masterFormPropsWithDataT<companySchemaT>) {
+export default function CreateCompany(
+  props: masterFormPropsWithDataT<companySchemaT>
+) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -38,7 +40,9 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [defaultCountry, setdefaultCountry] = useState("");
   const [defaultCountryId, setdefaultCountryId] = useState(0);
-  const entityData: companySchemaT = props.data ? props.data : {} as companySchemaT;
+  const entityData: companySchemaT = props.data
+    ? props.data
+    : ({} as companySchemaT);
 
   useEffect(() => {
     const fetchCountryData = async () => {
@@ -194,12 +198,13 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   autoFocus
                   id="name"
                   label="Name"
+                  titleCase={true}
                   name="name"
                   required
                   style={{ width: "100%" }}
                   error={formError?.name?.error}
                   helperText={formError?.name?.msg}
- setFormError={setFormError}
+                  setFormError={setFormError}
                   defaultValue={entityData.name}
                   FormHelperTextProps={{
                     sx: { backgroundColor: "white", margin: 0 },
@@ -222,7 +227,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   style={{ width: "100%" }}
                   error={formError?.alias?.error}
                   helperText={formError?.alias?.msg}
- setFormError={setFormError}
+                  setFormError={setFormError}
                   defaultValue={entityData.alias}
                   sx={{ height: "fit-content" }}
                   onKeyDown={() => {
@@ -270,10 +275,47 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  name="city"
+                  id="city"
+                  label="City"
+                  style={{ width: "100%" }}
+                  error={formError?.city?.error}
+                  helperText={formError?.city?.msg}
+                  defaultValue={entityData.city}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { city, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <InputControl
+                  inputType={InputType.TEXT}
+                  name="pincode"
+                  id="pincode"
+                  label="Pin Code"
+                  style={{ width: "100%" }}
+                  error={formError?.pincode?.error}
+                  helperText={formError?.pincode?.msg}
+                  defaultValue={entityData.pincode}
+                  onKeyDown={() => {
+                    setFormError((curr) => {
+                      const { pincode, ...rest } = curr;
+                      return rest;
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
                 <AutocompleteDB
                   name={"country"}
                   id={"country"}
                   label={"Country"}
+                  required
                   onChange={(e, val, s) => {
                     setSelectValues({ country: val, state: null });
                     entityData.country_id = undefined;
@@ -290,6 +332,11 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                       ? {
                           id: entityData.country_id,
                           name: entityData.country,
+                        }
+                      : selectValues.country
+                      ? {
+                          id: selectValues.country?.id,
+                          name: selectValues.country?.name ?? "",
                         }
                       : ({
                           id: defaultCountryId,
@@ -323,9 +370,9 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                       selectValues.country?.name ?? entityData.country;
                     return getStatesMaster(stateStr, country);
                   }}
-                  disable={
-                    selectValues.country || entityData.country ? false : true
-                  }
+                  // disable={
+                  //   selectValues.country || entityData.country ? false : true
+                  // }
                   diaglogVal={
                     selectValues.state
                       ? {
@@ -345,44 +392,6 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                 />
                 {/* </div> */}
               </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6}>
-                <InputControl
-                  inputType={InputType.TEXT}
-                  name="city"
-                  id="city"
-                  label="City"
-                  style={{ width: "100%" }}
-                  error={formError?.city?.error}
-                  helperText={formError?.city?.msg}
- setFormError={setFormError}
-                  defaultValue={entityData.city}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { city, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6}>
-                <InputControl
-                  inputType={InputType.TEXT}
-                  name="pincode"
-                  id="pincode"
-                  label="Pin Code"
-                  style={{ width: "100%" }}
-                  error={formError?.pincode?.error}
-                  helperText={formError?.pincode?.msg}
- setFormError={setFormError}
-                  defaultValue={entityData.pincode}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { pincode, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
-                />
-              </Grid>
               <Grid
                 item
                 xs={12}
@@ -396,7 +405,7 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
                   onClick={() => {
                     if (props?.setDialogOpen === undefined) {
                       router.push("/signin");
-                    }  else {
+                    } else {
                       handleCancel();
                     }
                   }}
@@ -414,13 +423,15 @@ export default function CreateCompany(props: masterFormPropsWithDataT<companySch
               </Grid>
             </Grid>
           </form>
-          <Snackbar
-            open={snackOpen}
-            autoHideDuration={1000}
-            onClose={() => setSnackOpen(false)}
-            message="Record Saved!!"
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          />
+          <Portal>
+            <Snackbar
+              open={snackOpen}
+              autoHideDuration={1000}
+              onClose={() => setSnackOpen(false)}
+              message="Record Saved!"
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            />
+          </Portal>
         </Box>
       </Box>
     </>

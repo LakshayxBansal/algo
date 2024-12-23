@@ -14,7 +14,10 @@ import {
     IconButton,
     Stack,
     FormControl,
-    InputLabel
+    InputLabel,
+    Snackbar,
+    Collapse,
+    Alert
 } from "@mui/material";
 import {
     DragHandle as DragHandleIcon,
@@ -27,33 +30,63 @@ import { createCustomFields } from "@/app/controllers/customField.controller";
 import CloseIcon from "@mui/icons-material/Close";
 import { ErrorOutline as ErrorOutlineIcon } from "@mui/icons-material";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import { customFieldsMasterSchemaT } from "@/app/models/models";
 
 
-type FieldItem = {
-    action_id: number;
-    column_format: string | null;
-    column_id: number | null;
-    column_label: string;
-    column_name: string;
-    column_name_id: string;
-    column_order: number;
-    column_type_id: number;
-    created_by: number | null;
-    created_on: string | null;
-    form_section: string | null;
-    id: number;
-    is_default_column: number;
-    is_default_mandatory: number | null;
-    is_disabled: number;
-    is_mandatory: number;
+type FieldItem = customFieldsMasterSchemaT & {
     modified_by: number | null;
     modified_on: string | null;
-    object_type_id: number;
+    created_by: number | null;
+    created_on: string | null;
+    column_order: number;
 }
 
-export interface IformData {
-    userID: number;
-}
+// Define the type for formError
+type FormError = {
+    [key: string]: string; // Keys are strings, and values are error messages (strings)
+};
+
+// Define the type for each column's value
+type ColumnError = {
+    formError: FormError;
+};
+
+// Define the overall state type
+type ErrorState = {
+    [columnName: string]: ColumnError; // Column names are keys
+};
+
+
+const options = {
+    Form: [
+        { label: 'Enquiry', value: 26 },
+        { label: 'Contact', value: 5 },
+        { label: 'Organisation', value: 19 },
+        { label: 'Executive', value: 11 },
+        { label: 'Executive Department', value: 10 },
+        { label: 'Support', value: 28 },
+        // { label: 'Source', value: 2 },
+        // { label: 'Executive Group', value: 12 },
+        // { label: 'Contact Group', value: 6 },
+    ],
+    Mode: [
+        { label: 'Create', value: 1 },
+        { label: 'Update', value: 2 }
+    ],
+    ListOption: [
+        { label: 'List of Executives', value: "executive.name" },
+        { label: 'List of Contacts', value: "contact.name" }
+    ],
+    ColumnType: [
+        { label: 'Text', value: 1 },
+        { label: 'Options', value: 2 },
+        { label: 'Numeric', value: 3 },
+        { label: 'Date', value: 4 },
+        { label: 'List', value: 5 },
+        // { label: 'Currency', value: 6 },
+        { label: 'Master List', value: 7 },
+    ]
+};
 
 const FieldConfigurator = () => {
     const [fields, setFields] = useState<FieldItem[]>([]);
@@ -62,37 +95,26 @@ const FieldConfigurator = () => {
     const [selectedFormModeValue, setSelectedFormModeValue] = useState("");
     const [autoScrolling, setAutoScrolling] = useState(false);
     const scrollIntervalRef = useRef<number | null>(null);
-    const [formError, setFormError] = useState<Record<string, { label_msg: string }>>({});
+    const [fieldHelperState, setFieldHelperState] = useState<ErrorState>({});
+    const [snackOpen, setSnackOpen] = React.useState(false);
     // const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
 
 
-    const dateFormat = "DD.MM.YYYY";
-
-    const options = {
-        Form: [
-            { label: 'Enquiry', value: 26 },
-            { label: 'Contact', value: 5 },
-            { label: 'Organisation', value: 19 },
-            { label: 'Executive', value: 11 },
-            { label: 'Executive Department', value: 10 },
-            { label: 'Support', value: 28 },
-            // { label: 'Source', value: 2 },
-            // { label: 'Executive Group', value: 12 },
-            // { label: 'Contact Group', value: 6 },
-        ],
-        Mode: [
-            { label: 'Create', value: 1 },
-            { label: 'Update', value: 2 }
-        ]
-    };
-
     const handleFormChange = (event: any) => {
         setSelectedFormValue(event.target.value);
+        setFieldHelperState({});
     };
 
     // const handleFormModeChange = (event: any) => {
     //     setSelectedFormModeValue(event.target.value);
     // };
+
+    const clearFormError = () => {
+        setFieldHelperState((curr) => {
+            const { form, ...rest } = curr;
+            return rest;
+        });
+    };
 
     useEffect(() => {
         async function getFieldData() {
@@ -102,15 +124,16 @@ const FieldConfigurator = () => {
         getFieldData();
     }, [selectedFormValue, selectedFormModeValue]);
 
-    let customCount = fields.filter((row: any) => row.is_default_column === 0).length + 1;
+    let customColumnCount = fields.filter((row: any) => row.is_default_column === 0).length;
+    let counter = customColumnCount + 1;
     const addField = () => {
         const newField: FieldItem = {
             action_id: 1,
             column_format: null,
-            column_id: null,
+            column_id: `c_col${counter}`,
             column_label: "Label",
-            column_name: `c_col${customCount}`,
-            column_name_id: `c_col${customCount}`,
+            column_name: `c_col${counter}`,
+            column_name_id: `c_col${counter}`,
             column_order: fields.length + 1,
             column_type_id: 1,
             created_by: null,
@@ -120,25 +143,74 @@ const FieldConfigurator = () => {
             is_default_column: 0,
             is_default_mandatory: null,
             is_disabled: 0,
-            is_mandatory: 1,
+            is_mandatory: 0,
             modified_by: null,
             modified_on: null,
             object_type_id: parseInt(selectedFormValue)
         };
         setFields([...fields, newField]);
-        customCount++;
+        customColumnCount++;
+    };
+
+    // Function to update the state
+    const updateErrorState = (
+        columnName: string, // Column name as a string
+        field: string,      // Field name as a string
+        errorMessage: string // Error message as a string
+    ): void => {
+        setFieldHelperState((prevState) => ({
+            ...prevState,
+            [columnName]: {
+                formError: {
+                    ...prevState[columnName]?.formError, // Preserve existing errors for this column
+                    [field]: errorMessage, // Add or update the error for the specified field
+                },
+            },
+        }));
     };
 
     const handleChange = (index: number, field: keyof FieldItem, value: any) => {
+
+        // setFieldHelperState((prev) => {
+        //     const updatedFormError = { ...prev };
+        //     if (updatedFormError['form']) {
+        //         delete updatedFormError['form']; // Remove the 'form' property
+        //     }
+        //     return updatedFormError
+        // })
+        clearFormError();
+
         const updatedFields: any = [...fields];
         updatedFields[index][field] = value;
+
+        if (field === "is_mandatory") {
+            updatedFields[index]["is_disabled"] = 0;
+        }
         setFields(updatedFields);
 
-        const updatedErrors = { ...formError };
-        if (field === "column_label" && updatedFields[index].column_label.trim() !== "") {
-            delete updatedErrors[updatedFields[index].column_name_id];
+        if (field === "column_label" || field === "column_format") {
+            setFieldHelperState((prevState) => {
+                const updatedState = { ...prevState };
+                const columnNameId = updatedFields[index].column_name_id;
+
+                // Remove the error if the field is corrected
+                if (value.trim() !== "") {
+                    if (updatedState[columnNameId]?.formError?.[field]) {
+                        delete updatedState[columnNameId].formError[field];
+                    }
+
+                    // If there are no errors left for this column, delete the entire column key
+                    if (
+                        updatedState[columnNameId]?.formError &&
+                        Object.keys(updatedState[columnNameId].formError).length === 0
+                    ) {
+                        delete updatedState[columnNameId];
+                    }
+                }
+
+                return updatedState;
+            });
         }
-        setFormError(updatedErrors);
     };
 
 
@@ -210,7 +282,7 @@ const FieldConfigurator = () => {
         if (draggedItem === null || draggedItem === toIndex) return;
 
         const updatedFields = [...fields];
-        // Move the dragged item to the new position
+        // Move the dragged item to the new position ${value}`
         const [movedItem] = updatedFields.splice(draggedItem, 1);
         updatedFields.splice(toIndex, 0, movedItem);
 
@@ -235,54 +307,77 @@ const FieldConfigurator = () => {
     };
 
     const handleSubmit = async () => {
-        // await createCustomFields(Number(selectedFormValue), 1, fields);
-        // fields.map((Item) => {
-        //     if (Item.column_label == "") {
-        //         const errorState = { ...formError };
-        //         errorState[Item.column_name_id] = { msg: "Label cannot be Empty" };
-        //         setFormError(errorState);
-        //         console.log("Final field error", errorState);
-        //         return;
-        //     }
-        // })
-        const errors: Record<string, { label_msg: string }> = {};
-        // const error: Record<string, { label_msg: string }> = {};
 
-
-        // Validate each field to ensure labels are not empty
-        fields.forEach((item) => {
-            if (item.column_label.trim() === "") {
-                errors[item.column_name_id] = { label_msg: "Label cannot be empty" };
+        const grouped = fields.reduce<Record<string, string[]>>((acc, item: FieldItem) => {
+            if (!acc[item.column_label]) {
+                acc[item.column_label] = [];
             }
-        });
+            acc[item.column_label].push(item.column_name);
+            return acc;
+        }, {});
 
-        if (Object.keys(errors).length > 0) {
-            setFormError(errors);
-            // console.log("Validation errors:", errors);
-            return; // Prevent form submission if there are errors
+        const duplicates = Object.entries(grouped)
+            .filter(([label, values]) => values.length > 1)
+            .map(([label, values]) => ({ label, values }));
+
+        if (duplicates.length > 0) {
+            updateErrorState("form", "column_label", "Labels Cannot be Same")
+            return;
         }
+
 
         // Proceed with form submission if there are no errors
         try {
             const result = await createCustomFields(Number(selectedFormValue), fields);
-            if (result) {
-                console.log("FIELDS", fields);
-                alert("Field configuration saved!");
+            console.log("result", result.data[0].errorMessages);
+            if (result.status) {
+                setSnackOpen(true);
             }
             else {
-                // console.error("Error saving configuration:");
-                alert("Failed to save configuration. Please try again.");
+                result.data.forEach((item: any) => {
+                    console.log("result", item);
+                    for (const [key, value] of Object.entries(item.errorMessages)) {
+                        updateErrorState(item.path, `${key}`, `${value}`)
+                    }
+                });
             }
         } catch (error) {
             // console.error("Error saving configuration:", error);
             alert("Failed to save configuration. Please try again.");
         }
-
-        // alert("Field configuration saved!");
     };
 
     return (
         <Box sx={{ maxWidth: 1200, margin: "auto", p: 3 }}>
+            <Collapse in={fieldHelperState?.form ? true : false}>
+                <Alert
+                    sx={{
+                        position: "fixed", // Makes it stay on top of the screen
+                        top: 75, // Positions it at the top
+                        left: 40,
+                        right: 30,
+                        zIndex: 9999, // Ensures it's above other content
+                        display: "flex",
+                        justifyContent: "center", // Centers the alert horizontally
+                        p: 2,
+                        mb: 2
+                    }}
+                    severity="error"
+                    action={
+                        <IconButton
+                            aria-label="close"
+                            color="inherit"
+                            size="small"
+                            onClick={clearFormError}
+                        >
+                            <CloseIcon fontSize="inherit" />
+                        </IconButton>
+                    }
+                // sx={{ mb: 2 }}
+                >
+                    {fieldHelperState?.form?.formError.column_label}
+                </Alert>
+            </Collapse>
             <Typography variant="h6" gutterBottom>
                 Configure Form Fields :
             </Typography>
@@ -302,21 +397,6 @@ const FieldConfigurator = () => {
                             ))}
                         </Select>
                     </FormControl>
-
-                    {/* <FormControl sx={{ width: 200 }} size="small" variant="outlined">
-                        <InputLabel>Select Form Mode</InputLabel>
-                        <Select
-                            value={selectedFormModeValue}
-                            onChange={handleFormModeChange}
-                            label="Select Form Mode"
-                        >
-                            {options.Mode.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
                 </Box>
 
                 {fields.length > 0 && <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
@@ -398,24 +478,15 @@ const FieldConfigurator = () => {
                                     </Box>
                                 }
                             </Box>
-
-                            {/* <TextField
-                                label="Label"
-                                value={item.column_label}
-                                onChange={(e) => handleChange(index, "column_label", e.target.value)}
-                                size="small"
-                                sx={{ width: 200 }}
-                                error={!!formError[item.column_name_id]} // Show error state if there's an error
-                                helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
-                            /> */}
                             <InputControl
                                 inputType={InputType.TEXT}
                                 id="label"
                                 key="label"
-                                label="Label"
+                                label={"Label" + `  (${item.column_label})`}
                                 name="label"
-                                error={!!formError[item.column_name_id]} // Show error state if there's an error       
-                                helperText={formError[item.column_name_id]?.label_msg} // Display error message if it exists      
+                                error={!!fieldHelperState[item.column_name_id]?.formError.column_label} // Show error state if there's an error       
+                                helperText={fieldHelperState[item.column_name_id]?.formError?.column_label} // Display error message if it exists      
+                                setFormError={setFieldHelperState}
                                 defaultValue={item.column_label}
                                 onChange={(e: any) => handleChange(index, "column_label", e.target.value)}
                             />
@@ -426,26 +497,34 @@ const FieldConfigurator = () => {
                                     <Select
                                         value={item.column_type_id}
                                         label="Column Type"
-                                        onChange={(e) => handleChange(index, "column_type_id", e.target.value)}
+                                        onChange={(e) => {
+                                            handleChange(index, "column_type_id", e.target.value)
+                                            const updatedFields: FieldItem[] = [...fields];
+                                            updatedFields[index]["column_format"] = null;
+                                        }}
                                     >
-                                        <MenuItem value={1}>Text</MenuItem>
-                                        <MenuItem value={3}>Numeric</MenuItem>
-                                        <MenuItem value={4}>Date</MenuItem>
-                                        <MenuItem value={6}>Currency</MenuItem>
-                                        <MenuItem value={5}>List</MenuItem>
-                                        <MenuItem value={2}>Options</MenuItem>
+                                        {options.ColumnType.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             )}
 
-                            {item.is_default_column !== 1 && (
+                            {item.is_default_column !== 1 && (item.column_type_id === 2 || item.column_type_id === 5) && (
                                 <InputControl
                                     inputType={InputType.TEXT}
                                     id="format"
                                     key="format"
-                                    label={item.column_type_id !== 4 ? "Format" : dateFormat}
+                                    label="Format"
                                     value={item.column_format || ""}
+                                    error={!!fieldHelperState[item.column_name_id]?.formError.column_format} // Show error state if there's an error       
+                                    helperText={fieldHelperState[item.column_name_id]?.formError?.column_format} // Display error message if it exists      
                                     name="format"
+                                    sx={{
+                                        width: "280px",
+                                    }}
                                     defaultValue={item.column_format}
                                     onChange={(e: any) => handleChange(index, "column_format", e.target.value)}
                                     disabled={
@@ -453,15 +532,30 @@ const FieldConfigurator = () => {
                                         item.column_type_id !== 5 && // Numeric
                                         item.column_type_id !== 6    // Date
                                     }
-                                    placeholder={item.column_type_id === 6
-                                        ? "Number of decimal places"
-                                        : item.column_type_id === 5
-                                            ? "Enter comma separated list items"
-                                            : item.column_type_id === 2 ? "Enter comma seperated options" : ""}
+                                    placeholder={item.column_type_id === 2 ? "Enter semi-colon seperated options" : "Enter semi-colon seperated List Items"}
                                 />
                             )}
 
-                            <FormControlLabel
+                            {item.column_type_id === 7 &&
+                                <FormControl sx={{ width: 215 }} size="small" variant="outlined">
+                                    <InputLabel>Select the Master Form</InputLabel>
+                                    <Select
+                                        value={item.column_format}
+                                        label="Select the Master Form"
+                                        onChange={(e) => {
+                                            handleChange(index, "column_format", e.target.value)
+                                        }}
+                                    >
+                                        {options.ListOption.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            }
+
+                            {item.column_type_id !== 2 && <FormControlLabel
                                 disabled={item.is_default_mandatory === 1}
                                 control={
                                     <Checkbox
@@ -470,8 +564,7 @@ const FieldConfigurator = () => {
                                     />
                                 }
                                 label="Mandatory"
-                            />
-
+                            />}
                             {item.is_default_column ? (<FormControlLabel
                                 disabled={item.is_default_mandatory === 1 || item.is_mandatory === 1}
                                 control={
@@ -481,13 +574,18 @@ const FieldConfigurator = () => {
                                     />
                                 }
                                 label="Disabled"
-                            />) : (<></>) }
+                            />) : (<></>)}
 
                             {item.is_default_column !== 1 && <Box sx={{ marginLeft: "auto" }}>
                                 <IconButton onClick={() => {
                                     const newFields = [...fields];
-                                    newFields.splice(index, 1);
+                                    const removedField = newFields.splice(index, 1);
                                     setFields(newFields);
+                                    setFieldHelperState((prevState) => {
+                                        const updatedState = { ...prevState };
+                                        delete updatedState[removedField[0].column_name_id];
+                                        return updatedState;
+                                    });
                                 }}>
                                     <CloseIcon />
                                 </IconButton>
@@ -505,6 +603,13 @@ const FieldConfigurator = () => {
                     Save Configuration
                 </Button>
             </Box>}
+            <Snackbar
+                open={snackOpen}
+                autoHideDuration={1000}
+                onClose={() => setSnackOpen(false)}
+                message="Record Saved!"
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            />
         </Box>
     );
 };

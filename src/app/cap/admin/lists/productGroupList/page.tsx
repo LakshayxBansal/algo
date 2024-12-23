@@ -8,6 +8,8 @@ import {
   getProductGroupById,
   getProductGroupByPage,
 } from "@/app/controllers/productGroup.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -20,6 +22,9 @@ const columns: GridColDef[] = [
 export default function ProductGroup() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Product Group"}/>
+      </Box>
       <EntityList
         title="Product Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

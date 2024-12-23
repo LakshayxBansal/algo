@@ -8,6 +8,8 @@ import {
   getCategoryById,
   getEnquiryCategoryByPage,
 } from "@/app/controllers/enquiryCategory.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -20,6 +22,9 @@ const columns: GridColDef[] = [
 export default function Category() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Enquiry Category"}/>
+      </Box>
       <EntityList
         title="Enquiry Category"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

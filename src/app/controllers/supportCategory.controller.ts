@@ -67,7 +67,7 @@ export async function createSupportCategory(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await createSupportCategoryDb(session, data);
@@ -116,7 +116,7 @@ export async function updateSupportCategory(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
 
       if (parsed.success) {
@@ -185,7 +185,7 @@ export async function getSupportCategoryByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getSupportCategoryByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

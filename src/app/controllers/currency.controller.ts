@@ -34,7 +34,7 @@ export async function createCurrency(data: currencySchemaT) {
   try {
     const session = await getSession();
 
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.currencySchema.safeParse(data);
 
       if (parsed.success) {
@@ -95,7 +95,7 @@ export async function updateCurrency(data: currencySchemaT) {
   try {
     const session = await getSession();
 
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.currencySchema.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateCurrencyDb(
@@ -210,7 +210,7 @@ export async function getCurrencyByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getCurrencyByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,

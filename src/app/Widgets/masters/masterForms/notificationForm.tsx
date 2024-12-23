@@ -6,6 +6,7 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Portal,
   Select,
   SelectChangeEvent,
 } from "@mui/material";
@@ -100,7 +101,7 @@ export default function NotificationForm(props: masterFormPropsT) {
   };
 
   const handleRemoveName = (nameToRemove: string) => {
-    setSelectedNames((prev) => prev.filter(name => name !== nameToRemove));
+    setSelectedNames((prev) => prev.filter((name) => name !== nameToRemove));
   };
 
   const handleNameChange = (event: SelectChangeEvent) => {
@@ -121,24 +122,6 @@ export default function NotificationForm(props: masterFormPropsT) {
 
   return (
     <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: "0px",
-          zIndex: 2,
-          paddingY: "10px",
-          bgcolor: "white",
-        }}
-      >
-        <Seperator>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {props.data ? "Update Notification" : "Add Notification"}
-            <IconButton onClick={handleCancel}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Seperator>
-      </Box>
       <Collapse in={formError?.form ? true : false}>
         <Alert
           severity="error"
@@ -157,7 +140,7 @@ export default function NotificationForm(props: masterFormPropsT) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form action={handleSubmit}>
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
             <Seperator>Details</Seperator>
@@ -185,10 +168,16 @@ export default function NotificationForm(props: masterFormPropsT) {
                   <MenuItem value={"Read Enquiry"}>Read Enquiry</MenuItem>
                   <MenuItem value={"Update Enquiry"}>Update Enquiry</MenuItem>
                   <MenuItem value={"Delete Enquiry"}>Delete Enquiry</MenuItem>
-                  <MenuItem value={"Create Executive"}>Create Executive</MenuItem>
+                  <MenuItem value={"Create Executive"}>
+                    Create Executive
+                  </MenuItem>
                   <MenuItem value={"Read Executive"}>Read Executive</MenuItem>
-                  <MenuItem value={"Update Executive"}>Update Executive</MenuItem>
-                  <MenuItem value={"Delete Executive"}>Delete Executive</MenuItem>
+                  <MenuItem value={"Update Executive"}>
+                    Update Executive
+                  </MenuItem>
+                  <MenuItem value={"Delete Executive"}>
+                    Delete Executive
+                  </MenuItem>
                 </Select>
               </FormControl>
 
@@ -199,7 +188,7 @@ export default function NotificationForm(props: masterFormPropsT) {
               ))}
             </Box>
 
-              {/* {nameType && (
+            {/* {nameType && (
                 <>
                   <Button onClick={handleCreate}>Create</Button>
                   <Button onClick={handleRead}>Read</Button>
@@ -241,9 +230,7 @@ export default function NotificationForm(props: masterFormPropsT) {
                 gridTemplateColumns: "repeat(3, 1fr)",
                 p: 1,
               }}
-            >
-              
-            </Box>
+            ></Box>
           </Paper>
 
           <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
@@ -277,9 +264,7 @@ export default function NotificationForm(props: masterFormPropsT) {
                 gridTemplateColumns: "repeat(3, 1fr)",
                 p: 1,
               }}
-            >
-              
-            </Box>
+            ></Box>
           </Paper>
 
           <Paper elevation={3} sx={{ mb: 4, p: 2 }}>
@@ -305,12 +290,6 @@ export default function NotificationForm(props: masterFormPropsT) {
                 </Box>
               </Seperator>
             </Box>
-            <Box sx={{display: "grid",
-                columnGap: 2,
-                rowGap: 1,
-                gridTemplateColumns: "repeat(2, 1fr)",
-                p: 1,}}
-                >
             <Box
               sx={{
                 display: "grid",
@@ -320,36 +299,45 @@ export default function NotificationForm(props: masterFormPropsT) {
                 p: 1,
               }}
             >
-              <FormControl fullWidth>
-                <InputLabel id="recipient-label">Recipient</InputLabel>
-                <Select
-                  labelId="recipient-label"
-                  id="recipient"
-                  name="recipient"
-                  value={recipientName}
-                  label="Recipient"
-                  onChange={handleRecipientChange}
-                >
-                  <MenuItem value="ind">XYZ</MenuItem>
-                  <MenuItem value="int">ABC</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth>
-                <InputLabel id="channel-label">Channels</InputLabel>
-                <Select
-                  labelId="channel-label"
-                  id="channel"
-                  datatype="string"
-                  name="channel"
-                  value={channelType}
-                  label="Channel"
-                  onChange={handleChannelChange}
+              <Box
+                sx={{
+                  display: "grid",
+                  columnGap: 2,
+                  rowGap: 1,
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  p: 1,
+                }}
+              >
+                <FormControl fullWidth>
+                  <InputLabel id="recipient-label">Recipient</InputLabel>
+                  <Select
+                    labelId="recipient-label"
+                    id="recipient"
+                    name="recipient"
+                    value={recipientName}
+                    label="Recipient"
+                    onChange={handleRecipientChange}
                   >
-                  <MenuItem value={2}>Email</MenuItem>
-                  <MenuItem value={3}>Mobile Number</MenuItem>
-                </Select>
-              </FormControl>
+                    <MenuItem value="ind">XYZ</MenuItem>
+                    <MenuItem value="int">ABC</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <InputLabel id="channel-label">Channels</InputLabel>
+                  <Select
+                    labelId="channel-label"
+                    id="channel"
+                    datatype="string"
+                    name="channel"
+                    value={channelType}
+                    label="Channel"
+                    onChange={handleChannelChange}
+                  >
+                    <MenuItem value={2}>Email</MenuItem>
+                    <MenuItem value={3}>Mobile Number</MenuItem>
+                  </Select>
+                </FormControl>
               </Box>
 
               <InputControl
@@ -362,7 +350,7 @@ export default function NotificationForm(props: masterFormPropsT) {
                   "& .MuiInputBase-input": {
                     height: "6rem",
                     padding: "0 14px",
-                    textAlign: "center"
+                    textAlign: "center",
                   },
                   "& .MuiOutlinedInput-root": {
                     height: "3.5rem",
@@ -374,11 +362,10 @@ export default function NotificationForm(props: masterFormPropsT) {
                 }}
                 // error={formError?.message.error}
                 // helperText={formError?.message?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 // defaultValue={entityData.message}
-                />
-
-                </Box>
+              />
+            </Box>
             {/* </Box> */}
           </Paper>
 
@@ -398,13 +385,15 @@ export default function NotificationForm(props: masterFormPropsT) {
             </Button>
           </Box>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

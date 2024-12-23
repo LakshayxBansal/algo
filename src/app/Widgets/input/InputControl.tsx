@@ -28,7 +28,7 @@ import {
   NumberInputProps,
   numberInputClasses,
 } from "@mui/base/Unstable_NumberInput";
-import { CustomTextField } from "@/app/utils/styledComponents";
+import { CustomTextField, StyledTelInput } from "@/app/utils/styledComponents";
 import capitalizeFirstChar from "@/app/utils/titleCase.utils";
 import { error } from "console";
 
@@ -86,7 +86,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     prevKey = currentKey;
     currentKey = event.key;
-    if(props.onKeyDown){
+    if (props.onKeyDown) {
       props.onKeyDown(event);
     }
   };
@@ -103,15 +103,14 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   }
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-
     if (setFormError && props.error) {
       setFormError((prevFormError: Record<string, any>) => {
         const updatedFormError = { ...prevFormError };
-        
-        if (updatedFormError['form']) {
-          delete updatedFormError['form']; // Remove the 'form' property
+
+        if (updatedFormError["form"]) {
+          delete updatedFormError["form"]; // Remove the 'form' property
         }
-    
+
         return {
           ...updatedFormError,
           [props.name]: {
@@ -121,8 +120,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
         };
       });
     }
-    
-    
 
     switch (inputType) {
       case InputType.TEXT: {
@@ -155,6 +152,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
             }
           }
         }
+        if (inputProps.onChange) {
+          inputProps.onChange(event);
+        }
+        break;
+      }
+      case InputType.EMAIL: {
+        const inputProps = props as TextFieldProps;
         if (inputProps.onChange) {
           inputProps.onChange(event);
         }
@@ -265,7 +269,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
       return (
         <FormControlLabel
           label={custLabel}
-          control={<Checkbox {...CheckboxProps} onChange={onChange}/>}
+          control={<Checkbox {...CheckboxProps} onChange={onChange} />}
         />
       );
       break;
@@ -300,13 +304,21 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.EMAIL: {
       // It's a TextField
       const textFieldProps = props as TextFieldProps;
-      return <TextField {...textFieldProps} type="email" onChange={onChange} />;
+      return (
+        <CustomTextField
+          {...textFieldProps}
+          onChange={onChange}
+          type="email"
+          onKeyDown={handleKeyDown}
+        />
+      );
+      // return <TextField {...textFieldProps} type="email" onChange={onChange} />;
       break;
     }
     case InputType.PHONE: {
       // It's a phone input
       return (
-        <MuiTelInput
+        <StyledTelInput
           ref={inputRef}
           defaultCountry="IN"
           {...props}

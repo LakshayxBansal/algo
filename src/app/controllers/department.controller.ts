@@ -77,7 +77,7 @@ export async function createDepartment(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await createDepartmentDb(session, data);
@@ -126,7 +126,7 @@ export async function updateDepartment(data: nameMasterDataT) {
   let result;
   try {
     const session = await getSession();
-    if (session) {
+    if (session?.user.dbInfo) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await updateDepartmentDb(session, data);
@@ -185,7 +185,7 @@ export async function getDepartmentByPage(
   try {
     const appSession = await getSession();
 
-    if (appSession) {
+    if (appSession?.user.dbInfo) {
       const dbData = await getDepartmentByPageDb(
         appSession.user.dbInfo.dbName as string,
         page as number,
@@ -221,8 +221,7 @@ export async function getDepartmentByPage(
 export async function getDepartmentColumns(){
   try{
     const session = await getSession();
-    console.log("session", session);
-    if(session){
+    if(session?.user.dbInfo){
       const result = await getDepartmentColumnsDb(session.user.dbInfo.dbName as string);
       return result;
     }

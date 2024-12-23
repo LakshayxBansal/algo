@@ -9,6 +9,8 @@ import {
   getDepartmentByPage,
   getDepartmentColumns,
 } from "@/app/controllers/department.controller";
+import { Box } from "@mui/material";
+import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
   {
@@ -18,11 +20,12 @@ const columns: GridColDef[] = [
   },
 ];
 
-// const reqcols = ["name"]
-
 export default function Department() {
   return (
     <>
+      <Box sx={{margin: "20px 20px"}}>
+      <SecondNavbar title={"List of Department"}/>
+      </Box>
       <EntityList
         title="Department"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -35,7 +38,7 @@ export default function Department() {
         fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         fnDeleteDataByID={delDepartmentById}
-        fnFetchColumns={getDepartmentColumns}
+        // fnFetchColumns={getDepartmentColumns}
         customCols={columns}
         AddAllowed={false}
         uploadAllowed={true}

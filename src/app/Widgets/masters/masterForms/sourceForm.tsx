@@ -11,16 +11,23 @@ import Seperator from "../../seperator";
 import Snackbar from "@mui/material/Snackbar";
 import Paper from "@mui/material/Paper";
 import { masterFormPropsWithDataT, nameMasterDataT } from "@/app/models/models";
-import { Collapse, Grid, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
+import { usePathname } from "next/navigation";
 
-export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDataT>) {
+export default function SourceForm(
+  props: masterFormPropsWithDataT<nameMasterDataT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: nameMasterDataT = props.data ? props.data : {} as nameMasterDataT;
+  const entityData: nameMasterDataT = props.data
+    ? props.data
+    : ({} as nameMasterDataT);
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   // submit function. Save to DB and set value to the dropdown control
   const handleSubmit = async (formData: FormData) => {
@@ -30,13 +37,21 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
 
     const result = await persistEntity(data as nameMasterDataT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name, stamp: result.data[0].stamp };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
+      const newVal = {
+        id: result.data[0].id,
+        name: result.data[0].name,
+        stamp: result.data[0].stamp,
+      };
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/sourceList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -95,8 +110,8 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm">
-        <form action={handleSubmit} noValidate>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl
@@ -110,14 +125,14 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
+                // onKeyDown={() => {
+                //   setFormError((curr) => {
+                //     const { name, ...rest } = curr;
+                //     return rest;
+                //   });
+                // }}
               />
             </Grid>
             <Grid
@@ -143,13 +158,15 @@ export default function SourceForm(props: masterFormPropsWithDataT<nameMasterDat
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={3000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

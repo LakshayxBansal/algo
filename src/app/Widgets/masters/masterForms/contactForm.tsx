@@ -14,6 +14,7 @@ import {
 import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
+import { Portal } from "@mui/material";
 import {
   createContact,
   updateContact,
@@ -53,21 +54,19 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { AddDialog } from "../addDialog";
 import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
+import { usePathname } from "next/navigation";
 
 export default function ContactForm(
   props: masterFormPropsWithDataT<contactSchemaT>
 ) {
-  // console.log("props : ", props)
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(
-    props.data?.docData ? props?.data?.docData : []
-  );
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(props.data?.docData ? props?.data?.docData : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
-  // const [entityData, setentityData] = React.useState<contactSchemaT>(props.data);
+
   const entityData: contactSchemaT = props.data
     ? props.data
     : ({} as contactSchemaT);
@@ -77,11 +76,15 @@ export default function ContactForm(
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
   const [printNameFn, setPrintNameFn] = useState(entityData.print_name);
-  const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
+  const [whatsappFn, setWhatsappFn] = useState(
+    entityData.whatsapp?.length === 0 ? "+91" : entityData.whatsapp
+  );
   const [stateDisable, setStateDisable] = useState(!entityData.country);
-
+  const [formKey, setFormKey] = useState(0);
+  let customMasterListData: { [key: string]: { table_name: string, field: string } } = {}
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-
+  const pathName = usePathname();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -95,8 +98,12 @@ export default function ContactForm(
 
     // Set a new timeout
     debounceTimeout.current = setTimeout(() => {
-      setPrintNameFn(value); // Update the state after 300ms of inactivity
+      setPrintNameFn(value);
     }, 300);
+  };
+
+  const handleWhatsappChange = (val: string) => {
+    setWhatsappFn(val);
   };
 
   async function getStatesforCountry(stateStr: string) {
@@ -134,7 +141,7 @@ export default function ContactForm(
   };
 
   const handleSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; // Initialize an empty object
+    let data: { [key: string]: any } = {};
     for (let i = 1; i <= 10; ++i) {
       data[`c_col${i}`] = "";
     }
@@ -149,22 +156,28 @@ export default function ContactForm(
       const newVal = {
         id: result.data[0].id,
         name: result.data[0].name,
-        // reloadOpts: true,
       };
-      setSnackOpen(true);
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
       setFormError({});
+      setSnackOpen(true);
+      if (pathName !== "/cap/admin/lists/contactList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+        setPrintNameFn("");
+        setWhatsappFn("");
+        setDocData([]);
+      }
     } else {
       const issues = result.data;
-      // show error on screen
       const errorState: Record<string, { msg: string; error: boolean }> = {};
       errorState["form"] = { msg: "Error encountered", error: true };
       for (const issue of issues) {
         for (const path of issue.path) {
           errorState[path] = { msg: issue.message, error: true };
+          console.log("errorState", errorState);
           if (path === "refresh") {
             errorState["form"] = { msg: issue.message, error: true };
           }
@@ -178,34 +191,36 @@ export default function ContactForm(
     data.contactGroup_id = selectValues.contactGroup
       ? selectValues.contactGroup.id
       : entityData.contactGroup_id
-        ? entityData.contactGroup_id
-        : 0;
+      ? entityData.contactGroup_id
+      : 0;
     data.area_id = selectValues.area
       ? selectValues.area.id
       : entityData.area_id
-        ? entityData.area_id
-        : 0;
+      ? entityData.area_id
+      : 0;
     data.organisation_id = selectValues.organisation
       ? selectValues.organisation.id
       : entityData.organisation_id
-        ? entityData.organisation_id
-        : 0;
+      ? entityData.organisation_id
+      : 0;
     data.department_id = selectValues.department
       ? selectValues.department.id
       : entityData.department_id
-        ? entityData.department_id
-        : 0;
+      ? entityData.department_id
+      : 0;
     data.country_id = selectValues.country
       ? selectValues.country.id
       : entityData.country_id
-        ? entityData.country_id
-        : 0;
+      ? entityData.country_id
+      : 0;
     data.state_id = selectValues.state
       ? selectValues.state.id
       : entityData.state_id
         ? entityData.state_id
         : 0;
-
+    Object.keys(customMasterListData).forEach((key) => {
+      data[key] = selectValues[key] ? selectValues[key].id : null;
+    });
     return data;
   };
 
@@ -237,23 +252,17 @@ export default function ContactForm(
         key="name"
         autoFocus
         id="name"
+        titleCase={true}
         label="Name"
         name="name"
         required
         fullWidth
         error={formError?.name?.error}
         helperText={formError?.name?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { name, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "alias",
@@ -266,17 +275,10 @@ export default function ContactForm(
         name="alias"
         error={formError?.alias?.error}
         helperText={formError?.alias?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.alias}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { alias, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "print_name",
@@ -289,17 +291,10 @@ export default function ContactForm(
         name="print_name"
         error={formError?.print_name?.error}
         helperText={formError?.print_name?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={printNameFn}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { print_name, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "organisation",
@@ -347,17 +342,10 @@ export default function ContactForm(
         name="pan"
         error={formError?.pan?.error}
         helperText={formError?.pan?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pan}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pan, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "aadhaar",
@@ -370,17 +358,10 @@ export default function ContactForm(
         name="aadhaar"
         error={formError?.aadhaar?.error}
         helperText={formError?.aadhaar?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.aadhaar}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { aadhaar, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "contactGroup",
@@ -497,17 +478,10 @@ export default function ContactForm(
         placeholder="Email address"
         error={formError?.email?.error}
         helperText={formError?.email?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.email}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { email, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "mobile",
@@ -521,17 +495,11 @@ export default function ContactForm(
         size="small"
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.mobile}
+        onChange={handleWhatsappChange}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { mobile, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "whatsapp",
@@ -543,30 +511,13 @@ export default function ContactForm(
         label="Whatsapp No"
         name="whatsapp"
         // defaultCountry="FR"
+        defaultCountry={whatsappFn?.length === 0 ? "" : "IN"}
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
- setFormError={setFormError}
-        // fullWidth
-        // defaultValue={whatsappFn}
-        // key={whatsappFn}
-        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        //   const value = e.target.value;
-        //   setWhatsappFn(value);
-        //   setFormError((curr) => {
-        //     const { whatsapp, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
+        setFormError={setFormError}
         defaultValue={whatsappFn}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { whatsapp, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "address1",
@@ -582,14 +533,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.address1}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { address1, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "address2",
@@ -605,43 +549,8 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.address2}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { address2, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
-    // [
-    //   "address3",
-
-    //   <InputControl
-    //     inputType={InputType.TEXT}
-    //     label="Address Line 3"
-    //     name="address3"
-    //     id="address3"
-    //     error={formError?.address3?.error}
-    //     helperText={formError?.address3?.msg}
-    //     defaultValue={entityData.address3}
-    //     sx={{
-    //       width: {
-    //         xs: "90%",  // Full width for extra-small screens (mobile)
-    //         sm: "90%",   // Slightly smaller width for small screens (tablets)
-    //         md: "80%",   // Moderate width for medium screens (small laptops)
-    //         lg: "405px", // Fixed width for large screens (desktops)
-    //       },
-    //     }}
-    //     onKeyDown={() => {
-    //       setFormError((curr) => {
-    //         const { address3, ...rest } = curr;
-    //         return rest;
-    //       });
-    //     }}
-    //   />
-
-    // ],
     [
       "city",
 
@@ -653,15 +562,9 @@ export default function ContactForm(
         label="City"
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { city, ...rest } = curr;
-            return rest;
-          });
-        }}
       />,
     ],
     [
@@ -675,15 +578,9 @@ export default function ContactForm(
         label="Pin Code"
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
-        onKeyDown={() => {
-          setFormError((curr) => {
-            const { pincode, ...rest } = curr;
-            return rest;
-          });
-        }}
       />,
     ],
     [
@@ -723,7 +620,7 @@ export default function ContactForm(
         label={"State"}
         onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
         width={375}
-        dialogTitle={"Add State"}
+        dialogTitle={"State"}
         fetchDataFn={getStatesforCountry}
         fnFetchDataByID={getStateById}
         defaultValue={defaultState}
@@ -737,8 +634,7 @@ export default function ContactForm(
             parentData={selectValues.country?.id || entityData.country_id}
           />
         )}
-      />
-
+      />,
     ],
     [
       "city",
@@ -751,17 +647,10 @@ export default function ContactForm(
         label="City"
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.city}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { city, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
+      />,
     ],
     [
       "pincode",
@@ -774,27 +663,25 @@ export default function ContactForm(
         label="Pin Code"
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
- setFormError={setFormError}
+        setFormError={setFormError}
         defaultValue={entityData.pincode}
         fullWidth
-      // onKeyDown={() => {
-      //   setFormError((curr) => {
-      //     const { pincode, ...rest } = curr;
-      //     return rest;
-      //   });
-      // }}
-      />
-
-    ]
-  ])
+      />,
+    ],
+  ]);
 
   let fieldArr: React.ReactElement[] = [];
 
   props.metaData?.fields.map((field: any) => {
-    if (
-      field.column_name_id === "address1" ||
-      field.column_name_id === "address2"
-    ) {
+    if (field.column_type_id === 7) {
+      const parts = field.column_format.split(".");
+      let tableName = "";
+      let fieldName = "";
+      if (parts) {
+        customMasterListData[field.column_name] = { table_name: tableName, field: fieldName }
+      }
+    }
+    if (field.column_name_id === "address1" || field.column_name_id === "address2") {
       const baseElement = defaultComponentMap.get(
         field.column_name_id
       ) as React.ReactElement;
@@ -807,9 +694,13 @@ export default function ContactForm(
         disabled: field.is_disabled === 1 ? true : false,
       });
       fieldArr.push(fld);
-    }
-    else if (field.column_name_id === 'country' || field.column_name_id === 'state' || field.column_name_id === 'city' || field.column_name_id === 'pincode') {
-      if (field.column_name_id === 'state') {
+    } else if (
+      field.column_name_id === "country" ||
+      field.column_name_id === "state" ||
+      field.column_name_id === "city" ||
+      field.column_name_id === "pincode"
+    ) {
+      if (field.column_name_id === "state") {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -839,27 +730,45 @@ export default function ContactForm(
 
     }
     else if (field.is_default_column) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
+      if (field.column_name_id === 'whatsapp') {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
 
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}-${whatsappFn}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
 
-      fieldArr.push(fld);
+        fieldArr.push(fld);
+      } else {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
+
+        fieldArr.push(fld);
+      }
     } else {
       const fld = (
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue={
-            entityData[field.column_name_id as keyof contactSchemaT]
+          defaultValue={field.column_type_id !== 7 ?
+            entityData[field.column_name_id as keyof contactSchemaT] : { id: entityData.c_col1_id, name: entityData.c_col1_name }
           }
+          setSelectValues={setSelectValues}
+          formError={formError}
         />
       );
       fieldArr.push(fld);
@@ -886,8 +795,8 @@ export default function ContactForm(
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="contactForm" sx={{ p: 3 }}>
-        <form action={handleSubmit} noValidate>
+      <Box id="contactForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;
@@ -911,53 +820,83 @@ export default function ContactForm(
                 );
               }
             })}
+            {/* </Grid> */}
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                // mt: 1,
+              }}
+            ></Grid>
+            {dialogOpen && (
+              <AddDialog
+                title=""
+                open={dialogOpen}
+                setDialogOpen={setDialogOpen}
+              >
+                <DocModal
+                  docData={docData}
+                  setDocData={setDocData}
+                  setDialogOpen={setDialogOpen}
+                />
+              </AddDialog>
+            )}
           </Grid>
           <Grid xs={12}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 2
-            }}
-          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: 1
+              }}
+            >
               <Tooltip
-                title={docData?.length > 0 ? (
-                  docData.map((file: any, index: any) => (
-                    <Typography variant="body2" key={index}>
-                      {file.description}
+                title={
+                  docData?.length > 0 ? (
+                    docData.map((file: any, index: any) => (
+                      <Typography variant="body2" key={index}>
+                        {file.description}
+                      </Typography>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="white">
+                      No files available
                     </Typography>
-                  ))
-                ) : (
-                  <Typography variant="body2" color="white">
-                    No files available
-                  </Typography>
-                )}
+                  )
+                }
               >
                 <IconButton
-                  sx={{ marginRight:"3rem"}}
+                  sx={{ marginRight: "3rem" }}
                   onClick={() => setDialogOpen(true)}
                   aria-label="file"
+                  tabIndex={-1}
                 >
                   <Badge badgeContent={docData?.length} color="primary">
                     <AttachFileIcon></AttachFileIcon>
                   </Badge>
-    
+
                 </IconButton>
               </Tooltip>
-            <Button onClick={handleCancel} tabIndex={-1}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Box>
+              <Button onClick={handleCancel} tabIndex={-1}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
           </Grid>
           {dialogOpen && (
-            <AddDialog title="Document List" open={dialogOpen} setDialogOpen={setDialogOpen}>
+            <AddDialog
+              title="Document List"
+              open={dialogOpen}
+              setDialogOpen={setDialogOpen}
+            >
               <DocModal
                 docData={docData}
                 setDocData={setDocData}
@@ -966,13 +905,15 @@ export default function ContactForm(
             </AddDialog>
           )}
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

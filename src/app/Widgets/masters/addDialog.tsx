@@ -17,7 +17,6 @@ function PaperComponent(props: PaperProps & { handleid: string }) {
 
   React.useEffect(() => {
     if (paperRef.current) {
-      console.log(paperRef.current);
       const { offsetWidth, offsetHeight } = paperRef.current;
       setBounds({
         left: -(window.innerWidth + offsetWidth) / 2 + 64,

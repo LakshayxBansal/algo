@@ -1,8 +1,9 @@
 "use server";
 import { use } from "react";
 import excuteQuery from "../utils/db/db";
+import { customFieldsMasterSchemaT, FieldItemT } from "../models/models";
 
-export async function createCustomFieldsDB(crmDb: string,userID: number, object_id: number,data: any) {
+export async function createCustomFieldsDB(crmDb: string,userID: number, object_id: number,data: FieldItemT[]) {
   try {
       // console.log("data in services",object_id,userID);
       

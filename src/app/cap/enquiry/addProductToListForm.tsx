@@ -174,13 +174,13 @@ export default function AddProductToListForm(props: customprop) {
             id={"product"}
             label={"Product Name"}
             showDetails={true}
-            dialogTitle={"Add Product"}
+            dialogTitle={"Product"}
             fetchDataFn={getProduct}
             fnFetchDataByID={getProductById}
             required
             formError={formError?.product ?? formError.product}
- setFormError={setFormError}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
+            setFormError={setFormError}
+            onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
             renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <ProductForm
                 setDialogOpen={fnDialogOpen}
@@ -224,20 +224,20 @@ export default function AddProductToListForm(props: customprop) {
               }}
               error={formError?.quantity?.error}
               helperText={formError?.quantity?.msg}
- setFormError={setFormError}
+              setFormError={setFormError}
             />
             <SelectMasterWrapper
               key={defaultValueForUnitUsingProduct.id}
               name={"unit"}
               id={"unit"}
               label={"Unit Name"}
-              dialogTitle={"Add Unit"}
+              dialogTitle={"Unit"}
               fetchDataFn={getUnit}
               fnFetchDataByID={getUnitById}
               required
               formError={formError?.unit ?? formError.unit}
- setFormError={setFormError}
-       onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
+              setFormError={setFormError}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "unit")}
               renderForm={(fnDialogOpen, fnDialogValue, data) => (
                 <UnitForm
                   setDialogOpen={fnDialogOpen}
@@ -258,7 +258,7 @@ export default function AddProductToListForm(props: customprop) {
             placeholder="Remarks"
             label="Remarks"
             multiline
-            name="remarks"
+            name="remark"
             id="product_remark"
             rows={6}
             fullWidth

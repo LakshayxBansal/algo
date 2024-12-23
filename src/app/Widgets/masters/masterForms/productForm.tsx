@@ -20,18 +20,25 @@ import {
 import { getUnit, getUnitById } from "@/app/controllers/unit.controller";
 import ProductGroupForm from "./productGroupForm";
 import UnitForm from "./unitForm";
-import { Collapse, Grid, IconButton } from "@mui/material";
+import { Collapse, Grid, IconButton, Portal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateProduct } from "@/app/controllers/product.controller";
+import { usePathname } from "next/navigation";
 
-export default function ProductForm(props: masterFormPropsWithDataT<productSchemaT>) {
+export default function ProductForm(
+  props: masterFormPropsWithDataT<productSchemaT>
+) {
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [snackOpen, setSnackOpen] = React.useState(false);
-  const entityData: productSchemaT = props.data ? props.data : {} as productSchemaT;
+  const entityData: productSchemaT = props.data
+    ? props.data
+    : ({} as productSchemaT);
+  const pathName = usePathname();
+  const [formKey, setFormKey] = useState(0);
 
   entityData.group = props.data?.group;
   entityData.unit = props.data?.unit;
@@ -54,12 +61,16 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
         name: result.data[0].name,
         stamp: result.data[0].stamp,
       };
-      props.setDialogValue ? props.setDialogValue(newVal) : null;
       setFormError({});
       setSnackOpen(true);
-      setTimeout(() => {
-        props.setDialogOpen ? props.setDialogOpen(false) : null;
-      }, 1000);
+      if (pathName !== "/cap/admin/lists/productList" || entityData.id) {
+        setTimeout(() => {
+          props.setDialogOpen ? props.setDialogOpen(false) : null;
+          props.setDialogValue ? props.setDialogValue(newVal) : null;
+        }, 1000);
+      } else {
+        setFormKey(formKey + 1);
+      }
     } else {
       const issues = result.data;
       // show error on screen
@@ -81,13 +92,13 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
     data.group = selectValues.productGroup
       ? selectValues.productGroup.id
       : entityData.group
-        ? entityData.group
-        : 0;
+      ? entityData.group
+      : 0;
     data.unit = selectValues.unit
       ? selectValues.unit.id
       : entityData.unit
-        ? entityData.unit
-        : 0;
+      ? entityData.unit
+      : 0;
     return data;
   };
 
@@ -129,8 +140,8 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <Box id="sourceForm">
-        <form action={handleSubmit} noValidate>
+      <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
+        <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <InputControl
@@ -143,14 +154,8 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 titleCase={true}
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.name}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { name, ...rest } = curr;
-                    return rest;
-                  });
-                }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -162,14 +167,8 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 name="alias"
                 error={formError?.alias?.error}
                 helperText={formError?.alias?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.alias}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { alias, ...rest } = curr;
-                    return rest;
-                  });
-                }}
                 style={{ width: "100%" }}
               />
             </Grid>
@@ -178,7 +177,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 name={"productGroup"}
                 id={"productGroup"}
                 label={"Product Group Name"}
-                dialogTitle={"Add Product Group"}
+                dialogTitle={"Product Group"}
                 fetchDataFn={getProductGroup}
                 fnFetchDataByID={getProductGroupById}
                 allowModify={true}
@@ -211,7 +210,7 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 name={"unit"}
                 id={"unit"}
                 label={"Unit Name"}
-                dialogTitle={"Add Unit"}
+                dialogTitle={"Unit"}
                 allowModify={true}
                 defaultValue={
                   {
@@ -247,43 +246,11 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
                 label="HSN Code"
                 error={formError?.hsn_code?.error}
                 helperText={formError?.hsn_code?.msg}
- setFormError={setFormError}
+                setFormError={setFormError}
                 defaultValue={entityData.hsn_code}
-                onKeyDown={() => {
-                  setFormError((curr) => {
-                    const { hsn_code, ...rest } = curr;
-                    return rest;
-                  });
-                }}
                 style={{ width: "100%" }}
               />
             </Grid>
-            {/* </Box>
-          <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          ></Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 1,
-            }}
-          >
-            <Button onClick={handleCancel} tabIndex={-1}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ width: "15%", marginLeft: "5%" }}
-            >
-              Submit
-            </Button>
-          </Box> */}
             <Grid
               item
               xs={12}
@@ -307,13 +274,15 @@ export default function ProductForm(props: masterFormPropsWithDataT<productSchem
             </Grid>
           </Grid>
         </form>
-        <Snackbar
-          open={snackOpen}
-          autoHideDuration={1000}
-          onClose={() => setSnackOpen(false)}
-          message="Record Saved!"
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        />
+        <Portal>
+          <Snackbar
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackOpen(false)}
+            message="Record Saved!"
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          />
+        </Portal>
       </Box>
     </>
   );

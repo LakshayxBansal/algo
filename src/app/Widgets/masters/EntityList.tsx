@@ -85,7 +85,6 @@ export default function EntityList(props: entitiyCompT) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
   const router = useRouter();
-  const url = usePathname();
   let searchText;
 
   //for navbar search
@@ -242,7 +241,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     dialogOpen,
     searchData,
     apiRef,
-    props,
+    props
   ]);
 
   const toggleColBtn = () => {
@@ -300,6 +299,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     setOpen(false);
   };
 
+
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
@@ -326,7 +326,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             ) : null}
           </AddDialog>
         )}
-        <SecondNavbar title={props.title}/>
+        {/* <SecondNavbar title={props.title}/> */}
         <Paper
           elevation={3}
           sx={{
