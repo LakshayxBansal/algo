@@ -36,7 +36,6 @@ import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
 import SecondNavbar from "./SecondNavbar";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
-import Loadered from "@/app/Widgets/link/Loadered";
 
 const drawerWidth: number = 290;
 
