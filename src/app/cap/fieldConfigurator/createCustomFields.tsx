@@ -98,6 +98,7 @@ const FieldConfigurator = () => {
     const [fieldHelperState, setFieldHelperState] = useState<ErrorState>({});
     const [snackOpen, setSnackOpen] = React.useState(false);
     // const [fieldelperText, setFieldHelperText] = useState<Record<string, Record<string, { label: string; format: string }>>>({});
+    const dragPositionRef = useRef<number | null>(null);
 
 
     const handleFormChange = (event: any) => {
@@ -215,48 +216,70 @@ const FieldConfigurator = () => {
 
 
     const startAutoScroll = (clientY: number) => {
-        const scrollThreshold = 200; // pixels from top/bottom of viewport to trigger scroll
-        const maxScrollSpeed = 20; // maximum scroll speed in pixels per interval
+        const scrollThreshold = 150;
+        const maxScrollSpeed = 15;
+        dragPositionRef.current = clientY;
 
         const handleScroll = () => {
-            const viewportHeight = window.innerHeight;
-            const distanceFromTop = clientY;
-            const distanceFromBottom = viewportHeight - clientY;
+            if (!dragPositionRef.current) return;
 
+            const viewportHeight = window.innerHeight;
+            const mouseY = dragPositionRef.current;
+            const distanceFromTop = mouseY;
+            const distanceFromBottom = viewportHeight - mouseY;
+
+            let scrollSpeed = 0;
             if (distanceFromTop < scrollThreshold) {
                 // Scroll up when near top
-                const speed = Math.min(maxScrollSpeed, (scrollThreshold - distanceFromTop) / 5);
-                window.scrollBy(0, -speed);
+                const scrollPercent = 1 - (distanceFromTop / scrollThreshold);
+                scrollSpeed = -maxScrollSpeed * scrollPercent;
             } else if (distanceFromBottom < scrollThreshold) {
                 // Scroll down when near bottom
-                const speed = Math.min(maxScrollSpeed, (scrollThreshold - distanceFromBottom) / 5);
-                window.scrollBy(0, speed);
+                const scrollPercent = 1 - (distanceFromBottom / scrollThreshold);
+                scrollSpeed = maxScrollSpeed * scrollPercent;
+            }
+
+            if (scrollSpeed !== 0) {
+                window.scrollBy(0, scrollSpeed);
             }
         };
 
-        if (scrollIntervalRef.current) return; // Prevent multiple intervals
-        scrollIntervalRef.current = window.setInterval(handleScroll, 16);
+        if (!scrollIntervalRef.current) {
+            scrollIntervalRef.current = window.setInterval(handleScroll, 16);
+        }
     };
-
 
     const stopAutoScroll = () => {
         if (scrollIntervalRef.current) {
             clearInterval(scrollIntervalRef.current);
             scrollIntervalRef.current = null;
         }
-        setAutoScrolling(false);
+        dragPositionRef.current = null;
     };
+
+    // const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    //     setDraggedItem(index);
+    //     const element = e.currentTarget as HTMLDivElement;
+    //     // element.classList.add("opacity-50");
+    //     element.style.opacity = "0"; // Make it completely transparent
+    // };
+
+    // const handleDragOver = (e: React.DragEvent) => {
+    //     e.preventDefault();
+    //     startAutoScroll(e.clientY); // Pass the current mouse Y position for scrolling
+    // };
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         setDraggedItem(index);
         const element = e.currentTarget as HTMLDivElement;
-        // element.classList.add("opacity-50");
-        element.style.opacity = "0"; // Make it completely transparent
+        element.style.opacity = "0.4";
+        startAutoScroll(e.clientY);
     };
 
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-        startAutoScroll(e.clientY); // Pass the current mouse Y position for scrolling
+    const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+        if (e.clientY !== 0) { // Avoid processing invalid coordinates
+            dragPositionRef.current = e.clientY;
+        }
     };
 
     const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
@@ -267,12 +290,10 @@ const FieldConfigurator = () => {
         stopAutoScroll();
     };
 
-    // Clean up interval on unmount
+    // Add cleanup in useEffect
     useEffect(() => {
         return () => {
-            if (scrollIntervalRef.current) {
-                clearInterval(scrollIntervalRef.current);
-            }
+            stopAutoScroll();
         };
     }, []);
 
@@ -432,8 +453,16 @@ const FieldConfigurator = () => {
                         elevation={1}
                         draggable
                         onDragStart={(e) => handleDragStart(e, index)}
+                        onDrag={handleDrag}
                         onDragEnd={handleDragEnd}
-                        onDragOver={handleDragOver}
+                        // onDragOver={handleDragOver}
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                            // Update scroll position during dragover
+                            if (e.clientY !== 0) {
+                                dragPositionRef.current = e.clientY;
+                            }
+                        }}
                         onDrop={(e) => handleDrop(e, index)} // Attach the handleDrop function
                         sx={{
                             p: 2,
