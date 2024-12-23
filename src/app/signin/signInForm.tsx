@@ -16,6 +16,7 @@ import GoogleSignUpButton from "../signup/customButton";
 import Image from "next/image";
 import styles from "../signup/SignUpForm.module.css";
 import * as zs from "../zodschema/zodschema";
+import { LoadingButton } from "@mui/lab";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -86,8 +87,7 @@ export default function AuthPage(props: authPagePropsType) {
         if (status?.ok) {
               router.push(successCallBackUrl);
             }
-          // }, 1000);
-        } else {
+         else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};
           errorState["form"] = { msg: "Invalid Credentials", error: true };

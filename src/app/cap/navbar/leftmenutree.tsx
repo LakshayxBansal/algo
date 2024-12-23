@@ -13,7 +13,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
 import { useRouter } from "next/navigation";
-// import "./globals.css";
 
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
@@ -121,12 +120,10 @@ export default function LeftMenuTree(props: {
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) => {
-  ) => {
     // setHoverId(page.id);
     idToOpenPop.current.clear();
     // setOpenPopper((prevState) => new Map(prevState.clear()));
     openPopper.clear();
-  };
   };
 
   function handleCollapse(id: number): boolean {
@@ -331,20 +328,13 @@ export default function LeftMenuTree(props: {
                       // open={idToOpenPop.current.has(page.id)}
                       // open={hoverId === page.id || hoverId === page.parent_id}
                       open={openPopper.get(page.id) ? true : false}
-                      open={openPopper.get(page.id) ? true : false}
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
                       style={{ position: "absolute", zIndex: "9999" }}
-                      style={{ position: "absolute", zIndex: "9999" }}
                     >
                       {({ TransitionProps }) => (
                         <Grow {...TransitionProps}>
-                          <Paper
-                            elevation={8}
-                            style={{ maxHeight: "20em", overflowY: "auto" }}
-                          >
-                            {/* <div style={{backgroundColor:"#fff" , zIndex:9999}}> */}
                           <Paper
                             elevation={8}
                             style={{ maxHeight: "20em", overflowY: "auto" }}
