@@ -33,7 +33,7 @@ const NextBreadcrumb = () => {
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
       >
-        <Link href={"/cap"}>{<HomeIcon fontSize="small" />}</Link>
+        <Link href={"/cap"}   tabIndex={-1}>{<HomeIcon fontSize="small" />}</Link>
         {pathNames.map((value, index) => {
         if (hiddenSegments.includes(value)) {
           return null; // Skip this segment
@@ -43,7 +43,7 @@ const NextBreadcrumb = () => {
         }
         const routeTo = `/${pathNames.slice(0, index + 1).join('/')}`;
         return (
-          <Link key={routeTo} href={routeTo} color="inherit">
+          <Link key={routeTo} href={routeTo} color="inherit"   tabIndex={-1}>
             <Typography variant="caption">
             {value.charAt(0).toUpperCase() + value.slice(1)}
             </Typography>

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useRef } from "react";
-import { Popper, Grow, Paper } from "@mui/material";
+import { Popper, Grow, Paper, Typography, Box, Slide } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Collapse from "@mui/material/Collapse";
 import List from "@mui/material/List";
@@ -12,22 +12,29 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
+import { useRouter } from "next/navigation";
 
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
   openDrawer: boolean;
   setOpenDrawer?: any;
+  isHover?: boolean;
+  setLoading:any;
 }) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
+  const [loading,setLoading]  = useState(false);
+  const [hover, setHover] = useState(false);
+
+  const router = useRouter();
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   );
   const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
-  let arra1 = [0, 2, 5, 9, 12, 51, 54, 61];
+  let arra1 = [0, 2, 5, 9, 12, 51, 54,61];
   const pages = props.pages;
 
   useEffect(() => {
@@ -52,18 +59,23 @@ export default function LeftMenuTree(props: {
     };
   }, [props.openDrawer, openPopper]);
 
-  function handleHeaderMenuClick(id: number) {
+  function handleHeaderMenuClick(id: number, href:string) {
     const idToOpenMap: Map<number, boolean> = new Map(open);
     idToOpenMap.set(id, !idToOpenMap.get(id));
     props.setOpenDrawer(true);
     setOpen(idToOpenMap);
     setSelectedId(id);
+    router.push(href);
+    props.setLoading(true);
   }
 
   function handleSubMenuHover(
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) {
+    console.log("pageid", page.id);
+    console.log("parentid", page.parent_id);
+    console.log("this", page.children.length);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;
     // setHoverId(page.id);
@@ -72,7 +84,8 @@ export default function LeftMenuTree(props: {
       if (page.parent_id == 0) {
         openPopper.clear();
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
-      } else if (page.parent_id == 5) {
+      } 
+      else if (page.parent_id == 5) {
         openPopper.clear();
         setOpenPopper((prevState) => new Map(prevState.set(5, true)));
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
@@ -81,7 +94,8 @@ export default function LeftMenuTree(props: {
         setOpenPopper((prevState) => new Map(prevState.set(5, true)));
         setOpenPopper((prevState) => new Map(prevState.set(9, true)));
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
-      } else if (page.parent_id == 61) {
+      } 
+      else if (page.parent_id == 61) {
         openPopper.clear();
         setOpenPopper((prevState) => new Map(prevState.set(61, true)));
         setOpenPopper((prevState) => new Map(prevState.set(page.id, true)));
@@ -124,6 +138,17 @@ export default function LeftMenuTree(props: {
     return href;
   }
 
+  const handleTransiton =  (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    href: string
+  ) => {
+    // props.setLoading(true);
+    // document.body.classList.add('cursor-wait');
+    // router.push(href);
+     
+  };
+
+
   function ShowMenu(levelData: {
     pages: menuTreeT[];
     level: number;
@@ -150,12 +175,13 @@ export default function LeftMenuTree(props: {
                 <Tooltip title={page.name} placement="right">
                   <ListItemButton
                     sx={{ pl: indent }}
-                    onClick={(e) => handleHeaderMenuClick(page.id)}
+                    onClick={(e) => handleHeaderMenuClick(page.id,page.href)}
                     component="a"
-                    href={
-                      page.href !== "#" ? page.href : generateHref(page.name)
-                    }
+                    // href={
+                    //   page.href !== "#" ? page.href : generateHref(page.name)
+                    // }
                     selected={selectedId === page.id}
+                    tabIndex={-1}
                   >
                     <ListItemIcon
                       style={{
@@ -219,13 +245,14 @@ export default function LeftMenuTree(props: {
       return { icon };
     }
 
+
+
     return (
       <div>
         {pages.map((page, index) => (
           <div key={index}>
             {page.parent_id === level && (
-              <div>
-                {/* <Tooltip title={page.name} placement="right-start"> */}
+              <Box>
                 <ListItemButton
                   sx={{ pl: indent }}
                   onMouseEnter={(e) => {
@@ -235,8 +262,15 @@ export default function LeftMenuTree(props: {
                     handleMouseLeave(e, page);
                   }}
                   component="a"
+                  // onClick={(e) => handleTransiton(e, page.href)}
                   href={page.href}
                   selected={selectedId === page.id}
+                  tabIndex={-1}
+                  style={
+                    page.parent_id == 0 && props.isHover
+                      ? { display: "flex", flexDirection: "column" }
+                      : { margin: "7px 0" }
+                  }
                 >
                   <ListItemIcon
                     style={{
@@ -250,8 +284,34 @@ export default function LeftMenuTree(props: {
                       selected: selectedId === page.id,
                     })}
                   </ListItemIcon>
+
+                  {/* {
+                    (page.parent_id ==0 && hover) ? (
+                      <Typography variant="caption">
+                      {page.name}
+                      </Typography> 
+                      ) :(<ListItemText primary={page.name} />)
+                  } */}
+
+                  {/* {page.parent_id == 0 && props.isHover ? (
+                    <Typography variant="caption">{page.name}</Typography>
+                  ) : (
+                    <></>
+                  )}
+
+                  {page.parent_id > 0 && <ListItemText primary={page.name} />}
+
+                  {page.children.length && page.parent_id > 0 ? (
+                    openPopper?.get(page.id) ? (
+                      <ChevronRightIcon />
+                    ) : (
+                      <ExpandMore />
+                    )
+                  ) : (
+                    <></>
+                  )} */}
                   <ListItemText primary={page.name} />
-                  {page.children.length ? (
+                  {page.children.length > 0 ? (
                     openPopper?.get(page.id) ? (
                       <ChevronRightIcon />
                     ) : (
@@ -261,7 +321,6 @@ export default function LeftMenuTree(props: {
                     <></>
                   )}
                 </ListItemButton>
-                {/* </Tooltip> */}
                 {
                   <>
                     {/*Boolean(hoverId) &&  (page.parent_id===0 && hoverId===page.id)|| */}
@@ -287,14 +346,13 @@ export default function LeftMenuTree(props: {
                               level: page.id,
                               menuLevel: 0,
                             })}
-                            {/* </div> */}
                           </Paper>
                         </Grow>
                       )}
                     </Popper>
                   </>
                 }
-              </div>
+              </Box>
             )}
           </div>
         ))}

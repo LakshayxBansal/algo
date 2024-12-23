@@ -99,6 +99,7 @@ export default function ProfileMenu(props: profileModalT) {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
+                tabIndex={-1}
             >
                 {props?.img ? <Box
                     component="img"

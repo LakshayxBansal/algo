@@ -71,15 +71,17 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
   if (open) {
     return (
       <>
+      {/* <Draggable> */}
+
         <Dialog maxWidth="lg" open={open} onClose={handleClose} 
       //   PaperComponent={(props) => (
-      //   <PaperComponent {...props} handleid={uniqueHandleId} />
+      //     <PaperComponent {...props} handleid={uniqueHandleId} />
       // )}
+      
       >
-
           <DialogTitle style={{ 
             cursor: 'move',
-           }} id={uniqueHandleId}>
+          }} id={uniqueHandleId}>
             {title}
             <IconButton
             aria-label="close"
@@ -99,6 +101,7 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
             {children}
           </DialogContent>
         </Dialog>
+  {/* </Draggable> */}
       </>
     );
   } else {

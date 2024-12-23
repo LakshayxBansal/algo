@@ -16,7 +16,7 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Department Name",
-    editable: true,
+    editable: false,
   },
 ];
 

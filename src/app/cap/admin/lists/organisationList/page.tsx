@@ -15,12 +15,12 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
   {
     field: "alias",
     headerName: "Alias",
-    editable: true,
+    editable: false,
   },
 ];
 

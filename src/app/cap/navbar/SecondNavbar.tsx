@@ -27,7 +27,7 @@ function SecondNavbar(props:{title?:string}) {
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h6" style={{ verticalAlign: "baseline" }}>
-              {`${props.title}` }
+              {`List of ${props.title}` }
             </Typography>
           </Grid>
           <Grid
