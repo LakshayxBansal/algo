@@ -75,9 +75,9 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
       {/* <Draggable> */}
 
         <Dialog maxWidth="lg" open={open} onClose={handleClose} 
-        PaperComponent={(props) => (
-          <PaperComponent {...props} handleid={uniqueHandleId} />
-      )}
+      //   PaperComponent={(props) => (
+      //     <PaperComponent {...props} handleid={uniqueHandleId} />
+      // )}
       
       >
           <DialogTitle style={{ 
