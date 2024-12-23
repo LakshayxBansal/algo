@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/executiveDept.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { getColumns } from "@/app/controllers/masters.controller";
 
 const columns: GridColDef[] = [
   {
@@ -38,6 +39,7 @@ export default function executiveDept() {
         fetchDataFn={getExecutiveDeptByPage}
         fnFetchDataByID={getDeptById}
         fnDeleteDataByID={delExecutiveDeptById}
+        fnFetchColumns={10}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
