@@ -159,7 +159,7 @@ export async function getDepartmentColumnsDb(crmDb:string){
   try{
     return excuteQuery({
       host:crmDb,
-      query:"select * from custom_fields_master where object_type_id =9",
+      query:"select * from custom_fields_master where object_type_id =5",
       values:""
     });
   }catch(e){

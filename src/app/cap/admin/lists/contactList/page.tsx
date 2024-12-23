@@ -60,6 +60,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { getDepartmentColumns } from "@/app/controllers/department.controller";
 
 const columns: GridColDef[] = [
   {
@@ -101,6 +102,7 @@ export default function ManageContacts() {
         fnFileUpad={createContactsBatch}
         fetchDataFn={getContactByPage}
         // instead of this fn we are sending rows
+        fnFetchColumns={getDepartmentColumns}
         fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
