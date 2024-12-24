@@ -3,6 +3,7 @@
 import excuteQuery from "../utils/db/db";
 import * as zm from "../models/models";
 import { Session } from "next-auth";
+import { logger } from "../utils/logger.utils";
 
 /**
  *
@@ -540,5 +541,17 @@ export async function getCountryIdByNameDb (country: string) {
     return result;
   } catch(e) {
     console.log(e);
+  }
+}
+
+export async function getColumnsDb(crmDb:string, value: number){
+  try{
+    return excuteQuery({
+      host:crmDb,
+      query:"select * from custom_fields_master where object_type_id = ?",
+      values: [value]
+    });
+  }catch(e){
+    logger.error(e);
   }
 }

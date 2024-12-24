@@ -44,6 +44,7 @@ import IconComponent from "./component/IconComponent";
 import { useRouter } from "next/navigation";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import ReactDOM from "react-dom";
+import { getColumns } from "@/app/controllers/masters.controller";
 
 const pgSize = 10;
 
@@ -170,7 +171,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     }
 
     if (props.fnFetchColumns) {
-      const columnsData = await props.fnFetchColumns();
+      // const columnsData = await props.fnFetchColumns();
+      const columnsData = await getColumns(props.fnFetchColumns);
       console.log("columnsData", columnsData);
       if (columnsData) {  
         const dbColumns = columnsData.map((col: any) => ({
