@@ -10,17 +10,18 @@ import {
 import OrganisationForm from "@/app/Widgets/masters/masterForms/organisationForm";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { getColumns } from "@/app/controllers/masters.controller";
 
 const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
   {
     field: "alias",
     headerName: "Alias",
-    editable: true,
+    editable: false,
   },
 ];
 
@@ -43,6 +44,7 @@ export default function organisation() {
         fetchDataFn={getOrganisationByPage}
         fnFetchDataByID={getOrganisationById}
         fnDeleteDataByID={delOrganisationById}
+        fnFetchColumns={19}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

@@ -240,7 +240,8 @@ export type  entitiyCompT = {
   ) => Promise<any>;
   fnFetchDataByID?: (id: number) => Promise<any>;
   fnDeleteDataByID?: (id: number) => Promise<any>;
-  fnFetchColumns?: () => Promise<any>;
+  // fnFetchColumns?: () => Promise<any>;
+  fnFetchColumns?: number;
   customCols: GridColDef[];
   AddAllowed?: boolean;
   uploadAllowed?:boolean;

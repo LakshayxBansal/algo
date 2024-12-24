@@ -379,12 +379,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           />
         )}
         defaultValue={
-          enqData?.enquiry_id
-            ? defaultData?.allocated_to ?? {}
-            : ({
-                id: baseData?.loggedInUserData?.id,
-                name: baseData?.loggedInUserData?.name,
-              } as optionsDataT)
+          enqData?.enquiry_id ? defaultData?.allocated_to : {}
         }
       />,
     ],

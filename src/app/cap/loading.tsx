@@ -1,16 +1,3 @@
-// // loading.tsx
-// import React from "react";
-
-// export default function Loading() {
-//   return (
-//     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-//       <p>Loading...</p>
-//     </div>
-//   );
-// };
-
-
-
 "use client"
 import { useEffect } from "react";
 import { ReactNode } from "react";

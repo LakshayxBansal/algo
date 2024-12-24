@@ -12,10 +12,10 @@ import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 
 const columns: GridColDef[] = [
-  { field: "name", headerName: "Name", editable: true },
-  { field: "group_name", headerName: "Group Name", editable: true },
-  { field: "alias", headerName: "Alias", editable: true },
-  { field: "unit_name", headerName: "Unit Name", editable: true },
+  { field: "name", headerName: "Name", editable: false },
+  { field: "group_name", headerName: "Group Name", editable: false },
+  { field: "alias", headerName: "Alias", editable: false },
+  { field: "unit_name", headerName: "Unit Name", editable: false },
 ];
 
 export default function Products() {

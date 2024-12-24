@@ -20,6 +20,25 @@ export default function CapLayout({children} : {children?: React.ReactNode}) {
   const headersList = headers();
     const pathname = headersList.get('x-nextjs-pathname') || '/'; 
 
+  //   const pathname = usePathname();
+  
+
+  // useEffect(() => {
+  //   document.body.classList.add('cursor-wait');
+
+  //   const handleComplete = () => {
+  //     document.body.classList.remove('cursor-wait');
+  //   };
+
+  //   const timeout = setTimeout(handleComplete, 1000); // Adjust the timeout as necessary
+
+  //   return () => {
+  //     clearTimeout(timeout);
+  //     document.body.classList.remove('cursor-wait');
+  //   };
+  // }, [pathname]);
+
+
   return (
     <section>
       {/* Include shared UI here e.g. a header or sidebar */}
