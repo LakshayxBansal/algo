@@ -1123,6 +1123,7 @@ export const configBaseSchema = z.object({
     column_order: z.number(),
     is_disabled: z.number().optional(),
     action_id: z.number().optional(),
+    default_column_label: z.string().nullish().optional(),
   })
   .refine(
     (data) => {

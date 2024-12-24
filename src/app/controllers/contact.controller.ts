@@ -183,9 +183,7 @@ export async function updateContact(data: contactSchemaT, docData : docDescripti
       const combinedSchema = contactSchema.merge(dynamicSchema);
 
       const parsed=combinedSchema.safeParse(data)
-      if(!parsed.success){
-        console.log("dynamicSchema",  parsed.error.issues);        
-      }
+
       // const parsed = contactSchema.safeParse(data);
       
       if (parsed.success) {
