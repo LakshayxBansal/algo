@@ -147,7 +147,8 @@ const FieldConfigurator = () => {
             is_mandatory: 0,
             modified_by: null,
             modified_on: null,
-            object_type_id: parseInt(selectedFormValue)
+            object_type_id: parseInt(selectedFormValue),
+            default_column_label: null
         };
         setFields([...fields, newField]);
         customColumnCount++;
@@ -256,18 +257,6 @@ const FieldConfigurator = () => {
         }
         dragPositionRef.current = null;
     };
-
-    // const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
-    //     setDraggedItem(index);
-    //     const element = e.currentTarget as HTMLDivElement;
-    //     // element.classList.add("opacity-50");
-    //     element.style.opacity = "0"; // Make it completely transparent
-    // };
-
-    // const handleDragOver = (e: React.DragEvent) => {
-    //     e.preventDefault();
-    //     startAutoScroll(e.clientY); // Pass the current mouse Y position for scrolling
-    // };
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         setDraggedItem(index);
@@ -511,7 +500,7 @@ const FieldConfigurator = () => {
                                 inputType={InputType.TEXT}
                                 id="label"
                                 key="label"
-                                label={"Label" + `  (${item.column_label})`}
+                                label={"Label" + `  ${item.default_column_label ? "(" + item.default_column_label + ")" : ""}`}
                                 name="label"
                                 error={!!fieldHelperState[item.column_name_id]?.formError.column_label} // Show error state if there's an error       
                                 helperText={fieldHelperState[item.column_name_id]?.formError?.column_label} // Display error message if it exists      

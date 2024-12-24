@@ -1100,39 +1100,59 @@ export const configBaseSchema = z.object({
     prefillWithZero: z.boolean().optional(),
   });
   
-  export const customFieldsMasterSchema = z.object ({
-    id : z.number().optional(),
-    object_type_id : z.number(),    // form id
+  export const customFieldsMasterSchema = z
+  .object({
+    id: z.number().optional(),
+    object_type_id: z.number(), // form id
     column_name_id: z.string().min(1).max(45),
-    column_label:  z.string().min(1, "Please enter Label").max(45,"Enter Smaller Label"),
-    column_name:  z.string().min(1).max(45),
-    column_id:  z.string().min(1).max(45),
-    column_type_id:  z.number(),
-    column_format: z.string().max(1000).nullish(),    // special handling required. blank or 1000 max
-    form_section:  z.string().optional().nullish(),
-    is_mandatory:  z.number(),
-    is_default_column:  z.number(),
-    is_default_mandatory:  z.number().nullable(),
-    column_order:  z.number(),
-    is_disabled:  z.number().optional(),
-    action_id:  z.number().optional(),
+    column_label: z
+      .string()
+      .min(1, "Please enter Label")
+      .max(45, "Enter Smaller Label"),
+    column_name: z.string().min(1).max(45),
+    column_id: z.string().min(1).max(45),
+    column_type_id: z.number(),
+    column_format: z
+      .string()
+      .max(1000)
+      .nullish(), // special handling required. blank or 1000 max
+    form_section: z.string().optional().nullish(),
+    is_mandatory: z.number(),
+    is_default_column: z.number(),
+    is_default_mandatory: z.number().nullable(),
+    column_order: z.number(),
+    is_disabled: z.number().optional(),
+    action_id: z.number().optional(),
+    default_column_label: z.string().nullish().optional(),
   })
   .refine(
     (data) => {
-      const columnFormat = data.column_format ?? ""; // Treat undefined as an empty string
-      if (data.column_type_id === 2) {
-        // If column_type_id is 2, column_format must be non-empty and follow the semicolon-separated alphanumeric format.
-        const semicolonSeparatedPattern = /^([a-zA-Z0-9]+)(;[a-zA-Z0-9]+)*$/;
+      const columnFormat = (data.column_format ?? "").trim(); // Trim whitespace
+      if (data.column_type_id === 2 || data.column_type_id === 5) {
+        // Allow trimmed alphanumeric values, optionally semicolon-separated
+        const semicolonSeparatedPattern = /^([a-zA-Z0-9]+)(\s*;\s*[a-zA-Z0-9]+)*;?$/;
         return columnFormat.length > 0 && semicolonSeparatedPattern.test(columnFormat);
       }
       return true; // Allow other cases, including when column_type_id is null
     },
     {
-      message:
-        "Enter semi-colon seperated options.",
+      message: "Enter semi-colon separated options.",
       path: ["column_format"], // Point the error to column_format
     }
-  );
+  )
+  .transform((data) => {
+    if (data.column_format) {
+      // Trim and normalize column_format to remove extra spaces around semicolons
+      const normalizedFormat = data.column_format
+        .split(";")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+        .join(";");
+      return { ...data, column_format: normalizedFormat };
+    }
+    return data;
+  });
+
 
 
 export const rightSchema = z.object({
