@@ -18,7 +18,7 @@ import {
 } from "../../../controllers/masters.controller";
 import { getStates } from "@/app/controllers/masters.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import CountryForm from "./countryForm";
 import {
   docDescriptionSchemaT,

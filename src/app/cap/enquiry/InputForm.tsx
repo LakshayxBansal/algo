@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AttachFileIcon from "@mui/icons-material/AttachFile";

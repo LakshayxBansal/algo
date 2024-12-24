@@ -164,12 +164,8 @@ export default function EntityList(props: entitiyCompT) {
     }
   }, [
     PageModel,
-    filterModel,
-    searchText,
     search,
-    dialogOpen,
     searchData,
-    props
   ]);
 
   const toggleColBtn = () => {

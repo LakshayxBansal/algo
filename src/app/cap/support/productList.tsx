@@ -3,7 +3,7 @@ import * as zs from "../../zodschema/zodschema";
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import Snackbar from "@mui/material/Snackbar";
 import { masterFormPropsT, selectKeyValueT } from "@/app/models/models";
 import {

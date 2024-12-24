@@ -19,7 +19,7 @@ import {
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl } from "@/app/Widgets/input/InputControl";
 import { InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import {
   getContact,
   getContactById,
