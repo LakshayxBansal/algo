@@ -24,6 +24,7 @@ import {
   getCountryListMasterDb,
   getStateListMasterDb,
   getCountryIdByNameDb,
+  getColumnsDb,
 } from "../services/masters.service";
 import { getSession } from "../services/session.service";
 import * as zs from "../zodschema/zodschema";
@@ -31,6 +32,7 @@ import * as zm from "../models/models";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
 import * as mdl from "../models/models";
+import { logger } from "../utils/logger.utils";
 
 export async function authenticate(formData: FormData) {
   try {
@@ -593,5 +595,17 @@ export async function getCountryIdByName(name: string){
 
   } catch (error) {
     throw error;
+  }
+}
+
+export async function getColumns(id: number){
+  try{
+    const session = await getSession();
+    if(session?.user.dbInfo){
+      const result = await getColumnsDb(session.user.dbInfo.dbName as string, id);
+      return result;
+    }
+  }catch(e){
+    logger.error(e);
   }
 }

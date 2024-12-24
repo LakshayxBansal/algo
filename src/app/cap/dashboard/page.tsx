@@ -13,9 +13,9 @@ import OverviewCard from "./OverviewCard";
 import { logger } from "@/app/utils/logger.utils";
 import { Metadata } from "next";
 
-export const metadata : Metadata = {
-  title : 'Dashboard'
-}
+// export const metadata : Metadata = {
+//   title : 'Dashboard'
+// }
 
 
 export default async function Dashboard() {

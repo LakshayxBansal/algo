@@ -8,6 +8,7 @@ import {
   getEnquiryDataByPage,
   delEnquiryDataById,
 } from "@/app/controllers/enquiry.controller";
+import { getColumns } from "@/app/controllers/masters.controller";
 
 const columns: GridColDef[] = [
   {
@@ -69,6 +70,7 @@ export default function Action() {
         fetchDataFn={getEnquiryDataByPage}
         fnFetchDataByID={getEnquiryById}
         fnDeleteDataByID={delEnquiryDataById}
+        fnFetchColumns={26}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

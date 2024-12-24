@@ -69,7 +69,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
   );
   const [options, setOptions] = useState<optionsDataT[]>(defaultOpts);
   const width = props.width ? props.width : '100%';
-  const [valueChange, setvalueChange] = useState(true);
+  const [valueChange, setvalueChange] = useState(false);
   const [autoSelect, setAutoSelect] = useState(props.notEmpty);
   const [defaultValue, setDefaultValue] = useState<optionsDataT | undefined>(
     props.defaultValue
@@ -92,15 +92,15 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
   // }, [props.defaultValue]);
 
-  useEffect(() => {
-    const getData = debounce(async (input) => {
+  const fetchData = async (input: string) => {
+
       let results;
-      if (!(props.defaultOptions && !props.diaglogVal.reloadOpts) && open) {
+      if (props && !(props.defaultOptions && !props.diaglogVal.reloadOpts)) {
         results = (await props.fetchDataFn(
           props.defaultOptions ? "" : input
         )) as optionsDataT[];
         console.log("result", results);
-
+  
         if (props.diaglogVal?.reloadOpts) {
           setDefaultOpts(results);
           props.setDialogVal({ ...props.diaglogVal, reloadOpts: false });
@@ -109,7 +109,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       } else {
         results = await filterOpts(defaultOpts, input);
       }
-
+  
       setOptions([] as optionsDataT[]);
       // setLoading(false);
       if (results) {
@@ -118,14 +118,14 @@ export function AutocompleteDB(props: autocompleteDBT) {
         }
         setOptions(results);
       }
-    }, 400);
+
+  };
+
+  
+
+  useEffect(() => {
+    const getData = debounce(async (input) => await fetchData(input), 400);
     if (defaultValue?.name !== props.defaultValue?.name) {
-      console.log(
-        "in the defaultvalue condition ------",
-        defaultValue,
-        "- ",
-        props.defaultValue
-      );
       setvalueChange(true);
       props.setDialogVal(props.defaultValue as optionsDataT);
       setDefaultValue(props.defaultValue);
@@ -133,10 +133,11 @@ export function AutocompleteDB(props: autocompleteDBT) {
     }
 
     if (valueChange || autoSelect) {
-      if (open) {
+      // if (open) {
         // setLoading(true)
         getData(inputValue?.trim() ?? "");
-      }
+        console.log("fired getData!!");
+      // }
     }
   }, [inputValue, autoSelect, open]);
 
@@ -175,6 +176,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
   return (
     <Autocomplete
+      open={open}
       id={props.id}
       disabled={props.disable ? props.disable : false}
       options={options}
@@ -210,6 +212,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
           paddingRight: 1,
         },
       }}
+      
       renderInput={(params) => {
         return (
           <InputControl
@@ -285,10 +288,12 @@ export function AutocompleteDB(props: autocompleteDBT) {
           hltIndex = -1;
         }
       }}
-      onOpen={(e) => {
-        setOpen(true);
+      onOpen={async (e) => {
+        await fetchData("");
         setvalueChange(true);
         setInputValue("");
+        setOpen(true);
+
       }}
       onClose={(e) => {
         setOpen(false);

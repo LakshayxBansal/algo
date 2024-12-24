@@ -12,6 +12,7 @@ import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
 import { delSupportDataById, getSupportDataById, getSupportDataByPage } from "@/app/controllers/supportTicket.controller";
 import SupportTicketForm from "../SupportTicketForm";
+import { getColumns } from "@/app/controllers/masters.controller";
 
 const columns: GridColDef[] = [
   {
@@ -74,6 +75,7 @@ export default function Action() {
         fetchDataFn={getSupportDataByPage}
         fnFetchDataByID={getSupportDataById}
         fnDeleteDataByID={delSupportDataById}
+        fnFetchColumns={28}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
