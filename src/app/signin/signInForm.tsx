@@ -47,8 +47,6 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
-    setLoading(true);
-    document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -82,11 +80,6 @@ export default function AuthPage(props: authPagePropsType) {
           if (status?.error === "CredentialsSignin") {
             console.log(status);
           }
-          //loader cursor set
-          if (errorState.form.error == true) {
-            setLoading(false);
-            document.body.classList.remove("cursor-wait");
-          }
         }
       });
     } else {
@@ -110,13 +103,13 @@ export default function AuthPage(props: authPagePropsType) {
   return (
     <Grid className={styles.container} container spacing={0}>
       <Grid item className={styles.left} rowGap={2}>
-        <Image
+        {/* <Image
           src="/Illustration.png"
           alt="Log In Page Image"
           width={500}
           height={550}
           className={styles.mainImg}
-        />
+        /> */}
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
           Welcome!
         </Typography>
