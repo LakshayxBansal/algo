@@ -46,12 +46,12 @@ export const createSchemaZod = (structure: any) => {
                             message: "Field must not be empty",
                         })
                   : z.date().optional()
-          );
+            );
           break;
-              break;
 
           case "master list":
-              schema = z.number().nullish();
+
+              schema = element.is_mandatory?z.number({ invalid_type_error: "This field is required." }):z.number().nullish();
               break;
 
           case "list":

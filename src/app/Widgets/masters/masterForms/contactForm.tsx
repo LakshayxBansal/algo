@@ -11,7 +11,7 @@ import {
   getDepartment,
   getDepartmentById,
 } from "@/app/controllers/department.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
 import { Portal } from "@mui/material";

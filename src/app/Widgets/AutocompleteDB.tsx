@@ -11,15 +11,13 @@ import {
 import Autocomplete from "@mui/material/Autocomplete";
 import { debounce } from "@mui/material/utils";
 import TextField from "@mui/material/TextField";
-import Popper from "@mui/material/Popper";
+import Popper, { PopperProps } from "@mui/material/Popper";
 import { formErrorT } from "../models/models";
 import { InputControl, InputType } from "./input/InputControl";
 import { optionsDataT } from "@/app/models/models";
 import { CustomStyledDiv } from "../utils/styledComponents";
 import { autocompleteTextfieldSx } from "../utils/theme.util";
-import { propagateServerField } from "next/dist/server/lib/render-server";
-import { IconButton, InputAdornment } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { InputAdornment } from "@mui/material";
 
 type OnChangeFunction = (
   event: any,
@@ -45,7 +43,7 @@ type autocompleteDBT = {
   required?: boolean;
   defaultValue?: optionsDataT;
   notEmpty?: boolean;
-  fnSetModifyMode: (id: string) => void;
+  // fnSetModifyMode: (id: string) => void;
   disable?: boolean;
   defaultOptions?: optionsDataT[];
   showDetails?: boolean;
@@ -55,15 +53,47 @@ type autocompleteDBT = {
   //children: React.FunctionComponentElements
 };
 
+
+const filterOpts = async (opts: optionsDataT[], input: string) => {
+  return opts.filter((item) =>
+    item.name.toLowerCase().includes(input ? input.toLowerCase() : "")
+  );
+};
+
+
+/**
+ * AutocompleteDB is a functional component that wraps the MUI autocomplete input field.
+ * It filters options based on user input searches in the db.
+ * It manages various states related to the input field.
+ * 
+ * Props:
+ * - width: The width of the autocomplete input field.
+ * - diaglogVal: The current value of the of the field.
+ * - setDialogVal: Function to set the dialog value.
+ * - formError: Object representing form errors.
+ * - required: Boolean indicating if the field is required.
+ * - defaultValue: The default value for the autocomplete input.
+ * - notEmpty: Boolean indicating if the input should not be empty.
+ * - fnSetModifyMode: Function to set modify mode by id.
+ * - disable: Boolean indicating if the input should be disabled.
+ * - defaultOptions: Array of default options for the autocomplete. this is used in case the values are supplied for initial load.
+ * - showDetails: Boolean indicating if details box below the list should be shown.
+ * - autoFocus: Boolean indicating if the input should be auto-focused.
+ * - iconControl: React node for custom icon control.
+ * - setFormError: Function to set form errors.
+ * 
+ * State:
+ * - inputValue: The current input value entered by user.
+ * - defaultOpts: The default options for the autocomplete.
+ * - options: The filtered options based on user input.
+ * - valueChange: Boolean indicating if the value has changed.
+ * - autoSelect: Boolean indicating if the input should auto-select.
+ * - defaultValue: The current default value.
+ * - open: Boolean indicating if the autocomplete dropdown is open.
+ * 
+ */
 export function AutocompleteDB(props: autocompleteDBT) {
-  const filterOpts = async (opts: optionsDataT[], input: string) => {
-    return opts.filter((item) =>
-      item.name.toLowerCase().includes(input ? input.toLowerCase() : "")
-    );
-  };
-
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
-
   const [defaultOpts, setDefaultOpts] = useState<optionsDataT[]>(
     props.defaultOptions ? props.defaultOptions : []
   );
@@ -74,32 +104,23 @@ export function AutocompleteDB(props: autocompleteDBT) {
   const [defaultValue, setDefaultValue] = useState<optionsDataT | undefined>(
     props.defaultValue
   );
-  let hltIndex = -1;
-  let isTabbingOut = 0;
-  // const [selectDefault, setSelectDefault] = useState(
-  // Boolean(props.defaultValue? true: false)
-  // );
-  // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const showDetails = props.showDetails ? props.showDetails : false;
+  let hltIndex = -1;
+  let isTabbingOut = 0;
 
   if (defaultValue?.name !== props.defaultValue?.name) {
     props.setDialogVal(props.defaultValue as optionsDataT);
-    console.log("set the default value!");
   }
 
-  // useEffect(() => {
-
-  // }, [props.defaultValue]);
 
   const fetchData = async (input: string) => {
 
       let results;
-      if (props && !(props.defaultOptions && !props.diaglogVal.reloadOpts)) {
+      if (!(props.defaultOptions && !props.diaglogVal.reloadOpts)) {
         results = (await props.fetchDataFn(
           props.defaultOptions ? "" : input
         )) as optionsDataT[];
-        console.log("result", results);
   
         if (props.diaglogVal?.reloadOpts) {
           setDefaultOpts(results);
@@ -110,7 +131,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
         results = await filterOpts(defaultOpts, input);
       }
   
-      setOptions([] as optionsDataT[]);
+      // setOptions([] as optionsDataT[]);
       // setLoading(false);
       if (results) {
         if (autoSelect && inputValue === "") {
@@ -118,7 +139,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
         }
         setOptions(results);
       }
-
   };
 
   
@@ -141,15 +161,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
     }
   }, [inputValue, autoSelect, open]);
 
-  function getOptions(option: any, selectFunc?: SelectOptionsFunction): string {
-    if (Object.keys(option).length > 0) {
-      if (selectFunc) {
-        return selectFunc(option);
-      }
-      return option.name;
-    }
-    return "";
-  }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.key === "Tab") {
@@ -174,19 +185,98 @@ export function AutocompleteDB(props: autocompleteDBT) {
     }
   }
 
+    /**
+   * Renders the input control for the Autocomplete component.
+   * 
+   * @param {any} params - The parameters passed from the Autocomplete component.
+   * @returns {JSX.Element} The rendered input control.
+   */
+  function renderInput(params: any): JSX.Element {
+    return (
+      <InputControl
+        {...params}
+        // {...props}
+        inputType={InputType.TEXT}
+        name={props.name}
+        label={props.label}
+        required={props.required}
+        error={props.formError?.error}
+        helperText={props.formError?.msg}
+        setFormError={props.setFormError}
+        InputProps={{
+          ...params.InputProps,
+          endAdornment: (
+            <Fragment>
+              {props.iconControl ? (
+                <InputAdornment position="end">
+                  {props.iconControl}
+                </InputAdornment>
+              ) : (
+                params?.InputProps?.endAdornment
+              )}
+            </Fragment>
+          ),
+        }}
+      />
+    );
+  }
+
+  /**
+   * Renders a Popper component with custom styling and optional TextField.
+   * 
+   * @param {PopperProps} props - The properties passed to the Popper component.
+   * @returns {JSX.Element} The rendered Popper component.
+   */
+  function showPopper(props: PopperProps): JSX.Element {
+    if (showDetails) {
+      return (
+        <Popper {...props}>
+          <CustomStyledDiv>
+            {props.children as ReactNode}
+            {/* TextField component with custom styling and multiline support */}
+            <TextField
+              id="popper_textid_temp_5276"
+              variant="standard"
+              defaultValue={" "}
+              InputProps={{
+                style: {
+                  ...autocompleteTextfieldSx,
+                  height: "100%",
+                },
+              }}
+              multiline
+              rows={4}
+              fullWidth
+            />
+          </CustomStyledDiv>
+        </Popper>
+      );
+    } else {
+      return (
+        <Popper {...props}>
+          <CustomStyledDiv>{props.children as ReactNode}</CustomStyledDiv>
+        </Popper>
+      );
+    }
+  }
+
+
   return (
     <Autocomplete
       open={open}
       id={props.id}
       disabled={props.disable ? props.disable : false}
       options={options}
-      // loading={loading}
       getOptionLabel={(option) => option.name ?? ""}
       autoHighlight
       onKeyDown={handleKeyDown}
+      renderInput={(params) => renderInput(params)}
+      onHighlightChange={onHighlightChange}
+      value={props.diaglogVal}
+      isOptionEqualToValue={(option, value) => option.id === value?.id}
+      PopperComponent={(props) =>  showPopper(props)}
       filterOptions={(options, { inputValue }) =>
         options.filter((option) =>
-          // option.detail? option.detail.toLowerCase().includes(inputValue.toLowerCase()) : option.name.toLowerCase().includes(inputValue.toLowerCase())
           `${option.detail ?? ""}${option.name ?? ""}`
             .toLowerCase()
             .includes((inputValue.toLowerCase()).trim())
@@ -200,7 +290,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
             {option.name}
           </li>
         );
-        //return <li>{getOptions(option, props.renderOptions)}</li>;
       }}
       sx={{
         width: { width },
@@ -213,65 +302,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
         },
       }}
       
-      renderInput={(params) => {
-        return (
-          <InputControl
-            {...params}
-            inputType={InputType.TEXT}
-            name={props.name}
-            label={props.label}
-            required={props.required}
-            error={props.formError?.error}
-            helperText={props.formError?.msg}
-            setFormError={props.setFormError}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <Fragment>
-                  {props.iconControl ? (
-                    <InputAdornment position="end">
-                      {props.iconControl}
-                    </InputAdornment>
-                  ) : (
-                    params?.InputProps?.endAdornment
-                  )}
-                </Fragment>
-              ),
-            }}
-          />
-        );
-      }}
-      onHighlightChange={onHighlightChange}
-      value={props.diaglogVal}
-      isOptionEqualToValue={(option, value) => option.id === value?.id}
-      PopperComponent={(props) =>
-        showDetails ? (
-          <Popper {...props}>
-            <CustomStyledDiv>
-              {props.children as ReactNode}
 
-              <TextField
-                id="popper_textid_temp_5276"
-                variant="standard"
-                defaultValue={" "}
-                InputProps={{
-                  style: {
-                    ...autocompleteTextfieldSx,
-                    height: "100%",
-                  },
-                }}
-                multiline
-                rows={4}
-                fullWidth
-              />
-            </CustomStyledDiv>
-          </Popper>
-        ) : (
-          <Popper {...props}>
-            <CustomStyledDiv>{props.children as ReactNode}</CustomStyledDiv>
-          </Popper>
-        )
-      }
       onBlur={(e) => {
         setAutoSelect(props.notEmpty);
 
@@ -326,7 +357,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
             ? props.onChange(event, newValue, props.setDialogVal)
             : null;
         }
-        console.log("change---!!!");
       }}
       onInputChange={(event, newInputValue, reason) => {
         setAutoSelect(false);
@@ -336,8 +366,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
         }
       }}
       forcePopupIcon={true}
-      // autoHighlight
-      noOptionsText={" "}
       autoComplete
       includeInputInList
       disableClearable={

@@ -237,10 +237,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     };
   }, [
     PageModel,
-    filterModel,
-    searchText,
     search,
-    dialogOpen,
     searchData,
     apiRef,
     props

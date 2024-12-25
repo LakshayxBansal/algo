@@ -268,3 +268,9 @@ export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;
 
+export type OnChangeFunction = (
+  event: any,
+  newVal: any,
+  setDialogValue: (props: any) => void
+) => void;
+

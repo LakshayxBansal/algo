@@ -9,7 +9,7 @@ import {
   updateExecutiveRole,
   getExecutiveRoleById,
 } from "@/app/controllers/executiveRole.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import {
   executiveRoleSchemaT,
   masterFormPropsWithDataT,
