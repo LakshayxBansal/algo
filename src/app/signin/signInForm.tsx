@@ -15,7 +15,7 @@ import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customButton";
 import * as zs from "../zodschema/zodschema";
 import { LoadingButton } from "@mui/lab";
-import styles from "./signInForm.module.css";
+import { styles } from "./signInFormStyles";
 import Image from "next/image";
 
 interface authPagePropsType {
@@ -108,14 +108,14 @@ export default function AuthPage(props: authPagePropsType) {
     });
 
   return (
-    <Grid className={styles.container} container spacing={0}>
-      <Grid item className={styles.left} rowGap={2}>
+    <Grid sx={styles.container} container spacing={0}>
+      <Grid item sx={styles.left} rowGap={2}>
         <Image
           src="/Illustration.png"
           alt="Log In Page Image"
           width={500}
           height={550}
-          className={styles.mainImg}
+          style={styles.mainImg}
         />
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
           Welcome!
@@ -125,8 +125,8 @@ export default function AuthPage(props: authPagePropsType) {
         </Typography>
       </Grid>
 
-      <Grid item className={styles.right}>
-        <Box className={styles.rightTop} rowGap={2}>
+      <Grid item sx={styles.right}>
+        <Box sx={styles.rightTop} rowGap={2}>
           <Typography variant="h3" sx={{ color: "#4870ac", fontWeight: "700" }}>
             Log In
           </Typography>
@@ -137,8 +137,10 @@ export default function AuthPage(props: authPagePropsType) {
             Don’t have an account?{" "}
             <Link
               href={loading ? "#" : "/signup"}
-              className={styles.links}
-              style={{ cursor: loading ? "wait" : "pointer" }}
+              style={{
+                ...styles.links,
+                ...(loading ? styles.linksLoading : {}),
+              }}
               tabIndex={-1}
             >
               Sign Up
@@ -238,13 +240,7 @@ export default function AuthPage(props: authPagePropsType) {
             />
           )}
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <Box sx={styles.passwordContainer}>
             <InputControl
               inputType={InputType.TEXT}
               fullWidth
@@ -284,11 +280,7 @@ export default function AuthPage(props: authPagePropsType) {
             />
             <Button
               type="button"
-              sx={{
-                marginLeft: "-65px",
-                marginTop: "1rem",
-                maxHeight: "fit-content",
-              }}
+              sx={styles.eyeBtn}
               onClick={() => setShowPassword(!showPassword)}
               tabIndex={-1}
               disabled={loading}
@@ -303,17 +295,20 @@ export default function AuthPage(props: authPagePropsType) {
 
           <Link
             href={loading ? "#" : ""}
-            className={styles.links}
-            style={{ alignSelf: "flex-end", cursor: loading ? "wait" : "pointer" }}
+            style={{
+              ...styles.links,
+              ...(loading ? styles.linksLoading : {}),
+              alignSelf: "flex-end",
+            }}
             tabIndex={-1}
           >
             Forgot Password?
           </Link>
 
-          <Box className={styles.btnBox} rowGap={2}>
+          <Box sx={styles.btnBox} rowGap={2}>
             <LoadingButton
               type="submit"
-              className={styles.pillButton}
+              sx={styles.pillButton}
               loading={loading}
               loadingIndicator={
                 <CircularProgress
@@ -335,20 +330,17 @@ export default function AuthPage(props: authPagePropsType) {
                 tabIndex={-1}
                 disabled={loading}
                 setLoading={setLoading}
-                sx={{
-                  width: "100%",
-                  borderRadius: "2rem",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
+                sx={styles.googleBtn}
               >
                 Sign In With
               </GoogleSignUpButton>
             ))}
             <Link
               href={""}
-              className={styles.links}
-              style={{ cursor: loading ? "wait" : "pointer" }}
+              style={{
+                ...styles.links,
+                ...(loading ? styles.linksLoading : {}),
+              }}
               onClick={loading ? () => {} : contactHandler}
               tabIndex={-1}
             >
@@ -357,7 +349,7 @@ export default function AuthPage(props: authPagePropsType) {
           </Box>
         </form>
 
-        <Typography className={styles.cpyRight} variant="caption">
+        <Typography sx={styles.cpyRight} variant="caption">
           © 2024 Algofast India Pvt. Ltd. ALL RIGHTS RESERVED
         </Typography>
       </Grid>
