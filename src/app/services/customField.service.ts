@@ -5,9 +5,8 @@ import { customFieldsMasterSchemaT, FieldItemT } from "../models/models";
 
 export async function createCustomFieldsDB(crmDb: string,userID: number, object_id: number,data: FieldItemT[]) {
   try {
-      // console.log("data in services",object_id,userID);
-      
-      const stringdata=JSON.stringify(data)
+    
+    const stringdata=JSON.stringify(data)
       const result = await excuteQuery({
           host: crmDb,
           query: "call createCustomFields(?,?,?);",

@@ -10,6 +10,8 @@ import {
   useGridApiRef,
   gridClasses,
   GridColumnVisibilityModel,
+  DEFAULT_GRID_AUTOSIZE_OPTIONS,
+  GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import {
   Box,
@@ -25,6 +27,7 @@ import {
   Popper,
   Tooltip,
   TextField,
+  useStepContext,
 } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
@@ -40,7 +43,6 @@ import {
   rightSchemaT,
 } from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
-import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
 import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
@@ -85,6 +87,13 @@ export default function EntityList(props: entitiyCompT) {
     loggedInUserData: {} as loggedInUserDataT,
   });
 
+  const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
+
+  const [selectionModel, setSelectionModel] = useState([]);
+
+
+  
+
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -98,12 +107,48 @@ export default function EntityList(props: entitiyCompT) {
   const searchData: string | null = searchParams.get("searchText");
   //for navbar search
 
+
+let timeOut: string | number | NodeJS.Timeout | undefined;
+
+
+  const handleCellKeyDown = (params: any, event: any, details: any) => {
+    const rowId = params.row.id;
+    const currentIndex = data.findIndex((row: any) => row.id === rowId);
+
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      nextIndex =
+        currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+    } else if (event.key === "Enter" || event.key === " ") { 
+      event.preventDefault();
+    }
+
+    if (nextIndex !== currentIndex) {
+      const nextRow = data[nextIndex];
+      if (nextRow) {
+        // setRowSelectionModel([nextRow.id]);
+        // setSelectedRow(nextRow);
+      }
+    }
+  };
+
+  
+
+
+
   const optionsColumn: GridColDef[] = [
     {
       field: "Icon menu",
       headerName: "More Options",
       minWidth: 100,
       hideable: false,
+      sortable: false,
+      editable: false,
       renderCell: (params) => {
         return (
           <IconComponent
@@ -134,7 +179,6 @@ export default function EntityList(props: entitiyCompT) {
       searchText as string,
       pgSize as number
     );
-
     if (rows.data) {
       setData(rows.data);
       setNRows(rows.count as number);
@@ -173,12 +217,12 @@ export default function EntityList(props: entitiyCompT) {
     } else {
       fetchData(search);
     }
+    return () => {
+      clearInterval(timeOut);
+    };
   }, [
     PageModel,
-    filterModel,
-    searchText,
     search,
-    dialogOpen,
     searchData,
     props,
   ]);
@@ -491,6 +535,7 @@ export default function EntityList(props: entitiyCompT) {
                         aria-label="select merge strategy"
                         aria-haspopup="menu"
                         onClick={handleDropDownBtn}
+                        tabIndex={-1}
                       >
                         <ArrowDropDownIcon />
                       </Button>
@@ -522,6 +567,18 @@ export default function EntityList(props: entitiyCompT) {
                               arrow
                             >
                               <Button
+                                onClick={() => {
+                                  setDialogOpen(true);
+                                  setDlgMode(dialogMode.FileUpload);
+                                }}
+                              >
+                                <CloudUploadIcon
+                                  fontSize="small"
+                                  style={{ marginRight: "5px" }}
+                                />
+                                Upload File
+                              </Button>
+                              {/* <Button
                                 key={"Upload File"}
                                 onClick={hideUploadBtn}
                                 component="label"
@@ -543,7 +600,7 @@ export default function EntityList(props: entitiyCompT) {
                                   multiple
                                 />
                                 Upload File
-                              </Button>
+                              </Button> */}
                             </Tooltip>
                           </ClickAwayListener>
                         </Paper>
@@ -582,6 +639,7 @@ export default function EntityList(props: entitiyCompT) {
                   aria-haspopup="true"
                   ref={(ref) => setAnchorEl(ref)}
                   onClick={toggleColBtn}
+                  tabIndex={-1}
                 >
                   <TuneIcon fontSize="medium" />
                 </IconButton>
@@ -590,6 +648,7 @@ export default function EntityList(props: entitiyCompT) {
           </Grid>
           <Seperator />
           <StripedDataGrid
+            apiRef={apiRef}
             disableColumnMenu
             rows={data ? data : []}
             rowHeight={40}
@@ -604,8 +663,11 @@ export default function EntityList(props: entitiyCompT) {
             onPaginationModelChange={setPageModel}
             filterMode="server"
             onFilterModelChange={setFilterModel}
+            rowSelectionModel={rowSelectionModel}
+              
             loading={!data}
-            apiRef={apiRef}
+            onCellKeyDown={handleCellKeyDown}
+            // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
             slotProps={{

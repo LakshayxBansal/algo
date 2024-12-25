@@ -60,24 +60,26 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { getDepartmentColumns } from "@/app/controllers/department.controller";
+import { getColumns } from "@/app/controllers/masters.controller";
 import { CONTACT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
   {
     field: "email",
     headerName: "Email",
-    editable: true,
+    editable: false,
   },
   {
     field: "whatsapp",
     headerName: "Whatsapp",
     type: "number",
-    editable: true,
+    editable: false,
   },
 ];
 

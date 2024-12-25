@@ -16,12 +16,12 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
   {
     field: "alias",
     headerName: "Alias",
-    editable: true,
+    editable: false,
   },
 ];
 
@@ -44,6 +44,7 @@ export default function organisation() {
         fetchDataFn={getOrganisationByPage}
         fnFetchDataByID={getOrganisationById}
         fnDeleteDataByID={delOrganisationById}
+        fnFetchColumns={19}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

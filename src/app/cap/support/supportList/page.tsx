@@ -75,6 +75,7 @@ export default function Action() {
         fetchDataFn={getSupportDataByPage}
         fnFetchDataByID={getSupportDataById}
         fnDeleteDataByID={delSupportDataById}
+        fnFetchColumns={28}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

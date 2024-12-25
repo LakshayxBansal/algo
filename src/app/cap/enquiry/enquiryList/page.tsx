@@ -70,6 +70,7 @@ export default function Action() {
         fetchDataFn={getEnquiryDataByPage}
         fnFetchDataByID={getEnquiryById}
         fnDeleteDataByID={delEnquiryDataById}
+        fnFetchColumns={26}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

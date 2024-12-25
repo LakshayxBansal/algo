@@ -16,7 +16,7 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
-    editable: true,
+    editable: false,
   },
 ];
 
@@ -39,6 +39,7 @@ export default function executiveDept() {
         fetchDataFn={getExecutiveDeptByPage}
         fnFetchDataByID={getDeptById}
         fnDeleteDataByID={delExecutiveDeptById}
+        fnFetchColumns={10}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}

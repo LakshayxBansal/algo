@@ -8,7 +8,7 @@ import {
   getContactGroupById,
   updateContactGroup,
 } from "../../../controllers/contactGroup.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import { getContactGroup } from "@/app/controllers/contactGroup.controller";
 import {
   contactGroupSchemaT,

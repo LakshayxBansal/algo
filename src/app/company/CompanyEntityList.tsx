@@ -52,6 +52,10 @@ export default function CompanyEntityList() {
 
   // const companyDefaultColumns=["companyName","companyAlias","createdBy","createdOn"];
 
+  // if(document.querySelector(".cursor-wait")){
+    // }
+      // document.body.classList.remove("cursor-wait");
+
   return (
     <AuthWrapper>
       <EntityList

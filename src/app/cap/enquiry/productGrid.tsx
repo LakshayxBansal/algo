@@ -13,7 +13,7 @@ import { Button, Grid, Typography } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import {
   getProduct,
   getProductById,

@@ -16,7 +16,7 @@ import { Button } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import Seperator from "@/app/Widgets/seperator";
 import { getProduct, getProductById } from "@/app/controllers/product.controller";
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";

@@ -63,34 +63,6 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
-    width: open ? 290 : 72,
-    // height:"100vh",
-    // overflowY: 'auto',
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: "border-box",
-    ...(!open && {
-      overflowX: "hidden",
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing(7),
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(7),
-      },
-    }),
-  },
-}));
-
 const GroupHeader = styled("div")(({ theme }) => ({
   position: "sticky",
   top: "-8px",
@@ -159,6 +131,45 @@ export default function MenuBar(props: propsType) {
   const [search, setSearch] = useState("");
   const [searchData, setSearchData] = useState("");
   const router = useRouter();
+  const [hovered, setHovered] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const childrenRef = useRef<React.ReactNode>(props.children); 
+
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  "& .MuiDrawer-paper": {
+    position: "relative",
+    whiteSpace: "nowrap",
+    // width: open ? 290 : 72,
+    width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
+    // height:"100vh",
+    // overflowY: 'auto',
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.easeInOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    boxSizing: "border-box",
+    ...((!open && hovered) && {
+      overflowX: "hidden",
+      // transition: theme.transitions.create("width", {
+      //   easing: theme.transitions.easing.sharp,
+      //   duration: theme.transitions.duration.leavingScreen,
+      // }),
+      width: hovered ? theme.spacing(16) : theme.spacing(7),
+      // [theme.breakpoints.up("sm")]: {
+      //   width: theme.spacing(7),
+      // },
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: "1.0s",
+      }),
+    }),
+  },
+}));
+
 
   const holdValue = useRef("newValue");
 
@@ -173,7 +184,11 @@ export default function MenuBar(props: propsType) {
     if (search.length > 0) {
       maindata(search);
     }
-  }, [search]);
+
+
+  }, [search,loading]);
+
+  console.log(loading);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
 
@@ -197,6 +212,7 @@ export default function MenuBar(props: propsType) {
 
   const toggleDrawer = () => {
     setOpen(!open);
+    setHovered(false);
   };
 
   const setOpenDrawer = (val: boolean) => {
@@ -228,6 +244,7 @@ export default function MenuBar(props: propsType) {
               aria-label="open drawer"
               onClick={toggleDrawer}
               sx={{ marginRight: "36px", ...(open && { display: "none" }) }}
+              tabIndex={-1}
             >
               <MenuIcon />
             </IconButton>
@@ -341,6 +358,7 @@ export default function MenuBar(props: propsType) {
               img={props.profileImg}
               name={props.username}
               companyName={props.companyName}
+            
             />
           </Toolbar>
         </AppBar>
@@ -350,6 +368,7 @@ export default function MenuBar(props: propsType) {
             anchor="left"
             open={open}
             sx={{ display: { xs: "none", sm: "flex" } }}
+            // onMouseEnter={(e)=>setHovered(true)} onMouseLeave={(e)=>{setHovered(false)}}
           >
             {/* need to work on this as on xs it should be at the top */}
             <Toolbar
@@ -364,12 +383,16 @@ export default function MenuBar(props: propsType) {
                 <ChevronLeftIcon />
               </IconButton>
             </Toolbar>
+
             <LeftMenuTree
               pages={pages}
               openDrawer={open}
               setOpenDrawer={setOpenDrawer}
+              isHover={hovered}
+              setLoading={setLoading}
             />
           </Drawer>
+          {/* <Box style={{ width: "96vw" }}>{loading ? <Loadered> {children}</Loadered> : children}</Box> */}
           <Box style={{ width: "96vw" }}>{children}</Box>
         </Box>
       </>
