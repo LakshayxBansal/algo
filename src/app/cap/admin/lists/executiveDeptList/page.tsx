@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/executiveDept.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { EXECUTIVE_DEPT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -42,6 +43,7 @@ export default function executiveDept() {
         uploadAllowed={true}
         AddAllowed={false}
         height="60vh"
+        objectTypeId={EXECUTIVE_DEPT_OBJECT_ID}
       ></EntityList>
     </>
   );

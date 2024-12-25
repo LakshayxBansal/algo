@@ -83,6 +83,7 @@ import { getEnquiryDescription } from "@/app/controllers/enquiry.controller";
 import { getSupportTicketDescription } from "@/app/controllers/supportTicket.controller";
 import { getContact } from "@/app/controllers/contact.controller";
 import { columnsStateInitializer } from "@mui/x-data-grid/internals";
+import { CALL_EXPLORER_ID } from "@/app/utils/consts.utils";
 
 
 type ColumnWidths = {
@@ -180,7 +181,7 @@ export default function AutoGrid(props: any) {
   React.useEffect(() => {
     const fetchAndSetPreferences = async () => {
       try {
-        const data = await getUserPreference();
+        const data = await getUserPreference(CALL_EXPLORER_ID);
         let userColumnPreference = data[0] ? JSON.parse(data[0]?.meta_data) : {};
 
         if (!Object.keys(userColumnPreference).length) {
@@ -191,7 +192,7 @@ export default function AutoGrid(props: any) {
             return acc;
           }, {});
 
-          await insertUserPreference(userColumnPreference);
+          await insertUserPreference(userColumnPreference, CALL_EXPLORER_ID);
 
           // Set column widths in the state
           setColumnWidths(userColumnPreference);
@@ -356,7 +357,7 @@ export default function AutoGrid(props: any) {
     });
 
     // Update user preferences in the database
-    updateUserPreference(updatedColumnWidths);
+    updateUserPreference(updatedColumnWidths, CALL_EXPLORER_ID);
 
     // Update the local state
     setColumnWidths(updatedColumnWidths);
@@ -665,7 +666,7 @@ export default function AutoGrid(props: any) {
         // updateUserPreference(updatedWidths); 
         return updatedWidths;
       });
-      updateUserPreference(updatedWidths);
+      updateUserPreference(updatedWidths,CALL_EXPLORER_ID);
     }, 600);
   };
 

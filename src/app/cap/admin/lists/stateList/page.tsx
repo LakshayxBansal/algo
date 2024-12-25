@@ -10,6 +10,7 @@ import {
 import StateFormList from "@/app/Widgets/masters/masterForms/stateFormList";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { STATE_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -46,6 +47,7 @@ export default function State() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={STATE_OBJECT_ID}
       ></EntityList>
     </>
   );

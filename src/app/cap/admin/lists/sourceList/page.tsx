@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/enquirySource.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { SOURCE_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -41,6 +42,7 @@ export default function enquirySource() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={SOURCE_OBJECT_ID}
       ></EntityList>
     </>
   );

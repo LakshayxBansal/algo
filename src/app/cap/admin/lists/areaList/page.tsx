@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/area.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { AREA_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -41,6 +42,7 @@ export default function Area() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={AREA_OBJECT_ID}
       ></EntityList>
     </>
   );

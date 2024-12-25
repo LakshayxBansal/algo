@@ -12,6 +12,7 @@ import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import { Box } from "@mui/material";
+import { ACTION_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -46,6 +47,7 @@ export default function Action() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={ACTION_OBJECT_ID}
       ></EntityList>
     </>
   );

@@ -273,13 +273,14 @@ export async function getCallSupportDetails(id: number) {
   }
 }
 
-export async function getUserPreference() {
+export async function getUserPreference(objectId: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo && session?.user.userId) {
       const result = await getUserPreferenceDb(
         session.user.dbInfo.dbName,
-        session.user.userId
+        session.user.userId,
+        objectId
       );
 
       // console.log("res", result);
@@ -290,13 +291,14 @@ export async function getUserPreference() {
   }
 }
 
-export async function insertUserPreference(data:ColumnWidths) {
+export async function insertUserPreference(data:ColumnWidths, objectId: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo && session?.user.userId) {
       const result = await insertUserPreferenceDb(
         session.user.dbInfo.dbName,
         session.user.userId,
+        objectId,
        JSON.stringify(data)
       );
 
@@ -308,13 +310,14 @@ export async function insertUserPreference(data:ColumnWidths) {
   }
 }
 
-export async function updateUserPreference(data: ColumnWidths) {
+export async function updateUserPreference(data: ColumnWidths, objectId: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo && session?.user.userId) {
       const result = await updateUserPreferenceDb(
         session.user.dbInfo.dbName,
         session.user.userId,
+        objectId,
         JSON.stringify(data)
       );
       return result;

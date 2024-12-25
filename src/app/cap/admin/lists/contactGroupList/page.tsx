@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/contactGroup.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { CONTACT_GROUP_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -41,6 +42,7 @@ export default function ContactGroup() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={CONTACT_GROUP_OBJECT_ID}
       ></EntityList>
     </>
   );
