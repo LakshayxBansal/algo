@@ -183,7 +183,7 @@ export default function AuthPage(props: authPagePropsType) {
                   height: "45px",
                   padding: "0 14px",
                   backgroundColor: "#E8F0FE",
-                  cursor: loading ? "wait" : "pointer",
+                  cursor: loading ? "wait" : "normal",
                 },
                 "& .MuiOutlinedInput-root": {
                   height: "45px",
@@ -226,7 +226,7 @@ export default function AuthPage(props: authPagePropsType) {
                   height: "45px",
                   padding: "0 14px",
                   backgroundColor: "#E8F0FE",
-                  cursor: loading ? "wait" : "pointer",
+                  cursor: loading ? "wait" : "normal",
                 },
                 "& .MuiOutlinedInput-root": {
                   height: "45px",
@@ -264,7 +264,7 @@ export default function AuthPage(props: authPagePropsType) {
                   height: "45px",
                   padding: "0 14px",
                   backgroundColor: "#E8F0FE",
-                  cursor: loading ? "wait" : "pointer",
+                  cursor: loading ? "wait" : "normal",
                 },
                 "& .MuiOutlinedInput-root": {
                   height: "45px",
