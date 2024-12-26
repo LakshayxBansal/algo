@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/unit.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { UNIT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -41,6 +42,7 @@ export default function Unit() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={UNIT_OBJECT_ID}
       ></EntityList>
     </>
   );

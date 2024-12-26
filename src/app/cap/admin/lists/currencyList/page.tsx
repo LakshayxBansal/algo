@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/currency.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { CURRENCY_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -46,6 +47,7 @@ export default function Currency() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={CURRENCY_OBJECT_ID}
       ></EntityList>
     </>
   );

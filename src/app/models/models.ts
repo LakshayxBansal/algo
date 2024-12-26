@@ -247,6 +247,7 @@ export type  entitiyCompT = {
   uploadAllowed?:boolean;
   height?: string;
   link ?:string;
+  objectTypeId ?: number;
 };
 
 export type iconCompT = {

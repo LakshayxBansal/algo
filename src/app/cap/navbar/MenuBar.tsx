@@ -132,7 +132,6 @@ export default function MenuBar(props: propsType) {
   const [searchData, setSearchData] = useState("");
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const childrenRef = useRef<React.ReactNode>(props.children); 
 
@@ -186,9 +185,7 @@ const Drawer = styled(MuiDrawer, {
     }
 
 
-  }, [search,loading]);
-
-  console.log(loading);
+  }, [search]);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
 
@@ -389,10 +386,8 @@ const Drawer = styled(MuiDrawer, {
               openDrawer={open}
               setOpenDrawer={setOpenDrawer}
               isHover={hovered}
-              setLoading={setLoading}
             />
           </Drawer>
-          {/* <Box style={{ width: "96vw" }}>{loading ? <Loadered> {children}</Loadered> : children}</Box> */}
           <Box style={{ width: "96vw" }}>{children}</Box>
         </Box>
       </>

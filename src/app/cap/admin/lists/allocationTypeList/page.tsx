@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/allocationType.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { ALLOCATION_TYPE_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -41,6 +42,7 @@ export default function AllocationType() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={ALLOCATION_TYPE_ID}
       ></EntityList>
     </>
   );

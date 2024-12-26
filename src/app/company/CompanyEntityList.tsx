@@ -11,6 +11,7 @@ import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
 import { Typography } from "@mui/material";
 import React from "react";
+import { COMPANY_USER_OBJECT_ID } from "../utils/consts.utils";
 
 export default function CompanyEntityList() {
 
@@ -72,6 +73,7 @@ export default function CompanyEntityList() {
         customCols={columns}
         AddAllowed={true}
         height="60vh"
+        objectTypeId={COMPANY_USER_OBJECT_ID}
       ></EntityList>
     </AuthWrapper>
   );
