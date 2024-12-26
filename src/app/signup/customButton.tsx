@@ -8,7 +8,6 @@ import googleImage from "../../../public/google.svg";
 interface IButtonProps extends ButtonProps {
   provider: ClientSafeProvider;
   callbackUrl: string;
-  setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const StyledLoadingButton = styled(LoadingButton)(({ theme }) => ({
@@ -55,7 +54,6 @@ export function GoogleSignUpButton({
   provider,
   callbackUrl,
   children,
-  setLoading,
   ...rest
 }: IButtonProps) {
   const theme = useTheme();
@@ -67,7 +65,6 @@ export function GoogleSignUpButton({
     <div key={provider.name} style={{ width: "100%" }}>
       <StyledLoadingButton
         onClick={() => {
-          setLoading && setLoading(true);
           signIn(provider.id, { callbackUrl: callbackUrl });
         }}
         variant="contained"

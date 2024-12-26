@@ -8,7 +8,7 @@ import {
   getEnquiryDataByPage,
   delEnquiryDataById,
 } from "@/app/controllers/enquiry.controller";
-import { getColumns } from "@/app/controllers/masters.controller";
+import { ENQUIRY_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -76,6 +76,7 @@ export default function Action() {
         AddAllowed={false}
         height="60vh"
         link="/cap/enquiry"
+        objectTypeId={ENQUIRY_OBJECT_ID}
       ></EntityList>
     </>
   );

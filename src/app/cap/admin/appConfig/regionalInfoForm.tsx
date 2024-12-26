@@ -152,7 +152,6 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
             />
             <AutocompleteDB
               name={"state"}
@@ -184,7 +183,6 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
             />
           </Box>
           <Box

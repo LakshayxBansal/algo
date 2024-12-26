@@ -11,7 +11,6 @@ export default function CellDbName(props: { row: dbInfoT; userId: number }) {
 
   const handleClick = async (event: any) => {
     event.preventDefault();
-    document.body.classList.add("cursor-wait");
     const result = await selectUserCompany(row, props.userId);
     if (result) {
       const data = await update();

@@ -62,6 +62,7 @@ import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import { getDepartmentColumns } from "@/app/controllers/department.controller";
 import { getColumns } from "@/app/controllers/masters.controller";
+import { CONTACT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -102,13 +103,13 @@ export default function ManageContacts() {
         sampleFileName=""
         fnFileUpad={createContactsBatch}
         fetchDataFn={getContactByPage}
-        // instead of this fn we are sending rows
-        fnFetchColumns={5}
+        // instead Oof this fn we are sending rows
         fnFetchDataByID={getContactById}
         fnDeleteDataByID={DeleteContact}
         customCols={columns}
         uploadAllowed={true}
         height="60vh"
+        objectTypeId= {CONTACT_OBJECT_ID}
       ></EntityList>
     </>
   );

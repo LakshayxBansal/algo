@@ -12,7 +12,7 @@ import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
 import { delSupportDataById, getSupportDataById, getSupportDataByPage } from "@/app/controllers/supportTicket.controller";
 import SupportTicketForm from "../SupportTicketForm";
-import { getColumns } from "@/app/controllers/masters.controller";
+import { SUPPORT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -81,6 +81,7 @@ export default function Action() {
         AddAllowed={false}
         height="60vh"
         link="/cap/support"
+        objectTypeId={SUPPORT_OBJECT_ID}
       ></EntityList>
     </>
   );

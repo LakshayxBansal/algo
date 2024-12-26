@@ -64,18 +64,13 @@ export const styles = {
     fontFamily: "Roboto, 'Helvetica Neue', sans-serif",
     fontSize: "0.9rem",
   },
-  linksLoading: {
-    cursor: "wait",
-  },
+  // linksLoading: {
+  //   cursor: "wait",
+  // },
   passwordContainer: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  eyeBtn: {
-    marginLeft: "-65px",
-    marginTop: "1rem",
-    maxHeight: "fit-content",
   },
   googleBtn: {
     width: "100%",
