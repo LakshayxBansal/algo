@@ -68,10 +68,10 @@ export const options: NextAuthOptions = {
         // return '/unauthorized'
       }
     },
-    async jwt({ user, token, account, profile, trigger }) {
+    async jwt({ user, token, account, profile, trigger, session }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
-      let userId: number = 0;
       if (account) {
+        let userId: number = 0;
         if (account.provider === "google") {
           const userDetails = await getUserDetailsByEmail(user.email as string);
           userId = userDetails.id;
@@ -86,10 +86,14 @@ export const options: NextAuthOptions = {
     },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
+      // console.log(session);
+
       if (token) {
         session.user.userId = token.userid as number;
         const dbInfo = await getDbSession(session.user.userId);
-        session.user.dbInfo = dbInfo as dbInfoT;
+        if (dbInfo) {
+          session.user.dbInfo = dbInfo as dbInfoT;
+        }
       }
       return session;
     },
@@ -98,3 +102,4 @@ export const options: NextAuthOptions = {
     signIn: "/signin",
   },
 };
+
