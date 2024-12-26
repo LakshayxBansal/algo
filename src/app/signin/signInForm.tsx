@@ -327,7 +327,6 @@ export default function AuthPage(props: authPagePropsType) {
                 callbackUrl="/company"
                 tabIndex={-1}
                 disabled={loading}
-                setLoading={setLoading}
                 sx={{
                   width: "100%",
                   borderRadius: "2rem",
