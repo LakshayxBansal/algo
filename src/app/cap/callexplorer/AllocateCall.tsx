@@ -230,7 +230,7 @@ export default function AllocateCall(props: customprop) {
                 setDialogVal={function (
                   value: React.SetStateAction<optionsDataT>
                 ): void { }}
-                fnSetModifyMode={function (id: string): void { }}
+                // fnSetModifyMode={function (id: string): void { }}
 
               />
               {/* <InputControl

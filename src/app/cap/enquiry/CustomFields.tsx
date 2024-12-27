@@ -197,7 +197,7 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                             value: React.SetStateAction<optionsDataT>
                         ): void {
                         }}
-                        fnSetModifyMode={function (id: string): void { }}
+                        // fnSetModifyMode={function (id: string): void { }}
                     />
                 )
         }

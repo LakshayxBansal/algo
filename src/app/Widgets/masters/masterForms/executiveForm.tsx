@@ -86,6 +86,7 @@ export default function ExecutiveForm(
     ? props.data
     : ({} as executiveSchemaT);
   const pathName = usePathname();
+  // const [whatsappFn, setWhatsappFn] = useState(entityData.whatsapp);
   const [whatsappFn, setWhatsappFn] = useState(
     entityData.whatsapp?.length === 0 ? "+91" : entityData.whatsapp
   );
@@ -436,15 +437,16 @@ export default function ExecutiveForm(
         fullWidth
         error={formError?.mobile?.error}
         helperText={formError?.mobile?.msg}
-        defaultValue={mobile}
+        defaultValue={entityData.mobile}
         setFormError={setFormError}
-        onChange={(val: string) => {
-          // setMobile(val);
-          handleWhatsappChange
-          if (keyDownMobile.current === undefined || keyDownMobile.current === false) {
-            keyDownMobile.current = true;
-          }
-        }}
+        onChange={handleWhatsappChange}
+        // onChange={(val: string) => {
+        //   // setMobile(val);
+        //   handleWhatsappChange
+        //   if (keyDownMobile.current === undefined || keyDownMobile.current === false) {
+        //     keyDownMobile.current = true;
+        //   }
+        // }}
       // onKeyDown={() => {
       //   setFormError((curr) => {
       //     const { mobile, ...rest } = curr;
@@ -893,8 +895,8 @@ export default function ExecutiveForm(
           fieldArr.push(fld);
         }
       }
-      // else if (field.is_default_column) {
-      else if (field.column_name_id === 'whatsapp') {
+      else if (field.is_default_column) {
+      if (field.column_name_id === 'whatsapp') {
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -908,21 +910,23 @@ export default function ExecutiveForm(
         });
 
         fieldArr.push(fld);
-      } else if (field.column_name_id === 'mobile') {
-        const baseElement = defaultComponentMap.get(
-          field.column_name_id
-        ) as React.ReactElement;
+      } 
+    //   else if (field.column_name_id === 'mobile') {
+    //     const baseElement = defaultComponentMap.get(
+    //       field.column_name_id
+    //     ) as React.ReactElement;
 
-        const fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          key: `field-default-${field.column_name_id}-${mobile}`,
-          disabled: field.is_disabled === 1 ? true : false
-        });
+    //     const fld = React.cloneElement(baseElement, {
+    //       ...baseElement.props,
+    //       label: field.column_label,
+    //       required: field.is_mandatory === 1,
+    //       key: `field-default-${field.column_name_id}-${mobile}`,
+    //       disabled: field.is_disabled === 1 ? true : false
+    //     });
 
-        fieldArr.push(fld);
-      } else if (field.is_default_column) {
+    //     fieldArr.push(fld);
+      // }
+       else{
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -936,8 +940,9 @@ export default function ExecutiveForm(
         });
 
       fieldArr.push(fld);
-
-    } else {
+      }
+    } 
+    else {
       const fld = (
         <CustomField
           key={`field-custom-${field.column_name_id}`}

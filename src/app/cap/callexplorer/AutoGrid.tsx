@@ -792,7 +792,7 @@ export default function AutoGrid(props: any) {
 
 
               }}
-              fnSetModifyMode={function (id: string): void { }}
+              // fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -891,7 +891,7 @@ export default function AutoGrid(props: any) {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
+              // fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -932,7 +932,7 @@ export default function AutoGrid(props: any) {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
+              // fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -998,7 +998,7 @@ export default function AutoGrid(props: any) {
                 setDialogVal={function (
                   value: React.SetStateAction<optionsDataT>
                 ): void { }}
-                fnSetModifyMode={function (id: string): void { }}
+                // fnSetModifyMode={function (id: string): void { }}
               />
             </MenuItem>
           )}
@@ -1046,7 +1046,7 @@ export default function AutoGrid(props: any) {
 
 
               }}
-              fnSetModifyMode={function (id: string): void { }}
+              // fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -1179,7 +1179,7 @@ export default function AutoGrid(props: any) {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
+              // fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
@@ -1219,7 +1219,7 @@ export default function AutoGrid(props: any) {
               setDialogVal={function (
                 value: React.SetStateAction<optionsDataT>
               ): void { }}
-              fnSetModifyMode={function (id: string): void { }}
+              // fnSetModifyMode={function (id: string): void { }}
             />
           </MenuItem>
         </FilterMenu>
