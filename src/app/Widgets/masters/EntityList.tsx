@@ -35,7 +35,13 @@ import TuneIcon from "@mui/icons-material/Tune";
 import SearchIcon from "@mui/icons-material/Search";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AddDialog } from "./addDialog";
-import { entitiyCompT, formMetaDataPropT, loggedInUserDataT, regionalSettingSchemaT, rightSchemaT } from "@/app/models/models";
+import {
+  entitiyCompT,
+  formMetaDataPropT,
+  loggedInUserDataT,
+  regionalSettingSchemaT,
+  rightSchemaT,
+} from "@/app/models/models";
 import { StripedDataGrid } from "@/app/utils/styledComponents";
 import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
@@ -43,7 +49,11 @@ import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { useRouter } from "next/navigation";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
-import ReactDOM from "react-dom";
+import {
+  getUserPreference,
+  insertUserPreference,
+  updateUserPreference,
+} from "@/app/controllers/callExplorer.controller";
 import { getColumns } from "@/app/controllers/masters.controller";
 
 const pgSize = 10;
@@ -68,12 +78,13 @@ export default function EntityList(props: entitiyCompT) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [ids, setIds] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState<GridColumnVisibilityModel>({});
   const [metaData, setMetaData] = useState<formMetaDataPropT>({
     fields: [],
     rights: {} as rightSchemaT,
     regionalSettingsConfigData: {} as regionalSettingSchemaT,
-    loggedInUserData: {} as loggedInUserDataT
+    loggedInUserData: {} as loggedInUserDataT,
   });
 
   const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
@@ -83,9 +94,12 @@ export default function EntityList(props: entitiyCompT) {
 
   
 
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+
   const anchorRef = useRef<HTMLDivElement>(null);
   const apiRef = useGridApiRef();
   const router = useRouter();
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   let searchText;
 
   //for navbar search
@@ -131,7 +145,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     {
       field: "Icon menu",
       headerName: "More Options",
-      // minWidth: 50,
+      minWidth: 100,
       hideable: false,
       sortable: false,
       editable: false,
@@ -158,7 +172,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   let allDfltCols: GridColDef[];
   allDfltCols = optionsColumn.concat(props.customCols);
   const dfltColFields: string[] = allDfltCols.map((col) => col.field);
-    
+
   const fetchData = debounce(async (searchText) => {
     const rows: any = await props.fetchDataFn(
       PageModel.page,
@@ -169,62 +183,33 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
       setData(rows.data);
       setNRows(rows.count as number);
     }
-
-    if (props.fnFetchColumns) {
-      // const columnsData = await props.fnFetchColumns();
-      const columnsData = await getColumns(props.fnFetchColumns);
-      console.log("columnsData", columnsData);
-      if (columnsData) {  
-        const dbColumns = columnsData.map((col: any) => ({
-          field: col.column_name,
-          headerName: col.column_label,
-          editable: false,
-        }));
-        // filter on columns not to showinitially
-        const filteredColumns = dbColumns.filter(
-          (col: any) => !dfltColFields.includes(col.field)
-        );
-        //columns not to showinitially
-        const allColumns = allDfltCols.concat(filteredColumns);
-        const visibleColumns = allColumns.reduce((model: any, col: any) => {
-          autoSizeColumns();
-          model[col.field] = dfltColFields.includes(col.field);
-          return model;
-        }, {});
-        
-        setColumnVisibilityModel(visibleColumns);
-        setAllColumns(allColumns);
-        
-        // setColumnsChanged(true);
-        // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
-      }
-    } else {
-       setAllColumns(allDfltCols);
-    }
-    const headers = document.querySelectorAll(
-      ".MuiDataGrid-columnHeader.MuiDataGrid-withBorderColor"
-    );
-    headers.forEach((header) => {
-      header.setAttribute("tabindex", "-1");
-    });
-    console.log(headers);
-  }, 400);
-  
-  const autoSizeColumns =  () => {
-    if (apiRef.current) {
-      // Wait for the grid to finish rendering
-      // await new Promise(resolve => setTimeout(resolve, 100)); // Delay for rendering
-      timeOut =  setTimeout(() => {
-        ReactDOM.flushSync(() => {
-          const allColumns = apiRef.current.getAllColumns();
-              apiRef.current.autosizeColumns({columns:allColumns.map(col => col.field),includeHeaders:true,includeOutliers:true });
-              
-        });
-          
-        }, 100);
-      
-    }
-  };
+    // if (props.fnFetchColumns) {
+    //   const columnsData = await props.fnFetchColumns();
+    //   if (columnsData) {
+    //     const dbColumns = columnsData.map((col: any) => ({
+    //       field: col.column_name,
+    //       headerName: col.column_label,
+    //     }));
+    //     // filter on columns not to showinitially
+    //     const filteredColumns = dbColumns.filter(
+    //       (col: any) => !dfltColFields.includes(col.field)
+    //     );
+    //     //columns not to showinitially
+    //     const allColumns = allDfltCols.concat(filteredColumns);
+    //     const visibleColumns = allColumns.reduce((model: any, col: any) => {
+    //       model[col.field] = dfltColFields.includes(col.field);
+    //       return model;
+    //     }, {});
+    //     setColumnVisibilityModel(visibleColumns);
+    //     setAllColumns(allColumns);
+    //     // setColumnsChanged(true);
+    //     // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
+    //   }
+    // }
+    //  else {
+    //   setAllColumns(allDfltCols);
+    // }
+  }, 100);
 
   useEffect(() => {
     if (searchData) {
@@ -239,9 +224,131 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     PageModel,
     search,
     searchData,
-    apiRef,
-    props
+    props,
   ]);
+  const fetchAllColumns = async () => {
+    let columnList;
+   
+      const dbcolumns = await getColumns(props.objectTypeId ?? 0);
+      
+      if (dbcolumns.length > 0) {
+        columnList = dbcolumns.map((col: any) => ({
+          field: col.column_name,
+          headerName: col.column_label,
+          width: 100,
+        }));
+        columnList = optionsColumn.concat(columnList);
+      } else {
+        columnList = allDfltCols.map((col) => {
+          return {
+            ...col,
+            width: 100,
+          };
+        });
+      }
+    
+    setAllColumns(columnList);
+    return columnList;
+  };
+
+  useEffect(() => {
+    const fetchAndSetPreferences = async () => {
+      try {
+        // Fetch user preferences
+        const data: any[] = await getUserPreference(props.objectTypeId ?? 0);
+
+        const allColumns = await fetchAllColumns();
+        const userColumnPreference: Record<string, number> = data[0]?.meta_data
+          ? JSON.parse(data[0].meta_data)
+          : {};
+        setColumnWidths(userColumnPreference);
+
+        // if user preferences exist
+        if (Object.keys(userColumnPreference).length > 0) {
+          // Update column widths based on user preferences
+          const newWithWidth = allColumns.map((col) => ({
+            ...col,
+            width: userColumnPreference[col.field] ?? 100,
+          }));
+          setAllColumns(newWithWidth);
+
+          // Update column visibility
+          const visibleColumns = allColumns.reduce((model, col) => {
+            model[col.field] = userColumnPreference[col.field] !== undefined;
+            return model;
+          }, {} as Record<string, boolean>);
+
+          setColumnVisibilityModel(visibleColumns);
+        } else {
+          // Set default visibility and widths
+          const visibleColumns = allColumns.reduce((model: any, col: any) => {
+            model[col.field] = dfltColFields.includes(col.field);
+            return model;
+          }, {} as GridColumnVisibilityModel); // Ensure the type is GridColumnVisibilityModel
+
+          setColumnVisibilityModel(visibleColumns);
+
+          // Initialize and save default preferences
+          const initialPreferences = allDfltCols.reduce((acc, col) => {
+            acc[col.field] = col.width ?? 100;
+            return acc;
+          }, {} as Record<string, number>);
+
+          setColumnWidths(initialPreferences);
+
+          await insertUserPreference(
+            initialPreferences,
+            props.objectTypeId ?? 0
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching or setting column preferences:", error);
+      }
+    };
+
+    fetchAndSetPreferences();
+  }, []);
+
+  const handleColumnVisibilityModelChange = (
+    model: GridColumnVisibilityModel
+  ) => {
+    const updatedColumnWidths = { ...columnWidths };
+
+    Object.keys(model).forEach((column) => {
+      if (model[column]) {
+        // Add column with default width if not already present
+        if (!(column in updatedColumnWidths)) {
+          updatedColumnWidths[column] = 100; // Default width
+        }
+      } else {
+        // Remove column if it is not visible
+        delete updatedColumnWidths[column];
+      }
+    });
+
+    // Update user preferences in the database
+    updateUserPreference(updatedColumnWidths, props.objectTypeId || 0);
+
+    // Update the local state
+    setColumnWidths(updatedColumnWidths);
+    setColumnVisibilityModel(model);
+  };
+
+  const handleColumnResize = async (params: any) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Set a timeout
+    debounceTimeout.current = setTimeout(() => {
+      let updatedWidths = columnWidths;
+      setColumnWidths((prev) => {
+        updatedWidths = { ...prev, [params.colDef.field]: params.width };
+        return updatedWidths;
+      });
+      updateUserPreference(updatedWidths, props.objectTypeId || 0);
+    }, 600);
+  };
 
   const toggleColBtn = () => {
     const preferencePanelState = gridPreferencePanelStateSelector(
@@ -259,11 +366,9 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   };
 
   const handleAddBtn = async () => {
-    if (props?.link)
-    {
+    if (props?.link) {
       router.push(props.link);
-    }
-    else {
+    } else {
       if (props.fnFetchDataByID) {
         const data = await props.fnFetchDataByID(0);
         if (data[0]?.length > 0) {
@@ -271,7 +376,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             fields: data[0][0] || [],
             rights: data[0][1] || {},
             regionalSettingsConfigData: data[0][2] || [],
-            loggedInUserData: data[0][3] || {}
+            loggedInUserData: data[0][3] || {},
           });
         }
       }
@@ -298,23 +403,42 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     setOpen(false);
   };
 
-
   return (
     <Box>
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
-          <AddDialog title={`${dlgMode === dialogMode.FileUpload ? 'Upload File' : dlgMode === dialogMode.Add ? `Add ${props.title}` : dlgMode === dialogMode.Delete ? `Delete ${props.title}` : `Update ${props.title}`}`} open={dialogOpen} setDialogOpen={setDialogOpen}>
+          <AddDialog
+            title={`${
+              dlgMode === dialogMode.FileUpload
+                ? "Upload File"
+                : dlgMode === dialogMode.Add
+                ? `Add ${props.title}`
+                : dlgMode === dialogMode.Delete
+                ? `Delete ${props.title}`
+                : `Update ${props.title}`
+            }`}
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
             {props.fileUploadFeatureReqd &&
-              dlgMode === dialogMode.FileUpload ? (
+            dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
                 setDialogOpen={setDialogOpen}
                 fnFileUpad={props.fnFileUpad}
                 sampleFileName={props.sampleFileName}
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
-              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData) : props.renderForm(setDialogOpen, (arg) => { })
+              metaData.fields.length > 0 ? (
+                props.renderForm(setDialogOpen, (arg) => {}, metaData)
+              ) : (
+                props.renderForm(setDialogOpen, (arg) => {})
+              )
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
-              metaData.fields.length > 0 ? props.renderForm(setDialogOpen, (arg) => { }, metaData, modData) : props.renderForm(setDialogOpen, (arg) => { }, modData)
+              metaData.fields.length > 0 ? (
+                props.renderForm(setDialogOpen, (arg) => {}, metaData, modData)
+              ) : (
+                props.renderForm(setDialogOpen, (arg) => {}, modData)
+              )
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
                 fnDeleteDataByID={props.fnDeleteDataByID}
@@ -365,7 +489,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                       backgroundColor: "#f5f5f5",
                     },
                   }}
-                  sx={{ marginLeft: '1.1em' }}
+                  sx={{ marginLeft: "1.1em" }}
                 />
               </Box>
             </Grid>
@@ -529,6 +653,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             rows={data ? data : []}
             rowHeight={40}
             columns={allColumns}
+            onColumnResize={handleColumnResize}
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
@@ -544,9 +669,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             onCellKeyDown={handleCellKeyDown}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={(newModel) => {
-              setColumnVisibilityModel(newModel);
-            }}
+            onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
             slotProps={{
               columnsPanel: {
                 sx: {
@@ -566,7 +689,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                    GridPreferencePanelsValue.columns &&
+                      GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;

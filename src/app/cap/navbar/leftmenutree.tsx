@@ -19,13 +19,11 @@ export default function LeftMenuTree(props: {
   openDrawer: boolean;
   setOpenDrawer?: any;
   isHover?: boolean;
-  setLoading:any;
 }) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
-  const [loading,setLoading]  = useState(false);
   const [hover, setHover] = useState(false);
 
   const router = useRouter();
@@ -66,7 +64,6 @@ export default function LeftMenuTree(props: {
     setOpen(idToOpenMap);
     setSelectedId(id);
     router.push(href);
-    props.setLoading(true);
   }
 
   function handleSubMenuHover(
@@ -142,8 +139,6 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    // props.setLoading(true);
-    // document.body.classList.add('cursor-wait');
     // router.push(href);
      
   };
@@ -364,7 +359,7 @@ export default function LeftMenuTree(props: {
   return (
     <div>
       <List
-        sx={{ width: "100%", maxWidth: 560, bgcolor: "background.paper" }}
+        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper" }}
         component="nav"
         aria-labelledby="nested-list-subheader"
       >

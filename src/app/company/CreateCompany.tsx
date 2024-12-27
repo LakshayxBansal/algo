@@ -346,7 +346,6 @@ export default function CreateCompany(
                   setDialogVal={function (
                     value: React.SetStateAction<optionsDataT>
                   ): void {}}
-                  // fnSetModifyMode={function (id: string): void {}}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -388,7 +387,6 @@ export default function CreateCompany(
                   setDialogVal={function (
                     value: React.SetStateAction<optionsDataT>
                   ): void {}}
-                  // fnSetModifyMode={function (id: string): void {}}
                 />
                 {/* </div> */}
               </Grid>

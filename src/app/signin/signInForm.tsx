@@ -1,7 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  InputAdornment,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import ProviderButton from "../Widgets/providerButton";
 import { ClientSafeProvider, getCsrfToken } from "next-auth/react";
@@ -15,7 +20,7 @@ import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customButton";
 import * as zs from "../zodschema/zodschema";
 import { LoadingButton } from "@mui/lab";
-import styles from "./signInForm.module.css";
+import { styles } from "./signInFormStyles";
 import Image from "next/image";
 
 interface authPagePropsType {
@@ -34,7 +39,7 @@ export default function AuthPage(props: authPagePropsType) {
 
   const [email, setEmail] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   let csrfToken;
@@ -47,8 +52,7 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
-    setLoading(true);
-    document.body.classList.add("cursor-wait");
+    // document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -82,11 +86,6 @@ export default function AuthPage(props: authPagePropsType) {
           if (status?.error === "CredentialsSignin") {
             console.log(status);
           }
-          //loader cursor set
-          if (errorState.form.error == true) {
-            setLoading(false);
-            document.body.classList.remove("cursor-wait");
-          }
         }
       });
     } else {
@@ -99,6 +98,12 @@ export default function AuthPage(props: authPagePropsType) {
     }
   }
 
+  // useEffect(() => {
+  //   return () => {
+  //     document.body.classList.remove("cursor-wait");
+  //   };
+  // }, []);
+
   getCsrfToken()
     .then((token) => {
       csrfToken = token;
@@ -108,14 +113,14 @@ export default function AuthPage(props: authPagePropsType) {
     });
 
   return (
-    <Grid className={styles.container} container spacing={0}>
-      <Grid item className={styles.left} rowGap={2}>
+    <Grid sx={styles.container} container spacing={0}>
+      <Grid item sx={styles.left} rowGap={2}>
         <Image
           src="/Illustration.png"
           alt="Log In Page Image"
           width={500}
           height={550}
-          className={styles.mainImg}
+          style={styles.mainImg}
         />
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
           Welcome!
@@ -125,8 +130,8 @@ export default function AuthPage(props: authPagePropsType) {
         </Typography>
       </Grid>
 
-      <Grid item className={styles.right}>
-        <Box className={styles.rightTop} rowGap={2}>
+      <Grid item sx={styles.right}>
+        <Box sx={styles.rightTop} rowGap={2}>
           <Typography variant="h3" sx={{ color: "#4870ac", fontWeight: "700" }}>
             Log In
           </Typography>
@@ -136,9 +141,13 @@ export default function AuthPage(props: authPagePropsType) {
           >
             Don’t have an account?{" "}
             <Link
-              href={loading ? "#" : "/signup"}
-              className={styles.links}
-              style={{ cursor: loading ? "wait" : "pointer" }}
+              // href={loading ? "#" : "/signup"}
+              href={"/signup"}
+              // style={{
+              //   ...styles.links,
+              //   ...(loading ? styles.linksLoading : {}),
+              // }}
+              style={styles.links}
               tabIndex={-1}
             >
               Sign Up
@@ -160,7 +169,7 @@ export default function AuthPage(props: authPagePropsType) {
           {email && (
             <InputControl
               inputType={InputType.EMAIL}
-              autoFocus
+              autoFocus={email ? true : false}
               error={formError?.email?.error}
               helperText={formError?.email?.msg}
               setFormError={setFormError}
@@ -169,19 +178,13 @@ export default function AuthPage(props: authPagePropsType) {
               label="Email Address"
               name="email"
               autoComplete="off"
-              disabled={loading}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { email, form, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // disabled={loading}
               sx={{
                 "& .MuiInputBase-input": {
                   height: "45px",
                   padding: "0 14px",
                   backgroundColor: "#E8F0FE",
-                  cursor: loading ? "wait" : "pointer",
+                  // cursor: loading ? "wait" : "normal",
                 },
                 "& .MuiOutlinedInput-root": {
                   height: "45px",
@@ -192,18 +195,18 @@ export default function AuthPage(props: authPagePropsType) {
                 },
                 my: 3,
               }}
-              placeholder="Enter Email"
             />
           )}
 
           {!email && (
             <InputControl
               inputType={InputType.PHONE}
+              autoFocus={!email ? true : false}
               id="usercontact"
               label="Phone No"
               name="phone"
               autoComplete="off"
-              disabled={loading}
+              // disabled={loading}
               fullWidth
               error={formError?.phone?.error}
               helperText={formError?.phone?.msg}
@@ -212,19 +215,13 @@ export default function AuthPage(props: authPagePropsType) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { phone, form, ...rest } = curr;
-                  return rest;
-                });
-              }}
               // onkeydown={onPhoneChange}
               sx={{
                 "& .MuiInputBase-input": {
                   height: "45px",
                   padding: "0 14px",
                   backgroundColor: "#E8F0FE",
-                  cursor: loading ? "wait" : "pointer",
+                  // cursor: loading ? "wait" : "normal",
                 },
                 "& .MuiOutlinedInput-root": {
                   height: "45px",
@@ -253,25 +250,20 @@ export default function AuthPage(props: authPagePropsType) {
               type={!showPassword ? "password" : "text"}
               id="password"
               autoComplete="off"
-              disabled={loading}
+              // disabled={loading}
               error={formError?.password?.error}
               helperText={formError?.password?.msg}
               setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { password, form, ...rest } = curr;
-                  return rest;
-                });
-              }}
               sx={{
                 "& .MuiInputBase-input": {
                   height: "45px",
                   padding: "0 14px",
                   backgroundColor: "#E8F0FE",
-                  cursor: loading ? "wait" : "pointer",
+                  // cursor: loading ? "wait" : "normal",
                 },
                 "& .MuiOutlinedInput-root": {
                   height: "45px",
+                  backgroundColor: "#E8F0FE",
                 },
                 "& .MuiInputLabel-root": {
                   fontSize: "1rem",
@@ -280,41 +272,45 @@ export default function AuthPage(props: authPagePropsType) {
                 mt: 3,
                 mb: 1,
               }}
-              placeholder="Enter Password"
-            />
-            <Button
-              type="button"
-              sx={{
-                marginLeft: "-65px",
-                marginTop: "1rem",
-                maxHeight: "fit-content",
+              InputProps={{
+                endAdornment: (
+                  <Button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                    // disabled={loading}
+                    sx={{ marginRight: -1, marginTop: 1 }}
+                  >
+                    {showPassword ? (
+                      <RemoveRedEyeOutlinedIcon />
+                    ) : (
+                      <VisibilityOffOutlinedIcon />
+                    )}
+                  </Button>
+                ),
               }}
-              onClick={() => setShowPassword(!showPassword)}
-              tabIndex={-1}
-              disabled={loading}
-            >
-              {showPassword ? (
-                <VisibilityOffOutlinedIcon />
-              ) : (
-                <RemoveRedEyeOutlinedIcon />
-              )}
-            </Button>
+            />
           </Box>
 
           <Link
-            href={loading ? "#" : ""}
-            className={styles.links}
-            style={{ alignSelf: "flex-end", cursor: loading ? "wait" : "pointer" }}
+            // href={loading ? "#" : ""}
+            href={""}
+            // style={{
+            //   ...styles.links,
+            //   ...(loading ? styles.linksLoading : {}),
+            //   alignSelf: "flex-end",
+            // }}
+            style={{ ...styles.links, alignSelf: "flex-end" }}
             tabIndex={-1}
           >
             Forgot Password?
           </Link>
 
-          <Box className={styles.btnBox} rowGap={2}>
+          <Box sx={styles.btnBox} rowGap={2}>
             <LoadingButton
               type="submit"
-              className={styles.pillButton}
-              loading={loading}
+              sx={styles.pillButton}
+              // loading={loading}
               loadingIndicator={
                 <CircularProgress
                   size={24}
@@ -333,23 +329,21 @@ export default function AuthPage(props: authPagePropsType) {
                 provider={provider}
                 callbackUrl="/company"
                 tabIndex={-1}
-                disabled={loading}
-                setLoading={setLoading}
-                sx={{
-                  width: "100%",
-                  borderRadius: "2rem",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
+                // disabled={loading}
+                sx={styles.googleBtn}
               >
                 Sign In With
               </GoogleSignUpButton>
             ))}
             <Link
               href={""}
-              className={styles.links}
-              style={{ cursor: loading ? "wait" : "pointer" }}
-              onClick={loading ? () => {} : contactHandler}
+              // style={{
+              //   ...styles.links,
+              //   ...(loading ? styles.linksLoading : {}),
+              // }}
+              style={styles.links}
+              // onClick={loading ? () => {} : contactHandler}
+              onClick={contactHandler}
               tabIndex={-1}
             >
               Log In with {email ? "Mobile No" : "Email"}.
@@ -357,7 +351,7 @@ export default function AuthPage(props: authPagePropsType) {
           </Box>
         </form>
 
-        <Typography className={styles.cpyRight} variant="caption">
+        <Typography sx={styles.cpyRight} variant="caption">
           © 2024 Algofast India Pvt. Ltd. ALL RIGHTS RESERVED
         </Typography>
       </Grid>

@@ -11,7 +11,7 @@ import {
 } from "@/app/controllers/department.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
-import { getColumns } from "@/app/controllers/masters.controller";
+import { DEPARTMENT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -44,6 +44,7 @@ export default function Department() {
         AddAllowed={false}
         uploadAllowed={true}
         height = "60vh"
+        objectTypeId={DEPARTMENT_OBJECT_ID}
       ></EntityList>
     </>
   );
