@@ -40,39 +40,27 @@ export default function CreateCompany(
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [defaultCountry, setdefaultCountry] = useState("");
   const [defaultCountryId, setdefaultCountryId] = useState(0);
+  const [city, setCity] = useState("");
+  const [pin, setPin] = useState("");
+
   const entityData: companySchemaT = props.data
     ? props.data
     : ({} as companySchemaT);
 
   useEffect(() => {
     const fetchCountryData = async () => {
-      try {
-        const countryData = await getCountryByIp();
-
-        if (countryData) {
-          setdefaultCountry(countryData.country);
-          setdefaultCountryId(countryData.countryId);
-        } else {
-          setdefaultCountry("");
-          setdefaultCountryId(0);
-          setFormError({
-            form: {
-              msg: "Failed to fetch country data. Please insert data manually.",
-              error: true,
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching country data:", error);
-        setFormError({
-          form: {
-            msg: "Failed to fetch country data. Please try again later.",
-            error: true,
-          },
-        });
-      }
-    };
-    fetchCountryData();
+      const countryData = await getCountryByIp();
+      console.log(countryData);
+      if (countryData) {
+        setdefaultCountry(countryData.country);
+        setdefaultCountryId(countryData.countryId);
+        setCity(countryData.city);
+        setPin(countryData.pin);
+      } 
+    } 
+    if (!props.data && defaultCountry === "") {  
+      fetchCountryData();
+    }
   }, []);
 
   const handleSubmit = async (formData: FormData) => {
@@ -283,7 +271,7 @@ export default function CreateCompany(
                   style={{ width: "100%" }}
                   error={formError?.city?.error}
                   helperText={formError?.city?.msg}
-                  defaultValue={entityData.city}
+                  defaultValue={entityData.city  ?  entityData.city: city}
                   onKeyDown={() => {
                     setFormError((curr) => {
                       const { city, ...rest } = curr;
@@ -301,7 +289,7 @@ export default function CreateCompany(
                   style={{ width: "100%" }}
                   error={formError?.pincode?.error}
                   helperText={formError?.pincode?.msg}
-                  defaultValue={entityData.pincode}
+                  defaultValue={entityData.pincode ?  entityData.pincode: pin}
                   onKeyDown={() => {
                     setFormError((curr) => {
                       const { pincode, ...rest } = curr;
