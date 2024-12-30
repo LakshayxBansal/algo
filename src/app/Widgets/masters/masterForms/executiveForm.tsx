@@ -920,7 +920,7 @@ export default function ExecutiveForm(
           key: `field-default-${field.column_name_id}-${mobile}`,
           disabled: field.is_disabled === 1 ? true : false
         });
-    
+
         fieldArr.push(fld);
       } else if (field.is_default_column) {
         const baseElement = defaultComponentMap.get(
