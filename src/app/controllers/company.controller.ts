@@ -1,5 +1,5 @@
 "use server";
-import { companySchemaT, configSchemaT, dbInfoT, regionalSettingSchemaT } from "../models/models";
+import { companySchemaT, configSchemaT,  regionalSettingSchemaT } from "../models/models";
 import {
   createCompanyDB,
   getHostId,
@@ -15,7 +15,6 @@ import {
   getCompanyCountDB,
 } from "../services/company.service";
 import {
-  createRegionalSettingDb,
   getCountryWithCurrencyDb,
   getRegionalSettingDb,
   updateteRegionalSettingDb,
@@ -27,10 +26,7 @@ import { companySchema } from "../zodschema/zodschema";
 import { SqlError } from "mariadb";
 import { headers } from "next/headers";
 import { getCountryIdByName } from "./masters.controller";
-import { NextRequest } from "next/server";
 import os from "os";
-import { isIP } from "net";
-import { count } from "console";
 import { getAllRolesDB } from "../services/executiveRole.service";
 import { logger } from "../utils/logger.utils";
 
@@ -400,26 +396,22 @@ function compareIpOctets(clientIp: string, serverIp: string): boolean {
 }
 
 async function getCountryByAPI(ip: string){
-  let country, countryId, fetchedData;
-  if(ip===""){
-    fetchedData = await fetch(``
-      // `https://api.ipregistry.co/?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
-    );
-  }
-  else{
-    fetchedData = await fetch(``
-      // `https://api.ipregistry.co/${ip}?key=ira_LZvLD3Bhm00twdQUfDf64i8ymemjFM0HqXhV`
-    );
-  }
-    const data = await fetchedData.json();
-    country = data.location.country.name;
-    countryId = await getCountryIdByName(country);
-    console.log(country);
-    console.log(countryId);
-
-    console.log("Country & CountryID: ", { country, countryId });
+  const url = 'https://api.ipregistry.co/' + ip + '?key=' + process.env.IPREGISTRY_KEY;
+  try {
+    const fetchedData = await (await fetch(url)).json();
+    if (fetchedData.ip) {
+      const countryID = await getCountryIdByName(fetchedData.location.country.name);
+      return { country: fetchedData.location.country.name, 
+        pin: fetchedData.location.postal,
+        city: fetchedData.location.city,
+        countryId:  countryID};
+    }
   
-  return {country, countryId};
+  }  catch (e) {
+    console.error("Error in getCountryByAPI:", e);
+  }
+  
+  return null;
 }
 
 export async function getCountryByIp() {
@@ -431,21 +423,14 @@ export async function getCountryByIp() {
       requestHeaders.get("remote-address");
     const serverIp = findServerIp();
 
-    const networkInterfaces = os.networkInterfaces(); //to log network interfaces will delete it!
-    console.log("OS: ", networkInterfaces); //will delete it
-    console.log("Server IP: ", serverIp); //will delete this log later
-    console.log("Client IP: ", clientIp); //will delete this log later
-
     //conditions to check weather both client and server using same network or system
     const isLocalhost = isLocalhostIp(clientIp as string);
     const areOctetsMatching = compareIpOctets(clientIp as string, serverIp as string);
 
-    requestHeaders.forEach((key, value) => console.log(key, "-", value)); //will delete this log later
-
     if (isLocalhost || areOctetsMatching) {
-      data = getCountryByAPI("");
+      data = await getCountryByAPI("");
     } else {
-      data = getCountryByAPI(clientIp as string);
+      data = await getCountryByAPI(clientIp as string);
     }
   } catch (e) {
     data = null;
