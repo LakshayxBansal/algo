@@ -1,5 +1,5 @@
 import { getProviders } from "next-auth/react";
-import SignupForm from "./signUpFormNew";
+import SignupForm from "./signUpForm";
 import { Metadata } from "next";
 
 export const metadata : Metadata = {
