@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
@@ -32,6 +32,8 @@ export default function AuthPage(props: authPagePropsType) {
     Record<string, { msg: string; error: boolean }>
   >({});
 
+  const [isPending, startTransition] = React.useTransition();
+
   const [email, setEmail] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,6 +42,8 @@ export default function AuthPage(props: authPagePropsType) {
   let csrfToken;
   const providerArr = props.providers;
   const successCallBackUrl = "/company";
+
+  
 
   const contactHandler = () => {
     setEmail(!email);
@@ -71,7 +75,10 @@ export default function AuthPage(props: authPagePropsType) {
         password: data.password,
       }).then(async (status) => {
         if (status?.ok) {
-          router.push(successCallBackUrl);
+          startTransition(() => {
+            router.push(successCallBackUrl);
+          })
+          
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};
@@ -163,12 +170,12 @@ export default function AuthPage(props: authPagePropsType) {
               name="email"
               autoComplete="off"
               disabled={loading}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { email, form, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { email, form, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
               sx={{
                 "& .MuiInputBase-input": {
                   height: "45px",
@@ -205,12 +212,12 @@ export default function AuthPage(props: authPagePropsType) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { phone, form, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { phone, form, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
               // onkeydown={onPhoneChange}
               sx={{
                 "& .MuiInputBase-input": {
@@ -246,16 +253,16 @@ export default function AuthPage(props: authPagePropsType) {
               type={!showPassword ? "password" : "text"}
               id="password"
               autoComplete="off"
-              disabled={loading}
+              disabled={isPending}
               error={formError?.password?.error}
               helperText={formError?.password?.msg}
               setFormError={setFormError}
-              onKeyDown={() => {
-                setFormError((curr) => {
-                  const { password, form, ...rest } = curr;
-                  return rest;
-                });
-              }}
+              // onKeyDown={() => {
+              //   setFormError((curr) => {
+              //     const { password, form, ...rest } = curr;
+              //     return rest;
+              //   });
+              // }}
               sx={{
                 "& .MuiInputBase-input": {
                   height: "45px",
@@ -307,7 +314,7 @@ export default function AuthPage(props: authPagePropsType) {
             <LoadingButton
               type="submit"
               className={styles.pillButton}
-              loading={loading}
+              loading={isPending}
               loadingIndicator={
                 <CircularProgress
                   size={24}

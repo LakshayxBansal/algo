@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React, { lazy, Suspense } from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
@@ -77,7 +77,7 @@ export default function Action() {
         height="60vh"
         link="/cap/enquiry"
         objectTypeId={ENQUIRY_OBJECT_ID}
-      ></EntityList>
+      />
     </>
   );
 }
