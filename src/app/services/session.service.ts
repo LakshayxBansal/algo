@@ -114,16 +114,16 @@ export async function updateSession(dbInfo: dbInfoT, userId: number){
  * server function to return the session object at the server
  */
 export async function getSession() {
-  try {
-    const session = await getServerSession(options);
-    if (session) {
-      if (!session.user.dbInfo) {
-        console.log("------------- dbInfo not found -------------")
-      }
-      return session;
-    }
-  } catch(e) {
-    console.log(e);
-  }
-  return null;
+  // try {
+    return await getServerSession(options);
+  //   if (session) {
+  //     if (!session.user.dbInfo) {
+  //       console.log("------------- dbInfo not found -------------")
+  //     }
+  //     return session;
+  //   }
+  // } catch(e) {
+  //   console.log(e);
+  // }
+  // return null;
 }
