@@ -19,11 +19,10 @@ import { userSchemaT } from "../models/models";
 import Image from "next/image";
 import GoogleSignUpButton from "./customButton";
 import { AddDialog } from "../Widgets/masters/addDialog";
-import Confirmation from "./Confirmation";
 import { logger } from "../utils/logger.utils";
 import styles from "./SignUpForm.module.css";
 
-export default function SignupForm1(props: any) {
+export default function SignupForm(props: any) {
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
