@@ -24,7 +24,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { userSchemaT } from "../models/models";
 import Image from "next/image";
-import GoogleSignUpButton from "./customButton";
+import GoogleSignUpButton from "./customGoogleButton";
 import { AddDialog } from "../Widgets/masters/addDialog";
 import { logger } from "../utils/logger.utils";
 // import styles from "./SignUpForm.module.css";
@@ -121,7 +121,7 @@ export default function SignupForm(props: any) {
   }
 
   const formSubmit = async (formData: FormData) => {
-    let data: { [key: string]: any } = {}; 
+    let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
@@ -541,7 +541,7 @@ export default function SignupForm(props: any) {
   //   </Box>
   // );
   return (
-    <Grid sx={styles.container} container spacing={0} >
+    <Grid sx={styles.container} container spacing={0}>
       <Grid item sx={styles.left} rowGap={2}>
         <Image
           src="/Illustration.png"

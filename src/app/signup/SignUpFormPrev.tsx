@@ -17,7 +17,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { userSchemaT } from "../models/models";
 import Image from "next/image";
-import GoogleSignUpButton from "./customButton";
+import GoogleSignUpButton from "./customGoogleButton";
 import { AddDialog } from "../Widgets/masters/addDialog";
 import { logger } from "../utils/logger.utils";
 import styles from "./SignUpForm.module.css";
