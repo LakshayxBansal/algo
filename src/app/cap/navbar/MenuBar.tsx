@@ -12,18 +12,19 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { useRouter } from "next/navigation";
 import LeftMenuTree from "./leftmenutree";
 import { menuTreeT, searchDataT } from "../../models/models";
 import ProfileMenu from "@/app/cap/admin/profile/ProfileMenu";
-import mainLogo from "../../../../public/logo.png";
+import logo from "../../../../public/logo.png";
+import companyLogo from "../../../../public/companyLogo.png";
+import notification from "../../../../public/notificationIcon.png";
+import searchIcon from "../../../../public/searchIcon.png";
 import Image from "next/image";
 import {
   Autocomplete,
   Button,
-  ClickAwayListener,
   darken,
   debounce,
   InputAdornment,
@@ -46,21 +47,21 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  height:60,
-  // backgroundColor: "#005a9f",
+  height: 64,
+  backgroundColor: "#4870AC",
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
+  // ...(open && {
+  //   marginLeft: drawerWidth,
+  //   width: `calc(100% - ${drawerWidth}px)`,
+  //   transition: theme.transitions.create(["width", "margin"], {
+  //     easing: theme.transitions.easing.sharp,
+  //     duration: theme.transitions.duration.enteringScreen,
+  //   }),
+  // }),
 }));
 
 const GroupHeader = styled("div")(({ theme }) => ({
@@ -91,21 +92,27 @@ const GroupItems = styled("ul")({
 });
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
-  backgroundColor: "white",
+  backgroundColor: "#4870AC",
   "& .MuiOutlinedInput-root": {
     padding: "2px 8px",
+    borderRadius: 0,
     "& fieldset": {
-      borderColor: "transparent",
+      borderColor: "transparent", // Default state
+      borderWidth: "0 0 2px 0",
+      borderBottomColor: "#FFFFFF",
     },
     "&:hover fieldset": {
-      borderColor: "transparent",
+      borderWidth: "0 0 2px 0",
+      borderBottomColor: "#FFFFFF",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "transparent",
+      borderWidth: "0 0 2px 0",
+      borderBottomColor: "#FFFFFF",
     },
     "& input": {
       padding: "6px 0",
       fontSize: "0.875rem",
+      color: "#FFFFFF",
     },
   },
 }));
@@ -123,52 +130,49 @@ interface propsType {
 
 export default function MenuBar(props: propsType) {
   const pages = props.pages;
-  const children:React.ReactNode = props.children;
+  const children: React.ReactNode = props.children;
   const [open, setOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
-  const [searchIcon, setSearchIcon] = useState<boolean>(false);
   const [data, setData] = useState<searchDataT[]>([]);
   const [search, setSearch] = useState("");
-  const [searchData, setSearchData] = useState("");
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
 
-  const childrenRef = useRef<React.ReactNode>(props.children); 
+  const childrenRef = useRef<React.ReactNode>(props.children);
 
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
-    // width: open ? 290 : 72,
-    width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
-    // height:"100vh",
-    // overflowY: 'auto',
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.easeInOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: "border-box",
-    ...((!open && hovered) && {
-      overflowX: "hidden",
-      // transition: theme.transitions.create("width", {
-      //   easing: theme.transitions.easing.sharp,
-      //   duration: theme.transitions.duration.leavingScreen,
-      // }),
-      width: hovered ? theme.spacing(16) : theme.spacing(7),
-      // [theme.breakpoints.up("sm")]: {
-      //   width: theme.spacing(7),
-      // },
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: "1.0s",
+  const Drawer = styled(MuiDrawer, {
+    shouldForwardProp: (prop) => prop !== "open",
+  })(({ theme, open }) => ({
+    "& .MuiDrawer-paper": {
+      position: "relative",
+      top: 64, // Matches the height of the AppBar
+      whiteSpace: "nowrap",
+      // width: open ? 290 : 72,
+      width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
+      // height:"100vh",
+      // overflowY: 'auto',
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.easeInOut,
+        duration: theme.transitions.duration.enteringScreen,
       }),
-    }),
-  },
-}));
-
+      boxSizing: "border-box",
+      ...(!open &&
+        hovered && {
+          overflowX: "hidden",
+          // transition: theme.transitions.create("width", {
+          //   easing: theme.transitions.easing.sharp,
+          //   duration: theme.transitions.duration.leavingScreen,
+          // }),
+          width: hovered ? theme.spacing(16) : theme.spacing(7),
+          // [theme.breakpoints.up("sm")]: {
+          //   width: theme.spacing(7),
+          // },
+          transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: "1.0s",
+          }),
+        }),
+    },
+  }));
 
   const holdValue = useRef("newValue");
 
@@ -183,8 +187,6 @@ const Drawer = styled(MuiDrawer, {
     if (search.length > 0) {
       maindata(search);
     }
-
-
   }, [search]);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
@@ -226,171 +228,167 @@ const Drawer = styled(MuiDrawer, {
     });
   };
 
-  if (!menuOpen) {
-    return <></>;
-  } else {
-    return (
-      <>
-        <CssBaseline />
-        <AppBar open={open}>
-          <Toolbar sx={{ pr: "24px", height:55 }}>
-            <IconButton
-              title="Title"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{ marginRight: "36px", ...(open && { display: "none" }) }}
-              tabIndex={-1}
-            >
-              <MenuIcon />
-            </IconButton>
+  return (
+    <>
+      <CssBaseline />
+      <AppBar open={open}>
+        <Toolbar
+          sx={{
+            height: 64,
+            "&.MuiToolbar-root": {
+              paddingLeft: 0,
+              paddingRight: 0,
+            },
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Image
-              src={mainLogo}
-              alt="Algofast Main Logo"
+              src={logo}
+              alt="Algofast Logo"
               width={20}
               height={20}
-              style={{ marginRight: 10 }}
+              style={{ marginLeft: 16 }}
+            />
+            <Image
+              src={companyLogo}
+              alt="Company Logo"
+              width={30}
+              height={30}
+              style={{ marginRight: 10, marginLeft: 40 }}
             />
             <Typography
               component="h1"
               variant="h6"
               color="inherit"
               noWrap
-              sx={{ flexGrow: { xs: 1, md: 0 } }}
+              sx={{ flexGrow: { xs: 1, md: 0 }, fontWeight: 600 }}
             >
-              Algofast
+              {props.companyName}
             </Typography>
-            <Box
-              justifyContent="flex-end"
-              sx={{ flexGrow: 1, display: "flex" }}
-            >
-              <Typography component="h1" variant="h6" color="inherit">
-                {props.companyName}
-              </Typography>
-            </Box>
-            <Box
-              justifyContent="flex-end"
-              sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
-            >
-              <Box>
-                <ClickAwayListener onClickAway={() => setSearchIcon(false)}>
-                  {searchIcon ? (
-                    <Autocomplete
-                      options={options}
-                      getOptionLabel={(option) => option.result}
-                      groupBy={(option) => option.tableName}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => (
-                        <CustomTextField
-                          {...params}
-                          placeholder="Search Across Algofast"
-                          InputProps={{
-                            ...params.InputProps,
-                            startAdornment: <SearchIcon />,
-                          }}
-                        />
-                      )}
-                      renderGroup={(params) => (
-                        <li key={params.key}>
-                          <GroupHeader>{params.group}</GroupHeader>
-                          <GroupItems>
-                            {Array.isArray(params.children) &&
-                              params.children.map((child: any) => {
-                                const option = options.find(
-                                  (o) => o.result === child.props.children
-                                );
-                                return (
-                                  <li key={child.key}>
-                                    <StyledLink
-                                      // href={option!.href}
-                                      style={{
-                                        textDecoration: "none",
-                                        color: "inherit",
-                                      }}
-                                      onClick={() => {
-                                        handleMasterSearch(
-                                          child.props.children,
-                                          option!.href
-                                        );
-                                      }}
-                                    >
-                                      {child.props.children}
-                                    </StyledLink>
-                                  </li>
-                                );
-                              })}
-                          </GroupItems>
-                        </li>
-                      )}
-                      inputValue={search}
-                      onInputChange={(event, newInputValue) => {
-                        setSearch(newInputValue);
-                      }}
-                    />
-                  ) : (
-                    <IconButton title="Title" onClick={() => setSearchIcon(true)}>
-                      <SearchIcon fontSize="medium" style={{ color: "#fff" }} />
-                    </IconButton>
-                  )}
-                </ClickAwayListener>
-              </Box>
-              <Box>
-                <Typography
-                  variant="subtitle1"
-                  style={{ paddingTop: 10, marginLeft: 20 }}
-                >
-                  {props.username}
-                </Typography>
-              </Box>
-            </Box>
-            <IconButton title="title" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <ProfileMenu
-              userId={props.userId}
-              companyId={props.companyId}
-              img={props.profileImg}
-              name={props.username}
-              companyName={props.companyName}
-            
-            />
-          </Toolbar>
-        </AppBar>
-        <Box sx={{ display: "flex" }}>
-          <Drawer
-            variant="permanent"
-            anchor="left"
-            open={open}
-            sx={{ display: { xs: "none", sm: "flex" } }}
-            // onMouseEnter={(e)=>setHovered(true)} onMouseLeave={(e)=>{setHovered(false)}}
+          </Box>
+
+          <Box
+            justifyContent="flex-end"
+            sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
           >
-            {/* need to work on this as on xs it should be at the top */}
-            <Toolbar
+            <Autocomplete
+              options={options}
+              getOptionLabel={(option) => option.result}
+              groupBy={(option) => option.tableName}
+              sx={{ width: 300 }}
+              renderInput={(params) => (
+                <CustomTextField
+                  {...params}
+                  placeholder="Search"
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <Image
+                        src={searchIcon}
+                        alt="Search Icon"
+                        width={28}
+                        height={28}
+                      />
+                    ),
+                    endAdornment: null,
+                  }}
+                />
+              )}
+              renderGroup={(params) => (
+                <li key={params.key}>
+                  <GroupHeader>{params.group}</GroupHeader>
+                  <GroupItems>
+                    {Array.isArray(params.children) &&
+                      params.children.map((child: any) => {
+                        const option = options.find(
+                          (o) => o.result === child.props.children
+                        );
+                        return (
+                          <li key={child.key}>
+                            <StyledLink
+                              // href={option!.href}
+                              style={{
+                                textDecoration: "none",
+                                color: "inherit",
+                              }}
+                              onClick={() => {
+                                handleMasterSearch(
+                                  child.props.children,
+                                  option!.href
+                                );
+                              }}
+                            >
+                              {child.props.children}
+                            </StyledLink>
+                          </li>
+                        );
+                      })}
+                  </GroupItems>
+                </li>
+              )}
+              inputValue={search}
+              onInputChange={(event, newInputValue) => {
+                setSearch(newInputValue);
+              }}
+            />
+          </Box>
+
+          <IconButton title="title" color="inherit">
+            <Badge
+              badgeContent={4}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                px: [1],
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#FF4C4C",
+                  color: "white",
+                },
               }}
             >
-              <IconButton title="Title" onClick={toggleDrawer}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </Toolbar>
+              <Image
+                src={notification}
+                alt="notification"
+                width={20}
+                height={20}
+              />
+            </Badge>
+          </IconButton>
 
-            <LeftMenuTree
-              pages={pages}
-              openDrawer={open}
-              setOpenDrawer={setOpenDrawer}
-              isHover={hovered}
-            />
-          </Drawer>
-          <Box style={{ width: "96vw" }}>{children}</Box>
-        </Box>
-      </>
-    );
-  }
+          <ProfileMenu
+            userId={props.userId}
+            companyId={props.companyId}
+            img={props.profileImg}
+            name={props.username}
+            companyName={props.companyName}
+          />
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ display: "flex" }}>
+        <Drawer variant="permanent" anchor="left" open={open} >
+          {/* need to work on this as on xs it should be at the top */}
+          <IconButton
+            title={open ? "Close Menu" : "Open Menu"}
+            onClick={toggleDrawer}
+            aria-label="open drawer"
+            tabIndex={-1}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginY: "7px",
+              paddingLeft: `${open ? "13px" : "4px"}`,
+              justifyContent: `${open ? "flex-start" : "center"}`,
+            }}
+          >
+            {open ? <CloseRoundedIcon /> : <MenuIcon />}
+          </IconButton>
+          <LeftMenuTree
+            pages={pages}
+            openDrawer={open}
+            setOpenDrawer={setOpenDrawer}
+            isHover={hovered}
+          />
+        </Drawer>
+        <Box style={{ width: "96vw" }}>{children}</Box>
+      </Box>
+    </>
+  );
 }
