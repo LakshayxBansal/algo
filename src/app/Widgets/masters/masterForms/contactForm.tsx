@@ -515,7 +515,7 @@ export default function ContactForm(
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
         setFormError={setFormError}
-        defaultValue={(whatsappFn?.length===0 && !entityData.id)? "+91": whatsappFn }
+        defaultValue={whatsappFn}
         fullWidth
       />,
     ],
