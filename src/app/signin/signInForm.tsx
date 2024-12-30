@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   Box,
@@ -37,6 +37,8 @@ export default function AuthPage(props: authPagePropsType) {
     Record<string, { msg: string; error: boolean }>
   >({});
 
+  const [isPending, startTransition] = React.useTransition();
+
   const [email, setEmail] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   // const [loading, setLoading] = useState(false);
@@ -45,6 +47,8 @@ export default function AuthPage(props: authPagePropsType) {
   let csrfToken;
   const providerArr = props.providers;
   const successCallBackUrl = "/company";
+
+  
 
   const contactHandler = () => {
     setEmail(!email);
@@ -77,7 +81,10 @@ export default function AuthPage(props: authPagePropsType) {
         password: data.password,
       }).then(async (status) => {
         if (status?.ok) {
-          router.push(successCallBackUrl);
+          startTransition(() => {
+            router.push(successCallBackUrl);
+          })
+          
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};
@@ -250,7 +257,7 @@ export default function AuthPage(props: authPagePropsType) {
               type={!showPassword ? "password" : "text"}
               id="password"
               autoComplete="off"
-              // disabled={loading}
+              disabled={isPending}
               error={formError?.password?.error}
               helperText={formError?.password?.msg}
               setFormError={setFormError}
@@ -309,6 +316,7 @@ export default function AuthPage(props: authPagePropsType) {
           <Box sx={styles.btnBox} rowGap={2}>
             <LoadingButton
               type="submit"
+              loading={isPending}
               sx={styles.pillButton}
               // loading={loading}
               loadingIndicator={

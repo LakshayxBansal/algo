@@ -541,10 +541,10 @@ const SupportTicketForm = (props: customprop) => {
   }
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
-    setDefaultValues({
-      sub_status: { id: 0, name: "" },
-      next_action: { id: 0, name: "" },
-    });
+    // setDefaultValues({
+    //   sub_status: { id: 0, name: "" },
+    //   next_action: { id: 0, name: "" },
+    // });
     setSelectValues((prev) => {
       return {
         ...prev,
