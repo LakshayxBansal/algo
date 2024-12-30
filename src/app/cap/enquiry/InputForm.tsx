@@ -591,8 +591,8 @@ export default function InputForm({ baseData }: InputFormProps) {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
-    setSubStatus({ id: 0, name: "" });
-    setNextAction({ id: 0, name: "" });
+    // setSubStatus({ id: 0, name: "" });
+    // setNextAction({ id: 0, name: "" });
     setSelectValues({ ...selectValues, sub_status: null, next_action: null });
   }
 

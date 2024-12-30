@@ -1,15 +1,18 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Dashbaord  from './dashboard/page';
-import CapLayout from './layout';
-import { usePathname } from "next/navigation";
+import {  LinearProgress } from "@mui/material";
+
 
 
 export default function ClientApp() {
 
   return (
+    <Suspense fallback={<LinearProgress/>}>
     <Dashbaord></Dashbaord>
+    </Suspense>
   );
 };
+
 
 
 
