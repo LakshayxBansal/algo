@@ -365,17 +365,14 @@ export default function ExecutiveForm(
         }
         width={365}
         onChange={(e, val, s) => {
-          setSelectValues({
-            ...selectValues,
-            crm_user: val ? val : { id: 0, name: "" },
-          });
+          setSelectValues({ ...selectValues, crm_user: val ? val : { id: 0, name: "" } })
           if (Object.keys(entityData).length === 0 && val) {
             if (emailRegex.test(val.contact)) {
               if (!keyDownEmail.current && email?.current) {
                 email.current.value = val.contact;
               }
               if (!keyDownMobile.current) {
-                setMobile("");
+                setMobile('');
               }
             } else {
               if (!keyDownMobile.current) {
@@ -386,7 +383,8 @@ export default function ExecutiveForm(
               }
             }
           }
-        }}
+        }
+        }
         fetchDataFn={getApplicationUser}
         formError={formError.crm_user}
         setFormError={setFormError}
@@ -417,18 +415,15 @@ export default function ExecutiveForm(
         defaultValue={entityData.email}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           // setEmail(e.target.value);
-          if (
-            keyDownEmail.current === undefined ||
-            keyDownEmail.current === false
-          ) {
+          if (keyDownEmail.current === undefined || keyDownEmail.current === false) {
             keyDownEmail.current = true;
           }
         }}
-        // onKeyDown={() => {
-        //   setKeyDown(true);
-        // }}
-        // fullWidth
-      />,
+      // onKeyDown={() => {
+      //   setKeyDown(true);
+      // }}
+      // fullWidth
+      />
     ],
     [
       "mobile",
@@ -445,22 +440,19 @@ export default function ExecutiveForm(
         setFormError={setFormError}
         onChange={(val: string) => {
           // setMobile(val);
-          handleWhatsappChange;
-          if (
-            keyDownMobile.current === undefined ||
-            keyDownMobile.current === false
-          ) {
+          handleWhatsappChange
+          if (keyDownMobile.current === undefined || keyDownMobile.current === false) {
             keyDownMobile.current = true;
           }
         }}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { mobile, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
-        // fullWidth
-      />,
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { mobile, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
+      // fullWidth
+      />
     ],
     [
       "whatsapp",
@@ -573,8 +565,8 @@ export default function ExecutiveForm(
         error={formError?.address1?.error}
         helperText={formError?.address1?.msg}
         setFormError={setFormError}
-        // fullWidth
-      />,
+      // fullWidth
+      />
     ],
     [
       "address2",
@@ -605,7 +597,7 @@ export default function ExecutiveForm(
         error={formError?.city?.error}
         helperText={formError?.city?.msg}
         setFormError={setFormError}
-      />,
+      />
     ],
     [
       "country",
@@ -672,13 +664,13 @@ export default function ExecutiveForm(
         error={formError?.pincode?.error}
         helperText={formError?.pincode?.msg}
         setFormError={setFormError}
-        // onKeyDown={() => {
-        //   setFormError((curr) => {
-        //     const { pincode, ...rest } = curr;
-        //     return rest;
-        //   });
-        // }}
-      />,
+      // onKeyDown={() => {
+      //   setFormError((curr) => {
+      //     const { pincode, ...rest } = curr;
+      //     return rest;
+      //   });
+      // }}
+      />
     ],
   ]);
 
@@ -711,6 +703,7 @@ export default function ExecutiveForm(
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
+
 
       formData = updateFormData(data);
       data["dob"] = data["dob"] != "" ? new Date(data["dob"]) : "";
@@ -852,13 +845,10 @@ export default function ExecutiveForm(
     });
   };
   props.metaData?.fields.map((field: any) => {
-    if (
-      field.column_name_id === "address1" ||
-      field.column_name_id === "address2"
-    ) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
+      if (field.column_name_id === "address1" || field.column_name_id === "address2") {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
 
       const fld = React.cloneElement(baseElement, {
         ...baseElement.props,
@@ -879,18 +869,18 @@ export default function ExecutiveForm(
           field.column_name_id
         ) as React.ReactElement;
 
-        const fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          key: `field-subAddress-${field.column_name_id}-${stateKey}`,
-        });
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            key: `field-subAddress-${field.column_name_id}-${stateKey}`,
+          });
 
-        fieldArr.push(fld);
-      } else {
-        const baseElement = defaultComponentMap.get(
-          field.column_name_id
-        ) as React.ReactElement;
+          fieldArr.push(fld);
+        } else {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
 
         const fld = React.cloneElement(baseElement, {
           ...baseElement.props,
@@ -900,60 +890,59 @@ export default function ExecutiveForm(
           disabled: field.is_disabled === 1 ? true : false,
         });
 
-        fieldArr.push(fld);
+          fieldArr.push(fld);
+        }
       }
-    }
-    // else if (field.is_default_column) {
-    else if (field.column_name_id === "whatsapp") {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
+      // else if (field.is_default_column) {
+      else if (field.column_name_id === 'whatsapp') {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
 
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}-${whatsappFn}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}-${whatsappFn}`,
+          disabled: field.is_disabled === 1 ? true : false,
+        });
+
+        fieldArr.push(fld);
+      } else if (field.column_name_id === 'mobile') {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}-${mobile}`,
+          disabled: field.is_disabled === 1 ? true : false
+        });
+    
+        fieldArr.push(fld);
+      } else if (field.is_default_column) {
+        const baseElement = defaultComponentMap.get(
+          field.column_name_id
+        ) as React.ReactElement;
+
+        const fld = React.cloneElement(baseElement, {
+          ...baseElement.props,
+          label: field.column_label,
+          required: field.is_mandatory === 1,
+          key: `field-default-${field.column_name_id}`,
+          disabled: field.is_disabled === 1 ? true : false
+        });
 
       fieldArr.push(fld);
-    } else if (field.column_name_id === "mobile") {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
 
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}-${mobile}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
-
-      fieldArr.push(fld);
-    } else if (field.is_default_column) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
-
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-default-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
-
-      fieldArr.push(fld);
     } else {
       const fld = (
         <CustomField
           key={`field-custom-${field.column_name_id}`}
           desc={field}
-          defaultValue={
-            entityData[field.column_name_id as keyof executiveSchemaT]
-          }
+          defaultValue={entityData[field.column_name_id as keyof executiveSchemaT]}
         />
       );
       fieldArr.push(fld);
@@ -987,33 +976,61 @@ export default function ExecutiveForm(
               const fieldKey = field.key as string;
               if (fieldKey.includes("field-address")) {
                 return (
-                  <Grid key={fieldKey} item xs={12} sm={6} md={6}>
-                    <div key={index}>{field}</div>
-                  </Grid>
-                );
-              } else if (fieldKey.includes("field-subAddress")) {
-                return (
-                  <Grid key={fieldKey} item xs={12} sm={6} md={3}>
-                    <div key={index}>{field}</div>
-                  </Grid>
-                );
-              } else {
-                return (
-                  <Grid key={fieldKey} item xs={12} sm={6} md={4}>
-                    <div key={index}>{field}</div>
-                  </Grid>
-                );
-              }
-            })}
-            <Grid xs={12}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginTop: 2,
-                  paddingLeft: "2rem",
-                }}
-              >
+                  <Grid key={fieldKey}
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+
+                >
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
+            }
+            else if (fieldKey.includes("field-subAddress")) {
+              return (
+                <Grid key={fieldKey}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
+
+                >
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
+            }
+            else {
+              return (
+                <Grid key={fieldKey}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+
+                >
+                  <div key={index}>
+                    {field}
+                  </div>
+                </Grid>
+              )
+            }
+          }
+
+          )}
+          <Grid xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: 2,
+                paddingLeft: "2rem"
+              }}
+            >
                 <Tooltip
                   title={
                     docData?.length > 0 ? (
@@ -1040,41 +1057,34 @@ export default function ExecutiveForm(
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                <Button
-                  onClick={() => {
-                    if (props.setDialogOpen === undefined) {
-                      router.push("/cap");
-                    } else {
-                      handleCancel();
-                    }
-                  }}
-                  tabIndex={-1}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{ width: "15%", marginLeft: "5%" }}
-                >
-                  Submit
-                </Button>
-              </Box>
-            </Grid>
+              <Button onClick={() => {
+                if (props.setDialogOpen === undefined) {
+                  router.push('/cap');
+                }
+                else {
+                  handleCancel();
+                }
+              }} tabIndex={-1}>Cancel</Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ width: "15%", marginLeft: "5%" }}
+              >
+                Submit
+              </Button>
+            </Box>
           </Grid>
-          {dialogOpen && (
-            <AddDialog
-              title="Document List"
-              open={dialogOpen}
-              setDialogOpen={setDialogOpen}
-            >
-              <DocModal
-                docData={docData}
-                setDocData={setDocData}
-                setDialogOpen={setDialogOpen}
-              />
-            </AddDialog>
-          )}
+        </Grid>
+        {dialogOpen && (
+          <AddDialog
+            title="Document List"
+            open={dialogOpen}
+            setDialogOpen={setDialogOpen}
+          >
+            <DocModal docData={docData} setDocData={setDocData} setDialogOpen={setDialogOpen} />
+          </AddDialog>
+        )}
+
         </form>
         <Portal>
           <Snackbar
