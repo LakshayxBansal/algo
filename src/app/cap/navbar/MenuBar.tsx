@@ -6,7 +6,6 @@ import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -22,100 +21,17 @@ import companyLogo from "../../../../public/companyLogo.png";
 import notification from "../../../../public/notificationIcon.png";
 import searchIcon from "../../../../public/searchIcon.png";
 import Image from "next/image";
-import {
-  Autocomplete,
-  Button,
-  darken,
-  debounce,
-  InputAdornment,
-  lighten,
-  ListItemButton,
-  TextField,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { Autocomplete, debounce } from "@mui/material";
 import { searchMainData } from "@/app/controllers/navbar.controller";
-import Link from "next/link";
-import SecondNavbar from "./SecondNavbar";
-import { AddDialog } from "@/app/Widgets/masters/addDialog";
+import {
+  GroupHeader,
+  GroupItems,
+  StyledLink,
+  CustomTextFieldForSearch,
+  AppBar,
+} from "@/styledComponents";
 
 const drawerWidth: number = 290;
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
-  height: 64,
-  backgroundColor: "#4870AC",
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  // ...(open && {
-  //   marginLeft: drawerWidth,
-  //   width: `calc(100% - ${drawerWidth}px)`,
-  //   transition: theme.transitions.create(["width", "margin"], {
-  //     easing: theme.transitions.easing.sharp,
-  //     duration: theme.transitions.duration.enteringScreen,
-  //   }),
-  // }),
-}));
-
-const GroupHeader = styled("div")(({ theme }) => ({
-  position: "sticky",
-  top: "-8px",
-  padding: "4px 10px",
-  color: theme.palette.primary.main,
-  backgroundColor: lighten(theme.palette.primary.light, 0.85),
-  ...theme.applyStyles("dark", {
-    backgroundColor: darken(theme.palette.primary.main, 0.8),
-  }),
-}));
-
-const StyledLink = styled("a")(({ theme }) => ({
-  textDecoration: "none",
-  color: "inherit",
-  padding: "10px",
-  display: "block", // Make it behave like a block element
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover, // Change background on hover
-    color: theme.palette.primary.main, // Change text color on hover
-    cursor: "pointer",
-  },
-}));
-
-const GroupItems = styled("ul")({
-  padding: 0,
-});
-
-const CustomTextField = styled(TextField)(({ theme }) => ({
-  backgroundColor: "#4870AC",
-  "& .MuiOutlinedInput-root": {
-    padding: "2px 8px",
-    borderRadius: 0,
-    "& fieldset": {
-      borderColor: "transparent", // Default state
-      borderWidth: "0 0 2px 0",
-      borderBottomColor: "#FFFFFF",
-    },
-    "&:hover fieldset": {
-      borderWidth: "0 0 2px 0",
-      borderBottomColor: "#FFFFFF",
-    },
-    "&.Mui-focused fieldset": {
-      borderWidth: "0 0 2px 0",
-      borderBottomColor: "#FFFFFF",
-    },
-    "& input": {
-      padding: "6px 0",
-      fontSize: "0.875rem",
-      color: "#FFFFFF",
-    },
-  },
-}));
 
 interface propsType {
   pages: menuTreeT[];
@@ -146,10 +62,7 @@ export default function MenuBar(props: propsType) {
       position: "relative",
       top: 64, // Matches the height of the AppBar
       whiteSpace: "nowrap",
-      // width: open ? 290 : 72,
       width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
-      // height:"100vh",
-      // overflowY: 'auto',
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.easeInOut,
         duration: theme.transitions.duration.enteringScreen,
@@ -158,14 +71,7 @@ export default function MenuBar(props: propsType) {
       ...(!open &&
         hovered && {
           overflowX: "hidden",
-          // transition: theme.transitions.create("width", {
-          //   easing: theme.transitions.easing.sharp,
-          //   duration: theme.transitions.duration.leavingScreen,
-          // }),
           width: hovered ? theme.spacing(16) : theme.spacing(7),
-          // [theme.breakpoints.up("sm")]: {
-          //   width: theme.spacing(7),
-          // },
           transition: theme.transitions.create("width", {
             easing: theme.transitions.easing.sharp,
             duration: "1.0s",
@@ -231,7 +137,7 @@ export default function MenuBar(props: propsType) {
   return (
     <>
       <CssBaseline />
-      <AppBar open={open}>
+      <AppBar>
         <Toolbar
           sx={{
             height: 64,
@@ -277,7 +183,7 @@ export default function MenuBar(props: propsType) {
               groupBy={(option) => option.tableName}
               sx={{ width: 300 }}
               renderInput={(params) => (
-                <CustomTextField
+                <CustomTextFieldForSearch
                   {...params}
                   placeholder="Search"
                   InputProps={{
@@ -363,7 +269,7 @@ export default function MenuBar(props: propsType) {
       </AppBar>
 
       <Box sx={{ display: "flex" }}>
-        <Drawer variant="permanent" anchor="left" open={open} >
+        <Drawer variant="permanent" anchor="left" open={open}>
           {/* need to work on this as on xs it should be at the top */}
           <IconButton
             title={open ? "Close Menu" : "Open Menu"}
