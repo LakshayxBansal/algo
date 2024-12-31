@@ -12,6 +12,7 @@ import {
   getEnquiryDataByPageDb,
   getEnquiryDataCount,
   delEnquiryDataByIdDb,
+  getLastVoucherNumberDb,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -424,6 +425,25 @@ export async function delEnquiryDataById(enquiryID: number) {
           ],
         };
       }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (error: any) {
+    throw error;
+  }
+}
+
+export async function getLastVoucherNumber() {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await getLastVoucherNumberDb(session);
+      result = { status: true, data: dbResult };
     } else {
       result = {
         status: false,

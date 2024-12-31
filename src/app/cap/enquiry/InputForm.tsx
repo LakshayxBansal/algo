@@ -77,6 +77,7 @@ import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
+import { nameMasterData } from "@/app/zodschema/zodschema";
 
 export interface InputFormProps {
   baseData: {
@@ -87,6 +88,10 @@ export interface InputFormProps {
     regional_setting: Record<string, any>;
     loggedInUserData?: Record<string, any>;
     statusUpdate?: boolean;
+    voucherNumber?: {
+      voucherString : string |null,
+      newVoucherNumber : number 
+    }
   };
 }
 
@@ -569,6 +574,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         product: productData,
       });
     } else {
+      enquirydata.auto_number= baseData.voucherNumber?.newVoucherNumber
       result = await createEnquiry({
         enqData: enquirydata,
         product: productData,
@@ -846,7 +852,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-              Enquiry Details
+            {`Enquiry Details ${baseData.voucherNumber?.voucherString ? `(${baseData.voucherNumber.voucherString})` : ""}`}
             </div>
           </Seperator>
         </Grid>
