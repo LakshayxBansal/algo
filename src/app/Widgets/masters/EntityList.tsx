@@ -201,6 +201,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     search,
     searchData,
     props,
+    dialogOpen
   ]);
   const fetchAllColumns = async () => {
     setLoading(true);
