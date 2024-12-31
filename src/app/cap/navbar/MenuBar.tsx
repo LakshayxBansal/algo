@@ -25,7 +25,6 @@ import { Autocomplete, debounce } from "@mui/material";
 import { searchMainData } from "@/app/controllers/navbar.controller";
 import {
   GroupHeader,
-  GroupItems,
   StyledLink,
   CustomTextFieldForSearch,
   AppBar,
@@ -203,7 +202,7 @@ export default function MenuBar(props: propsType) {
               renderGroup={(params) => (
                 <li key={params.key}>
                   <GroupHeader>{params.group}</GroupHeader>
-                  <GroupItems>
+                  <ul style={{ padding: 0 }}>
                     {Array.isArray(params.children) &&
                       params.children.map((child: any) => {
                         const option = options.find(
@@ -229,7 +228,7 @@ export default function MenuBar(props: propsType) {
                           </li>
                         );
                       })}
-                  </GroupItems>
+                  </ul>
                 </li>
               )}
               inputValue={search}

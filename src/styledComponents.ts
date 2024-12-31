@@ -475,10 +475,6 @@ export const StyledLink = styled("a")(({ theme }) => ({
   },
 }));
 
-export const GroupItems = styled("ul")({
-  padding: 0,
-});
-
 export const CustomTextFieldForSearch = styled(TextField)(({ theme }) => ({
   backgroundColor: "#4870AC",
   "& .MuiOutlinedInput-root": {
