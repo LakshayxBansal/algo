@@ -23,6 +23,7 @@ export const styles = {
     right: {
       width: "44.44%",
       padding: "4%",
+      paddingTop: "3%",
       paddingBottom: "0",
       display: "flex",
       flexDirection: "column",
@@ -35,7 +36,7 @@ export const styles = {
     },
     btnBox: {
       width: "60%",
-      marginTop: "8%",
+      marginTop: "7%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",

@@ -1,10 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Box,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Grid from "@mui/material/Grid";
@@ -94,12 +90,12 @@ export default function SignupForm(props: any) {
           emailElement ? (issue.path[0] = "email") : (issue.path[0] = "phone");
           emailElement
             ? (issue.message = "Email already exist")
-            : (issue.message = "Phone already exist");
+            : (issue.message = "Phone No. already exists");
         }
         errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
       console.log(issues);
-      errorState["form"] = { msg: "Error encountered", error: true };
+      // errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   }
@@ -203,13 +199,12 @@ export default function SignupForm(props: any) {
               "& .MuiInputLabel-root": {
                 fontSize: "1rem",
                 textAlign: "center",
-                color: "#1A1D22",
               },
               "& .MuiInputLabel-asterisk": {
                 color: "#E63946",
               },
-              mt: 3,
-              mb: 2,
+              mt: 2,
+              mb: 1,
             }}
           />
 
@@ -238,12 +233,11 @@ export default function SignupForm(props: any) {
                 "& .MuiInputLabel-root": {
                   fontSize: "1rem",
                   textAlign: "center",
-                  color: "#1A1D22",
                 },
                 "& .MuiInputLabel-asterisk": {
                   color: "#E63946",
                 },
-                my: 2,
+                my: 1,
               }}
             />
           )}
@@ -277,12 +271,11 @@ export default function SignupForm(props: any) {
                 "& .MuiInputLabel-root": {
                   fontSize: "1rem",
                   textAlign: "center",
-                  color: "#1A1D22",
                 },
                 "& .MuiInputLabel-asterisk": {
                   color: "#E63946",
                 },
-                my: 2,
+                my: 1,
               }}
             />
           )}
@@ -320,12 +313,11 @@ export default function SignupForm(props: any) {
                   "& .MuiInputLabel-root": {
                     fontSize: "1rem",
                     textAlign: "center",
-                    color: "#1A1D22",
                   },
                   "& .MuiInputLabel-asterisk": {
                     color: "#E63946",
                   },
-                  mt: 2,
+                  mt: 1,
                   mb: 1,
                 }}
                 InputProps={{
@@ -334,7 +326,7 @@ export default function SignupForm(props: any) {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       tabIndex={-1}
-                      sx={{ marginRight: -3, marginTop: 0 }}
+                      sx={{ marginRight: -2, marginTop: 0 }}
                     >
                       {showPassword ? (
                         <RemoveRedEyeOutlinedIcon />
@@ -374,12 +366,11 @@ export default function SignupForm(props: any) {
                   "& .MuiInputLabel-root": {
                     fontSize: "1rem",
                     textAlign: "center",
-                    color: "#1A1D22",
                   },
                   "& .MuiInputLabel-asterisk": {
                     color: "#E63946",
                   },
-                  mt: 2,
+                  mt: 1,
                   mb: 1,
                 }}
                 InputProps={{
@@ -388,7 +379,7 @@ export default function SignupForm(props: any) {
                       type="button"
                       onClick={() => setShowRePassword(!showRePassword)}
                       tabIndex={-1}
-                      sx={{ marginRight: -3, marginTop: 0 }}
+                      sx={{ marginRight: -2, marginTop: 0 }}
                     >
                       {showRePassword ? (
                         <RemoveRedEyeOutlinedIcon />
@@ -402,7 +393,13 @@ export default function SignupForm(props: any) {
             </Grid>
           </Grid>
 
-          <Box sx={styles.btnBox} rowGap={2}>
+          <Box
+            sx={{
+              ...styles.btnBox,
+              marginTop: `${formError?.password?.error ? "0%" : "7%"}`,
+            }}
+            rowGap={2}
+          >
             <LoadingButton
               type="submit"
               sx={styles.pillButton}
