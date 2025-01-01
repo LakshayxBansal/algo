@@ -725,6 +725,7 @@ export default function ExecutiveForm(
           }, 1000);
         } else {
           setFormKey(formKey + 1);
+          setStateDisable(true);
           setWhatsappFn("");
           setDocData([]);
         }
