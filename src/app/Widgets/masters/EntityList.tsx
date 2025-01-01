@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   GridColDef,
@@ -92,7 +92,7 @@ export default function EntityList(props: entitiyCompT) {
   const [selectionModel, setSelectionModel] = useState([]);
 
 
-  const [loading, setLoading] = useState<boolean>(true);
+  
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
@@ -174,7 +174,6 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   const dfltColFields: string[] = allDfltCols.map((col) => col.field);
 
   const fetchData = debounce(async (searchText) => {
-    setLoading(true);
     const rows: any = await props.fetchDataFn(
       PageModel.page,
       searchText as string,
@@ -184,7 +183,32 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
       setData(rows.data);
       setNRows(rows.count as number);
     }
-    setLoading(false);
+    // if (props.fnFetchColumns) {
+    //   const columnsData = await props.fnFetchColumns();
+    //   if (columnsData) {
+    //     const dbColumns = columnsData.map((col: any) => ({
+    //       field: col.column_name,
+    //       headerName: col.column_label,
+    //     }));
+    //     // filter on columns not to showinitially
+    //     const filteredColumns = dbColumns.filter(
+    //       (col: any) => !dfltColFields.includes(col.field)
+    //     );
+    //     //columns not to showinitially
+    //     const allColumns = allDfltCols.concat(filteredColumns);
+    //     const visibleColumns = allColumns.reduce((model: any, col: any) => {
+    //       model[col.field] = dfltColFields.includes(col.field);
+    //       return model;
+    //     }, {});
+    //     setColumnVisibilityModel(visibleColumns);
+    //     setAllColumns(allColumns);
+    //     // setColumnsChanged(true);
+    //     // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
+    //   }
+    // }
+    //  else {
+    //   setAllColumns(allDfltCols);
+    // }
   }, 100);
 
   useEffect(() => {
@@ -204,7 +228,6 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     dialogOpen
   ]);
   const fetchAllColumns = async () => {
-    setLoading(true);
     let columnList;
    
       const dbcolumns = await getColumns(props.objectTypeId ?? 0);
@@ -226,13 +249,11 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
       }
     
     setAllColumns(columnList);
-    setLoading(false);
     return columnList;
   };
 
   useEffect(() => {
     const fetchAndSetPreferences = async () => {
-      setLoading(true);
       try {
         // Fetch user preferences
         const data: any[] = await getUserPreference(props.objectTypeId ?? 0);
@@ -281,10 +302,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             props.objectTypeId ?? 0
           );
         }
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching or setting column preferences:", error);
-        setLoading(false);
       }
     };
 
@@ -384,85 +403,6 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   const hideUploadBtn = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setOpen(false);
   };
-
-
-  const memoizedGetRowId = useMemo(() => (row : any) => row.id, []);
-  const memoizedPageSizeOptions = useMemo(() => [5, pgSize, 20], []);
-  const memoizedOnColumnVisibilityModelChange = useMemo(
-    () => (
-      model: GridColumnVisibilityModel
-    ) => {
-      const updatedColumnWidths = { ...columnWidths };
-  
-      Object.keys(model).forEach((column) => {
-        if (model[column]) {
-          // Add column with default width if not already present
-          if (!(column in updatedColumnWidths)) {
-            updatedColumnWidths[column] = 100; // Default width
-          }
-        } else {
-          // Remove column if it is not visible
-          delete updatedColumnWidths[column];
-        }
-      });
-  
-      // Update user preferences in the database
-      updateUserPreference(updatedColumnWidths, props.objectTypeId || 0);
-  
-      // Update the local state
-      setColumnWidths(updatedColumnWidths);
-      setColumnVisibilityModel(model);
-    },
-    [setColumnVisibilityModel, columnVisibilityModel]
-  );
-  const memoizedSlotProps = useMemo(() => {
-    return {
-      columnsPanel: {
-        sx: {
-          "& .MuiDataGrid-panelFooter button:firstChild": {
-            display: "none",
-          },
-          ".MuiDataGrid-columnsManagementHeader": {
-            display: "none",
-          },
-        },
-      },
-      panel: {
-        anchorEl: () => {
-          const preferencePanelState = gridPreferencePanelStateSelector(
-            apiRef.current.state
-          );
-          if (
-            preferencePanelState.openedPanelValue ===
-              GridPreferencePanelsValue.columns &&
-            anchorEl
-          ) {
-            return anchorEl;
-          }
-  
-          const columnHeadersElement =
-            apiRef.current.rootElementRef?.current?.querySelector(
-              `.${gridClasses.columnHeaders}`
-            )!;
-          return columnHeadersElement;
-        },
-      },
-      loadingOverlay: {
-        sx:{
-          variant: 'skeleton',
-          noRowsVariant: 'skeleton',
-        }
-      },
-    };
-  }, [apiRef, anchorEl]);
-  
-  const memoizedColumnVisibilityModel = useMemo(() => (columnVisibilityModel),[columnVisibilityModel]);
-
-  const memoizedRows = useMemo(() => {
-    return data ? data : [];
-  }, [data]);
-  const memoizedColumns = useMemo(() => (allColumns),[allColumns]);
-  const memoizedRowCount = useMemo(() => (NRows),[NRows]);
 
   return (
     <Box>
@@ -711,19 +651,14 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           <StripedDataGrid
             apiRef={apiRef}
             disableColumnMenu
-            // rows={data ? data : []}
-            rows={memoizedRows}
+            rows={data ? data : []}
             rowHeight={40}
-            // columns={allColumns}
-            columns={memoizedColumns}
+            columns={allColumns}
             onColumnResize={handleColumnResize}
-            // rowCount={NRows}
-            rowCount={memoizedRowCount}
-            // getRowId={(row) => row.id}
-            getRowId={memoizedGetRowId}
+            rowCount={NRows}
+            getRowId={(row) => row.id}
             pagination={true}
-            // pageSizeOptions={[5, pgSize, 20]}
-            pageSizeOptions={memoizedPageSizeOptions}
+            pageSizeOptions={[5, pgSize, 20]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}
@@ -731,51 +666,46 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
               
-            loading={loading}
-            // onCellKeyDown={handleCellKeyDown}
+            loading={!data}
+            onCellKeyDown={handleCellKeyDown}
             // autosizeOptions={autosizeOptions}
-            // columnVisibilityModel={columnVisibilityModel}
-            columnVisibilityModel={memoizedColumnVisibilityModel}
-            // onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
-            onColumnVisibilityModelChange={memoizedOnColumnVisibilityModelChange}
-            // slotProps={{
-            //   columnsPanel: {
-            //     sx: {
-            //       "& .MuiDataGrid-panelFooter button:firstChild": {
-            //         display: "none",
-            //       },
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
+            slotProps={{
+              columnsPanel: {
+                sx: {
+                  "& .MuiDataGrid-panelFooter button:firstChild": {
+                    display: "none",
+                  },
 
-            //       ".MuiDataGrid-columnsManagementHeader": {
-            //         display: "none",
-            //       },
-            //     },
-            //   },
-            //   panel: {
-            //     anchorEl: () => {
-            //       const preferencePanelState = gridPreferencePanelStateSelector(
-            //         apiRef.current.state
-            //       );
-            //       if (
-            //         preferencePanelState.openedPanelValue ===
-            //           GridPreferencePanelsValue.columns &&
-            //         anchorEl
-            //       ) {
-            //         return anchorEl;
-            //       }
+                  ".MuiDataGrid-columnsManagementHeader": {
+                    display: "none",
+                  },
+                },
+              },
+              panel: {
+                anchorEl: () => {
+                  const preferencePanelState = gridPreferencePanelStateSelector(
+                    apiRef.current.state
+                  );
+                  if (
+                    preferencePanelState.openedPanelValue ===
+                      GridPreferencePanelsValue.columns &&
+                    anchorEl
+                  ) {
+                    return anchorEl;
+                  }
 
-            //       const columnHeadersElement =
-            //         apiRef.current.rootElementRef?.current?.querySelector(
-            //           `.${gridClasses.columnHeaders}`
-            //         )!;
-            //       return columnHeadersElement;
-            //     },
-            //   },
-            // }}
-            slotProps={memoizedSlotProps}
+                  const columnHeadersElement =
+                    apiRef.current.rootElementRef?.current?.querySelector(
+                      `.${gridClasses.columnHeaders}`
+                    )!;
+                  return columnHeadersElement;
+                },
+              },
+            }}
             disableRowSelectionOnClick
-            sx={{ maxHeight: props.height,
-              '--DataGrid-overlayHeight': props.height 
-             }}
+            sx={{ maxHeight: props.height }}
           />
         </Paper>
       </Box>

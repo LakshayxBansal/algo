@@ -198,12 +198,12 @@ export default function CreateCompany(
                     sx: { backgroundColor: "white", margin: 0 },
                   }}
                   sx={{ height: "fit-content" }}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { name, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  // onKeyDown={() => {
+                  //   setFormError((curr) => {
+                  //     const { name, ...rest } = curr;
+                  //     return rest;
+                  //   });
+                  // }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -218,12 +218,12 @@ export default function CreateCompany(
                   setFormError={setFormError}
                   defaultValue={entityData.alias}
                   sx={{ height: "fit-content" }}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { alias, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  // onKeyDown={() => {
+                  //   setFormError((curr) => {
+                  //     const { alias, ...rest } = curr;
+                  //     return rest;
+                  //   });
+                  // }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -236,12 +236,12 @@ export default function CreateCompany(
                   error={formError?.add1?.error}
                   helperText={formError?.add1?.msg}
                   defaultValue={entityData.add1}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { add1, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  // onKeyDown={() => {
+                  //   setFormError((curr) => {
+                  //     const { add1, ...rest } = curr;
+                  //     return rest;
+                  //   });
+                  // }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -254,12 +254,12 @@ export default function CreateCompany(
                   error={formError?.add2?.error}
                   helperText={formError?.add2?.msg}
                   defaultValue={entityData.add2}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { add2, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  // onKeyDown={() => {
+                  //   setFormError((curr) => {
+                  //     const { add2, ...rest } = curr;
+                  //     return rest;
+                  //   });
+                  // }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -272,12 +272,12 @@ export default function CreateCompany(
                   error={formError?.city?.error}
                   helperText={formError?.city?.msg}
                   defaultValue={entityData.city  ?  entityData.city: city}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { city, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  // onKeyDown={() => {
+                  //   setFormError((curr) => {
+                  //     const { city, ...rest } = curr;
+                  //     return rest;
+                  //   });
+                  // }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -290,12 +290,12 @@ export default function CreateCompany(
                   error={formError?.pincode?.error}
                   helperText={formError?.pincode?.msg}
                   defaultValue={entityData.pincode ?  entityData.pincode: pin}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { pincode, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  // onKeyDown={() => {
+                  //   setFormError((curr) => {
+                  //     const { pincode, ...rest } = curr;
+                  //     return rest;
+                  //   });
+                  // }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -315,6 +315,7 @@ export default function CreateCompany(
                   // width={{ xs: "100%", sm: 290, md: 290 }}
                   formError={formError?.country}
                   fetchDataFn={getCountriesMaster}
+                  setFormError={setFormError}
                   diaglogVal={
                     entityData.country
                       ? {

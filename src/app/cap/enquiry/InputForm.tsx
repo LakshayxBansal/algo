@@ -919,6 +919,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                       sx={{ marginRight: "3rem" }}
                       onClick={() => setDocDialogOpen(true)}
                       aria-label="file"
+                      tabIndex={-1}
                     >
                       <Badge badgeContent={docData.length} color="primary">
                         <AttachFileIcon></AttachFileIcon>
