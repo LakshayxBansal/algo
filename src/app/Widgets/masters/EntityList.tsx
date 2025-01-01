@@ -232,7 +232,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
    
       const dbcolumns = await getColumns(props.objectTypeId ?? 0);
       
-      if (dbcolumns.length > 0) {
+      if (dbcolumns?.length > 0) {
         columnList = dbcolumns.map((col: any) => ({
           field: col.column_name,
           headerName: col.column_label,

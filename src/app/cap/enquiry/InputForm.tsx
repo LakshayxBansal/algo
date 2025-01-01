@@ -78,6 +78,7 @@ import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { nameMasterData } from "@/app/zodschema/zodschema";
+import generateVoucher from "@/app/utils/generateVoucher";
 
 export interface InputFormProps {
   baseData: {
@@ -128,6 +129,11 @@ export default function InputForm({ baseData }: InputFormProps) {
   const [subStatus, setSubStatus] = useState<optionsDataT>(
     defaultData?.sub_status ?? {}
   );
+  const [voucherConflict, setVoucherConflict] = useState({
+    status: false,
+    message: "",
+  });
+
   const [nextAction, setNextAction] = useState<optionsDataT>(
     defaultData?.next_action ?? {}
   );
@@ -510,6 +516,11 @@ export default function InputForm({ baseData }: InputFormProps) {
     );
     if (result.status) {
       // const newVal = { id: result.data[0].id, name: result.data[0].name };
+       const isVoucherNumberChanged =result.data[0].auto_number!== baseData?.voucherNumber?.newVoucherNumber
+      if(isVoucherNumberChanged){
+        const newVoucherString = await generateVoucher(baseData.config_data.voucher,result.data[0].auto_number)
+        setVoucherConflict({status : true, message:`Your Enquiry has been saved with Voucher Number ${newVoucherString}`})
+        }
       setSnackOpen(true);
       setTimeout(function () {
         location.reload();
@@ -574,7 +585,6 @@ export default function InputForm({ baseData }: InputFormProps) {
         product: productData,
       });
     } else {
-      enquirydata.auto_number= baseData.voucherNumber?.newVoucherNumber
       result = await createEnquiry({
         enqData: enquirydata,
         product: productData,
@@ -971,14 +981,15 @@ export default function InputForm({ baseData }: InputFormProps) {
       </form>
       <Snackbar
         open={snackOpen}
-        autoHideDuration={3000}
+        autoHideDuration={voucherConflict.status? 4000:3000}
         onClose={() => setSnackOpen(false)}
         message={
+          voucherConflict.status ? voucherConflict.message:
           enqData?.enquiry_id
             ? "Enquiry details updated successfully!"
             : "Enquiry details saved successfully!"
         }
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: voucherConflict.status? "top":"bottom", horizontal: "center" }}
       />
     </Box>
   );

@@ -17,7 +17,7 @@ export async function createEnquiryDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -37,7 +37,6 @@ export async function createEnquiryDB(
         enqData.headerLedger.closure_remark,
         enqData.headerLedger.enquiry_tran_type,
         enqData.headerLedger.active,
-        enqData.headerLedger.auto_number,
         session.user.userId,
         enqData.product,
         enqData.headerLedger.c_col1,
