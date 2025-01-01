@@ -73,7 +73,6 @@ export default function CompanyEntityList() {
         customCols={columns}
         AddAllowed={true}
         height="60vh"
-        objectTypeId={COMPANY_USER_OBJECT_ID}
       ></EntityList>
     </AuthWrapper>
   );
