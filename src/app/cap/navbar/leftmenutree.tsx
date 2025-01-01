@@ -376,7 +376,7 @@ export default function LeftMenuTree(props: {
   return (
     <div>
       <List
-        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper" }}
+        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper", padding: 0}}
         component="nav"
         aria-labelledby="nested-list-subheader"
       >

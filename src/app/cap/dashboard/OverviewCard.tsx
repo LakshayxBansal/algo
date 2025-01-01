@@ -51,9 +51,9 @@ const getXAxisData = (currMonth: number) => {
   ];
   let data: Array<string> = [];
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 6; i++) {    
     const ind = currMonth - 1;
-    currMonth = currMonth === 0 ? 11 : currMonth - 1;
+    currMonth = currMonth === 1 ? 12 : currMonth - 1;
     data.push(monthArr[ind]);
   }
   return data.reverse();
