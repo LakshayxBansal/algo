@@ -91,7 +91,7 @@ export default function SignupForm(props: any) {
       data[key] = value;
     }
     const inActiveUser = await checkInActiveUser(
-      data.email || (data.phone.replace(/ +/g, '') as string)
+      data.email || (data.phone?.replace(/ +/g, '') as string)
     );
     if (inActiveUser) {
       setSignUpData(data as userSchemaT);
