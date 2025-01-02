@@ -39,6 +39,7 @@ export default function AuthPage(props: authPagePropsType) {
     setEmail(!email);
     setFormError({});
   };
+  
   function actValidate(formData: FormData) {
     // document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
