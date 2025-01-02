@@ -53,9 +53,7 @@ export default function SignupForm(props: any) {
 
   async function makeUserActiveAgain(userId: number | undefined) {
     try {
-      if(userId && signUpData?.password){
-        await makeUserActive(userId, signUpData.password);
-      }
+      await makeUserActive(userId);
       router.push("/signin");
     } catch (error) {
       logger.info(error);
@@ -106,11 +104,14 @@ export default function SignupForm(props: any) {
 
   return (
     <Grid sx={styles.container} container spacing={0}>
-      {dialogOpen && (
+      {true && (
         <AddDialog title={""} open={true} setDialogOpen={setDialogOpen}>
           <Box sx={styles.dialogBox}>
-            <h2>You have to continue with previous credentials</h2>
-            <Button onClick={() => makeUserActiveAgain(inActiveUserId)} sx={styles.okButton}>
+            <h2>User Already Exists! <br></br>Please login with previous credentials</h2>
+            <Button
+              onClick={() => makeUserActiveAgain(inActiveUserId)}
+              sx={styles.okButton}
+            >
               Ok
             </Button>
           </Box>

@@ -67,13 +67,13 @@ export async function checkInActiveUserDB(contact: string) {
   return false;
 } 
 
-export async function makeUserActiveDB(id: number | undefined, password: string) {
+export async function makeUserActiveDB(id: number | undefined) {
   try {
     // check if the user exists
     await excuteQuery({
       host: 'userDb',
-      query: 'update user set active = 1, password = ? where id = ?',
-      values: [password, id],
+      query: 'update user set active = 1 where id = ?',
+      values: [id],
     })
   } catch (e) {
     console.log(e);
