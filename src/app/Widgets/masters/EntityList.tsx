@@ -229,9 +229,12 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   ]);
   const fetchAllColumns = async () => {
     let columnList;
-   
-      const dbcolumns = await getColumns(props.objectTypeId ?? 0);
-      
+    let dbcolumns=[];
+
+      //fetch columns from db only if objectTypeId is provided
+      if(props?.objectTypeId){
+      dbcolumns = await getColumns(props.objectTypeId ?? 0);
+      }
       if (dbcolumns?.length > 0) {
         columnList = dbcolumns.map((col: any) => ({
           field: col.column_name,
@@ -246,17 +249,19 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             width: 100,
           };
         });
-      }
-    
+      }    
     setAllColumns(columnList);
     return columnList;
   };
 
   useEffect(() => {
-    const fetchAndSetPreferences = async () => {
+      const fetchAndSetPreferences = async () => {
       try {
         // Fetch user preferences
-        const data: any[] = await getUserPreference(props.objectTypeId ?? 0);
+        let data = [];
+
+        if(props?.objectTypeId)
+         data = await getUserPreference(props.objectTypeId ?? 0);
 
         const allColumns = await fetchAllColumns();
         const userColumnPreference: Record<string, number> = data[0]?.meta_data
@@ -296,11 +301,12 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           }, {} as Record<string, number>);
 
           setColumnWidths(initialPreferences);
-
+          if(props?.objectTypeId){
           await insertUserPreference(
             initialPreferences,
             props.objectTypeId ?? 0
           );
+        }
         }
       } catch (error) {
         console.error("Error fetching or setting column preferences:", error);

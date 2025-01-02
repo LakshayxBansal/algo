@@ -67,6 +67,7 @@ export default function SubStatusListForm(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
+        setStatus(undefined);
       }
     } else {
       const issues = result.data;

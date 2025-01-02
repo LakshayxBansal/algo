@@ -7,6 +7,7 @@ import MuiAppBar, {
   AppBarProps,
   AppBarProps as MuiAppBarProps,
 } from "@mui/material/AppBar";
+import { lighten, darken } from "@mui/material";
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -111,48 +112,48 @@ export const MinimizedDataGrid = styled(DataGrid)(({ theme }) => ({
   height: 650,
   border: "none",
 
-  '& .MuiDataGrid-cellCheckbox': {
-                width: '30px',
-                height: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-cellCheckbox .MuiCheckbox-root': {
-                padding: 0,
-              },
-              '& .MuiDataGrid-cellCheckbox .MuiSvgIcon-root': {
-                width: '15px',
-                height: '15px',
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox': {
-                width: '38px',
-                height: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox .MuiCheckbox-root': {
-                padding: 0,
-              },
-              '& .MuiDataGrid-columnHeaderCheckbox .MuiSvgIcon-root': {
-                width: '15px',
-                height: '15px',
-              },
-              '& .MuiDataGrid-footerContainer': {
-                height: '28px', // Force footer container to 30px
-                minHeight: '28px', // Override any minimum height constraints
-              },
-              '& .MuiTablePagination-root': {
-                height: '28px', // Ensure pagination component also respects 30px height
-                minHeight: '28px',
-                overflow: "hidden"
-              },
-              '& .MuiTablePagination-toolbar': {
-                height: '28px', // Adjust the toolbar within the pagination
-                minHeight: '28px',
-              },
-  
+  "& .MuiDataGrid-cellCheckbox": {
+    width: "30px",
+    height: "30px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  "& .MuiDataGrid-cellCheckbox .MuiCheckbox-root": {
+    padding: 0,
+  },
+  "& .MuiDataGrid-cellCheckbox .MuiSvgIcon-root": {
+    width: "15px",
+    height: "15px",
+  },
+  "& .MuiDataGrid-columnHeaderCheckbox": {
+    width: "38px",
+    height: "30px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  "& .MuiDataGrid-columnHeaderCheckbox .MuiCheckbox-root": {
+    padding: 0,
+  },
+  "& .MuiDataGrid-columnHeaderCheckbox .MuiSvgIcon-root": {
+    width: "15px",
+    height: "15px",
+  },
+  "& .MuiDataGrid-footerContainer": {
+    height: "28px", // Force footer container to 30px
+    minHeight: "28px", // Override any minimum height constraints
+  },
+  "& .MuiTablePagination-root": {
+    height: "28px", // Ensure pagination component also respects 30px height
+    minHeight: "28px",
+    overflow: "hidden",
+  },
+  "& .MuiTablePagination-toolbar": {
+    height: "28px", // Adjust the toolbar within the pagination
+    minHeight: "28px",
+  },
+
   // disableColumnMenu:true,
   "& .MuiDataGrid-cell": {
     borderBottom: "none",
@@ -444,10 +445,68 @@ export const CustomTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-export const CustomStyledDiv = styled('div')(({ theme }) => ({
+export const CustomStyledDiv = styled("div")(({ theme }) => ({
   zIndex: 1300,
-  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-  borderRadius: '4px',
-  border: '1px solid #ddd',
+  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+  borderRadius: "4px",
+  border: "1px solid #ddd",
 }));
 
+export const GroupHeader = styled("div")(({ theme }) => ({
+  position: "sticky",
+  top: "-8px",
+  padding: "4px 10px",
+  color: theme.palette.primary.main,
+  backgroundColor: lighten(theme.palette.primary.light, 0.85),
+  ...theme.applyStyles("dark", {
+    backgroundColor: darken(theme.palette.primary.main, 0.8),
+  }),
+}));
+
+export const StyledLink = styled("a")(({ theme }) => ({
+  textDecoration: "none",
+  color: "inherit",
+  padding: "10px",
+  display: "block", // Make it behave like a block element
+  "&:hover": {
+    backgroundColor: theme.palette.action.hover, // Change background on hover
+    color: theme.palette.primary.main, // Change text color on hover
+    cursor: "pointer",
+  },
+}));
+
+export const CustomTextFieldForSearch = styled(TextField)(({ theme }) => ({
+  backgroundColor: "#4870AC",
+  "& .MuiOutlinedInput-root": {
+    padding: "2px 8px",
+    borderRadius: 0,
+    "& fieldset": {
+      borderColor: "transparent", // Default state
+      borderWidth: "0 0 2px 0",
+      borderBottomColor: "#FFFFFF",
+    },
+    "&:hover fieldset": {
+      borderWidth: "0 0 2px 0",
+      borderBottomColor: "#FFFFFF",
+    },
+    "&.Mui-focused fieldset": {
+      borderWidth: "0 0 2px 0",
+      borderBottomColor: "#FFFFFF",
+    },
+    "& input": {
+      padding: "6px 0",
+      fontSize: "0.875rem",
+      color: "#FFFFFF",
+    },
+  },
+}));
+
+export const AppBar = styled(MuiAppBar)<AppBarProps>(({ theme }) => ({
+  height: 64,
+  backgroundColor: "#4870AC",
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+}));

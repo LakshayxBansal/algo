@@ -6,6 +6,7 @@ import { logger } from "../utils/logger.utils";
 import { getTotalInvite } from "../controllers/user.controller";
 import CompanyPage from "./CompanyPage";
 import { getCompanyCount } from "../controllers/company.controller";
+import { LinearProgress } from "@mui/material";
 
 export const metadata: Metadata = {
     title: "Manage Company",
@@ -22,7 +23,7 @@ export default async function Companies() {
             ]);
 
             return (
-                    <React.Suspense fallback={<div>Loading...</div>}>
+                    <React.Suspense fallback={<LinearProgress/>}>
                     <CompanyPage 
                         totalInvites={totalInvites.rowCount || 0} 
                         totalCompanies={Number(totalCompanies[0]?.rowCount || 0)}

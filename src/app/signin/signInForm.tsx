@@ -17,7 +17,7 @@ import { InputControl, InputType } from "../Widgets/input/InputControl";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import Google from "next-auth/providers/google";
-import GoogleSignUpButton from "../signup/customButton";
+import GoogleSignUpButton from "../signup/customGoogleButton";
 import * as zs from "../zodschema/zodschema";
 import { LoadingButton } from "@mui/lab";
 import { styles } from "./signInFormStyles";
