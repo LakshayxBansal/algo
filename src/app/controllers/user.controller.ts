@@ -500,7 +500,7 @@ export async function getInviteByUserContact(
 ) {
   let getInvites = {
     status: false,
-    data: {} as inviteUserSchemaT,
+    data: [] as inviteUserSchemaT[],
     count: 0,
     error: {},
   };
@@ -519,7 +519,7 @@ export async function getInviteByUserContact(
 
       getInvites = {
         status: true,
-        data: invites.map(bigIntToNum) as inviteUserSchemaT,
+        data: invites.map(bigIntToNum) as inviteUserSchemaT[],
         count: Number(invites[0]["total_count"]),
         // count: Number(rowCount[0]["rowCount"]),
         error: {},
@@ -531,7 +531,7 @@ export async function getInviteByUserContact(
     getInvites = {
       ...getInvites,
       status: false,
-      data: {} as inviteUserSchemaT,
+      data: [] as inviteUserSchemaT[],
       error: err,
     };
   }
