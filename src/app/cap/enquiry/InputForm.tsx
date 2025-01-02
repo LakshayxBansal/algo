@@ -6,6 +6,11 @@ import {
   Alert,
   Badge,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid,
@@ -90,9 +95,9 @@ export interface InputFormProps {
     loggedInUserData?: Record<string, any>;
     statusUpdate?: boolean;
     voucherNumber?: {
-      voucherString : string |null,
-      newVoucherNumber : number 
-    }
+      voucherString: string | null;
+      newVoucherNumber: number;
+    };
   };
 }
 
@@ -389,9 +394,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
-        defaultValue={
-          enqData?.enquiry_id ? defaultData?.allocated_to : {}
-        }
+        defaultValue={enqData?.enquiry_id ? defaultData?.allocated_to : {}}
       />,
     ],
     [
@@ -516,15 +519,21 @@ export default function InputForm({ baseData }: InputFormProps) {
     );
     if (result.status) {
       // const newVal = { id: result.data[0].id, name: result.data[0].name };
-       const isVoucherNumberChanged =result.data[0].auto_number!== baseData?.voucherNumber?.newVoucherNumber
-      if(isVoucherNumberChanged){
-        const newVoucherString = await generateVoucher(baseData.config_data.voucher,result.data[0].auto_number)
-        setVoucherConflict({status : true, message:`Your Enquiry has been saved with Voucher Number ${newVoucherString}`})
-        }
-      setSnackOpen(true);
-      setTimeout(function () {
-        location.reload();
-      }, 3000);
+      const isVoucherNumberChanged =
+        result.data[0].auto_number !==
+        baseData?.voucherNumber?.newVoucherNumber;
+      if (isVoucherNumberChanged) {
+        setVoucherConflict({
+          status: true,
+          message: `Your Enquiry has been saved with Voucher Number (${result.data[0].voucher_number})`,
+        });
+        return;
+      } else {
+        setSnackOpen(true);
+        setTimeout(function () {
+          location.reload();
+        }, 3000);
+      }
     } else {
       issues = result?.data;
 
@@ -862,7 +871,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-            {`Enquiry Details ${baseData.voucherNumber?.voucherString ? `(${baseData.voucherNumber.voucherString})` : ""}`}
+              {`Enquiry Details ${
+                baseData.voucherNumber?.voucherString
+                  ? `(${baseData.voucherNumber.voucherString})`
+                  : ""
+              }`}
             </div>
           </Seperator>
         </Grid>
@@ -979,17 +992,52 @@ export default function InputForm({ baseData }: InputFormProps) {
           </AddDialog>
         )}
       </form>
+      <Dialog
+        open={voucherConflict.status}
+        onClose={() => {
+          setSnackOpen(true);
+          setTimeout(() => {
+            location.reload();
+          }, 3000);
+          setVoucherConflict({ status: false, message: "" });
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth
+        maxWidth="sm"
+      >
+        {/* <DialogTitle id="alert-dialog-title">Voucher Conflict</DialogTitle> */}
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {voucherConflict.message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setSnackOpen(true);
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
+              setVoucherConflict({ status: false, message: "" });
+            }}
+            color="primary"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar
         open={snackOpen}
-        autoHideDuration={voucherConflict.status? 4000:3000}
+        autoHideDuration={3000}
         onClose={() => setSnackOpen(false)}
         message={
-          voucherConflict.status ? voucherConflict.message:
           enqData?.enquiry_id
             ? "Enquiry details updated successfully!"
             : "Enquiry details saved successfully!"
         }
-        anchorOrigin={{ vertical: voucherConflict.status? "top":"bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
   );

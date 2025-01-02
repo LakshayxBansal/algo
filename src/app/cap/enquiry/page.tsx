@@ -57,7 +57,7 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
     // Step 2: Fetch the necessary data in parallel
     const [fields, configData, loggedInUserData] = await Promise.all([
       getScreenDescription(ENQUIRY_ID),
-      getConfigData(),
+      getConfigData("enquiry"),
       getLoggedInUserDetails(),
      
       ]);
@@ -76,13 +76,14 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
     }
 
     let newVoucherNumber ;
-    
+    let voucherString;
 
     // Step 4: Proceed with remaining calls if the ID is present
     let enqData: Record<string, any> | undefined = {};
     if (decryptedId) {
       enqData = await getEnquiryById(Number(decryptedId));
       newVoucherNumber= enqData?.headerData[0].auto_number;
+      voucherString = enqData?.headerData[0].voucher_number;
       enqData = await getSuggestedRemark(enqData, status, configData[1].config);
       enqData = await formatedData(enqData);
      
@@ -91,8 +92,9 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
     else {
          const lastVoucherNumber= await  getLastVoucherNumber();
          newVoucherNumber= lastVoucherNumber.data[0].maxAutoNumber + 1
+         voucherString =await generateVoucher(JSON.parse(configData[0].config).voucher, newVoucherNumber);
+
     }
-   const  voucherString =await generateVoucher(JSON.parse(configData[0].config).voucher, newVoucherNumber);
 
     // Step 5: Prepare the masterData object
     const masterData: MasterData = {

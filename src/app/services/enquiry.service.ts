@@ -17,7 +17,7 @@ export async function createEnquiryDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -54,7 +54,7 @@ export async function createEnquiryDB(
   } catch (e) {
     console.log(e);
   }
-  return null;
+  
 }
 
 export async function updateEnquiryDB(
@@ -160,10 +160,10 @@ export async function getEnquiryStatusList(
   }
 }
 
-export async function getConfigDataDB(crmDb: string) {
+export async function getConfigDataDB(crmDb: string,formName:string) {
   try {
     let query =
-      'select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type in("enquiry", "regionalSetting")';
+      `select ac.config from app_config ac, config_meta_data cm where cm.id=ac.config_type_id AND cm.config_type in('${formName}', "regionalSetting") `;
     let values: any[] = [];
 
     const result = await excuteQuery({

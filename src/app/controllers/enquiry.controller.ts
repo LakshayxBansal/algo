@@ -241,13 +241,13 @@ export async function updateEnquiry({
   return result;
 }
 
-export async function getConfigData() {
+export async function getConfigData(formName: string) {
   let result;
 
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const dbResult = await getConfigDataDB(session.user.dbInfo.dbName);
+      const dbResult = await getConfigDataDB(session.user.dbInfo.dbName,formName);
       if (dbResult) {
         result = dbResult;
       }

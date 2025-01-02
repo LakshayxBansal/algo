@@ -4,6 +4,10 @@ import {
   Alert,
   Badge,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
   FormControl,
   FormControlLabel,
   Grid,
@@ -93,6 +97,10 @@ interface customprop extends masterFormPropsT {
   };
   status: string | string[] | undefined;
   fields: Array<Record<string, any>>;
+  voucherNumber?: {
+    voucherString: string | null;
+    newVoucherNumber: number;
+  };
 }
 
 const SupportTicketForm = (props: customprop) => {
@@ -125,6 +133,10 @@ const SupportTicketForm = (props: customprop) => {
   const [data, setData] = useState<suppportProductArraySchemaT>(
     props?.data?.productData ?? []
   );
+  const [voucherConflict, setVoucherConflict] = useState({
+    status: false,
+    message: "",
+  });
 
   const router = useRouter();
   const handleSubmit = async (formData: FormData) => {
@@ -136,16 +148,24 @@ const SupportTicketForm = (props: customprop) => {
 
     let result: any;
 
-   
-
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
       // const newVal = { id: result.data[0].id, name: result.data[0].name };
-      setSnackOpen(true);
-      setTimeout(function () {
-        setFormError;
-        location.reload();
-      }, 3000);
+      const isVoucherNumberChanged =
+        result.data[0].auto_number !== props?.voucherNumber?.newVoucherNumber;
+      if (isVoucherNumberChanged) {
+        setVoucherConflict({
+          status: true,
+          message: `Your Ticket has been saved with Voucher Number (${result.data[0].voucher_number})`,
+        });
+        return;
+      } else {
+        setSnackOpen(true);
+        setTimeout(function () {
+          setFormError;
+          location.reload();
+        }, 3000);
+      }
     } else {
       const issues = result?.data;
 
@@ -396,29 +416,29 @@ const SupportTicketForm = (props: customprop) => {
     ],
     [
       "allocate_to",
-        <SelectMasterWrapper
-         key="allocated_to"
-          name={"allocated_to"}
-          id={"allocated_to"}
-          label={"Allocate to"}
-          showDetails={true}
-          dialogTitle={"Assign Executive"}
-          onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
-          fetchDataFn={getExecutive}
-          fnFetchDataByID={getExecutiveById}
-          required
-          formError={formError?.allocated_to ?? formError.allocated_to}
-          defaultValue={masterData?.allocated_to}
-          renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
-            <ExecutiveForm
-              setDialogOpen={fnDialogOpen}
-              setDialogValue={fnDialogValue}
-              metaData={metaData}
-              data={data}
-            />
-          )}
-          disabled={status === "2"}
-        />
+      <SelectMasterWrapper
+        key="allocated_to"
+        name={"allocated_to"}
+        id={"allocated_to"}
+        label={"Allocate to"}
+        showDetails={true}
+        dialogTitle={"Assign Executive"}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
+        fetchDataFn={getExecutive}
+        fnFetchDataByID={getExecutiveById}
+        required
+        formError={formError?.allocated_to ?? formError.allocated_to}
+        defaultValue={masterData?.allocated_to}
+        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+          <ExecutiveForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            metaData={metaData}
+            data={data}
+          />
+        )}
+        disabled={status === "2"}
+      />,
     ],
     [
       "next_action",
@@ -458,7 +478,9 @@ const SupportTicketForm = (props: customprop) => {
           status === "1"
             ? masterData?.next_action_date
               ? adjustToLocal(masterData.next_action_date)
-              : props.status ?"":dayjs()
+              : props.status
+              ? ""
+              : dayjs()
             : null
         }
         slotProps={{
@@ -636,7 +658,7 @@ const SupportTicketForm = (props: customprop) => {
                     />
                   </Box>
                 </Grid>
-              }       
+              }
               <Grid
                 item
                 xs={12}
@@ -646,24 +668,24 @@ const SupportTicketForm = (props: customprop) => {
                 key={`remarks-grid-${index}`}
               >
                 {props.status !== "true" && (
-                <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
-                  <InputControl
-                    placeholder="Call Receipt Remarks"
-                    multiline
-                    inputType={InputType.TEXTFIELD}
-                    label={propsForCallReceiptField.label}
-                    name="call_receipt_remark"
-                    id="call_receipt_remark"
-                    error={formError?.call_receipt_remark?.error}
-                    helperText={formError?.call_receipt_remark?.msg}
-                    setFormError={setFormError}
-                    defaultValue={props.data?.call_receipt_remark}
-                    rows={6}
-                    fullWidth
-                    disabled={props?.status === "true" ? true : false}
-                  />
-                </Grid>
-              )}
+                  <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
+                    <InputControl
+                      placeholder="Call Receipt Remarks"
+                      multiline
+                      inputType={InputType.TEXTFIELD}
+                      label={propsForCallReceiptField.label}
+                      name="call_receipt_remark"
+                      id="call_receipt_remark"
+                      error={formError?.call_receipt_remark?.error}
+                      helperText={formError?.call_receipt_remark?.msg}
+                      setFormError={setFormError}
+                      defaultValue={props.data?.call_receipt_remark}
+                      rows={6}
+                      fullWidth
+                      disabled={props?.status === "true" ? true : false}
+                    />
+                  </Grid>
+                )}
                 <Grid
                   item
                   xs={12}
@@ -686,15 +708,14 @@ const SupportTicketForm = (props: customprop) => {
                     disabled={props?.status === "true" ? true : false}
                   />
                 </Grid>
-              {
-                props?.status === "true" && (
+                {props?.status === "true" && (
                   <Grid
                     item
                     xs={12}
                     md={12}
                     key={`action-taken-remarks-grid-${index}`}
                   >
-                     <InputControl
+                    <InputControl
                       inputType={InputType.TEXTFIELD}
                       key={`action-taken-field-${index}`}
                       placeholder="Action Taken Remarks"
@@ -716,9 +737,8 @@ const SupportTicketForm = (props: customprop) => {
                       required={propsForActionTakenRemField.required}
                       defaultValue={props.data?.action_taken_remark}
                     />
-                    </Grid>
-                )
-              }
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -726,7 +746,7 @@ const SupportTicketForm = (props: customprop) => {
 
         fieldArr.push(fld);
       } else if (!skipColumns.includes(field.column_name_id)) {
-        if (field.column_name_id === "allocate_to" && props.status!=="true") {
+        if (field.column_name_id === "allocate_to" && props.status !== "true") {
           //skip this field
           return null;
         }
@@ -784,7 +804,7 @@ const SupportTicketForm = (props: customprop) => {
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-              Support Ticket
+              {`Support Ticket (${props.voucherNumber?.voucherString})`}
             </div>
           </Seperator>
         </Grid>
@@ -898,6 +918,41 @@ const SupportTicketForm = (props: customprop) => {
           </AddDialog>
         )}
       </form>
+      <Dialog
+        open={voucherConflict.status}
+        onClose={() => {
+          setSnackOpen(true);
+          setTimeout(() => {
+            location.reload();
+          }, 3000);
+          setVoucherConflict({ status: false, message: "" });
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth
+        maxWidth="sm"
+      >
+        {/* <DialogTitle id="alert-dialog-title">Voucher Conflict</DialogTitle> */}
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {voucherConflict.message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setSnackOpen(true);
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
+              setVoucherConflict({ status: false, message: "" });
+            }}
+            color="primary"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         open={snackOpen}
         autoHideDuration={3000}

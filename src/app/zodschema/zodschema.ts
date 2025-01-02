@@ -467,6 +467,7 @@ export const enquiryHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+  voucher_number : z.string().optional(),
   call_receipt_remark: z
     .string()
     .max(5000, {
@@ -556,6 +557,7 @@ export const supportHeaderSchema = z.object({
     .optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
+  voucher_number : z.string().optional(),
 });
 
 export const supportLedgerSchema = z.object({
