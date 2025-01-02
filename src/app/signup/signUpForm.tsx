@@ -1,9 +1,19 @@
 "use client";
 import React, { useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import Button from "@mui/material/Button";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import { LoadingButton } from "@mui/lab";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { userSchemaT } from "../models/models";
+import { logger } from "../utils/logger.utils";
+import { AddDialog } from "../Widgets/masters/addDialog";
+import { styles } from "./signUpFormStyles";
+import GoogleSignUpButton from "./customGoogleButton";
 import {
   registerUser,
   checkInActiveUser,
@@ -11,16 +21,6 @@ import {
   deleteUser,
 } from "@/app/controllers/user.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { useRouter } from "next/navigation";
-import { userSchemaT } from "../models/models";
-import Image from "next/image";
-import GoogleSignUpButton from "./customGoogleButton";
-import { AddDialog } from "../Widgets/masters/addDialog";
-import { logger } from "../utils/logger.utils";
-import { styles } from "./signUpFormStyles";
-import { LoadingButton } from "@mui/lab";
-import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 export default function SignupForm(props: any) {
   const router = useRouter();
@@ -30,23 +30,19 @@ export default function SignupForm(props: any) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inActiveUserId, setInActiveUserId] = useState<number | undefined>();
   const [signUpData, setSignUpData] = useState<userSchemaT>();
-  const [emailElement, setEmailElement] = useState(true);
   const [contact, setContact] = useState("phone");
+  const [emailElement, setEmailElement] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
-  const providerArr = props.providers;
-  const successCallBackUrl = "/company";
 
   const contactHandler = () => {
     if (contact === "phone") {
       setEmailElement(false);
       setContact("email");
       setFormError({});
-      setFormError({});
     } else {
       setEmailElement(true);
       setContact("phone");
-      setFormError({});
       setFormError({});
     }
   };
@@ -57,18 +53,10 @@ export default function SignupForm(props: any) {
 
   async function makeUserActiveAgain(userId: number | undefined) {
     try {
-      await makeUserActive(userId);
+      if(userId && signUpData?.password){
+        await makeUserActive(userId, signUpData.password);
+      }
       router.push("/signin");
-    } catch (error) {
-      logger.info(error);
-    } finally {
-      setDialogOpen(false);
-    }
-  }
-  async function deleteUserPrevDetail(userId: number | undefined) {
-    try {
-      await deleteUser(userId);
-      await handleRegister(signUpData as userSchemaT);
     } catch (error) {
       logger.info(error);
     } finally {
@@ -94,7 +82,6 @@ export default function SignupForm(props: any) {
         }
         errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
-      console.log(issues);
       // errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
@@ -119,6 +106,17 @@ export default function SignupForm(props: any) {
 
   return (
     <Grid sx={styles.container} container spacing={0}>
+      {dialogOpen && (
+        <AddDialog title={""} open={true} setDialogOpen={setDialogOpen}>
+          <Box sx={styles.dialogBox}>
+            <h2>You have to continue with previous credentials</h2>
+            <Button onClick={() => makeUserActiveAgain(inActiveUserId)} sx={styles.okButton}>
+              Ok
+            </Button>
+          </Box>
+        </AddDialog>
+      )}
+
       <Grid item sx={styles.left} rowGap={2}>
         <Image
           src="/Illustration.png"
@@ -134,20 +132,6 @@ export default function SignupForm(props: any) {
           Your business operations, streamlined at your fingertips!
         </Typography>
       </Grid>
-
-      {dialogOpen && (
-        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-          <Box>
-            <h2>Do you want continue with previous credentials ? </h2>
-            <Button onClick={() => makeUserActiveAgain(inActiveUserId)}>
-              Yes
-            </Button>
-            <Button onClick={() => deleteUserPrevDetail(inActiveUserId)}>
-              No
-            </Button>
-          </Box>
-        </AddDialog>
-      )}
 
       <Grid item sx={styles.right}>
         <Box sx={styles.rightTop} rowGap={2}>
@@ -187,25 +171,7 @@ export default function SignupForm(props: any) {
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
             setFormError={setFormError}
-            sx={{
-              "& .MuiInputBase-input": {
-                height: "45px",
-                padding: "0 14px",
-                backgroundColor: "#E8F0FE",
-              },
-              "& .MuiOutlinedInput-root": {
-                height: "45px",
-              },
-              "& .MuiInputLabel-root": {
-                fontSize: "1rem",
-                textAlign: "center",
-              },
-              "& .MuiInputLabel-asterisk": {
-                color: "#E63946",
-              },
-              mt: 2,
-              mb: 1,
-            }}
+            sx={styles.nameInput}
           />
 
           {emailElement && (
@@ -217,28 +183,10 @@ export default function SignupForm(props: any) {
               autoComplete="off"
               fullWidth
               required
-              // autoFocus={email ? true : false}
               error={formError?.email?.error}
               helperText={formError?.email?.msg}
               setFormError={setFormError}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                "& .MuiInputLabel-asterisk": {
-                  color: "#E63946",
-                },
-                my: 1,
-              }}
+              sx={styles.emailPhoneInput}
             />
           )}
 
@@ -251,7 +199,6 @@ export default function SignupForm(props: any) {
               autoComplete="off"
               fullWidth
               required
-              // autoFocus={!email ? true : false}
               error={formError?.phone?.error}
               helperText={formError?.phone?.msg}
               setFormError={setFormError}
@@ -259,24 +206,7 @@ export default function SignupForm(props: any) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                "& .MuiInputLabel-asterisk": {
-                  color: "#E63946",
-                },
-                my: 1,
-              }}
+              sx={styles.emailPhoneInput}
             />
           )}
 
@@ -300,26 +230,7 @@ export default function SignupForm(props: any) {
                 error={formError?.password?.error}
                 helperText={formError?.password?.msg}
                 setFormError={setFormError}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    padding: "0 14px",
-                    backgroundColor: "#E8F0FE",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    height: "45px",
-                    backgroundColor: "#E8F0FE",
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontSize: "1rem",
-                    textAlign: "center",
-                  },
-                  "& .MuiInputLabel-asterisk": {
-                    color: "#E63946",
-                  },
-                  mt: 1,
-                  mb: 1,
-                }}
+                sx={styles.passwordInput}
                 InputProps={{
                   endAdornment: (
                     <Button
@@ -353,26 +264,7 @@ export default function SignupForm(props: any) {
                 setFormError={setFormError}
                 onCopy={(event: any) => handleDefault(event)}
                 onPaste={(event: any) => handleDefault(event)}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    padding: "0 14px",
-                    backgroundColor: "#E8F0FE",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    height: "45px",
-                    backgroundColor: "#E8F0FE",
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontSize: "1rem",
-                    textAlign: "center",
-                  },
-                  "& .MuiInputLabel-asterisk": {
-                    color: "#E63946",
-                  },
-                  mt: 1,
-                  mb: 1,
-                }}
+                sx={styles.passwordInput}
                 InputProps={{
                   endAdornment: (
                     <Button

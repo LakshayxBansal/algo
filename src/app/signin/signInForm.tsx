@@ -1,14 +1,8 @@
 "use client";
-import React, { startTransition, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import {
-  Box,
-  CircularProgress,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
-import ProviderButton from "../Widgets/providerButton";
 import { ClientSafeProvider, getCsrfToken } from "next-auth/react";
 import Grid from "@mui/material/Grid";
 import { signIn } from "next-auth/react";
@@ -16,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { InputControl, InputType } from "../Widgets/input/InputControl";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customGoogleButton";
 import * as zs from "../zodschema/zodschema";
 import { LoadingButton } from "@mui/lab";
@@ -26,11 +19,6 @@ import Image from "next/image";
 interface authPagePropsType {
   providers: ClientSafeProvider[];
 }
-
-/**
- *
- * @param formData to be used with form action
- */
 
 export default function AuthPage(props: authPagePropsType) {
   const [formError, setFormError] = useState<
@@ -45,10 +33,7 @@ export default function AuthPage(props: authPagePropsType) {
 
   const router = useRouter();
   let csrfToken;
-  const providerArr = props.providers;
   const successCallBackUrl = "/company";
-
-  
 
   const contactHandler = () => {
     setEmail(!email);
@@ -83,8 +68,7 @@ export default function AuthPage(props: authPagePropsType) {
         if (status?.ok) {
           startTransition(() => {
             router.push(successCallBackUrl);
-          })
-          
+          });
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};
@@ -186,22 +170,7 @@ export default function AuthPage(props: authPagePropsType) {
               name="email"
               autoComplete="off"
               // disabled={loading}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                  // cursor: loading ? "wait" : "normal",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                my: 3,
-              }}
+              sx={styles.emailPhoneInput}
             />
           )}
 
@@ -222,82 +191,41 @@ export default function AuthPage(props: authPagePropsType) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              // onkeydown={onPhoneChange}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                  // cursor: loading ? "wait" : "normal",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                my: 3,
-              }}
+              sx={styles.emailPhoneInput}
             />
           )}
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+          <InputControl
+            inputType={InputType.TEXT}
+            fullWidth
+            name="password"
+            label="Password"
+            type={!showPassword ? "password" : "text"}
+            id="password"
+            autoComplete="off"
+            disabled={isPending}
+            error={formError?.password?.error}
+            helperText={formError?.password?.msg}
+            setFormError={setFormError}
+            sx={styles.passwordInput}
+            InputProps={{
+              endAdornment: (
+                <Button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  // disabled={loading}
+                  sx={{ marginRight: -1, marginTop: 1 }}
+                >
+                  {showPassword ? (
+                    <RemoveRedEyeOutlinedIcon />
+                  ) : (
+                    <VisibilityOffOutlinedIcon />
+                  )}
+                </Button>
+              ),
             }}
-          >
-            <InputControl
-              inputType={InputType.TEXT}
-              fullWidth
-              name="password"
-              label="Password"
-              type={!showPassword ? "password" : "text"}
-              id="password"
-              autoComplete="off"
-              disabled={isPending}
-              error={formError?.password?.error}
-              helperText={formError?.password?.msg}
-              setFormError={setFormError}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                  // cursor: loading ? "wait" : "normal",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                  backgroundColor: "#E8F0FE",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                mt: 3,
-                mb: 1,
-              }}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    tabIndex={-1}
-                    // disabled={loading}
-                    sx={{ marginRight: -1, marginTop: 1 }}
-                  >
-                    {showPassword ? (
-                      <RemoveRedEyeOutlinedIcon />
-                    ) : (
-                      <VisibilityOffOutlinedIcon />
-                    )}
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          />
 
           <Link
             // href={loading ? "#" : ""}

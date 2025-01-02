@@ -78,4 +78,37 @@ export const styles = {
     textAlign: "center",
     fontWeight: "bold",
   },
+  emailPhoneInput: {
+    "& .MuiInputBase-input": {
+      height: "45px",
+      padding: "0 14px",
+      backgroundColor: "#E8F0FE",
+      // cursor: loading ? "wait" : "normal",
+    },
+    "& .MuiOutlinedInput-root": {
+      height: "45px",
+    },
+    "& .MuiInputLabel-root": {
+      fontSize: "1rem",
+      textAlign: "center",
+    },
+    my: 3,
+  },
+  passwordInput: {
+    "& .MuiInputBase-input": {
+      height: "45px",
+      padding: "0 14px",
+      backgroundColor: "#E8F0FE",
+      // cursor: loading ? "wait" : "normal",
+    },
+    "& .MuiOutlinedInput-root": {
+      height: "45px",
+      backgroundColor: "#E8F0FE",
+    },
+    "& .MuiInputLabel-root": {
+      fontSize: "1rem",
+      textAlign: "center",
+    },
+    my: 1,
+  },
 };

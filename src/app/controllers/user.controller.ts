@@ -107,10 +107,11 @@ export async function getUserDetailsById(userId: number) {
   return null;
 }
 
-export async function makeUserActive(userId: number | undefined) {
+export async function makeUserActive(userId: number | undefined, password: string) {
   try {
+    const hashedPassword = await hashText(password);
     if (userId) {
-      await makeUserActiveDB(userId);
+      await makeUserActiveDB(userId, hashedPassword);
     }
   } catch (e) {
     throw e;
