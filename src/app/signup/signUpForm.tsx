@@ -104,7 +104,7 @@ export default function SignupForm(props: any) {
 
   return (
     <Grid sx={styles.container} container spacing={0}>
-      {true && (
+      {dialogOpen && (
         <AddDialog title={""} open={true} setDialogOpen={setDialogOpen}>
           <Box sx={styles.dialogBox}>
             <h2>User Already Exists! <br></br>Please login with previous credentials</h2>
