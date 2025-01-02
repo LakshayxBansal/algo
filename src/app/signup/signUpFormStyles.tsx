@@ -140,7 +140,5 @@ export const styles = {
   },
   okButton: {
     alignSelf: "flex-end",
-    paddingBottom: "0%",
-    justifyContent: "end",
   },
 };

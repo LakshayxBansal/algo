@@ -91,7 +91,7 @@ export default function SignupForm(props: any) {
       data[key] = value;
     }
     const inActiveUser = await checkInActiveUser(
-      data.email || (data.phone as string)
+      data.email || (data.phone.replace(/ +/g, '') as string)
     );
     if (inActiveUser) {
       setSignUpData(data as userSchemaT);
@@ -105,10 +105,10 @@ export default function SignupForm(props: any) {
   return (
     <Grid sx={styles.container} container spacing={0}>
       {dialogOpen && (
-        <AddDialog title={""} open={true} setDialogOpen={setDialogOpen}>
+        <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
           <Box sx={styles.dialogBox}>
             <h2>User Already Exists! <br></br>Please login with previous credentials</h2>
-            <Button
+            <Button variant="contained"
               onClick={() => makeUserActiveAgain(inActiveUserId)}
               sx={styles.okButton}
             >
