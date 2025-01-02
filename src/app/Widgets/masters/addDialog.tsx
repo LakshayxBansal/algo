@@ -32,6 +32,7 @@ function PaperComponent(props: PaperProps & { handleid: string }) {
       handle={`#${props.handleid}`}
       cancel={'[class*="MuiDialogContent-root"]'}
       bounds={bounds}
+      nodeRef={paperRef}
     >
       <Paper ref={paperRef} {...props} />
     </Draggable>
@@ -74,9 +75,12 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
       {/* <Draggable> */}
 
         <Dialog maxWidth="lg" open={open} onClose={handleClose} 
-      //   PaperComponent={(props) => (
-      //     <PaperComponent {...props} handleid={uniqueHandleId} />
-      // )}
+        PaperComponent={(props) => (
+          <PaperComponent {...props} handleid={uniqueHandleId} />
+      )}
+        disableAutoFocus={true}
+        disableEnforceFocus={true}
+        // disableRestoreFocus={true}
       
       >
           <DialogTitle style={{ 

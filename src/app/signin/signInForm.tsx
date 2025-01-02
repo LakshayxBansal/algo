@@ -128,6 +128,7 @@ export default function AuthPage(props: authPagePropsType) {
           width={500}
           height={550}
           style={styles.mainImg}
+          priority
         />
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
           Welcome!

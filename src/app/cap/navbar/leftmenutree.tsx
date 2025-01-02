@@ -90,9 +90,6 @@ export default function LeftMenuTree(props: {
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) {
-    console.log("pageid", page.id);
-    console.log("parentid", page.parent_id);
-    console.log("this", page.children.length);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;
     // setHoverId(page.id);
