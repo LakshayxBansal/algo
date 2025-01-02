@@ -84,6 +84,7 @@ import { GridCloseIcon } from "@mui/x-data-grid";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { nameMasterData } from "@/app/zodschema/zodschema";
 import generateVoucher from "@/app/utils/generateVoucher";
+import { idID } from "@mui/material/locale";
 
 export interface InputFormProps {
   baseData: {
@@ -116,6 +117,10 @@ export default function InputForm({ baseData }: InputFormProps) {
             id: baseData.loggedInUserData?.id,
             name: baseData.loggedInUserData?.name,
           },
+          allocated_to:{
+            id: baseData.loggedInUserData?.id,
+            name: baseData.loggedInUserData?.name
+          }
         }
   );
   const [formError, setFormError] = useState<
@@ -312,6 +317,33 @@ export default function InputForm({ baseData }: InputFormProps) {
         disabled={baseData.statusUpdate}
       />,
     ],
+   
+    [
+      "sub_status",
+      <SelectMasterWrapper
+        key={`sub-status-${status}`}
+        name="sub_status"
+        id="sub_status"
+        label="sub_status"
+        dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
+        onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
+        fetchDataFn={getSubStatusforStatus}
+        fnFetchDataByID={getEnquirySubSatusById}
+        required={false}
+        formError={formError?.sub_status ?? formError.sub_status}
+        setFormError={setFormError}
+        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+          <SubStatusForm
+            setDialogOpen={fnDialogOpen}
+            setDialogValue={fnDialogValue}
+            parentData={parseInt(status)}
+            data={data}
+          />
+        )}
+        allowNewAdd={status === "1"}
+        defaultValue={subStatus}
+      />,
+    ],
     [
       "status",
       <FormControl sx={{ pl: "0.625em" }} required={false} key="status">
@@ -346,32 +378,6 @@ export default function InputForm({ baseData }: InputFormProps) {
       </FormControl>,
     ],
     [
-      "sub_status",
-      <SelectMasterWrapper
-        key={`sub-status-${status}`}
-        name="sub_status"
-        id="sub_status"
-        label="sub_status"
-        dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
-        fetchDataFn={getSubStatusforStatus}
-        fnFetchDataByID={getEnquirySubSatusById}
-        required={false}
-        formError={formError?.sub_status ?? formError.sub_status}
-        setFormError={setFormError}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <SubStatusForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            parentData={parseInt(status)}
-            data={data}
-          />
-        )}
-        allowNewAdd={status === "1"}
-        defaultValue={subStatus}
-      />,
-    ],
-    [
       "allocate_to",
       <SelectMasterWrapper
         key="allocated_to"
@@ -394,7 +400,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
-        defaultValue={enqData?.enquiry_id ? defaultData?.allocated_to : {}}
+        defaultValue={ defaultData?.allocated_to ?? {id: baseData?.loggedInUserData?.id, name: baseData?.loggedInUserData?.name}  }
       />,
     ],
     [
@@ -812,11 +818,18 @@ export default function InputForm({ baseData }: InputFormProps) {
         );
 
         fieldArr.push(fld);
+        fieldArr.push (  <Grid item xs={12} key={`final-status-container`}>
+          <Seperator>
+            <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+              Final Status
+            </div>
+          </Seperator>  
+        </Grid>)
       } else if (!skipColumns.includes(field.column_name_id)) {
-        if (field.column_name_id === "allocate_to" && !baseData.statusUpdate) {
-          //skip this field
-          return null;
-        }
+        // if (field.column_name_id === "allocate_to" && !baseData.statusUpdate) {
+        //   //skip this field
+        //   return null;
+        // }
 
         const baseElement = defaultComponentMap.get(
           field.column_name_id
@@ -884,16 +897,13 @@ export default function InputForm({ baseData }: InputFormProps) {
             {fieldArr.map((field, index) => {
               // Extract the original key from the field if it exists
               const fieldKey = field.key as string;
-              if (fieldKey.includes("field-default-status")) {
+              if (fieldKey.includes("final-status-container")) {
                 return (
-                  <Grid item xs={12} key={`status-container-${index}`}>
-                    <Seperator>
-                      <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-                        Final Status
-                      </div>
-                    </Seperator>
+                  <React.Fragment
+                  key={`final-status-container-${index}`}>
                     {field}
-                  </Grid>
+                  </React.Fragment>
+                  
                 );
               } else if (
                 fieldKey.includes("field-default-product-remarks-grid")
