@@ -38,7 +38,6 @@ export default function AuthPage(props: authPagePropsType) {
   const contactHandler = () => {
     setEmail(!email);
     setFormError({});
-    setFormError({});
   };
   function actValidate(formData: FormData) {
     // document.body.classList.add("cursor-wait");
