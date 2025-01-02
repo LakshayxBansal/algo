@@ -19,14 +19,14 @@ export default function LeftMenuTree(props: {
   openDrawer: boolean;
   setOpenDrawer?: any;
   isHover?: boolean;
-  setLoading:any;
+  setLoadingg:(props: any) => void;
 }) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
-  const [loading,setLoading]  = useState(false);
   const [hover, setHover] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   const router = useRouter();
 
@@ -66,16 +66,12 @@ export default function LeftMenuTree(props: {
     setOpen(idToOpenMap);
     setSelectedId(id);
     router.push(href);
-    props.setLoading(true);
   }
 
   function handleSubMenuHover(
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) {
-    console.log("pageid", page.id);
-    console.log("parentid", page.parent_id);
-    console.log("this", page.children.length);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;
     // setHoverId(page.id);
@@ -142,9 +138,8 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    // props.setLoading(true);
-    // document.body.classList.add('cursor-wait');
-    // router.push(href);
+    router.push(href);
+    props.setLoadingg(true);
      
   };
 
@@ -262,8 +257,8 @@ export default function LeftMenuTree(props: {
                     handleMouseLeave(e, page);
                   }}
                   component="a"
-                  // onClick={(e) => handleTransiton(e, page.href)}
-                  href={page.href}
+                  onClick={(e) => handleTransiton(e, page.href)}
+                  // href={page.href}
                   selected={selectedId === page.id}
                   tabIndex={-1}
                   style={
@@ -364,7 +359,7 @@ export default function LeftMenuTree(props: {
   return (
     <div>
       <List
-        sx={{ width: "100%", maxWidth: 560, bgcolor: "background.paper" }}
+        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper" }}
         component="nav"
         aria-labelledby="nested-list-subheader"
       >

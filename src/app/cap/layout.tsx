@@ -48,8 +48,8 @@ export default function CapLayout({children} : {children?: React.ReactNode}) {
             <ThemeProvider theme={theme}>
               {children}
             </ThemeProvider>
-          </Box>
                <Footer/>
+          </Box>
         </AppMenu>
         </>
 

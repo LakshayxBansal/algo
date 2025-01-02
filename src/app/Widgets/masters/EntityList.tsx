@@ -44,6 +44,7 @@ import IconComponent from "./component/IconComponent";
 import { useRouter } from "next/navigation";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import ReactDOM from "react-dom";
+import LoadingWrapper from "@/app/loadingWrapper";
 
 const pgSize = 10;
 
@@ -76,7 +77,7 @@ export default function EntityList(props: entitiyCompT) {
   });
 
   const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
-
+  const [loading, setLoading] = useState(false);
   const [selectionModel, setSelectionModel] = useState([]);
 
 
@@ -159,6 +160,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   const dfltColFields: string[] = allDfltCols.map((col) => col.field);
     
   const fetchData = debounce(async (searchText) => {
+    setLoading(true);
     const rows: any = await props.fetchDataFn(
       PageModel.page,
       searchText as string,
@@ -185,13 +187,13 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
         //columns not to showinitially
         const allColumns = allDfltCols.concat(filteredColumns);
         const visibleColumns = allColumns.reduce((model: any, col: any) => {
-          autoSizeColumns();
+          // autoSizeColumns();
           model[col.field] = dfltColFields.includes(col.field);
           return model;
         }, {});
-        
         setColumnVisibilityModel(visibleColumns);
         setAllColumns(allColumns);
+        // setLoading(false);
         
         // setColumnsChanged(true);
         // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
@@ -230,17 +232,26 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     } else {
       fetchData(search);
     }
+    // window.onload = () => {
+    //   setLoading(false);
+    //   document.body.classList.remove("cursor-wait");
+    // }
+    console.log(window.onload);
     return () => {
       clearInterval(timeOut);
     };
   }, [
     PageModel,
+
     filterModel,
     searchText,
+
     search,
-    dialogOpen,
     searchData,
+    
+    dialogOpen,
     apiRef,
+   
     props
   ]);
 
@@ -302,6 +313,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 
   return (
     <Box>
+      {/* <LoadingWrapper loadingg={loading}>   */}
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
           <AddDialog title={`${dlgMode === dialogMode.FileUpload ? 'Upload File' : dlgMode === dialogMode.Add ? `Add ${props.title}` : dlgMode === dialogMode.Delete ? `Delete ${props.title}` : `Update ${props.title}`}`} open={dialogOpen} setDialogOpen={setDialogOpen}>
@@ -586,6 +598,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           />
         </Paper>
       </Box>
+      {/* </LoadingWrapper> */}
     </Box>
   );
 }

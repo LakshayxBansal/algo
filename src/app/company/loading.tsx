@@ -1,10 +1,23 @@
-// loading.tsx
-import React from "react";
+"use client"
+import { useEffect } from "react";
+import { ReactNode } from "react";
 
-export default function Loading() {
-  return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <p>Loading...</p>
-    </div>
-  );
+interface TransitionLinkProps{
+    children: ReactNode;
+}
+export default function Loading({children}:TransitionLinkProps){
+
+    // useEffect(()=>{
+
+    //     document.body.classList.add('cursor-wait');
+    //     return () => {
+    //         document.body.classList.remove('cursor-wait');
+    //     };
+    // },[]);
+
+    return(
+        <div>
+            {children}
+        </div>
+    )
 }

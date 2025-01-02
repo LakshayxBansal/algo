@@ -59,8 +59,6 @@ export default function AuthPage(props: authPagePropsType) {
     setFormError({});
   };
   function actValidate(formData: FormData) {
-    setLoading(true);
-    document.body.classList.add("cursor-wait");
       let data: { [key: string]: any } = {};
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -86,6 +84,7 @@ export default function AuthPage(props: authPagePropsType) {
       }).then(async (status) => {
         if (status?.ok) {
               router.push(successCallBackUrl);
+              
             }
          else {
           const errorState: Record<string, { msg: string; error: boolean }> =
@@ -94,11 +93,6 @@ export default function AuthPage(props: authPagePropsType) {
           setFormError(errorState);
           if (status?.error === "CredentialsSignin") {
             console.log(status);
-          }
-          //loader cursor set
-          if(errorState.form.error == true){
-            setLoading(false)
-            document.body.classList.remove("cursor-wait");
           }
         }
       });
@@ -110,15 +104,9 @@ export default function AuthPage(props: authPagePropsType) {
         errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
       setFormError(errorState);
-    }
-       
+    }    
   }
 
-  // useEffect(() => {
-  //   return () => {
-  //     document.body.classList.remove("cursor-wait");
-  //   };
-  // }, []);
 
   getCsrfToken()
     .then((token) => {

@@ -36,6 +36,7 @@ import { searchMainData } from "@/app/controllers/navbar.controller";
 import Link from "next/link";
 import SecondNavbar from "./SecondNavbar";
 import { AddDialog } from "@/app/Widgets/masters/addDialog";
+import LoadingWrapper from "@/app/loadingWrapper";
 
 const drawerWidth: number = 290;
 
@@ -46,7 +47,7 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  height:60,
+  height: 60,
   // backgroundColor: "#005a9f",
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
@@ -123,7 +124,7 @@ interface propsType {
 
 export default function MenuBar(props: propsType) {
   const pages = props.pages;
-  const children:React.ReactNode = props.children;
+  const children: React.ReactNode = props.children;
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const [searchIcon, setSearchIcon] = useState<boolean>(false);
@@ -134,42 +135,41 @@ export default function MenuBar(props: propsType) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const childrenRef = useRef<React.ReactNode>(props.children); 
+  const childrenRef = useRef<React.ReactNode>(props.children);
 
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
-    // width: open ? 290 : 72,
-    width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
-    // height:"100vh",
-    // overflowY: 'auto',
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.easeInOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: "border-box",
-    ...((!open && hovered) && {
-      overflowX: "hidden",
-      // transition: theme.transitions.create("width", {
-      //   easing: theme.transitions.easing.sharp,
-      //   duration: theme.transitions.duration.leavingScreen,
-      // }),
-      width: hovered ? theme.spacing(16) : theme.spacing(7),
-      // [theme.breakpoints.up("sm")]: {
-      //   width: theme.spacing(7),
-      // },
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: "1.0s",
+  const Drawer = styled(MuiDrawer, {
+    shouldForwardProp: (prop) => prop !== "open",
+  })(({ theme, open }) => ({
+    "& .MuiDrawer-paper": {
+      position: "relative",
+      whiteSpace: "nowrap",
+      // width: open ? 290 : 72,
+      width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
+      // height:"100vh",
+      // overflowY: 'auto',
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.easeInOut,
+        duration: theme.transitions.duration.enteringScreen,
       }),
-    }),
-  },
-}));
-
+      boxSizing: "border-box",
+      ...(!open &&
+        hovered && {
+          overflowX: "hidden",
+          // transition: theme.transitions.create("width", {
+          //   easing: theme.transitions.easing.sharp,
+          //   duration: theme.transitions.duration.leavingScreen,
+          // }),
+          width: hovered ? theme.spacing(16) : theme.spacing(7),
+          // [theme.breakpoints.up("sm")]: {
+          //   width: theme.spacing(7),
+          // },
+          transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: "1.0s",
+          }),
+        }),
+    },
+  }));
 
   const holdValue = useRef("newValue");
 
@@ -184,11 +184,14 @@ const Drawer = styled(MuiDrawer, {
     if (search.length > 0) {
       maindata(search);
     }
-
-
-  }, [search,loading]);
-
-  console.log(loading);
+    // window.onload = () => {
+    // };
+    
+    setLoading(false); // Set loading to false when everything is loaded
+    return () => {
+      window.onload = null;
+    };
+  }, []);
 
   let groupedData: Record<string, { result: string; href: string }[]> = {};
 
@@ -236,7 +239,7 @@ const Drawer = styled(MuiDrawer, {
       <>
         <CssBaseline />
         <AppBar open={open}>
-          <Toolbar sx={{ pr: "24px", height:55 }}>
+          <Toolbar sx={{ pr: "24px", height: 55 }}>
             <IconButton
               title="Title"
               edge="start"
@@ -332,7 +335,10 @@ const Drawer = styled(MuiDrawer, {
                       }}
                     />
                   ) : (
-                    <IconButton title="Title" onClick={() => setSearchIcon(true)}>
+                    <IconButton
+                      title="Title"
+                      onClick={() => setSearchIcon(true)}
+                    >
                       <SearchIcon fontSize="medium" style={{ color: "#fff" }} />
                     </IconButton>
                   )}
@@ -358,7 +364,6 @@ const Drawer = styled(MuiDrawer, {
               img={props.profileImg}
               name={props.username}
               companyName={props.companyName}
-            
             />
           </Toolbar>
         </AppBar>
@@ -383,17 +388,17 @@ const Drawer = styled(MuiDrawer, {
                 <ChevronLeftIcon />
               </IconButton>
             </Toolbar>
-
-            <LeftMenuTree
-              pages={pages}
-              openDrawer={open}
-              setOpenDrawer={setOpenDrawer}
-              isHover={hovered}
-              setLoading={setLoading}
-            />
+              <LeftMenuTree
+                pages={pages}
+                openDrawer={open}
+                setOpenDrawer={setOpenDrawer}
+                isHover={hovered}
+                setLoadingg={setLoading}
+              />
           </Drawer>
-          {/* <Box style={{ width: "96vw" }}>{loading ? <Loadered> {children}</Loadered> : children}</Box> */}
+          <LoadingWrapper loadingg={loading}>
           <Box style={{ width: "96vw" }}>{children}</Box>
+          </LoadingWrapper>
         </Box>
       </>
     );

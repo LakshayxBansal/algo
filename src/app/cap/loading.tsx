@@ -8,13 +8,13 @@ interface TransitionLinkProps{
 }
 export default function Loading({children}:TransitionLinkProps){
 
-    useEffect(()=>{
+    // useEffect(()=>{
 
-        document.body.classList.add('cursor-wait');
-        return () => {
-            document.body.classList.remove('cursor-wait');
-        };
-    },[]);
+    //     document.body.classList.add('cursor-wait');
+    //     return () => {
+    //         document.body.classList.remove('cursor-wait');
+    //     };
+    // },[]);
 
     return(
         <div>
