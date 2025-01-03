@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -163,7 +163,8 @@ export default function InputForm({ baseData }: InputFormProps) {
     .filter(Boolean)
     .join(" "); // Remove empty strings and join with space
 
-  const defaultComponentMap = new Map<string, React.ReactNode>([
+  const defaultComponentMap = useMemo(() => {
+    return new Map<string, React.ReactNode>([ 
     [
       "enq_number",
       <InputControl
@@ -455,6 +456,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         format={dateTimeFormat}
         key={status}
         label="When"
+        sx={{ display: "flex", flexGrow: 1 }}
         inputType={InputType.DATETIMEINPUT}
         id="next_action_date"
         name="next_action_date"
@@ -505,6 +507,8 @@ export default function InputForm({ baseData }: InputFormProps) {
       />,
     ],
   ]);
+},[formError, onSelectChange,baseData])
+
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
@@ -523,6 +527,9 @@ export default function InputForm({ baseData }: InputFormProps) {
       formatedData as enquiryDataSchemaT,
       data as enquiryProductArraySchemaT
     );
+
+    console.log("result", result);
+    
     if (result.status) {
       // const newVal = { id: result.data[0].id, name: result.data[0].name };
       const isVoucherNumberChanged =
@@ -568,7 +575,8 @@ export default function InputForm({ baseData }: InputFormProps) {
           const key = row.path[0];
           const field = row.path[1];
           if (!temp[key]) {
-            temp[key] = {};
+            temp[key] = {}; console.log("field");
+    
           }
 
           // Add or update the field's error message
@@ -633,6 +641,8 @@ export default function InputForm({ baseData }: InputFormProps) {
     setDialogValue: any,
     name: string
   ) {
+    console.log("select is called ", val, name);
+    
     let values = { ...selectValues };
     values[name] = val;
     setSelectValues(values);
@@ -660,7 +670,7 @@ export default function InputForm({ baseData }: InputFormProps) {
     return { label: "default label", required: false, disabled: false }; // Default if no match is found
   }
 
-  let fieldArr: React.ReactElement[] = [];
+  // let fieldArr: React.ReactElement[] = [];
 
   const skipColumns = [
     "product_grid",
@@ -671,195 +681,145 @@ export default function InputForm({ baseData }: InputFormProps) {
 
   const enquiryMaintainProducts = baseData.config_data.maintainProducts;
 
-  baseData.fields.map((field: any, index) => {
-    if (field.is_default_column) {
-      if (field.column_name_id === "product_grid") {
-        let propsForCallReceiptField = fieldPropertiesById(
-          "call_receipt_remark"
-        );
-        let propsForSugActionField = fieldPropertiesById(
-          "suggested_action_remark"
-        );
-        let propsForActionTakenRemField = fieldPropertiesById(
-          "action_taken_remark"
-        );
-        let fld = (
-          <Grid item xs={12} key={`field-default-product-remarks-grid`}>
-            <Grid container spacing={2} key={`grid-container-${index}`}>
-              {enquiryMaintainProducts && (
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  sx={{ marginY: "0.5%" }}
-                  key={`product-grid-${index}`}
-                >
-                  <Box
-                    sx={{
-                      height: 264,
-                    }}
-                    key={`product-box-${index}`}
-                  >
-                    <ProductGrid
-                      key={`product-grid-component-${index}`}
-                      id="product_grid"
-                      name="product_grid"
-                      dgData={data}
-                      setdgData={setData}
-                      setdgDialogOpen={setDialogOpen}
-                      dgFormError={formError}
-                      setdgFormError={setFormError}
-                      dgProductFormError={productFormError}
-                      disabled={
-                        baseData.statusUpdate || Boolean(field.is_disabled)
-                      }
-                    />
-                  </Box>
-                </Grid>
-              )}
 
-              <Grid
-                item
-                xs={12}
-                md={enquiryMaintainProducts ? 6 : 12}
-                sx={{ display: "flex", flexDirection: "column" }}
-                key={`remarks-grid-${index}`}
-              >
-                {!baseData.statusUpdate && (
-                  <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
-                    <InputControl
-                      inputType={InputType.TEXTFIELD}
-                      key={`call-receipt-field-${index}`}
-                      placeholder="Call receipt remarks"
-                      label={propsForCallReceiptField.label}
-                      multiline
-                      name="call_receipt_remark"
-                      id="call_receipt_remark"
-                      rows={6}
-                      fullWidth
-                      error={formError?.call_receipt_remark?.error}
-                      helperText={formError?.call_receipt_remark?.msg}
-                      setFormError={setFormError}
-                      sx={{
-                        "& .MuiFormHelperText-root": {
-                          margin: 0,
-                        },
-                      }}
-                      disabled={
-                        baseData.statusUpdate ||
-                        Boolean(propsForCallReceiptField.disabled)
-                      }
-                      required={propsForCallReceiptField.required}
-                      defaultValue={enqData?.call_receipt_remark ?? ""}
-                    />
+  const fieldArr = useMemo(() => {
+    let fields : React.ReactElement[] = [];
+    baseData.fields.map((field: any, index) => {
+      if (field.is_default_column) {
+        if (field.column_name_id === "product_grid") {
+          let propsForCallReceiptField = fieldPropertiesById("call_receipt_remark");
+          let propsForSugActionField = fieldPropertiesById("suggested_action_remark");
+          let propsForActionTakenRemField = fieldPropertiesById("action_taken_remark");
+  
+          const fld = (
+            <Grid item xs={12} key={`field-default-product-remarks-grid`}>
+              <Grid container spacing={2} key={`grid-container-${index}`}>
+                {enquiryMaintainProducts && (
+                  <Grid item xs={12} md={6} sx={{ marginY: "0.5%" }} key={`product-grid-${index}`}>
+                    <Box sx={{ height: 264 }} key={`product-box-${index}`}>
+                      <ProductGrid
+                        key={`product-grid-component-${index}`}
+                        id="product_grid"
+                        name="product_grid"
+                        dgData={data}
+                        setdgData={setData}
+                        setdgDialogOpen={setDialogOpen}
+                        dgFormError={formError}
+                        setdgFormError={setFormError}
+                        dgProductFormError={productFormError}
+                        disabled={baseData.statusUpdate || Boolean(field.is_disabled)}
+                      />
+                    </Box>
                   </Grid>
                 )}
-                <Grid
-                  item
-                  xs={12}
-                  md={12}
-                  key={`suggested-action-grid-${index}`}
-                >
-                  <InputControl
-                    inputType={InputType.TEXTFIELD}
-                    key={`suggested-action-field-${index}`}
-                    placeholder="Suggested Action Remarks"
-                    label={propsForSugActionField.label}
-                    multiline
-                    name="suggested_action_remark"
-                    id="suggested_action_remark"
-                    rows={6}
-                    fullWidth
-                    error={formError?.suggested_action_remark?.error}
-                    helperText={formError?.suggested_action_remark?.msg}
-                    setFormError={setFormError}
-                    sx={{
-                      "& .MuiFormHelperText-root": {
-                        margin: 0,
-                      },
-                    }}
-                    disabled={
-                      baseData.statusUpdate ||
-                      Boolean(propsForSugActionField.disabled)
-                    }
-                    required={propsForSugActionField.required}
-                    defaultValue={enqData.suggested_action_remark}
-                  />
+  
+                <Grid item xs={12} md={enquiryMaintainProducts ? 6 : 12} sx={{ display: "flex", flexDirection: "column" }} key={`remarks-grid-${index}`}>
+                  {!baseData.statusUpdate && (
+                    <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
+                      <InputControl
+                        inputType={InputType.TEXTFIELD}
+                        key={`call-receipt-field-${index}`}
+                        placeholder="Call receipt remarks"
+                        label={propsForCallReceiptField.label}
+                        multiline
+                        name="call_receipt_remark"
+                        id="call_receipt_remark"
+                        rows={6}
+                        fullWidth
+                        error={formError?.call_receipt_remark?.error}
+                        helperText={formError?.call_receipt_remark?.msg}
+                        setFormError={setFormError}
+                        sx={{ "& .MuiFormHelperText-root": { margin: 0 } }}
+                        disabled={baseData.statusUpdate || Boolean(propsForCallReceiptField.disabled)}
+                        required={propsForCallReceiptField.required}
+                        defaultValue={enqData?.call_receipt_remark ?? ""}
+                      />
+                    </Grid>
+                  )}
+                  <Grid item xs={12} md={12} key={`suggested-action-grid-${index}`}>
+                    <InputControl
+                      inputType={InputType.TEXTFIELD}
+                      key={`suggested-action-field-${index}`}
+                      placeholder="Suggested Action Remarks"
+                      label={propsForSugActionField.label}
+                      multiline
+                      name="suggested_action_remark"
+                      id="suggested_action_remark"
+                      rows={6}
+                      fullWidth
+                      error={formError?.suggested_action_remark?.error}
+                      helperText={formError?.suggested_action_remark?.msg}
+                      setFormError={setFormError}
+                      sx={{ "& .MuiFormHelperText-root": { margin: 0 } }}
+                      disabled={baseData.statusUpdate || Boolean(propsForSugActionField.disabled)}
+                      required={propsForSugActionField.required}
+                      defaultValue={enqData.suggested_action_remark}
+                    />
+                  </Grid>
+                  {baseData.statusUpdate && (
+                    <Grid item xs={12} md={12} key={`action-taken-grid-${index}`}>
+                      <InputControl
+                        inputType={InputType.TEXTFIELD}
+                        key={`action-taken-field-${index}`}
+                        placeholder="Action Taken Remarks"
+                        label={propsForActionTakenRemField.label}
+                        multiline
+                        name="action_taken_remark"
+                        id="action_taken_remark"
+                        rows={6}
+                        fullWidth
+                        error={formError?.action_taken_remark?.error}
+                        helperText={formError?.action_taken_remark?.msg}
+                        setFormError={setFormError}
+                        sx={{ "& .MuiFormHelperText-root": { margin: 0 } }}
+                        disabled={Boolean(propsForActionTakenRemField.disabled)}
+                        required={propsForActionTakenRemField.required}
+                        defaultValue={enqData.action_taken_remark}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
-                {baseData.statusUpdate && (
-                  <Grid item xs={12} md={12} key={`action-taken-grid-${index}`}>
-                    <InputControl
-                      inputType={InputType.TEXTFIELD}
-                      key={`action-taken-field-${index}`}
-                      placeholder="Action Taken Remarks"
-                      label={propsForActionTakenRemField.label}
-                      multiline
-                      name="action_taken_remark"
-                      id="action_taken_remark"
-                      rows={6}
-                      fullWidth
-                      error={formError?.action_taken_remark?.error}
-                      helperText={formError?.action_taken_remark?.msg}
-                      setFormError={setFormError}
-                      sx={{
-                        "& .MuiFormHelperText-root": {
-                          margin: 0,
-                        },
-                      }}
-                      disabled={Boolean(propsForActionTakenRemField.disabled)}
-                      required={propsForActionTakenRemField.required}
-                      defaultValue={enqData.action_taken_remark}
-                    />
-                  </Grid>
-                )}
               </Grid>
             </Grid>
-          </Grid>
+          );
+  
+          fields.push(fld);
+          fields.push(
+            <Grid item xs={12} key={`final-status-container`}>
+              <Seperator>
+                <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+                  Final Status
+                </div>
+              </Seperator>
+            </Grid>
+          );
+        } else if (!skipColumns.includes(field.column_name_id)) {
+          const baseElement = defaultComponentMap.get(field.column_name_id) as React.ReactElement;
+  
+          const fld = React.cloneElement(baseElement, {
+            ...baseElement.props,
+            key: `field-default-${field.column_name_id}`,
+            label: field.column_label,
+            required: field.is_mandatory === 1,
+            disabled: field.is_disabled ? true : baseElement.props.disabled,
+          });
+  
+          fields.push(fld);
+        }
+      } else {
+        const fld = (
+          <CustomField key={`field-custom-${field.column_name_id}`} desc={field} defaultValue={enqData[field.column_name_id]} />
         );
-
-        fieldArr.push(fld);
-        fieldArr.push (  <Grid item xs={12} key={`final-status-container`}>
-          <Seperator>
-            <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-              Final Status
-            </div>
-          </Seperator>  
-        </Grid>)
-      } else if (!skipColumns.includes(field.column_name_id)) {
-        // if (field.column_name_id === "allocate_to" && !baseData.statusUpdate) {
-        //   //skip this field
-        //   return null;
-        // }
-
-        const baseElement = defaultComponentMap.get(
-          field.column_name_id
-        ) as React.ReactElement;
-
-        let fld;
-
-        fld = React.cloneElement(baseElement, {
-          ...baseElement.props,
-          key: `field-default-${field.column_name_id}`,
-          label: field.column_label,
-          required: field.is_mandatory === 1,
-          disabled: field.is_disabled ? true : baseElement.props.disabled,
-        });
-
-        fieldArr.push(fld);
+        fields.push(fld);
       }
-    } else {
-      const fld = (
-        <CustomField
-          key={`field-custom-${field.column_name_id}`}
-          desc={field}
-          defaultValue={enqData[field.column_name_id]}
-        />
-      );
-      fieldArr.push(fld);
-    }
-    return null; // Add this to satisfy the map function
-  });
-
+  
+      return null; // Satisfy map's return type, but this does not affect the field array
+    });
+  
+    return fields; // Return the final list of fields
+  }, [defaultComponentMap,formError, baseData, enqData, skipColumns]);
+  
+  
   return (
     <Box>
       <Collapse in={formError?.form ? true : false}>

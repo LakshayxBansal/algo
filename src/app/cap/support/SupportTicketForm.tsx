@@ -112,7 +112,7 @@ const SupportTicketForm = (props: customprop) => {
 
   const [snackOpen, setSnackOpen] = useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>(
-    props?.data?.tkt_number ? masterData : { received_by: props?.userDetails }
+    props?.data?.tkt_number ? masterData : { received_by: props?.userDetails , allocated_to: props?.userDetails}
   );
   const [status, setStatus] = useState(
     masterData?.status?.id != null ? masterData.status.id.toString() : "1"
@@ -428,7 +428,7 @@ const SupportTicketForm = (props: customprop) => {
         fnFetchDataByID={getExecutiveById}
         required
         formError={formError?.allocated_to ?? formError.allocated_to}
-        defaultValue={masterData?.allocated_to}
+        defaultValue={masterData?.allocated_to ?? props.userDetails}
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
           <ExecutiveForm
             setDialogOpen={fnDialogOpen}
@@ -469,6 +469,7 @@ const SupportTicketForm = (props: customprop) => {
         key={`next_action_date_${status}`}
         label="When"
         inputType={InputType.DATETIMEINPUT}
+        sx={{ display: "flex", flexGrow: 1 }}
         id="next_action_date"
         name="next_action_date"
         error={formError?.next_action_date?.error}
@@ -745,11 +746,17 @@ const SupportTicketForm = (props: customprop) => {
         );
 
         fieldArr.push(fld);
+        fieldArr.push(
+          <Grid item xs={12} key={`final-status-container`}>
+            <Seperator>
+              <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+                Final Status
+              </div>
+            </Seperator>
+          </Grid>
+        );
       } else if (!skipColumns.includes(field.column_name_id)) {
-        if (field.column_name_id === "allocate_to" && props.status !== "true") {
-          //skip this field
-          return null;
-        }
+        
         const baseElement = defaultComponentMap.get(
           field.column_name_id
         ) as React.ReactElement;
@@ -813,16 +820,11 @@ const SupportTicketForm = (props: customprop) => {
             {fieldArr.map((field, index) => {
               // Extract the original key from the field if it exists
               const fieldKey = field.key as string;
-              if (fieldKey.includes("field-default-status")) {
+              if (fieldKey.includes("final-status-container")) {
                 return (
-                  <Grid item xs={12} key={`status-container-${index}`}>
-                    <Seperator>
-                      <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-                        Final Status
-                      </div>
-                    </Seperator>
+                  <React.Fragment key={`final-status-container-${index}`}>
                     {field}
-                  </Grid>
+                  </React.Fragment>
                 );
               } else if (
                 fieldKey.includes("field-default-product-remarks-grid")
