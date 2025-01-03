@@ -89,6 +89,7 @@ import { useRouter } from "next/navigation";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 import CustomField from "../enquiry/CustomFields";
 import { GridCloseIcon } from "@mui/x-data-grid";
+import AlertDialog from "@/app/Widgets/AlertDialog";
 
 interface customprop extends masterFormPropsT {
   userDetails: {
@@ -103,6 +104,12 @@ interface customprop extends masterFormPropsT {
   };
 }
 
+const checkVoucherConflict = (savedVoucherNumber: number, newVoucherNumber: number| undefined) => {
+  if(savedVoucherNumber ===0 || savedVoucherNumber === newVoucherNumber ) {
+    return false;
+  }
+  return true;
+}
 const SupportTicketForm = (props: customprop) => {
   const masterData = props?.data?.masterData ?? {};
 
@@ -150,22 +157,24 @@ const SupportTicketForm = (props: customprop) => {
 
     result = await persistEntity(formatedData as supportTicketSchemaT, data);
     if (result.status) {
-      // const newVal = { id: result.data[0].id, name: result.data[0].name };
-      const isVoucherNumberChanged =
-        result.data[0].auto_number !== props?.voucherNumber?.newVoucherNumber;
-      if (isVoucherNumberChanged) {
+      const savedVoucherNumber = result.data[0].auto_number;      
+      const localVoucherNumber = props.voucherNumber?.newVoucherNumber;
+      const isVoucherConflict = checkVoucherConflict(savedVoucherNumber, localVoucherNumber)
+
+
+      if (isVoucherConflict) {
         setVoucherConflict({
           status: true,
           message: `Your Ticket has been saved with Voucher Number (${result.data[0].voucher_number})`,
         });
         return;
-      } else {
-        setSnackOpen(true);
-        setTimeout(function () {
-          setFormError;
-          location.reload();
-        }, 3000);
       }
+
+      setSnackOpen(true);
+      setTimeout(function () {
+        setFormError;
+        location.reload();
+      }, 3000);
     } else {
       const issues = result?.data;
 
@@ -555,6 +564,15 @@ const SupportTicketForm = (props: customprop) => {
     router.back();
   };
 
+  const handleDialogClose = () => {
+    setSnackOpen(true);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+    setVoucherConflict({ status: false, message: '' });
+  };
+
+
   async function getSubStatusforStatus(stateStr: string) {
     const subStatus = await getSupportSubStatus(stateStr, status);
     if (subStatus?.length > 0) {
@@ -804,7 +822,7 @@ const SupportTicketForm = (props: customprop) => {
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-              {`Support Ticket (${props.voucherNumber?.voucherString})`}
+              {`Support Ticket ${props.voucherNumber?.voucherString ? `(${props.voucherNumber?.voucherString})` : ""}`}
             </div>
           </Seperator>
         </Grid>
@@ -919,41 +937,11 @@ const SupportTicketForm = (props: customprop) => {
           </AddDialog>
         )}
       </form>
-      <Dialog
+      <AlertDialog
         open={voucherConflict.status}
-        onClose={() => {
-          setSnackOpen(true);
-          setTimeout(() => {
-            location.reload();
-          }, 3000);
-          setVoucherConflict({ status: false, message: "" });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        fullWidth
-        maxWidth="sm"
-      >
-        {/* <DialogTitle id="alert-dialog-title">Voucher Conflict</DialogTitle> */}
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {voucherConflict.message}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setSnackOpen(true);
-              setTimeout(() => {
-                location.reload();
-              }, 3000);
-              setVoucherConflict({ status: false, message: "" });
-            }}
-            color="primary"
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        message={voucherConflict.message}
+        onClose={handleDialogClose}
+      />
       <Snackbar
         open={snackOpen}
         autoHideDuration={3000}

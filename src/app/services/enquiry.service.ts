@@ -381,7 +381,7 @@ export async function getEnquiryDescriptionDb(crmDb: string, searchString: strin
   }
 }
 
-export async function getLastVoucherNumberDb(session: Session) {
+export async function getLastVoucherNumberEnquiryDb(session: Session) {
   try {
     let query = "select max(auto_number) as maxAutoNumber from enquiry_header_tran ";
     const result = await  excuteQuery({

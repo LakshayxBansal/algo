@@ -7,7 +7,7 @@ import {
   getLoggedInUserDetails,
   getConfigData,
   getEnquiryById,
-  getLastVoucherNumber,
+  getLastVoucherNumberEnquiry,
 } from "@/app/controllers/enquiry.controller";
 import { getRightsData } from "@/app/controllers/rights.controller";
 import { getScreenDescription } from "@/app/controllers/object.controller";
@@ -90,7 +90,7 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
 
     }
     else {
-         const lastVoucherNumber= await  getLastVoucherNumber();
+         const lastVoucherNumber= await  getLastVoucherNumberEnquiry();
          newVoucherNumber= lastVoucherNumber.data[0].maxAutoNumber + 1
          voucherString =await generateVoucher(JSON.parse(configData[0].config).voucher, newVoucherNumber);
 

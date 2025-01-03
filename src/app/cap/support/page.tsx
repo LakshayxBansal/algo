@@ -5,7 +5,7 @@ import { logger } from "@/app/utils/logger.utils";
 import SupportTicketForm from "./SupportTicketForm";
 import { getLastVoucherNumberSupport, getSupportDataById } from "@/app/controllers/supportTicket.controller";
 import { decrypt } from "@/app/utils/encrypt.utils";
-import { getConfigData, getLastVoucherNumber, getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
+import { getConfigData, getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { Metadata } from "next";
 import { getScreenDescription } from "@/app/controllers/object.controller";
