@@ -12,7 +12,7 @@ import { getScreenDescription } from "@/app/controllers/object.controller";
 import { SUPPORT_ID } from "@/app/utils/consts.utils";
 
 export const metadata : Metadata = {
-  title : ''
+  title : 'Support Tickets'
 }
 
 interface searchParamsProps {

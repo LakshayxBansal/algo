@@ -16,7 +16,7 @@ import { decrypt } from "@/app/utils/encrypt.utils";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 
 export const metadata: Metadata = {
-  title: "Add Enquiry",
+  title: "Enquiry Tickets",
 };
 
 interface searchParamsProps {
