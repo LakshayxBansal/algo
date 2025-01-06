@@ -126,7 +126,7 @@ export default function LeftMenuTree(props: {
         // setHoverId(page.id);
         idToOpenPop.current.clear();
         setOpenPopper((prevState) => new Map());
-      }, 100);
+      }, 300);
     }
   };
 

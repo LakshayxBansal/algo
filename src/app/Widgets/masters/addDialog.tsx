@@ -12,26 +12,35 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
 function PaperComponent(props: PaperProps & { handleid: string }) {
-  let paperRef = useRef<HTMLDivElement | null>(null);
-  const [bounds, setBounds] = useState({ left: 0, top: 0, right: 0, bottom: 0 });
+  const paperRef = useRef<HTMLDivElement | null>(null);
+  const dragBounds = useRef({ left: 0, top: 0, right: 0, bottom: 0 });
+  const [isBoundsSet, setIsBoundsSet] = useState(false);
 
-  React.useEffect(() => {
+  const calculateBounds = () => {
     if (paperRef.current) {
       const { offsetWidth, offsetHeight } = paperRef.current;
-      setBounds({
+      dragBounds.current = {
         left: -(window.innerWidth + offsetWidth) / 2 + 64,
         top: -(window.innerHeight - offsetHeight) / 2,
         right: (window.innerWidth + offsetWidth) / 2 - 64,
         bottom: (window.innerHeight + offsetHeight) / 2 - 64,
-      });
+      };
+      setIsBoundsSet(true);
     }
-  }, [props.handleid]);
+  };
+
+  const handleDragStart = () => {
+    if (!isBoundsSet) {
+      calculateBounds(); // Calculate bounds only if not already set
+    }
+  };
 
   return (
     <Draggable
       handle={`#${props.handleid}`}
       cancel={'[class*="MuiDialogContent-root"]'}
-      bounds={bounds}
+      bounds={dragBounds.current}
+      onStart={handleDragStart} // Calculate bounds dynamically on first drag start
       nodeRef={paperRef}
     >
       <Paper ref={paperRef} {...props} />
@@ -78,10 +87,6 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
         PaperComponent={(props) => (
           <PaperComponent {...props} handleid={uniqueHandleId} />
       )}
-        disableAutoFocus={true}
-        disableEnforceFocus={true}
-        // disableRestoreFocus={true}
-      
       >
           <DialogTitle style={{ 
             cursor: 'move',
