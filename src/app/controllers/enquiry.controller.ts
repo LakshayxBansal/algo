@@ -12,7 +12,7 @@ import {
   getEnquiryDataByPageDb,
   getEnquiryDataCount,
   delEnquiryDataByIdDb,
-  getLastVoucherNumberDb,
+  getLastVoucherNumberEnquiryDb,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -435,12 +435,12 @@ export async function delEnquiryDataById(enquiryID: number) {
   }
 }
 
-export async function getLastVoucherNumber() {
+export async function getLastVoucherNumberEnquiry() {
   let result;
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const dbResult = await getLastVoucherNumberDb(session);
+      const dbResult = await getLastVoucherNumberEnquiryDb(session);
       result = { status: true, data: dbResult };
     } else {
       result = {

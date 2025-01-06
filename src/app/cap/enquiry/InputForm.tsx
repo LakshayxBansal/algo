@@ -85,6 +85,7 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { nameMasterData } from "@/app/zodschema/zodschema";
 import generateVoucher from "@/app/utils/generateVoucher";
 import { idID } from "@mui/material/locale";
+import AlertDialog from "@/app/Widgets/AlertDialog";
 
 export interface InputFormProps {
   baseData: {
@@ -514,6 +515,13 @@ export default function InputForm({ baseData }: InputFormProps) {
     ]);
   }, [formError, onSelectChange, baseData]);
 
+  const checkVoucherConflict = (savedVoucherNumber: number, newVoucherNumber: number| undefined) => {
+    if(savedVoucherNumber ===0 || savedVoucherNumber === newVoucherNumber ) {
+      return false;
+    }
+    return true;
+  }
+
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
@@ -533,25 +541,23 @@ export default function InputForm({ baseData }: InputFormProps) {
       data as enquiryProductArraySchemaT
     );
 
-    console.log("result", result);
-
     if (result.status) {
-      // const newVal = { id: result.data[0].id, name: result.data[0].name };
-      const isVoucherNumberChanged =
-        result.data[0].auto_number !==
-        baseData?.voucherNumber?.newVoucherNumber;
-      if (isVoucherNumberChanged) {
+      const savedVoucherNumber = result.data[0].auto_number;      
+      const localVoucherNumber = baseData.voucherNumber?.newVoucherNumber;
+      const isVoucherConflict = checkVoucherConflict(savedVoucherNumber, localVoucherNumber)
+
+      if (isVoucherConflict) {
         setVoucherConflict({
           status: true,
           message: `Your Enquiry has been saved with Voucher Number (${result.data[0].voucher_number})`,
         });
         return;
-      } else {
-        setSnackOpen(true);
-        setTimeout(function () {
-          location.reload();
-        }, 3000);
-      }
+      } 
+      setSnackOpen(true);
+      setTimeout(function () {
+        location.reload();
+      }, 3000);
+      
     } else {
       issues = result?.data;
 
@@ -632,7 +638,13 @@ export default function InputForm({ baseData }: InputFormProps) {
       return subStatus;
     }
   }
-
+  const handleDialogClose = () => {
+    setSnackOpen(true);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+    setVoucherConflict({ status: false, message: '' });
+  };
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
     // setSubStatus({ id: 0, name: "" });
@@ -1011,41 +1023,11 @@ export default function InputForm({ baseData }: InputFormProps) {
           </AddDialog>
         )}
       </form>
-      <Dialog
+      <AlertDialog
         open={voucherConflict.status}
-        onClose={() => {
-          setSnackOpen(true);
-          setTimeout(() => {
-            location.reload();
-          }, 3000);
-          setVoucherConflict({ status: false, message: "" });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        fullWidth
-        maxWidth="sm"
-      >
-        {/* <DialogTitle id="alert-dialog-title">Voucher Conflict</DialogTitle> */}
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {voucherConflict.message}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setSnackOpen(true);
-              setTimeout(() => {
-                location.reload();
-              }, 3000);
-              setVoucherConflict({ status: false, message: "" });
-            }}
-            color="primary"
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        message={voucherConflict.message}
+        onClose={handleDialogClose}
+      />
 
       <Snackbar
         open={snackOpen}
