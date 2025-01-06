@@ -6,21 +6,20 @@ import { useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { LoadingButton } from "@mui/lab";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { userSchemaT } from "../models/models";
 import { logger } from "../utils/logger.utils";
 import { AddDialog } from "../Widgets/masters/addDialog";
-import { styles } from "./signUpFormStyles";
 import GoogleSignUpButton from "./customGoogleButton";
 import {
   registerUser,
   checkInActiveUser,
   makeUserActive,
-  deleteUser,
 } from "@/app/controllers/user.controller";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
+import { styles } from "../utils/styles/sign.styles";
 
 export default function SignupForm(props: any) {
   const router = useRouter();
@@ -65,8 +64,6 @@ export default function SignupForm(props: any) {
   async function handleRegister(data: userSchemaT) {
     const result = await registerUser(data as userSchemaT);
     if (result.status) {
-      const newVal = { id: result.data[0].id, name: result.data[0].name };
-      setFormError({});
       router.push("/signin");
     } else {
       const issues = result.data;
@@ -74,13 +71,12 @@ export default function SignupForm(props: any) {
       for (const issue of issues) {
         if (issue.path[0] === "contact") {
           emailElement ? (issue.path[0] = "email") : (issue.path[0] = "phone");
-          emailElement
-            ? (issue.message = "Email already exist")
-            : (issue.message = "Phone No. already exists");
+          issue.message = emailElement
+            ? issue.message.replace("Contact", "Email")
+            : issue.message.replace("Contact", "Phone No.");
         }
         errorState[issue.path[0]] = { msg: issue.message, error: true };
       }
-      // errorState["form"] = { msg: "Error encountered", error: true };
       setFormError(errorState);
     }
   }
@@ -91,7 +87,7 @@ export default function SignupForm(props: any) {
       data[key] = value;
     }
     const inActiveUser = await checkInActiveUser(
-      data.email || (data.phone?.replace(/ +/g, '') as string)
+      data.email || (data.phone?.replace(/ +/g, "") as string)
     );
     if (inActiveUser) {
       setSignUpData(data as userSchemaT);
@@ -106,11 +102,15 @@ export default function SignupForm(props: any) {
     <Grid sx={styles.container} container spacing={0}>
       {dialogOpen && (
         <AddDialog title={""} open={dialogOpen} setDialogOpen={setDialogOpen}>
-          <Box sx={styles.dialogBox}>
-            <h2>User Already Exists! <br></br>Please login with previous credentials</h2>
-            <Button variant="contained"
+          <Box sx={styles.confirmationDialogBox}>
+            <h2>
+              User Already Exists! <br></br>Please login with previous
+              credentials
+            </h2>
+            <Button
+              variant="contained"
               onClick={() => makeUserActiveAgain(inActiveUserId)}
-              sx={styles.okButton}
+              sx={styles.dialogOkButton}
             >
               Ok
             </Button>
@@ -118,33 +118,46 @@ export default function SignupForm(props: any) {
         </AddDialog>
       )}
 
-      <Grid item sx={styles.left} rowGap={2}>
+      <Grid item sx={styles.leftImageContainer} rowGap={2}>
         <Image
           src="/Illustration.png"
           alt="Log In Page Image"
           width={500}
           height={550}
-          style={styles.mainImg}
+          style={styles.leftImage}
         />
-        <Typography variant="h3" sx={{ fontWeight: "600" }}>
+        <Typography
+          variant="h3"
+          sx={{ fontWeight: "600" }}
+          color="primary.contrastText"
+        >
           Welcome!
         </Typography>
-        <Typography variant="body1" sx={{ fontWeight: "400" }}>
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: "400" }}
+          color="primary.contrastText"
+        >
           Your business operations, streamlined at your fingertips!
         </Typography>
       </Grid>
 
-      <Grid item sx={styles.right}>
-        <Box sx={styles.rightTop} rowGap={2}>
-          <Typography variant="h3" sx={{ color: "#4870ac", fontWeight: "700" }}>
+      <Grid item sx={styles.rightFormContainerSignUp}>
+        <Box sx={styles.rightFormTopSectionSignUp} rowGap={2}>
+          <Typography
+            variant="h3"
+            sx={{ fontWeight: "700" }}
+            color="primary.main"
+          >
             Sign Up
           </Typography>
           <Typography
             variant="body2"
-            sx={{ fontWeight: "400", color: "#777F8C" }}
+            sx={{ fontWeight: "400" }}
+            color="primary.light"
           >
             Already have an account?{" "}
-            <Link href={"/signin"} style={styles.links} tabIndex={-1}>
+            <Link href={"/signin"} style={styles.toggleLink} tabIndex={-1}>
               Log In
             </Link>
           </Typography>
@@ -156,7 +169,7 @@ export default function SignupForm(props: any) {
           style={{ display: "flex", flexDirection: "column" }}
         >
           {formError?.form?.error && (
-            <p style={{ color: "#FF4C4C" }}>{formError?.form.msg}</p>
+            <p style={{ color: "error.main" }}>{formError?.form.msg}</p>
           )}
 
           <InputControl
@@ -172,7 +185,7 @@ export default function SignupForm(props: any) {
             error={formError?.name?.error}
             helperText={formError?.name?.msg}
             setFormError={setFormError}
-            sx={styles.nameInput}
+            sx={styles.nameInputField}
           />
 
           {emailElement && (
@@ -187,7 +200,7 @@ export default function SignupForm(props: any) {
               error={formError?.email?.error}
               helperText={formError?.email?.msg}
               setFormError={setFormError}
-              sx={styles.emailPhoneInput}
+              sx={styles.emailPhoneInputFieldSignUp}
             />
           )}
 
@@ -207,7 +220,7 @@ export default function SignupForm(props: any) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              sx={styles.emailPhoneInput}
+              sx={styles.emailPhoneInputFieldSignUp}
             />
           )}
 
@@ -231,21 +244,21 @@ export default function SignupForm(props: any) {
                 error={formError?.password?.error}
                 helperText={formError?.password?.msg}
                 setFormError={setFormError}
-                sx={styles.passwordInput}
+                sx={styles.passwordInputField}
                 InputProps={{
                   endAdornment: (
-                    <Button
+                    <IconButton
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       tabIndex={-1}
-                      sx={{ marginRight: -2, marginTop: 0 }}
+                      sx={{ marginRight: -1, marginTop: 0, color: "primary.main" }}
                     >
                       {showPassword ? (
                         <RemoveRedEyeOutlinedIcon />
                       ) : (
                         <VisibilityOffOutlinedIcon />
                       )}
-                    </Button>
+                    </IconButton>
                   ),
                 }}
               />
@@ -265,21 +278,21 @@ export default function SignupForm(props: any) {
                 setFormError={setFormError}
                 onCopy={(event: any) => handleDefault(event)}
                 onPaste={(event: any) => handleDefault(event)}
-                sx={styles.passwordInput}
+                sx={styles.passwordInputField}
                 InputProps={{
                   endAdornment: (
-                    <Button
+                    <IconButton
                       type="button"
                       onClick={() => setShowRePassword(!showRePassword)}
                       tabIndex={-1}
-                      sx={{ marginRight: -2, marginTop: 0 }}
+                      sx={{ marginRight: -1, marginTop: 0, color: "primary.main" }}
                     >
                       {showRePassword ? (
                         <RemoveRedEyeOutlinedIcon />
                       ) : (
                         <VisibilityOffOutlinedIcon />
                       )}
-                    </Button>
+                    </IconButton>
                   ),
                 }}
               />
@@ -288,20 +301,18 @@ export default function SignupForm(props: any) {
 
           <Box
             sx={{
-              ...styles.btnBox,
+              ...styles.signUpSubmitButtonContainer,
               marginTop: `${formError?.password?.error ? "0%" : "7%"}`,
             }}
             rowGap={2}
           >
             <LoadingButton
               type="submit"
-              sx={styles.pillButton}
+              sx={styles.pillStyledButton}
               loadingIndicator={
                 <CircularProgress
                   size={24}
-                  sx={{
-                    color: "white",
-                  }}
+                  sx={{ color: "primary.contrastText" }}
                 />
               }
             >
@@ -314,14 +325,14 @@ export default function SignupForm(props: any) {
                 provider={provider}
                 callbackUrl="/company"
                 tabIndex={-1}
-                sx={styles.googleBtn}
+                sx={styles.googleSignInButton}
               >
                 Sign In With
               </GoogleSignUpButton>
             ))}
             <Link
               href={""}
-              style={styles.links}
+              style={styles.toggleLink}
               onClick={contactHandler}
               tabIndex={-1}
             >
@@ -330,7 +341,7 @@ export default function SignupForm(props: any) {
           </Box>
         </form>
 
-        <Typography sx={styles.cpyRight} variant="caption">
+        <Typography sx={styles.copyrightText} variant="caption">
           © 2024 Algofast India Pvt. Ltd. ALL RIGHTS RESERVED
         </Typography>
       </Grid>

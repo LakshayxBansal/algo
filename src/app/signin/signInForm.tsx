@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import Link from "next/link";
 import { ClientSafeProvider, getCsrfToken } from "next-auth/react";
 import Grid from "@mui/material/Grid";
@@ -13,8 +13,8 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import GoogleSignUpButton from "../signup/customGoogleButton";
 import * as zs from "../zodschema/zodschema";
 import { LoadingButton } from "@mui/lab";
-import { styles } from "./signInFormStyles";
 import Image from "next/image";
+import { styles } from "../utils/styles/sign.styles";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
@@ -39,7 +39,7 @@ export default function AuthPage(props: authPagePropsType) {
     setEmail(!email);
     setFormError({});
   };
-  
+
   function actValidate(formData: FormData) {
     // document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
@@ -105,13 +105,13 @@ export default function AuthPage(props: authPagePropsType) {
 
   return (
     <Grid sx={styles.container} container spacing={0}>
-      <Grid item sx={styles.left} rowGap={2}>
+      <Grid item sx={styles.leftImageContainer} rowGap={2}>
         <Image
           src="/Illustration.png"
           alt="Log In Page Image"
           width={500}
           height={550}
-          style={styles.mainImg}
+          style={styles.leftImage}
         />
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
           Welcome!
@@ -121,14 +121,14 @@ export default function AuthPage(props: authPagePropsType) {
         </Typography>
       </Grid>
 
-      <Grid item sx={styles.right}>
-        <Box sx={styles.rightTop} rowGap={2}>
-          <Typography variant="h3" sx={{ color: "#4870ac", fontWeight: "700" }}>
+      <Grid item sx={styles.rightFormContainerLogIn}>
+        <Box sx={styles.rightFormTopSectionLogIn} rowGap={2}>
+          <Typography variant="h3" sx={{ fontWeight: "700" }} color="primary.main">
             Log In
           </Typography>
           <Typography
             variant="body2"
-            sx={{ fontWeight: "400", color: "#777F8C" }}
+            sx={{ fontWeight: "400"}} color="primary.light" 
           >
             Don’t have an account?{" "}
             <Link
@@ -138,7 +138,7 @@ export default function AuthPage(props: authPagePropsType) {
               //   ...styles.links,
               //   ...(loading ? styles.linksLoading : {}),
               // }}
-              style={styles.links}
+              style={styles.toggleLink}
               tabIndex={-1}
             >
               Sign Up
@@ -152,7 +152,7 @@ export default function AuthPage(props: authPagePropsType) {
           style={{ display: "flex", flexDirection: "column" }}
         >
           {formError?.form?.error && (
-            <p style={{ color: "#FF4C4C" }}>{formError?.form.msg}</p>
+            <p style={{ color: "error.main" }}>{formError?.form.msg}</p>
           )}
 
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
@@ -170,7 +170,7 @@ export default function AuthPage(props: authPagePropsType) {
               name="email"
               autoComplete="off"
               // disabled={loading}
-              sx={styles.emailPhoneInput}
+              sx={styles.emailPhoneInputFieldLogIn}
             />
           )}
 
@@ -191,7 +191,7 @@ export default function AuthPage(props: authPagePropsType) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              sx={styles.emailPhoneInput}
+              sx={styles.emailPhoneInputFieldLogIn}
             />
           )}
 
@@ -207,22 +207,22 @@ export default function AuthPage(props: authPagePropsType) {
             error={formError?.password?.error}
             helperText={formError?.password?.msg}
             setFormError={setFormError}
-            sx={styles.passwordInput}
+            sx={styles.passwordInputField}
             InputProps={{
               endAdornment: (
-                <Button
+                <IconButton
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                   // disabled={loading}
-                  sx={{ marginRight: -1, marginTop: 1 }}
+                  sx={{ marginRight: -1, marginTop: 0, color: "primary.main" }}
                 >
                   {showPassword ? (
                     <RemoveRedEyeOutlinedIcon />
                   ) : (
                     <VisibilityOffOutlinedIcon />
                   )}
-                </Button>
+                </IconButton>
               ),
             }}
           />
@@ -235,23 +235,23 @@ export default function AuthPage(props: authPagePropsType) {
             //   ...(loading ? styles.linksLoading : {}),
             //   alignSelf: "flex-end",
             // }}
-            style={{ ...styles.links, alignSelf: "flex-end" }}
+            style={{ ...styles.toggleLink, alignSelf: "flex-end" }}
             tabIndex={-1}
           >
             Forgot Password?
           </Link>
 
-          <Box sx={styles.btnBox} rowGap={2}>
+          <Box sx={styles.loginSubmitButtonContainer} rowGap={2}>
             <LoadingButton
               type="submit"
               loading={isPending}
-              sx={styles.pillButton}
+              sx={styles.pillStyledButton}
               // loading={loading}
               loadingIndicator={
                 <CircularProgress
                   size={24}
                   sx={{
-                    color: "white",
+                    color: "primary.contrastText",
                   }}
                 />
               }
@@ -266,7 +266,7 @@ export default function AuthPage(props: authPagePropsType) {
                 callbackUrl="/company"
                 tabIndex={-1}
                 // disabled={loading}
-                sx={styles.googleBtn}
+                sx={styles.googleSignInButton}
               >
                 Sign In With
               </GoogleSignUpButton>
@@ -277,7 +277,7 @@ export default function AuthPage(props: authPagePropsType) {
               //   ...styles.links,
               //   ...(loading ? styles.linksLoading : {}),
               // }}
-              style={styles.links}
+              style={styles.toggleLink}
               // onClick={loading ? () => {} : contactHandler}
               onClick={contactHandler}
               tabIndex={-1}
@@ -287,7 +287,7 @@ export default function AuthPage(props: authPagePropsType) {
           </Box>
         </form>
 
-        <Typography sx={styles.cpyRight} variant="caption">
+        <Typography sx={styles.copyrightText} variant="caption">
           © 2024 Algofast India Pvt. Ltd. ALL RIGHTS RESERVED
         </Typography>
       </Grid>

@@ -3,7 +3,7 @@ import { Box, IconButton, MenuItem, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
-import { StyledMenu } from "@/app/utils/styledComponents";
+import { StyledMenu } from "@/app/utils/styles/styledComponents";
 import { iconCompT } from "@/app/models/models";
 import { useRouter } from "next/navigation";
 import { encrypt } from "@/app/utils/encrypt.utils";
