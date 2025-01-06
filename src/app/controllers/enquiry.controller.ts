@@ -47,8 +47,6 @@ export async function createEnquiry({
       const updatedEnqData = {
         ...enqData,
         status_version: 0,
-        allocated_to_id: 0,
-        allocated_to: "",
         enquiry_tran_type: 1,
         active: 1,
       };
