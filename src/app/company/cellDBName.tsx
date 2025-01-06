@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 export default function CellDbName(props: { row: dbInfoT; userId: number }) {
   const row = props.row;
   const { update } = useSession();
+  const router = useRouter();
+  const [isPending, startTransition] = React.useTransition();
 
   const handleClick = async (event: any) => {
     event.preventDefault();
@@ -15,7 +17,10 @@ export default function CellDbName(props: { row: dbInfoT; userId: number }) {
     if (result) {
       const data = await update();
       if (data) {
-        redirectToPage("/cap");
+        startTransition(() => {
+          redirectToPage('/cap')
+        })
+        
       }
     } else {
       redirectToPage("/error");
@@ -24,15 +29,22 @@ export default function CellDbName(props: { row: dbInfoT; userId: number }) {
 
   return (
     <>
-    {row.roleId ? (
-    <Link href="" onClick={handleClick} style={{ textDecoration: "none", color: "rgb(59 131 249)" }}>
-      {row.companyName}
-    </Link>)
-    :
-    (<Link href="" style={{ textDecoration: "none", cursor: "default" }}>
-      {row.companyName}
-    </Link>)
-    }
-    </>
+    {isPending ? (
+      <span>Loading...</span>
+    ) : row.roleId ? (
+      <Link
+        href=""
+        onClick={handleClick}
+        style={{ textDecoration: "none", color: "rgb(59 131 249)" }}
+      >
+        {row.companyName}
+      </Link>
+    ) : (
+      <Link href="" style={{ textDecoration: "none", cursor: "default" }}>
+        {row.companyName}
+      </Link>
+    )}
+  </>
+  
   );
 }

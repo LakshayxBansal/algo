@@ -10,6 +10,7 @@ import {
 import OrganisationForm from "@/app/Widgets/masters/masterForms/organisationForm";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { ORGANISATION_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -43,10 +44,12 @@ export default function organisation() {
         fetchDataFn={getOrganisationByPage}
         fnFetchDataByID={getOrganisationById}
         fnDeleteDataByID={delOrganisationById}
+        fnFetchColumns={19}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
         height="60vh"
+        objectTypeId={ORGANISATION_OBJECT_ID}
       ></EntityList>
     </>
   );

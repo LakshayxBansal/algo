@@ -11,7 +11,7 @@ import {
   getDepartment,
   getDepartmentById,
 } from "@/app/controllers/department.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import OrganisationForm from "./organisationForm";
 import DepartmentForm from "./departmentForm";
 import { Portal } from "@mui/material";
@@ -166,6 +166,7 @@ export default function ContactForm(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
+        setStateDisable(true);
         setPrintNameFn("");
         setWhatsappFn("");
         setDocData([]);
@@ -820,31 +821,7 @@ export default function ContactForm(
                 );
               }
             })}
-            {/* </Grid> */}
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                // mt: 1,
-              }}
-            ></Grid>
-            {dialogOpen && (
-              <AddDialog
-                title=""
-                open={dialogOpen}
-                setDialogOpen={setDialogOpen}
-              >
-                <DocModal
-                  docData={docData}
-                  setDocData={setDocData}
-                  setDialogOpen={setDialogOpen}
-                />
-              </AddDialog>
-            )}
-          </Grid>
-          <Grid xs={12}>
+            <Grid xs={12}>
             <Box
               sx={{
                 display: "flex",
@@ -904,6 +881,8 @@ export default function ContactForm(
               />
             </AddDialog>
           )}
+          </Grid>
+          
         </form>
         <Portal>
           <Snackbar

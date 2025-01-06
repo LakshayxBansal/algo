@@ -19,7 +19,7 @@ import {
   masterFormPropsWithDataT,
   selectKeyValueT,
 } from "@/app/models/models";
-import { SelectMasterWrapper } from "../../masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "../../selectMasterWrapper/selectMasterWrapper";
 import Seperator from "../../seperator";
 import StateForm from "./stateForm";
 import { Collapse, IconButton, Portal, Snackbar } from "@mui/material";

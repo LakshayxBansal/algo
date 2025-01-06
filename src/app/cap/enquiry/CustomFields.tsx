@@ -30,7 +30,6 @@ type CustomFieldT = {
 }
 
 export default function CustomField(props: { desc: CustomFieldT, defaultValue?: any, setSelectValues?: (props: any) => void, formError?: any }) {
-    console.log("props.defaultValue", props.formError);
     const [status, setStatus] = useState(0);
     const [selectedMasterValue, setSelectedMasterValue] = useState<{ id: number | undefined, name: string }>({ id: props.defaultValue?.id ? props.defaultValue.id : undefined, name: props.defaultValue?.name });
     const columnType = {
@@ -197,7 +196,6 @@ export default function CustomField(props: { desc: CustomFieldT, defaultValue?: 
                             value: React.SetStateAction<optionsDataT>
                         ): void {
                         }}
-                        fnSetModifyMode={function (id: string): void { }}
                     />
                 )
         }

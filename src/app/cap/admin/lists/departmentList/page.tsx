@@ -11,6 +11,7 @@ import {
 } from "@/app/controllers/department.controller";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { DEPARTMENT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -38,11 +39,12 @@ export default function Department() {
         fetchDataFn={getDepartmentByPage}
         fnFetchDataByID={getDepartmentById}
         fnDeleteDataByID={delDepartmentById}
-        // fnFetchColumns={getDepartmentColumns}
+        // fnFetchColumns={async ()=> await getColumns("5")}
         customCols={columns}
         AddAllowed={false}
         uploadAllowed={true}
         height = "60vh"
+        objectTypeId={DEPARTMENT_OBJECT_ID}
       ></EntityList>
     </>
   );

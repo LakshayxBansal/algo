@@ -40,39 +40,27 @@ export default function CreateCompany(
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
   const [defaultCountry, setdefaultCountry] = useState("");
   const [defaultCountryId, setdefaultCountryId] = useState(0);
+  const [city, setCity] = useState("");
+  const [pin, setPin] = useState("");
+
   const entityData: companySchemaT = props.data
     ? props.data
     : ({} as companySchemaT);
 
   useEffect(() => {
     const fetchCountryData = async () => {
-      try {
-        const countryData = await getCountryByIp();
-
-        if (countryData) {
-          setdefaultCountry(countryData.country);
-          setdefaultCountryId(countryData.countryId);
-        } else {
-          setdefaultCountry("");
-          setdefaultCountryId(0);
-          setFormError({
-            form: {
-              msg: "Failed to fetch country data. Please insert data manually.",
-              error: true,
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching country data:", error);
-        setFormError({
-          form: {
-            msg: "Failed to fetch country data. Please try again later.",
-            error: true,
-          },
-        });
-      }
-    };
-    fetchCountryData();
+      const countryData = await getCountryByIp();
+      console.log(countryData);
+      if (countryData) {
+        setdefaultCountry(countryData.country);
+        setdefaultCountryId(countryData.countryId);
+        setCity(countryData.city);
+        setPin(countryData.pin);
+      } 
+    } 
+    if (!props.data && defaultCountry === "") {  
+      fetchCountryData();
+    }
   }, []);
 
   const handleSubmit = async (formData: FormData) => {
@@ -210,12 +198,6 @@ export default function CreateCompany(
                     sx: { backgroundColor: "white", margin: 0 },
                   }}
                   sx={{ height: "fit-content" }}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { name, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -230,12 +212,6 @@ export default function CreateCompany(
                   setFormError={setFormError}
                   defaultValue={entityData.alias}
                   sx={{ height: "fit-content" }}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { alias, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -248,12 +224,6 @@ export default function CreateCompany(
                   error={formError?.add1?.error}
                   helperText={formError?.add1?.msg}
                   defaultValue={entityData.add1}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { add1, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -266,12 +236,6 @@ export default function CreateCompany(
                   error={formError?.add2?.error}
                   helperText={formError?.add2?.msg}
                   defaultValue={entityData.add2}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { add2, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -283,13 +247,7 @@ export default function CreateCompany(
                   style={{ width: "100%" }}
                   error={formError?.city?.error}
                   helperText={formError?.city?.msg}
-                  defaultValue={entityData.city}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { city, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  defaultValue={entityData.city  ?  entityData.city: city}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -301,13 +259,7 @@ export default function CreateCompany(
                   style={{ width: "100%" }}
                   error={formError?.pincode?.error}
                   helperText={formError?.pincode?.msg}
-                  defaultValue={entityData.pincode}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { pincode, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
+                  defaultValue={entityData.pincode ?  entityData.pincode: pin}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -327,6 +279,7 @@ export default function CreateCompany(
                   // width={{ xs: "100%", sm: 290, md: 290 }}
                   formError={formError?.country}
                   fetchDataFn={getCountriesMaster}
+                  setFormError={setFormError}
                   diaglogVal={
                     entityData.country
                       ? {
@@ -346,7 +299,6 @@ export default function CreateCompany(
                   setDialogVal={function (
                     value: React.SetStateAction<optionsDataT>
                   ): void {}}
-                  fnSetModifyMode={function (id: string): void {}}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -388,7 +340,6 @@ export default function CreateCompany(
                   setDialogVal={function (
                     value: React.SetStateAction<optionsDataT>
                   ): void {}}
-                  fnSetModifyMode={function (id: string): void {}}
                 />
                 {/* </div> */}
               </Grid>

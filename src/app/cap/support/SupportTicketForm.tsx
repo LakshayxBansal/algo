@@ -19,7 +19,7 @@ import {
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl } from "@/app/Widgets/input/InputControl";
 import { InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import {
   getContact,
   getContactById,
@@ -541,10 +541,10 @@ const SupportTicketForm = (props: customprop) => {
   }
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
-    setDefaultValues({
-      sub_status: { id: 0, name: "" },
-      next_action: { id: 0, name: "" },
-    });
+    // setDefaultValues({
+    //   sub_status: { id: 0, name: "" },
+    //   next_action: { id: 0, name: "" },
+    // });
     setSelectValues((prev) => {
       return {
         ...prev,
@@ -857,6 +857,7 @@ const SupportTicketForm = (props: customprop) => {
                       sx={{ marginRight: "3rem" }}
                       onClick={() => setDocDialogOpen(true)}
                       aria-label="file"
+                      tabIndex={-1}
                     >
                       <Badge badgeContent={docData.length} color="primary">
                         <AttachFileIcon></AttachFileIcon>

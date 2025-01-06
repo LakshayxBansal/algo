@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useRef } from "react";
-import { Popper, Grow, Paper, Typography, Box, Slide } from "@mui/material";
+import { Popper, Grow, Paper, Typography, Box, Slide, LinearProgress } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Collapse from "@mui/material/Collapse";
 import List from "@mui/material/List";
@@ -14,17 +14,19 @@ import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
 import { useRouter } from "next/navigation";
 
+
+
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
   openDrawer: boolean;
   setOpenDrawer?: any;
   isHover?: boolean;
-  setLoadingg:(props: any) => void;
 }) {
   const [open, setOpen] = React.useState<Map<number, boolean>>();
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [openPopper, setOpenPopper] = useState<Map<number, boolean>>(new Map());
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
+  const [isPending, startTransition] = React.useTransition();
   const [hover, setHover] = useState(false);
   const [loading, setLoading] = useState(false); 
 
@@ -36,6 +38,18 @@ export default function LeftMenuTree(props: {
   const idToOpenPop = useRef<Map<number, HTMLElement | null>>(new Map());
   let arra1 = [0, 2, 5, 9, 12, 51, 54,61];
   const pages = props.pages;
+
+
+
+  useEffect(()=>{
+    if(isPending){
+      document.body.classList.add('cursor-wait');
+    }
+    else {
+      document.body.classList.remove('cursor-wait');
+    }
+  },[isPending]);
+
 
   useEffect(() => {
     if (!props.openDrawer) {
@@ -57,6 +71,7 @@ export default function LeftMenuTree(props: {
     return () => {
       clearTimeout(timeoutRef.current);
     };
+    
   }, [props.openDrawer, openPopper]);
 
   function handleHeaderMenuClick(id: number, href:string) {
@@ -65,7 +80,11 @@ export default function LeftMenuTree(props: {
     props.setOpenDrawer(true);
     setOpen(idToOpenMap);
     setSelectedId(id);
-    router.push(href);
+    startTransition(() => {
+      router.push(href)
+      document.body.classList.add('cursor-wait');
+     
+    })
   }
 
   function handleSubMenuHover(
@@ -108,7 +127,7 @@ export default function LeftMenuTree(props: {
         // setHoverId(page.id);
         idToOpenPop.current.clear();
         setOpenPopper((prevState) => new Map());
-      }, 100);
+      }, 500);
     }
   };
 
@@ -138,8 +157,11 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    router.push(href);
-    props.setLoadingg(true);
+    startTransition(() => {
+      router.push(href)
+      document.body.classList.add('cursor-wait');
+     
+    })
      
   };
 
@@ -163,62 +185,59 @@ export default function LeftMenuTree(props: {
 
     return (
       <div>
-        {pages.map((page, index) => (
-          <div key={index}>
-            {page.parent_id === level && (
-              <>
-                <Tooltip title={page.name} placement="right">
-                  <ListItemButton
-                    sx={{ pl: indent }}
-                    onClick={(e) => handleHeaderMenuClick(page.id,page.href)}
-                    component="a"
-                    // href={
-                    //   page.href !== "#" ? page.href : generateHref(page.name)
-                    // }
-                    selected={selectedId === page.id}
-                    tabIndex={-1}
-                  >
-                    <ListItemIcon
-                      style={{
-                        minWidth: "30px",
-                        marginRight: 12,
-                        marginLeft: 13,
-                      }}
+        {
+          pages.map((page, index) => (
+            <div key={index}>
+              {page.parent_id === level && (
+                <>
+                  <Tooltip title={page.name} placement="right">
+                    <ListItemButton
+                      sx={{ pl: indent }}
+                      onClick={(e) =>{ e.preventDefault(); handleHeaderMenuClick(page.id, page.href)}}
+                      component="a"
+                      selected={selectedId === page.id}
+                      tabIndex={-1}
                     >
-                      {SelectIcon({
-                        Page: page,
-                        selected: selectedId === page.id,
+                      <ListItemIcon
+                        style={{
+                          minWidth: "30px",
+                          marginRight: 12,
+                          marginLeft: 13,
+                        }}
+                      >
+                        {SelectIcon({
+                          Page: page,
+                          selected: selectedId === page.id,
+                        })}
+                      </ListItemIcon>
+                      <ListItemText primary={page.name} />
+                      {page.children.length ? (
+                        open?.get(page.id) ? (
+                          <ExpandLess />
+                        ) : (
+                          <ExpandMore />
+                        )
+                      ) : null}
+                    </ListItemButton>
+                  </Tooltip>
+                  <Collapse
+                    in={handleCollapse(page.id)}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <List component="div" disablePadding>
+                      {ShowMenu({
+                        pages: page.children,
+                        level: page.id,
+                        menuLevel: indent + 2,
                       })}
-                    </ListItemIcon>
-                    <ListItemText primary={page.name} />
-                    {page.children.length ? (
-                      open?.get(page.id) ? (
-                        <ExpandLess />
-                      ) : (
-                        <ExpandMore />
-                      )
-                    ) : (
-                      <></>
-                    )}
-                  </ListItemButton>
-                </Tooltip>
-                <Collapse
-                  in={handleCollapse(page.id)}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  <List component="div" disablePadding>
-                    {ShowMenu({
-                      pages: page.children,
-                      level: page.id,
-                      menuLevel: indent + 2,
-                    })}
-                  </List>
-                </Collapse>
-              </>
-            )}
-          </div>
-        ))}
+                    </List>
+                  </Collapse>
+                </>
+              )}
+            </div>
+          ))
+        }
       </div>
     );
   }
@@ -359,7 +378,7 @@ export default function LeftMenuTree(props: {
   return (
     <div>
       <List
-        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper" }}
+        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper", padding: 0}}
         component="nav"
         aria-labelledby="nested-list-subheader"
       >

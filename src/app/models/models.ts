@@ -240,12 +240,14 @@ export type  entitiyCompT = {
   ) => Promise<any>;
   fnFetchDataByID?: (id: number) => Promise<any>;
   fnDeleteDataByID?: (id: number) => Promise<any>;
-  fnFetchColumns?: () => Promise<any>;
+  // fnFetchColumns?: () => Promise<any>;
+  fnFetchColumns?: number;
   customCols: GridColDef[];
   AddAllowed?: boolean;
   uploadAllowed?:boolean;
   height?: string;
   link ?:string;
+  objectTypeId ?: number;
 };
 
 export type iconCompT = {
@@ -266,4 +268,10 @@ export type configDeptMapSchemaT = z.infer<typeof zs.configDeptMapSchema>;
 // export type rightSchemaT = z.infer<typeof zs.rightSchema>;
 // export type configSchemaT = z.infer<typeof zs.configSchema>;
 // export type configBaseSchemaT = z.infer<typeof zs.configBaseSchema>;
+
+export type OnChangeFunction = (
+  event: any,
+  newVal: any,
+  setDialogValue: (props: any) => void
+) => void;
 

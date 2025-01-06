@@ -18,6 +18,7 @@ import {
 import SupportTicketForm from "../SupportTicketForm";
 import SecondNavbar from "../../navbar/SecondNavbar";
 import { Box } from "@mui/material";
+import { SUPPORT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -83,11 +84,13 @@ export default function Action() {
         fetchDataFn={getSupportDataByPage}
         fnFetchDataByID={getSupportDataById}
         fnDeleteDataByID={delSupportDataById}
+        fnFetchColumns={28}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
         height="60vh"
         link="/cap/support"
+        objectTypeId={SUPPORT_OBJECT_ID}
       ></EntityList>
     </>
   );

@@ -8,7 +8,7 @@ import {
   getProductGroupById,
   updateProductGroup,
 } from "../../../controllers/productGroup.controller";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import { getProductGroup } from "@/app/controllers/productGroup.controller";
 import {
   productGroupSchemaT,

@@ -57,7 +57,14 @@ export default function ProfileMenu(props: profileModalT) {
         <>
             {dialogOpen && (
                 <AddDialog
-                    title={"Modal"}
+                    // title={"Modal"}
+                    title={`${
+                        title.includes("Logout") 
+                          ? "Log Out" 
+                          : title.includes("App") 
+                          ? "De-Register from App" 
+                          : `De-Register from ${props.companyName}`
+                      }`}
                     open={dialogOpen}
                     setDialogOpen={setDialogOpen}
                 >
@@ -129,12 +136,12 @@ export default function ProfileMenu(props: profileModalT) {
                 </MenuItem>
                 <MenuItem onClick={() => {
                     setDialogOpen(true)
-                    setTitle(`Do you want De Register from ${props.companyName} ?`)
+                    setTitle(`Do you want to De-Register from ${props.companyName} ?`)
                     setFnController(() => handleDeregisterFormCompany)
-                }}>De-register with {props.companyName}</MenuItem>
+                }}>De-register from {props.companyName}</MenuItem>
                 <MenuItem onClick={() => {
                     setDialogOpen(true)
-                    setTitle(`Do you want De Register from App ?`)
+                    setTitle(`Do you want to De-Register from App ?`)
                     setFnController(() => handleDeregisterFormApp)
                 }}>De-register from App</MenuItem>
                 <MenuItem onClick={() => {

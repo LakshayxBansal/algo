@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React, { lazy, Suspense } from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
@@ -10,6 +10,7 @@ import {
 } from "@/app/controllers/enquiry.controller";
 import SecondNavbar from "../../navbar/SecondNavbar";
 import { Box } from "@mui/material";
+import { ENQUIRY_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
@@ -74,12 +75,14 @@ export default function Action() {
         fetchDataFn={getEnquiryDataByPage}
         fnFetchDataByID={getEnquiryById}
         fnDeleteDataByID={delEnquiryDataById}
+        fnFetchColumns={26}
         customCols={columns}
         uploadAllowed={true}
         AddAllowed={false}
         height="60vh"
         link="/cap/enquiry"
-      ></EntityList>
+        objectTypeId={ENQUIRY_OBJECT_ID}
+      />
     </>
   );
 }

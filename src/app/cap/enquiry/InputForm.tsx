@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import Seperator from "@/app/Widgets/seperator";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
-import { SelectMasterWrapper } from "@/app/Widgets/masters/selectMasterWrapper";
+import { SelectMasterWrapper } from "@/app/Widgets/selectMasterWrapper/selectMasterWrapper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -591,8 +591,8 @@ export default function InputForm({ baseData }: InputFormProps) {
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
-    setSubStatus({ id: 0, name: "" });
-    setNextAction({ id: 0, name: "" });
+    // setSubStatus({ id: 0, name: "" });
+    // setNextAction({ id: 0, name: "" });
     setSelectValues({ ...selectValues, sub_status: null, next_action: null });
   }
 
@@ -919,6 +919,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                       sx={{ marginRight: "3rem" }}
                       onClick={() => setDocDialogOpen(true)}
                       aria-label="file"
+                      tabIndex={-1}
                     >
                       <Badge badgeContent={docData.length} color="primary">
                         <AttachFileIcon></AttachFileIcon>

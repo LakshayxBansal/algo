@@ -1017,13 +1017,14 @@ export async function getCallSupportDetailsDb(crmDb: string, id: number) {
 
 export async function getUserPreferenceDb(
   crmDb: string,
-  userId: number
+  userId: number,
+  objectId:number
 ) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: `select * from callExplorer_metaData where user_id=?`,
-      values: [userId],
+      query: `select * from grid_metaData where user_id=? and object_type_id=?`,
+      values: [userId,objectId],
     });
     return result;
   } catch (e) {
@@ -1034,13 +1035,14 @@ export async function getUserPreferenceDb(
 export async function updateUserPreferenceDb(
   crmDb: string,
   userId: number,
+  objectId:number,
   metaData: string
 ) {
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: `update callExplorer_metaData set meta_data=? where user_id=?`,
-      values: [metaData, userId],
+      query: `update grid_metaData set meta_data=? where user_id=? and object_type_id=?`,
+      values: [metaData, userId,objectId],
     });
     return result[0];
   } catch (e) {
@@ -1051,16 +1053,17 @@ export async function updateUserPreferenceDb(
 export async function insertUserPreferenceDb(
   crmDb: string,
   userId: number,
+  objectId:number,
   metaData: string
 ) {
   try {
     const result = await excuteQuery({
       host: crmDb,
       query: `
-        INSERT INTO callExplorer_metaData (user_id, meta_data) 
-        VALUES (?, ?)
+        INSERT INTO grid_metaData (user_id, meta_data,object_type_id) 
+        VALUES (?, ?,?)
       `,
-      values: [userId, metaData],
+      values: [userId, metaData,objectId],
     });
     return result[0];
   } catch (e) {

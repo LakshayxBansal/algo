@@ -20,7 +20,7 @@ export async function getDbSession(userId: number): Promise<dbInfoT | null> {
 
     if (result?.length > 0) {
       return JSON.parse(result[0].data);
-    }
+    } 
     return null;
   } catch (e) {
     console.log(e);
@@ -63,6 +63,7 @@ export async function createSession(value: any) {
 
 }
 */
+
 
 async function getLastSession(idUser: number){
   // fetch the session id
@@ -114,16 +115,16 @@ export async function updateSession(dbInfo: dbInfoT, userId: number){
  * server function to return the session object at the server
  */
 export async function getSession() {
-  try {
-    const session = await getServerSession(options);
-    if (session) {
-      if (!session.user.dbInfo) {
-        console.log("------------- dbInfo not found -------------")
-      }
-      return session;
-    }
-  } catch(e) {
-    console.log(e);
-  }
-  return null;
+  // try {
+    return await getServerSession(options);
+  //   if (session) {
+  //     if (!session.user.dbInfo) {
+  //       console.log("------------- dbInfo not found -------------")
+  //     }
+  //     return session;
+  //   }
+  // } catch(e) {
+  //   console.log(e);
+  // }
+  // return null;
 }

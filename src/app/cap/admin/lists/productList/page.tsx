@@ -10,6 +10,7 @@ import {
 import ProductForm from "@/app/Widgets/masters/masterForms/productForm";
 import { Box } from "@mui/material";
 import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
+import { PRODUCT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "Name", editable: false },
@@ -40,6 +41,7 @@ export default function Products() {
         uploadAllowed={true}
         AddAllowed={false}
         height = "60vh"
+        objectTypeId={PRODUCT_OBJECT_ID}
       ></EntityList>
     </>
   );
