@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Badge,
@@ -112,7 +112,9 @@ const SupportTicketForm = (props: customprop) => {
 
   const [snackOpen, setSnackOpen] = useState(false);
   const [selectValues, setSelectValues] = useState<selectKeyValueT>(
-    props?.data?.tkt_number ? masterData : { received_by: props?.userDetails , allocated_to: props?.userDetails}
+    props?.data?.tkt_number
+      ? masterData
+      : { received_by: props?.userDetails, allocated_to: props?.userDetails }
   );
   const [status, setStatus] = useState(
     masterData?.status?.id != null ? masterData.status.id.toString() : "1"
@@ -214,310 +216,314 @@ const SupportTicketForm = (props: customprop) => {
     });
   };
 
-  const defaultComponentMap = new Map<string, React.ReactNode>([
-    [
-      "tkt_number",
-      <InputControl
-        key="tkt_number"
-        label="Ticket Description"
-        id="tkt_number"
-        inputType={InputType.TEXT}
-        name="tkt_number"
-        fullWidth
-        required
-        defaultValue={props.data?.tkt_number}
-        error={formError?.tkt_number?.error}
-        helperText={formError?.tkt_number?.msg}
-        setFormError={setFormError}
-        // sx={{
-        //   "& .MuiInputBase-root": {
-        //     height: 100,
-        //     alignItems: "start",
-        //   },
-        // }}
-        disabled={props?.status === "true" ? true : false}
-      />,
-    ],
-    [
-      "date",
-      <InputControl
-        key="date"
-        label="Received on"
-        inputType={InputType.DATETIMEINPUT}
-        id="date"
-        name="date"
-        defaultValue={
-          masterData?.date ? adjustToLocal(masterData.date) : dayjs()
-        }
-        required
-        error={formError?.date?.error}
-        helperText={formError?.date?.msg}
-        setFormError={setFormError}
-        sx={{ display: "flex", flexGrow: 1 }}
-        slotProps={{
-          openPickerButton: {
-            tabIndex: -1,
-          },
-        }}
-        disabled={props?.status === "true" ? true : false}
-      />,
-    ],
-    [
-      "contact",
-      <SelectMasterWrapper
-        key={"contact"}
-        name="contact"
-        id="contact"
-        label="Contact"
-        showDetails={true}
-        dialogTitle="Contact"
-        onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
-        fetchDataFn={getContact}
-        fnFetchDataByID={getContactById}
-        required
-        formError={formError?.contact ?? formError.contact}
-        setFormError={setFormError}
-        defaultValue={masterData.contact}
-        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
-          <ContactForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            metaData={metaData}
-            data={data}
-          />
-        )}
-        disabled={props?.status === "true" ? true : false}
-      />,
-    ],
-    [
-      "category",
-      <SelectMasterWrapper
-        key={"category"}
-        name="category"
-        id="category"
-        label="Category"
-        dialogTitle="Category"
-        onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
-        fetchDataFn={getSupportCategory}
-        fnFetchDataByID={getSupportCategoryById}
-        required
-        formError={formError?.category ?? formError.category}
-        setFormError={setFormError}
-        defaultValue={masterData.category}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <SupportCategoryForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-        disabled={props?.status === "true" ? true : false}
-      />,
-    ],
-    [
-      "received_by",
-      <SelectMasterWrapper
-        key={"received_by"}
-        name="received_by"
-        id="received_by"
-        label="Received By"
-        showDetails={true}
-        dialogTitle="Executive"
-        onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
-        fetchDataFn={getExecutive}
-        fnFetchDataByID={getExecutiveById}
-        required
-        formError={formError?.received_by ?? formError.received_by}
-        defaultValue={
-          props?.data?.tkt_number ? masterData.received_by : props.userDetails
-        }
-        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
-          <ExecutiveForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            metaData={metaData}
-            data={data}
-          />
-        )}
-        disabled={props?.status === "true" ? true : false}
-      />,
-    ],
-    [
-      "status",
-      <FormControl sx={{ pl: "0.625em" }} key={"status"}>
-        <RadioGroup
-          row
-          name="status"
-          id="status"
+  const defaultComponentMap = useMemo(() => {
+    return new Map<string, React.ReactNode>([
+      [
+        "tkt_number",
+        <InputControl
+          key="tkt_number"
+          label="Ticket Description"
+          id="tkt_number"
+          inputType={InputType.TEXT}
+          name="tkt_number"
+          fullWidth
+          required
+          defaultValue={props.data?.tkt_number}
+          error={formError?.tkt_number?.error}
+          helperText={formError?.tkt_number?.msg}
+          setFormError={setFormError}
+          // sx={{
+          //   "& .MuiInputBase-root": {
+          //     height: 100,
+          //     alignItems: "start",
+          //   },
+          // }}
+          disabled={props?.status === "true" ? true : false}
+        />,
+      ],
+      [
+        "date",
+        <InputControl
+          key="date"
+          label="Received on"
+          inputType={InputType.DATETIMEINPUT}
+          id="date"
+          name="date"
           defaultValue={
-            masterData?.status != null ? masterData?.status.id.toString() : "1"
+            masterData?.date ? adjustToLocal(masterData.date) : dayjs()
           }
-          onChange={onStatusChange}
-          sx={{ color: "black" }}
-        >
-          <FormControlLabel
-            value="Status"
-            control={<label />}
-            label="Status :"
-          />
-          <FormControlLabel value="1" control={<Radio />} label="Open" />
-          <FormControlLabel value="2" control={<Radio />} label="Closed" />
-        </RadioGroup>
-      </FormControl>,
-    ],
-    [
-      "sub_status",
-      <SelectMasterWrapper
-        name={"sub_status"}
-        id={"sub_status"}
-        label={"Call Sub-Status"}
-        dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
-        fetchDataFn={getSubStatusforStatus}
-        fnFetchDataByID={getSupportSubSatusById}
-        required
-        key={`sub_status_${status}`}
-        formError={formError?.sub_status ?? formError.sub_status}
-        setFormError={setFormError}
-        defaultValue={defaultValues.sub_status}
-        allowNewAdd={status === "1"}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <SupportSubStatusForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            parentData={parseInt(status)}
-            data={data}
-          />
-        )}
-      />,
-    ],
-    [
-      "action_taken",
-      <SelectMasterWrapper
-        key={`action_taken_${status}`}
-        name={"action_taken"}
-        id={"action_taken"}
-        label={"Action Taken"}
-        dialogTitle={"Action"}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
-        fetchDataFn={getSupportAction}
-        fnFetchDataByID={getSupportActionById}
-        formError={formError?.action_taken ?? formError.action_taken}
-        setFormError={setFormError}
-        defaultValue={masterData.action}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <SupportActionForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-      />,
-    ],
-    [
-      "allocate_to",
-      <SelectMasterWrapper
-        key="allocated_to"
-        name={"allocated_to"}
-        id={"allocated_to"}
-        label={"Allocate to"}
-        showDetails={true}
-        dialogTitle={"Assign Executive"}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
-        fetchDataFn={getExecutive}
-        fnFetchDataByID={getExecutiveById}
-        required
-        formError={formError?.allocated_to ?? formError.allocated_to}
-        defaultValue={masterData?.allocated_to ?? props.userDetails}
-        renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
-          <ExecutiveForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            metaData={metaData}
-            data={data}
-          />
-        )}
-        disabled={status === "2"}
-      />,
-    ],
-    [
-      "next_action",
-      <SelectMasterWrapper
-        key={`next_action_${status}`}
-        name={"next_action"}
-        id={"next_action"}
-        label={"Next Action"}
-        dialogTitle={"Action"}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
-        fetchDataFn={getSupportAction}
-        formError={formError?.next_action ?? formError.next_action}
-        setFormError={setFormError}
-        defaultValue={defaultValues.next_action}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <SupportActionForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-        disabled={status === "2"}
-      />,
-    ],
-    [
-      "next_action_date",
-      <InputControl
-        key={`next_action_date_${status}`}
-        label="When"
-        inputType={InputType.DATETIMEINPUT}
-        sx={{ display: "flex", flexGrow: 1 }}
-        id="next_action_date"
-        name="next_action_date"
-        error={formError?.next_action_date?.error}
-        helperText={formError?.next_action_date?.msg}
-        setFormError={setFormError}
-        defaultValue={
-          status === "1"
-            ? masterData?.next_action_date
-              ? adjustToLocal(masterData.next_action_date)
-              : props.status
-              ? ""
-              : dayjs()
-            : null
-        }
-        slotProps={{
-          openPickerButton: {
-            tabIndex: -1,
-          },
-        }}
-        disabled={status === "2"}
-      />,
-    ],
-    [
-      "closure_remark",
-      <InputControl
-        inputType={InputType.TEXTFIELD}
-        key={`closure-remark-${status}`}
-        defaultValue={status === "1" ? "" : props.data?.closure_remark}
-        placeholder="Closure remarks"
-        label="closure_remark"
-        required={false}
-        multiline
-        name="closure_remark"
-        id="closure_remark"
-        rows={1}
-        fullWidth
-        disabled={status === "1"}
-        error={formError?.closure_remark?.error}
-        helperText={formError?.closure_remark?.msg}
-        setFormError={setFormError}
-        sx={{
-          "& .MuiFormHelperText-root": {
-            margin: 0,
-          },
-        }}
-      />,
-    ],
-  ]);
+          required
+          error={formError?.date?.error}
+          helperText={formError?.date?.msg}
+          setFormError={setFormError}
+          sx={{ display: "flex", flexGrow: 1 }}
+          slotProps={{
+            openPickerButton: {
+              tabIndex: -1,
+            },
+          }}
+          disabled={props?.status === "true" ? true : false}
+        />,
+      ],
+      [
+        "contact",
+        <SelectMasterWrapper
+          key={"contact"}
+          name="contact"
+          id="contact"
+          label="Contact"
+          showDetails={true}
+          dialogTitle="Contact"
+          onChange={(e, v, s) => onSelectChange(e, v, s, "contact")}
+          fetchDataFn={getContact}
+          fnFetchDataByID={getContactById}
+          required
+          formError={formError?.contact ?? formError.contact}
+          setFormError={setFormError}
+          defaultValue={masterData.contact}
+          renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+            <ContactForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              metaData={metaData}
+              data={data}
+            />
+          )}
+          disabled={props?.status === "true" ? true : false}
+        />,
+      ],
+      [
+        "category",
+        <SelectMasterWrapper
+          key={"category"}
+          name="category"
+          id="category"
+          label="Category"
+          dialogTitle="Category"
+          onChange={(e, v, s) => onSelectChange(e, v, s, "category")}
+          fetchDataFn={getSupportCategory}
+          fnFetchDataByID={getSupportCategoryById}
+          required
+          formError={formError?.category ?? formError.category}
+          setFormError={setFormError}
+          defaultValue={masterData.category}
+          renderForm={(fnDialogOpen, fnDialogValue, data) => (
+            <SupportCategoryForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              data={data}
+            />
+          )}
+          disabled={props?.status === "true" ? true : false}
+        />,
+      ],
+      [
+        "received_by",
+        <SelectMasterWrapper
+          key={"received_by"}
+          name="received_by"
+          id="received_by"
+          label="Received By"
+          showDetails={true}
+          dialogTitle="Executive"
+          onChange={(e, v, s) => onSelectChange(e, v, s, "received_by")}
+          fetchDataFn={getExecutive}
+          fnFetchDataByID={getExecutiveById}
+          required
+          formError={formError?.received_by ?? formError.received_by}
+          defaultValue={
+            props?.data?.tkt_number ? masterData.received_by : props.userDetails
+          }
+          renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+            <ExecutiveForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              metaData={metaData}
+              data={data}
+            />
+          )}
+          disabled={props?.status === "true" ? true : false}
+        />,
+      ],
+      [
+        "status",
+        <FormControl sx={{ pl: "0.625em" }} key={"status"}>
+          <RadioGroup
+            row
+            name="status"
+            id="status"
+            defaultValue={
+              masterData?.status != null
+                ? masterData?.status.id.toString()
+                : "1"
+            }
+            onChange={onStatusChange}
+            sx={{ color: "black" }}
+          >
+            <FormControlLabel
+              value="Status"
+              control={<label />}
+              label="Status :"
+            />
+            <FormControlLabel value="1" control={<Radio />} label="Open" />
+            <FormControlLabel value="2" control={<Radio />} label="Closed" />
+          </RadioGroup>
+        </FormControl>,
+      ],
+      [
+        "sub_status",
+        <SelectMasterWrapper
+          name={"sub_status"}
+          id={"sub_status"}
+          label={"Call Sub-Status"}
+          dialogTitle={`Sub-Status for ${status === "1" ? "Open" : "Closed"}`}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "sub_status")}
+          fetchDataFn={getSubStatusforStatus}
+          fnFetchDataByID={getSupportSubSatusById}
+          required
+          key={`sub_status_${status}`}
+          formError={formError?.sub_status ?? formError.sub_status}
+          setFormError={setFormError}
+          defaultValue={defaultValues.sub_status}
+          allowNewAdd={status === "1"}
+          renderForm={(fnDialogOpen, fnDialogValue, data) => (
+            <SupportSubStatusForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              parentData={parseInt(status)}
+              data={data}
+            />
+          )}
+        />,
+      ],
+      [
+        "action_taken",
+        <SelectMasterWrapper
+          key={`action_taken_${status}`}
+          name={"action_taken"}
+          id={"action_taken"}
+          label={"Action Taken"}
+          dialogTitle={"Action"}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
+          fetchDataFn={getSupportAction}
+          fnFetchDataByID={getSupportActionById}
+          formError={formError?.action_taken ?? formError.action_taken}
+          setFormError={setFormError}
+          defaultValue={masterData.action}
+          renderForm={(fnDialogOpen, fnDialogValue, data) => (
+            <SupportActionForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              data={data}
+            />
+          )}
+        />,
+      ],
+      [
+        "allocate_to",
+        <SelectMasterWrapper
+          key="allocated_to"
+          name={"allocated_to"}
+          id={"allocated_to"}
+          label={"Allocate to"}
+          showDetails={true}
+          dialogTitle={"Assign Executive"}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
+          fetchDataFn={getExecutive}
+          fnFetchDataByID={getExecutiveById}
+          required
+          formError={formError?.allocated_to ?? formError.allocated_to}
+          defaultValue={masterData?.allocated_to ?? props.userDetails}
+          renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
+            <ExecutiveForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              metaData={metaData}
+              data={data}
+            />
+          )}
+          disabled={status === "2"}
+        />,
+      ],
+      [
+        "next_action",
+        <SelectMasterWrapper
+          key={`next_action_${status}`}
+          name={"next_action"}
+          id={"next_action"}
+          label={"Next Action"}
+          dialogTitle={"Action"}
+          onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
+          fetchDataFn={getSupportAction}
+          formError={formError?.next_action ?? formError.next_action}
+          setFormError={setFormError}
+          defaultValue={defaultValues.next_action}
+          renderForm={(fnDialogOpen, fnDialogValue, data) => (
+            <SupportActionForm
+              setDialogOpen={fnDialogOpen}
+              setDialogValue={fnDialogValue}
+              data={data}
+            />
+          )}
+          disabled={status === "2"}
+        />,
+      ],
+      [
+        "next_action_date",
+        <InputControl
+          key={`next_action_date_${status}`}
+          label="When"
+          inputType={InputType.DATETIMEINPUT}
+          sx={{ display: "flex", flexGrow: 1 }}
+          id="next_action_date"
+          name="next_action_date"
+          error={formError?.next_action_date?.error}
+          helperText={formError?.next_action_date?.msg}
+          setFormError={setFormError}
+          defaultValue={
+            status === "1"
+              ? masterData?.next_action_date
+                ? adjustToLocal(masterData.next_action_date)
+                : props.status
+                ? ""
+                : dayjs()
+              : null
+          }
+          slotProps={{
+            openPickerButton: {
+              tabIndex: -1,
+            },
+          }}
+          disabled={status === "2"}
+        />,
+      ],
+      [
+        "closure_remark",
+        <InputControl
+          inputType={InputType.TEXTFIELD}
+          key={`closure-remark-${status}`}
+          defaultValue={status === "1" ? "" : props.data?.closure_remark}
+          placeholder="Closure remarks"
+          label="closure_remark"
+          required={false}
+          multiline
+          name="closure_remark"
+          id="closure_remark"
+          rows={1}
+          fullWidth
+          disabled={status === "1"}
+          error={formError?.closure_remark?.error}
+          helperText={formError?.closure_remark?.msg}
+          setFormError={setFormError}
+          sx={{
+            "& .MuiFormHelperText-root": {
+              margin: 0,
+            },
+          }}
+        />,
+      ],
+    ]);
+  }, [formError, onSelectChange, props]);
 
   const isProduct = props?.data?.mantainProduct ? true : true;
   async function persistEntity(
@@ -603,8 +609,6 @@ const SupportTicketForm = (props: customprop) => {
     return { label: "default label", required: false, disabled: false }; // Default if no match is found
   }
 
-  let fieldArr: React.ReactElement[] = [];
-
   const skipColumns = [
     "product_grid",
     "call_receipt_remark",
@@ -614,178 +618,186 @@ const SupportTicketForm = (props: customprop) => {
 
   // const enquiryMaintainProducts = .config_data.maintainProducts;
 
-  props.fields.map((field: any, index) => {
-    if (field.is_default_column) {
-      if (field.column_name_id === "product_grid") {
-        let propsForCallReceiptField = fieldPropertiesById(
-          "call_receipt_remark"
-        );
-        let propsForSugActionField = fieldPropertiesById(
-          "suggested_action_remark"
-        );
-        let propsForActionTakenRemField = fieldPropertiesById(
-          "action_taken_remark"
-        );
+  const fieldArr = useMemo(() => {
+    let fields: React.ReactElement[] = [];
+    props.fields.map((field: any, index) => {
+      if (field.is_default_column) {
+        if (field.column_name_id === "product_grid") {
+          let propsForCallReceiptField = fieldPropertiesById(
+            "call_receipt_remark"
+          );
+          let propsForSugActionField = fieldPropertiesById(
+            "suggested_action_remark"
+          );
+          let propsForActionTakenRemField = fieldPropertiesById(
+            "action_taken_remark"
+          );
 
-        let fld = (
-          <Grid item xs={12} key={`field-default-product-remarks-grid`}>
-            <Grid container spacing={2} key={`grid-container-${index}`}>
-              {/* {enquiryMaintainProducts && ( */}
-              {
+          let fld = (
+            <Grid item xs={12} key={`field-default-product-remarks-grid`}>
+              <Grid container spacing={2} key={`grid-container-${index}`}>
+                {/* {enquiryMaintainProducts && ( */}
+                {
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    sx={{ marginY: "0.5%" }}
+                    key={`product-grid-${index}`}
+                  >
+                    <Box
+                      sx={{
+                        height: 264,
+                      }}
+                      key={`product-box-${index}`}
+                    >
+                      <SupportProductGrid
+                        key={`product-grid-component-${index}`}
+                        // id="product_grid"
+                        // name="product_grid"
+                        isDisable={props?.status === "true" ? true : false}
+                        dgData={data}
+                        setdgData={setData}
+                        setdgDialogOpen={setDialogOpen}
+                        dgFormError={formError}
+                        setdgFormError={setFormError}
+                        dgProductFormError={productFormError}
+                      />
+                    </Box>
+                  </Grid>
+                }
                 <Grid
                   item
                   xs={12}
+                  // md={enquiryMaintainProducts ? 6 : 12}
                   md={6}
-                  sx={{ marginY: "0.5%" }}
-                  key={`product-grid-${index}`}
+                  sx={{ display: "flex", flexDirection: "column" }}
+                  key={`remarks-grid-${index}`}
                 >
-                  <Box
-                    sx={{
-                      height: 264,
-                    }}
-                    key={`product-box-${index}`}
+                  {props.status !== "true" && (
+                    <Grid
+                      item
+                      xs={12}
+                      md={12}
+                      key={`call-receipt-grid-${index}`}
+                    >
+                      <InputControl
+                        placeholder="Call Receipt Remarks"
+                        multiline
+                        inputType={InputType.TEXTFIELD}
+                        label={propsForCallReceiptField.label}
+                        name="call_receipt_remark"
+                        id="call_receipt_remark"
+                        error={formError?.call_receipt_remark?.error}
+                        helperText={formError?.call_receipt_remark?.msg}
+                        setFormError={setFormError}
+                        defaultValue={props.data?.call_receipt_remark}
+                        rows={6}
+                        fullWidth
+                        disabled={props?.status === "true" ? true : false}
+                      />
+                    </Grid>
+                  )}
+                  <Grid
+                    item
+                    xs={12}
+                    md={12}
+                    key={`suggested-action-grid-${index}`}
                   >
-                    <SupportProductGrid
-                      key={`product-grid-component-${index}`}
-                      // id="product_grid"
-                      // name="product_grid"
-                      isDisable={props?.status === "true" ? true : false}
-                      dgData={data}
-                      setdgData={setData}
-                      setdgDialogOpen={setDialogOpen}
-                      dgFormError={formError}
-                      setdgFormError={setFormError}
-                      dgProductFormError={productFormError}
-                    />
-                  </Box>
-                </Grid>
-              }
-              <Grid
-                item
-                xs={12}
-                // md={enquiryMaintainProducts ? 6 : 12}
-                md={6}
-                sx={{ display: "flex", flexDirection: "column" }}
-                key={`remarks-grid-${index}`}
-              >
-                {props.status !== "true" && (
-                  <Grid item xs={12} md={12} key={`call-receipt-grid-${index}`}>
                     <InputControl
-                      placeholder="Call Receipt Remarks"
+                      placeholder="Suggested Action Remarks"
                       multiline
                       inputType={InputType.TEXTFIELD}
-                      label={propsForCallReceiptField.label}
-                      name="call_receipt_remark"
-                      id="call_receipt_remark"
-                      error={formError?.call_receipt_remark?.error}
-                      helperText={formError?.call_receipt_remark?.msg}
+                      label={propsForSugActionField.label}
+                      name="suggested_action_remark"
+                      id="suggested_action_remark"
+                      error={formError?.suggested_action_remark?.error}
+                      helperText={formError?.suggested_action_remark?.msg}
                       setFormError={setFormError}
-                      defaultValue={props.data?.call_receipt_remark}
+                      defaultValue={props.data?.suggested_action_remark}
                       rows={6}
                       fullWidth
                       disabled={props?.status === "true" ? true : false}
                     />
                   </Grid>
-                )}
-                <Grid
-                  item
-                  xs={12}
-                  md={12}
-                  key={`suggested-action-grid-${index}`}
-                >
-                  <InputControl
-                    placeholder="Suggested Action Remarks"
-                    multiline
-                    inputType={InputType.TEXTFIELD}
-                    label={propsForSugActionField.label}
-                    name="suggested_action_remark"
-                    id="suggested_action_remark"
-                    error={formError?.suggested_action_remark?.error}
-                    helperText={formError?.suggested_action_remark?.msg}
-                    setFormError={setFormError}
-                    defaultValue={props.data?.suggested_action_remark}
-                    rows={6}
-                    fullWidth
-                    disabled={props?.status === "true" ? true : false}
-                  />
+                  {props?.status === "true" && (
+                    <Grid
+                      item
+                      xs={12}
+                      md={12}
+                      key={`action-taken-remarks-grid-${index}`}
+                    >
+                      <InputControl
+                        inputType={InputType.TEXTFIELD}
+                        key={`action-taken-field-${index}`}
+                        placeholder="Action Taken Remarks"
+                        label={propsForActionTakenRemField.label}
+                        multiline
+                        name="action_taken_remark"
+                        id="action_taken_remark"
+                        rows={6}
+                        fullWidth
+                        error={formError?.action_taken_remark?.error}
+                        helperText={formError?.action_taken_remark?.msg}
+                        setFormError={setFormError}
+                        sx={{
+                          "& .MuiFormHelperText-root": {
+                            margin: 0,
+                          },
+                        }}
+                        disabled={Boolean(propsForActionTakenRemField.disabled)}
+                        required={propsForActionTakenRemField.required}
+                        defaultValue={props.data?.action_taken_remark}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
-                {props?.status === "true" && (
-                  <Grid
-                    item
-                    xs={12}
-                    md={12}
-                    key={`action-taken-remarks-grid-${index}`}
-                  >
-                    <InputControl
-                      inputType={InputType.TEXTFIELD}
-                      key={`action-taken-field-${index}`}
-                      placeholder="Action Taken Remarks"
-                      label={propsForActionTakenRemField.label}
-                      multiline
-                      name="action_taken_remark"
-                      id="action_taken_remark"
-                      rows={6}
-                      fullWidth
-                      error={formError?.action_taken_remark?.error}
-                      helperText={formError?.action_taken_remark?.msg}
-                      setFormError={setFormError}
-                      sx={{
-                        "& .MuiFormHelperText-root": {
-                          margin: 0,
-                        },
-                      }}
-                      disabled={Boolean(propsForActionTakenRemField.disabled)}
-                      required={propsForActionTakenRemField.required}
-                      defaultValue={props.data?.action_taken_remark}
-                    />
-                  </Grid>
-                )}
               </Grid>
             </Grid>
-          </Grid>
-        );
+          );
 
-        fieldArr.push(fld);
-        fieldArr.push(
-          <Grid item xs={12} key={`final-status-container`}>
-            <Seperator>
-              <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-                Final Status
-              </div>
-            </Seperator>
-          </Grid>
-        );
-      } else if (!skipColumns.includes(field.column_name_id)) {
-        
-        const baseElement = defaultComponentMap.get(
-          field.column_name_id
-        ) as React.ReactElement;
+          fields.push(fld);
+          fields.push(
+            <Grid item xs={12} key={`final-status-container`}>
+              <Seperator>
+                <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
+                  Final Status
+                </div>
+              </Seperator>
+            </Grid>
+          );
+        } else if (!skipColumns.includes(field.column_name_id)) {
+          const baseElement = defaultComponentMap.get(
+            field.column_name_id
+          ) as React.ReactElement;
 
-        let fld;
-        if (baseElement) {
-          fld = React.cloneElement(baseElement, {
-            ...baseElement.props,
-            label: field.column_label,
-            required: field.is_mandatory === 1,
-            disabled: field.is_disabled ? true : baseElement.props.disabled,
-            key: `field-default-${field.column_name_id}`,
-          });
+          let fld;
+          if (baseElement) {
+            fld = React.cloneElement(baseElement, {
+              ...baseElement.props,
+              label: field.column_label,
+              required: field.is_mandatory === 1,
+              disabled: field.is_disabled ? true : baseElement.props.disabled,
+              key: `field-default-${field.column_name_id}`,
+            });
 
-          fieldArr.push(fld);
+            fields.push(fld);
+          }
         }
+      } else {
+        const fld = (
+          <CustomField
+            key={`field-custom-${field.column_name_id}`}
+            desc={field}
+            defaultValue={props.data?.[field.column_name] ?? ""}
+          />
+        );
+        fields.push(fld);
       }
-    } else {
-      const fld = (
-        <CustomField
-          key={`field-custom-${field.column_name_id}`}
-          desc={field}
-          defaultValue={props.data?.[field.column_name] ?? ""}
-        />
-      );
-      fieldArr.push(fld);
-    }
-    return null; // Add this to satisfy the map function
-  });
+      return null; // Add this to satisfy the map function
+    });
+    return fields; // Return the final list of fields
+  }, [defaultComponentMap, formError, props, skipColumns]);
 
   return (
     <Box>
