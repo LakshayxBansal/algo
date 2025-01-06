@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -22,7 +22,7 @@ button.MuiButton-containedError {
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
+} */
 
 /* styles/globals.css */
 .cursor-wait * {
@@ -30,29 +30,28 @@ button.MuiButton-containedError {
 }
 
 body {
-    /* color: rgb(var(--foreground-rgb)); */
-    /* background: linear-gradient(
+  /* color: rgb(var(--foreground-rgb)); */
+  /* background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb)); */
-    margin: 0;
-    /* height: 50vh; */
-    /* cursor:wait; */
-  }
+  margin: 0;
+  /* height: 50vh; */
+  /* cursor:wait; */
+}
 
-@layer utilities {
+/* @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
-
+} */
 
 /* width */
 ::-webkit-scrollbar {
   width: 0.4em;
-  height:0.5em;
+  height: 0.5em;
   /* display: none; */
 }
 
@@ -63,15 +62,15 @@ body {
   /* background: transparent; */
   border-radius: 10px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
   /* background: rgba(255, 255, 255, 0.5); */
-    background: #1976d2; 
+  background: #1976d2;
   border-radius: 16px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #63a4ff; 
+  background: #63a4ff;
 }
