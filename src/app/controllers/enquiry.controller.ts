@@ -12,6 +12,7 @@ import {
   getEnquiryDataByPageDb,
   getEnquiryDataCount,
   delEnquiryDataByIdDb,
+  getLastVoucherNumberEnquiryDb,
 } from "../services/enquiry.service";
 import { getSession } from "../services/session.service";
 import {
@@ -46,8 +47,6 @@ export async function createEnquiry({
       const updatedEnqData = {
         ...enqData,
         status_version: 0,
-        allocated_to_id: 0,
-        allocated_to: "",
         enquiry_tran_type: 1,
         active: 1,
       };
@@ -240,13 +239,13 @@ export async function updateEnquiry({
   return result;
 }
 
-export async function getConfigData() {
+export async function getConfigData(formName: string) {
   let result;
 
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const dbResult = await getConfigDataDB(session.user.dbInfo.dbName);
+      const dbResult = await getConfigDataDB(session.user.dbInfo.dbName,formName);
       if (dbResult) {
         result = dbResult;
       }
@@ -424,6 +423,25 @@ export async function delEnquiryDataById(enquiryID: number) {
           ],
         };
       }
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (error: any) {
+    throw error;
+  }
+}
+
+export async function getLastVoucherNumberEnquiry() {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await getLastVoucherNumberEnquiryDb(session);
+      result = { status: true, data: dbResult };
     } else {
       result = {
         status: false,

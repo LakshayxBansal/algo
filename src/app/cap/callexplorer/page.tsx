@@ -17,7 +17,7 @@ export default async function callExplorer() {
     const session = await getSession();
     if (session?.user.dbInfo) {
         const result = await getCallEnquiries({}, "reset", "", "0", "0", 1, 10,[]);
-        const config_data = await getConfigData();
+        const config_data = await getConfigData("enquiry");
         const regional_setting =JSON.parse(config_data[1].config)?? {};
         return (
           <AutoGrid result={result} regional_setting={regional_setting} />

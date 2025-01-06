@@ -18,7 +18,7 @@ export default function CellDbName(props: { row: dbInfoT; userId: number }) {
       const data = await update();
       if (data) {
         startTransition(() => {
-          router.push('/cap')
+          redirectToPage('/cap')
         })
         
       }

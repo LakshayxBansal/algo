@@ -3,13 +3,14 @@ import { getSession } from "../../services/session.service";
 import { redirect } from "next/navigation";
 import { logger } from "@/app/utils/logger.utils";
 import SupportTicketForm from "./SupportTicketForm";
-import { getSupportDataById } from "@/app/controllers/supportTicket.controller";
+import { getLastVoucherNumberSupport, getSupportDataById } from "@/app/controllers/supportTicket.controller";
 import { decrypt } from "@/app/utils/encrypt.utils";
-import { getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
+import { getConfigData, getLoggedInUserDetails } from "@/app/controllers/enquiry.controller";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 import { Metadata } from "next";
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { SUPPORT_ID } from "@/app/utils/consts.utils";
+import generateVoucher from "@/app/utils/generateVoucher";
 
 export const metadata : Metadata = {
   title : 'Support Tickets'
@@ -27,22 +28,36 @@ export default async function Support({ searchParams }: searchParamsProps) {
       const masterData = {
         userName: session.user?.name as string,
       };
-      const userDetails = await getLoggedInUserDetails();
+      const [userDetails, configData, fields] = await Promise.all([
+        getLoggedInUserDetails(),
+        getConfigData("support"),
+        getScreenDescription(SUPPORT_ID)
+      ]);
+      
       const id = searchParams.id;
       const status = searchParams.status;
       let supportData: any = {};
       let formatedSupportData: any;
-      const fields = await getScreenDescription(SUPPORT_ID);
+      let newVoucherNumber ;
+      let voucherString ;
       if (id) {
         const decryptedId = await decrypt(id);
 
         supportData = await getSupportDataById(Number(decryptedId));
+        newVoucherNumber= supportData?.headerData[0].auto_number;
+        voucherString = supportData?.headerData[0].voucher_number;
         const updatedWithSuggestedRemark = await getSuggestedRemark(
           supportData,
           status
         );
         formatedSupportData = await formatedData(updatedWithSuggestedRemark);
       }
+      else {
+               const lastVoucherNumber= await  getLastVoucherNumberSupport();
+               newVoucherNumber= lastVoucherNumber.data[0].maxAutoNumber + 1
+               voucherString =await generateVoucher(JSON.parse(configData[0].config).voucher, newVoucherNumber);
+          }
+      
 
       return (
         <SupportTicketForm
@@ -53,6 +68,7 @@ export default async function Support({ searchParams }: searchParamsProps) {
           }}
           status={status}
           fields={fields}
+          voucherNumber= {{voucherString , newVoucherNumber}}
         />
       );
     }
