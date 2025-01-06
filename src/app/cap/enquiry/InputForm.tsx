@@ -6,6 +6,11 @@ import {
   Alert,
   Badge,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid,
@@ -77,6 +82,9 @@ import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import { enquiryDataFormat } from "@/app/utils/formatData/enquiryDataformat";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
+import { nameMasterData } from "@/app/zodschema/zodschema";
+import generateVoucher from "@/app/utils/generateVoucher";
+import AlertDialog from "@/app/Widgets/AlertDialog";
 
 export interface InputFormProps {
   baseData: {
@@ -87,6 +95,10 @@ export interface InputFormProps {
     regional_setting: Record<string, any>;
     loggedInUserData?: Record<string, any>;
     statusUpdate?: boolean;
+    voucherNumber?: {
+      voucherString: string | null;
+      newVoucherNumber: number;
+    };
   };
 }
 
@@ -123,6 +135,11 @@ export default function InputForm({ baseData }: InputFormProps) {
   const [subStatus, setSubStatus] = useState<optionsDataT>(
     defaultData?.sub_status ?? {}
   );
+  const [voucherConflict, setVoucherConflict] = useState({
+    status: false,
+    message: "",
+  });
+
   const [nextAction, setNextAction] = useState<optionsDataT>(
     defaultData?.next_action ?? {}
   );
@@ -378,9 +395,7 @@ export default function InputForm({ baseData }: InputFormProps) {
             data={data}
           />
         )}
-        defaultValue={
-          enqData?.enquiry_id ? defaultData?.allocated_to : {}
-        }
+        defaultValue={enqData?.enquiry_id ? defaultData?.allocated_to : {}}
       />,
     ],
     [
@@ -485,6 +500,13 @@ export default function InputForm({ baseData }: InputFormProps) {
       />,
     ],
   ]);
+
+  const checkVoucherConflict = (savedVoucherNumber: number, newVoucherNumber: number| undefined) => {
+    if(savedVoucherNumber ===0 || savedVoucherNumber === newVoucherNumber ) {
+      return false;
+    }
+    return true;
+  }
   const handleSubmit = async (formData: FormData) => {
     setFormError({});
     setProductFormError({});
@@ -499,16 +521,25 @@ export default function InputForm({ baseData }: InputFormProps) {
     let result;
     let issues = [];
 
-    result = await persistEntity(
-      formatedData as enquiryDataSchemaT,
-      data as enquiryProductArraySchemaT
-    );
+    result = await persistEntity(formatedData as enquiryDataSchemaT, data as enquiryProductArraySchemaT );
+
     if (result.status) {
-      // const newVal = { id: result.data[0].id, name: result.data[0].name };
+      const savedVoucherNumber = result.data[0].auto_number;      
+      const localVoucherNumber = baseData.voucherNumber?.newVoucherNumber;
+      const isVoucherConflict = checkVoucherConflict(savedVoucherNumber, localVoucherNumber)
+
+      if (isVoucherConflict) {
+        setVoucherConflict({
+          status: true,
+          message: `Your Enquiry has been saved with Voucher Number (${result.data[0].voucher_number})`,
+        });
+        return;
+      } 
       setSnackOpen(true);
       setTimeout(function () {
         location.reload();
       }, 3000);
+      
     } else {
       issues = result?.data;
 
@@ -588,7 +619,13 @@ export default function InputForm({ baseData }: InputFormProps) {
       return subStatus;
     }
   }
-
+  const handleDialogClose = () => {
+    setSnackOpen(true);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+    setVoucherConflict({ status: false, message: '' });
+  };
   function onStatusChange(event: React.SyntheticEvent, value: any) {
     setStatus(value);
     // setSubStatus({ id: 0, name: "" });
@@ -846,7 +883,11 @@ export default function InputForm({ baseData }: InputFormProps) {
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>
-              Enquiry Details
+              {`Enquiry Details ${
+                baseData.voucherNumber?.voucherString
+                  ? `(${baseData.voucherNumber.voucherString})`
+                  : ""
+              }`}
             </div>
           </Seperator>
         </Grid>
@@ -964,6 +1005,12 @@ export default function InputForm({ baseData }: InputFormProps) {
           </AddDialog>
         )}
       </form>
+      <AlertDialog
+        open={voucherConflict.status}
+        message={voucherConflict.message}
+        onClose={handleDialogClose}
+      />
+
       <Snackbar
         open={snackOpen}
         autoHideDuration={3000}

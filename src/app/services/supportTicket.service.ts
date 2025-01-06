@@ -280,4 +280,18 @@ export async function createSupportTicketDB(
       }
     }
     
+    export async function getLastVoucherNumberSupportDb(session: Session) {
+      try {
+        let query = "select max(auto_number) as maxAutoNumber from ticket_header_tran ";
+        const result = await  excuteQuery({
+          host: session.user.dbInfo.dbName,
+          query: query,
+          values: [],
+        });
+        return result ;
+      } catch (e) {
+        console.log(e);
+      }
+      return null;
+    }
   
