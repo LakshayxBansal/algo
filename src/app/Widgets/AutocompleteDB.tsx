@@ -148,9 +148,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
 
     if (valueChange || autoSelect) {
       // if (open) {
-      // setLoading(true)
-      getData(inputValue?.trim() ?? "");
-      console.log("fired getData!!");
+        // setLoading(true)
+        getData(inputValue?.trim() ?? "");
       // }
     }
   }, [inputValue, autoSelect, open]);
@@ -297,7 +296,6 @@ export function AutocompleteDB(props: autocompleteDBT) {
         setAutoSelect(props.notEmpty);
 
         if (isTabbingOut) {
-          console.log("index ---:", hltIndex);
           if (hltIndex >= 0 && options.length > 0) {
             setInputValue(options[hltIndex].name);
             props.setDialogVal(options[hltIndex]);

@@ -7,6 +7,7 @@ import {
   getLoggedInUserDetails,
   getConfigData,
   getEnquiryById,
+  getLastVoucherNumberEnquiry,
 } from "@/app/controllers/enquiry.controller";
 import { getRightsData } from "@/app/controllers/rights.controller";
 import { getScreenDescription } from "@/app/controllers/object.controller";
@@ -14,6 +15,7 @@ import { ENQUIRY_ID } from "@/app/utils/consts.utils";
 import { Metadata } from "next";
 import { decrypt } from "@/app/utils/encrypt.utils";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
+import generateVoucher from "@/app/utils/generateVoucher";
 
 export const metadata: Metadata = {
   title: "Add Enquiry",
@@ -31,6 +33,10 @@ interface MasterData {
   regional_setting: Record<string, any>;
   loggedInUserData: Record<string, any>;
   statusUpdate: boolean;
+  voucherNumber?: {
+    voucherString : string |null,
+    newVoucherNumber : number 
+  }
 }
 
 export default async function MyForm({ searchParams }: searchParamsProps) {
@@ -51,9 +57,10 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
     // Step 2: Fetch the necessary data in parallel
     const [fields, configData, loggedInUserData] = await Promise.all([
       getScreenDescription(ENQUIRY_ID),
-      getConfigData(),
+      getConfigData("enquiry"),
       getLoggedInUserDetails(),
-    ]);
+     
+      ]);
 
     // Step 3: Validate data and handle errors
     if (
@@ -68,12 +75,25 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
       return null;
     }
 
+    let newVoucherNumber ;
+    let voucherString;
+
     // Step 4: Proceed with remaining calls if the ID is present
     let enqData: Record<string, any> | undefined = {};
     if (decryptedId) {
       enqData = await getEnquiryById(Number(decryptedId));
+      newVoucherNumber= enqData?.headerData[0].auto_number;
+      voucherString = enqData?.headerData[0].voucher_number;
       enqData = await getSuggestedRemark(enqData, status, configData[1].config);
       enqData = await formatedData(enqData);
+     
+
+    }
+    else {
+         const lastVoucherNumber= await  getLastVoucherNumberEnquiry();
+         newVoucherNumber= lastVoucherNumber.data[0].maxAutoNumber + 1
+         voucherString =await generateVoucher(JSON.parse(configData[0].config).voucher, newVoucherNumber);
+
     }
 
     // Step 5: Prepare the masterData object
@@ -84,6 +104,7 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
       regional_setting: JSON.parse(configData[1].config) ?? {},
       loggedInUserData: loggedInUserData ?? {},
       statusUpdate: status === "true" ? true : false,
+      voucherNumber: {voucherString , newVoucherNumber}
     };
 
     // Step 6: Return the component
