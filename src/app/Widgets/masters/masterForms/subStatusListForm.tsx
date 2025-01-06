@@ -67,7 +67,7 @@ export default function SubStatusListForm(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
-        setStatus(undefined);
+        setStatus(1);
       }
     } else {
       const issues = result.data;
@@ -148,6 +148,7 @@ export default function SubStatusListForm(
                       row
                       name="status"
                       id="status"
+                      defaultValue={1}
                       value={status_id}
                       onChange={onStatusChange}
                     >
