@@ -150,21 +150,21 @@ export const MUILight: ThemeOptions = {
         },
       },
     },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#4870AC", // Default background color
-          color: "#fff", // Text color
-          "&:hover": {
-            backgroundColor: "#777F8C", // Darker shade of the button on hover
-            color: "#fff", 
-          },
-        },
-      },
-      defaultProps: {
-        variant: "contained",
-      },
-    },
+    // MuiButton: {
+    //   styleOverrides: {
+    //     root: {
+    //       backgroundColor: "#4870AC", // Default background color
+    //       color: "#fff", // Text color
+    //       "&:hover": {
+    //         backgroundColor: "#777F8C", // Darker shade of the button on hover
+    //         color: "#fff", 
+    //       },
+    //     },
+    //   },
+    //   defaultProps: {
+    //     variant: "contained",
+    //   },
+    // },
   },
 };
 
