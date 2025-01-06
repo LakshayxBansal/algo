@@ -821,7 +821,8 @@ export default function ExecutiveForm(
       setDefaultState(undefined);
       if (values.country.id === 0) setStateDisable(true);
       else setStateDisable(false);
-      setStateKey((prev) => 1 - prev);
+      const newKey = 1-stateKey;
+      setStateKey(newKey);
     }
     setSelectValues(values);
   }
