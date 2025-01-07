@@ -28,7 +28,10 @@ import {
   NumberInputProps,
   numberInputClasses,
 } from "@mui/base/Unstable_NumberInput";
-import { CustomTextField, StyledTelInput } from "@/app/utils/styledComponents";
+import {
+  CustomTextField,
+  StyledTelInput,
+} from "@/app/utils/styles/styledComponents";
 import capitalizeFirstChar from "@/app/utils/titleCase.utils";
 import { error } from "console";
 

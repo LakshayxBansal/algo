@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { AppProps } from 'next/app';
 import { Box } from "@mui/material";
 
-import { theme } from "@/app/utils/theme.util";
+import { theme } from "@/app/utils/styles/theme.util";
 import { ThemeProvider } from "@mui/material/styles";
 import "./globals.css";
 

@@ -8,6 +8,9 @@ import MuiAppBar, {
   AppBarProps as MuiAppBarProps,
 } from "@mui/material/AppBar";
 import { MuiTelInput } from "mui-tel-input";
+import { InputControl } from "../../Widgets/input/InputControl";
+import { LoadingButton } from "@mui/lab";
+import { createTheme } from "@mui/material/styles";
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -466,3 +469,44 @@ export const StyledTelInput = styled(MuiTelInput)(({ theme }) => ({
     margin: 0,
   },
 }));
+
+export const StyledLoadingButton = styled(LoadingButton)(({ theme }) => ({
+  backgroundColor: "black !important",
+  color: "#fff !important",
+  maxWidth: "100%",
+  width: "100%",
+  minWidth: "100px",
+  fontSize: "14px",
+  fontFamily: "'Roboto', arial, sans-serif",
+  letterSpacing: "0.25px",
+  height: "37px",
+  position: "relative",
+  "&:hover": {
+    backgroundColor: "#1a1a1a !important",
+  },
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: theme.spacing(1),
+  padding: theme.spacing(1, 2),
+  textTransform: "none",
+  "& .MuiLoadingButton-startIcon": {
+    margin: 0,
+    display: "flex",
+    alignItems: "center",
+  },
+  "& .MuiButton-root": {
+    backgroundColor: "black !important",
+  },
+  svg: {
+    width: "24px",
+    height: "24px",
+  },
+  [theme.breakpoints.down("sm")]: {
+    width: "100%",
+    minWidth: "100%",
+    padding: theme.spacing(1, 1),
+    fontSize: "0.875rem",
+  },
+}));
+

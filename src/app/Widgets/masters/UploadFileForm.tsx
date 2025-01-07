@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Alert, Box, Button, IconButton, Link, Snackbar } from "@mui/material";
 import Seperator from "../seperator";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import { VisuallyHiddenInput } from "@/app/utils/styledComponents";
+import { VisuallyHiddenInput } from "@/app/utils/styles/styledComponents";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Papa from "papaparse";
 import { contactSchema } from "@/app/zodschema/zodschema";

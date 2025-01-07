@@ -1,14 +1,8 @@
 "use client";
-import React, { startTransition, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import {
-  Box,
-  CircularProgress,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import Link from "next/link";
-import ProviderButton from "../Widgets/providerButton";
 import { ClientSafeProvider, getCsrfToken } from "next-auth/react";
 import Grid from "@mui/material/Grid";
 import { signIn } from "next-auth/react";
@@ -16,21 +10,15 @@ import { useRouter } from "next/navigation";
 import { InputControl, InputType } from "../Widgets/input/InputControl";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import Google from "next-auth/providers/google";
 import GoogleSignUpButton from "../signup/customGoogleButton";
 import * as zs from "../zodschema/zodschema";
 import { LoadingButton } from "@mui/lab";
-import { styles } from "./signInFormStyles";
 import Image from "next/image";
+import { styles } from "../utils/styles/sign.styles";
 
 interface authPagePropsType {
   providers: ClientSafeProvider[];
 }
-
-/**
- *
- * @param formData to be used with form action
- */
 
 export default function AuthPage(props: authPagePropsType) {
   const [formError, setFormError] = useState<
@@ -45,16 +33,13 @@ export default function AuthPage(props: authPagePropsType) {
 
   const router = useRouter();
   let csrfToken;
-  const providerArr = props.providers;
   const successCallBackUrl = "/company";
-
-  
 
   const contactHandler = () => {
     setEmail(!email);
     setFormError({});
-    setFormError({});
   };
+
   function actValidate(formData: FormData) {
     // document.body.classList.add("cursor-wait");
     let data: { [key: string]: any } = {};
@@ -83,8 +68,7 @@ export default function AuthPage(props: authPagePropsType) {
         if (status?.ok) {
           startTransition(() => {
             router.push(successCallBackUrl);
-          })
-          
+          });
         } else {
           const errorState: Record<string, { msg: string; error: boolean }> =
             {};
@@ -121,13 +105,13 @@ export default function AuthPage(props: authPagePropsType) {
 
   return (
     <Grid sx={styles.container} container spacing={0}>
-      <Grid item sx={styles.left} rowGap={2}>
+      <Grid item sx={styles.leftImageContainer} rowGap={2}>
         <Image
           src="/Illustration.png"
           alt="Log In Page Image"
           width={500}
           height={550}
-          style={styles.mainImg}
+          style={styles.leftImage}
         />
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
           Welcome!
@@ -137,14 +121,14 @@ export default function AuthPage(props: authPagePropsType) {
         </Typography>
       </Grid>
 
-      <Grid item sx={styles.right}>
-        <Box sx={styles.rightTop} rowGap={2}>
-          <Typography variant="h3" sx={{ color: "#4870ac", fontWeight: "700" }}>
+      <Grid item sx={styles.rightFormContainerLogIn}>
+        <Box sx={styles.rightFormTopSectionLogIn} rowGap={2}>
+          <Typography variant="h3" sx={{ fontWeight: "700" }} color="primary.main">
             Log In
           </Typography>
           <Typography
             variant="body2"
-            sx={{ fontWeight: "400", color: "#777F8C" }}
+            sx={{ fontWeight: "400"}} color="primary.light" 
           >
             Don’t have an account?{" "}
             <Link
@@ -154,7 +138,7 @@ export default function AuthPage(props: authPagePropsType) {
               //   ...styles.links,
               //   ...(loading ? styles.linksLoading : {}),
               // }}
-              style={styles.links}
+              style={styles.toggleLink}
               tabIndex={-1}
             >
               Sign Up
@@ -168,7 +152,7 @@ export default function AuthPage(props: authPagePropsType) {
           style={{ display: "flex", flexDirection: "column" }}
         >
           {formError?.form?.error && (
-            <p style={{ color: "#FF4C4C" }}>{formError?.form.msg}</p>
+            <p style={{ color: "error.main" }}>{formError?.form.msg}</p>
           )}
 
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
@@ -186,22 +170,7 @@ export default function AuthPage(props: authPagePropsType) {
               name="email"
               autoComplete="off"
               // disabled={loading}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                  // cursor: loading ? "wait" : "normal",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                my: 3,
-              }}
+              sx={styles.emailPhoneInputFieldLogIn}
             />
           )}
 
@@ -222,82 +191,41 @@ export default function AuthPage(props: authPagePropsType) {
               preferredCountries={["in", "gb"]}
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
-              // onkeydown={onPhoneChange}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                  // cursor: loading ? "wait" : "normal",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                my: 3,
-              }}
+              sx={styles.emailPhoneInputFieldLogIn}
             />
           )}
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+          <InputControl
+            inputType={InputType.TEXT}
+            fullWidth
+            name="password"
+            label="Password"
+            type={!showPassword ? "password" : "text"}
+            id="password"
+            autoComplete="off"
+            disabled={isPending}
+            error={formError?.password?.error}
+            helperText={formError?.password?.msg}
+            setFormError={setFormError}
+            sx={styles.passwordInputField}
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  // disabled={loading}
+                  sx={{ marginRight: -1, marginTop: 0, color: "primary.main" }}
+                >
+                  {showPassword ? (
+                    <RemoveRedEyeOutlinedIcon />
+                  ) : (
+                    <VisibilityOffOutlinedIcon />
+                  )}
+                </IconButton>
+              ),
             }}
-          >
-            <InputControl
-              inputType={InputType.TEXT}
-              fullWidth
-              name="password"
-              label="Password"
-              type={!showPassword ? "password" : "text"}
-              id="password"
-              autoComplete="off"
-              disabled={isPending}
-              error={formError?.password?.error}
-              helperText={formError?.password?.msg}
-              setFormError={setFormError}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  padding: "0 14px",
-                  backgroundColor: "#E8F0FE",
-                  // cursor: loading ? "wait" : "normal",
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "45px",
-                  backgroundColor: "#E8F0FE",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "1rem",
-                  textAlign: "center",
-                },
-                mt: 3,
-                mb: 1,
-              }}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    tabIndex={-1}
-                    // disabled={loading}
-                    sx={{ marginRight: -1, marginTop: 1 }}
-                  >
-                    {showPassword ? (
-                      <RemoveRedEyeOutlinedIcon />
-                    ) : (
-                      <VisibilityOffOutlinedIcon />
-                    )}
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          />
 
           <Link
             // href={loading ? "#" : ""}
@@ -307,23 +235,23 @@ export default function AuthPage(props: authPagePropsType) {
             //   ...(loading ? styles.linksLoading : {}),
             //   alignSelf: "flex-end",
             // }}
-            style={{ ...styles.links, alignSelf: "flex-end" }}
+            style={{ ...styles.toggleLink, alignSelf: "flex-end" }}
             tabIndex={-1}
           >
             Forgot Password?
           </Link>
 
-          <Box sx={styles.btnBox} rowGap={2}>
+          <Box sx={styles.loginSubmitButtonContainer} rowGap={2}>
             <LoadingButton
               type="submit"
               loading={isPending}
-              sx={styles.pillButton}
+              sx={styles.pillStyledButton}
               // loading={loading}
               loadingIndicator={
                 <CircularProgress
                   size={24}
                   sx={{
-                    color: "white",
+                    color: "primary.contrastText",
                   }}
                 />
               }
@@ -338,7 +266,7 @@ export default function AuthPage(props: authPagePropsType) {
                 callbackUrl="/company"
                 tabIndex={-1}
                 // disabled={loading}
-                sx={styles.googleBtn}
+                sx={styles.googleSignInButton}
               >
                 Sign In With
               </GoogleSignUpButton>
@@ -349,7 +277,7 @@ export default function AuthPage(props: authPagePropsType) {
               //   ...styles.links,
               //   ...(loading ? styles.linksLoading : {}),
               // }}
-              style={styles.links}
+              style={styles.toggleLink}
               // onClick={loading ? () => {} : contactHandler}
               onClick={contactHandler}
               tabIndex={-1}
@@ -359,7 +287,7 @@ export default function AuthPage(props: authPagePropsType) {
           </Box>
         </form>
 
-        <Typography sx={styles.cpyRight} variant="caption">
+        <Typography sx={styles.copyrightText} variant="caption">
           © 2024 Algofast India Pvt. Ltd. ALL RIGHTS RESERVED
         </Typography>
       </Grid>

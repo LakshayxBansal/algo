@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 import { getCallEnquiryDetails, getCallSupportDetails } from "../../controllers/callExplorer.controller";
-import { StripedDataGrid } from "../../utils/styledComponents";
+import { StripedDataGrid } from "../../utils/styles/styledComponents";
 import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 

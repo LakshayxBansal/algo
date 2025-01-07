@@ -1,6 +1,6 @@
 import AppMenu from './navbar/AppMenu';
 import Box from '@mui/material/Box';
-import {theme} from '@/app/utils/theme.util'
+import { theme } from "@/app/utils/styles/theme.util";
 import { ThemeProvider } from "@mui/material/styles";
 import Footer from './navbar/Footer';
 import SecondNavbar from './navbar/SecondNavbar';
