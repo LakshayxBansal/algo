@@ -37,7 +37,7 @@ const pathNameToTitle:Record<Pathname, string>={
 
 }
 
-export default async function AppMenu(props: {pathname: string,children: any}) {
+export default async function AppMenu(props: {pathname: string,children: React.ReactNode}) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
