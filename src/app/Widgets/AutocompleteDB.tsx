@@ -271,7 +271,7 @@ export function AutocompleteDB(props: autocompleteDBT) {
       onKeyDown={handleKeyDown}
       renderInput={(params) => renderInput(params)}
       onHighlightChange={onHighlightChange}
-      value={props.diaglogVal}
+      value={props.diaglogVal?.id ? props.diaglogVal : null}
       isOptionEqualToValue={(option, value) => option.id === value?.id}
       PopperComponent={(props) =>  showPopper(props)}
       filterOptions={(options, { inputValue }) =>
