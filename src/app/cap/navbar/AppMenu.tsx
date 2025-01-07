@@ -37,7 +37,7 @@ const pathNameToTitle:Record<Pathname, string>={
 
 }
 
-export default async function AppMenu(props: {pathname: string,children: React.ReactNode}) {
+export default async function AppMenu(props: {pathname: string,children: any}) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
@@ -56,7 +56,6 @@ export default async function AppMenu(props: {pathname: string,children: React.R
       const title = routeTitleMap[props.pathname] || 'AlgoFast';
       
       
-      
       // const title = pathNameToTitle[props.pathname] || "Default";
       if (menuOptions) {
         return (
@@ -68,8 +67,11 @@ export default async function AppMenu(props: {pathname: string,children: React.R
             companyId = {session.user.dbInfo.id}
             profileImg = {img_src ? img_src : session.user.image}
             >
-            <Box component="span" sx={{ display: 'block',  mt: 8 }}>
-              {props.children}
+            <Box component={"span"} sx={{ display: 'block',  mt: 8 }}>
+              <div>
+                  {props.children}
+              </div>
+              
             </Box>
           </MenuBar>
         );

@@ -821,7 +821,7 @@ export default function ContactForm(
                 );
               }
             })}
-            <Grid xs={12}>
+            <Grid item xs={12}>
             <Box
               sx={{
                 display: "flex",

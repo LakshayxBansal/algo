@@ -29,6 +29,7 @@ import {
   CustomTextFieldForSearch,
   AppBar,
 } from "@/styledComponents";
+import { Height } from "@mui/icons-material";
 
 const drawerWidth: number = 290;
 
@@ -134,7 +135,7 @@ export default function MenuBar(props: propsType) {
   };
 
   return (
-    <>
+    <div>
       <CssBaseline />
       <AppBar>
         <Toolbar
@@ -267,24 +268,29 @@ export default function MenuBar(props: propsType) {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ display: "flex" }}>
-        <Drawer variant="permanent" anchor="left" open={open}>
+      <Box sx={{ display: "flex" , overflow: "hidden" , height: "100vh"}}>
+        <Drawer variant="permanent" anchor="left" open={open} 
+        // sx={{ overflowY: "auto", height: "100vh" }}
+        >
           {/* need to work on this as on xs it should be at the top */}
+          <Box>
+
           <IconButton
             title={open ? "Close Menu" : "Open Menu"}
             onClick={toggleDrawer}
             aria-label="open drawer"
             tabIndex={-1}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginY: "7px",
-              paddingLeft: `${open ? "13px" : "4px"}`,
-              justifyContent: `${open ? "flex-start" : "center"}`,
-            }}
-          >
+            // sx={{
+            //   display: "flex",
+            //   alignItems: "center",
+            //   marginY: "7px",
+            //   paddingLeft: `${open ? "13px" : "4px"}`,
+            //   justifyContent: `${open ? "flex-start" : "center"}`,
+            // }}
+            >
             {open ? <CloseRoundedIcon /> : <MenuIcon />}
           </IconButton>
+            </Box>
           <LeftMenuTree
             pages={pages}
             openDrawer={open}
@@ -294,6 +300,6 @@ export default function MenuBar(props: propsType) {
         </Drawer>
         <Box style={{ width: "96vw" }}>{children}</Box>
       </Box>
-    </>
+    </div>
   );
 }

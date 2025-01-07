@@ -214,15 +214,14 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 
 
   useEffect(() => {
-    if (searchData) {
-      fetchData(searchData);
-    } else {
-      fetchData(search);
-    }
-    // window.onload = () => {
-    //   setLoading(false);
-    //   document.body.classList.remove("cursor-wait");
-    // }
+    if(!dialogOpen){
+      if (searchData) {
+        fetchData(searchData);
+      } else {
+        fetchData(search);
+      }
+    };
+
     return () => {
       clearInterval(timeOut);
     };
@@ -231,7 +230,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     search,
     searchData,
     props,
-    // dialogOpen
+    dialogOpen
   ]);
   const fetchAllColumns = async () => {
     let columnList;
