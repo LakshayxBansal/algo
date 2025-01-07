@@ -11,7 +11,7 @@ import "./globals.css";
 export const metadata = {
   title: {
     template: '%s - Algofast CRM',
-    default: 'Algofast CRM',
+    default: 'Sign In - Algofast CRM',
   },
   description: 'Manage your customer relationship with ease',
 }

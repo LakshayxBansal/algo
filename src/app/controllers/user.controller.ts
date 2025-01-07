@@ -500,7 +500,7 @@ export async function getInviteByUserContact(
 ) {
   let getInvites = {
     status: false,
-    data: {} as inviteUserSchemaT,
+    data: [] as inviteUserSchemaT[],
     count: 0,
     error: {},
   };
@@ -517,13 +517,21 @@ export async function getInviteByUserContact(
         limit as number
       );
 
+
+
       getInvites = {
         status: true,
-        data: invites.map(bigIntToNum) as inviteUserSchemaT,
+        data: invites.map(bigIntToNum) as inviteUserSchemaT[],
         count: Number(invites[0]["total_count"]),
         // count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
+      getInvites.data = getInvites.data.map((invitee) => {
+        return {
+          ...invitee,
+          inviteDate: invitee.inviteDate?.toDateString(),
+        };
+      }) as inviteUserSchemaT[];
     }
   } catch (e: any) {
     let err = "Contact Admin, E-Code:369";
@@ -531,7 +539,7 @@ export async function getInviteByUserContact(
     getInvites = {
       ...getInvites,
       status: false,
-      data: {} as inviteUserSchemaT,
+      data: [] as inviteUserSchemaT[],
       error: err,
     };
   }

@@ -212,11 +212,14 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   }, 100);
 
   useEffect(() => {
-    if (searchData) {
-      fetchData(searchData);
-    } else {
-      fetchData(search);
-    }
+    if(!dialogOpen){
+      if (searchData) {
+        fetchData(searchData);
+      } else {
+        fetchData(search);
+      }
+    };
+
     return () => {
       clearInterval(timeOut);
     };

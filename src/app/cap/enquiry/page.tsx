@@ -18,7 +18,7 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 import generateVoucher from "@/app/utils/generateVoucher";
 
 export const metadata: Metadata = {
-  title: "Add Enquiry",
+  title: "Enquiry Tickets",
 };
 
 interface searchParamsProps {
