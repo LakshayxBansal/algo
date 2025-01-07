@@ -111,7 +111,6 @@ export default function AuthPage(props: authPagePropsType) {
           alt="Log In Page Image"
           width={500}
           height={550}
-          style={styles.mainImg}
           priority
           style={styles.leftImage}
         />
