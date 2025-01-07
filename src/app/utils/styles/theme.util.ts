@@ -100,7 +100,8 @@ export const MUILight: ThemeOptions = {
       contrastText: "#fff",
     },
     secondary: {
-      main: "#f50057",
+      // main: "#f50057",
+      main: "#9C27B0",
       light: "#F0F8FF",
       contrastText: "#98A1B2",
     },
