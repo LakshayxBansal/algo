@@ -206,9 +206,9 @@ export default function ExecutiveForm(
         key="executive_dept"
         name={"executive_dept"}
         id={"department"}
-        label={"Department"}
+        label={"Executive Department"}
         required
-        dialogTitle={"Department"}
+        dialogTitle={"Executive Department"}
         width={365}
         defaultValue={
           {
