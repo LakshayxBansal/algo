@@ -2,15 +2,9 @@
 import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { DataGrid, DataGridProps, gridClasses } from "@mui/x-data-grid";
-import { Box, Button, Menu, TextField } from "@mui/material";
-import MuiAppBar, {
-  AppBarProps,
-  AppBarProps as MuiAppBarProps,
-} from "@mui/material/AppBar";
+import { Button, Menu, TextField } from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
-import { InputControl } from "../../Widgets/input/InputControl";
 import { LoadingButton } from "@mui/lab";
-import { createTheme } from "@mui/material/styles";
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
