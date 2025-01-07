@@ -51,3 +51,15 @@ export const PRODUCT_OBJECT_ID=33;
 export const CREATE_ACTION_ID = 1;
 
 
+
+/************************ Config Constants  ***************************/
+export const PRODUCT_CONFIG_ID = 3;
+export const ENQUIRY_CONFIG_ID = 1;
+export const REGIONAL_SETTING_CONFIG_ID = 4;
+export const SEARCH_CONTACT_CONFIG_ID = 6;
+export const SEARCH_EXECUTIVE_CONFIG_ID = 7;
+export const SEARCH_NAVBAR_CONFIG_ID = 5;
+export const SEARCH_ORGANISATION_CONFIG_ID = 8;
+export const SUPPORT_CONFIG_ID = 2;
+
+

@@ -140,6 +140,20 @@ export async function getExecutiveList(crmDb: string, searchString: string) {
   }
 }
 
+export async function getExecutiveForAllocationDB(crmDb: string,searchString: string, objectId: number) {
+  try {
+    const search_value = searchString ? searchString : '';
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "call search_executive_allocated(?, ?);",
+      values: [search_value, objectId]
+    })
+    return result[0];
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getExecutiveDetailsById(crmDb: string, id: number) {
   try {
     const result = await excuteQuery({
