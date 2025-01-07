@@ -23,7 +23,6 @@ import { usePathname } from "next/navigation";
 export default function ExecutiveDeptForm(
   props: masterFormPropsWithDataT<executiveDeptSchemaT>
 ) {
-  console.log(props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});

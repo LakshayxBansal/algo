@@ -50,7 +50,6 @@ export default function CreateCompany(
   useEffect(() => {
     const fetchCountryData = async () => {
       const countryData = await getCountryByIp();
-      console.log(countryData);
       if (countryData) {
         setdefaultCountry(countryData.country);
         setdefaultCountryId(countryData.countryId);

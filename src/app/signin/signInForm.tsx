@@ -111,6 +111,7 @@ export default function AuthPage(props: authPagePropsType) {
           alt="Log In Page Image"
           width={500}
           height={550}
+          priority
           style={styles.leftImage}
         />
         <Typography variant="h3" sx={{ fontWeight: "600" }}>
