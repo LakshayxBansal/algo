@@ -38,6 +38,7 @@ import Button from "@mui/material/Button";
 import {
   getExecutive,
   getExecutiveById,
+  getExecutiveForAllocation,
 } from "@/app/controllers/executive.controller";
 
 import dayjs from "dayjs";
@@ -90,6 +91,7 @@ import { adjustToLocal } from "@/app/utils/utcToLocal";
 import CustomField from "../enquiry/CustomFields";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import AlertDialog from "@/app/Widgets/AlertDialog";
+import { SUPPORT_CONFIG_ID } from "@/app/utils/consts.utils";
 
 interface customprop extends masterFormPropsT {
   userDetails: {
@@ -438,7 +440,7 @@ const SupportTicketForm = (props: customprop) => {
           showDetails={true}
           dialogTitle={"Assign Executive"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
-          fetchDataFn={getExecutive}
+          fetchDataFn={(arg:any)=>getExecutiveForAllocation(SUPPORT_CONFIG_ID,arg)}
           fnFetchDataByID={getExecutiveById}
           required
           formError={formError?.allocated_to ?? formError.allocated_to}

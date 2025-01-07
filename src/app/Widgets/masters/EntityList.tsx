@@ -42,7 +42,7 @@ import {
   regionalSettingSchemaT,
   rightSchemaT,
 } from "@/app/models/models";
-import { StripedDataGrid } from "@/app/utils/styledComponents";
+import { StripedDataGrid } from "@/app/utils/styles/styledComponents";
 import UploadFileForm from "./UploadFileForm";
 import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
@@ -674,7 +674,6 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             filterMode="server"
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
-              
             loading={!data}
             onCellKeyDown={handleCellKeyDown}
             // autosizeOptions={autosizeOptions}

@@ -17,6 +17,7 @@ import {
   getExecutiveColumnsDb,
   mapExecutiveToDeptDb,
   getEnquiriesByExecutiveIdDb,
+  getExecutiveForAllocationDB,
 } from "../services/executive.service";
 import { deleteSession, getDbSession, getSession } from "../services/session.service";
 import { getExecutiveList } from "@/app/services/executive.service";
@@ -184,6 +185,16 @@ export async function getExecutive(searchString: string) {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return getExecutiveList(session.user.dbInfo.dbName, searchString);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+export async function getExecutiveForAllocation(objectId: number, searchString: string) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getExecutiveForAllocationDB(session.user.dbInfo.dbName,searchString, objectId);
     }
   } catch (error) {
     throw error;
