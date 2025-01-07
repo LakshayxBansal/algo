@@ -27,9 +27,9 @@ export default function CallDetailList({ selectedRow, refresh , callType , dateT
 
         async function getEnquiries() {
             let result;
-            if(callType === 0)
+            if(callType === 0 && selectedRow)
             {
-                result = await getCallEnquiryDetails(selectedRow?.id);
+                result = await getCallEnquiryDetails(selectedRow.id);
             }
             else if(callType === 1) result = await getCallSupportDetails(selectedRow?.id);
             setData(result);
