@@ -230,7 +230,7 @@ export default function AuthPage(props: authPagePropsType) {
 
           <Link
             // href={loading ? "#" : ""}
-            href={""}
+            href={"/forgotpassword"}
             // style={{
             //   ...styles.links,
             //   ...(loading ? styles.linksLoading : {}),
