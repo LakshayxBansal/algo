@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Checkbox, { CheckboxProps } from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -19,18 +19,11 @@ import { FieldChangeHandlerContext } from "@mui/x-date-pickers/internals/hooks/u
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker, TimePickerProps } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-// import ReactPhoneInput, { CountryData, PhoneInputProps } from 'react-phone-input-material-ui';
-// import PhoneInput from 'react-phone-input-2';
-// import "react-phone-input-2/lib/style.css";
-import { MuiTelInput, MuiTelInputInfo } from "mui-tel-input";
+
 import {
-  Unstable_NumberInput as BaseNumberInput,
-  NumberInputProps,
-  numberInputClasses,
-} from "@mui/base/Unstable_NumberInput";
-import { CustomTextField, StyledTelInput } from "@/app/utils/styledComponents";
-import capitalizeFirstChar from "@/app/utils/titleCase.utils";
-import { error } from "console";
+  CustomTextField,
+  StyledTelInput,
+} from "@/app/utils/styles/styledComponents";
 
 // for number
 // inputtype = TEXT

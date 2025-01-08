@@ -59,7 +59,7 @@ export const userSchema = z
       .max(50)
       .regex(
         passwordRegex,
-        "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+        "Minimum 8 characters with 1 letter, 1 number, and 1 special character."
       ),
     name: z.string().min(1, "Name must not be empty").max(45),
     phone: z

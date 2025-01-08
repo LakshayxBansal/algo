@@ -1,64 +1,63 @@
 "use client";
 
 import { createTheme } from "@mui/material/styles";
-import { ThemeOptions } from '@mui/material/styles';
+import { ThemeOptions } from "@mui/material/styles";
 
 export const theme1: ThemeOptions = {
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#0f0',
+      main: "#0f0",
     },
     background: {
-      default: '#111111',
-      paper: '#212121',
+      default: "#111111",
+      paper: "#212121",
     },
   },
   typography: {
-    fontFamily: 'Open Sans',
+    fontFamily: "Open Sans",
     h1: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     h2: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     h3: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     h4: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     h6: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     h5: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     subtitle1: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     subtitle2: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
     button: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
       fontWeight: 900,
     },
     overline: {
-      fontFamily: 'Ubuntu Mono',
+      fontFamily: "Ubuntu Mono",
     },
   },
 };
 
-
 const themeDefault: ThemeOptions = {
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
-      main: '#3f51b5',
+      main: "#3f51b5",
     },
     secondary: {
-      main: '#f50057',
+      main: "#f50057",
     },
   },
   spacing: 8,
@@ -90,23 +89,39 @@ const themeDefault: ThemeOptions = {
   //     arrow: true,
   //   },
   // },
-}
+};
 
 export const MUILight: ThemeOptions = {
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
-      main: '#1976d2',
+      main: "#4870AC",
+      light: "#777F8C",
+      contrastText: "#fff",
     },
     secondary: {
-      main: '#9c27b0',
+      // main: "#f50057",
+      main: "#9C27B0",
+      light: "#F0F8FF",
+      contrastText: "#98A1B2",
     },
     background: {
-      default: '#fff',
-      paper: '#fff',
+      default: "#fff",
+      paper: "#fff",
+    },
+    error: {
+      main: "#FF4C4C",
     },
   },
   spacing: 8,
+  typography: {
+    fontFamily: "Roboto, 'Helvetica Neue', sans-serif",
+    button: {
+      color: "#ffffff",
+      backgroundColor: "#98A1B2",
+      dark: "#1A1D22",
+    },
+  },
   components: {
     MuiTextField: {
       styleOverrides: {
@@ -129,9 +144,30 @@ export const MUILight: ThemeOptions = {
         margin: "dense",
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        asterisk: {
+          color: "#E63946",
+        },
+      },
+    },
+    // MuiButton: {
+    //   styleOverrides: {
+    //     root: {
+    //       backgroundColor: "#4870AC", // Default background color
+    //       color: "#fff", // Text color
+    //       "&:hover": {
+    //         backgroundColor: "#777F8C", // Darker shade of the button on hover
+    //         color: "#fff", 
+    //       },
+    //     },
+    //   },
+    //   defaultProps: {
+    //     variant: "contained",
+    //   },
+    // },
   },
 };
-
 
 interface InputStyle {
   color: string;
@@ -144,11 +180,8 @@ interface InputStyle {
   backgroundColor: string;
   boxShadow: string;
   height?: string | number;
-  width?: string | number; 
+  width?: string | number;
 }
-
-
-
 
 export const theme = createTheme(MUILight);
 

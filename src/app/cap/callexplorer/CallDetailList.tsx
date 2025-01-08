@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 import { getCallEnquiryDetails, getCallSupportDetails } from "../../controllers/callExplorer.controller";
-import { StripedDataGrid } from "../../utils/styledComponents";
+import { StripedDataGrid } from "../../utils/styles/styledComponents";
 import { Box, Paper, Popover, Tooltip, Typography } from "@mui/material";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
 
@@ -27,9 +27,9 @@ export default function CallDetailList({ selectedRow, refresh , callType , dateT
 
         async function getEnquiries() {
             let result;
-            if(callType === 0)
+            if(callType === 0 && selectedRow)
             {
-                result = await getCallEnquiryDetails(selectedRow?.id);
+                result = await getCallEnquiryDetails(selectedRow.id);
             }
             else if(callType === 1) result = await getCallSupportDetails(selectedRow?.id);
             setData(result);

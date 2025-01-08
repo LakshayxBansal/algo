@@ -13,7 +13,7 @@ import { SUPPORT_ID } from "@/app/utils/consts.utils";
 import generateVoucher from "@/app/utils/generateVoucher";
 
 export const metadata : Metadata = {
-  title : ''
+  title : 'Support Tickets'
 }
 
 interface searchParamsProps {

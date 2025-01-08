@@ -48,6 +48,7 @@ import {
 import {
   getExecutive,
   getExecutiveById,
+  getExecutiveForAllocation,
 } from "@/app/controllers/executive.controller";
 import {
   getEnquirySubSatusById,
@@ -86,6 +87,7 @@ import { nameMasterData } from "@/app/zodschema/zodschema";
 import generateVoucher from "@/app/utils/generateVoucher";
 import { idID } from "@mui/material/locale";
 import AlertDialog from "@/app/Widgets/AlertDialog";
+import { ENQUIRY_CONFIG_ID } from "@/app/utils/consts.utils";
 
 export interface InputFormProps {
   baseData: {
@@ -389,7 +391,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           showDetails={true}
           dialogTitle={"Allocated To"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
-          fetchDataFn={getExecutive}
+          fetchDataFn={(arg:any)=>getExecutiveForAllocation(ENQUIRY_CONFIG_ID,arg)}
           fnFetchDataByID={getExecutiveById}
           required={false}
           formError={formError?.allocated_to ?? formError.allocated_to}
