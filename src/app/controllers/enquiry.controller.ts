@@ -30,6 +30,7 @@ import { logger } from "@/app/utils/logger.utils";
 import { getObjectByName } from "./rights.controller";
 import { uploadDocument } from "./document.controller";
 import { bigIntToNum } from "../utils/db/types";
+import { sendNotificationToTopic } from "../services/notification.service";
 
 export async function createEnquiry({
   enqData,
@@ -161,6 +162,10 @@ export async function updateEnquiry({
         const dbResult = await updateEnquiryDB(session, enqActionData);
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
+          if(enqData.allocated_to_id !== 0){
+            const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated");
+          }
           // const objectDetails = await getObjectByName("Enquiry");
           // await uploadDocument(
           //   docData,
