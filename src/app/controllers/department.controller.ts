@@ -81,7 +81,6 @@ export async function createDepartment(data: nameMasterDataT) {
       const parsed = zs.nameMasterData.safeParse(data);
       if (parsed.success) {
         const dbResult = await createDepartmentDb(session, data);
-        console.log("department", dbResult[1]);
         if (dbResult.length > 0 && dbResult[0][0].error === 0) {
           result = { status: true, data: dbResult[1] };
         } else {

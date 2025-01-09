@@ -59,7 +59,7 @@ export const userSchema = z
       .max(50)
       .regex(
         passwordRegex,
-        "Minimum 8 characters required with atleast 1 letter, 1 number, and 1 special character"
+        "Minimum 8 characters with 1 letter, 1 number, and 1 special character."
       ),
     name: z.string().min(1, "Name must not be empty").max(45),
     phone: z
@@ -467,6 +467,7 @@ export const enquiryHeaderSchema = z.object({
   modified_on: z.date().optional(),
   created_by: z.number().optional(),
   created_on: z.date().optional(),
+  voucher_number : z.string().optional(),
   call_receipt_remark: z
     .string()
     .max(5000, {
@@ -556,6 +557,7 @@ export const supportHeaderSchema = z.object({
     .optional(),
   modified_by_name: z.string().max(60).optional(),
   created_by_name: z.string().max(60).optional(),
+  voucher_number : z.string().optional(),
 });
 
 export const supportLedgerSchema = z.object({

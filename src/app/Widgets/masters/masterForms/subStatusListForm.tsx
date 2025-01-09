@@ -34,7 +34,7 @@ export default function SubStatusListForm(
   >({});
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [status_id, setStatus] = useState<number | undefined>(
-    props.data?.enquiry_status_id
+    props.data?.enquiry_status_id ? props.data?.enquiry_status_id : 1
   );
   const entityData: enquirySubStatusMasterT = props.data
     ? props.data
@@ -54,7 +54,6 @@ export default function SubStatusListForm(
       : entityData.enquiry_status_id
       ? entityData.enquiry_status_id
       : 0;
-
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -67,7 +66,7 @@ export default function SubStatusListForm(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
-        setStatus(undefined);
+        setStatus(1);
       }
     } else {
       const issues = result.data;
@@ -148,6 +147,7 @@ export default function SubStatusListForm(
                       row
                       name="status"
                       id="status"
+                      defaultValue={1}
                       value={status_id}
                       onChange={onStatusChange}
                     >

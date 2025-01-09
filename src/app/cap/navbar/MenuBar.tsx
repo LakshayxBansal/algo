@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -16,21 +16,16 @@ import { useRouter } from "next/navigation";
 import LeftMenuTree from "./leftmenutree";
 import { menuTreeT, searchDataT } from "../../models/models";
 import ProfileMenu from "@/app/cap/admin/profile/ProfileMenu";
-import logo from "../../../../public/logo.png";
-import companyLogo from "../../../../public/companyLogo.png";
-import notification from "../../../../public/notificationIcon.png";
-import searchIcon from "../../../../public/searchIcon.png";
 import Image from "next/image";
-import { Autocomplete, debounce } from "@mui/material";
+import { Autocomplete, debounce, useMediaQuery } from "@mui/material";
 import { searchMainData } from "@/app/controllers/navbar.controller";
 import {
   GroupHeader,
   StyledLink,
   CustomTextFieldForSearch,
   AppBar,
+  barHeight,
 } from "@/styledComponents";
-
-const drawerWidth: number = 290;
 
 interface propsType {
   pages: menuTreeT[];
@@ -52,16 +47,16 @@ export default function MenuBar(props: propsType) {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
 
-  const childrenRef = useRef<React.ReactNode>(props.children);
+  const matches = useMediaQuery("(max-width:425px)");
 
   const Drawer = styled(MuiDrawer, {
     shouldForwardProp: (prop) => prop !== "open",
   })(({ theme, open }) => ({
     "& .MuiDrawer-paper": {
       position: "relative",
-      top: 64, // Matches the height of the AppBar
+      top: barHeight, // Matches the height of the AppBar
       whiteSpace: "nowrap",
-      width: open ? 290 : hovered ? theme.spacing(16) : theme.spacing(7),
+      width: open ? 290 : matches ? 0 : theme.spacing(7),
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.easeInOut,
         duration: theme.transitions.duration.enteringScreen,
@@ -79,8 +74,6 @@ export default function MenuBar(props: propsType) {
         }),
     },
   }));
-
-  const holdValue = useRef("newValue");
 
   useEffect(() => {
     const maindata = debounce(async (searchText: string) => {
@@ -140,26 +133,33 @@ export default function MenuBar(props: propsType) {
       <AppBar>
         <Toolbar
           sx={{
-            height: 64,
             "&.MuiToolbar-root": {
               paddingLeft: 0,
               paddingRight: 0,
+              minHeight: barHeight,
             },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton
+              title={open ? "Close Menu" : "Open Menu"}
+              onClick={toggleDrawer}
+              aria-label="open drawer"
+              tabIndex={-1}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                marginY: "7px",
+                marginLeft: "8px",
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
             <Image
-              src={logo}
-              alt="Algofast Logo"
-              width={20}
-              height={20}
-              style={{ marginLeft: 16 }}
-            />
-            <Image
-              src={companyLogo}
+              src={"/companyLogo.png"}
               alt="Company Logo"
-              width={30}
-              height={30}
+              width={40}
+              height={40}
               style={{ marginRight: 10, marginLeft: 40 }}
             />
             <Typography
@@ -190,7 +190,7 @@ export default function MenuBar(props: propsType) {
                     ...params.InputProps,
                     startAdornment: (
                       <Image
-                        src={searchIcon}
+                        src={"/searchIcon.png"}
                         alt="Search Icon"
                         width={28}
                         height={28}
@@ -252,7 +252,7 @@ export default function MenuBar(props: propsType) {
               }}
             >
               <Image
-                src={notification}
+                src={"/notificationIcon.png"}
                 alt="notification"
                 width={20}
                 height={20}
@@ -275,30 +275,13 @@ export default function MenuBar(props: propsType) {
         // sx={{ overflowY: "auto", height: "100vh" }}
         >
           {/* need to work on this as on xs it should be at the top */}
-          <Box>
-
-          <IconButton
-            title={open ? "Close Menu" : "Open Menu"}
-            onClick={toggleDrawer}
-            aria-label="open drawer"
-            tabIndex={-1}
-            // sx={{
-            //   display: "flex",
-            //   alignItems: "center",
-            //   marginY: "7px",
-            //   paddingLeft: `${open ? "13px" : "4px"}`,
-            //   justifyContent: `${open ? "flex-start" : "center"}`,
-            // }}
-            >
-            {open ? <CloseRoundedIcon /> : <MenuIcon />}
-          </IconButton>
-            </Box>
           <LeftMenuTree
             pages={pages}
             openDrawer={open}
             setOpenDrawer={setOpenDrawer}
             isHover={hovered}
           />
+
         </Drawer>
         <Box style={{  flex: 1, overflowY: "auto" }}>{children}</Box>
       </Box>

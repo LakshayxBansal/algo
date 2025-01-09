@@ -71,7 +71,6 @@ export const AddDialog: React.FC<dialogPropsT> = ({title, open, setDialogOpen, c
   };
   
   function handleCloseClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    console.log(e);
     setDialogOpen(false);
   }
 

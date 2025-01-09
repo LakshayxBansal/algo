@@ -8,6 +8,7 @@ import MuiAppBar, {
   AppBarProps as MuiAppBarProps,
 } from "@mui/material/AppBar";
 import { lighten, darken } from "@mui/material";
+export const barHeight = 55;
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -502,7 +503,7 @@ export const CustomTextFieldForSearch = styled(TextField)(({ theme }) => ({
 }));
 
 export const AppBar = styled(MuiAppBar)<AppBarProps>(({ theme }) => ({
-  height: 64,
+  height: barHeight,
   backgroundColor: "#4870AC",
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {

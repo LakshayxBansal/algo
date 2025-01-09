@@ -41,7 +41,7 @@ import {
 import {
   ContainedButton,
   MinimizedDataGrid,
-} from "../../utils/styledComponents";
+} from "../../utils/styles/styledComponents";
 import TuneIcon from "@mui/icons-material/Tune";
 import { getExecutive } from "../../controllers/executive.controller";
 import { optionsDataT } from "../../models/models";

@@ -12,6 +12,7 @@ import {
   createSupportTicketDB,
   delSupportDataByIdDb,
   getHeaderDataAction,
+  getLastVoucherNumberSupportDb,
   getLedgerDataAction,
   getProductDataAction,
   getSupportDataByPageDb,
@@ -46,8 +47,6 @@ export async function createSupportTicket({
       const updatedSupportData = {
         ...supportData,
         status_version: 0,
-        allocated_to_id: 0,
-        allocated_to: "",
         ticket_tran_type: 1,
         active: 1,
       };
@@ -331,6 +330,25 @@ export async function getSupportTicketDescription(searchString: string) {
       return getSupportTicketDescriptionDb(session.user.dbInfo.dbName, searchString);
     }
   } catch (error) {
+    throw error;
+  }
+}
+
+export async function getLastVoucherNumberSupport() {
+  let result;
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      const dbResult = await getLastVoucherNumberSupportDb(session);
+      result = { status: true, data: dbResult };
+    } else {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Error: Server Error" }],
+      };
+    }
+    return result;
+  } catch (error: any) {
     throw error;
   }
 }

@@ -1,7 +1,7 @@
 import { getConfigData } from "../controllers/enquiry.controller";
 
 export const regionalDateFormat= async()=>{
-    const config_data = await getConfigData();
+    const config_data = await getConfigData("enquiry");
     const { dateFormat, timeFormat } =JSON.parse(config_data[1].config)?? {};
   
     const timeFormatString = timeFormat

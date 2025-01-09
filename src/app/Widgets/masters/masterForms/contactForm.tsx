@@ -131,7 +131,8 @@ export default function ContactForm(
       if (values.country.id === 0) {
         setStateDisable(true);
       }
-      setStateKey((prev) => 1 - prev);
+      const newKey = 1 - stateKey;
+      setStateKey(newKey);
     }
     setSelectValues(values);
   };
@@ -243,6 +244,7 @@ export default function ContactForm(
       return rest;
     });
   };
+
 
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
