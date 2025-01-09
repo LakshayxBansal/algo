@@ -93,13 +93,13 @@ export default function EntityList(props: entitiyCompT) {
   const [loading, setLoading] = useState(false);
   const [selectionModel, setSelectionModel] = useState([]);
 
-  React.useLayoutEffect(() => {
-    if (apiRef.current) {
-      // apiRef.current.setCellFocus([]);
-      // apiRef.current.setRowSelectionModel([]);
-      apiRef.current.setCellFocus(focusedRow, "More Options");
-    }
-  }, [focusedRow]);
+  // React.useLayoutEffect(() => {
+  //   if (apiRef.current) {
+  //     // apiRef.current.setCellFocus([]);
+  //     // apiRef.current.setRowSelectionModel([]);
+  //     apiRef.current.setCellFocus(focusedRow, "More Options");
+  //   }
+  // }, [focusedRow]);
   
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -131,8 +131,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 //   }
 // };
 
-const getRowClassName = (params) =>
-  focusedRow === params.row.id ? "Mui-focused-row" : "";
+// const getRowClassName = (params) =>
+//   focusedRow === params.row.id ? "Mui-focused-row" : "";
 
 
 // const handleCellKeyDown = (params, event) => {
@@ -154,32 +154,32 @@ const getRowClassName = (params) =>
 
 
 
-const handleCellKeyDown = (params: any, event: any, details: any) => {
-  const rowId = params.row.id;
-  const currentIndex = data.findIndex((row: any) => row.id === rowId);
+// const handleCellKeyDown = (params: any, event: any, details: any) => {
+//   const rowId = params.row.id;
+//   const currentIndex = data.findIndex((row: any) => row.id === rowId);
 
-  let nextIndex = currentIndex;
+//   let nextIndex = currentIndex;
 
-  if (event.key === "ArrowDown") {
-    event.preventDefault();
-    nextIndex =
-      currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
-  } else if (event.key === "ArrowUp") {
-    event.preventDefault();
-    nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
-  } else if (event.key === "Enter" || event.key === " ") {
-    event.preventDefault();
-  }
+//   if (event.key === "ArrowDown") {
+//     event.preventDefault();
+//     nextIndex =
+//       currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+//   } else if (event.key === "ArrowUp") {
+//     event.preventDefault();
+//     nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+//   } else if (event.key === "Enter" || event.key === " ") {
+//     event.preventDefault();
+//   }
 
-  if (nextIndex !== currentIndex) {
-    const nextRow = data[nextIndex];
-    if (nextRow) {
-      // setRowSelectionModel([nextRow.id]);
-      // setSelectedRow(nextRow);
-      setFocusedRow(nextRow)
-    }
-  }
-};
+//   if (nextIndex !== currentIndex) {
+//     const nextRow = data[nextIndex];
+//     if (nextRow) {
+//       // setRowSelectionModel([nextRow.id]);
+//       // setSelectedRow(nextRow);
+//       setFocusedRow(nextRow)
+//     }
+//   }
+// };
 
   
 
@@ -731,8 +731,8 @@ const handleCellKeyDown = (params: any, event: any, details: any) => {
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
-            onCellKeyDown={handleCellKeyDown}
-            getRowClassName={getRowClassName}
+            // onCellKeyDown={handleCellKeyDown}
+            // getRowClassName={getRowClassName}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
