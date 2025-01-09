@@ -82,12 +82,12 @@ export default function LeftMenuTree(props: {
     if (href !== '#' && pathname !== href && props.setOpenDrawer) {
       props.setOpenDrawer(false);
     }
-    if (href !== '#') {
+    // if (href !== '#') {
       startTransition(() => {
         router.push(href);
         document.body.classList.add('cursor-wait');
       });
-    }
+    // }
   };
 
   function handleSubMenuHover(
@@ -373,6 +373,7 @@ export default function LeftMenuTree(props: {
   return (
     <div>
       <List
+      tabIndex={-1}
         sx={{ width: "100%", maxWidth: 560,overflowX:"hidden",bgcolor: "background.paper", padding: 0}}
         component="nav"
         aria-labelledby="nested-list-subheader"

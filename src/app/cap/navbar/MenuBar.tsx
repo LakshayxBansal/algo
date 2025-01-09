@@ -29,7 +29,6 @@ import {
   CustomTextFieldForSearch,
   AppBar,
 } from "@/styledComponents";
-import { Height } from "@mui/icons-material";
 
 const drawerWidth: number = 290;
 
@@ -68,9 +67,10 @@ export default function MenuBar(props: propsType) {
         duration: theme.transitions.duration.enteringScreen,
       }),
       boxSizing: "border-box",
+      overflowY: "auto",
       ...(!open &&
         hovered && {
-          overflowX: "hidden",
+          // overflowX: "hidden",
           width: hovered ? theme.spacing(16) : theme.spacing(7),
           transition: theme.transitions.create("width", {
             easing: theme.transitions.easing.sharp,
@@ -185,7 +185,7 @@ export default function MenuBar(props: propsType) {
               renderInput={(params) => (
                 <CustomTextFieldForSearch
                   {...params}
-                  placeholder="Search"
+                  placeholder={`search across ${props.companyName}`}
                   InputProps={{
                     ...params.InputProps,
                     startAdornment: (
@@ -198,6 +198,7 @@ export default function MenuBar(props: propsType) {
                     ),
                     endAdornment: null,
                   }}
+                  // tabIndex={-1}
                 />
               )}
               renderGroup={(params) => (
@@ -236,10 +237,11 @@ export default function MenuBar(props: propsType) {
               onInputChange={(event, newInputValue) => {
                 setSearch(newInputValue);
               }}
+              tabIndex={-1}
             />
           </Box>
 
-          <IconButton title="title" color="inherit">
+          <IconButton title="title" color="inherit" tabIndex={-1}>
             <Badge
               badgeContent={4}
               sx={{
@@ -268,7 +270,7 @@ export default function MenuBar(props: propsType) {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ display: "flex" , overflow: "hidden" , height: "100vh"}}>
+      <Box sx={{ display: "flex", maxHeight: "100vh",overflow: "hidden"}}>
         <Drawer variant="permanent" anchor="left" open={open} 
         // sx={{ overflowY: "auto", height: "100vh" }}
         >
@@ -298,7 +300,7 @@ export default function MenuBar(props: propsType) {
             isHover={hovered}
           />
         </Drawer>
-        <Box style={{ width: "96vw" }}>{children}</Box>
+        <Box style={{  flex: 1, overflowY: "auto" }}>{children}</Box>
       </Box>
     </div>
   );

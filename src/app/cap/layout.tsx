@@ -44,7 +44,7 @@ export default function CapLayout({children} : {children?: React.ReactNode}) {
       {/* Include shared UI here e.g. a header or sidebar */}
         <>
         <AppMenu pathname ={pathname}>
-          <Box id="cap_layout" sx={{overflowY:"auto", height:"100vh"}}>
+          <Box id="cap_layout">
             <ThemeProvider theme={theme}>
               {children}
             </ThemeProvider>
