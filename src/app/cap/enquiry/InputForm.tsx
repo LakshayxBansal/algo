@@ -137,7 +137,7 @@ export default function InputForm({ baseData }: InputFormProps) {
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(baseData.enqData.docData ? baseData.enqData.docData : []);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [subStatus, setSubStatus] = useState<optionsDataT>(
     defaultData?.sub_status ?? {}
@@ -619,6 +619,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       result = await updateEnquiry({
         enqData: enquirydata,
         product: productData,
+        docData: newDocsData
       });
     } else {
       result = await createEnquiry({
