@@ -108,8 +108,8 @@ export async function createTablesAndProc(
     data += await excuteQuery({
       host: dbName,
       query:
-        "INSERT INTO executive_master (name, email, mobile, created_by, created_on, crm_user_id, role_id) values\
-                (?, ?, ?, ?, now(), ?, 1);",
+        "INSERT INTO executive_master (name, email, mobile, created_by, created_on, crm_user_id, role_id, stamp) values\
+                (?, ?, ?, ?, now(), ?, 1, 0);",
       values: [userName, userEmail, userMobile, userId, userId],
     });
     result = {
