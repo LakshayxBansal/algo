@@ -7,13 +7,14 @@ export async function getOpenEnquiriesDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "SELECT ROW_NUMBER() over (ORDER BY eht.created_on DESC) AS id, eht.created_on , cm.name contactName, ecm.name category, essm.name subStatus\
-        FROM enquiry_header_tran eht \
+        "SELECT ROW_NUMBER() over (ORDER BY eht.created_on DESC) AS id, elt.enquiry_id, eht.created_on , cm.name contactName, ecm.name category, essm.name subStatus\
+        FROM enquiry_header_tran eht\
         left join enquiry_ledger_tran elt on elt.enquiry_id = eht.id\
         left join contact_master cm on cm.id = eht.contact_id\
         left join enquiry_category_master ecm on ecm.id = eht.category_id\
         left join enquiry_sub_status_master essm on essm.id = elt.sub_status_id\
-        limit 10;",
+        group by elt.enquiry_id\
+        order by eht.created_on desc limit 10;",
       values: [],
     });
 
@@ -211,13 +212,14 @@ export async function getRecentTicketsDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "SELECT ROW_NUMBER() over (ORDER BY eht.created_on DESC) AS id, eht.created_on , cm.name contactName, ecm.name category, essm.name subStatus\
+        "SELECT ROW_NUMBER() over (ORDER BY eht.created_on DESC) AS id, eht.created_on ,elt.ticket_id, cm.name contactName, ecm.name category, essm.name subStatus\
         FROM ticket_header_tran eht \
         left join ticket_ledger_tran elt on elt.ticket_id = eht.id\
         left join contact_master cm on cm.id = eht.contact_id\
         left join ticket_category_master ecm on ecm.id = eht.category_id \
         left join ticket_sub_status_master essm on essm.id = elt.sub_status_id\
-        limit 10;",
+        group by elt.ticket_id\
+        order by eht.created_on desc limit 10;",
       values: [],
     });
 
