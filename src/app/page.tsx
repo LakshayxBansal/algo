@@ -1,14 +1,18 @@
 import React from "react";
 import SignIn from './signin/page';
+import { initializeApp } from "./services/notification.service";
 //import { signIn } from "next-auth/react"
 
 
 
 
-export default function Home() {
+export default async function Home() {
 
   // Return the JSX element for the login page
   //return signIn();
+  console.log("home");
+  
+  await initializeApp();
   return (
     <SignIn></SignIn>
   );
