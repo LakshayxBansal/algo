@@ -9,7 +9,9 @@ import { logger } from "@/app/utils/logger.utils";
 
 const pgSize = 5;
 const groupByName = (enquiries: any, data: any) => {
-  const currWeek = dayjs().week() - 1;
+  const currWeek = dayjs().week();
+  const maxWeekLastYear = 52;
+
   let result: any = {};
   data.forEach((ele: any) => {
     result[ele["name"]] = new Array(5);
@@ -21,8 +23,24 @@ const groupByName = (enquiries: any, data: any) => {
   });
 
   enquiries.forEach((ele: any) => {
-    const ind = currWeek - ele["week"] + 2;
-    result[ele["name"]][ind] = Number(ele["count"]);
+    let weekDifference;
+
+    if(ele['week'] > currWeek) {
+      weekDifference = (currWeek - ele["week"] + maxWeekLastYear) % maxWeekLastYear;
+    } else {
+      weekDifference = currWeek - ele['week'];
+    }
+
+    
+    
+
+    if (weekDifference === 0) {
+      result[ele["name"]][2] += Number(ele["count"]);
+    } else if (weekDifference === 1) {
+      result[ele["name"]][3] += Number(ele["count"]);
+    } else {
+      result[ele["name"]][4] += Number(ele["count"]);
+    }
   });
 
   return result;
@@ -36,8 +54,8 @@ const createTableData = (data: any) => {
     obj["name"] = key;
     obj["total"] = data[key][1];
     obj["since3w"] = data[key][4];
-    obj["since2w"] = data[key][3] + obj["since3w"];
-    obj["since1w"] = data[key][2] + obj["since2w"];
+    obj["since2w"] = data[key][3];
+    obj["since1w"] = data[key][2];
 
     result.push(obj);
   }
@@ -50,29 +68,31 @@ export default async function ExecutiveEnquiryList() {
   try {
     result = await getExecutiveEnquiriesOverview();
 
+
     const groupedData = groupByName(result![1], result![0]);
     data = createTableData(groupedData);
   } catch (e) {
     logger.info(e);
   }
 
+
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID" },
     { field: "name", headerName: "Executive", width: 200 },
-    { field: "total", headerName: "Open", width: 150 },
+    { field: "total", headerName: "Total", width: 150 },
     {
       field: "since1w",
-      headerName: "Since 1 week",
+      headerName: "This Week",
       width: 150,
     },
     {
       field: "since2w",
-      headerName: "Since 2 week",
+      headerName: "Last Week",
       width: 150,
     },
     {
       field: "since3w",
-      headerName: "Since 3 week",
+      headerName: "Earlier",
       width: 150,
     },
   ];
@@ -81,7 +101,7 @@ export default async function ExecutiveEnquiryList() {
     <>
       <Paper elevation={2} sx={{ p: 2, borderRadius: "16px" }}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
-          Enquiries
+          Open Enquiries
         </Typography>
         <DataGrid
           disableColumnMenu
