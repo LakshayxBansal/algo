@@ -17,7 +17,7 @@ const passwordRegex = new RegExp(
 
 export const docDescriptionSchema = z.object({
   id: z.number().optional(),
-  description: z.string().min(1,"Description can't be empty").max(255),
+  description: z.string().min(1,"Field can't be empty").max(255),
   fileName: z.string().optional(),
   objectId: z.number().optional(),
   objectTypeId: z.number().optional(),
