@@ -11,6 +11,7 @@ export default async function EnquiryList() {
     logger.info(e);
   }
 
+
   const columns: GridColDef[] = [
     {
       field: "contactName",
@@ -28,7 +29,7 @@ export default async function EnquiryList() {
       width: 140,
     },
     {
-      field: "date",
+      field: "created_on",
       headerName: "Created On",
       width: 140,
     },
@@ -37,7 +38,7 @@ export default async function EnquiryList() {
   return (
     <Paper elevation={2} sx={{ borderRadius: "16px", py: 1, px: 2 }}>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>
-        Recent Enquiries
+        Recently Created Enquiries
       </Typography>
       <Box sx={{ height: 380 }}>
         <DataGrid
