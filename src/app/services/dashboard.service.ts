@@ -7,14 +7,13 @@ export async function getOpenEnquiriesDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "select ROW_NUMBER() OVER (order by lt.date desc) AS id, ht.created_by, ht.created_on, lt.date,\
-        ht.enq_number, cm.name contactName, em.name category, es.name subStatus from enquiry_ledger_tran lt\
-        left join enquiry_header_tran ht on lt.enquiry_id=ht.id \
-        left join contact_master cm on cm.id=ht.contact_id\
-        left join enquiry_category_master em on em.id=ht.category_id\
-        left join enquiry_sub_status_master es on lt.sub_status_id=es.id\
-		where lt.enquiry_id not in (select enquiry_id from enquiry_ledger_tran et left join enquiry_status_master sm on et.status_id=sm.id\
-        where sm.name='Closed') group by enquiry_id limit 10;",
+        "SELECT ROW_NUMBER() over (ORDER BY eht.created_on DESC) AS id, eht.created_on , cm.name contactName, ecm.name category, essm.name subStatus\
+        FROM enquiry_header_tran eht \
+        left join enquiry_ledger_tran elt on elt.enquiry_id = eht.id\
+        left join contact_master cm on cm.id = eht.contact_id\
+        left join enquiry_category_master ecm on ecm.id = eht.category_id\
+        left join enquiry_sub_status_master essm on essm.id = elt.sub_status_id\
+        limit 10;",
       values: [],
     });
 
@@ -29,10 +28,9 @@ export async function getOpenEnquiriesCountDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "SELECT COUNT(DISTINCT lt.enquiry_id) AS total\
-        FROM enquiry_ledger_tran lt WHERE lt.enquiry_id not in\
-        (select et.enquiry_id from enquiry_ledger_tran et left join enquiry_status_master sm ON sm.id = et.status_id \
-        where sm.name='Closed');",
+        "SELECT COUNT(DISTINCT elt.enquiry_id) AS total\
+        FROM enquiry_ledger_tran elt where elt.active=1 and elt.status_id=1\
+        ",
       values: [],
     });
 
@@ -60,10 +58,9 @@ export async function getUnassignedEnquiriesDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "SELECT COUNT(*) as count FROM enquiry_ledger_tran lt\
-				where lt.enquiry_id not in (select enquiry_id from enquiry_ledger_tran et\
-        left join enquiry_status_master sm on sm.id=et.status_id\
-        WHERE sm.name='Closed') AND lt.allocated_to IS NULL;",
+       "SELECT COUNT(*) AS count FROM enquiry_ledger_tran elt\
+       WHERE elt.active=1 AND elt.status_id=1 AND elt.allocated_to=0;"
+        ,
       values: [],
     });
 
@@ -78,9 +75,11 @@ export async function getClosedEnquiriesCountDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "select DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') as since, count(DISTINCT(lt.enquiry_id)) as count from enquiry_ledger_tran lt\
-              left join enquiry_status_master sm on sm.id=lt.status_id where sm.name='Closed'\
-              AND lt.date >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01');",
+              "SELECT DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since,\
+               count(*) AS count from enquiry_header_tran eht\
+               LEFT JOIN enquiry_ledger_tran elt ON eht.id = elt.enquiry_id\
+               WHERE elt.active=1 AND elt.status_id=2 AND\
+               eht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
       values: [],
     });
 
@@ -109,10 +108,145 @@ export async function getAverageAgeDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "select ROUND(AVG(DATEDIFF(maxDate, minDate))) AS age, DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01 00:00:00') as since \
-	      from (select date as maxDate, (select MIN(date) from enquiry_ledger_tran et where et.enquiry_id = lt.enquiry_id) as minDate\
-		    from enquiry_ledger_tran lt left join enquiry_status_master sm on sm.id=lt.status_id \
-        WHERE sm.name='Closed' AND lt.date >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01')) as res;",
+        "SELECT ROUND(AVG(DATEDIFF(\
+            CASE \
+                WHEN elt.active = 1 AND elt.status_id = 2 THEN elt.date\
+                WHEN elt.active = 1 AND elt.status_id = 1 THEN CURDATE()\
+            END, \
+            eht.created_on))) AS age,\
+              DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since\
+        FROM enquiry_header_tran eht\
+        LEFT JOIN enquiry_ledger_tran elt ON eht.id = elt.enquiry_id\
+        WHERE elt.active = 1 \
+          AND eht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getOpenTicketsCountDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query:
+        "SELECT COUNT(DISTINCT elt.ticket_id) AS total\
+        FROM ticket_ledger_tran elt where elt.active=1 and elt.status_id=1;\
+        ",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getClosedTicketsCountDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query:
+              "SELECT DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since,\
+               count(*) AS count from ticket_header_tran tht\
+               LEFT JOIN ticket_ledger_tran tlt ON tht.id = tlt.ticket_id\
+               WHERE tlt.active=1 AND tlt.status_id=2 AND\
+               tht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getUnassignedTicketsDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query:
+       "SELECT COUNT(*) AS count FROM ticket_ledger_tran elt\
+       WHERE elt.active=1 AND elt.status_id=1 AND elt.allocated_to=0;"
+        ,
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getAverageTicketAgeDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query:
+        "SELECT ROUND(AVG(DATEDIFF(\
+            CASE \
+                WHEN elt.active = 1 AND elt.status_id = 2 THEN elt.date\
+                WHEN elt.active = 1 AND elt.status_id = 1 THEN CURDATE()\
+            END, \
+            eht.created_on))) AS age,\
+              DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since\
+        FROM ticket_header_tran eht\
+        LEFT JOIN ticket_ledger_tran elt ON eht.id = elt.ticket_id\
+        WHERE elt.active = 1 \
+          AND eht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getRecentTicketsDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query:
+        "SELECT ROW_NUMBER() over (ORDER BY eht.created_on DESC) AS id, eht.created_on , cm.name contactName, ecm.name category, essm.name subStatus\
+        FROM ticket_header_tran eht \
+        left join ticket_ledger_tran elt on elt.ticket_id = eht.id\
+        left join contact_master cm on cm.id = eht.contact_id\
+        left join ticket_category_master ecm on ecm.id = eht.category_id \
+        left join ticket_sub_status_master essm on essm.id = elt.sub_status_id\
+        limit 10;",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+
+export async function getExecutiveTicketsOverviewDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query: "call getExecutiveTicketsData()",
+      values: [],
+    });
+
+    return result;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function getOverviewGraphDataTicketsDb(dbName: string) {
+  try {
+    const result = await excuteQuery({
+      host: dbName,
+      query: "call getOverviewGraphTicketData()",
       values: [],
     });
 
