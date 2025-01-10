@@ -51,6 +51,7 @@ export default function CreateCompany(
     const fetchCountryData = async () => {
       const countryData = await getCountryByIp();
       if (countryData) {
+        setSelectValues({ country: {id: countryData.countryId, name: countryData.country} });
         setdefaultCountry(countryData.country);
         setdefaultCountryId(countryData.countryId);
         setCity(countryData.city);
