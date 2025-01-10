@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import Dashbaord  from './dashboard/page';
 import {  LinearProgress } from "@mui/material";
 import TabLayout from "./TabLayout";
-import { Dashboard } from "@mui/icons-material";
 import SupportDashboard from "./supportDashboard/page";
 
 export default async function ClientApp() {
