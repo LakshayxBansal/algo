@@ -150,11 +150,11 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
+    openPopper.clear();
     startTransition(() => {
       router.push(href)
       document.body.classList.add('cursor-wait');
-     
-    })
+    });
      
   };
 
