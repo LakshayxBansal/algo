@@ -438,7 +438,7 @@ const SupportTicketForm = (props: customprop) => {
           id={"allocated_to"}
           label={"Allocate to"}
           showDetails={true}
-          dialogTitle={"Assign Executive"}
+          dialogTitle={"Executive"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
           fetchDataFn={(arg:any)=>getExecutiveForAllocation(SUPPORT_CONFIG_ID,arg)}
           fnFetchDataByID={getExecutiveById}

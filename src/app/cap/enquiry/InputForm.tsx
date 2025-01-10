@@ -389,7 +389,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           id="allocated_to"
           label="allocated_to"
           showDetails={true}
-          dialogTitle={"Allocated To"}
+          dialogTitle={"Executive"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
           fetchDataFn={(arg:any)=>getExecutiveForAllocation(ENQUIRY_CONFIG_ID,arg)}
           fnFetchDataByID={getExecutiveById}
