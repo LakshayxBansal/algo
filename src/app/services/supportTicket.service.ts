@@ -295,3 +295,23 @@ export async function createSupportTicketDB(
       return null;
     }
   
+
+export async function getSupportTicketsByExecutiveIdDb(crmDb: string, userId: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select ht.tkt_number enqDesc, cm.name contact, lt.date, lt.suggested_action_remark remark, lt.id\
+              from ticket_header_tran ht \
+              left join ticket_ledger_tran lt on lt.ticket_id = ht.id \
+              left join contact_master cm on cm.id = ht.contact_id\
+              where lt.active =1 AND \
+              lt.allocated_to = (select id from executive_master em where em.crm_user_id = ?) AND lt.status_id = 1\
+              ORDER BY lt.date desc;",
+      values: [userId],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}

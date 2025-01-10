@@ -18,6 +18,7 @@ import {
   getSupportDataByPageDb,
   getSupportDataCount,
   getSupportTicketDescriptionDb,
+  getSupportTicketsByExecutiveIdDb,
   updateSupportDataDb,
 } from "../services/supportTicket.service";
 import { logger } from "../utils/logger.utils";
@@ -30,6 +31,7 @@ import { uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
 import { adjustToLocal } from "../utils/utcToLocal";
 import { bigIntToNum } from "../utils/db/types";
+import { sendNotificationToTopic } from "../services/notification.service";
 
 export async function createSupportTicket({
   supportData,
@@ -64,6 +66,10 @@ export async function createSupportTicket({
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
           const objectDetails = await getObjectByName("Support");
+          if(supportData.allocated_to_id !== 0){
+            const topic = supportData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            sendNotificationToTopic(topic, "Support", "Support ticket allocated", "support");
+          }
           await uploadDocument(
             docData,
             dbResult[2][0].id,
@@ -184,6 +190,10 @@ export async function updateSupportData(
         );
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
+          if(data.allocated_to_id !== 0){
+            const topic = data.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            sendNotificationToTopic(topic, "Support", "Support Updated", "support");
+          }
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           let errorStateForProduct: {
@@ -349,6 +359,17 @@ export async function getLastVoucherNumberSupport() {
     }
     return result;
   } catch (error: any) {
+    throw error;
+  }
+}
+
+export async function getSupportTicketsByExecutiveId() {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      return getSupportTicketsByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);
+    }
+  } catch (error) {
     throw error;
   }
 }

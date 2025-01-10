@@ -10,9 +10,8 @@ export default async function Home() {
 
   // Return the JSX element for the login page
   //return signIn();
-  console.log("home");
   
-  await initializeApp();
+  initializeApp();
   return (
     <SignIn></SignIn>
   );

@@ -63,6 +63,10 @@ export async function createEnquiry({
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
           const objectDetails = await getObjectByName("Enquiry");
+          if(enqData.allocated_to_id !== 0){
+            const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            sendNotificationToTopic(topic, "Enquiry", "Enquiry allocated", "enquiry");
+          }
           await uploadDocument(
             docData,
             dbResult[2][0].id,
@@ -164,7 +168,7 @@ export async function updateEnquiry({
           result = { status: true, data: dbResult[2] };
           if(enqData.allocated_to_id !== 0){
             const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
-            sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated");
+            sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated", "enquiry");
           }
           // const objectDetails = await getObjectByName("Enquiry");
           // await uploadDocument(
@@ -342,6 +346,11 @@ export async function createEnquiryLedger(
         session,
         ledgerData as enquiryLedgerSchemaT
       );
+
+      // if(session.user. !== 0){
+        const topic = session.user.userId!.toString() + '_' + session.user.dbInfo.id.toString();
+        sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated", "enquiry");
+      // }
       return {
         status: true,
       };
