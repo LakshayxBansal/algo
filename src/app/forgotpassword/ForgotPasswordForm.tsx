@@ -15,9 +15,7 @@ import { LoadingButton } from "@mui/lab";
 import Image from "next/image";
 import Link from "next/link";
 import { styles } from "../utils/styles/forgotPasswordFormStyles";
-import {
-  checkIfActiveUser,
-} from "../controllers/forgotPassword.controller";
+import { checkIfActiveUser } from "../controllers/forgotPassword.controller";
 import Slide, { SlideProps } from "@mui/material/Slide";
 import { AddDialog } from "../Widgets/masters/addDialog";
 import OtpForm from "./OtpForm";
@@ -92,7 +90,7 @@ export default function ForgotPasswordForm() {
           Forgot Password?
         </Typography>
         <Typography variant="body2" sx={styles.subHeading}>
-          "No worries, we’ll send you an OTP shortly to reset your password"
+          No worries, we&apos;ll send you an OTP shortly to reset your password
         </Typography>
 
         <form
@@ -114,9 +112,10 @@ export default function ForgotPasswordForm() {
               name="email"
               autoComplete="off"
               sx={styles.credentialsInput}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setContactValue(e.target.value)
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setContactValue(e.target.value);
+                clearFormError();
+              }}
             />
           )}
           {!email && (
@@ -137,7 +136,10 @@ export default function ForgotPasswordForm() {
               dropdownClass={["in", "gb"]}
               disableDropdown={false}
               sx={styles.credentialsInput}
-              onChange={(e: string) => setContactValue(e)}
+              onChange={(e: string) => {
+                setContactValue(e);
+                clearFormError();
+              }}
             />
           )}
 

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   DialogActions,
   TextField,
@@ -23,6 +24,12 @@ export default function OtpForm({ setOpen, contact }: OtpFormProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const router = useRouter();
+
+  const Mobile = useMediaQuery("(min-width:415px)");
+
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
 
   const handleClose = (): void => setOpen(false);
 
@@ -69,44 +76,51 @@ export default function OtpForm({ setOpen, contact }: OtpFormProps) {
       <Typography sx={{ textAlign: "center", color: "green", mt: 2 }}>
         OTP sent to {contact}
       </Typography>
-      <Box display="flex" gap={1} justifyContent="center">
-        {otp.map((digit, index) => (
-          <TextField
-            key={index}
-            value={digit}
-            onChange={(e) => handleChange(index, e.target.value)}
-            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-              handleKeyDown(index, e)
-            }
-            inputProps={{
-              maxLength: 1,
-              style: {
-                textAlign: "center",
-                fontSize: "2rem",
-                width: "2em",
-                height: "1em",
-              },
-            }}
-            autoFocus={index === 0}
-            inputRef={(el) => (inputRefs.current[index] = el)}
-          />
-        ))}
-      </Box>
-      <DialogActions sx={{ justifyContent: "center" }}>
-        <Button
-          onClick={handleClose}
-          sx={{ ...styles.toggleLink, textTransform: "none" }}
-          tabIndex={-1}
+      <form>
+        <Box
+          display="flex"
+          gap={1}
+          justifyContent="center"
+          id="otp-form-container"
         >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          sx={{ ...styles.pillStyledButton, width: "20%" }}
-        >
-          Submit
-        </Button>
-      </DialogActions>
+          {otp.map((digit, index) => (
+            <TextField
+              key={index}
+              value={digit}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                handleKeyDown(index, e)
+              }
+              inputProps={{
+                maxLength: 1,
+                style: {
+                  textAlign: "center",
+                  fontSize: "2rem",
+                  width: "2em",
+                  height: "1em",
+                  padding: Mobile ? "14px 8.5px" : "8.5px 2px",
+                },
+              }}
+              inputRef={(el) => (inputRefs.current[index] = el)}
+            />
+          ))}
+        </Box>
+        <DialogActions sx={{ justifyContent: "center" }}>
+          <Button
+            onClick={handleClose}
+            sx={{ ...styles.toggleLink, textTransform: "none" }}
+            tabIndex={-1}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            sx={{ ...styles.pillStyledButton, width: "20%" }}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </form>
     </>
   );
 }
