@@ -10,8 +10,14 @@ import {
 import ActionForm from "@/app/Widgets/masters/masterForms/actionForm";
 import UploadFile from "@/app/Widgets/masters/UploadFileForm";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
-import { delSupportDataById, getSupportDataById, getSupportDataByPage } from "@/app/controllers/supportTicket.controller";
+import {
+  delSupportDataById,
+  getSupportDataById,
+  getSupportDataByPage,
+} from "@/app/controllers/supportTicket.controller";
 import SupportTicketForm from "../SupportTicketForm";
+import SecondNavbar from "../../navbar/SecondNavbar";
+import { Box } from "@mui/material";
 import { SUPPORT_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
@@ -23,43 +29,46 @@ const columns: GridColDef[] = [
   {
     field: "category",
     headerName: "Category",
-    editable: true
+    editable: true,
   },
   {
     field: "contact",
     headerName: "Contact",
     editable: true,
-  }
-  , {
+  },
+  {
     field: "status",
     headerName: "Status",
-    editable: true
-  }
-  ,
+    editable: true,
+  },
   {
     field: "sub_status",
     headerName: "Sub Status",
-    editable: true
-  }, {
+    editable: true,
+  },
+  {
     field: "received_by",
     headerName: "Received By",
-    editable: true
+    editable: true,
   },
   {
     field: "action_taken",
     headerName: "Action Taken",
     editable: true,
-  }
-  , {
+  },
+  {
     field: "next_action",
     headerName: " Next Action ",
-    editable: true
-  }
+    editable: true,
+  },
 ];
 
 export default function Action() {
   return (
     <>
+      <Box sx={{ margin: "20px 20px" }}>
+        <SecondNavbar title="List of Support Ticket" />
+      </Box>
       <EntityList
         title="Support Ticket"
         // renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -69,8 +78,8 @@ export default function Action() {
         //     data={data}
         //   />
         // )}
-        fileUploadFeatureReqd={true} 
-        fnFileUpad={createContactsBatch} 
+        fileUploadFeatureReqd={true}
+        fnFileUpad={createContactsBatch}
         sampleFileName=""
         fetchDataFn={getSupportDataByPage}
         fnFetchDataByID={getSupportDataById}

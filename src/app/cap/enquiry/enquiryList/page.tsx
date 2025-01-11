@@ -8,6 +8,8 @@ import {
   getEnquiryDataByPage,
   delEnquiryDataById,
 } from "@/app/controllers/enquiry.controller";
+import SecondNavbar from "../../navbar/SecondNavbar";
+import { Box } from "@mui/material";
 import { ENQUIRY_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
@@ -62,6 +64,9 @@ const columns: GridColDef[] = [
 export default function Action() {
   return (
     <>
+       <Box sx={{ margin: "20px 20px" }}>
+        <SecondNavbar title="List of Enquiry Ticket" />
+      </Box>
       <EntityList
         title="Enquiry Ticket"
         fileUploadFeatureReqd={true}

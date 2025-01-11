@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { getSession } from "../../services/session.service";
@@ -12,6 +13,7 @@ import UnassignedCard from "./UnassignedCard";
 import OverviewCard from "./OverviewCard";
 import { logger } from "@/app/utils/logger.utils";
 import { Metadata } from "next";
+import LoadingWrapper from "@/app/loadingWrapper";
 
 // export const metadata : Metadata = {
 //   title : 'Dashboard'
@@ -22,7 +24,8 @@ export default async function Dashboard() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-        return (
+      return (
+          // <LoadingWrapper loadingg={false}>
           <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>
             <Box sx={{ py: 3, maxWidth: "90vw", margin: "auto" }}>
               <Grid container spacing={3}>
@@ -72,6 +75,7 @@ export default async function Dashboard() {
               </Grid>
             </Box>
           </Box>
+            // </LoadingWrapper>
         );
     }
   } catch (error) {

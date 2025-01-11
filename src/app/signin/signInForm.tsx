@@ -89,11 +89,6 @@ export default function AuthPage(props: authPagePropsType) {
     }
   }
 
-  // useEffect(() => {
-  //   return () => {
-  //     document.body.classList.remove("cursor-wait");
-  //   };
-  // }, []);
 
   getCsrfToken()
     .then((token) => {

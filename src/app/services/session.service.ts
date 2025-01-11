@@ -20,7 +20,7 @@ export async function getDbSession(userId: number): Promise<dbInfoT | null> {
 
     if (result?.length > 0) {
       return JSON.parse(result[0].data);
-    }
+    } 
     return null;
   } catch (e) {
     console.log(e);
@@ -63,6 +63,7 @@ export async function createSession(value: any) {
 
 }
 */
+
 
 async function getLastSession(idUser: number){
   // fetch the session id

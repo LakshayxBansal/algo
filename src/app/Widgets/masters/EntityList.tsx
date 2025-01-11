@@ -55,6 +55,7 @@ import {
   updateUserPreference,
 } from "@/app/controllers/callExplorer.controller";
 import { getColumns } from "@/app/controllers/masters.controller";
+import React from "react";
 
 const pgSize = 10;
 
@@ -86,12 +87,19 @@ export default function EntityList(props: entitiyCompT) {
     regionalSettingsConfigData: {} as regionalSettingSchemaT,
     loggedInUserData: {} as loggedInUserDataT,
   });
+  const [focusedRow, setFocusedRow] = useState(0);
 
   const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
-
+  const [loading, setLoading] = useState(false);
   const [selectionModel, setSelectionModel] = useState([]);
 
-
+  // React.useLayoutEffect(() => {
+  //   if (apiRef.current) {
+  //     // apiRef.current.setCellFocus([]);
+  //     // apiRef.current.setRowSelectionModel([]);
+  //     apiRef.current.setCellFocus(focusedRow, "More Options");
+  //   }
+  // }, [focusedRow]);
   
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -110,32 +118,68 @@ export default function EntityList(props: entitiyCompT) {
 
 let timeOut: string | number | NodeJS.Timeout | undefined;
 
+// const handleCellKeyDown = (params, event) => {
+//   const rowId = params.row.id;
+//   const currentIndex = data.findIndex((row: any) => row.id === rowId);
 
-  const handleCellKeyDown = (params: any, event: any, details: any) => {
-    const rowId = params.row.id;
-    const currentIndex = data.findIndex((row: any) => row.id === rowId);
+//   let nextIndex = currentIndex;
 
-    let nextIndex = currentIndex;
+//   if (event.key === "Tab") {
+//     // event.preventDefault(); // Prevent default tab behavior
+//     nextIndex = currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+//     setFocusedRow(params.row.id); // Set the row as focused
+//   }
+// };
 
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      nextIndex =
-        currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
-    } else if (event.key === "Enter" || event.key === " ") { 
-      event.preventDefault();
-    }
+// const getRowClassName = (params) =>
+//   focusedRow === params.row.id ? "Mui-focused-row" : "";
 
-    if (nextIndex !== currentIndex) {
-      const nextRow = data[nextIndex];
-      if (nextRow) {
-        // setRowSelectionModel([nextRow.id]);
-        // setSelectedRow(nextRow);
-      }
-    }
-  };
+
+// const handleCellKeyDown = (params, event) => {
+//   if (event.key === "Tab") {
+//     event.preventDefault(); // Prevent default Tab behavior
+
+//     const currentRowIndex = data.findIndex((row:any) => row.id === params.id);
+//     console.log("to check the index", currentRowIndex)
+//     const nextRowIndex = (currentRowIndex + 1) % data.length; // Loop to the first row if at the end
+//     const nextRowId = data[nextRowIndex].id;
+
+//     // Update the focused row state
+//     setFocusedRow(params.row.id);
+
+//     // Programmatically set focus to the next row using apiRef
+//     // apiRef.current.setCellFocus(nextRowId, "More Options"); // Focus on the "name" field of the next row
+//   }
+// };
+
+
+
+// const handleCellKeyDown = (params: any, event: any, details: any) => {
+//   const rowId = params.row.id;
+//   const currentIndex = data.findIndex((row: any) => row.id === rowId);
+
+//   let nextIndex = currentIndex;
+
+//   if (event.key === "ArrowDown") {
+//     event.preventDefault();
+//     nextIndex =
+//       currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+//   } else if (event.key === "ArrowUp") {
+//     event.preventDefault();
+//     nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+//   } else if (event.key === "Enter" || event.key === " ") {
+//     event.preventDefault();
+//   }
+
+//   if (nextIndex !== currentIndex) {
+//     const nextRow = data[nextIndex];
+//     if (nextRow) {
+//       // setRowSelectionModel([nextRow.id]);
+//       // setSelectedRow(nextRow);
+//       setFocusedRow(nextRow)
+//     }
+//   }
+// };
 
   
 
@@ -174,6 +218,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   const dfltColFields: string[] = allDfltCols.map((col) => col.field);
 
   const fetchData = debounce(async (searchText) => {
+    setLoading(true);
     const rows: any = await props.fetchDataFn(
       PageModel.page,
       searchText as string,
@@ -181,6 +226,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     );
     if (rows.data) {
       setData(rows.data);
+      console.log("data", rows.data);
       setNRows(rows.count as number);
     }
     // if (props.fnFetchColumns) {
@@ -209,7 +255,9 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     //  else {
     //   setAllColumns(allDfltCols);
     // }
+
   }, 100);
+
 
   useEffect(() => {
     if(!dialogOpen){
@@ -228,7 +276,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     search,
     searchData,
     props,
-    dialogOpen
+    dialogOpen,
   ]);
   const fetchAllColumns = async () => {
     let columnList;
@@ -311,6 +359,12 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           );
         }
         }
+        const headers = document.querySelectorAll(
+          ".MuiDataGrid-columnHeader.MuiDataGrid-withBorderColor"
+        );
+        headers.forEach((header) => {
+          header.setAttribute("tabindex", "-1");
+        });
       } catch (error) {
         console.error("Error fetching or setting column preferences:", error);
       }
@@ -415,6 +469,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 
   return (
     <Box>
+      {/* <LoadingWrapper loadingg={loading}>   */}
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
           <AddDialog
@@ -581,6 +636,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                                   setDialogOpen(true);
                                   setDlgMode(dialogMode.FileUpload);
                                 }}
+                                tabIndex={-1}
                               >
                                 <CloudUploadIcon
                                   fontSize="small"
@@ -660,7 +716,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           <StripedDataGrid
             apiRef={apiRef}
             disableColumnMenu
-            rows={data ? data : []}
+            rows={data}
             rowHeight={40}
             columns={allColumns}
             onColumnResize={handleColumnResize}
@@ -675,7 +731,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
-            onCellKeyDown={handleCellKeyDown}
+            // onCellKeyDown={handleCellKeyDown}
+            // getRowClassName={getRowClassName}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
@@ -712,11 +769,12 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                 },
               },
             }}
-            disableRowSelectionOnClick
+            // disableRowSelectionOnClick
             sx={{ maxHeight: props.height }}
           />
         </Paper>
       </Box>
+      {/* </LoadingWrapper> */}
     </Box>
   );
 }

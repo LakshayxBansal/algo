@@ -7,6 +7,7 @@ import { Box } from "@mui/material";
 import { theme } from "@/app/utils/styles/theme.util";
 import { ThemeProvider } from "@mui/material/styles";
 import "./globals.css";
+import LoadingWrapper from './loadingWrapper';
 
 export const metadata = {
   title: {
@@ -22,28 +23,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const pathname = usePathname();
   
-
-  // useEffect(() => {
-  //   document.body.classList.add('cursor-wait');
-
-  //   const handleComplete = () => {
-  //     document.body.classList.remove('cursor-wait');
-  //   };
-
-  //   const timeout = setTimeout(handleComplete, 1000); // Adjust the timeout as necessary
-
-  //   return () => {
-  //     clearTimeout(timeout);
-  //     document.body.classList.remove('cursor-wait');
-  //   };
-  // }, [pathname]);
-
   return (
     <html lang="en">
       <body>
-        {/* {children} */}
           <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </body>
     </html>

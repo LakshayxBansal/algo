@@ -25,9 +25,9 @@ const columns: GridColDef[] = [
 export default function Action() {
   return (
     <>
-    <Box sx={{margin: "20px 20px"}}>
+    {/* <Box sx={{margin: "20px 20px"}}> */}
       <SecondNavbar title={"List of Action"}/>
-    </Box>
+    {/* </Box> */}
       <EntityList
         title="Action"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
