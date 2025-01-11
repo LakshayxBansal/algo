@@ -146,7 +146,7 @@ export default function LeftMenuTree(props: {
     return href;
   }
 
-  const handleTransiton =  (
+  const handlePopperClick =  (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
@@ -155,7 +155,6 @@ export default function LeftMenuTree(props: {
       router.push(href)
       document.body.classList.add('cursor-wait');
     });
-     
   };
 
 
@@ -271,8 +270,7 @@ export default function LeftMenuTree(props: {
                     handleMouseLeave(e, page);
                   }}
                   component="a"
-                  onClick={(e) => handleTransiton(e, page.href)}
-                  // href={page.href}
+                  onClick={(e) => handlePopperClick(e, page.href)}
                   selected={selectedId === page.id}
                   tabIndex={-1}
                   style={
