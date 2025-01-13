@@ -112,14 +112,6 @@ export default function EntityList(props: entitiyCompT) {
 
 let timeOut: string | number | NodeJS.Timeout | undefined;
 
-// const handleCellKeyDown = (params, event) => {
-//   const rowId = params.row.id;
-
-//   if (event.key === "Tab") {
-//     setFocusedRow(rowId); // Set the row as focused
-//   }
-// };
-
 const handleCellKeyDown = (params: any, event: any, details: any) => {
   const rowId = params.row.id;
   const currentIndex = data.findIndex((row: any) => row.id === rowId);
@@ -144,35 +136,6 @@ if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
 
 const getRowClassName = (params:any) =>
   focusedRow?.id === params.row.id ? "Mui-focused-row" : "";
-
-// const handleCellKeyDown = (params: any, event: any, details: any) => {
-//   const rowId = params.row.id;
-//   const currentIndex = data.findIndex((row: any) => row.id === rowId);
-
-//   let nextIndex = currentIndex;
-
-//   if (event.key === "ArrowDown") {
-//     // event.preventDefault();
-//     nextIndex =
-//       currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
-//   } else if (event.key === "ArrowUp") {
-//     // event.preventDefault();
-//     nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
-//   } else if (event.key === "Enter" || event.key === " ") {
-//     // event.preventDefault();
-//   }
-
-//   if (nextIndex !== currentIndex) {
-//     const nextRow = data[nextIndex];
-//     if (nextRow) {
-//       setFocusedRow(nextRow);
-//     }
-//   }
-// };
-
-  
-
-
 
   const optionsColumn: GridColDef[] = [
     {
@@ -249,8 +212,6 @@ const getRowClassName = (params:any) =>
 
   React.useLayoutEffect(() => {
     if (apiRef.current) {
-      // apiRef.current.setCellFocus([]);
-      // apiRef.current.setRowSelectionModel([]);
       apiRef.current.setCellFocus(focusedRow, "More Options");
     }
   }, [focusedRow]);
@@ -275,6 +236,7 @@ const getRowClassName = (params:any) =>
     props,
     dialogOpen,
   ]);
+
   const fetchAllColumns = async () => {
     let columnList;
     let dbcolumns=[];
@@ -466,7 +428,6 @@ const getRowClassName = (params:any) =>
 
   return (
     <Box>
-      {/* <LoadingWrapper loadingg={loading}>   */}
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
           <AddDialog
@@ -776,7 +737,6 @@ const getRowClassName = (params:any) =>
           />
         </Paper>
       </Box>
-      {/* </LoadingWrapper> */}
     </Box>
   );
 }
