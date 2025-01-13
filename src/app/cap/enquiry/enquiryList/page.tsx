@@ -63,7 +63,7 @@ export default function Action() {
   return (
     <>
       <EntityList
-        title="Enquiry List"
+        title="Enquiry Ticket"
         fileUploadFeatureReqd={true}
         fnFileUpad={createContactsBatch}
         sampleFileName=""

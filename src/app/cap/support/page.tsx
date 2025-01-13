@@ -182,6 +182,7 @@ async function formatedData(supportData: any) {
       ...remainingHeaderData
     },
     productData,
+    docData
   } = supportData;
 
   // Group all extracted pairs into a single object
@@ -232,6 +233,7 @@ async function formatedData(supportData: any) {
     ...remainingLedgerData,
     ...remainingHeaderData,
     productData,
+    docData
   };
   return result;
 }

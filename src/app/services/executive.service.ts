@@ -10,7 +10,6 @@ export async function createExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    console.log("Harsh=====>", session.user.dbInfo.dbName)
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
@@ -51,8 +50,6 @@ export async function createExecutiveDB(
         data.c_col10
       ],
     });
-    console.log('session.user.userId')
-    console.log("services : ", result);
     return result;
   } catch (e) {
     logger.error(e);
@@ -159,7 +156,7 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name executive_group,\
          s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
          cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\
@@ -183,7 +180,7 @@ export async function getProfileDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name executive_group,\
          s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
          cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\

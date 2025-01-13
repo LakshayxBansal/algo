@@ -26,10 +26,11 @@ import {
   supportProductArraySchema,
   supportTicketSchema,
 } from "../zodschema/zodschema";
-import { uploadDocument } from "./document.controller";
+import { getDocs, uploadDocument } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
 import { adjustToLocal } from "../utils/utcToLocal";
 import { bigIntToNum } from "../utils/db/types";
+import { SUPPORT_ID } from "@/app/utils/consts.utils";
 
 export async function createSupportTicket({
   supportData,
@@ -62,11 +63,10 @@ export async function createSupportTicket({
         const dbResult = await createSupportTicketDB(session,  updatedSupportData,  JSON.stringify(productData));
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
-          const objectDetails = await getObjectByName("Support");
           await uploadDocument(
             docData,
             dbResult[2][0].id,
-            objectDetails[0].object_id
+            SUPPORT_ID
           );
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -145,6 +145,7 @@ export async function getSupportDataById(id: number) {
       let headerData = await getHeaderDataAction(session, id);
       let ledgerData = await getLedgerDataAction(session, id);
       const productData = await getProductDataAction(session, id);
+      const docData = await getDocs(id,SUPPORT_ID);
       
       // let suggested_action_remark = `${headerData[0].created_by_name} ; ${adjustToLocal(headerData[0].created_on).toDate()} ; ${ledgerData[0].suggested_action_remark} \n`;
 
@@ -158,7 +159,7 @@ export async function getSupportDataById(id: number) {
       // ledgerData.suggested_action_remark = suggested_action_remark;
       // headerData = headerData[0];
 
-      return { headerData, ledgerData, productData };
+      return { headerData, ledgerData, productData, docData };
     }
   } catch (error) {
     logger.error(error);
@@ -167,7 +168,8 @@ export async function getSupportDataById(id: number) {
 
 export async function updateSupportData(
   data: supportTicketSchemaT,
-  productData: suppportProductArraySchemaT
+  productData: suppportProductArraySchemaT,
+  docData : docDescriptionSchemaT[]
 ) {
   try {
     let result;
@@ -183,6 +185,11 @@ export async function updateSupportData(
         );
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
+          await uploadDocument(
+            docData,
+            dbResult[2][0].id,
+            SUPPORT_ID
+          );
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           let errorStateForProduct: {

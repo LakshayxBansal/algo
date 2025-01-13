@@ -2,7 +2,7 @@
 import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Paper, Typography } from "@mui/material";
-import { getExecutiveEnquiriesOverview } from "@/app/controllers/dashboard.controller";
+import { getExecutiveTicketsOverview } from "@/app/controllers/dashboard.controller";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import dayjs from "dayjs";
 import { logger } from "@/app/utils/logger.utils";
@@ -31,8 +31,6 @@ const groupByName = (enquiries: any, data: any) => {
       weekDifference = currWeek - ele['week'];
     }
 
-    
-    
 
     if (weekDifference === 0) {
       result[ele["name"]][2] += Number(ele["count"]);
@@ -62,11 +60,11 @@ const createTableData = (data: any) => {
 
   return result;
 };
-export default async function ExecutiveEnquiryList() {
+export default async function ExecutiveTicketList() {
   dayjs.extend(weekOfYear);
   let result, data;
   try {
-    result = await getExecutiveEnquiriesOverview();
+    result = await getExecutiveTicketsOverview();
 
 
     const groupedData = groupByName(result![1], result![0]);
@@ -101,7 +99,7 @@ export default async function ExecutiveEnquiryList() {
     <>
       <Paper elevation={2} sx={{ p: 2, borderRadius: "16px" }}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
-          Open Enquiries
+          Open Tickets
         </Typography>
         <DataGrid
           disableColumnMenu

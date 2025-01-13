@@ -241,6 +241,7 @@ async function formatedData(enqData: any) {
     },
 
     productData,
+    docData
   } = enqData;
 
   // Group all extracted pairs into a single object
@@ -301,6 +302,7 @@ async function formatedData(enqData: any) {
     ...remainingHeaderData,
     ...remainingLedgerData,
     updatedProducts,
+    docData
   };
   return result;
 }
