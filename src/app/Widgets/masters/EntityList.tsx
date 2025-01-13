@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   GridColDef,
@@ -55,6 +55,8 @@ import {
   updateUserPreference,
 } from "@/app/controllers/callExplorer.controller";
 import { getColumns } from "@/app/controllers/masters.controller";
+import { flushSync } from "react-dom";
+import { object } from "zod";
 
 const pgSize = 10;
 
@@ -65,6 +67,9 @@ enum dialogMode {
   FileUpload,
 }
 
+interface VisibilityModel {
+  [key: string]: boolean;
+}
 export default function EntityList(props: entitiyCompT) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [data, setData] = useState([]);
@@ -230,112 +235,144 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     props,
     dialogOpen
   ]);
-  const fetchAllColumns = async () => {
-    let columnList;
-    let dbcolumns=[];
-
-      //fetch columns from db only if objectTypeId is provided
-      if(props?.objectTypeId){
-      dbcolumns = await getColumns(props.objectTypeId ?? 0);
-      }
-      if (dbcolumns?.length > 0) {
-        columnList = dbcolumns.map((col: any) => ({
-          field: col.column_name,
-          headerName: col.column_label,
-          width: 100,
-        }));
-        columnList = optionsColumn.concat(columnList);
-      } else {
-        columnList = allDfltCols.map((col) => {
-          return {
-            ...col,
+  const fetchAllColumns = async (objectTypeId?: number) => {
+    // Only fetch if objectTypeId exists
+    const dbColumns = objectTypeId ? await getColumns(objectTypeId) : [];
+    
+    // Create columns based on DB data or defaults
+    const columnList = dbColumns?.length > 0
+      ? optionsColumn.concat(
+          dbColumns.map((col: any) => ({
+            field: col.column_name,
+            headerName: col.column_label,
             width: 100,
-          };
-        });
-      }    
-    setAllColumns(columnList);
+          }))
+        )
+      : allDfltCols.map(col => ({ ...col, width: 100 }));
+  
     return columnList;
   };
+  
 
+  const processDefaultSettings = (
+    columns: any[]
+  ) => {
+    const defaultPreferences: Record<string, number> = {};
+    const visibilityModel: VisibilityModel = {};
+  
+    for (const col of columns) {
+      // Set default preferences
+      defaultPreferences[col.field] = col.width ?? 100;
+      // Set default visibility
+      visibilityModel[col.field] = dfltColFields.includes(col.field);
+    }
+  
+    return { defaultPreferences, visibilityModel };
+  };
+  
+  const processColumnsWithPreferences = (
+    columns: any[], 
+    preferences: Record<string, number>
+  ) => {
+    const updatedColumns = [];
+    const visibilityModel: VisibilityModel = {};
+  
+    for (const col of columns) {
+      // Update column widths
+      updatedColumns.push({
+        ...col,
+        width: preferences[col.field] ?? 100,
+      });
+  
+      visibilityModel[col.field] = preferences[col.field] !== undefined;
+    }
+  
+    return { updatedColumns, visibilityModel };
+  };
+  
+ 
   useEffect(() => {
-      const fetchAndSetPreferences = async () => {
+    let isMounted = true; // Track if the component is still mounted
+  
+    const fetchAndSetPreferences = async () => {
       try {
-        // Fetch user preferences
-        let data = [];
-
-        if(props?.objectTypeId)
-         data = await getUserPreference(props.objectTypeId ?? 0);
-
-        const allColumns = await fetchAllColumns();
-        const userColumnPreference: Record<string, number> = data[0]?.meta_data
-          ? JSON.parse(data[0].meta_data)
-          : {};
-        setColumnWidths(userColumnPreference);
-
-        // if user preferences exist
-        if (Object.keys(userColumnPreference).length > 0) {
-          // Update column widths based on user preferences
-          const newWithWidth = allColumns.map((col) => ({
-            ...col,
-            width: userColumnPreference[col.field] ?? 100,
-          }));
-          setAllColumns(newWithWidth);
-
-          // Update column visibility
-          const visibleColumns = allColumns.reduce((model, col) => {
-            model[col.field] = userColumnPreference[col.field] !== undefined;
-            return model;
-          }, {} as Record<string, boolean>);
-
-          setColumnVisibilityModel(visibleColumns);
-        } else {
-          // Set default visibility and widths
-          const visibleColumns = allColumns.reduce((model: any, col: any) => {
-            model[col.field] = dfltColFields.includes(col.field);
-            return model;
-          }, {} as GridColumnVisibilityModel); // Ensure the type is GridColumnVisibilityModel
-
-          setColumnVisibilityModel(visibleColumns);
-
-          // Initialize and save default preferences
-          const initialPreferences = allDfltCols.reduce((acc, col) => {
-            acc[col.field] = col.width ?? 100;
-            return acc;
-          }, {} as Record<string, number>);
-
-          setColumnWidths(initialPreferences);
-          if(props?.objectTypeId){
-          await insertUserPreference(
-            initialPreferences,
-            props.objectTypeId ?? 0
-          );
+        if (!props?.objectTypeId) {
+          const columns = await fetchAllColumns();
+          if (isMounted) setAllColumns(columns);
+          return;
         }
+  
+        const [userPreferenceData, allColumns] = await Promise.all([
+          getUserPreference(props.objectTypeId), 
+          fetchAllColumns(props.objectTypeId),
+        ]);
+  
+        const userPreferences: Record<string, number> = userPreferenceData[0]?.meta_data
+          ? JSON.parse(userPreferenceData[0].meta_data)
+          : {};
+  
+      
+  
+        if (Object.keys(userPreferences).length > 0) {
+          const { updatedColumns, visibilityModel } = processColumnsWithPreferences(
+            allColumns,
+            userPreferences
+          );
+          if(isMounted){
+
+              setColumnVisibilityModel(visibilityModel);
+              setAllColumns(updatedColumns);
+              setColumnWidths(userPreferences);
+        }
+        } else {
+          const { defaultPreferences, visibilityModel } = processDefaultSettings(allColumns);
+  
+          if (isMounted) {
+            setColumnWidths(defaultPreferences);
+            setAllColumns(allColumns);
+            setColumnVisibilityModel(visibilityModel);
+          }
+  
+        await insertUserPreference(defaultPreferences, props.objectTypeId);
         }
       } catch (error) {
         console.error("Error fetching or setting column preferences:", error);
       }
     };
-
+  
     fetchAndSetPreferences();
-  }, []);
+      console.log("my useeffect run ");
+      
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Keep dependency array empty
+  
 
   const handleColumnVisibilityModelChange = (
     model: GridColumnVisibilityModel
   ) => {
+    console.log("model", model);
     const updatedColumnWidths = { ...columnWidths };
-
-    Object.keys(model).forEach((column) => {
-      if (model[column]) {
-        // Add column with default width if not already present
-        if (!(column in updatedColumnWidths)) {
-          updatedColumnWidths[column] = 100; // Default width
+    if (Object.keys(model).length === 1 && model["Icon menu"]=== true) {
+      allColumns.forEach((col:any) => {
+        updatedColumnWidths[col.field] = 100;
+      });
+    } else {
+      Object.keys(model).forEach((column) => {
+        if (model[column]) {
+          // Add column with default width if not already present
+          if (!(column in updatedColumnWidths)) {
+            updatedColumnWidths[column] = 100; // Default width
+          }
+        } else {
+          // Remove column if it is not visible
+          delete updatedColumnWidths[column];
         }
-      } else {
-        // Remove column if it is not visible
-        delete updatedColumnWidths[column];
-      }
-    });
-
+      });
+    }
+    
     // Update user preferences in the database
     updateUserPreference(updatedColumnWidths, props.objectTypeId || 0);
 

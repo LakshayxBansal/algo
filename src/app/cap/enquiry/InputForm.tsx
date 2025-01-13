@@ -197,6 +197,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           name="date"
           required={false}
           sx={{ display: "flex", flexGrow: 1 }}
+          setFormError={setFormError}
           slotProps={{
             textField: {
               error: formError?.date?.error,
@@ -206,7 +207,7 @@ export default function InputForm({ baseData }: InputFormProps) {
               tabIndex: -1,
             },
           }}
-          defaultValue={enqData?.date ? adjustToLocal(enqData.date) : dayjs()}
+          defaultValue={baseData.enqData.enquiry_id? adjustToLocal(enqData.date) : dayjs()}
           disabled={baseData.statusUpdate}
         />,
       ],
@@ -325,7 +326,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       [
         "sub_status",
         <SelectMasterWrapper
-          key={`sub-status-${status}`}
+          key={`sub-status`}
           name="sub_status"
           id="sub_status"
           label="sub_status"
@@ -437,13 +438,14 @@ export default function InputForm({ baseData }: InputFormProps) {
       [
         "next_action",
         <SelectMasterWrapper
-          key={`next-action-${status}`}
+          key={`next-action`}
           name="next_action"
           id="next_action"
           label="next_action"
           dialogTitle={"Action"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
           fetchDataFn={getEnquiryAction}
+          fnFetchDataByID={getActionById}
           formError={formError?.next_action ?? formError.next_action}
           setFormError={setFormError}
           renderForm={(fnDialogOpen, fnDialogValue, data) => (
@@ -462,7 +464,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         "next_action_date",
         <InputControl
           format={dateTimeFormat}
-          key={status}
+          key={"next_action_date"}
           label="When"
           sx={{ display: "flex", flexGrow: 1 }}
           inputType={InputType.DATETIMEINPUT}
@@ -493,7 +495,7 @@ export default function InputForm({ baseData }: InputFormProps) {
         "closure_remark",
         <InputControl
           inputType={InputType.TEXTFIELD}
-          key={`closure-remark-${status}`}
+          key={`closure-remark`}
           placeholder="Closure remarks"
           label="closure_remark"
           multiline
@@ -530,8 +532,7 @@ export default function InputForm({ baseData }: InputFormProps) {
     const formatedData = await enquiryDataFormat({
       formData,
       selectValues,
-      dateFormat,
-      timeFormat,
+      dateTimeFormat,
       otherData: enqData,
     });
 
@@ -556,10 +557,14 @@ export default function InputForm({ baseData }: InputFormProps) {
         return;
       } 
       setSnackOpen(true);
+      if(baseData.enqData?.enquiry_id) {
+        router.back();
+      }
+      else{
       setTimeout(function () {
         location.reload();
       }, 3000);
-      
+    }
     } else {
       issues = result?.data;
 
@@ -698,6 +703,12 @@ export default function InputForm({ baseData }: InputFormProps) {
     "action_taken_remark",
   ];
 
+  const statusAffectedColumns= [
+    "sub_status",
+    "next_action",
+    "next_action_date",
+    "closure_remark"
+  ]
   const enquiryMaintainProducts = baseData.config_data.maintainProducts;
 
   const fieldArr = useMemo(() => {
@@ -737,6 +748,7 @@ export default function InputForm({ baseData }: InputFormProps) {
                         dgFormError={formError}
                         setdgFormError={setFormError}
                         dgProductFormError={productFormError}
+                        setDgProductFormError={setProductFormError}
                         disabled={
                           baseData.statusUpdate || Boolean(field.is_disabled)
                         }
@@ -856,14 +868,28 @@ export default function InputForm({ baseData }: InputFormProps) {
           const baseElement = defaultComponentMap.get(
             field.column_name_id
           ) as React.ReactElement;
+          let fld;
 
-          const fld = React.cloneElement(baseElement, {
-            ...baseElement.props,
-            key: `field-default-${field.column_name_id}`,
-            label: field.column_label,
-            required: field.is_mandatory === 1,
-            disabled: field.is_disabled ? true : baseElement.props.disabled,
-          });
+          if(baseElement && !statusAffectedColumns.includes(field.column_name_id)){
+            fld = React.cloneElement(baseElement, {
+              ...baseElement.props,
+              key: `field-default-${field.column_name_id}`,
+              label: field.column_label,
+              required: field.is_mandatory === 1,
+              disabled: field.is_disabled ? true : baseElement.props.disabled,
+            });
+          }
+          else{
+            fld = React.cloneElement(baseElement, {
+              ...baseElement.props,
+              label: field.column_label,
+              required: field.is_mandatory === 1,
+              disabled: field.is_disabled ? true : baseElement.props.disabled,
+              key: `field-default-${field.column_name_id}-${status}`,
+            })
+          }
+
+         
 
           fields.push(fld);
         }

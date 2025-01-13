@@ -211,7 +211,7 @@ export async function getHeaderDataAction(session: Session, id: number | undefin
       LEFT JOIN executive_master em ON em.id = h.received_by_id \
       LEFT JOIN enquiry_category_master ecm ON ecm.id = h.category_id \
       LEFT JOIN enquiry_source_master esm ON esm.id = h.source_id \
-      LEFT JOIN executive_master created ON created.id = h.created_by \
+      LEFT JOIN executive_master created ON created.crm_user_id = h.created_by \
       LEFT JOIN executive_master modified ON modified.id = h.modified_by \
       WHERE h.id = ?;",
       values: [id],
@@ -294,27 +294,38 @@ export async function getEnquiryDataByPageDb(
                em.name AS received_by, 
                ecm.name AS category, 
                esm.name AS source,
+              pm.name as product_grid,
                created.name AS created_by_name,
-               modified.name AS modified_by_name, 
+               modified.name AS modified_by_name,
                l.id AS ledger_id, 
-               allocate.name AS allocated_to_name, 
+               allocate.name AS allocate_to_name, 
+               cfd.c_col1,cfd.c_col2,cfd.c_col3,
+              cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10,
                l.suggested_action_remark, 
                st.name AS status, 
                sub_st.name AS sub_status, 
                eam.name AS action_taken, 
-               next_action.name AS next_action
+               next_action.name AS next_action,
+               l.next_action_date,
+               l.closure_remark,
+               l.action_taken_remark
         FROM enquiry_header_tran h 
         LEFT JOIN contact_master cm ON cm.id = h.contact_id 
         LEFT JOIN executive_master em ON em.id = h.received_by_id 
         LEFT JOIN enquiry_category_master ecm ON ecm.id = h.category_id
         LEFT JOIN enquiry_source_master esm ON esm.id = h.source_id
-        LEFT JOIN executive_master created ON created.id = h.created_by 
+        LEFT JOIN executive_master created ON created.id = h.created_by
+        LEFT JOIN enquiry_product_tran ept ON ept.enquiry_id = h.id AND 
+        ept.slno = (SELECT MIN(sub_ept.slno) FROM enquiry_product_tran sub_ept 
+        WHERE sub_ept.enquiry_id = h.id)
+        LEFT JOIN product_master pm ON pm.id = ept.product_id
         LEFT JOIN executive_master modified ON modified.id = h.modified_by 
         LEFT JOIN enquiry_ledger_tran l ON l.enquiry_id = h.id AND l.active = 1 
         LEFT JOIN executive_master allocate ON allocate.id = l.allocated_to 
         LEFT JOIN enquiry_status_master st ON st.id = l.status_id 
         LEFT JOIN enquiry_sub_status_master sub_st ON sub_st.id = l.sub_status_id 
         LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id 
+        LEFT OUTER JOIN custom_fields_data cfd on cfd.object_id=h.id and cfd.object_type_id=26
         LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id 
         ${filter ? "WHERE enq_number LIKE CONCAT('%', ?, '%')" : ""}
         ORDER BY h.id

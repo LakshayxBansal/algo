@@ -100,6 +100,8 @@ interface customprop extends masterFormPropsT {
   };
   status: string | string[] | undefined;
   fields: Array<Record<string, any>>;
+  config_data: Record<string, any>;
+  regional_setting: Record<string, any>;
   voucherNumber?: {
     voucherString: string | null;
     newVoucherNumber: number;
@@ -150,11 +152,25 @@ const SupportTicketForm = (props: customprop) => {
   });
 
   const router = useRouter();
+
+  const { dateFormat, timeFormat } = props.regional_setting;
+  const timeFormatString = timeFormat
+    ? timeFormat === "12 Hours"
+      ? "hh:mm A"
+      : "HH:mm"
+    : "HH:mm";
+  const dateTimeFormat = [
+    dateFormat || "DD/MM/YYYY", // Add dateFormat if it exists
+    timeFormatString, // Add timeFormatString if timeFormat is valid
+  ]
+    .filter(Boolean)
+    .join(" "); 
   const handleSubmit = async (formData: FormData) => {
     const formatedData = await supportDataFormat({
       formData,
       selectValues,
       otherData: props?.data,
+      dateTimeFormat,
     });
 
     let result: any;
@@ -175,10 +191,15 @@ const SupportTicketForm = (props: customprop) => {
       }
 
       setSnackOpen(true);
+      if(props.status){
+        router.back();
+      }
+      else{
       setTimeout(function () {
         setFormError;
         location.reload();
       }, 3000);
+    }
     } else {
       const issues = result?.data;
 
@@ -196,6 +217,8 @@ const SupportTicketForm = (props: customprop) => {
         for (const issue of formIssue) {
           errorState[issue.path[0]] = { msg: issue.message, error: true };
         }
+        console.log("error state : ", errorState);
+        
         setFormError(errorState);
       }
       //set errors for product grid
@@ -225,7 +248,7 @@ const SupportTicketForm = (props: customprop) => {
       const { form, ...rest } = curr;
       return rest;
     });
-  };
+  };  
 
   const defaultComponentMap = useMemo(() => {
     return new Map<string, React.ReactNode>([
@@ -239,6 +262,7 @@ const SupportTicketForm = (props: customprop) => {
           name="tkt_number"
           fullWidth
           required
+          autoFocus
           defaultValue={props.data?.tkt_number}
           error={formError?.tkt_number?.error}
           helperText={formError?.tkt_number?.msg}
@@ -255,20 +279,23 @@ const SupportTicketForm = (props: customprop) => {
       [
         "date",
         <InputControl
+          format ={dateTimeFormat}
           key="date"
           label="Received on"
           inputType={InputType.DATETIMEINPUT}
           id="date"
           name="date"
           defaultValue={
-            masterData?.date ? adjustToLocal(masterData.date) : dayjs()
+           props.status? adjustToLocal(masterData.date) : dayjs()
           }
           required
-          error={formError?.date?.error}
-          helperText={formError?.date?.msg}
           setFormError={setFormError}
           sx={{ display: "flex", flexGrow: 1 }}
           slotProps={{
+            textField: {
+              error: formError?.date?.error,
+              helperText: formError?.date?.msg,
+            },
             openPickerButton: {
               tabIndex: -1,
             },
@@ -392,7 +419,7 @@ const SupportTicketForm = (props: customprop) => {
           fetchDataFn={getSubStatusforStatus}
           fnFetchDataByID={getSupportSubSatusById}
           required
-          key={`sub_status_${status}`}
+          key={`sub_status`}
           formError={formError?.sub_status ?? formError.sub_status}
           setFormError={setFormError}
           defaultValue={defaultValues.sub_status}
@@ -410,7 +437,7 @@ const SupportTicketForm = (props: customprop) => {
       [
         "action_taken",
         <SelectMasterWrapper
-          key={`action_taken_${status}`}
+          key={`action_taken`}
           name={"action_taken"}
           id={"action_taken"}
           label={"Action Taken"}
@@ -459,13 +486,14 @@ const SupportTicketForm = (props: customprop) => {
       [
         "next_action",
         <SelectMasterWrapper
-          key={`next_action_${status}`}
+          key={`next_action`}
           name={"next_action"}
           id={"next_action"}
           label={"Next Action"}
           dialogTitle={"Action"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "next_action")}
           fetchDataFn={getSupportAction}
+          fnFetchDataByID={getSupportActionById}
           formError={formError?.next_action ?? formError.next_action}
           setFormError={setFormError}
           defaultValue={defaultValues.next_action}
@@ -482,7 +510,8 @@ const SupportTicketForm = (props: customprop) => {
       [
         "next_action_date",
         <InputControl
-          key={`next_action_date_${status}`}
+          format={dateTimeFormat}
+          key={`next_action_date`}
           label="When"
           inputType={InputType.DATETIMEINPUT}
           sx={{ display: "flex", flexGrow: 1 }}
@@ -496,7 +525,7 @@ const SupportTicketForm = (props: customprop) => {
               ? masterData?.next_action_date
                 ? adjustToLocal(masterData.next_action_date)
                 : props.status
-                ? ""
+                ? null
                 : dayjs()
               : null
           }
@@ -590,10 +619,10 @@ const SupportTicketForm = (props: customprop) => {
   }
 
   function onStatusChange(event: React.SyntheticEvent, value: any) {
-    // setDefaultValues({
-    //   sub_status: { id: 0, name: "" },
-    //   next_action: { id: 0, name: "" },
-    // });
+    setDefaultValues({
+      sub_status: { id: 0, name: "" },
+      next_action: { id: 0, name: "" },
+    });
     setSelectValues((prev) => {
       return {
         ...prev,
@@ -636,8 +665,14 @@ const SupportTicketForm = (props: customprop) => {
     "action_taken_remark",
   ];
 
-  // const enquiryMaintainProducts = .config_data.maintainProducts;
+  const statusAffectedColumns= [
+    "sub_status",
+    "next_action",
+    "next_action_date",
+    "closure_remark"
+  ]
 
+  const maintainProducts = props.config_data.maintainProducts;
   const fieldArr = useMemo(() => {
     let fields: React.ReactElement[] = [];
     props.fields.map((field: any, index) => {
@@ -656,8 +691,8 @@ const SupportTicketForm = (props: customprop) => {
           let fld = (
             <Grid item xs={12} key={`field-default-product-remarks-grid`}>
               <Grid container spacing={2} key={`grid-container-${index}`}>
-                {/* {enquiryMaintainProducts && ( */}
-                {
+                {maintainProducts && (
+                
                   <Grid
                     item
                     xs={12}
@@ -682,15 +717,15 @@ const SupportTicketForm = (props: customprop) => {
                         dgFormError={formError}
                         setdgFormError={setFormError}
                         dgProductFormError={productFormError}
+                        setDgProductFormError={setProductFormError}
                       />
                     </Box>
                   </Grid>
-                }
+                )}
                 <Grid
                   item
                   xs={12}
-                  // md={enquiryMaintainProducts ? 6 : 12}
-                  md={6}
+                  md={maintainProducts ? 6 : 12}
                   sx={{ display: "flex", flexDirection: "column" }}
                   key={`remarks-grid-${index}`}
                 >
@@ -790,9 +825,8 @@ const SupportTicketForm = (props: customprop) => {
           const baseElement = defaultComponentMap.get(
             field.column_name_id
           ) as React.ReactElement;
-
           let fld;
-          if (baseElement) {
+          if (baseElement && !statusAffectedColumns.includes(field.column_name_id)) {
             fld = React.cloneElement(baseElement, {
               ...baseElement.props,
               label: field.column_label,
@@ -800,9 +834,19 @@ const SupportTicketForm = (props: customprop) => {
               disabled: field.is_disabled ? true : baseElement.props.disabled,
               key: `field-default-${field.column_name_id}`,
             });
-
-            fields.push(fld);
+           
+            
           }
+          else{
+            fld = React.cloneElement(baseElement, {
+              ...baseElement.props,
+              label: field.column_label,
+              required: field.is_mandatory === 1,
+              disabled: field.is_disabled ? true : baseElement.props.disabled,
+              key: `field-default-${field.column_name_id}-${status}`,
+            })
+          }
+          fields.push(fld);
         }
       } else {
         const fld = (
@@ -932,7 +976,7 @@ const SupportTicketForm = (props: customprop) => {
 
         {dialogOpen && (
           <AddDialog
-            title="Product"
+            title="Add Product to Product List "
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
