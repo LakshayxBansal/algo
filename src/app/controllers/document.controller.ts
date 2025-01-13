@@ -16,7 +16,7 @@ export async function uploadDocument(docData: mdl.docDescriptionSchemaT[], objec
             for (const doc of docData) {
                 const formData = new FormData();
 
-                formData.append('app_id', '9334f8d1-1b69-476f-b143-2b5b048cc458');
+                formData.append('application_id', process.env.DOC_APPLICATION_ID);
                 formData.append('meta_data', `{"name": "${doc.description}"}`);
 
                 const base64Data = doc?.file?.replace(/^data:.*;base64,/, "");
@@ -24,11 +24,11 @@ export async function uploadDocument(docData: mdl.docDescriptionSchemaT[], objec
                 const buffer = Buffer.from(base64Data as string, 'base64');
                 formData.append('doc', buffer, { filename: doc?.fileName, contentType: contentType });
 
-                const docInfo = await axios.post("http://192.168.1.200:3000/addDoc", formData, {
+                const docInfo = await axios.post(`${process.env.DOC_SERVICE_URL}/add`, formData, {
                     headers: {
                         ...formData.getHeaders(),
-                        "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
-                        "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+                        "client_id": process.env.DOC_CLIENT_ID,
+                        "access_key": process.env.DOC_ACCESS_KEY
                     }
                 }
                 )
@@ -94,15 +94,15 @@ export async function deleteExecutiveDoc(id: number, docId: string) {
         const session = await getSession();
         if (session?.user.dbInfo) {
             const body = {
-                "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
+                "application_id": process.env.DOC_APPLICATION_ID,
                 "doc_id": docId
             }
 
-            const result = await axios.delete("http://192.168.1.200:3000/deleteDoc", {
+            const result = await axios.delete(`${process.env.DOC_SERVICE_URL}/delete`, {
                 data: body, // body data should go inside the `data` field
                 headers: {
-                    "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
-                    "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+                    "client_id": process.env.DOC_CLIENT_ID,
+                    "access_key": process.env.DOC_ACCESS_KEY
                 }
             });
             await deleteExecutiveDocDB(session.user.dbInfo.dbName, id);
@@ -119,14 +119,14 @@ export async function viewExecutiveDoc(documentId: string) {
         const session = await getSession();
         if (session?.user.dbInfo) {
             const body = {
-                "app_id": "9334f8d1-1b69-476f-b143-2b5b048cc458",
+                "application_id": process.env.DOC_APPLICATION_ID,
                 "doc_id": documentId
             }
 
-            const result = await axios.post("http://192.168.1.200:3000/getDoc", body, {
+            const result = await axios.post(`${process.env.DOC_SERVICE_URL}/get`, body, {
                 headers: {
-                    "client_id": "fd85c348-8d54-4e20-b75e-c085d507a8ab",
-                    "access_key": "5616e450142cb9214437e6a7d0f1eb944ca733b02883226a876e43b597f64011"
+                    "client_id": process.env.DOC_CLIENT_ID,
+                    "access_key": process.env.DOC_ACCESS_KEY
                 },
             });
             let base64Data = Buffer.from(result.data.data.doc_buffer.data, "binary").toString("base64");

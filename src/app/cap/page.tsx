@@ -1,14 +1,20 @@
 import React, { Suspense } from "react";
 import Dashbaord  from './dashboard/page';
 import {  LinearProgress } from "@mui/material";
+import TabLayout from "./TabLayout";
+import SupportDashboard from "./supportDashboard/page";
 
+export default async function ClientApp() {
 
-
-export default function ClientApp() {
+  const dashboardContent = await Dashbaord();
+  const supportDashboardContent = await SupportDashboard();
 
   return (
     <Suspense fallback={<LinearProgress/>}>
-    <Dashbaord></Dashbaord>
+      <TabLayout 
+        dashboardContent={dashboardContent}
+        supportDashboardContent={supportDashboardContent}
+      />
     </Suspense>
   );
 };

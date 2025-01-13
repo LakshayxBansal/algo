@@ -438,7 +438,7 @@ const SupportTicketForm = (props: customprop) => {
           id={"allocated_to"}
           label={"Allocate to"}
           showDetails={true}
-          dialogTitle={"Assign Executive"}
+          dialogTitle={"Executive"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
           fetchDataFn={(arg:any)=>getExecutiveForAllocation(SUPPORT_CONFIG_ID,arg)}
           fnFetchDataByID={getExecutiveById}
@@ -558,7 +558,7 @@ const SupportTicketForm = (props: customprop) => {
             ? 4 // If status exists and allocation matches, assign 4
             : 2 // If status exists but allocation doesn't match, assign 2
           : 3; // If no status then it is full update, assign 3
-      result = await updateSupportData(data, productData);
+      result = await updateSupportData(data, productData,newDocsData);
     } else {
       result = await createSupportTicket({
         supportData: data,
