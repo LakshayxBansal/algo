@@ -5,6 +5,7 @@ import {
   checkIfActiveUserDB,
 } from "../services/forgotPassword.service";
 import { hashText } from "../utils/encrypt.utils";
+import { logger } from "../utils/logger.utils";
 
 export async function checkIfActiveUser(contact: string) {
   let result;
@@ -29,8 +30,14 @@ export async function checkIfActiveUser(contact: string) {
       };
     }
   } catch (e) {
-    throw e;
+    logger.error(e);
+    result = {
+      status: false,
+      path: "form",
+      msg: "An Error Occured Please Try Again After Some Time",
+    };
   }
+
   return result;
 }
 
@@ -59,7 +66,12 @@ export async function changePassword(
       };
     }
   } catch (e) {
-    throw e;
+    logger.error(e);
+    result = {
+      status: false,
+      path: "form",
+      msg: "An Error Occured Please Try Again After Some Time",
+    };
   }
   return result;
 }
