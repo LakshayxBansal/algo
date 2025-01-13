@@ -93,13 +93,13 @@ export default function EntityList(props: entitiyCompT) {
   const [loading, setLoading] = useState(false);
   const [selectionModel, setSelectionModel] = useState([]);
 
-  // React.useLayoutEffect(() => {
-  //   if (apiRef.current) {
-  //     // apiRef.current.setCellFocus([]);
-  //     // apiRef.current.setRowSelectionModel([]);
-  //     apiRef.current.setCellFocus(focusedRow, "More Options");
-  //   }
-  // }, [focusedRow]);
+  React.useLayoutEffect(() => {
+    if (apiRef.current) {
+      // apiRef.current.setCellFocus([]);
+      // apiRef.current.setRowSelectionModel([]);
+      apiRef.current.setCellFocus(focusedRow, "More Options");
+    }
+  }, [focusedRow]);
   
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -131,26 +131,26 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 //   }
 // };
 
-// const getRowClassName = (params) =>
-//   focusedRow === params.row.id ? "Mui-focused-row" : "";
+const getRowClassName = (params) =>
+  focusedRow === params.row.id ? "Mui-focused-row" : "";
 
 
-// const handleCellKeyDown = (params, event) => {
-//   if (event.key === "Tab") {
-//     event.preventDefault(); // Prevent default Tab behavior
+const handleCellKeyDown = (params, event) => {
+  if (event.key === "Tab") {
+    event.preventDefault(); // Prevent default Tab behavior
 
-//     const currentRowIndex = data.findIndex((row:any) => row.id === params.id);
-//     console.log("to check the index", currentRowIndex)
-//     const nextRowIndex = (currentRowIndex + 1) % data.length; // Loop to the first row if at the end
-//     const nextRowId = data[nextRowIndex].id;
+    const currentRowIndex = data.findIndex((row:any) => row.id === params.id);
+    console.log("to check the index", currentRowIndex)
+    const nextRowIndex = (currentRowIndex + 1) % data.length; // Loop to the first row if at the end
+    const nextRowId = data[nextRowIndex].id;
 
-//     // Update the focused row state
-//     setFocusedRow(params.row.id);
+    // Update the focused row state
+    setFocusedRow(params.row.id);
 
-//     // Programmatically set focus to the next row using apiRef
-//     // apiRef.current.setCellFocus(nextRowId, "More Options"); // Focus on the "name" field of the next row
-//   }
-// };
+    // Programmatically set focus to the next row using apiRef
+    // apiRef.current.setCellFocus(nextRowId, "More Options"); // Focus on the "name" field of the next row
+  }
+};
 
 
 
@@ -161,7 +161,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 //   let nextIndex = currentIndex;
 
 //   if (event.key === "ArrowDown") {
-//     event.preventDefault();
+//     // event.preventDefault();
 //     nextIndex =
 //       currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
 //   } else if (event.key === "ArrowUp") {
@@ -731,8 +731,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
-            // onCellKeyDown={handleCellKeyDown}
-            // getRowClassName={getRowClassName}
+            onCellKeyDown={handleCellKeyDown}
+            getRowClassName={getRowClassName}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
