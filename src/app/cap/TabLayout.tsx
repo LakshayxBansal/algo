@@ -24,10 +24,10 @@ export default function TabLayout({
   return (
     <Box sx={{ width: '100%' }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', backgroundColor: 'white', paddingLeft: 1}}>
           <TabList onChange={handleChange}>
-            <Tab label="Enquiry Tickets" value="1" />
-            <Tab label="Support Tickets" value="2" />
+            <Tab label="Enquiry Tickets" value="1" sx={{ backgroundColor: 'white' }}/>
+            <Tab label="Support Tickets" value="2" sx={{ backgroundColor: 'white' }}/>
           </TabList>
         </Box>
         <TabPanel value="1">
