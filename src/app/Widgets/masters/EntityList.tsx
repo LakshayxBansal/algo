@@ -93,13 +93,7 @@ export default function EntityList(props: entitiyCompT) {
   const [loading, setLoading] = useState(false);
   const [selectionModel, setSelectionModel] = useState([]);
 
-  React.useLayoutEffect(() => {
-    if (apiRef.current) {
-      // apiRef.current.setCellFocus([]);
-      // apiRef.current.setRowSelectionModel([]);
-      apiRef.current.setCellFocus(focusedRow, "More Options");
-    }
-  }, [focusedRow]);
+
   
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -120,19 +114,36 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 
 // const handleCellKeyDown = (params, event) => {
 //   const rowId = params.row.id;
-//   const currentIndex = data.findIndex((row: any) => row.id === rowId);
-
-//   let nextIndex = currentIndex;
 
 //   if (event.key === "Tab") {
-//     // event.preventDefault(); // Prevent default tab behavior
-//     nextIndex = currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
-//     setFocusedRow(params.row.id); // Set the row as focused
+//     setFocusedRow(rowId); // Set the row as focused
 //   }
 // };
 
-// const getRowClassName = (params:any) =>
-//   focusedRow === params.row.id ? "Mui-focused-row" : "";
+const handleCellKeyDown = (params: any, event: any, details: any) => {
+  const rowId = params.row.id;
+  const currentIndex = data.findIndex((row: any) => row.id === rowId);
+
+  let nextIndex = currentIndex;
+
+if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
+    // event.preventDefault();
+    nextIndex =
+      currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+  } else if ((event.key === "ArrowUp") || (event.key === "Tab" && event.shiftKey)) {
+    // event.preventDefault();
+    nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+  } 
+  if (nextIndex !== currentIndex) {
+    const nextRow = data[nextIndex];
+    if (nextRow) {
+      setFocusedRow(nextRow);
+    }
+  }
+};
+
+const getRowClassName = (params:any) =>
+  focusedRow?.id === params.row.id ? "Mui-focused-row" : "";
 
 // const handleCellKeyDown = (params: any, event: any, details: any) => {
 //   const rowId = params.row.id;
@@ -141,22 +152,20 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 //   let nextIndex = currentIndex;
 
 //   if (event.key === "ArrowDown") {
-//     event.preventDefault();
+//     // event.preventDefault();
 //     nextIndex =
 //       currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
 //   } else if (event.key === "ArrowUp") {
-//     event.preventDefault();
+//     // event.preventDefault();
 //     nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
 //   } else if (event.key === "Enter" || event.key === " ") {
-//     event.preventDefault();
+//     // event.preventDefault();
 //   }
 
 //   if (nextIndex !== currentIndex) {
 //     const nextRow = data[nextIndex];
 //     if (nextRow) {
-//       // setRowSelectionModel([nextRow.id]);
-//       // setSelectedRow(nextRow);
-//       setFocusedRow(nextRow.id);
+//       setFocusedRow(nextRow);
 //     }
 //   }
 // };
@@ -202,7 +211,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     const rows: any = await props.fetchDataFn(
       PageModel.page,
       searchText as string,
-      pgSize as number
+      PageModel.pageSize as number, //pgSize as number
     );
     if (rows.data) {
       setData(rows.data);
@@ -237,6 +246,14 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     // }
 
   }, 100);
+
+  React.useLayoutEffect(() => {
+    if (apiRef.current) {
+      // apiRef.current.setCellFocus([]);
+      // apiRef.current.setRowSelectionModel([]);
+      apiRef.current.setCellFocus(focusedRow, "More Options");
+    }
+  }, [focusedRow]);
 
 
   useEffect(() => {
@@ -512,6 +529,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             <Grid item xs={12} sm={8} md={8}>
               <Box sx={{ width: { xs: "92%", md: "50%" } }}>
                 <TextField
+                // tabIndex={1}
                   variant="outlined"
                   fullWidth
                   placeholder="Search..."
@@ -519,6 +537,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                   onChange={handleSearch}
                   margin="normal"
                   InputProps={{
+                    // tabIndex: 1,
                     startAdornment: (
                       <InputAdornment position="start">
                         <SearchIcon fontSize="small" />
@@ -564,7 +583,9 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                     }}
                   >
                     <Tooltip title="Add New" placement="top-start" arrow>
-                      <Button size="small" onClick={handleAddBtn}>
+                      <Button size="small" onClick={handleAddBtn}
+                      //  tabIndex={2}
+                       >
                         <AddIcon
                           fontSize="small"
                           style={{ marginRight: "5px" }}
@@ -659,6 +680,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
               {props.AddAllowed && (
                 <Tooltip title="Add New">
                   <Button
+                  // tabIndex={2}
                     size="small"
                     variant="contained"
                     sx={{ width: { xs: "85%", md: "auto" } }}
@@ -703,7 +725,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
-            pageSizeOptions={[5, pgSize, 20]}
+            pageSizeOptions={[pgSize, 20,30]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}
@@ -711,8 +733,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
-            // onCellKeyDown={handleCellKeyDown}
-            // getRowClassName={getRowClassName}
+            onCellKeyDown={handleCellKeyDown}
+            getRowClassName={getRowClassName}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}

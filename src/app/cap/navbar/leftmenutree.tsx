@@ -132,6 +132,17 @@ export default function LeftMenuTree(props: {
       }, 300);
     }
   };
+  
+  const handlePopperMouseEnter = (page: menuTreeT) => {
+    clearTimeout(timeoutRef.current);
+  };
+  
+  const handlePopperMouseLeave = (page: menuTreeT) => {
+    timeoutRef.current = setTimeout(() => {
+      idToOpenPop.current.clear();
+      setOpenPopper(new Map());
+    }, 300);
+  };
 
 
   function handleCollapse(id: number): boolean {
@@ -150,11 +161,11 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    if(openPopper.size > 1){
-      openPopper.clear();
-    }
+    // if(openPopper.size > 0){
+    //   openPopper.clear();
+    // }
     startTransition(() => {
-      router.push(href)
+      router.push(href);
       document.body.classList.add('cursor-wait');
     });
   };
@@ -266,10 +277,10 @@ export default function LeftMenuTree(props: {
                 <ListItemButton
                   sx={{ pl: indent }}
                   onMouseEnter={(e) => {
-                    handleSubMenuHover(e, page);
+                   handleSubMenuHover(e, page);
                   }}
                   onMouseLeave={(e) => {
-                    handleMouseLeave(e, page);
+                  handleMouseLeave(e, page);
                   }}
                   component="a"
                   onClick={(e) => handlePopperClick(e, page.href)}
@@ -340,6 +351,8 @@ export default function LeftMenuTree(props: {
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
+                      // onMouseEnter={() => handlePopperMouseEnter(page)}
+                      // onMouseLeave={() => handlePopperMouseLeave(page)}
                       style={{ position: "absolute", zIndex: "9999" }}
                     >
                       {({ TransitionProps }) => (

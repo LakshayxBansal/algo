@@ -179,6 +179,7 @@ export default function MenuBar(props: propsType) {
             sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
           >
             <Autocomplete
+              tabIndex={-1}
               options={options}
               getOptionLabel={(option) => option.result}
               groupBy={(option) => option.tableName}
@@ -285,7 +286,7 @@ export default function MenuBar(props: propsType) {
 
         </Drawer>
         <Box style={{  flex: 1, overflowY: "auto" , height:"100vh"}}>{children}</Box>
-      </Box>
+      </Box>  
     </div>
   );
 }
