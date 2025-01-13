@@ -26,6 +26,7 @@ import {
   AppBar,
   barHeight,
 } from "@/styledComponents";
+import { Height } from "@mui/icons-material";
 
 interface propsType {
   pages: menuTreeT[];
@@ -283,7 +284,7 @@ export default function MenuBar(props: propsType) {
           />
 
         </Drawer>
-        <Box style={{  flex: 1, overflowY: "auto" }}>{children}</Box>
+        <Box style={{  flex: 1, overflowY: "auto" , height:"100vh"}}>{children}</Box>
       </Box>
     </div>
   );

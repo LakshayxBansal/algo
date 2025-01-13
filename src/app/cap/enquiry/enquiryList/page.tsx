@@ -64,9 +64,7 @@ const columns: GridColDef[] = [
 export default function Action() {
   return (
     <>
-       <Box sx={{ margin: "20px 20px" }}>
         <SecondNavbar title="List of Enquiry Ticket" />
-      </Box>
       <EntityList
         title="Enquiry Ticket"
         fileUploadFeatureReqd={true}

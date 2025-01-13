@@ -131,28 +131,8 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
 //   }
 // };
 
-const getRowClassName = (params) =>
-  focusedRow === params.row.id ? "Mui-focused-row" : "";
-
-
-const handleCellKeyDown = (params, event) => {
-  if (event.key === "Tab") {
-    event.preventDefault(); // Prevent default Tab behavior
-
-    const currentRowIndex = data.findIndex((row:any) => row.id === params.id);
-    console.log("to check the index", currentRowIndex)
-    const nextRowIndex = (currentRowIndex + 1) % data.length; // Loop to the first row if at the end
-    const nextRowId = data[nextRowIndex].id;
-
-    // Update the focused row state
-    setFocusedRow(params.row.id);
-
-    // Programmatically set focus to the next row using apiRef
-    // apiRef.current.setCellFocus(nextRowId, "More Options"); // Focus on the "name" field of the next row
-  }
-};
-
-
+// const getRowClassName = (params:any) =>
+//   focusedRow === params.row.id ? "Mui-focused-row" : "";
 
 // const handleCellKeyDown = (params: any, event: any, details: any) => {
 //   const rowId = params.row.id;
@@ -161,7 +141,7 @@ const handleCellKeyDown = (params, event) => {
 //   let nextIndex = currentIndex;
 
 //   if (event.key === "ArrowDown") {
-//     // event.preventDefault();
+//     event.preventDefault();
 //     nextIndex =
 //       currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
 //   } else if (event.key === "ArrowUp") {
@@ -176,7 +156,7 @@ const handleCellKeyDown = (params, event) => {
 //     if (nextRow) {
 //       // setRowSelectionModel([nextRow.id]);
 //       // setSelectedRow(nextRow);
-//       setFocusedRow(nextRow)
+//       setFocusedRow(nextRow.id);
 //     }
 //   }
 // };
@@ -731,8 +711,8 @@ const handleCellKeyDown = (params, event) => {
             onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
-            onCellKeyDown={handleCellKeyDown}
-            getRowClassName={getRowClassName}
+            // onCellKeyDown={handleCellKeyDown}
+            // getRowClassName={getRowClassName}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}

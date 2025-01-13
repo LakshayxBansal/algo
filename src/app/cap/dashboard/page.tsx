@@ -25,7 +25,6 @@ export default async function Dashboard() {
     const session = await getSession();
     if (session?.user.dbInfo) {
       return (
-          // <LoadingWrapper loadingg={false}>
           <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>
             <Box sx={{ py: 3, maxWidth: "90vw", margin: "auto" }}>
               <Grid container spacing={3}>

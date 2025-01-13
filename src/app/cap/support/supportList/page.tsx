@@ -66,9 +66,7 @@ const columns: GridColDef[] = [
 export default function Action() {
   return (
     <>
-      <Box sx={{ margin: "20px 20px" }}>
         <SecondNavbar title="List of Support Ticket" />
-      </Box>
       <EntityList
         title="Support Ticket"
         // renderForm={(fnDialogOpen, fnDialogValue, data) => (

@@ -1,5 +1,5 @@
 "use client";
-import NextBreadcrumb from "@/app/utils/NextBreadcrumbs";
+import NextBreadcrumb from "@/app/Widgets/NextBreadcrumbs";
 import React, { useState } from "react";
 import { Paper, Grid, Typography } from "@mui/material";
 import { usePathname, useSearchParams } from "next/navigation";
