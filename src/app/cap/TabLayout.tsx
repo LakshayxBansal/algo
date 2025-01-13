@@ -43,10 +43,10 @@ export default function TabLayout({
               )}
             </TabList>
         </Box>
-        <TabPanel value="1">
+        <TabPanel value="1" sx={{p:0}}>
             {dashboardContent}
         </TabPanel>
-        <TabPanel value="2">
+        <TabPanel value="2" sx={{p:0}}>
            {supportDashboardContent}
         </TabPanel>
       </TabContext>
