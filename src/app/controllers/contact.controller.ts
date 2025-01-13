@@ -116,7 +116,6 @@ export async function createContact(data: contactSchemaT,docData : docDescriptio
       for (const element of dynamicStructureArray) {
         dynamicStructure[element.column_name]=element.column_type;
       }
-      console.log("dynamicStructure",dynamicStructure);
       
       const parsed = contactSchema.safeParse(data);
       if (parsed.success) {

@@ -462,8 +462,6 @@ export default function ExecutiveForm(
         id="whatsapp"
         label="Whatsapp No"
         name="whatsapp"
-        // defaultCountry="FR"
-        defaultCountry={whatsappFn?.length === 0 ? "" : "IN"}
         fullWidth
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
@@ -726,8 +724,9 @@ export default function ExecutiveForm(
         } else {
           setFormKey(formKey + 1);
           setStateDisable(true);
-          setWhatsappFn("");
+          setWhatsappFn("+91");
           setDocData([]);
+          setSelectValues({});
         }
       } else {
         const issues = result?.data;

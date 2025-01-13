@@ -10,7 +10,6 @@ export async function createExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    console.log("Harsh=====>", session.user.dbInfo.dbName)
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
@@ -51,8 +50,6 @@ export async function createExecutiveDB(
         data.c_col10
       ],
     });
-    console.log('session.user.userId')
-    console.log("services : ", result);
     return result;
   } catch (e) {
     logger.error(e);
