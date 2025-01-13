@@ -268,6 +268,7 @@ export default function AddProductToListForm(props: customprop) {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
+              m: "8px 0 4px 0",
             }}
           >
             <Button onClick={handleCancel} tabIndex={-1}>
@@ -278,7 +279,7 @@ export default function AddProductToListForm(props: customprop) {
               variant="contained"
               sx={{ width: "15%", marginLeft: "5%" }}
             >
-              Submit
+              Done
             </Button>
           </Box>
         </form>

@@ -169,8 +169,9 @@ export default function ContactForm(
         setFormKey(formKey + 1);
         setStateDisable(true);
         setPrintNameFn("");
-        setWhatsappFn("");
+        setWhatsappFn("+91");
         setDocData([]);
+        setSelectValues({});
       }
     } else {
       const issues = result.data;
@@ -513,8 +514,7 @@ export default function ContactForm(
         id="whatsapp"
         label="Whatsapp No"
         name="whatsapp"
-        // defaultCountry="FR"
-        defaultCountry={whatsappFn?.length === 0 ? "" : "IN"}
+        // defaultCountry={whatsappFn?.length === 0 ? "IN" : "IN"}
         error={formError?.whatsapp?.error}
         helperText={formError?.whatsapp?.msg}
         setFormError={setFormError}

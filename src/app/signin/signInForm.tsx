@@ -199,7 +199,7 @@ export default function AuthPage(props: authPagePropsType) {
             type={!showPassword ? "password" : "text"}
             id="password"
             autoComplete="off"
-            disabled={isPending}
+            // disabled={isPending}
             error={formError?.password?.error}
             helperText={formError?.password?.msg}
             setFormError={setFormError}
@@ -225,7 +225,7 @@ export default function AuthPage(props: authPagePropsType) {
 
           <Link
             // href={loading ? "#" : ""}
-            href={""}
+            href={"/forgotpassword"}
             // style={{
             //   ...styles.links,
             //   ...(loading ? styles.linksLoading : {}),
