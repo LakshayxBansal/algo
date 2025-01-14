@@ -12,6 +12,7 @@ import { Metadata } from "next";
 import { getScreenDescription } from "@/app/controllers/object.controller";
 import { SUPPORT_ID } from "@/app/utils/consts.utils";
 import generateVoucher from "@/app/utils/generateVoucher";
+import { last } from "lodash";
 
 export const metadata : Metadata = {
   title : 'Support Tickets'
@@ -115,7 +116,7 @@ async function getSuggestedRemark(data: any, status: any) {
 
     for (let i = 1; i < ledgerData.length; i++) {
       if (ledgerData[i].suggested_action_remark && ledgerData[i].suggested_action_remark !== lastSuggestedRemark) {
-        lastActionTakenRemark= ledgerData[i].suggested_action_remark
+        lastSuggestedRemark= ledgerData[i].suggested_action_remark
         suggested_action_remark += `Suggested Action Remarks:- ${
           ledgerData[i].modified_by_name
         } ; ${adjustToLocal(ledgerData[i].modified_on)
