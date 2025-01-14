@@ -2,28 +2,44 @@
 import Category from "@/app/cap/admin/lists/categoryList/page";
 import { selectKeyValueT } from "@/app/models/models";
 import { adjustToLocal } from "../utcToLocal";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
+
+dayjs.extend(customParseFormat);
 
 export async function supportDataFormat({
   formData,
   selectValues,
-  otherData
+  otherData,
+  dateTimeFormat,
 }: {
   formData: FormData;
   selectValues: selectKeyValueT;
-  otherData?: any
+  otherData?: any,
+  dateTimeFormat: string;
 }) {
   const formatDate = (dateStr: string | null | undefined ): string => {
-    if (!dateStr || dateStr === "" || dateStr === "Invalid Date") return "";
-    const dt = new Date(dateStr);
-    return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
+    if (!dateStr || dateStr === "" || dateStr === "Invalid Date" ) return "";
+    const dt = dayjs(dateStr, dateTimeFormat);
+    if (!dt.isValid()) return "";
+    const formatedDate= dt.format('YYYY-MM-DD HH:mm:ss');
+    
+
+    const newDate = new Date(formatedDate);
+   
+   return newDate.toISOString().slice(0, 10) + " " + newDate.toISOString().slice(11,19);
   };
 
-  const date= formatDate(  formData.get("date") ? formData.get("date") as string: adjustToLocal(otherData?.masterData.date).toString() );
+  const date=formData.get("date")
+      ? formatDate(formData.get("date") as string)
+      :otherData?.masterData.date ? dayjs(otherData?.masterData.date).format('YYYY-MM-DD HH:mm:ss'):null;
   const nextActionDate = formatDate(formData.get("next_action_date") as string);
 
   const headerData = {
     tkt_number: formData.get("tkt_number") as string ?? otherData?.tkt_number,
-    date: date,
+    date: date?.length === 0 ? null : date,
     contact_id: selectValues.contact?.id,
     received_by_id: selectValues.received_by?.id,
     category_id: selectValues.category?.id,
@@ -34,7 +50,7 @@ export async function supportDataFormat({
   };
 
   let ledgerData = {
-    date,
+    date: date?.length === 0 ? null : date,
     status_id: Number(formData.get("status")),
     sub_status_id: selectValues.sub_status?.id,
     sub_status: selectValues.sub_status?.name ?? "",

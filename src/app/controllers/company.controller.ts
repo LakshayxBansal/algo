@@ -425,7 +425,7 @@ async function getCountryByAPI(ip: string){
       return { country: fetchedData.location.country.name, 
         pin: fetchedData.location.postal,
         city: fetchedData.location.city,
-        countryId:  countryID};
+        countryId:  countryID[0].id};
     }
   
   }  catch (e) {

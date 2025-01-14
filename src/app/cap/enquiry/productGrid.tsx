@@ -50,6 +50,7 @@ type ProductGridProps = {
   setdgFormError: any;
   dgProductFormError: any;
   disabled?: boolean;
+  setDgProductFormError: any;
   // Add other props here as needed
 };
 
@@ -68,6 +69,7 @@ export default function ProductGrid({
   setdgFormError,
   dgProductFormError,
   disabled,
+  setDgProductFormError
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
@@ -132,6 +134,7 @@ export default function ProductGrid({
     setDialogValue: any,
     name: keyof ModifiedRowT
   ) {
+    console.log("select is called ", val, name);
     let values: ModifiedRowT = { ...modifiedRowData };
     values[name] = val?.name;
     values[`${name}_id` as keyof ModifiedRowT] = val?.id;
@@ -140,16 +143,27 @@ export default function ProductGrid({
 
   //Setting editmode with selected row id and then setting selected row data in modifiedRowData state
   const handleEditClick = (id: GridRowId) => () => {
-    setEditMode(id);
+    console.log("click is callled");
+    
     const selectedRowData = dgData.find((row: any) => row.id === id); // Find the corresponding row data
+    setEditMode(id);
     setModifiedRowData(selectedRowData);
+    
   };
+ 
+     
 
   // Filtering out the row with the matching id and saving into rows of data grid: DELETING THE SELECTED ROW
   const handleDeleteClick = (id: GridRowId) => () => {
     if (dgData.length > 0) {
       const updatedRows = dgData.filter((row: any) => row.id !== id);
-
+      
+      if(dgProductFormError[(Number(id)-1)]) {
+        setDgProductFormError((prev: any) => {
+          const { [(Number(id)-1)]: _, ...rest } = prev;
+          return rest;
+        });
+      }
       // Updating the data state with the filtered rows
       setdgData(updatedRows);
     }
@@ -159,12 +173,37 @@ export default function ProductGrid({
   const handleSaveClick = () => {
     const parsedData = productToListFormSchema.safeParse(modifiedRowData); //Validating on saving
     if (parsedData.success) {
+      const foundId = dgData.find(
+        (row: any) => row.product_id === modifiedRowData?.product_id
+      )
+      if (foundId) {
+        setDgProductFormError((prev: Record<number, Record<string, { msg: string; error: boolean }>>) => {
+          return {
+            ...prev,
+            [Number(foundId.id)]: {
+              product: {
+                msg: "Product already added",
+                error: true,
+              },
+            },
+          };
+        });
+        return ;
+      }
       const updatedData = dgData.map((row: any) =>
         row.id === modifiedRowData?.id ? modifiedRowData : row
       );
       setdgData(updatedData);
       setModifiedRowData(undefined);
       setEditMode(null);
+      const gridId = Number(modifiedRowData?.id)-1;
+      if(gridId){
+      if(dgProductFormError[gridId]) {
+        setDgProductFormError((prev: any) => {
+          const { [Number(gridId)]: _, ...rest } = prev;
+          return rest;
+        });
+      }}
       //Removing field erros on successful validation
       setdgFormError((curr: any) => {
         const { product, quantity, unit, remark, ...rest } = curr;
@@ -205,9 +244,10 @@ export default function ProductGrid({
         if (editMode === params.row.id) {
           return (
             <SelectMasterWrapper
+              key={"product"}
               name={"product"}
               id={"product"}
-              label={""}
+              label={"product"}
               dialogTitle={"Product"}
               fetchDataFn={getProduct}
               fnFetchDataByID={getProductById}
@@ -478,6 +518,9 @@ export default function ProductGrid({
             ? 70
             : 50
         }
+        slots={{ 
+          noRowsOverlay: () => <div></div>,
+        }}
         getRowClassName={(params) =>
           Object.keys(dgProductFormError).includes(
             (params.row.id - 1).toString()

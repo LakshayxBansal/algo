@@ -89,36 +89,47 @@ export default function CallDetailList({ selectedRow, refresh , callType , dateT
             },
         },
         {
-            field: "remark", headerName: "Remark", flex: 1, // Use flex to take up remaining space
+            field: "remark",
+            headerName: "Remark",
+            flex: 1, // Use flex to take up remaining space
             renderCell: (params) => {
-                const fullRemark = params.row.status_id == 1
-                    ? params.row.suggested_action_remark
-                    : params.row.closure_remark ?? "";
-
-                const truncatedRemark = truncateText(fullRemark, 120); // Limit to 120 characters
-
-                
-                    return (
-                        <Tooltip 
-                        title={
-                            <Box sx={{
-                                maxHeight: 150, 
-                                overflowY: 'auto', 
-                                whiteSpace: 'pre-wrap', 
-                            }}>
-                                {fullRemark}
-                            </Box>
-                        }
-                            arrow 
-                            placement="bottom-start"
-                        >
-                            <Box>
-                                {truncatedRemark}
-                            </Box>
-                        </Tooltip>
-                    );
+              // Determine the full remark based on the tranType
+              const type = params.row.tranType;
+              let fullRemark;
+          
+              if (type === "Status Update") {
+                fullRemark = params.row.action_taken_remark;
+              } else if (type === "Allocation" && params.row.action_taken_remark) {
+                  fullRemark = params.row.action_taken_remark;
+              } else {
+                fullRemark = params.row.suggested_action_remark;
+              }
+          
+              // Truncate the full remark to 120 characters
+              const truncatedRemark = truncateText(fullRemark || "", 120); 
+          
+              return (
+                <Tooltip
+                  title={
+                    <Box
+                      sx={{
+                        maxHeight: 150,
+                        overflowY: "auto",
+                        whiteSpace: "pre-wrap",
+                      }}
+                    >
+                      {fullRemark}
+                    </Box>
+                  }
+                  arrow
+                  placement="bottom-start"
+                >
+                  <Box>{truncatedRemark}</Box>
+                </Tooltip>
+              );
             },
-        }
+          }
+          
     ];
 
     return (<>
