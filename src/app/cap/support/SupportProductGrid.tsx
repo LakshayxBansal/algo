@@ -12,7 +12,7 @@ import {
 
 import { darken, lighten, styled, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 
 import { optionsDataT } from "@/app/models/models";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
@@ -29,6 +29,7 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { productToListFormSchema, supportProductSchema } from "@/app/zodschema/zodschema";
+import { set } from "lodash";
 
 type ModifiedRowT = {
   id?: number;
@@ -49,6 +50,7 @@ type ProductGridProps = {
   setdgFormError: any;
   dgProductFormError: any;
   isDisable : boolean;
+  setDgProductFormError:any
   // Add other props here as needed
 };
 
@@ -112,14 +114,34 @@ const getTextColor = (color: string, theme: Theme, coefficient: number) => ({
   }),
 });
 
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
-  "& .super-app-theme--Rejected": {
-    ...getTextColor(theme.palette.error.main, theme, 0.1),
-    "&:hover": {
-      ...getTextColor(theme.palette.error.main, theme, 0.2),
+  const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    ".MuiDataGrid-scrollbar.MuiDataGrid-scrollbar--horizontal": {
+      opacity: 0.8,
     },
-  },
-}));
+    "& .super-app-theme--Rejected": {
+      ...getTextColor(theme.palette.error.main, theme, 0.1),
+      "&:hover": {
+        ...getTextColor(theme.palette.error.main, theme, 0.2),
+      },
+    },
+    "& .MuiDataGrid-columnHeaders": {
+      "& .MuiDataGrid-columnHeaderTitle": {
+        fontWeight: "bold",
+      },
+    },
+    "& .MuiDataGrid-footerContainer": {
+      display: "none",
+    },
+    "&:hover": {
+      borderColor: "#212121",
+    },
+    "&.button-focused": {
+      borderColor: "#1976d2",
+      borderWidth: 2,
+    },
+    borderWidth: 1,
+    borderStyle: "solid",
+  }));
 
 export default function SupportProductGrid({
   dgData,
@@ -128,11 +150,12 @@ export default function SupportProductGrid({
   dgFormError,
   setdgFormError,
   dgProductFormError,
-  isDisable
+  isDisable,
+  setDgProductFormError
 }: ProductGridProps) {
   const [editMode, setEditMode] = useState<GridRowId | null>(); // Type is an array of GridRowId type
   const [modifiedRowData, setModifiedRowData] = useState<ModifiedRowT>();
-
+  const [isButtonFocused, setIsButtonFocused] = useState(false);
   function onSelectDataGridRowStateChange(
     event: React.SyntheticEvent,
     val: any,
@@ -142,6 +165,7 @@ export default function SupportProductGrid({
     let values: ModifiedRowT = { ...modifiedRowData };
     values[name] = val?.name;
     values[`${name}_id` as keyof ModifiedRowT] = val?.id;
+    setDialogValue(val);
     setModifiedRowData(values);
   }
 
@@ -150,7 +174,12 @@ export default function SupportProductGrid({
   const handleDeleteClick = (id: GridRowId) => () => {
     if (dgData.length > 0) {
       const updatedRows = dgData.filter((row: any) => row.id !== id);
-
+      if(dgProductFormError[(Number(id)-1)]) {
+        setDgProductFormError((prev: any) => {
+          const { [(Number(id)-1)]: _, ...rest } = prev;
+          return rest;
+        });
+      }
       // Updating the data state with the filtered rows
       setdgData(updatedRows);
     }
@@ -173,12 +202,38 @@ export default function SupportProductGrid({
   const handleSaveClick = () => {
     const parsedData = supportProductSchema.safeParse(modifiedRowData); //Validating on saving
     if (parsedData.success) {
+      
+      const foundId = dgData.find(
+        (row: any) => row.product_id === modifiedRowData?.product_id
+      )
+      if (foundId) {
+        setDgProductFormError((prev: Record<number, Record<string, { msg: string; error: boolean }>>) => {
+          return {
+            ...prev,
+            [Number(foundId.id)]: {
+              product: {
+                msg: "Product already added",
+                error: true,
+              },
+            },
+          };
+        });
+        return ;
+      }
       const updatedData = dgData.map((row: any) =>
         row.id === modifiedRowData?.id ? modifiedRowData : row
       );
       setdgData(updatedData);
       setModifiedRowData(undefined);
       setEditMode(null);
+      const gridId = Number(modifiedRowData?.id)-1;
+      if(gridId){
+      if(dgProductFormError[gridId]) {
+        setDgProductFormError((prev: any) => {
+          const { [Number(gridId)]: _, ...rest } = prev;
+          return rest;
+        });
+      }}
       //Removing field erros on successful validation
       setdgFormError((curr: any) => {
         const { product, ...rest } = curr;
@@ -207,7 +262,7 @@ export default function SupportProductGrid({
     {
       field: "product",
       headerName: "Product Name",
-      width: 300,
+      width: 200,
       renderCell: (params) => {
         if (editMode === params.row.id) {
           return (
@@ -305,39 +360,89 @@ export default function SupportProductGrid({
         ];
       },
     },
+     {
+          field: "errorMessages",
+          headerName: "Error Messages",
+          width: 300,
+          renderCell: (params) => {
+            const rowIndex = params.row.id - 1;
+            const rowErrors = dgProductFormError[rowIndex];
+    
+            if (rowErrors) {
+              return (
+                <div style={{ marginTop: "0.5rem" }}>
+                  {Object.keys(rowErrors).map((errorKey, index) => (
+                    <Typography
+                      key={index}
+                      variant="body2"
+                      color="error"
+                      sx={{ fontSize: "0.8rem" }}
+                    >
+                      {rowErrors[errorKey]?.msg}
+                    </Typography>
+                  ))}
+                </div>
+              );
+            }
+            return null; // Return null if no errors for the row
+          },
+        },
   ];
   
+  //**************** this was old code  ******************/
+  // function AddProductToolbar() {
+  //   const handleClick = () => {
+  //     setdgDialogOpen(true);
+  //   };
 
-  function AddProductToolbar() {
-    const handleClick = () => {
-      setdgDialogOpen(true);
-    };
-
-    return (
-      <GridToolbarContainer
-        sx={{ display: "flex", justifyContent: "space-between" }}
-      >
-        <Seperator>Product List</Seperator>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick} disabled={isDisable}>
-          Add Product
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
-
+  //   return (
+  //     <GridToolbarContainer
+  //       sx={{ display: "flex", justifyContent: "space-between" }}
+  //     >
+  //       <Seperator>Product List</Seperator>
+  //       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick} disabled={isDisable}>
+  //         Add Product
+  //       </Button>
+  //     </GridToolbarContainer>
+  //   );
+  // }
+  const handleFocus = () => setIsButtonFocused(true);
+  const handleBlur = () => setIsButtonFocused(false);
+  const handleClick = () => {
+    setdgDialogOpen(true);
+  };
  
 
 
   return (
     <>
+     <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ position: "relative", backgroundColor: "white" }}
+        >
+          Product List
+        </Typography>
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleClick}
+          onFocus={handleFocus} // Track focus
+          onBlur={handleBlur} // Track blur
+          disabled = {isDisable}
+        >
+          Add Product
+        </Button>
+      </Grid>
       <StyledDataGrid
         disableColumnMenu
         columns={columns}
         rows={dgData ? dgData : []}
         disableRowSelectionOnClick
-        slots={{
-          noRowsOverlay: CustomNoRowsOverlay,
-          toolbar: AddProductToolbar as GridSlots["toolbar"],
+        className={isButtonFocused ? "button-focused" : ""}
+        slots={{ 
+          noRowsOverlay: () => <div></div>,
         }}
         sx={{
           "& .MuiDataGrid-columnHeaders": {

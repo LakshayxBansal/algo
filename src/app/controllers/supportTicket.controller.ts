@@ -51,8 +51,7 @@ export async function createSupportTicket({
         ticket_tran_type: 1,
         active: 1,
       };
-      const supportDataParsed =
-        supportTicketSchema.safeParse(updatedSupportData);
+      const supportDataParsed =supportTicketSchema.safeParse(updatedSupportData);
       const productParsed = supportProductArraySchema.safeParse(productData);
 
       if (supportDataParsed.success && productParsed.success) {

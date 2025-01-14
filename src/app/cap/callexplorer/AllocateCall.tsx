@@ -167,9 +167,9 @@ export default function AllocateCall(props: customprop) {
             }}
           >
             <Box>Remark History</Box>
-            <IconButton onClick={handleCancel} tabIndex={-1}>
+            {/* <IconButton onClick={handleCancel} tabIndex={-1}>
               <CloseIcon />
-            </IconButton>
+            </IconButton> */}
           </Box>
         </Seperator>
         {/* InputControl for Remarks */}

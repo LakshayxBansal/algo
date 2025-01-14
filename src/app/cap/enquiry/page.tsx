@@ -63,17 +63,17 @@ export default async function MyForm({ searchParams }: searchParamsProps) {
       ]);
 
     // Step 3: Validate data and handle errors
-    if (
-      !fields ||
-      !configData ||
-      !loggedInUserData ||
-      !Array.isArray(configData) ||
-      configData.length < 2
-    ) {
-      logger.error("Required data is missing or invalid.");
-      redirect("/signin");
-      return null;
-    }
+    // if (
+    //   !fields ||
+    //   !configData ||
+    //   !loggedInUserData ||
+    //   !Array.isArray(configData) ||
+    //   configData.length < 2
+    // ) {
+    //   logger.error("Required data is missing or invalid.");
+    //   redirect("/signin");
+    //   return null;
+    // }
 
     let newVoucherNumber ;
     let voucherString;
@@ -124,6 +124,8 @@ async function getSuggestedRemark(
 ) {
   let ledgerData = data?.ledgerData;
   const headerData = data?.headerData;
+  let lastSuggestedRemark = "";
+  let lastActionTakenRemark = "";
 
   const { dateFormat, timeFormat } = dateTimeFormat;
   const timeFormatString = timeFormat
@@ -144,17 +146,18 @@ async function getSuggestedRemark(
     } ; ${adjustToLocal(headerData[0].created_on)
       .toDate()
           .toString()
-          .slice(0, 15)
+          .slice(0, 21)
     } ; ${headerData[0].call_receipt_remark} \n__________________________________________________________________________________________________________\n`:"";
 
     if(ledgerData[0].suggested_action_remark){
     suggested_action_remark += `Suggested Action Remarks:- ${
-      ledgerData[0].modified_by_name
-    } ; ${adjustToLocal(ledgerData[0].modified_on)
+      headerData[0].created_by_name
+    } ; ${adjustToLocal(headerData[0].created_on)
       .toDate()
       .toString()
-      .slice(0, 15)} ; ${ledgerData[0].suggested_action_remark} \n__________________________________________________________________________________________________________\n`;
+      .slice(0, 21)} ; ${ledgerData[0].suggested_action_remark} \n__________________________________________________________________________________________________________\n`;
     }
+    lastSuggestedRemark = ledgerData[0].suggested_action_remark;
     // let suggested_action_remark = `Call Receipt Remarks:-${
     //   headerData[0].created_by_name
     // } ; ${adjustToLocal(headerData[0].created_on).format(
@@ -166,30 +169,41 @@ async function getSuggestedRemark(
     // formating suggested action remark and action taken reamark
     //format-   modified_by , date , remark
     for (let i = 1; i < ledgerData.length; i++) {
-      if (ledgerData[i].suggested_action_remark) {
+      if (ledgerData[i].suggested_action_remark && ledgerData[i].suggested_action_remark !== lastSuggestedRemark) {
+        lastSuggestedRemark= ledgerData[i].suggested_action_remark
         suggested_action_remark += `Suggested Action Remarks:- ${
           ledgerData[i].modified_by_name
-        } ; ${adjustToLocal(ledgerData[i].modified_on).format(
-          modifiedDateTimeFormat
-        )} ; ${
+        } ; ${adjustToLocal(ledgerData[i].modified_on) .toDate()
+          .toString()
+          .slice(0, 21)} ; ${
           ledgerData[i].suggested_action_remark
         } \n_______________________________________________________________________________________\n`;
       }
-      if (ledgerData[i].action_taken_remark) {
+      if (ledgerData[i].action_taken_remark && ledgerData[i].action_taken_remark !== lastActionTakenRemark) {
+        lastActionTakenRemark= ledgerData[i].action_taken_remark
         suggested_action_remark += `Action Taken Remarks:-${
           ledgerData[i].modified_by_name
-        } ; ${adjustToLocal(ledgerData[i].modified_on).format(
-          modifiedDateTimeFormat
-        )} ; ${
+        } ; ${adjustToLocal(ledgerData[i].modified_on) .toDate()
+          .toString()
+          .slice(0, 21)} ; ${
           ledgerData[i].action_taken_remark
         } \n_______________________________________________________________________________________\n`;
       }
     }
     ledgerData = ledgerData[ledgerData.length - 1];
-
+    ledgerData.action_taken_remark = lastActionTakenRemark;
     ledgerData.suggested_action_remark = suggested_action_remark;
   } else {
-    ledgerData = ledgerData[ledgerData.length - 1];
+    let lastRemark = "";
+    let n= ledgerData.length;
+    for(let i=n-1;i>=0;i--){
+      if(ledgerData[i].suggested_action_remark){
+        lastRemark = ledgerData[i].suggested_action_remark
+        break;
+      }
+    }
+    ledgerData= ledgerData[n - 1];
+    ledgerData.suggested_action_remark = lastRemark;
   }
   data?.ledgerData ? (data.ledgerData = ledgerData) : undefined;
   data?.headerData ? (data.headerData = headerData[0]) : undefined;

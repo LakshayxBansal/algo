@@ -139,6 +139,7 @@ export default function ProductList(props: any) {
                       showDetails={true}
                       dialogTitle={"Product"}
                       fetchDataFn={getProduct}
+                      autoFocus
                       // width={350}
                       fnFetchDataByID={getProductById}
                       required

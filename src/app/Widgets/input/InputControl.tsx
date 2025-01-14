@@ -57,6 +57,27 @@ interface BaseControlProps {
 // Create a type for the new custom control props
 type CustomControlProps<T> = BaseControlProps & T;
 
+//function to remove error 
+
+function updateFormError(setFormError: any, fieldName: string) {
+  setFormError((prevFormError: Record<string, any>) => {
+    const updatedFormError = { ...prevFormError };
+
+    if (updatedFormError["form"]) {
+      delete updatedFormError["form"]; // Remove the 'form' property
+    }
+
+    return {
+      ...updatedFormError,
+      [fieldName]: {
+        error: false,
+        msg: "",
+      },
+    };
+  });
+}
+
+
 // Define the base control component
 export const InputControl: React.FC<CustomControlProps<any>> = ({
   inputType,
@@ -88,6 +109,8 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     const flagButton = inputRef.current.getElementsByClassName(
       "MuiTelInput-IconButton"
     )[0] as HTMLElement;
+    console.log("flagbutton ",flagButton);
+    
     if (flagButton) {
       flagButton.tabIndex = -1;
       flagButton.style.width = "2.188rem";
@@ -97,21 +120,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (setFormError && props.error) {
-      setFormError((prevFormError: Record<string, any>) => {
-        const updatedFormError = { ...prevFormError };
-
-        if (updatedFormError["form"]) {
-          delete updatedFormError["form"]; // Remove the 'form' property
-        }
-
-        return {
-          ...updatedFormError,
-          [props.name]: {
-            error: false,
-            msg: "",
-          },
-        };
-      });
+      updateFormError(setFormError, props.name);
     }
 
     switch (inputType) {
@@ -201,6 +210,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     value: Dayjs | null,
     context: PickerChangeHandlerContext<DateTimeValidationError>
   ) {
+    if (setFormError && props.slotProps?.textField.error) {
+      updateFormError(setFormError, props.name);
+    }
     const inputProps = props as DateTimePickerProps<Dayjs>;
     if (inputProps.onChange) {
       inputProps.onChange(value, context);
@@ -208,6 +220,9 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   }
 
   function onPhoneChange(newValue: any, details: any) {
+    if(setFormError && props.error) {
+      updateFormError(setFormError, props.name);
+    }
     setValue(newValue);
     if (props.onChange) {
       props.onChange(newValue);
@@ -288,7 +303,7 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     case InputType.DATETIMEINPUT: {
       const DataInputProps = props as DateTimePickerProps<Dayjs>;
       return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} >
           <DateTimePicker {...DataInputProps} onChange={onDateTimeChange} />
         </LocalizationProvider>
       );
