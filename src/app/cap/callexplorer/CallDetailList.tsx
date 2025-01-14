@@ -99,10 +99,8 @@ export default function CallDetailList({ selectedRow, refresh , callType , dateT
           
               if (type === "Status Update") {
                 fullRemark = params.row.action_taken_remark;
-              } else if (type === "Allocation") {
-                if (params.row.action_taken_remark) {
+              } else if (type === "Allocation" && params.row.action_taken_remark) {
                   fullRemark = params.row.action_taken_remark;
-                }
               } else {
                 fullRemark = params.row.suggested_action_remark;
               }
