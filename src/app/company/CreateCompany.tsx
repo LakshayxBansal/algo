@@ -82,11 +82,6 @@ export default function CreateCompany(
     console.log(docData);
     data.docData = docData;
 
-
-    const countryId = data.country_id[0]?.id;
-    data.country_id = countryId;
-
-
     const result = await persistEntity(data as companySchemaT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
