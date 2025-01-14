@@ -207,7 +207,9 @@ export default function InputForm({ baseData }: InputFormProps) {
               tabIndex: -1,
             },
           }}
-          defaultValue={baseData.enqData.enquiry_id? adjustToLocal(enqData.date) : dayjs()}
+          defaultValue={
+            baseData.enqData.enquiry_id ? adjustToLocal(enqData.date) : dayjs()
+          }
           disabled={baseData.statusUpdate}
         />,
       ],
@@ -392,7 +394,9 @@ export default function InputForm({ baseData }: InputFormProps) {
           showDetails={true}
           dialogTitle={"Executive"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
-          fetchDataFn={(arg:any)=>getExecutiveForAllocation(ENQUIRY_CONFIG_ID,arg)}
+          fetchDataFn={(arg: any) =>
+            getExecutiveForAllocation(ENQUIRY_CONFIG_ID, arg)
+          }
           fnFetchDataByID={getExecutiveById}
           required={false}
           formError={formError?.allocated_to ?? formError.allocated_to}
@@ -488,6 +492,8 @@ export default function InputForm({ baseData }: InputFormProps) {
             status === "1"
               ? enqData?.next_action_date
                 ? adjustToLocal(enqData.next_action_date)
+                : enqData.enquiry_id
+                ? null
                 : dayjs()
               : null
           }
@@ -561,7 +567,9 @@ export default function InputForm({ baseData }: InputFormProps) {
       } 
       setSnackOpen(true);
       if(baseData.enqData?.enquiry_id) {
-        router.back();
+        setTimeout(function () {
+          router.back();
+        }, 1000);
       }
       else{
       setTimeout(function () {

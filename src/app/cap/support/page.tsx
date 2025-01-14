@@ -86,6 +86,8 @@ async function getSuggestedRemark(data: any, status: any) {
   let length = data.length;
   let ledgerData = data.ledgerData;
   const headerData = data.headerData;
+  let lastSuggestedRemark = "";
+  let lastActionTakenRemark = "";
   if (status === "true") {
     let suggested_action_remark = headerData[0]?`Call Receipt Remarks:-${
       headerData[0].created_by_name
@@ -103,6 +105,7 @@ async function getSuggestedRemark(data: any, status: any) {
       .toString()
       .slice(0, 21)} ; ${ledgerData[0].suggested_action_remark} \n__________________________________________________________________________________________________________\n`;
     }
+    lastSuggestedRemark = ledgerData[0].suggested_action_remark;
 
     // formating suggested action remark and action taken reamark 
     //format-   modified_by , date , remark
@@ -111,7 +114,8 @@ async function getSuggestedRemark(data: any, status: any) {
 
 
     for (let i = 1; i < ledgerData.length; i++) {
-      if (ledgerData[i].suggested_action_remark) {
+      if (ledgerData[i].suggested_action_remark && ledgerData[i].suggested_action_remark !== lastSuggestedRemark) {
+        lastActionTakenRemark= ledgerData[i].suggested_action_remark
         suggested_action_remark += `Suggested Action Remarks:- ${
           ledgerData[i].modified_by_name
         } ; ${adjustToLocal(ledgerData[i].modified_on)
@@ -119,7 +123,8 @@ async function getSuggestedRemark(data: any, status: any) {
           .toString()
           .slice(0, 21)} ; ${ledgerData[i].suggested_action_remark} \n__________________________________________________________________________________________________________\n`;
       }
-      if (ledgerData[i].action_taken_remark) {
+      if (ledgerData[i].action_taken_remark && ledgerData[i].action_taken_remark !== lastActionTakenRemark) {
+        lastActionTakenRemark= ledgerData[i].action_taken_remark
         suggested_action_remark += `Action Taken Remarks:-${
           ledgerData[i].modified_by_name
         } ; ${adjustToLocal(ledgerData[i].modified_on)
@@ -128,8 +133,9 @@ async function getSuggestedRemark(data: any, status: any) {
           .slice(0, 21)} ; ${ledgerData[i].action_taken_remark} \n__________________________________________________________________________________________________________\n`;
       }
     }
+    
     ledgerData = ledgerData[ledgerData.length - 1];
-
+    ledgerData.action_taken_remark = lastActionTakenRemark;
     ledgerData.suggested_action_remark = suggested_action_remark;
   } else {
     let lastRemark = "";

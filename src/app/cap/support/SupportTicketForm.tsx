@@ -84,7 +84,7 @@ import ProductList from "./productList";
 import SupportProductGrid from "./SupportProductGrid";
 import { ZodIssue } from "zod";
 import DocModal from "@/app/utils/docs/DocModal";
-import { update } from "lodash";
+import { set, update } from "lodash";
 import { format } from "path";
 import { useRouter } from "next/navigation";
 import { adjustToLocal } from "@/app/utils/utcToLocal";
@@ -192,7 +192,9 @@ const SupportTicketForm = (props: customprop) => {
 
       setSnackOpen(true);
       if(props.status){
-        router.back();
+        setTimeout(function () {
+          router.back();
+        },1000)
       }
       else{
       setTimeout(function () {
