@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import {
   docDescriptionSchemaT,
   enquiryDataSchemaT,
+  supportLedgerSchemaT,
   supportProductSchemaT,
   supportTicketSchemaT,
   suppportProductArraySchemaT,
@@ -20,10 +21,12 @@ import {
   getSupportTicketDescriptionDb,
   getSupportTicketsByExecutiveIdDb,
   updateSupportDataDb,
+  updateSupportTicketStatusDb,
 } from "../services/supportTicket.service";
 import { logger } from "../utils/logger.utils";
 import {
   enquiryDataSchema,
+  supportLedgerSchema,
   supportProductArraySchema,
   supportTicketSchema,
 } from "../zodschema/zodschema";
@@ -367,9 +370,38 @@ export async function getSupportTicketsByExecutiveId() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getSupportTicketsByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);
+      const result = await getSupportTicketsByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);
+      return result;
     }
   } catch (error) {
     throw error;
+  }
+}
+
+export async function updateSupportTicketStatus(
+  ledgerData: supportLedgerSchemaT
+) {
+  try {
+    const session = await getSession();
+    if (session?.user.dbInfo) {
+      console.log('ledger ', ledgerData);
+      
+      const supportDataParsed = supportLedgerSchema.safeParse(ledgerData);
+
+      if (supportDataParsed.success) {
+        const ledgerRes = updateSupportTicketStatusDb(
+          session,
+          ledgerData as supportLedgerSchemaT
+        );
+        return {status: true};
+      }
+      else{
+        console.log(supportDataParsed.error.issues);
+        
+        return {status: false};
+      }
+    }
+  } catch (error) {
+    logger.error(error);
   }
 }

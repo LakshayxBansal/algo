@@ -11,7 +11,7 @@ export default async function Home() {
   // Return the JSX element for the login page
   //return signIn();
   
-  initializeApp();
+  // initializeApp();
   return (
     <SignIn></SignIn>
   );

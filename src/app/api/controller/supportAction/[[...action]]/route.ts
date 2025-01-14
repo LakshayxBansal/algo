@@ -1,5 +1,4 @@
-import { getSupportTicketsByExecutiveId, updateSupportTicketStatus } from "@/app/controllers/supportTicket.controller";
-import { supportLedgerSchemaT } from "@/app/models/models";
+import { getSupportAction } from "@/app/controllers/supportAction.controller";
 import { NextRequest, NextResponse } from "next/server";
 
 type fnRouteT = (req: NextRequest) => Promise<NextResponse>;
@@ -11,12 +10,8 @@ type callRouteT = {
 
 const callRoute: callRouteT[] = [
   {
-    key: "getSupportTicketsByExecutiveId",
-    fnRoute: getSupportTicketsByExecutiveIdRoute,
-  },
-  {
-    key: "updateSupportStatus",
-    fnRoute: updateSupportStatusRoute,
+    key: "getSupportAction",
+    fnRoute: getSupportActionRoute,
   },
 ];
 
@@ -42,19 +37,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
   );
 }
 
-async function getSupportTicketsByExecutiveIdRoute(req: NextRequest) {
+async function getSupportActionRoute(req: NextRequest) {
   try {
-    const result = await getSupportTicketsByExecutiveId();
-    return NextResponse.json(result);
-  } catch (error) {
-    return NextResponse.json(error);
-  }
-}
-
-async function updateSupportStatusRoute(req: NextRequest) {
-  try {
-    const ledgerData: supportLedgerSchemaT = await req.json();
-    const result = await updateSupportTicketStatus(ledgerData);
+    const { searchStr } = await req.json();
+    const result = await getSupportAction(searchStr);
+    
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(error);

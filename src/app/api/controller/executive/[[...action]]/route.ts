@@ -40,6 +40,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 async function getEnquiriesByExecutiveIdRoute(req: NextRequest) {
   try {
     const result = await getEnquiriesByExecutiveId();
+    console.log(result);
+    
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(error);
