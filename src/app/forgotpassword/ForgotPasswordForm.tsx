@@ -153,7 +153,7 @@ export default function ForgotPasswordForm() {
             onClick={contactHandler}
             tabIndex={-1}
           >
-            Use Mobile No.
+            Use {email ? "Mobile No." : "Email."}
           </Link>
 
           <LoadingButton
