@@ -124,24 +124,29 @@ export default function LeftMenuTree(props: {
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) => {
-    if (timeoutRef.current == undefined) {
-      timeoutRef.current = setTimeout(() => {
-        // setHoverId(page.id);
-        idToOpenPop.current.clear();
-        setOpenPopper((prevState) => new Map());
-      }, 300);
+    if(!hover){
+      if (timeoutRef.current == undefined) {
+        timeoutRef.current = setTimeout(() => {
+          // setHoverId(page.id);
+          idToOpenPop.current.clear();
+          setOpenPopper((prevState) => new Map());
+        }, 600);
+      }
     }
   };
   
   const handlePopperMouseEnter = (page: menuTreeT) => {
-    clearTimeout(timeoutRef.current);
+    // clearTimeout(timeoutRef.current);
+    setHover(true);
   };
   
   const handlePopperMouseLeave = (page: menuTreeT) => {
-    timeoutRef.current = setTimeout(() => {
+
+    // timeoutRef.current = setTimeout(() => {
       idToOpenPop.current.clear();
+      setHover(false);
       setOpenPopper(new Map());
-    }, 300);
+    // }, 300);
   };
 
 
@@ -161,9 +166,10 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    // if(openPopper.size > 0){
-    //   openPopper.clear();
-    // }
+    console.log(openPopper.size)
+    if(openPopper.size > 1){
+      openPopper.clear();
+    }
     startTransition(() => {
       router.push(href);
       document.body.classList.add('cursor-wait');
@@ -284,6 +290,7 @@ export default function LeftMenuTree(props: {
                   }}
                   component="a"
                   onClick={(e) => handlePopperClick(e, page.href)}
+                  href={page.href}
                   selected={selectedId === page.id}
                   tabIndex={-1}
                   style={
@@ -351,8 +358,8 @@ export default function LeftMenuTree(props: {
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
-                      // onMouseEnter={() => handlePopperMouseEnter(page)}
-                      // onMouseLeave={() => handlePopperMouseLeave(page)}
+                      onMouseEnter={() => handlePopperMouseEnter(page)}
+                      onMouseLeave={() => handlePopperMouseLeave(page)}
                       style={{ position: "absolute", zIndex: "9999" }}
                     >
                       {({ TransitionProps }) => (

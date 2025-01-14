@@ -87,7 +87,7 @@ export default function EntityList(props: entitiyCompT) {
     regionalSettingsConfigData: {} as regionalSettingSchemaT,
     loggedInUserData: {} as loggedInUserDataT,
   });
-  const [focusedRow, setFocusedRow] = useState(0);
+  const [focusedRow, setFocusedRow] = useState<any>();
 
   const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
   const [loading, setLoading] = useState(false);
@@ -181,33 +181,6 @@ const getRowClassName = (params:any) =>
       console.log("data", rows.data);
       setNRows(rows.count as number);
     }
-    // if (props.fnFetchColumns) {
-    //   const columnsData = await props.fnFetchColumns();
-    //   if (columnsData) {
-    //     const dbColumns = columnsData.map((col: any) => ({
-    //       field: col.column_name,
-    //       headerName: col.column_label,
-    //     }));
-    //     // filter on columns not to showinitially
-    //     const filteredColumns = dbColumns.filter(
-    //       (col: any) => !dfltColFields.includes(col.field)
-    //     );
-    //     //columns not to showinitially
-    //     const allColumns = allDfltCols.concat(filteredColumns);
-    //     const visibleColumns = allColumns.reduce((model: any, col: any) => {
-    //       model[col.field] = dfltColFields.includes(col.field);
-    //       return model;
-    //     }, {});
-    //     setColumnVisibilityModel(visibleColumns);
-    //     setAllColumns(allColumns);
-    //     // setColumnsChanged(true);
-    //     // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
-    //   }
-    // }
-    //  else {
-    //   setAllColumns(allDfltCols);
-    // }
-
   }, 100);
 
   React.useLayoutEffect(() => {
@@ -490,7 +463,7 @@ const getRowClassName = (params:any) =>
             <Grid item xs={12} sm={8} md={8}>
               <Box sx={{ width: { xs: "92%", md: "50%" } }}>
                 <TextField
-                // tabIndex={1}
+                tabIndex={1}
                   variant="outlined"
                   fullWidth
                   placeholder="Search..."
@@ -498,7 +471,7 @@ const getRowClassName = (params:any) =>
                   onChange={handleSearch}
                   margin="normal"
                   InputProps={{
-                    // tabIndex: 1,
+                    tabIndex: 1,
                     startAdornment: (
                       <InputAdornment position="start">
                         <SearchIcon fontSize="small" />
@@ -545,7 +518,7 @@ const getRowClassName = (params:any) =>
                   >
                     <Tooltip title="Add New" placement="top-start" arrow>
                       <Button size="small" onClick={handleAddBtn}
-                      //  tabIndex={2}
+                       tabIndex={2}
                        >
                         <AddIcon
                           fontSize="small"
@@ -641,7 +614,7 @@ const getRowClassName = (params:any) =>
               {props.AddAllowed && (
                 <Tooltip title="Add New">
                   <Button
-                  // tabIndex={2}
+                  tabIndex={2}
                     size="small"
                     variant="contained"
                     sx={{ width: { xs: "85%", md: "auto" } }}

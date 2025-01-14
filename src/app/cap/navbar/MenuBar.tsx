@@ -239,7 +239,6 @@ export default function MenuBar(props: propsType) {
               onInputChange={(event, newInputValue) => {
                 setSearch(newInputValue);
               }}
-              tabIndex={-1}
             />
           </Box>
 
