@@ -304,7 +304,6 @@ export async function getCompanies(
         if(company.roleId && companyRoles.length>0){
           role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
         }
-        company.createdOn = company.createdOn.toDateString();
         company.role = role;
       }
       
