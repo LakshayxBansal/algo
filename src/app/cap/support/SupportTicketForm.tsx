@@ -750,7 +750,8 @@ const SupportTicketForm = (props: customprop) => {
                         defaultValue={props.data?.call_receipt_remark}
                         rows={6}
                         fullWidth
-                        disabled={props?.status === "true" ? true : false}
+                        required={propsForCallReceiptField.required}
+                        disabled={props?.status === "true" || Boolean(propsForCallReceiptField.disabled)}
                       />
                     </Grid>
                   )}
@@ -773,7 +774,8 @@ const SupportTicketForm = (props: customprop) => {
                       defaultValue={props.data?.suggested_action_remark}
                       rows={6}
                       fullWidth
-                      disabled={props?.status === "true" ? true : false}
+                      required={propsForSugActionField.required}
+                      disabled={props?.status === "true" || Boolean(propsForSugActionField.disabled)}
                     />
                   </Grid>
                   {props?.status === "true" && (
