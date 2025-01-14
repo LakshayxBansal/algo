@@ -424,6 +424,8 @@ export default function InputForm({ baseData }: InputFormProps) {
           onChange={(e, v, s) => onSelectChange(e, v, s, "action_taken")}
           fetchDataFn={getEnquiryAction}
           fnFetchDataByID={getActionById}
+          formError={formError?.action_taken ?? formError.action_taken}
+          setFormError={setFormError}
           renderForm={(fnDialogOpen, fnDialogValue, data) => (
             <ActionForm
               setDialogOpen={fnDialogOpen}
@@ -543,6 +545,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       formatedData as enquiryDataSchemaT,
       data as enquiryProductArraySchemaT
     );
+
 
     if (result.status) {
       const savedVoucherNumber = result.data[0].auto_number;      

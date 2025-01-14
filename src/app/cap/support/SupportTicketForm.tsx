@@ -471,6 +471,7 @@ const SupportTicketForm = (props: customprop) => {
           fnFetchDataByID={getExecutiveById}
           required
           formError={formError?.allocated_to ?? formError.allocated_to}
+          setFormError={setFormError}
           defaultValue={masterData?.allocated_to ?? props.userDetails}
           renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (
             <ExecutiveForm
