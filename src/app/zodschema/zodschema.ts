@@ -1060,6 +1060,7 @@ export const companySchema = z.object({
     .max(45, "Field must contain at most 45 character(s)")
     .optional(),
   stamp: z.number().optional(),
+  docData: docDescriptionSchema.optional(),
 });
 
 export const inviteUserSchema = z.object({

@@ -32,7 +32,7 @@ export async function uploadDocument(docData: mdl.docDescriptionSchemaT[], objec
                     }
                 }
                 )
-
+                
                 if (docInfo.data.status) {
                     doc["docId"] = docInfo.data.data.doc_id;
                     doc["objectId"] = objectId;
@@ -129,6 +129,7 @@ export async function viewExecutiveDoc(documentId: string) {
                     "access_key": process.env.DOC_ACCESS_KEY
                 },
             });
+
             let base64Data = Buffer.from(result.data.data.doc_buffer.data, "binary").toString("base64");
             return { buffer: base64Data, contentType: result.data.data.doc_type, fileName: result.data.data.doc_title };
 
@@ -137,3 +138,38 @@ export async function viewExecutiveDoc(documentId: string) {
         logger.error(error);
     }
 }
+
+
+export async function uploadLogo(docData: mdl.docDescriptionSchemaT) {
+    try {
+        const session = await getSession();
+        if (session?.user.dbInfo) {
+            const formData = new FormData();
+
+                formData.append('application_id', process.env.DOC_APPLICATION_ID);
+                formData.append('meta_data', `{"name": "${docData.description}"}`);
+
+                const base64Data = docData?.file?.replace(/^data:.*;base64,/, "");
+                const contentType = docData?.fileType;
+                const buffer = Buffer.from(base64Data as string, 'base64');
+                formData.append('doc', buffer, { filename: docData?.fileName, contentType: contentType });
+
+                const docInfo = await axios.post(`${process.env.DOC_SERVICE_URL}/add`, formData, {
+                    headers: {
+                        ...formData.getHeaders(),
+                        "client_id": process.env.DOC_CLIENT_ID,
+                        "access_key": process.env.DOC_ACCESS_KEY
+                    }
+                }
+                )
+
+                if (docInfo.data.status) {
+                    docData["docId"] = docInfo.data.data.doc_id;
+                    return docData.docId;
+                }
+        }
+    } catch (error) {
+        logger.error(error);
+    }
+}
+

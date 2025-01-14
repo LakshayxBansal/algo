@@ -7,6 +7,7 @@ import { redirect, usePathname } from 'next/navigation';
 import { getMenuOptions } from '../../controllers/masters.controller';
 import { getExecutiveProfileImageByCrmUserId } from '@/app/controllers/executive.controller';
 import { headers } from 'next/headers';
+import { getCompanyById } from '@/app/controllers/company.controller';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },
@@ -44,7 +45,7 @@ export default async function AppMenu(props: {pathname: string,children: React.R
       
       const menuOptions= await getMenuOptions(session.user.dbInfo.dbName);
       const img_src = await getExecutiveProfileImageByCrmUserId(session.user.userId);
-      
+      const companyDetails = await getCompanyById(session.user.dbInfo.id);
       const routeTitleMap: { [key: string]: string } = {
         '/cap/enquiry': 'Enquiry',
         '/cap/support': 'Support',
@@ -63,6 +64,7 @@ export default async function AppMenu(props: {pathname: string,children: React.R
             pages= {menuOptions}
             username = {session.user?.name!}
             companyName = {session.user?.dbInfo?.companyName}
+            companyLogo = {companyDetails[0].docData?.file}
             userId = {session.user.userId}
             companyId = {session.user.dbInfo.id}
             profileImg = {img_src ? img_src : session.user.image}

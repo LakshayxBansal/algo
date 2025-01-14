@@ -145,7 +145,7 @@ export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : Rea
                             fullWidth
                             error={formError?.description?.error}
                             helperText={formError?.description?.msg}
- setFormError={setFormError}
+                            setFormError={setFormError}
                         />
                         {file ? selectedFileName : <Button
                             component="label"
