@@ -184,17 +184,10 @@ export default function CreateCompany(
       data["fileName"] = imageFile.name;
       data["fileType"] = imageFile.type;
       setDocData(data);
-    } else {
-      props?.data?.docData && setDocData({
-        docId : props?.data?.docData?.docId,
-        description: "Company logo"
-      });
     }
   }
 
-
-
-
+  
   return (
     <>
       <Box
