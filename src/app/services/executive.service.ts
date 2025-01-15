@@ -10,7 +10,6 @@ export async function createExecutiveDB(
   data: executiveSchemaT
 ) {
   try {
-    console.log("Harsh=====>", session.user.dbInfo.dbName)
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
@@ -51,8 +50,6 @@ export async function createExecutiveDB(
         data.c_col10
       ],
     });
-    console.log('session.user.userId')
-    console.log("services : ", result);
     return result;
   } catch (e) {
     logger.error(e);
@@ -159,7 +156,7 @@ export async function getExecutiveDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name executive_group,\
          s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
          cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\
@@ -183,7 +180,7 @@ export async function getProfileDetailsById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name group_name,\
+        "select em.*,em.dept_id as executive_dept_id, em.group_id as executive_group_id, am.name area, d.name executive_dept, e.name role, egm.name executive_group,\
          s.name state, co.name country , '' as crm_user ,cfd.c_col1,cfd.c_col2,cfd.c_col3,\
          cfd.c_col4,cfd.c_col5,cfd.c_col6,cfd.c_col7,cfd.c_col8,cfd.c_col9,cfd.c_col10\
          from executive_master em left join area_master am on am.id=em.area_id\
@@ -388,12 +385,25 @@ export async function getEnquiriesByExecutiveIdDb(crmDb: string, userId: number)
     const result = await excuteQuery({
       host: crmDb,
       query: "select ht.enq_number enqDesc, lt.status_id status, cm.name contact, lt.date, lt.suggested_action_remark remark, lt.id,\
-      JSON_OBJECT('id', lt.sub_status_id, 'name', ssm.name) AS subStatus,\
+      CASE \
+        WHEN (lt.action_taken_id IS NOT NULL AND lt.action_taken_id != 0) THEN JSON_OBJECT('id', lt.action_taken_id, 'name', tm.name)\
+        ELSE NULL\
+      END AS actionTakenId,\
+      CASE \
+        WHEN (lt.sub_status_id IS NOT NULL AND lt.sub_status_id != 0) THEN JSON_OBJECT('id', lt.sub_status_id, 'name', ssm.name)\
+        ELSE NULL\
+      END AS subStatusId,\
+      CASE \
+        WHEN (lt.next_action_id IS NOT NULL AND lt.next_action_id != 0) THEN JSON_OBJECT('id', lt.next_action_id, 'name', tam.name)\
+        ELSE NULL\
+      END AS nextActionId,\
       lt.action_taken_remark actionTakenRemark\
       from enquiry_header_tran ht \
       left join enquiry_ledger_tran lt on lt.enquiry_id = ht.id \
       left join contact_master cm on cm.id = ht.contact_id\
       left join enquiry_sub_status_master ssm on ssm.id = lt.sub_status_id\
+      left join enquiry_action_master tm on tm.id = lt.action_taken_id\
+      left join enquiry_action_master tam on tam.id = lt.next_action_id\
       where lt.active =1 AND \
       lt.allocated_to = (select id from executive_master em where em.crm_user_id = ?) AND lt.status_id = 1\
       ORDER BY lt.date desc;",

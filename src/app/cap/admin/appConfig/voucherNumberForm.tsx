@@ -72,6 +72,7 @@ export default function Voucher({config,setConfig,parentKey,formError,setFormErr
           id={`${parentKey}_voucher_length`}
           name={`${parentKey}_voucher_length`}
           label="Digit Length"
+          type="number"
           error={formError?.[`${parentKey}_voucher_length`]?.error}
           helperText={formError?.[`${parentKey}_voucher_length`]?.msg}
           defaultValue={config[parentKey]["voucher"]?.["length"]}

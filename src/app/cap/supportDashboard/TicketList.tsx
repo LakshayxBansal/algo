@@ -1,12 +1,12 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box, Paper, Typography } from "@mui/material";
-import { getOpenEnquiries } from "@/app/controllers/dashboard.controller";
+import { getRecentTickets } from "@/app/controllers/dashboard.controller";
 import { logger } from "@/app/utils/logger.utils";
 
-export default async function EnquiryList() {
-  let openEnquiries;
+export default async function TicketList() {
+  let openTickets;
   try {
-    openEnquiries = await getOpenEnquiries();
+    openTickets = await getRecentTickets();
   } catch (e) {
     logger.info(e);
   }
@@ -38,12 +38,12 @@ export default async function EnquiryList() {
   return (
     <Paper elevation={2} sx={{ borderRadius: "16px", py: 1, px: 2 }}>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>
-        Recently Created Enquiries
+        Recently Created Tickets
       </Typography>
       <Box sx={{ height: 380 }}>
         <DataGrid
           disableColumnMenu
-          rows={openEnquiries}
+          rows={openTickets}
           columns={columns}
           initialState={{
             pagination: {

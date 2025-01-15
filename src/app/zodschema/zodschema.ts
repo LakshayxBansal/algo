@@ -17,7 +17,7 @@ const passwordRegex = new RegExp(
 
 export const docDescriptionSchema = z.object({
   id: z.number().optional(),
-  description: z.string().min(1,"Description can't be empty").max(255),
+  description: z.string().min(1,"Field can't be empty").max(255),
   fileName: z.string().optional(),
   objectId: z.number().optional(),
   objectTypeId: z.number().optional(),
@@ -567,7 +567,7 @@ export const supportLedgerSchema = z.object({
   allocated_to: z.string().max(60).optional(),
   date: z.string().min(1).max(20),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1, "Field must not be empty").max(50),
+  sub_status: z.string().min(0).max(50),
   sub_status_id: z.number().min(1, "Field must not be empty"),
   action_taken_id: z.number().min(0).nullable().optional(),
   action_taken: z.string().min(0).max(60).optional(),

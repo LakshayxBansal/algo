@@ -1,11 +1,5 @@
 import admin from 'firebase-admin';
 
-export function initializeApp() {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
-}
-
 
 export const sendNotificationToTopic = async (topic: string, title: string, body: string, type: string) => {
     const message = {

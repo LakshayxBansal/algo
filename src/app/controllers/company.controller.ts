@@ -400,6 +400,8 @@ async function getCountryByAPI(ip: string){
   const url = 'https://api.ipregistry.co/' + ip + '?key=' + process.env.IPREGISTRY_KEY;
   try {
     const fetchedData = await (await fetch(url)).json();
+    console.log(fetchedData);
+    
     if (fetchedData.ip) {
       const countryID = await getCountryIdByName(fetchedData.location.country.name);
       return { country: fetchedData.location.country.name, 
@@ -428,8 +430,8 @@ export async function getCountryByIp() {
     const isLocalhost = isLocalhostIp(clientIp as string);
     const areOctetsMatching = compareIpOctets(clientIp as string, serverIp as string);
 
-    if (isLocalhost || areOctetsMatching) {
-      data = await getCountryByAPI("");
+    if (isLocalhost || areOctetsMatching) {      
+      data = await getCountryByAPI("192.168.1.200:3002");
     } else {
       data = await getCountryByAPI(clientIp as string);
     }

@@ -137,7 +137,7 @@ export default function InputForm({ baseData }: InputFormProps) {
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
-  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>([]);
+  const [docData, setDocData] = React.useState<docDescriptionSchemaT[]>(baseData.enqData.docData ? baseData.enqData.docData : []);
   const [docDialogOpen, setDocDialogOpen] = useState(false);
   const [subStatus, setSubStatus] = useState<optionsDataT>(
     defaultData?.sub_status ?? {}
@@ -389,7 +389,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           id="allocated_to"
           label="allocated_to"
           showDetails={true}
-          dialogTitle={"Allocated To"}
+          dialogTitle={"Executive"}
           onChange={(e, v, s) => onSelectChange(e, v, s, "allocated_to")}
           fetchDataFn={(arg:any)=>getExecutiveForAllocation(ENQUIRY_CONFIG_ID,arg)}
           fnFetchDataByID={getExecutiveById}
@@ -619,6 +619,7 @@ export default function InputForm({ baseData }: InputFormProps) {
       result = await updateEnquiry({
         enqData: enquirydata,
         product: productData,
+        docData: newDocsData
       });
     } else {
       result = await createEnquiry({

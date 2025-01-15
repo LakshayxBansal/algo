@@ -28,9 +28,10 @@ import {
 } from "@/app/zodschema/zodschema";
 import { logger } from "@/app/utils/logger.utils";
 import { getObjectByName } from "./rights.controller";
-import { uploadDocument } from "./document.controller";
+import { getDocs, uploadDocument } from "./document.controller";
 import { bigIntToNum } from "../utils/db/types";
 import { sendNotificationToTopic } from "../services/notification.service";
+import { ENQUIRY_ID } from "@/app/utils/consts.utils";
 
 export async function createEnquiry({
   enqData,
@@ -63,6 +64,8 @@ export async function createEnquiry({
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
           const objectDetails = await getObjectByName("Enquiry");
+          console.log('allocated to ', enqData.allocated_to_id);
+          
           if(enqData.allocated_to_id !== 0){
             const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
             sendNotificationToTopic(topic, "Enquiry", "Enquiry allocated", "enquiry");
@@ -70,7 +73,7 @@ export async function createEnquiry({
           await uploadDocument(
             docData,
             dbResult[2][0].id,
-            objectDetails[0].object_id
+            ENQUIRY_ID
           );
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
@@ -147,9 +150,11 @@ export async function createEnquiry({
 export async function updateEnquiry({
   enqData,
   product,
+  docData
 }: {
   enqData: enquiryDataSchemaT;
   product: enquiryProductSchemaT[];
+  docData: docDescriptionSchemaT[];
 }) {
   let result;
   try {
@@ -168,14 +173,15 @@ export async function updateEnquiry({
           result = { status: true, data: dbResult[2] };
           if(enqData.allocated_to_id !== 0){
             const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            console.log('allocated to ', topic);
             sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated", "enquiry");
           }
           // const objectDetails = await getObjectByName("Enquiry");
-          // await uploadDocument(
-          //   docData,
-          //   dbResult[2][0].id,
-          //   objectDetails[0].object_id
-          // );
+          await uploadDocument(
+            docData,
+            dbResult[2][0].id,
+            ENQUIRY_ID
+          );
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           let errorStateForProduct: {
@@ -291,8 +297,9 @@ export async function getEnquiryById(id: number) {
       const headerData = await getHeaderDataAction(session, id);
       const ledgerData = await getLedgerDataAction(session, id);
       const productData = await getProductDataAction(session, id);
+      const docData = await getDocs(id,ENQUIRY_ID);
 
-      return { headerData, ledgerData, productData };
+      return { headerData, ledgerData, productData, docData };
     }
   } catch (error) {
     logger.error(error);
