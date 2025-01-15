@@ -61,7 +61,7 @@ export default function CreateCompany(
         setdefaultCountryId(countryData.countryId);
         setCity(countryData.city);
         setPin(countryData.pin);
-      } 
+      }
     } 
     if (!props.data && defaultCountry === "") {  
       fetchCountryData();
