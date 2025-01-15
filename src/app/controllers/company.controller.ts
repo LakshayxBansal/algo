@@ -135,7 +135,10 @@ export async function createCompany(data: companySchemaT) {
           return hostRes;
         }
         const userId = session.user.userId;
-        const logoId = await uploadLogo(data.docData as docDescriptionSchemaT);
+        if(data.docData?.file)
+        {
+          const logoId = await uploadLogo(data.docData as docDescriptionSchemaT);
+        }
         const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userId as number);
 
         if (companyData[0].length === 0) {
