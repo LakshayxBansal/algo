@@ -79,7 +79,6 @@ export default function CreateCompany(
 
 
     docData["file"] = uploadedImage as string;
-    console.log(docData);
     data.docData = docData;
 
     const result = await persistEntity(data as companySchemaT);
@@ -187,7 +186,7 @@ export default function CreateCompany(
     }
   }
 
-  
+
   return (
     <>
       <Box
