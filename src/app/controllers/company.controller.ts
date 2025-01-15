@@ -1,5 +1,5 @@
 "use server";
-import { companySchemaT, configSchemaT,  regionalSettingSchemaT } from "../models/models";
+import { companySchemaT, configSchemaT,  docDescriptionSchemaT,  regionalSettingSchemaT } from "../models/models";
 import {
   createCompanyDB,
   getHostId,
@@ -29,12 +29,24 @@ import { getCountryIdByName } from "./masters.controller";
 import os from "os";
 import { getAllRolesDB } from "../services/executiveRole.service";
 import { logger } from "../utils/logger.utils";
+import { uploadLogo, viewExecutiveDoc } from "./document.controller";
+
 
 export async function getCompanyById(id: number) {
   try {
     const session = await getSession();
     if (session?.user) {
-      return getCompanyDetailsById(id);
+      const result = await getCompanyDetailsById(id);
+      if(result[0]?.docId){
+        const docData = await viewExecutiveDoc(result[0]?.docId);
+        result[0].docData = {
+          ...docData,
+          docId: result[0]?.docId,
+          file: docData?.buffer,
+          description: "Company Logo"
+        };
+      }
+      return result;
     }
   } catch (error) {
     throw error;
@@ -123,7 +135,12 @@ export async function createCompany(data: companySchemaT) {
           return hostRes;
         }
         const userId = session.user.userId;
-
+        if(data.docData?.file)
+        {
+          const logoId = await uploadLogo(data.docData as docDescriptionSchemaT);
+        }
+        
+        
         const companyData = await createCompanyAndInfoDb(hostDetails.id, dbName, data, userId as number);
 
         if (companyData[0].length === 0) {
@@ -197,6 +214,14 @@ export async function updateCompany(data: companySchemaT) {
       const parsed = companySchema.safeParse(data);
       let dbName = "crmapp";
       if (parsed.success) {
+        if(data.docData?.file && !(data.docData?.docId))
+        {
+            const logoId = await uploadLogo(data.docData as docDescriptionSchemaT);
+            if(!logoId)
+            {
+              throw new Error("Failed to upload Logo")
+            }
+        }
         const dbResult = await updateCompanyDB(data as companySchemaT);
         if (dbResult[0].length === 0) {
           dbName += dbResult[1][0].dbinfo_id;
@@ -284,7 +309,6 @@ export async function getCompanies(
         if(company.roleId && companyRoles.length>0){
           role = companyRoles.filter((role:{id:number,name:string})=>role.id===company.roleId)[0].name;
         }
-        company.createdOn = company.createdOn.toDateString();
         company.role = role;
       }
       
@@ -407,7 +431,7 @@ async function getCountryByAPI(ip: string){
       return { country: fetchedData.location.country.name, 
         pin: fetchedData.location.postal,
         city: fetchedData.location.city,
-        countryId:  countryID};
+        countryId:  countryID[0].id};
     }
   
   }  catch (e) {

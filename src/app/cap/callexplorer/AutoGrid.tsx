@@ -144,7 +144,7 @@ export default function AutoGrid(props: any) {
   const apiRef = useGridApiRef();
 
   const router = useRouter();
-
+  const sortingOrder =["asc","desc"]
   const ITEM_HEIGHT = 30;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -726,6 +726,7 @@ export default function AutoGrid(props: any) {
       headerName: "Description",
       hideable: false,
       width: columnWidths?.description ?? 130,
+      sortingOrder: ["asc", "desc"],
 
       renderHeader: () => (
         <FilterMenu
@@ -757,6 +758,7 @@ export default function AutoGrid(props: any) {
       headerName: "Contact",
       hideable: false,
       width: columnWidths?.contactParty ?? 130,
+      sortingOrder: ["asc", "desc"],
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -803,6 +805,7 @@ export default function AutoGrid(props: any) {
       width: columnWidths?.date ?? 140,
       headerName: "Date",
       hideable: false,
+      sortingOrder: ["asc", "desc"],
       renderCell: (params) => {
         return params.row.date ? adjustToLocal(params.row.date).format(dateTimeFormat) : "";
       },
@@ -860,6 +863,7 @@ export default function AutoGrid(props: any) {
       field: "callCategory",
       width: columnWidths?.callCategory ?? 120,
       headerName: "Call Category",
+      sortingOrder: ["asc", "desc"],
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -900,6 +904,7 @@ export default function AutoGrid(props: any) {
       field: "area",
       width: columnWidths?.area ?? 100,
       headerName: "Area",
+      sortingOrder: ["asc", "desc"],
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -940,6 +945,7 @@ export default function AutoGrid(props: any) {
       field: "executive",
       width: columnWidths?.executive ?? 100,
       headerName: "Allocated To",
+      sortingOrder: ["asc", "desc"],
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -1006,6 +1012,7 @@ export default function AutoGrid(props: any) {
       field: "actionTaken",
       headerName: "Action Taken",
       hideable: true,
+      sortingOrder: ["asc", "desc"],
       width: columnWidths?.actionTaken ?? 130,
       renderHeader: () => (
         <FilterMenu
@@ -1052,6 +1059,7 @@ export default function AutoGrid(props: any) {
       field: "callStatus",
       headerName: "Call Status",
       width: columnWidths?.callStatus ?? 100,
+      sortingOrder: ["asc", "desc"],
       renderCell: (params) => <span>{params.row.callStatus}</span>,
       renderHeader: () => (
         <FilterMenu
@@ -1128,6 +1136,7 @@ export default function AutoGrid(props: any) {
       field: "subStatus",
       width: columnWidths?.subStatus ?? 100,
       headerName: "Sub Status",
+      sortingOrder: ["asc", "desc"],
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -1184,6 +1193,7 @@ export default function AutoGrid(props: any) {
       field: "nextAction",
       width: columnWidths?.nextAction ?? 100,
       headerName: "Next Action",
+      sortingOrder: ["asc", "desc"],
       renderHeader: () => (
         <FilterMenu
           filterValueState={filterValueState}
@@ -1223,6 +1233,7 @@ export default function AutoGrid(props: any) {
       field: "actionDate",
       width: columnWidths?.actionDate ?? 140,
       headerName: " Next Action Date",
+      sortingOrder: ["asc", "desc"],
       renderCell: (params) => {
         return params.row.actionDate
           ? adjustToLocal(params.row.actionDate).format(dateTimeFormat)
@@ -1316,6 +1327,7 @@ export default function AutoGrid(props: any) {
       width: columnWidths?.modified_on ?? 140,
       headerName: "Last Updated",
       hideable: true,
+      sortingOrder: ["asc", "desc"],
       renderCell: (params) => {
         return params.row.modified_on
           ? adjustToLocal(params.row.modified_on).format(dateTimeFormat)
@@ -1738,6 +1750,7 @@ export default function AutoGrid(props: any) {
                     style={{
                       textDecoration: "none",
                     }}
+                    tabIndex={-1}
                   >
                     New Call Receipt
                   </Link>
@@ -1796,7 +1809,7 @@ export default function AutoGrid(props: any) {
                   justifyContent: { xs: "center" },
                 }}
               >
-                <IconButton aria-label="refresh" onClick={handleRefresh}>
+                <IconButton aria-label="refresh" onClick={handleRefresh} tabIndex={-1}>
                   <RefreshIcon />
                 </IconButton>
                 <Typography variant="body2" component="span" sx={{ ml: 1 }}>
@@ -1814,6 +1827,7 @@ export default function AutoGrid(props: any) {
                   }}
                   sx={{ mx: 1, width: "auto" }} // Fixed width for TextField
                   defaultValue={refreshInterval}
+                  tabIndex={-1}
                 />
                 <Typography variant="body2" component="span">
                   mins.

@@ -291,6 +291,9 @@ export function AutocompleteDB(props: autocompleteDBT) {
           {
             paddingRight: 1,
           },
+          '& .MuiAutocomplete-endAdornment': {
+      display: 'none',
+    },
       }}
       onBlur={(e) => {
         setAutoSelect(props.notEmpty);
@@ -337,6 +340,8 @@ export function AutocompleteDB(props: autocompleteDBT) {
         }
 
         if (reason != "blur") {
+          console.log("change", newValue);
+          
           props.setDialogVal(
             newValue ? (newValue as optionsDataT) : ({} as optionsDataT)
           );

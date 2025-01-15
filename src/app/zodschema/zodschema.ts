@@ -1,5 +1,7 @@
 import * as z from "zod";
 import { checkPhone, checkPhoneEmpty } from "../utils/phoneUtils";
+import { adjustToLocal } from "../utils/utcToLocal";
+import dayjs from "dayjs";
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|^$/
@@ -452,7 +454,17 @@ export const enquiryHeaderSchema = z.object({
     .max(75, {
       message: "Field must contain atmost 75 character(s)",
     }),
-  date: z.string().min(1, { message: "Field must not be empty" }).max(20),
+  date: z.string().max(20, "Field must not be greater than 20 character(s)").nullable().
+    refine((val) => { 
+        if(val?.length === 0 || val === null) return true;
+        
+        const now = dayjs(); // Current date and time in GMT
+        const date = dayjs(adjustToLocal(val)); // Parse `val` without any GMT adjustment
+        // Compare Day.js objects
+        return date.isBefore(now);
+      },{
+        message:"Date should not be greater than current date",
+      }),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
   contact: z.string().min(1, { message: "Field must not be empty" }).max(60),
@@ -484,7 +496,17 @@ export const enquiryLedgerSchema = z.object({
   status_version: z.number().optional(),
   allocated_to_id: z.number().min(0).optional(),
   allocated_to: z.string().max(60).optional(),
-  date: z.string().min(1, { message: "Field must not be empty" }).max(20),
+  date: z.string().max(20, "Field must not be greater than 20 character(s)").nullable().
+    refine((val) => { 
+        if(val?.length === 0 || val === null) return true;
+        
+        const now = dayjs(); // Current date and time in GMT
+        const date = dayjs(adjustToLocal(val)); // Parse `val` without any GMT adjustment
+        // Compare Day.js objects
+        return date.isBefore(now);
+      },{
+        message:"Date should not be greater than current date",
+      }),
   status_id: z.number().min(1),
   sub_status: z.string().min(1, { message: "Field must not be empty" }),
   sub_status_id: z.number().min(1),
@@ -531,6 +553,10 @@ export const enquiryDataSchema = enquiryHeaderSchema.merge(enquiryLedgerSchema);
 /**
  * support ticket schema
  */
+const getCurrentDateTime = () => {
+  const now = new Date();
+  return now;
+};
 
 export const supportHeaderSchema = z.object({
   id: z.number().optional(),
@@ -538,7 +564,17 @@ export const supportHeaderSchema = z.object({
     .string()
     .min(1, "Field must not be empty")
     .max(75, "Field must contain at most 75 character(s)"),
-  date: z.string().min(1).max(20),
+  date: z.string().max(20, "Field must not be greater than 20 character(s)").nullable().
+  refine((val) => { 
+      if(val?.length === 0 || val === null) return true;
+      
+      const now = dayjs(); // Current date and time in GMT
+      const date = dayjs(adjustToLocal(val)); // Parse `val` without any GMT adjustment
+      // Compare Day.js objects
+      return date.isBefore(now);
+    },{
+      message:"Date should not be greater than current date",
+    }),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1, "Field must not be empty"),
   contact: z.string().min(1, "Field must not be empty").max(60),
@@ -565,7 +601,17 @@ export const supportLedgerSchema = z.object({
   status_version: z.number().optional(),
   allocated_to_id: z.number().min(0).nullable().optional(),
   allocated_to: z.string().max(60).optional(),
-  date: z.string().min(1).max(20),
+  date: z.string().max(20, "Field must not be greater than 20 character(s)").nullable().
+  refine((val) => { 
+      if(val?.length === 0 || val === null) return true;
+      
+      const now = dayjs(); // Current date and time in GMT
+      const date = dayjs(adjustToLocal(val)); // Parse `val` without any GMT adjustment
+      // Compare Day.js objects
+      return date.isBefore(now);
+    },{
+      message:"Date should not be greater than current date",
+    }),
   status_id: z.number().min(1),
   sub_status: z.string().min(0).max(50),
   sub_status_id: z.number().min(1, "Field must not be empty"),
@@ -1060,6 +1106,7 @@ export const companySchema = z.object({
     .max(45, "Field must contain at most 45 character(s)")
     .optional(),
   stamp: z.number().optional(),
+  docData: docDescriptionSchema.optional(),
 });
 
 export const inviteUserSchema = z.object({
