@@ -8,7 +8,7 @@ export async function createProductDB(session: Session, data: zm.productSchemaT)
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createProduct(?,?,?,?,?,?);",
+      query: "call createProduct(?,?,?,?,?,?,?);",
       values: [
         data.name,
         data.group,
@@ -16,6 +16,7 @@ export async function createProductDB(session: Session, data: zm.productSchemaT)
         data.unit,
         data.hsn_code,
         session.user.userId,
+        data.profileDocument?.docId,
       ],
     });
   } catch (e) {
@@ -28,7 +29,7 @@ export async function updateProductDB(session: Session, data: zm.productSchemaT)
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateProduct(?,?,?,?,?,?,?,?);",
+      query: "call updateProduct(?,?,?,?,?,?,?,?,?);",
       values: [
         data.id,
         data.name,
@@ -38,6 +39,7 @@ export async function updateProductDB(session: Session, data: zm.productSchemaT)
         data.unit,
         data.hsn_code,
         session.user.userId,
+        data.profileDocument?.docId
       ],
     });
   } catch (e) {
@@ -139,7 +141,7 @@ export async function fetchProductById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select im.*, gm.name as group_name, um.name as unit_name\
+        "select im.*,im.unit_id as unit, im.group_id as `group`, gm.name as group_name, um.name as unit_name\
        from product_master im left join product_group_master gm on im.group_id=gm.id \
        left join unit_master um on im.unit_id=um.id where im.id=?",
       values: [id],

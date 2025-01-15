@@ -11,6 +11,7 @@ import {
   masterFormPropsWithDataT,
   optionsDataT,
   selectKeyValueT,
+  docDescriptionSchemaT,
 } from "@/app/models/models";
 import { createProduct } from "@/app/controllers/product.controller";
 import {
@@ -25,10 +26,13 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateProduct } from "@/app/controllers/product.controller";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { VisuallyHiddenInput } from "@/styledComponents";
 
 export default function ProductForm(
   props: masterFormPropsWithDataT<productSchemaT>
 ) {
+  console.log(props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -39,9 +43,11 @@ export default function ProductForm(
     : ({} as productSchemaT);
   const pathName = usePathname();
   const [formKey, setFormKey] = useState(0);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(props?.data?.profileDocument?.file ? `data:image/png;base64,${props.data.profileDocument?.file}` : null)
+  const [profileImage, setProfileImage] = useState<docDescriptionSchemaT>(props.data?.profileDocument ? props?.data?.profileDocument : {} as docDescriptionSchemaT);
+  
 
-  entityData.group = props.data?.group;
-  entityData.unit = props.data?.unit;
+
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
   };
@@ -52,6 +58,13 @@ export default function ProductForm(
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
+
+    if(uploadedImage)
+    {
+        profileImage["file"] = uploadedImage as string;
+    }
+    profileImage["description"] = "Product Image";
+    data.profileDocument = profileImage;
 
     formData = updateFormData(data);
     const result = await persistEntity(data as productSchemaT);
@@ -119,6 +132,41 @@ export default function ProductForm(
       return rest;
     });
   };
+
+    const handleProfileUpload = (event: any) => {
+      setFormError({});
+      let data: docDescriptionSchemaT = {} as docDescriptionSchemaT;
+      const imageFile = event.target.files[0];
+      if(imageFile)
+      {
+        const fileSizeInKb = imageFile.size / 1024;
+        if(fileSizeInKb < 50 || fileSizeInKb > 500)
+        {
+          const errorState: Record<string, { msg: string; error: boolean }> = {};
+          errorState["form"] = { msg: "Invalid file size. Please upload an image between 50KB and 500KB.", error: true };
+          setFormError(errorState);
+          return;
+        }
+  
+        if(imageFile.type !== 'image/png')
+        {
+          const errorState: Record<string, { msg: string; error: boolean }> = {};
+          errorState["form"] = { msg: "Invalid file type. Please upload a PNG image.", error: true };
+          setFormError(errorState);
+          return;
+        }
+  
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+          setUploadedImage(fileReader.result as string);
+        }
+        fileReader.readAsDataURL(imageFile);
+  
+        data["fileName"] = imageFile.name;
+        data["fileType"] = imageFile.type;
+        setProfileImage(data);
+      }
+    }
 
   return (
     <>
@@ -211,6 +259,7 @@ export default function ProductForm(
                 id={"unit"}
                 label={"Unit Name"}
                 dialogTitle={"Unit"}
+                required
                 allowModify={true}
                 defaultValue={
                   {
@@ -251,26 +300,51 @@ export default function ProductForm(
                 style={{ width: "100%" }}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 0.5,
-              }}
-            >
-              <Button onClick={handleCancel} tabIndex={-1}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
+            <Grid container item xs={12}>
+                <Grid item xs={6} sx={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-start" }}>
+                  <Box>
+                    {uploadedImage && (
+                      <Box sx={{ display: "flex", p: 1 }}>
+                        <Image
+                          src={uploadedImage}
+                          alt="Uploaded Logo"
+                          width={90}
+                          height={90}
+                          style={{ borderRadius: "8px", objectFit: "contain" }}
+                        />
+                      </Box>
+                    )}
+                    <Button
+                      component="label"
+                      role={undefined}
+                      variant="text"
+                      tabIndex={-1}
+                      sx={{ backgroundColor: "white" }}
+                    >
+                      Upload Image
+                      <VisuallyHiddenInput type="file" onChange={handleProfileUpload} multiple />
+                    </Button>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={6} sx={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                  <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                    <Button
+                      onClick={handleCancel}
+                      tabIndex={-1}
+                      sx={{ marginRight: "1rem" }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{ width: "15%", marginLeft: "5%" }}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                </Grid>
             </Grid>
           </Grid>
         </form>

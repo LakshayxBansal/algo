@@ -11,6 +11,7 @@ import { redirectToPage } from '@/app/company/SelectCompany';
 import { signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 import { AddDialog } from '@/app/Widgets/masters/addDialog';
+import Image from 'next/image';
 
 type profileModalT = {
     img?: string,
@@ -107,17 +108,17 @@ export default function ProfileMenu(props: profileModalT) {
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 tabIndex={-1}
+                sx={{backgroundColor:'unset'}}
             >
-                {props?.img ? <Box
-                    component="img"
-                    sx={{
-                        height: 40,
-                        width: 40,
-                        borderRadius: "50%",
-                    }}
-                    alt={props?.img}
-                    src={props?.img}
-                /> : <ProfileImage name={props.name} />}
+                {props?.img ? ( <Image
+                              src={`data:image/png;base64,${props.img}`}
+                              alt="Company Logo"
+                              width={40}
+                              height={40}
+                              style={{ marginRight: 10, marginLeft: 40, objectFit: "contain", borderRadius: "50%" }}
+                            />
+
+                ) : (<ProfileImage name={props.name} />)}
             </Button>
             <Menu
                 id="basic-menu"

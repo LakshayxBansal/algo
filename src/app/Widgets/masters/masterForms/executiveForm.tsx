@@ -66,7 +66,8 @@ import DocModal from "@/app/utils/docs/DocModal";
 import CustomField from "@/app/cap/enquiry/CustomFields";
 import { usePathname } from "next/navigation";
 import { emailRegex } from "@/app/zodschema/zodschema";
-import { boolean } from "zod";
+import Image from "next/image";
+import { VisuallyHiddenInput } from "@/styledComponents";
 
 export default function ExecutiveForm(
   props: masterFormPropsWithDataT<executiveSchemaT>
@@ -90,6 +91,8 @@ export default function ExecutiveForm(
     entityData.whatsapp?.length === 0 ? "+91" : entityData.whatsapp
   );
   const [formKey, setFormKey] = useState(0);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(props?.data?.profileDocument?.file ? `data:image/png;base64,${props.data.profileDocument?.file}` : null)
+  const [profileImage, setProfileImage] = useState<docDescriptionSchemaT>(props.data?.profileDocument ? props?.data?.profileDocument : {} as docDescriptionSchemaT);
 
   const handleWhatsappChange = (val: string) => {
     setWhatsappFn(val);
@@ -113,14 +116,10 @@ export default function ExecutiveForm(
     name: entityData.role,
   } as optionsDataT);
   const [stateKey, setStateKey] = useState(0);
-  const [roleKey, setRoleKey] = useState(0);
   const [stateDisable, setStateDisable] = useState<boolean>(
     !entityData.country
   );
-  const [roleDisable, setRoleDisable] = useState<boolean>(
-    !entityData.executive_dept
-  );
-
+  
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
@@ -701,6 +700,12 @@ export default function ExecutiveForm(
       for (const [key, value] of formData.entries()) {
         data[key] = value;
       }
+      if(uploadedImage)
+      {
+        profileImage["file"] = uploadedImage as string;
+      }
+      profileImage["description"] = "Profile Image";
+      data.profileDocument = profileImage;
 
 
       formData = updateFormData(data);
@@ -709,10 +714,10 @@ export default function ExecutiveForm(
       data["doj"] = data["doj"] != "" ? new Date(data["doj"]) : "";
 
       const result = await persistEntity(data as executiveSchemaT);
-      if (result?.status) {
+      if (result.status) {
         const newVal = {
-          id: result?.data[0].id,
-          name: result?.data[0].name,
+          id: result.data[0].id,
+          name: result.data[0].name,
         };
         setFormError({});
         setSnackOpen(true);
@@ -720,13 +725,15 @@ export default function ExecutiveForm(
           setTimeout(() => {
             props.setDialogOpen ? props.setDialogOpen(false) : null;
             props.setDialogValue ? props.setDialogValue(newVal) : null;
-          }, 1000);
+          }, 500);
         } else {
           setFormKey(formKey + 1);
           setStateDisable(true);
           setWhatsappFn("+91");
           setDocData([]);
           setSelectValues({});
+          setUploadedImage(null);
+          setProfileImage({} as docDescriptionSchemaT);
         }
       } else {
         const issues = result?.data;
@@ -950,6 +957,41 @@ export default function ExecutiveForm(
     }
   });
 
+  const handleProfileUpload = (event: any) => {
+    setFormError({});
+    let data: docDescriptionSchemaT = {} as docDescriptionSchemaT;
+    const imageFile = event.target.files[0];
+    if(imageFile)
+    {
+      const fileSizeInKb = imageFile.size / 1024;
+      if(fileSizeInKb < 50 || fileSizeInKb > 500)
+      {
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Invalid file size. Please upload an image between 50KB and 500KB.", error: true };
+        setFormError(errorState);
+        return;
+      }
+
+      if(imageFile.type !== 'image/png')
+      {
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Invalid file type. Please upload a PNG image.", error: true };
+        setFormError(errorState);
+        return;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setUploadedImage(fileReader.result as string);
+      }
+      fileReader.readAsDataURL(imageFile);
+
+      data["fileName"] = imageFile.name;
+      data["fileType"] = imageFile.type;
+      setProfileImage(data);
+    }
+  }
+
   return (
     <Box>
       <Collapse in={formError?.form ? true : false}>
@@ -1023,59 +1065,85 @@ export default function ExecutiveForm(
           }
 
           )}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: 2,
-                paddingLeft: "2rem"
-              }}
-            >
-                <Tooltip
-                  title={
-                    docData?.length > 0 ? (
-                      docData.map((file: any, index: any) => (
-                        <Typography variant="body2" key={index}>
-                          {file.description}
-                        </Typography>
-                      ))
-                    ) : (
-                      <Typography variant="body2" color="white">
-                        No files available
-                      </Typography>
-                    )
-                  }
-                >
-                  <IconButton
-                    sx={{ marginRight: "3rem" }}
-                    onClick={() => setDialogOpen(true)}
-                    aria-label="file"
-                    tabIndex={-1}
-                  >
-                    <Badge badgeContent={docData?.length} color="primary">
-                      <AttachFileIcon></AttachFileIcon>
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-              <Button onClick={() => {
-                if (props.setDialogOpen === undefined) {
-                  router.push('/cap');
-                }
-                else {
-                  handleCancel();
-                }
-              }} tabIndex={-1}>Cancel</Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ width: "15%", marginLeft: "5%" }}
-              >
-                Submit
-              </Button>
-            </Box>
+            <Grid container item xs={12}>
+                <Grid item xs={6} sx={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-start" }}>
+                  <Box>
+                    {uploadedImage && (
+                      <Box sx={{ display: "flex", p: 1 }}>
+                        <Image
+                          src={uploadedImage}
+                          alt="Uploaded Logo"
+                          width={90}
+                          height={90}
+                          style={{ borderRadius: "8px", objectFit: "contain" }}
+                        />
+                      </Box>
+                    )}
+                    <Button
+                      component="label"
+                      role={undefined}
+                      variant="text"
+                      tabIndex={-1}
+                      sx={{ backgroundColor: "white" }}
+                    >
+                      Upload Image
+                      <VisuallyHiddenInput type="file" onChange={handleProfileUpload} multiple />
+                    </Button>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={6} sx={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                  <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                    <Tooltip
+                      title={
+                        docData?.length > 0 ? (
+                          docData.map((file: any, index: any) => (
+                            <Typography variant="body2" key={index}>
+                              {file.description}
+                            </Typography>
+                          ))
+                        ) : (
+                          <Typography variant="body2" color="white">
+                            No files available
+                          </Typography>
+                        )
+                      }
+                    >
+                      <IconButton
+                        sx={{ marginRight: "1rem" }}
+                        onClick={() => setDialogOpen(true)}
+                        aria-label="file"
+                        tabIndex={-1}
+                      >
+                        <Badge badgeContent={docData?.length} color="primary">
+                          <AttachFileIcon />
+                        </Badge>
+                      </IconButton>
+                    </Tooltip>
+                    <Button
+                      onClick={() => {
+                        if (props.setDialogOpen === undefined) {
+                          router.push("/cap");
+                        } else {
+                          handleCancel();
+                        }
+                      }}
+                      tabIndex={-1}
+                      sx={{ marginRight: "1rem" }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{ width: "15%", marginLeft: "5%" }}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                </Grid>
+            </Grid>
           </Grid>
-        </Grid>
         {dialogOpen && (
           <AddDialog
             title="Document List"

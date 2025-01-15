@@ -8,6 +8,7 @@ import { getMenuOptions } from '../../controllers/masters.controller';
 import { getExecutiveProfileImageByCrmUserId } from '@/app/controllers/executive.controller';
 import { headers } from 'next/headers';
 import { getCompanyById } from '@/app/controllers/company.controller';
+import { viewExecutiveDoc } from '@/app/controllers/document.controller';
 
 const pages = [
                 { label: 'Call', link: '\MyForm', disabled: false, id:'call' },
@@ -45,6 +46,11 @@ export default async function AppMenu(props: {pathname: string,children: React.R
       
       const menuOptions= await getMenuOptions(session.user.dbInfo.dbName);
       const img_src = await getExecutiveProfileImageByCrmUserId(session.user.userId);
+      let imageFile;
+      if(img_src)
+      {
+        imageFile = await viewExecutiveDoc(img_src);
+      }
       const companyDetails = await getCompanyById(session.user.dbInfo.id);
       const routeTitleMap: { [key: string]: string } = {
         '/cap/enquiry': 'Enquiry',
@@ -67,7 +73,7 @@ export default async function AppMenu(props: {pathname: string,children: React.R
             companyLogo = {companyDetails[0].docData?.file}
             userId = {session.user.userId}
             companyId = {session.user.dbInfo.id}
-            profileImg = {img_src ? img_src : session.user.image}
+            profileImg = {imageFile?.buffer}
             >
             <Box component={"span"} sx={{ display: 'block',  mt: 8 }}>
               <div>

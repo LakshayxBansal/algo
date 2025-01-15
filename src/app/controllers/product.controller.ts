@@ -15,6 +15,7 @@ import { fetchProductById } from "@/app/services/product.service";
 import * as mdl from "../models/models";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
+import { uploadLogo, viewExecutiveDoc } from "./document.controller";
 
 export async function createProduct(data: productSchemaT) {
   let result;
@@ -23,6 +24,12 @@ export async function createProduct(data: productSchemaT) {
     if (session?.user.dbInfo) {
       const parsed = zs.ProductSchema.safeParse(data);
       if (parsed.success) {
+
+        if(data.profileDocument?.file)
+        {
+          const imageId = await uploadLogo(data.profileDocument as mdl.docDescriptionSchemaT);
+        }
+
         const dbResult = await createProductDB(session, data as productSchemaT);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -78,6 +85,14 @@ export async function updateProduct(data: productSchemaT) {
       const parsed = zs.ProductSchema.safeParse(data);
 
       if (parsed.success) {
+        if(data.profileDocument?.file && !(data.profileDocument?.docId))
+        {
+          const logoId = await uploadLogo(data.profileDocument as mdl.docDescriptionSchemaT);
+          if(!logoId)
+          {
+            throw new Error("Failed to upload Logo")
+          }
+        }
         const dbResult = await updateProductDB(session, data as productSchemaT);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -151,7 +166,19 @@ export async function getProductById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return fetchProductById(session.user.dbInfo.dbName, id);
+      const result = await fetchProductById(session.user.dbInfo.dbName, id);
+      
+      if(result[0]?.product_img)
+      {
+        const docData = await viewExecutiveDoc(result[0]?.product_img)
+        result[0].profileDocument = {
+          ...docData,
+          docId: result[0]?.docId,
+          file: docData?.buffer,
+          description: "Product Image"
+        }
+      }
+      return result;
     }
   } catch (error) {
     throw error;
