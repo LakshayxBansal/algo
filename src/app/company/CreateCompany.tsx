@@ -61,14 +61,7 @@ export default function CreateCompany(
         setdefaultCountryId(countryData.countryId);
         setCity(countryData.city);
         setPin(countryData.pin);
-      } 
-      // else{
-      //   setSelectValues({ country: {id: 107, name: "India"} });
-      //   setdefaultCountry("India");
-      //   setdefaultCountryId(107);
-      //   setCity("New Delhi");
-      //   setPin("110043");
-      // }
+      }
     } 
     if (!props.data && defaultCountry === "") {  
       fetchCountryData();

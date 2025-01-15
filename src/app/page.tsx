@@ -5,7 +5,7 @@ import SignIn from './signin/page';
 
 
 
-export default async function Home() {
+export default function Home() {
 
   // Return the JSX element for the login page
   //return signIn();
