@@ -77,8 +77,11 @@ export default function CreateCompany(
     }
     formData = updateFormData(data);
 
+    if(uploadedImage){
+      docData["file"] = uploadedImage as string;
+    }
 
-    docData["file"] = uploadedImage as string;
+    docData["description"] = "Company Logo";
     data.docData = docData;
 
     const result = await persistEntity(data as companySchemaT);
@@ -179,7 +182,6 @@ export default function CreateCompany(
       fileReader.readAsDataURL(imageFile);
 
  
-      data["description"] = "Company Logo";
       data["fileName"] = imageFile.name;
       data["fileType"] = imageFile.type;
       setDocData(data);
