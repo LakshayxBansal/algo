@@ -1,4 +1,4 @@
-import { getEnquiriesByExecutiveId } from "@/app/controllers/executive.controller";
+import { getSupportAction } from "@/app/controllers/supportAction.controller";
 import { NextRequest, NextResponse } from "next/server";
 
 type fnRouteT = (req: NextRequest) => Promise<NextResponse>;
@@ -10,8 +10,8 @@ type callRouteT = {
 
 const callRoute: callRouteT[] = [
   {
-    key: "getEnquiriesByExecutiveId",
-    fnRoute: getEnquiriesByExecutiveIdRoute,
+    key: "getSupportAction",
+    fnRoute: getSupportActionRoute,
   },
 ];
 
@@ -37,9 +37,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
   );
 }
 
-async function getEnquiriesByExecutiveIdRoute(req: NextRequest) {
+async function getSupportActionRoute(req: NextRequest) {
   try {
-    const result = await getEnquiriesByExecutiveId();
+    const { searchStr } = await req.json();
+    const result = await getSupportAction(searchStr);
     
     return NextResponse.json(result);
   } catch (error) {

@@ -479,7 +479,7 @@ export async function getEnquiriesByExecutiveId() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getEnquiriesByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);
+      return await getEnquiriesByExecutiveIdDb(session.user.dbInfo.dbName, session.user.userId);      
     }
   } catch (error) {
     throw error;

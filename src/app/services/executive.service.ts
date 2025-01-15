@@ -386,12 +386,29 @@ export async function getEnquiriesByExecutiveIdDb(crmDb: string, userId: number)
   try {
     const result = await excuteQuery({
       host: crmDb,
-      query: "select ht.enq_number enqDesc, cm.name contact, lt.date, lt.suggested_action_remark remark, lt.id\
-              from enquiry_header_tran ht \
-              left join enquiry_ledger_tran lt on lt.enquiry_id = ht.id \
-              left join contact_master cm on cm.id = ht.contact_id\
-              where lt.id in (select max(id) from enquiry_ledger_tran group by enquiry_id) AND \
-              lt.allocated_to = (select id from executive_master em where em.crm_user_id = ?) AND lt.status_id = 1;",
+      query: "select ht.enq_number enqDesc, lt.status_id status, cm.name contact, lt.date, lt.suggested_action_remark remark, lt.id,\
+      CASE \
+        WHEN (lt.action_taken_id IS NOT NULL AND lt.action_taken_id != 0) THEN JSON_OBJECT('id', lt.action_taken_id, 'name', tm.name)\
+        ELSE NULL\
+      END AS actionTakenId,\
+      CASE \
+        WHEN (lt.sub_status_id IS NOT NULL AND lt.sub_status_id != 0) THEN JSON_OBJECT('id', lt.sub_status_id, 'name', ssm.name)\
+        ELSE NULL\
+      END AS subStatusId,\
+      CASE \
+        WHEN (lt.next_action_id IS NOT NULL AND lt.next_action_id != 0) THEN JSON_OBJECT('id', lt.next_action_id, 'name', tam.name)\
+        ELSE NULL\
+      END AS nextActionId,\
+      lt.action_taken_remark actionTakenRemark\
+      from enquiry_header_tran ht \
+      left join enquiry_ledger_tran lt on lt.enquiry_id = ht.id \
+      left join contact_master cm on cm.id = ht.contact_id\
+      left join enquiry_sub_status_master ssm on ssm.id = lt.sub_status_id\
+      left join enquiry_action_master tm on tm.id = lt.action_taken_id\
+      left join enquiry_action_master tam on tam.id = lt.next_action_id\
+      where lt.active =1 AND \
+      lt.allocated_to = (select id from executive_master em where em.crm_user_id = ?) AND lt.status_id = 1\
+      ORDER BY lt.date desc;",
       values: [userId],
     });
 

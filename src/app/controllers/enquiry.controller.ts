@@ -30,6 +30,7 @@ import { logger } from "@/app/utils/logger.utils";
 import { getObjectByName } from "./rights.controller";
 import { getDocs, uploadDocument } from "./document.controller";
 import { bigIntToNum } from "../utils/db/types";
+import { sendNotificationToTopic } from "../services/notification.service";
 import { ENQUIRY_ID } from "@/app/utils/consts.utils";
 
 export async function createEnquiry({
@@ -62,11 +63,16 @@ export async function createEnquiry({
         const dbResult = await createEnquiryDB(session, enqActionData);
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
+          
           await uploadDocument(
             docData,
             dbResult[2][0].id,
             ENQUIRY_ID
           );
+          if(enqData.allocated_to_id !== 0){
+            const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            sendNotificationToTopic(topic, "Enquiry", "Enquiry allocated", "enquiry");
+          }
         } else {
           let errorState: { path: (string | number)[]; message: string }[] = [];
           let errorStateForProduct: {
@@ -163,6 +169,10 @@ export async function updateEnquiry({
         const dbResult = await updateEnquiryDB(session, enqActionData);
         if (dbResult[0].length === 0 && dbResult[1].length === 0) {
           result = { status: true, data: dbResult[2] };
+          if(enqData.allocated_to_id !== 0){
+            const topic = enqData.allocated_to_id!.toString() + '_' + session.user.dbInfo.id.toString();
+            sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated", "enquiry");
+          }
           // const objectDetails = await getObjectByName("Enquiry");
           await uploadDocument(
             docData,
@@ -340,6 +350,11 @@ export async function createEnquiryLedger(
         session,
         ledgerData as enquiryLedgerSchemaT
       );
+
+      // if(session.user. !== 0){
+        const topic = session.user.userId!.toString() + '_' + session.user.dbInfo.id.toString();
+        sendNotificationToTopic(topic, "Enquiry", "Enquiry Updated", "enquiry");
+      // }
       return {
         status: true,
       };

@@ -618,7 +618,7 @@ export const supportLedgerSchema = z.object({
       message:"Date should not be greater than current date",
     }),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1, "Field must not be empty").max(50),
+  sub_status: z.string().min(0).max(50),
   sub_status_id: z.number().min(1, "Field must not be empty"),
   action_taken_id: z.number().min(0).nullable().optional(),
   action_taken: z.string().min(0).max(60).optional(),

@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next"
 import { options } from '../api/auth/[...nextauth]/options';
 import { Session } from 'next-auth';
 import { dbInfoT } from '../models/models'
+import { initializeApp } from '../utils/firebase.utils';
 
 const sessionDb = 'userDb';
 
@@ -114,7 +115,8 @@ export async function updateSession(dbInfo: dbInfoT, userId: number){
  * server function to return the session object at the server
  */
 export async function getSession() {
-  // try {
+  // try {  
+    initializeApp();
     return await getServerSession(options);
   //   if (session) {
   //     if (!session.user.dbInfo) {
