@@ -31,6 +31,7 @@ interface propsType {
   pages: menuTreeT[];
   username: string;
   companyName: string;
+  companyLogo?: string;
   profileImg?: string;
   userId: number;
   companyId: number;
@@ -155,11 +156,12 @@ export default function MenuBar(props: propsType) {
               <MenuIcon />
             </IconButton>
             <Image
-              src={"/companyLogo.png"}
+              // src={"/companyLogo.png"}
+              src={props.companyLogo ? `data:image/png;base64,${props.companyLogo}` : '/companyLogo.png'}
               alt="Company Logo"
               width={40}
               height={40}
-              style={{ marginRight: 10, marginLeft: 40 }}
+              style={{ marginRight: 10, marginLeft: 40, objectFit: "contain", borderRadius: "50%" }}
             />
             <Typography
               component="h1"

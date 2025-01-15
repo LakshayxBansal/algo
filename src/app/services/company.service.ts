@@ -8,7 +8,7 @@ export async function getCompanyDetailsById(id: number) {
     const result = await excuteQuery({
       host: "userDb",
       query:
-        "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, \
+        "select c.id, c.alias, c.name, c.add1, c.add2, c.city, c.state_id state_id, c.pincode, c.country_id country_id, c.logo_id docId,\
 		    dh.host, dh.port, dbInfo.id dbInfoId, s.name state, co.name country, uc.role_id from company c\
         left join state_master s on c.state_id = s.id \
         left join country_master co on c.country_id = co.id \
@@ -134,7 +134,7 @@ export async function createCompanyAndInfoDb(
   try {
     const result = await excuteQuery({
       host: "userDb",
-      query: "call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      query: "call createCompanyAndInfo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       values: [
         dbName,
         hostId,
@@ -147,6 +147,7 @@ export async function createCompanyAndInfoDb(
         company.city,
         company.pincode,
         userId,
+        company?.docData?.docId,
       ],
     });
     return result;
@@ -290,7 +291,7 @@ export async function updateCompanyDB(data: zm.companySchemaT) {
   try {
     return excuteQuery({
       host: "userDb",
-      query: "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      query: "call updateCompany(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.name,
@@ -301,6 +302,7 @@ export async function updateCompanyDB(data: zm.companySchemaT) {
         data.state_id,
         data.city,
         data.pincode,
+        data.docData?.docId
       ],
     });
   } catch (e) {
