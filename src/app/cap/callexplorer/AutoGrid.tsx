@@ -1734,7 +1734,7 @@ export default function AutoGrid(props: any) {
                   justifyContent: { xs: "center", md: "flex-start" },
                 }}
               >
-                <ContainedButton
+                <Button
                   variant="contained"
                   size="small"
                   sx={{
@@ -1745,8 +1745,8 @@ export default function AutoGrid(props: any) {
                   onClick={() => setDetails(!details)}
                 >
                   {details ? "Hide Details" : "Show Details"}
-                </ContainedButton>
-                <ContainedButton
+                </Button>
+                <Button
                   variant="contained"
                   size="small"
                   sx={{ textTransform: "none" }}
@@ -1754,13 +1754,14 @@ export default function AutoGrid(props: any) {
                   <Link
                     href={`/cap/${tabOptions[value].name}`}
                     style={{
+                      color: "inherit",
                       textDecoration: "none",
                     }}
                     tabIndex={-1}
                   >
                     New Call Receipt
                   </Link>
-                </ContainedButton>
+                </Button>
               </Box>
             </Grid>
             <Grid item xs={8.5} sm={5} md={3}>
@@ -1843,7 +1844,7 @@ export default function AutoGrid(props: any) {
 
             <Grid item xs={10} sm={1} md={3}>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <ContainedButton
+                <Button
                   variant="contained"
                   size="small"
                   sx={{
@@ -1857,12 +1858,13 @@ export default function AutoGrid(props: any) {
                     href={`/cap`}
                     tabIndex={-1}
                     style={{
+                      color:"inherit",
                       textDecoration: "none",
                     }}
                   >
                     Quit
                   </Link>
-                </ContainedButton>
+                </Button>
               </Box>
             </Grid>
           </Grid>
