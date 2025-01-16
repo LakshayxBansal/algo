@@ -6,7 +6,7 @@ import {
 import AutocompleteDB from "@/app/Widgets/AutocompleteDB";
 import { InputControl, InputType } from "@/app/Widgets/input/InputControl";
 import Seperator from "@/app/Widgets/seperator";
-import { Autocomplete, Box, Paper, Snackbar } from "@mui/material";
+import { Autocomplete, Box, FormLabel, Paper, Snackbar, Typography } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
 import {
   getCountryWithCurrency,
@@ -308,46 +308,59 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               flexWrap: "wrap",
             }}
           >
-            <Autocomplete
-              value={config.regionalSetting?.dateFormat === "" ? "" : dayjs(new Date()).format(config.regionalSetting?.dateFormat) as string}
-              onChange={(e: SyntheticEvent<Element, Event>, value : string | null) => {
-                if (value !== null) {
-                  setConfig({
-                    ...config, ["regionalSetting"]: {
-                      ...config["regionalSetting"], ["dateFormat"]: value as string
-                    }
-                  })
-                } else {
-                  setConfig({
-                    ...config, ["regionalSetting"]: {
-                      ...config["regionalSetting"], ["dateFormat"]: "" as string
-                    }
-                  })
-                }
-                // setDateTimeFormat(value);
-              }}
-              options={dateFormatList}
-              id="dateFormat"
-              sx={{ maxWidth: 400 }}
-              renderInput={(params) => (
-                <InputControl
-                  {...params}
-                  inputType={InputType.TEXT}
-                  name="regionalSetting_dateFormat"
-                  label="Date Format"
-                  error={formError?.regionalSetting_dateFormat?.error}
-                  helperText={formError?.regionalSetting_dateFormat?.error && "Required"}
-                  onKeyDown={() => {
-                    setFormError((curr) => {
-                      const { regionalSetting_dateFormat, ...rest } = curr;
-                      return rest;
-                    });
-                  }}
-                />
-              )}
-              disabled={seperator === null}
-            />
+            <Box sx={{
+              display: "grid",
+              // flexDirection: "row",
+              gridTemplateColumns: "1fr 0.5fr",
+              // border: '1px solid black'
+            }}>
+              <Autocomplete
+                value={config.regionalSetting?.dateFormat}
+                onChange={(e: SyntheticEvent<Element, Event>, value : string | null) => {
+                  if (value !== null) {
+                    setConfig({
+                      ...config, ["regionalSetting"]: {
+                        ...config["regionalSetting"], ["dateFormat"]: value as string
+                      }
+                    })
+                  } else {
+                    setConfig({
+                      ...config, ["regionalSetting"]: {
+                        ...config["regionalSetting"], ["dateFormat"]: "" as string
+                      }
+                    })
+                  }
+                  // setDateTimeFormat(value);
+                }}
+                options={dateFormatList}
+                id="dateFormat"
+                sx={{ maxWidth: 400 }}
+                renderInput={(params) => (
+                  <InputControl
+                    {...params}
+                    inputType={InputType.TEXT}
+                    name="regionalSetting_dateFormat"
+                    label="Date Format"
+                    error={formError?.regionalSetting_dateFormat?.error}
+                    helperText={formError?.regionalSetting_dateFormat?.error && "Required"}
+                    onKeyDown={() => {
+                      setFormError((curr) => {
+                        const { regionalSetting_dateFormat, ...rest } = curr;
+                        return rest;
+                      });
+                    }}
+                  />
+                )}
+                disabled={seperator === null}
+              />
 
+              <Box sx={{font: "-webkit-small-control"}}>
+                <FormLabel sx={{fontSize: "0.7rem"}}>Today's Date:</FormLabel>
+                <Typography>
+                  {config.regionalSetting?.dateFormat == "" ? "" : dayjs(new Date()).format(config.regionalSetting?.dateFormat) as string}
+                </Typography>
+              </Box>
+            </Box>
             <Autocomplete
               value={config.regionalSetting?.timeFormat}
               onChange={(e: SyntheticEvent<Element, Event>, value : string | null) => {
