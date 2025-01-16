@@ -92,12 +92,12 @@ export default function EntityList(props: entitiyCompT) {
     loggedInUserData: {} as loggedInUserDataT,
   });
 
-  const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
+  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
 
   const [selectionModel, setSelectionModel] = useState([]);
 
 
-  
+
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
@@ -113,7 +113,7 @@ export default function EntityList(props: entitiyCompT) {
   //for navbar search
 
 
-let timeOut: string | number | NodeJS.Timeout | undefined;
+  let timeOut: string | number | NodeJS.Timeout | undefined;
 
 
   const handleCellKeyDown = (params: any, event: any, details: any) => {
@@ -129,7 +129,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
       nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
-    } else if (event.key === "Enter" || event.key === " ") { 
+    } else if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
     }
 
@@ -142,15 +142,15 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     }
   };
 
-  
+
 
 
 
   const optionsColumn: GridColDef[] = [
     {
       field: "Icon menu",
-      headerName: "More Options",
-      minWidth: 100,
+      headerName: "",
+      minWidth: 50,
       hideable: false,
       sortable: false,
       editable: false,
@@ -217,13 +217,26 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   }, 100);
 
   useEffect(() => {
-    if(!dialogOpen){
+    if (!dialogOpen) {
       if (searchData) {
         fetchData(searchData);
       } else {
         fetchData(search);
       }
     };
+
+    const rows = document.querySelectorAll('.MuiDataGrid-row--borderBottom');
+    rows.forEach((row) => {
+      // Type-cast to HTMLElement to access the style property
+      (row as HTMLElement).style.backgroundColor = 'grey'; // Change row background color
+    });
+
+    // Select the header row with the class "MuiDataGrid-columnHeaderRow"
+    const headerRow = document.querySelector('.MuiDataGrid-columnHeaderRow');
+    if (headerRow) {
+      // Type-cast to HTMLElement to access the style property
+      (headerRow as HTMLElement).style.backgroundColor = 'blue'; // Change header row background color
+    }
 
     return () => {
       clearInterval(timeOut);
@@ -238,62 +251,62 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   const fetchAllColumns = async (objectTypeId?: number) => {
     // Only fetch if objectTypeId exists
     const dbColumns = objectTypeId ? await getColumns(objectTypeId) : [];
-    
+
     // Create columns based on DB data or defaults
     const columnList = dbColumns?.length > 0
       ? optionsColumn.concat(
-          dbColumns.map((col: any) => ({
-            field: col.column_name,
-            headerName: col.column_label,
-            width: 100,
-          }))
-        )
+        dbColumns.map((col: any) => ({
+          field: col.column_name,
+          headerName: col.column_label,
+          width: 100,
+        }))
+      )
       : allDfltCols.map(col => ({ ...col, width: 100 }));
-  
+
     return columnList;
   };
-  
+
 
   const processDefaultSettings = (
     columns: any[]
   ) => {
     const defaultPreferences: Record<string, number> = {};
     const visibilityModel: VisibilityModel = {};
-  
+
     for (const col of columns) {
       // Set default preferences
       defaultPreferences[col.field] = col.width ?? 100;
       // Set default visibility
       visibilityModel[col.field] = dfltColFields.includes(col.field);
     }
-  
+
     return { defaultPreferences, visibilityModel };
   };
-  
+
   const processColumnsWithPreferences = (
-    columns: any[], 
+    columns: any[],
     preferences: Record<string, number>
   ) => {
     const updatedColumns = [];
     const visibilityModel: VisibilityModel = {};
-  
+
     for (const col of columns) {
       // Update column widths
       updatedColumns.push({
         ...col,
         width: preferences[col.field] ?? 100,
       });
-  
+
       visibilityModel[col.field] = preferences[col.field] !== undefined;
     }
-  
+
     return { updatedColumns, visibilityModel };
   };
-  
- 
+
+
   useEffect(() => {
     let isMounted = true; // Track if the component is still mounted
-  
+
     const fetchAndSetPreferences = async () => {
       try {
         if (!props?.objectTypeId) {
@@ -301,62 +314,62 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           if (isMounted) setAllColumns(columns);
           return;
         }
-  
+
         const [userPreferenceData, allColumns] = await Promise.all([
-          getUserPreference(props.objectTypeId), 
+          getUserPreference(props.objectTypeId),
           fetchAllColumns(props.objectTypeId),
         ]);
-  
+
         const userPreferences: Record<string, number> = userPreferenceData[0]?.meta_data
           ? JSON.parse(userPreferenceData[0].meta_data)
           : {};
-  
-      
-  
+
+
+
         if (Object.keys(userPreferences).length > 0) {
           const { updatedColumns, visibilityModel } = processColumnsWithPreferences(
             allColumns,
             userPreferences
           );
-          if(isMounted){
+          if (isMounted) {
 
-              setColumnVisibilityModel(visibilityModel);
-              setAllColumns(updatedColumns);
-              setColumnWidths(userPreferences);
-        }
+            setColumnVisibilityModel(visibilityModel);
+            setAllColumns(updatedColumns);
+            setColumnWidths(userPreferences);
+          }
         } else {
           const { defaultPreferences, visibilityModel } = processDefaultSettings(allColumns);
-  
+
           if (isMounted) {
             setColumnWidths(defaultPreferences);
             setAllColumns(allColumns);
             setColumnVisibilityModel(visibilityModel);
           }
-  
-        await insertUserPreference(defaultPreferences, props.objectTypeId);
+
+          await insertUserPreference(defaultPreferences, props.objectTypeId);
         }
       } catch (error) {
         console.error("Error fetching or setting column preferences:", error);
       }
     };
-  
+
     fetchAndSetPreferences();
-      console.log("my useeffect run ");
-      
+    console.log("my useeffect run ");
+
     // Cleanup function
     return () => {
       isMounted = false;
     };
   }, []); // Keep dependency array empty
-  
+
 
   const handleColumnVisibilityModelChange = (
     model: GridColumnVisibilityModel
   ) => {
     console.log("model", model);
     const updatedColumnWidths = { ...columnWidths };
-    if (Object.keys(model).length === 1 && model["Icon menu"]=== true) {
-      allColumns.forEach((col:any) => {
+    if (Object.keys(model).length === 1 && model["Icon menu"] === true) {
+      allColumns.forEach((col: any) => {
         updatedColumnWidths[col.field] = 100;
       });
     } else {
@@ -372,7 +385,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
         }
       });
     }
-    
+
     // Update user preferences in the database
     updateUserPreference(updatedColumnWidths, props.objectTypeId || 0);
 
@@ -455,20 +468,19 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
       <Box style={{ margin: "0 20px" }}>
         {dialogOpen && (
           <AddDialog
-            title={`${
-              dlgMode === dialogMode.FileUpload
+            title={`${dlgMode === dialogMode.FileUpload
                 ? "Upload File"
                 : dlgMode === dialogMode.Add
-                ? `Add ${props.title}`
-                : dlgMode === dialogMode.Delete
-                ? `Delete ${props.title}`
-                : `Update ${props.title}`
-            }`}
+                  ? `Add ${props.title}`
+                  : dlgMode === dialogMode.Delete
+                    ? `Delete ${props.title}`
+                    : `Update ${props.title}`
+              }`}
             open={dialogOpen}
             setDialogOpen={setDialogOpen}
           >
             {props.fileUploadFeatureReqd &&
-            dlgMode === dialogMode.FileUpload ? (
+              dlgMode === dialogMode.FileUpload ? (
               <UploadFileForm
                 setDialogOpen={setDialogOpen}
                 fnFileUpad={props.fnFileUpad}
@@ -476,15 +488,15 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
               />
             ) : props.renderForm && dlgMode === dialogMode.Add ? (
               metaData.fields.length > 0 ? (
-                props.renderForm(setDialogOpen, (arg) => {}, metaData)
+                props.renderForm(setDialogOpen, (arg) => { }, metaData)
               ) : (
-                props.renderForm(setDialogOpen, (arg) => {})
+                props.renderForm(setDialogOpen, (arg) => { })
               )
             ) : props.renderForm && dlgMode === dialogMode.Modify ? (
               metaData.fields.length > 0 ? (
-                props.renderForm(setDialogOpen, (arg) => {}, metaData, modData)
+                props.renderForm(setDialogOpen, (arg) => { }, metaData, modData)
               ) : (
-                props.renderForm(setDialogOpen, (arg) => {}, modData)
+                props.renderForm(setDialogOpen, (arg) => { }, modData)
               )
             ) : dlgMode === dialogMode.Delete ? (
               <DeleteComponent
@@ -726,6 +738,11 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                   ".MuiDataGrid-columnsManagementHeader": {
                     display: "none",
                   },
+                  // '&.MuiDataGrid-row--borderBottom.css-yrdy0g-MuiDataGrid-columnHeaderRow': {
+                  //   backgroundColor: 'black',
+                  //   color: 'black',
+                  //   fontSize: '50px',
+                  // },
                 },
               },
               panel: {
@@ -735,7 +752,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                   );
                   if (
                     preferencePanelState.openedPanelValue ===
-                      GridPreferencePanelsValue.columns &&
+                    GridPreferencePanelsValue.columns &&
                     anchorEl
                   ) {
                     return anchorEl;
