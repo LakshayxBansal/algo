@@ -77,17 +77,17 @@ export default function LeftMenuTree(props: {
     const idToOpenMap: Map<number, boolean> = new Map(open);
     idToOpenMap.set(id, !idToOpenMap.get(id));
     // props.setOpenDrawer(true);
+    if (href !== '#') {
+    startTransition(() => {
+      router.push(href);
+      document.body.classList.add('cursor-wait');
+    });
+    }
     setOpen(idToOpenMap);
     setSelectedId(id);
     if (href !== '#' && pathname !== href && props.setOpenDrawer) {
       props.setOpenDrawer(false);
     }
-    // if (href !== '#') {
-      startTransition(() => {
-        router.push(href);
-        document.body.classList.add('cursor-wait');
-      });
-    // }
   };
 
   function handleSubMenuHover(
@@ -166,16 +166,17 @@ export default function LeftMenuTree(props: {
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    console.log(openPopper.size)
-    if(openPopper.size > 1){
-      openPopper.clear();
+    if (href !== '#') {
+      if(openPopper.size > 1){
+        openPopper.clear();
     }
     startTransition(() => {
       router.push(href);
       document.body.classList.add('cursor-wait');
     });
+  }
   };
-
+  
 
   function ShowMenu(levelData: {
     pages: menuTreeT[];
@@ -290,7 +291,7 @@ export default function LeftMenuTree(props: {
                   }}
                   component="a"
                   onClick={(e) => handlePopperClick(e, page.href)}
-                  href={page.href}
+                  // href={page.href}
                   selected={selectedId === page.id}
                   tabIndex={-1}
                   style={

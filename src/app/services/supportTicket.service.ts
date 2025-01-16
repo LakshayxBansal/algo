@@ -1,6 +1,6 @@
 "use server"
 import { Session } from "next-auth";
-import {  supportTicketSchemaT } from "../models/models";
+import {  supportLedgerSchemaT, supportTicketSchemaT } from "../models/models";
 import excuteQuery from "../utils/db/db";
 import { SUPPORT_ID } from "../utils/consts.utils";
 
@@ -306,3 +306,70 @@ export async function createSupportTicketDB(
       return null;
     }
   
+
+export async function getSupportTicketsByExecutiveIdDb(crmDb: string, userId: number) {
+  try {
+    const result = await excuteQuery({
+      host: crmDb,
+      query: "select ht.tkt_number enqDesc, cm.name contact, lt.date, lt.suggested_action_remark suggestedActionRemark, lt.id, cfd.c_col1, cfd.c_col2,\
+			        cfd.c_col3, cfd.c_col4, cfd.c_col5, cfd.c_col6, cfd.c_col7, cfd.c_col8, cfd.c_col9, cfd.c_col10,\
+              CASE \
+                WHEN (lt.action_taken_id IS NOT NULL AND lt.action_taken_id != 0) THEN JSON_OBJECT('id', lt.action_taken_id, 'name', tm.name)\
+                ELSE NULL\
+              END AS actionTakenId,\
+              CASE \
+                WHEN (lt.sub_status_id IS NOT NULL AND lt.sub_status_id != 0) THEN JSON_OBJECT('id', lt.sub_status_id, 'name', ssm.name)\
+                ELSE NULL\
+              END AS subStatusId,\
+              CASE \
+                WHEN (lt.next_action_id IS NOT NULL AND lt.next_action_id != 0) THEN JSON_OBJECT('id', lt.next_action_id, 'name', tam.name)\
+                ELSE NULL\
+              END AS nextActionId,\
+              lt.action_taken_remark actionTakenRemark\
+              from ticket_header_tran ht \
+              left join ticket_ledger_tran lt on lt.ticket_id = ht.id \
+              left join contact_master cm on cm.id = ht.contact_id\
+              left join ticket_sub_status_master ssm on ssm.id = lt.sub_status_id\
+              left join ticket_action_master tm on tm.id = lt.action_taken_id\
+              left join ticket_action_master tam on tam.id = lt.next_action_id\
+              left join custom_fields_data cfd on cfd.object_id = lt.id AND cfd.object_type_id = (select id from object_type_master where name = 'Support')\
+              where lt.active =1 AND \
+              lt.allocated_to = (select id from executive_master em where em.crm_user_id = ?) AND lt.status_id = 1\
+              ORDER BY lt.date desc;",
+              values: [userId],
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function updateSupportTicketStatusDb(
+  session: Session,
+  ledgerData: supportLedgerSchemaT
+) {
+  try {
+    const result = excuteQuery({
+      host: session.user.dbInfo.dbName,
+      query:
+      "call updateSupportTicketStatus(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      values: [
+        ledgerData.id,
+        ledgerData.status_id,
+        ledgerData.sub_status_id,
+        ledgerData.action_taken_id,
+        ledgerData.next_action_id,
+        ledgerData.suggested_action_remark,
+        ledgerData.action_taken_remark,
+        ledgerData.closure_remark,
+        session.user.userId,
+        ledgerData.next_action_date
+      ],
+    });
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+}

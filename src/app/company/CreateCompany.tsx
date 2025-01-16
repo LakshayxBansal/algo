@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import { useRouter } from "next/navigation";
 import {
   companySchemaT,
+  docDescriptionSchemaT,
   masterFormPropsT,
   masterFormPropsWithDataT,
   optionsDataT,
@@ -28,6 +29,8 @@ import {
 } from "../controllers/masters.controller";
 import { Collapse, IconButton, Grid, Portal } from "@mui/material";
 import AutocompleteDB from "../Widgets/AutocompleteDB";
+import { VisuallyHiddenInput } from "@/styledComponents";
+import Image from "next/image";
 
 export default function CreateCompany(
   props: masterFormPropsWithDataT<companySchemaT>
@@ -42,6 +45,8 @@ export default function CreateCompany(
   const [defaultCountryId, setdefaultCountryId] = useState(0);
   const [city, setCity] = useState("");
   const [pin, setPin] = useState("");
+  const [uploadedImage, setUploadedImage] = useState<string | null>(props?.data?.docData?.file ? `data:image/png;base64,${props.data.docData.file}` : null);
+  const [docData, setDocData] = useState<docDescriptionSchemaT>(props.data?.docData ? props?.data?.docData : {} as docDescriptionSchemaT);
 
   const entityData: companySchemaT = props.data
     ? props.data
@@ -56,12 +61,13 @@ export default function CreateCompany(
         setdefaultCountryId(countryData.countryId);
         setCity(countryData.city);
         setPin(countryData.pin);
-      } 
+      }
     } 
     if (!props.data && defaultCountry === "") {  
       fetchCountryData();
     }
   }, []);
+
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {}; // Initialize an empty object
@@ -70,6 +76,13 @@ export default function CreateCompany(
       data[key] = value;
     }
     formData = updateFormData(data);
+
+    if(uploadedImage){
+      docData["file"] = uploadedImage as string;
+    }
+
+    docData["description"] = "Company Logo";
+    data.docData = docData;
 
     const result = await persistEntity(data as companySchemaT);
     if (result.status) {
@@ -118,9 +131,9 @@ export default function CreateCompany(
 
   async function persistEntity(data: companySchemaT) {
     let result;
+
     if (entityData?.id) {
       data = { ...data, id: entityData.id };
-
       result = await updateCompany(data);
     } else {
       result = await createCompany(data);
@@ -137,6 +150,45 @@ export default function CreateCompany(
       return rest;
     });
   };
+
+
+
+
+  const handleLogoUpload = (event: any) => {
+    setFormError({});
+    const imageFile = event.target.files[0];
+    if (imageFile) {
+      const fileSizeInKb = imageFile.size / 1024;
+      if(fileSizeInKb < 50 || fileSizeInKb > 500)
+      {
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Invalid file size. Please upload an image between 50KB and 500KB.", error: true };
+        setFormError(errorState);
+        return;
+      }
+
+      if(imageFile.type !== 'image/png')
+      {
+        const errorState: Record<string, { msg: string; error: boolean }> = {};
+        errorState["form"] = { msg: "Invalid file type. Please upload a PNG image.", error: true };
+        setFormError(errorState);
+        return;
+      }
+      let data: docDescriptionSchemaT = {} as docDescriptionSchemaT;
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setUploadedImage(fileReader.result as string);
+      }
+      fileReader.readAsDataURL(imageFile);
+
+ 
+      data["fileName"] = imageFile.name;
+      data["fileType"] = imageFile.type;
+      setDocData(data);
+    }
+  }
+
+
   return (
     <>
       <Box
@@ -170,15 +222,6 @@ export default function CreateCompany(
         </Collapse>
         <Box id="companyForm" sx={{ m: 1 }}>
           <form action={handleSubmit} noValidate>
-            {/* <Box
-            sx={{
-              display: "grid",
-              columnGap: 3,
-              rowGap: 1,
-              gridTemplateColumns: "repeat(2, 1fr)",
-              paddingBottom: "10px",
-            }}
-          > */}
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6} md={6} lg={6}>
                 <InputControl
@@ -275,8 +318,6 @@ export default function CreateCompany(
                     entityData.state_id = undefined;
                     entityData.state = "";
                   }}
-                  // width={352}
-                  // width={{ xs: "100%", sm: 290, md: 290 }}
                   formError={formError?.country}
                   fetchDataFn={getCountriesMaster}
                   setFormError={setFormError}
@@ -302,16 +343,10 @@ export default function CreateCompany(
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6}>
-                {/* <div style={{ width: '100%' }}> */}
                 <AutocompleteDB
                   name={"state"}
                   id={"state"}
                   label={"State"}
-                  // width={31.5rem}
-                  // width="stretch"
-                  // width={275}
-                  // style={{ width: '100%' }}
-                  // width={{ xs: "100%", sm: 290, md: 290 }}
                   onChange={(e, val, s) => {
                     setSelectValues({ ...selectValues, state: val });
                     entityData.state_id = undefined;
@@ -322,9 +357,6 @@ export default function CreateCompany(
                       selectValues.country?.name ?? entityData.country;
                     return getStatesMaster(stateStr, country);
                   }}
-                  // disable={
-                  //   selectValues.country || entityData.country ? false : true
-                  // }
                   diaglogVal={
                     selectValues.state
                       ? {
@@ -341,37 +373,67 @@ export default function CreateCompany(
                     value: React.SetStateAction<optionsDataT>
                   ): void {}}
                 />
-                {/* </div> */}
               </Grid>
+              <Grid item xs={6} sx={{ display: "flex", alignItems: "center" }}>
+                  {
+                    <Box>
+                    {uploadedImage && 
+                    (
+                      <Box sx={{display: "flex", p:1}}>
+                        <Image 
+                          src={uploadedImage}
+                          alt="Uploaded Logo"
+                          width={90}
+                          height={90}
+                          style={{ borderRadius: "8px", objectFit: "contain" }}
+                        />
+                      </Box>
+                    )}
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="text"
+                    tabIndex={-1}
+                    sx={{backgroundColor: 'white'}}
+                  >
+                    Upload Logo
+                    <VisuallyHiddenInput type="file" onChange={handleLogoUpload} multiple />
+                  </Button>
+                </Box>
+              }
+              </Grid>  
               <Grid
-                item
-                xs={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  mt: 0.5,
-                }}
-              >
-                <Button
-                  onClick={() => {
-                    if (props?.setDialogOpen === undefined) {
-                      router.push("/signin");
-                    } else {
-                      handleCancel();
-                    }
+                  item
+                  xs={6}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end"
                   }}
-                  tabIndex={-1}
                 >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{ width: "15%", marginLeft: "5%" }}
-                >
-                  Submit
-                </Button>
-              </Grid>
+                  <Box>
+                    <Button
+                      onClick={() => {
+                        if (props?.setDialogOpen === undefined) {
+                          router.push("/signin");
+                        } else {
+                          handleCancel();
+                        }
+                      }}
+                      tabIndex={-1}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{ width: "15%", marginLeft: "5%" }}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                {/* </Grid> */}
+              </Grid>              
             </Grid>
           </form>
           <Portal>

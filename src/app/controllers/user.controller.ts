@@ -526,12 +526,6 @@ export async function getInviteByUserContact(
         // count: Number(rowCount[0]["rowCount"]),
         error: {},
       };
-      getInvites.data = getInvites.data.map((invitee) => {
-        return {
-          ...invitee,
-          inviteDate: invitee.inviteDate?.toDateString(),
-        };
-      }) as inviteUserSchemaT[];
     }
   } catch (e: any) {
     let err = "Contact Admin, E-Code:369";
