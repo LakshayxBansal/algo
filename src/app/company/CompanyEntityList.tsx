@@ -9,9 +9,7 @@ import EntityList from "../Widgets/masters/EntityList";
 import CreateCompany from "./CreateCompany";
 import CellDbName from "./cellDBName";
 import AuthWrapper from "./AuthWrapper";
-import { Typography } from "@mui/material";
 import React from "react";
-import { COMPANY_USER_OBJECT_ID } from "../utils/consts.utils";
 
 export default function CompanyEntityList() {
 
