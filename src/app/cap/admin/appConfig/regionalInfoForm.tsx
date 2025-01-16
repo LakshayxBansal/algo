@@ -310,9 +310,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
           >
             <Box sx={{
               display: "grid",
-              // flexDirection: "row",
               gridTemplateColumns: "1fr 0.5fr",
-              // border: '1px solid black'
             }}>
               <Autocomplete
                 value={config.regionalSetting?.dateFormat}
