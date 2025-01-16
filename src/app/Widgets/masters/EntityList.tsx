@@ -411,13 +411,15 @@ export default function EntityList(props: entitiyCompT) {
   };
 
   const toggleColBtn = () => {
+    if (apiRef.current) {
     const preferencePanelState = gridPreferencePanelStateSelector(
       apiRef.current.state
     );
     if (preferencePanelState.open) {
       apiRef.current.hidePreferences();
     } else {
-      apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
+      apiRef.current?.showPreferences(GridPreferencePanelsValue.columns);
+    }
     }
   };
 
@@ -747,19 +749,21 @@ export default function EntityList(props: entitiyCompT) {
               },
               panel: {
                 anchorEl: () => {
+                  if (apiRef.current) {
                   const preferencePanelState = gridPreferencePanelStateSelector(
                     apiRef.current.state
                   );
-                  if (
-                    preferencePanelState.openedPanelValue ===
-                    GridPreferencePanelsValue.columns &&
-                    anchorEl
-                  ) {
-                    return anchorEl;
+                    if (
+                      preferencePanelState.openedPanelValue ===
+                      GridPreferencePanelsValue.columns &&
+                      anchorEl
+                    ) {
+                      return anchorEl;
+                    }
                   }
 
                   const columnHeadersElement =
-                    apiRef.current.rootElementRef?.current?.querySelector(
+                    apiRef.current?.rootElementRef.current?.querySelector(
                       `.${gridClasses.columnHeaders}`
                     )!;
                   return columnHeadersElement;

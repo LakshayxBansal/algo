@@ -116,11 +116,6 @@ export const MUILight: ThemeOptions = {
   spacing: 8,
   typography: {
     fontFamily: "Roboto, 'Helvetica Neue', sans-serif",
-    button: {
-      color: "#ffffff",
-      backgroundColor: "#98A1B2",
-      dark: "#1A1D22",
-    },
   },
   components: {
     MuiTextField: {
@@ -151,21 +146,6 @@ export const MUILight: ThemeOptions = {
         },
       },
     },
-    // MuiButton: {
-    //   styleOverrides: {
-    //     root: {
-    //       backgroundColor: "#4870AC", // Default background color
-    //       color: "#fff", // Text color
-    //       "&:hover": {
-    //         backgroundColor: "#777F8C", // Darker shade of the button on hover
-    //         color: "#fff", 
-    //       },
-    //     },
-    //   },
-    //   defaultProps: {
-    //     variant: "contained",
-    //   },
-    // },
   },
 };
 

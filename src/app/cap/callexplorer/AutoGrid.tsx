@@ -186,8 +186,8 @@ export default function AutoGrid(props: any) {
 
         if (!Object.keys(userColumnPreference).length) {
           // Get default column widths from apiRef
-          const currentColumns = apiRef.current.getAllColumns();
-          userColumnPreference = currentColumns.reduce((acc: any, column: any) => {
+          const currentColumns = apiRef.current?.getAllColumns();
+          userColumnPreference = currentColumns?.reduce((acc: any, column: any) => {
             acc[column.field] = column.computedWidth || column.width || 100;
             return acc;
           }, {});
@@ -201,12 +201,12 @@ export default function AutoGrid(props: any) {
           setColumnWidths(userColumnPreference || {});
         }
 
-        const columnVisibilityModel = apiRef.current
-          .getAllColumns()
-          .reduce((visibility: any, column: any) => {
+        const columnVisibilityModel = apiRef.current?
+          apiRef.current.getAllColumns().reduce((visibility: any, column: any) => {
             visibility[column.field] = column.field in userColumnPreference;
             return visibility;
-          }, {});
+          }, {})
+          :{};
         setColumnVisibilityModel(columnVisibilityModel);
 
       } catch (error) {
@@ -366,13 +366,15 @@ export default function AutoGrid(props: any) {
 
 
   const toggleColBtn = () => {
-    const preferencePanelState = gridPreferencePanelStateSelector(
-      apiRef.current.state
-    );
-    if (preferencePanelState.open) {
-      apiRef.current.hidePreferences();
-    } else {
-      apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
+    if (apiRef.current) {
+      const preferencePanelState = gridPreferencePanelStateSelector(
+        apiRef.current.state
+      );
+      if (preferencePanelState.open) {
+        apiRef.current.hidePreferences();
+      } else {
+        apiRef.current.showPreferences(GridPreferencePanelsValue.columns);
+      }
     }
   };
   
@@ -627,25 +629,27 @@ export default function AutoGrid(props: any) {
   };
   const handleExport = async () => {
     try {
+      if (apiRef.current) {
       // Get visible columns from DataGrid API
-      const visibleColumns = apiRef.current
-        .getVisibleColumns()
-        .filter((col) => !["time", "actionTime"].includes(col.field));
+        const visibleColumns = apiRef.current
+          .getVisibleColumns()
+          .filter((col) => !["time", "actionTime"].includes(col.field));
 
-      // Extract fields and headers for visible columns
-      const fields = visibleColumns.slice(2).map((col) => col.field);
-      const headers = visibleColumns.slice(2).map((col) => col.headerName);
+        // Extract fields and headers for visible columns
+        const fields = visibleColumns.slice(2).map((col) => col.field);
+        const headers = visibleColumns.slice(2).map((col) => col.headerName);
 
-      const allData = await tabOptions[value].getAllData(
-        filterValueState,
-        filterType,
-        selectedStatus,
-        callFilter,
-        dateFilter
-      );
+        const allData = await tabOptions[value].getAllData(
+          filterValueState,
+          filterType,
+          selectedStatus,
+          callFilter,
+          dateFilter
+        );
 
-      // Call the `exportToExcel` function
-      await exportToExcel(fields, headers, { result: allData?.result });
+        // Call the `exportToExcel` function
+        await exportToExcel(fields, headers, { result: allData?.result });
+      }
     } catch (error) {
       console.error("Error exporting to Excel:", error);
       alert("Failed to export data. Please try again.");
@@ -1616,19 +1620,21 @@ export default function AutoGrid(props: any) {
               },
               panel: {
                 anchorEl: () => {
-                  const preferencePanelState = gridPreferencePanelStateSelector(
-                    apiRef.current.state
-                  );
-                  if (
-                    preferencePanelState.openedPanelValue ===
-                    GridPreferencePanelsValue.columns &&
-                    anchorEl
-                  ) {
-                    return anchorEl;
-                  }
+                  if (apiRef.current) {
 
+                    const preferencePanelState = gridPreferencePanelStateSelector(
+                      apiRef.current.state
+                    );
+                    if (
+                      preferencePanelState.openedPanelValue ===
+                      GridPreferencePanelsValue.columns &&
+                      anchorEl
+                    ) {
+                      return anchorEl;
+                    }
+                  }
                   const columnHeadersElement =
-                    apiRef.current.rootElementRef?.current?.querySelector(
+                    apiRef.current?.rootElementRef?.current?.querySelector(
                       `.${gridClasses.columnHeaders}`
                     )!;
                   return columnHeadersElement;
