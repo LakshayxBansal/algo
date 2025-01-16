@@ -2,43 +2,43 @@
 import { selectKeyValueT } from "@/app/models/models";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 export async function enquiryDataFormat({
   formData,
   selectValues,
-  dateFormat,
-  timeFormat,
+  dateTimeFormat,
   otherData,
 }: {
   formData: FormData;
-  selectValues: selectKeyValueT;
-  dateFormat: string;
-  timeFormat: string;
+  selectValues: selectKeyValueT,
+  dateTimeFormat: string;
   otherData?: any;
 }) {
-  dayjs.extend(customParseFormat);
 
   const toISOString = (dateStr: string): string => {
-    // Parse the input format and convert to ISO 8601
-    if (!dateStr || dateStr === " ") return "";
-    const timeFormatString =
-      timeFormat === "12 Hours"
-        ? `${dateFormat} hh:mm A`
-        : `${dateFormat} HH:mm`;
-    let dt = dayjs(dateStr, timeFormatString).toDate();
-    return dt.toISOString().slice(0, 10) + " " + dt.toISOString().slice(11, 19);
+   if (!dateStr || dateStr === "" || dateStr === "Invalid Date") return "";
+       if (!dateStr || dateStr === "" || dateStr === "Invalid Date" ) return "";
+          const dt = dayjs(dateStr, dateTimeFormat);
+          if (!dt.isValid()) return "";
+          const formatedDate= dt.format('YYYY-MM-DD HH:mm:ss');
+          
+      
+          const newDate = new Date(formatedDate);
+      
+      return newDate.toISOString().slice(0, 10) + " " + newDate.toISOString().slice(11,19);
   };
   
   const date = formData.get("date")
     ? toISOString(formData.get("date") as string)
-    : dayjs(otherData?.date).format('YYYY-MM-DD HH:mm:ss');
+    : otherData?.date ?dayjs(otherData?.date).format('YYYY-MM-DD HH:mm:ss'):null;
 
   const nextActionDate = formData.get("next_action_date")
     ? toISOString(formData.get("next_action_date") as string)
     : null;
   const headerData = {
     enq_number: (formData.get("enq_number") as string) ?? otherData?.enq_number,
-    date,
+    date:date?.length===0?null:date,
     contact_id: selectValues.contact?.id,
     received_by_id: selectValues.received_by?.id,
     category_id: selectValues.category?.id,
@@ -51,7 +51,7 @@ export async function enquiryDataFormat({
   };
 
   let ledgerData = {
-    date,
+    date:date?.length===0?null:date,
     status_id: Number(formData.get("status")),
     sub_status_id: selectValues.sub_status?.id,
     sub_status: selectValues.sub_status?.name ?? "",

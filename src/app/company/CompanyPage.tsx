@@ -23,8 +23,8 @@ export default function CompanyPage({ totalInvites, totalCompanies }: { totalInv
   return (
     <>
       <Box>
-        <Box sx={{ margin: "20px 20px" }}>
           <SecondNavbar title={"Company List"} />
+        <Box sx={{ margin: "20px 20px" }}>
           <Accordion sx={{ padding: "0px 0px 0px" }}>
             <AccordionSummary
               sx={{
