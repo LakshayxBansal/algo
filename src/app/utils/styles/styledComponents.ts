@@ -53,22 +53,13 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   backgroundColor: "#fff",
   height: 650,
   border: "none",
-  // '& .MuiDataGrid-row--borderBottom': {
-  //   backgroundColor: 'red',
-  // },
+
   // disableColumnMenu:true,
-  '& .MuiDataGrid-topContainer.MuiDataGrid-container--top': {
-    backgroundColor: 'red', // Row background color
-  },
-  '& .MuiDataGrid-columnHeaderRow': {
-    backgroundColor: 'blue', // Header row background color
-  },
   "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
     outline: "none !important",
   },
   "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-columnHeader:focus":
     {
-      // backgroundColor:"red",
       outline: "none !important",
     },
   "& .MuiDataGrid-cell": {
