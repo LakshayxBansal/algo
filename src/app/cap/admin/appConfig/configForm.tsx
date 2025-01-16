@@ -19,7 +19,7 @@ import { configDeptMapSchemaT, configSchemaT } from "@/app/models/models";
 const customLabel: any = {
   enquiry: "Enquiry Management",
   support: "Support Management",
-  amcWarranty: "AMC Warranty",
+  amcWarranty: "AMC Warranty Management",
   closeCall: "Can Close Call at the time of Call Receipt",
   maintainProducts: "Maintain Products in Call Receipt",
   saveFAQ: "Ask to Save FAQ on Call Receipt and Report Saving",

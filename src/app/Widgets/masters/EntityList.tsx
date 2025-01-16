@@ -225,19 +225,6 @@ export default function EntityList(props: entitiyCompT) {
       }
     };
 
-    const rows = document.querySelectorAll('.MuiDataGrid-row--borderBottom');
-    rows.forEach((row) => {
-      // Type-cast to HTMLElement to access the style property
-      (row as HTMLElement).style.backgroundColor = 'grey'; // Change row background color
-    });
-
-    // Select the header row with the class "MuiDataGrid-columnHeaderRow"
-    const headerRow = document.querySelector('.MuiDataGrid-columnHeaderRow');
-    if (headerRow) {
-      // Type-cast to HTMLElement to access the style property
-      (headerRow as HTMLElement).style.backgroundColor = 'blue'; // Change header row background color
-    }
-
     return () => {
       clearInterval(timeOut);
     };
@@ -740,11 +727,6 @@ export default function EntityList(props: entitiyCompT) {
                   ".MuiDataGrid-columnsManagementHeader": {
                     display: "none",
                   },
-                  // '&.MuiDataGrid-row--borderBottom.css-yrdy0g-MuiDataGrid-columnHeaderRow': {
-                  //   backgroundColor: 'black',
-                  //   color: 'black',
-                  //   fontSize: '50px',
-                  // },
                 },
               },
               panel: {
