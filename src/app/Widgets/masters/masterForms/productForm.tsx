@@ -83,6 +83,7 @@ export default function ProductForm(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
+        setUploadedImage(null);
       }
     } else {
       const issues = result.data;
