@@ -13,7 +13,6 @@ import UnassignedCard from "./UnassignedCard";
 import OverviewCard from "./OverviewCard";
 import { logger } from "@/app/utils/logger.utils";
 import { Metadata } from "next";
-import LoadingWrapper from "@/app/loadingWrapper";
 
 // export const metadata : Metadata = {
 //   title : 'Dashboard'
@@ -74,7 +73,6 @@ export default async function Dashboard() {
               </Grid>
             </Box>
           </Box>
-            // </LoadingWrapper>
         );
     }
   } catch (error) {

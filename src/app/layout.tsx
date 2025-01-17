@@ -7,7 +7,6 @@ import { Box } from "@mui/material";
 import { theme } from "@/app/utils/styles/theme.util";
 import { ThemeProvider } from "@mui/material/styles";
 import "./globals.css";
-import LoadingWrapper from './loadingWrapper';
 
 export const metadata = {
   title: {

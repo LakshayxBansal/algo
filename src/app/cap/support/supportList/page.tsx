@@ -24,42 +24,42 @@ const columns: GridColDef[] = [
   {
     field: "tkt_number",
     headerName: "Ticket Number",
-    editable: true,
+    editable: false,
   },
   {
     field: "category",
     headerName: "Category",
-    editable: true,
+    editable: false,
   },
   {
     field: "contact",
     headerName: "Contact",
-    editable: true,
+    editable: false,
   },
   {
     field: "status",
     headerName: "Status",
-    editable: true,
+    editable: false,
   },
   {
     field: "sub_status",
     headerName: "Sub Status",
-    editable: true,
+    editable: false,
   },
   {
     field: "received_by",
     headerName: "Received By",
-    editable: true,
+    editable: false,
   },
   {
     field: "action_taken",
     headerName: "Action Taken",
-    editable: true,
+    editable: false,
   },
   {
     field: "next_action",
     headerName: " Next Action ",
-    editable: true,
+    editable: false,
   },
 ];
 
