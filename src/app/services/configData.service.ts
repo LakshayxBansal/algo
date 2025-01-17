@@ -47,27 +47,24 @@ export async function getConfigTypeDB(
   }
 }
 
-// export async function createConfigDataDB(crmDb: string, configData: configSchemaT) {
-//   try{
-//     const enquiryData = JSON.stringify(configData.enquiry);
-//     const supportData = JSON.stringify(configData.support);
-//     const contractData = JSON.stringify(configData.amcWarranty);
-//     const regionalSettingData = JSON.stringify(configData.regionalSetting);
-//     const searchNavbarData = JSON.stringify(configData.searchNavbar);
-//     const searchContactData = JSON.stringify(configData.searchContact);
-//     const searchExecutiveData = JSON.stringify(configData.searchExecutive);
-//     const searchOrganisationData = JSON.stringify(configData.searchOrganisation);
-//     await executeQuery({
-//       host: crmDb,
-//       query: "call createConfig(?, ?, ?, ?, ?, ?, ?, ?)",
-//       values: [enquiryData, supportData, contractData, regionalSettingData, searchNavbarData, searchContactData, searchExecutiveData, searchOrganisationData],
-//     });
-//     return true;
-//   }catch(error){
-//     logger.error(error);
-//     return false;
-//   }
-// }
+export async function createConfigDataDB(crmDb: string, configData: configSchemaT) {
+  try{
+    const enquiryData = JSON.stringify(configData.enquiry);
+    const supportData = JSON.stringify(configData.support);
+    const amcWarrantyData = JSON.stringify(configData.amcWarranty);
+    const regionalSettingData = JSON.stringify(configData.regionalSetting);
+    const globalSearchData = JSON.stringify(configData.globalSearch);
+    await executeQuery({
+      host: crmDb,
+      query: "call createConfig(?, ?, ?, ?, ?)",
+      values: [enquiryData, supportData, amcWarrantyData, regionalSettingData, globalSearchData],
+    });
+    return true;
+  }catch(error){
+    logger.error(error);
+    return false;
+  }
+}
 
 export async function updateConfigDataDB(crmDb:string,configId : number, enabled : number, data : string) {
   try{

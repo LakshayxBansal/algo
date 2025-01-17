@@ -108,13 +108,10 @@ async function createCompanyDbAndTableProc(
 function createAppConfigData(): configSchemaT{
   const enquiryData = {reqd:true, closeCall:true,maintainProducts:false,saveFAQ:false,allowReallocation:true,maintainAction:true,voucher:{voucherNumber:true,prefix:"",suffix:"",length: "6",prefillWithZero:true}};
   const supportData = {reqd:true,closeCall:true,maintainProducts:false,saveFAQ:false,allowReallocation:true,maintainAction:true,voucher:{voucherNumber:true,prefix:"",suffix:"",length: "6",prefillWithZero:true}};
-  const contractData = {reqd:false,voucher:{voucherNumber:false,prefix:"",suffix:"",length: "0",prefillWithZero:false}};
+  const amcWarrantyData = {reqd:false,voucher:{voucherNumber:false,prefix:"",suffix:"",length: "0",prefillWithZero:false}};
   const regionalData = {reqd:true,country_id: 0, country: "", state_id: 0, state: "", decimalPlaces: "Two Digits", timeFormat: "12 Hours", currencyString: "", currencySymbol: "", currencySubString: "", currencyCharacter: "", dateFormat: ""};
-  const searchNavbarData = {reqd:true,menu:true,enquiryDescription:true,organisation:true,supportDescription:true,contractDescription:true,product:true};
-  const searchContactData = {reqd:true,name:true,alias:true,phone:true,email:true,organisation:true,city:true};
-  const searchExecutiveData = {reqd:true,name:true,alias:true,dept:true,role:true,email:true,phone:true};
-  const searchOrganisationData = {reqd:true,name:true,alias:true,city:true};
-  return {enquiry: enquiryData, support: supportData, contract: contractData, regionalSetting: regionalData, searchNavbar: searchNavbarData, searchContact: searchContactData, searchExecutive: searchExecutiveData, searchOrganisation: searchOrganisationData};
+  const globalSearchData = {reqd:true,menu:true,enquiryDescription:true,organisation:true,supportDescription:true,AmcWarrantyDescription:true,product:true};
+  return {enquiry: enquiryData, support: supportData, amcWarranty: amcWarrantyData, regionalSetting: regionalData, globalSearch: globalSearchData};
 }
 
 export async function createCompany(data: companySchemaT) {
