@@ -1038,13 +1038,13 @@ export const regionalSettingSchema = z.object({
   voucher : voucherSchema.optional()
 });
 
-export const searchNavbarConfigSchema = z.object({
+export const globalSearchConfigSchema = z.object({
   reqd : z.boolean(),
   menu : z.boolean(),
   enquiryDescription : z.boolean(),
   organisation : z.boolean(),
   supportDescription : z.boolean(),
-  contractDescription : z.boolean(),
+  AmcWarrantyDescription : z.boolean(),
   product : z.boolean(),
   voucher : voucherSchema.optional()
 })
@@ -1084,7 +1084,7 @@ export const configSchema = z.object({
   support : supportConfigSchema,
   amcWarranty : amcWarrantyConfigSchema,
   regionalSetting : regionalSettingSchema,
-  searchNavbar : searchNavbarConfigSchema,
+  globalSearch : globalSearchConfigSchema,
 })
 
 export const companySchema = z.object({
