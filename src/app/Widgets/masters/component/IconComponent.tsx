@@ -70,6 +70,7 @@ function IconComponent(props: iconCompT) {
         aria-controls="simple-menu"
         aria-haspopup="true"
         onClick={optionMenuOpen}
+        tabIndex={3}
       >
         <MoreVertIcon />
       </IconButton>

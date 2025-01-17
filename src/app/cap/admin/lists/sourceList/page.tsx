@@ -23,9 +23,7 @@ const columns: GridColDef[] = [
 export default function enquirySource() {
   return (
     <>
-      <Box sx={{margin: "20px 20px"}}>
       <SecondNavbar title={"List of Source"}/>
-      </Box>
       <EntityList
         title="Source"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

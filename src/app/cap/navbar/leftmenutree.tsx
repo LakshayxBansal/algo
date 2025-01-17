@@ -13,8 +13,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { menuTreeT } from "../../models/models";
 import { nameIconArr } from "../../utils/iconmap.utils";
 import { useRouter } from "next/navigation";
-
-
+import { usePathname } from 'next/navigation';
 
 export default function LeftMenuTree(props: {
   pages: menuTreeT[];
@@ -28,9 +27,10 @@ export default function LeftMenuTree(props: {
   // const [hoverId, setHoverId] = React.useState<number | null>(null);
   const [isPending, startTransition] = React.useTransition();
   const [hover, setHover] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   const router = useRouter();
-
+  const pathname = usePathname();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   );
@@ -76,15 +76,19 @@ export default function LeftMenuTree(props: {
   function handleHeaderMenuClick(id: number, href:string) {
     const idToOpenMap: Map<number, boolean> = new Map(open);
     idToOpenMap.set(id, !idToOpenMap.get(id));
-    props.setOpenDrawer(true);
+    // props.setOpenDrawer(true);
+    if (href !== '#') {
+    startTransition(() => {
+      router.push(href);
+      document.body.classList.add('cursor-wait');
+    });
+    }
     setOpen(idToOpenMap);
     setSelectedId(id);
-    startTransition(() => {
-      router.push(href)
-      document.body.classList.add('cursor-wait');
-     
-    })
-  }
+    if (href !== '#' && pathname !== href && props.setOpenDrawer) {
+      props.setOpenDrawer(false);
+    }
+  };
 
   function handleSubMenuHover(
     event: React.MouseEvent<HTMLElement>,
@@ -92,7 +96,6 @@ export default function LeftMenuTree(props: {
   ) {
     clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;
-    // setHoverId(page.id);
     if (arra1.includes(page.parent_id)) {
       idToOpenPop.current.set(page.id, event.currentTarget);
       if (page.parent_id == 0) {
@@ -121,24 +124,31 @@ export default function LeftMenuTree(props: {
     event: React.MouseEvent<HTMLElement>,
     page: menuTreeT
   ) => {
-    if (timeoutRef.current == undefined) {
-      timeoutRef.current = setTimeout(() => {
-        // setHoverId(page.id);
-        idToOpenPop.current.clear();
-        setOpenPopper((prevState) => new Map());
-      }, 300);
+    if(!hover){
+      if (timeoutRef.current == undefined) {
+        timeoutRef.current = setTimeout(() => {
+          // setHoverId(page.id);
+          idToOpenPop.current.clear();
+          setOpenPopper((prevState) => new Map());
+        }, 600);
+      }
     }
   };
-
-  const handleMousePopper = (
-    event: React.MouseEvent<HTMLElement>,
-    page: menuTreeT
-  ) => {
-    // setHoverId(page.id);
-    idToOpenPop.current.clear();
-    // setOpenPopper((prevState) => new Map(prevState.clear()));
-    openPopper.clear();
+  
+  const handlePopperMouseEnter = (page: menuTreeT) => {
+    // clearTimeout(timeoutRef.current);
+    setHover(true);
   };
+  
+  const handlePopperMouseLeave = (page: menuTreeT) => {
+
+    // timeoutRef.current = setTimeout(() => {
+      idToOpenPop.current.clear();
+      setHover(false);
+      setOpenPopper(new Map());
+    // }, 300);
+  };
+
 
   function handleCollapse(id: number): boolean {
     return props.openDrawer ? open?.get(id) ?? false : false;
@@ -152,14 +162,21 @@ export default function LeftMenuTree(props: {
     return href;
   }
 
-  const handleTransiton =  (
+  const handlePopperClick =  (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     href: string
   ) => {
-    // router.push(href);
-     
+    if (href !== '#') {
+      if(openPopper.size > 1){
+        openPopper.clear();
+    }
+    startTransition(() => {
+      router.push(href);
+      document.body.classList.add('cursor-wait');
+    });
+  }
   };
-
+  
 
   function ShowMenu(levelData: {
     pages: menuTreeT[];
@@ -188,7 +205,9 @@ export default function LeftMenuTree(props: {
                   <Tooltip title={page.name} placement="right">
                     <ListItemButton
                       sx={{ pl: indent }}
-                      onClick={(e) =>{ e.preventDefault(); handleHeaderMenuClick(page.id, page.href)}}
+                      onClick={(e) =>{
+                         e.preventDefault(); 
+                        handleHeaderMenuClick(page.id, page.href)}}
                       component="a"
                       selected={selectedId === page.id}
                       tabIndex={-1}
@@ -265,14 +284,14 @@ export default function LeftMenuTree(props: {
                 <ListItemButton
                   sx={{ pl: indent }}
                   onMouseEnter={(e) => {
-                    handleSubMenuHover(e, page);
+                   handleSubMenuHover(e, page);
                   }}
                   onMouseLeave={(e) => {
-                    handleMouseLeave(e, page);
+                  handleMouseLeave(e, page);
                   }}
                   component="a"
-                  // onClick={(e) => handleTransiton(e, page.href)}
-                  href={page.href}
+                  onClick={(e) => handlePopperClick(e, page.href)}
+                  // href={page.href}
                   selected={selectedId === page.id}
                   tabIndex={-1}
                   style={
@@ -340,6 +359,8 @@ export default function LeftMenuTree(props: {
                       anchorEl={idToOpenPop.current.get(page.id)}
                       transition
                       placement="right-start"
+                      onMouseEnter={() => handlePopperMouseEnter(page)}
+                      onMouseLeave={() => handlePopperMouseLeave(page)}
                       style={{ position: "absolute", zIndex: "9999" }}
                     >
                       {({ TransitionProps }) => (
@@ -373,7 +394,8 @@ export default function LeftMenuTree(props: {
   return (
     <div>
       <List
-        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden", bgcolor: "background.paper", padding: 0}}
+      tabIndex={-1}
+        sx={{ width: "100%", maxWidth: 560,overflowX:"hidden",bgcolor: "background.paper", padding: 0}}
         component="nav"
         aria-labelledby="nested-list-subheader"
       >

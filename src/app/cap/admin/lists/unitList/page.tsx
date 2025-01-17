@@ -23,9 +23,7 @@ const columns: GridColDef[] = [
 export default function Unit() {
   return (
     <>
-      <Box sx={{margin: "20px 20px"}}>
       <SecondNavbar title={"List of Unit"}/>
-      </Box>
       <EntityList
         title="Unit"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
