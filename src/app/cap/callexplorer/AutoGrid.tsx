@@ -1784,7 +1784,7 @@ export default function AutoGrid(props: any) {
                   placement="top"
                 >
                   <span>
-                    <ContainedButton
+                    <Button
                       variant="contained"
                       size="small"
                       sx={{
@@ -1794,10 +1794,10 @@ export default function AutoGrid(props: any) {
                       disabled={!enableAllocate}
                     >
                       Allocate Call
-                    </ContainedButton>
+                    </Button>
                   </span>
                 </Tooltip>
-                <ContainedButton
+                <Button
                   variant="contained"
                   size="small"
                   sx={{ textTransform: "none" }}
@@ -1805,7 +1805,7 @@ export default function AutoGrid(props: any) {
                   onClick={handleStatusClick}
                 >
                   Status Update
-                </ContainedButton>
+                </Button>
               </Box>
             </Grid>
             <Grid item md={3} sm={6} xs={12}>
