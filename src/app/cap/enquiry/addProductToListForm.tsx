@@ -117,15 +117,17 @@ export default function AddProductToListForm(props: customprop) {
     if (name === "product" && val?.id) {
       try {
         const res = await getProductById(val.id);
-        if (res[0].id !== 0) {
-          setDefaultValueForUnitUsingProduct({
-            id: res[0].unit_id,
-            name: res[0].unit_name,
-          });
-          values["unit"] = {
-            id: res[0].unit_id,
-            name: res[0].unit_name,
-          };
+        {
+          if (res![0][1]?.id !== 0) {
+            setDefaultValueForUnitUsingProduct({
+              id: res![0][1]?.unit,
+              name: res![0][1]?.unit_name,
+            });
+            values["unit"] = {
+              id: res![0][1]?.unit,
+              name: res![0][1]?.unit_name,
+            };
+          }
         }
       } catch (error) {
         console.error("Error in getProductById:", error);
