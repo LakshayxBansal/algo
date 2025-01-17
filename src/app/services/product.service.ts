@@ -8,7 +8,7 @@ export async function createProductDB(session: Session, data: zm.productSchemaT)
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call createProduct(?,?,?,?,?,?);",
+      query: "call createProduct(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
       values: [
         data.name,
         data.group,
@@ -16,6 +16,17 @@ export async function createProductDB(session: Session, data: zm.productSchemaT)
         data.unit,
         data.hsn_code,
         session.user.userId,
+        data.profileDocument?.docId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
   } catch (e) {
@@ -28,7 +39,7 @@ export async function updateProductDB(session: Session, data: zm.productSchemaT)
   try {
     return excuteQuery({
       host: session.user.dbInfo.dbName,
-      query: "call updateProduct(?,?,?,?,?,?,?,?);",
+      query: "call updateProduct(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
       values: [
         data.id,
         data.name,
@@ -38,6 +49,17 @@ export async function updateProductDB(session: Session, data: zm.productSchemaT)
         data.unit,
         data.hsn_code,
         session.user.userId,
+        data.profileDocument?.docId,
+        data.c_col1,
+        data.c_col2,
+        data.c_col3,
+        data.c_col4,
+        data.c_col5,
+        data.c_col6,
+        data.c_col7,
+        data.c_col8,
+        data.c_col9,
+        data.c_col10
       ],
     });
   } catch (e) {
@@ -139,9 +161,12 @@ export async function fetchProductById(crmDb: string, id: number) {
     const result = await excuteQuery({
       host: crmDb,
       query:
-        "select im.*, gm.name as group_name, um.name as unit_name\
-       from product_master im left join product_group_master gm on im.group_id=gm.id \
-       left join unit_master um on im.unit_id=um.id where im.id=?",
+        "select im.*,im.unit_id as unit, im.group_id as `group`, gm.name as group_name, um.name as unit_name,\
+        cfd.c_col1, cfd.c_col2, cfd.c_col3, cfd.c_col4, \
+        cfd.c_col5, cfd.c_col6, cfd.c_col7, cfd.c_col8, cfd.c_col9, cfd.c_col10\
+        from product_master im left join product_group_master gm on im.group_id=gm.id \
+        left outer join custom_fields_data cfd on cfd.object_id = im.id and cfd.object_type_id=33\
+        left join unit_master um on im.unit_id=um.id where im.id=?",
       values: [id],
     });
 

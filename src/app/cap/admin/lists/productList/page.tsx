@@ -27,10 +27,11 @@ export default function Products() {
       </Box>
       <EntityList
         title="Product"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue,metaData, data) => (
           <ProductForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            metaData={metaData}
             data={data}
           />
         )}

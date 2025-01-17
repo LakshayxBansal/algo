@@ -78,7 +78,7 @@ export async function updateUnit(data: mdl.unitSchemaT) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      const parsed = zs.ProductSchema.safeParse(data);
+      const parsed = zs.UnitSchema.safeParse(data);
 
       if (parsed.success) {
         const dbResult = await updateUnitDB(session, data as mdl.unitSchemaT);

@@ -15,6 +15,10 @@ import { fetchProductById } from "@/app/services/product.service";
 import * as mdl from "../models/models";
 import { SqlError } from "mariadb";
 import { bigIntToNum } from "../utils/db/types";
+import { uploadLogo, viewExecutiveDoc } from "./document.controller";
+import { getRegionalSettings } from "./config.controller";
+import { getScreenDescription } from "./object.controller";
+import { PRODUCT_OBJECT_ID } from "../utils/consts.utils";
 
 export async function createProduct(data: productSchemaT) {
   let result;
@@ -23,6 +27,12 @@ export async function createProduct(data: productSchemaT) {
     if (session?.user.dbInfo) {
       const parsed = zs.ProductSchema.safeParse(data);
       if (parsed.success) {
+
+        if(data.profileDocument?.file)
+        {
+          const imageId = await uploadLogo(data.profileDocument as mdl.docDescriptionSchemaT);
+        }
+
         const dbResult = await createProductDB(session, data as productSchemaT);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -78,6 +88,14 @@ export async function updateProduct(data: productSchemaT) {
       const parsed = zs.ProductSchema.safeParse(data);
 
       if (parsed.success) {
+        if(data.profileDocument?.file && !(data.profileDocument?.docId))
+        {
+          const logoId = await uploadLogo(data.profileDocument as mdl.docDescriptionSchemaT);
+          if(!logoId)
+          {
+            throw new Error("Failed to upload Logo")
+          }
+        }
         const dbResult = await updateProductDB(session, data as productSchemaT);
         if (dbResult[0].length === 0) {
           result = { status: true, data: dbResult[1] };
@@ -151,7 +169,46 @@ export async function getProductById(id: number) {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return fetchProductById(session.user.dbInfo.dbName, id);
+      const userRights = {};
+      const configData = await getRegionalSettings();
+      const screenDesc = await getScreenDescription(PRODUCT_OBJECT_ID);
+      const loggedInUserData = {
+        name: session?.user.name,
+              userId : session?.user.userId
+      }
+      if(id)
+      {
+          const productDetails = await fetchProductById(session.user.dbInfo.dbName, id);
+          if(productDetails[0]?.product_img)
+            {
+              const docData = await viewExecutiveDoc(productDetails[0]?.product_img)
+              productDetails[0].profileDocument = {
+                ...docData,
+                docId: productDetails[0]?.docId,
+                file: docData?.buffer,
+                description: "Product Image"
+              }
+            }
+            const result = [
+              screenDesc,
+              productDetails[0],
+              userRights,
+              configData,
+              loggedInUserData
+            ]
+
+            return [result];
+      }
+      
+      const result=[
+        screenDesc,
+        userRights,
+        configData,
+        loggedInUserData
+      ]
+      return[
+        result
+      ];
     }
   } catch (error) {
     throw error;
