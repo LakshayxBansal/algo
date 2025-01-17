@@ -353,7 +353,7 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
               />
 
               <Box sx={{font: "-webkit-small-control"}}>
-                <FormLabel sx={{fontSize: "0.7rem"}}>Today's Date:</FormLabel>
+                <FormLabel sx={{fontSize: "0.7rem"}}>Today&apos;s Date:</FormLabel>
                 <Typography>
                   {config.regionalSetting?.dateFormat == "" ? "" : dayjs(new Date()).format(config.regionalSetting?.dateFormat) as string}
                 </Typography>

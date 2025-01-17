@@ -25,10 +25,11 @@ export default function Products() {
       <SecondNavbar title={"List of Product"}/>
       <EntityList
         title="Product"
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
+        renderForm={(fnDialogOpen, fnDialogValue,metaData, data) => (
           <ProductForm
             setDialogOpen={fnDialogOpen}
             setDialogValue={fnDialogValue}
+            metaData={metaData}
             data={data}
           />
         )}
