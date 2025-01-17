@@ -17,6 +17,7 @@ export async function getExecutiveGroupList(
       query = query + " where name like '%" + searchString + "%'";
       values = [];
     }
+    query = query + " order by name";
     const result = await excuteQuery({
       host: crmDb,
       query: query,
