@@ -52,6 +52,7 @@ export default function ProductForm(
   [
     "name",
     <InputControl
+      key="name"
       inputType={InputType.TEXT}
       autoFocus
       id="name"
@@ -69,6 +70,7 @@ export default function ProductForm(
   [
     "alias",
     <InputControl
+      key='alias'
       inputType={InputType.TEXT}
       id="alias"
       label="Alias"
@@ -83,6 +85,7 @@ export default function ProductForm(
   [
     "product_group_name",
     <SelectMasterWrapper
+      key='product_group_name'
       name={"productGroup"}
       id={"productGroup"}
       label={"Product Group Name"}
@@ -117,6 +120,7 @@ export default function ProductForm(
   [
     "unit_name",
     <SelectMasterWrapper
+      key='unit'
       name={"unit"}
       id={"unit"}
       label={"Unit Name"}
@@ -152,6 +156,7 @@ export default function ProductForm(
   [
     "hsn_code",
     <InputControl
+      key='hsn_code'
       inputType={InputType.TEXT}
       name="hsn_code"
       id="hsn_code"
