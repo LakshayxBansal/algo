@@ -1,7 +1,7 @@
 "use client";
 
-import { startTransition, useEffect, useRef, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import {  useSearchParams } from "next/navigation";
 import {
   GridColDef,
   GridFilterModel,
@@ -10,7 +10,6 @@ import {
   useGridApiRef,
   gridClasses,
   GridColumnVisibilityModel,
-  DEFAULT_GRID_AUTOSIZE_OPTIONS,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import {
@@ -27,7 +26,6 @@ import {
   Popper,
   Tooltip,
   TextField,
-  useStepContext,
 } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
@@ -48,7 +46,6 @@ import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { useRouter } from "next/navigation";
-import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import {
   getUserPreference,
   insertUserPreference,
@@ -56,8 +53,6 @@ import {
 } from "@/app/controllers/callExplorer.controller";
 import { getColumns } from "@/app/controllers/masters.controller";
 import React from "react";
-import { flushSync } from "react-dom";
-import { object } from "zod";
 
 const pgSize = 10;
 
@@ -77,7 +72,7 @@ export default function EntityList(props: entitiyCompT) {
   const [allColumns, setAllColumns] = useState([] as any);
   const [NRows, setNRows] = useState<number>(0);
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
-  const [filterModel, setFilterModel] = useState<GridFilterModel>();
+  // const [filterModel, setFilterModel] = useState<GridFilterModel>();
   const [modData, setModData] = useState({});
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [search, setSearch] = useState<string>("");
@@ -95,8 +90,8 @@ export default function EntityList(props: entitiyCompT) {
   const [focusedRow, setFocusedRow] = useState<any>();
 
   const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectionModel, setSelectionModel] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  // const [selectionModel, setSelectionModel] = useState([]);
 
 
   
@@ -175,7 +170,7 @@ const getRowClassName = (params:any) =>
   const dfltColFields: string[] = allDfltCols.map((col) => col.field);
 
   const fetchData = debounce(async (searchText) => {
-    setLoading(true);
+    // setLoading(true);
     const rows: any = await props.fetchDataFn(
       PageModel.page,
       searchText as string,
@@ -477,7 +472,6 @@ const getRowClassName = (params:any) =>
             ) : null}
           </AddDialog>
         )}
-        {/* <SecondNavbar title={props.title}/> */}
         <Paper
           elevation={3}
           sx={{
@@ -696,7 +690,7 @@ const getRowClassName = (params:any) =>
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}
             filterMode="server"
-            onFilterModelChange={setFilterModel}
+            // onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
             onCellKeyDown={handleCellKeyDown}
