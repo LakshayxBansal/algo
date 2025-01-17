@@ -28,11 +28,11 @@ import { updateProduct } from "@/app/controllers/product.controller";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { VisuallyHiddenInput } from "@/styledComponents";
+import CustomField from "@/app/cap/enquiry/CustomFields";
 
 export default function ProductForm(
   props: masterFormPropsWithDataT<productSchemaT>
 ) {
-  console.log(props);
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
   >({});
@@ -46,7 +46,157 @@ export default function ProductForm(
   const [uploadedImage, setUploadedImage] = useState<string | null>(props?.data?.profileDocument?.file ? `data:image/png;base64,${props.data.profileDocument?.file}` : null)
   const [profileImage, setProfileImage] = useState<docDescriptionSchemaT>(props.data?.profileDocument ? props?.data?.profileDocument : {} as docDescriptionSchemaT);
   
+  let fieldArr: React.ReactElement[] = [];
 
+ const defaultComponentMap = new Map<string, React.ReactNode>([
+  [
+    "name",
+    <InputControl
+      inputType={InputType.TEXT}
+      autoFocus
+      id="name"
+      label="Name"
+      name="name"
+      required
+      titleCase={true}
+      error={formError?.name?.error}
+      helperText={formError?.name?.msg}
+      setFormError={setFormError}
+      defaultValue={entityData.name}
+      style={{ width: "100%" }}
+    />
+  ],
+  [
+    "alias",
+    <InputControl
+      inputType={InputType.TEXT}
+      id="alias"
+      label="Alias"
+      name="alias"
+      error={formError?.alias?.error}
+      helperText={formError?.alias?.msg}
+      setFormError={setFormError}
+      defaultValue={entityData.alias}
+      style={{ width: "100%" }}
+    />
+  ],
+  [
+    "product_group_name",
+    <SelectMasterWrapper
+      name={"productGroup"}
+      id={"productGroup"}
+      label={"Product Group Name"}
+      dialogTitle={"Product Group"}
+      fetchDataFn={getProductGroup}
+      fnFetchDataByID={getProductGroupById}
+      allowModify={true}
+      defaultValue={
+        {
+          id: entityData.group,
+          name: entityData.group_name,
+        } as optionsDataT
+      }
+      onChange={(e, val, s) =>
+        setSelectValues({
+          ...selectValues,
+          productGroup: val ? val : { id: 0, name: "" },
+        })
+      }
+      formError={formError?.productGroup}
+      setFormError={setFormError}
+      renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+        <ProductGroupForm
+          setDialogOpen={fnDialogOpen}
+          setDialogValue={fnDialogValue}
+          data={data}
+        />
+      )}
+      width={352}
+    />
+  ],
+  [
+    "unit_name",
+    <SelectMasterWrapper
+      name={"unit"}
+      id={"unit"}
+      label={"Unit Name"}
+      dialogTitle={"Unit"}
+      required
+      allowModify={true}
+      defaultValue={
+        {
+          id: entityData.unit,
+          name: entityData.unit_name,
+        } as optionsDataT
+      }
+      onChange={(e, val, s) =>
+        setSelectValues({
+          ...selectValues,
+          unit: val ? val : { id: 0, name: "" },
+        })
+      }
+      fetchDataFn={getUnit}
+      fnFetchDataByID={getUnitById}
+      formError={formError.unit}
+      setFormError={setFormError}
+      renderForm={(fnDialogOpen, fnDialogValue, data?) => (
+        <UnitForm
+          setDialogOpen={fnDialogOpen}
+          setDialogValue={fnDialogValue}
+          data={data}
+        />
+      )}
+      width={352}
+    />
+  ],
+  [
+    "hsn_code",
+    <InputControl
+      inputType={InputType.TEXT}
+      name="hsn_code"
+      id="hsn_code"
+      label="HSN Code"
+      error={formError?.hsn_code?.error}
+      helperText={formError?.hsn_code?.msg}
+      setFormError={setFormError}
+      defaultValue={entityData.hsn_code}
+      style={{ width: "100%" }}
+  />
+  ]
+ ]);
+
+  props.metaData?.fields.map((field: any) => {
+    if(field.is_default_column === 1)
+    {
+      const baseElement = defaultComponentMap.get(
+        field.column_name_id
+      ) as React.ReactElement;
+
+
+
+      const fld = React.cloneElement(baseElement, {
+        ...baseElement.props,
+        label: field.column_label,
+        required: field.is_mandatory === 1,
+        key: `field-name-${field.column_name_id}`,
+        disabled: field.is_disabled === 1 ? true : false,
+      });
+
+      fieldArr.push(fld);
+    } else {
+        const fld = (
+        <CustomField
+          key={`field-custom-${field.column_name_id}`}
+          desc={field}
+          defaultValue={
+            entityData[field.column_name_id as keyof productSchemaT]
+          }
+        />
+      );
+      fieldArr.push(fld);
+    }
+    return null;
+  })
 
   const handleCancel = () => {
     props.setDialogOpen ? props.setDialogOpen(false) : null;
@@ -54,6 +204,10 @@ export default function ProductForm(
 
   const handleSubmit = async (formData: FormData) => {
     let data: { [key: string]: any } = {};
+
+    for (let i = 1; i <= 10; ++i) {
+      data[`c_col${i}`] = "";
+    }
 
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -192,115 +346,16 @@ export default function ProductForm(
       <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
         <form key={formKey} action={handleSubmit} noValidate>
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <InputControl
-                inputType={InputType.TEXT}
-                autoFocus
-                id="name"
-                label="Name"
-                name="name"
-                required
-                titleCase={true}
-                error={formError?.name?.error}
-                helperText={formError?.name?.msg}
-                setFormError={setFormError}
-                defaultValue={entityData.name}
-                style={{ width: "100%" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <InputControl
-                inputType={InputType.TEXT}
-                id="alias"
-                label="Alias"
-                name="alias"
-                error={formError?.alias?.error}
-                helperText={formError?.alias?.msg}
-                setFormError={setFormError}
-                defaultValue={entityData.alias}
-                style={{ width: "100%" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <SelectMasterWrapper
-                name={"productGroup"}
-                id={"productGroup"}
-                label={"Product Group Name"}
-                dialogTitle={"Product Group"}
-                fetchDataFn={getProductGroup}
-                fnFetchDataByID={getProductGroupById}
-                allowModify={true}
-                defaultValue={
-                  {
-                    id: entityData.group,
-                    name: entityData.group_name,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    productGroup: val ? val : { id: 0, name: "" },
-                  })
-                }
-                formError={formError?.productGroup}
-                setFormError={setFormError}
-                renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                  <ProductGroupForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-                width={352}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <SelectMasterWrapper
-                name={"unit"}
-                id={"unit"}
-                label={"Unit Name"}
-                dialogTitle={"Unit"}
-                required
-                allowModify={true}
-                defaultValue={
-                  {
-                    id: entityData.unit,
-                    name: entityData.unit_name,
-                  } as optionsDataT
-                }
-                onChange={(e, val, s) =>
-                  setSelectValues({
-                    ...selectValues,
-                    unit: val ? val : { id: 0, name: "" },
-                  })
-                }
-                fetchDataFn={getUnit}
-                fnFetchDataByID={getUnitById}
-                formError={formError.unit}
-                setFormError={setFormError}
-                renderForm={(fnDialogOpen, fnDialogValue, data?) => (
-                  <UnitForm
-                    setDialogOpen={fnDialogOpen}
-                    setDialogValue={fnDialogValue}
-                    data={data}
-                  />
-                )}
-                width={352}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <InputControl
-                inputType={InputType.TEXT}
-                name="hsn_code"
-                id="hsn_code"
-                label="HSN Code"
-                error={formError?.hsn_code?.error}
-                helperText={formError?.hsn_code?.msg}
-                setFormError={setFormError}
-                defaultValue={entityData.hsn_code}
-                style={{ width: "100%" }}
-              />
-            </Grid>
+            {
+              fieldArr.map((field, index) => {
+                const fieldKey = field.key as string;
+                return (
+                  <Grid key={fieldKey} item xs={12} sm={6} md={4} >
+                    <div key={index}>{field}</div>
+                  </Grid>
+                )
+              })
+            }
             <Grid container item xs={12}>
                 <Grid item xs={6} sx={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-start" }}>
                   <Box>
