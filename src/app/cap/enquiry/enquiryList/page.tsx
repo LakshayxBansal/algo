@@ -8,60 +8,63 @@ import {
   getEnquiryDataByPage,
   delEnquiryDataById,
 } from "@/app/controllers/enquiry.controller";
+import SecondNavbar from "../../navbar/SecondNavbar";
+import { Box } from "@mui/material";
 import { ENQUIRY_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [
   {
     field: "enq_number",
     headerName: "Enquiry Description",
-    editable: true,
+    editable: false,
   },
   {
     field: "contact",
     headerName: "Contact",
-    editable: true,
+    editable: false,
   },
   {
     field: "category",
     headerName: "Category",
-    editable: true,
+    editable: false,
   },
   {
     field: "source",
     headerName: "Source",
-    editable: true,
+    editable: false,
   },
   {
     field: "received_by",
     headerName: "Received By",
-    editable: true,
+    editable: false,
   },
   {
     field: "status",
     headerName: "Status",
-    editable: true,
+    editable: false,
   },
   {
     field: "sub_status",
     headerName: "Sub Status",
-    editable: true,
+    editable: false,
   },
 
   {
     field: "action_taken",
     headerName: "Action Taken",
-    editable: true,
+    editable: false,
   },
   {
     field: "next_action",
     headerName: " Next Action ",
-    editable: true,
+    editable: false,
   },
 ];
 
 export default function Action() {
   return (
     <>
+        <SecondNavbar title="List of Enquiry Ticket" />
       <EntityList
         title="Enquiry Ticket"
         fileUploadFeatureReqd={true}

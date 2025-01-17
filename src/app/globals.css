@@ -9,11 +9,15 @@ body
   cursor: wait;
 }
 
+.Mui-focused-row {
+  background-color:#C5D2E7;
+}
+
 /* Styles for scrollbar */
 /* width */
 ::-webkit-scrollbar {
   width: 0.4em;
-  height:0.5em;
+  height:0.4em;
 }
 
 /* Track */
@@ -23,11 +27,11 @@ body
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #1976d2; 
+  background: #4870ac; 
   border-radius: 16px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #63a4ff; 
+  background: #777F8C; 
 }

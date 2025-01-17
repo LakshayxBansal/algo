@@ -18,6 +18,8 @@ export async function getEnquiryCategoryList(
       query = query + " where name like '%" + searchString + "%'";
       values = [];
     }
+
+    query = query + " order by name";
     const result = await excuteQuery({
       host: crmDb,
       query: query,

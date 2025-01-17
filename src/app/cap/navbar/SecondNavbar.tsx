@@ -1,5 +1,5 @@
 "use client";
-import NextBreadcrumb from "@/app/utils/NextBreadcrumbs";
+import NextBreadcrumb from "@/app/Widgets/NextBreadcrumbs";
 import React, { useState } from "react";
 import { Paper, Grid, Typography } from "@mui/material";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -23,7 +23,7 @@ function SecondNavbar(props:{title?:string}) {
 
   return (
     <div>
-      <Paper elevation ={3} style={{ padding: 5, marginTop:props.title == "Company List"? 20:70,marginBottom:20, alignItems:"center" }}>
+      <Paper elevation ={3} style={{ padding: 5, margin:"20px 20px", alignItems:"center" }}>
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h6" style={{ verticalAlign: "baseline" }}>

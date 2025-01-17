@@ -7,6 +7,7 @@ import SecondNavbar from './navbar/SecondNavbar';
 import { useState } from 'react';
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
+import { CssBaseline } from '@mui/material';
 
 export const metadata : Metadata = {
   title : 'Dashboard'
@@ -46,6 +47,7 @@ export default function CapLayout({children} : {children?: React.ReactNode}) {
         <AppMenu pathname ={pathname}>
           <Box id="cap_layout">
             <ThemeProvider theme={theme}>
+            <CssBaseline />
               {children}
             </ThemeProvider>
           </Box>

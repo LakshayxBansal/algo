@@ -1,7 +1,7 @@
 "use client";
 
-import { startTransition, useEffect, useRef, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import {  useSearchParams } from "next/navigation";
 import {
   GridColDef,
   GridFilterModel,
@@ -10,7 +10,6 @@ import {
   useGridApiRef,
   gridClasses,
   GridColumnVisibilityModel,
-  DEFAULT_GRID_AUTOSIZE_OPTIONS,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import {
@@ -27,7 +26,6 @@ import {
   Popper,
   Tooltip,
   TextField,
-  useStepContext,
 } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
@@ -48,15 +46,13 @@ import Seperator from "../seperator";
 import DeleteComponent from "./component/DeleteComponent";
 import IconComponent from "./component/IconComponent";
 import { useRouter } from "next/navigation";
-import SecondNavbar from "@/app/cap/navbar/SecondNavbar";
 import {
   getUserPreference,
   insertUserPreference,
   updateUserPreference,
 } from "@/app/controllers/callExplorer.controller";
 import { getColumns } from "@/app/controllers/masters.controller";
-import { flushSync } from "react-dom";
-import { object } from "zod";
+import React from "react";
 
 const pgSize = 10;
 
@@ -76,7 +72,7 @@ export default function EntityList(props: entitiyCompT) {
   const [allColumns, setAllColumns] = useState([] as any);
   const [NRows, setNRows] = useState<number>(0);
   const [PageModel, setPageModel] = useState({ pageSize: pgSize, page: 0 });
-  const [filterModel, setFilterModel] = useState<GridFilterModel>();
+  // const [filterModel, setFilterModel] = useState<GridFilterModel>();
   const [modData, setModData] = useState({});
   const [dlgMode, setDlgMode] = useState(dialogMode.Add);
   const [search, setSearch] = useState<string>("");
@@ -91,10 +87,11 @@ export default function EntityList(props: entitiyCompT) {
     regionalSettingsConfigData: {} as regionalSettingSchemaT,
     loggedInUserData: {} as loggedInUserDataT,
   });
+  const [focusedRow, setFocusedRow] = useState<any>();
 
   const [rowSelectionModel, setRowSelectionModel] =useState<GridRowSelectionModel>([]);
-
-  const [selectionModel, setSelectionModel] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  // const [selectionModel, setSelectionModel] = useState([]);
 
 
   
@@ -115,36 +112,30 @@ export default function EntityList(props: entitiyCompT) {
 
 let timeOut: string | number | NodeJS.Timeout | undefined;
 
+const handleCellKeyDown = (params: any, event: any, details: any) => {
+  const rowId = params.row.id;
+  const currentIndex = data.findIndex((row: any) => row.id === rowId);
 
-  const handleCellKeyDown = (params: any, event: any, details: any) => {
-    const rowId = params.row.id;
-    const currentIndex = data.findIndex((row: any) => row.id === rowId);
+  let nextIndex = currentIndex;
 
-    let nextIndex = currentIndex;
-
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      nextIndex =
-        currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
-    } else if (event.key === "Enter" || event.key === " ") { 
-      event.preventDefault();
+if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
+    // event.preventDefault();
+    nextIndex =
+      currentIndex + 1 < data.length ? currentIndex + 1 : currentIndex;
+  } else if ((event.key === "ArrowUp") || (event.key === "Tab" && event.shiftKey)) {
+    // event.preventDefault();
+    nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+  } 
+  if (nextIndex !== currentIndex) {
+    const nextRow = data[nextIndex];
+    if (nextRow) {
+      setFocusedRow(nextRow);
     }
+  }
+};
 
-    if (nextIndex !== currentIndex) {
-      const nextRow = data[nextIndex];
-      if (nextRow) {
-        // setRowSelectionModel([nextRow.id]);
-        // setSelectedRow(nextRow);
-      }
-    }
-  };
-
-  
-
-
+const getRowClassName = (params:any) =>
+  focusedRow?.id === params.row.id ? "Mui-focused-row" : "";
 
   const optionsColumn: GridColDef[] = [
     {
@@ -179,42 +170,25 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
   const dfltColFields: string[] = allDfltCols.map((col) => col.field);
 
   const fetchData = debounce(async (searchText) => {
+    // setLoading(true);
     const rows: any = await props.fetchDataFn(
       PageModel.page,
       searchText as string,
-      pgSize as number
+      PageModel.pageSize as number, //pgSize as number
     );
     if (rows.data) {
       setData(rows.data);
+      console.log("data", rows.data);
       setNRows(rows.count as number);
     }
-    // if (props.fnFetchColumns) {
-    //   const columnsData = await props.fnFetchColumns();
-    //   if (columnsData) {
-    //     const dbColumns = columnsData.map((col: any) => ({
-    //       field: col.column_name,
-    //       headerName: col.column_label,
-    //     }));
-    //     // filter on columns not to showinitially
-    //     const filteredColumns = dbColumns.filter(
-    //       (col: any) => !dfltColFields.includes(col.field)
-    //     );
-    //     //columns not to showinitially
-    //     const allColumns = allDfltCols.concat(filteredColumns);
-    //     const visibleColumns = allColumns.reduce((model: any, col: any) => {
-    //       model[col.field] = dfltColFields.includes(col.field);
-    //       return model;
-    //     }, {});
-    //     setColumnVisibilityModel(visibleColumns);
-    //     setAllColumns(allColumns);
-    //     // setColumnsChanged(true);
-    //     // we dont need the state as use effect renders two time in the first iteration of useeffect it will set the visibility model
-    //   }
-    // }
-    //  else {
-    //   setAllColumns(allDfltCols);
-    // }
   }, 100);
+
+  React.useLayoutEffect(() => {
+    if (apiRef.current) {
+      apiRef.current.setCellFocus(focusedRow, "More Options");
+    }
+  }, [focusedRow]);
+
 
   useEffect(() => {
     if(!dialogOpen){
@@ -233,7 +207,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
     search,
     searchData,
     props,
-    dialogOpen
+    dialogOpen,
   ]);
   const fetchAllColumns = async (objectTypeId?: number) => {
     // Only fetch if objectTypeId exists
@@ -498,7 +472,6 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             ) : null}
           </AddDialog>
         )}
-        {/* <SecondNavbar title={props.title}/> */}
         <Paper
           elevation={3}
           sx={{
@@ -516,6 +489,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
             <Grid item xs={12} sm={8} md={8}>
               <Box sx={{ width: { xs: "92%", md: "50%" } }}>
                 <TextField
+                tabIndex={1}
                   variant="outlined"
                   fullWidth
                   placeholder="Search..."
@@ -523,6 +497,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                   onChange={handleSearch}
                   margin="normal"
                   InputProps={{
+                    tabIndex: 1,
                     startAdornment: (
                       <InputAdornment position="start">
                         <SearchIcon fontSize="small" />
@@ -568,7 +543,9 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                     }}
                   >
                     <Tooltip title="Add New" placement="top-start" arrow>
-                      <Button size="small" onClick={handleAddBtn}>
+                      <Button size="small" onClick={handleAddBtn}
+                       tabIndex={2}
+                       >
                         <AddIcon
                           fontSize="small"
                           style={{ marginRight: "5px" }}
@@ -620,6 +597,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                                   setDialogOpen(true);
                                   setDlgMode(dialogMode.FileUpload);
                                 }}
+                                tabIndex={-1}
                               >
                                 <CloudUploadIcon
                                   fontSize="small"
@@ -662,6 +640,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
               {props.AddAllowed && (
                 <Tooltip title="Add New">
                   <Button
+                  tabIndex={2}
                     size="small"
                     variant="contained"
                     sx={{ width: { xs: "85%", md: "auto" } }}
@@ -699,22 +678,23 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
           <StripedDataGrid
             apiRef={apiRef}
             disableColumnMenu
-            rows={data ? data : []}
+            rows={data}
             rowHeight={40}
             columns={allColumns}
             onColumnResize={handleColumnResize}
             rowCount={NRows}
             getRowId={(row) => row.id}
             pagination={true}
-            pageSizeOptions={[5, pgSize, 20]}
+            pageSizeOptions={[pgSize, 20,30]}
             paginationMode="server"
             paginationModel={PageModel}
             onPaginationModelChange={setPageModel}
             filterMode="server"
-            onFilterModelChange={setFilterModel}
+            // onFilterModelChange={setFilterModel}
             rowSelectionModel={rowSelectionModel}
             loading={!data}
             onCellKeyDown={handleCellKeyDown}
+            getRowClassName={getRowClassName}
             // autosizeOptions={autosizeOptions}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
@@ -753,7 +733,7 @@ let timeOut: string | number | NodeJS.Timeout | undefined;
                 },
               },
             }}
-            disableRowSelectionOnClick
+            // disableRowSelectionOnClick
             sx={{ maxHeight: props.height }}
           />
         </Paper>

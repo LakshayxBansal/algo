@@ -23,9 +23,7 @@ const columns: GridColDef[] = [
 export default function subStatus() {
   return (
     <>
-      <Box sx={{margin: "20px 20px"}}>
       <SecondNavbar title={"List of Sub Status"}/>
-      </Box>
       <EntityList
         title="Sub Status"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

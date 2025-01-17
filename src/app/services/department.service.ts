@@ -113,7 +113,7 @@ export async function getDepartmentByPageDb(
   limit: number
 ) {
   try {
-    const vals: any = [page, limit, limit];
+    const vals: any = [page, limit, limit,limit];
 
     if (filter) {
       vals.unshift(filter);

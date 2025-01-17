@@ -191,7 +191,10 @@ export const ProductSchema = z.object({
     .string()
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
-  unit: z.number().optional(),
+  unit: z.number().refine((val) => val !== 0, {
+    message: "Required",
+    path: ["unit"],
+  }),
   unit_name: z.string().optional(),
   hsn_code: z
     .string()
@@ -201,6 +204,17 @@ export const ProductSchema = z.object({
   modified_by: z.number().optional(),
   created_on: z.date().optional(),
   modified_on: z.date().optional(),
+  profileDocument: docDescriptionSchema.optional(),
+  c_col1: z.string().optional(),
+  c_col2: z.string().optional(),
+  c_col3: z.string().optional(),
+  c_col4: z.string().optional(),
+  c_col5: z.string().optional(),
+  c_col6: z.string().optional(),
+  c_col7: z.string().optional(),
+  c_col8: z.string().optional(),
+  c_col9: z.string().optional(),
+  c_col10: z.string().optional(),
 });
 
 export const productToListFormSchema = z.object({
@@ -425,6 +439,7 @@ export const executiveSchema = z
     ]),
     // aadhaar: z.union([z.literal(""), z.string().max(20)]),
     aadhaar: z.union([z.literal(""), z.string().optional()]),
+    profileDocument: docDescriptionSchema.optional(),
     c_col1: z.string().optional(),
     c_col2: z.string().optional(),
     c_col3: z.string().optional(),

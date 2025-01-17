@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { getSession } from "../../services/session.service";
@@ -22,7 +23,7 @@ export default async function Dashboard() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-        return (
+      return (
           <Box sx={{ maxWidth: "100%", bgcolor: "#F9FAFB" }}>
             <Box sx={{ py: 3, maxWidth: "90vw", margin: "auto" }}>
               <Grid container spacing={3}>

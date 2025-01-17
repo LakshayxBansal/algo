@@ -13,7 +13,7 @@ export async function createExecutiveDB(
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.alias,
         data.name,
@@ -38,6 +38,7 @@ export async function createExecutiveDB(
         data.executive_dept_id,
         data.executive_group_id,
         session.user.userId,
+        data.profileDocument?.docId,
         data.c_col1,
         data.c_col2,
         data.c_col3,
@@ -72,7 +73,7 @@ export async function updateExecutiveDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateExecutive(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         data.id,
         data.alias,
@@ -99,6 +100,7 @@ export async function updateExecutiveDB(
         data.executive_dept_id,
         data.executive_group_id,
         session.user.userId,
+        data.profileDocument?.docId,
         data.c_col1,
         data.c_col2,
         data.c_col3,

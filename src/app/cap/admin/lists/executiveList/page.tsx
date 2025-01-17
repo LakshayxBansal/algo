@@ -40,9 +40,7 @@ const columns: GridColDef[] = [
 export default function executive() {
   return (
     <>
-      <Box sx={{margin: "20px 20px"}}>
       <SecondNavbar title={"List of Executive"}/>
-      </Box>
       <EntityList
         title="Executive"
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (

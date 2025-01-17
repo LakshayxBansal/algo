@@ -28,7 +28,7 @@ import { modifyPhone } from "../utils/phoneUtils";
 import { logger } from "../utils/logger.utils";
 import { getUserDetailsById } from "./user.controller";
 import { revalidatePage } from "../company/SelectCompany";
-import { getDocs, uploadDocument } from "./document.controller";
+import { getDocs, uploadDocument, uploadLogo, viewExecutiveDoc } from "./document.controller";
 import { getObjectByName } from "./rights.controller";
 import { getRegionalSettings } from "./config.controller";
 import { getScreenDescription } from "./object.controller";
@@ -46,6 +46,11 @@ export async function createExecutive(data: executiveSchemaT, docData: mdl.docDe
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
+
+        if(data.profileDocument?.file)
+        {
+          const imageId = await uploadLogo(data.profileDocument as mdl.docDescriptionSchemaT);
+        }
 
         const dbResult = await createExecutiveDB(
           session,
@@ -113,6 +118,14 @@ export async function updateExecutive(data: executiveSchemaT, docData: mdl.docDe
       const parsed = zs.executiveSchema.safeParse(data);
 
       if (parsed.success) {
+        if(data.profileDocument?.file && !(data.profileDocument?.docId))
+        {
+          const logoId = await uploadLogo(data.profileDocument as mdl.docDescriptionSchemaT);
+          if(!logoId)
+          {
+            throw new Error("Failed to upload Logo")
+          }
+        }
         const dbResult = await updateExecutiveDB(
           session,
           data as executiveSchemaT
@@ -240,6 +253,7 @@ export async function getExecutiveById(id: number) {
       }
       if (id) {
         const executiveDetails = await getExecutiveDetailsById(session.user.dbInfo.dbName, id);
+
         if (executiveDetails.length > 0 && executiveDetails[0].crm_user_id) {
           const crm_user = await getUserDetailsById(executiveDetails[0].crm_user_id);
           if (crm_user) {
@@ -253,6 +267,18 @@ export async function getExecutiveById(id: number) {
         } else {
           executiveDetails[0].docData = [];
         }
+
+        if(executiveDetails[0]?.profile_img) {
+          const docData = await viewExecutiveDoc(executiveDetails[0]?.profile_img);
+
+          executiveDetails[0].profileDocument = {
+            ...docData,
+            docId: executiveDetails[0]?.profile_img,
+            file: docData?.buffer,
+            description: "Profile Image"
+          }
+        }
+
         const result = [
           screenDesc,
           executiveDetails[0],
