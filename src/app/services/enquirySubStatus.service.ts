@@ -20,6 +20,7 @@ export async function getEnquirySubStatusList(
     if (searchString !== "") {
       query = query + " and sb.name like '%" + searchString + "%'";
     }
+    query = query + " order by sb.name";
     const result = await excuteQuery({
       host: crmDb,
       query: query,
