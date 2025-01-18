@@ -36,6 +36,11 @@ export async function enquiryDataFormat({
   const nextActionDate = formData.get("next_action_date")
     ? toISOString(formData.get("next_action_date") as string)
     : null;
+
+    const actionTakenDate = formData.get("action_taken_date")
+    ? toISOString(formData.get("action_taken_date") as string)
+    : null;
+    
   const headerData = {
     enq_number: (formData.get("enq_number") as string) ?? otherData?.enq_number,
     date:date?.length===0?null:date,
@@ -66,6 +71,7 @@ export async function enquiryDataFormat({
     closure_remark: (formData.get("closure_remark") ?? "") as string,
     allocated_to_id: selectValues.allocated_to?.id,
     allocated_to: selectValues.allocated_to?.name ?? "",
+    action_taken_date: actionTakenDate,
     c_col1: (formData.get("c_col1") ?? "") as string,
     c_col2: (formData.get("c_col2") ?? "") as string,
     c_col3: (formData.get("c_col3") ?? "") as string,

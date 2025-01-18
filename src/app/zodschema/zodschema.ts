@@ -530,6 +530,7 @@ export const enquiryLedgerSchema = z.object({
   next_action_id: z.number().nullable().optional(),
   next_action: z.string().optional(),
   next_action_date: z.string().min(0).max(20).nullable().optional(),
+  action_taken_date: z.string().min(0).max(20).nullable().optional(),
   suggested_action_remark: z
     .string()
     .max(5000, {
@@ -653,6 +654,7 @@ export const supportLedgerSchema = z.object({
   allocated_to_name: z.string().max(60).optional(),
   stamp: z.number().optional(),
   custom_id: z.number().optional(),
+  action_taken_date: z.string().min(0).max(20).optional(),
   c_col1: z.string(),
   c_col2: z.string(),
   c_col3: z.string(),

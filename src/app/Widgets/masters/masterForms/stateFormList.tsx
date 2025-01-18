@@ -67,6 +67,7 @@ export default function StateFormList(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
+        setSelectValues({});
       }
     } else {
       const issues = result.data;

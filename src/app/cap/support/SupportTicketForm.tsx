@@ -166,6 +166,7 @@ const SupportTicketForm = (props: customprop) => {
     .filter(Boolean)
     .join(" "); 
   const handleSubmit = async (formData: FormData) => {
+    console.log(formData);
     const formatedData = await supportDataFormat({
       formData,
       selectValues,
@@ -457,6 +458,36 @@ const SupportTicketForm = (props: customprop) => {
               data={data}
             />
           )}
+        />,
+      ],
+      [
+        "action_taken_date",
+        <InputControl
+          format={dateTimeFormat}
+          key={`action_taken_date`}
+          label="Action Date"
+          inputType={InputType.DATETIMEINPUT}
+          sx={{ display: "flex", flexGrow: 1 }}
+          id="action_taken_date"
+          name="action_taken_date"
+          error={formError?.action_taken_date?.error}
+          helperText={formError?.action_taken_date?.msg}
+          setFormError={setFormError}
+          defaultValue={
+            status === "1"
+              ? masterData?.action_taken_date
+                ? adjustToLocal(masterData.action_taken_date)
+                : props.status
+                ? null
+                : dayjs()
+              : null
+          }
+          slotProps={{
+            openPickerButton: {
+              tabIndex: -1,
+            },
+          }}
+          disabled={status === "2"}
         />,
       ],
       [

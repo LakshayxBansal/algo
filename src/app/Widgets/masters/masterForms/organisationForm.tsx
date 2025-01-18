@@ -177,25 +177,25 @@ export default function OrganisationForm(
     }
   }
 
-  const onSelectChange = async (
-    event: React.SyntheticEvent,
-    val: any,
-    setDialogValue: any,
-    name: string
-  ) => {
-    let values = { ...selectValues };
-    values[name] = val ? val : { id: 0, name: "" };
-
-    if (name === "country") {
-      setStateDisable(false);
-      values["state"] = {};
-      setDefaultState(undefined);
-      if (values.country.id === 0) setStateDisable(true);
-      else setStateDisable(false);
-      setStateKey((prev) => 1 - prev);
+  function onSelectChange(
+      event: React.SyntheticEvent,
+      val: any,
+      setDialogValue: any,
+      name: string
+    ) {
+      let values = { ...selectValues };
+      values[name] = val ? val : { id: 0, name: "" };
+      if (name === "country") {
+        values["state"] = {};
+        setDefaultState(undefined);
+        if (values.country.id === 0) setStateDisable(true);
+        else setStateDisable(false);
+        const newKey = 1-stateKey;
+        setStateKey(newKey);
+      }
+      setSelectValues(values);
     }
-    setSelectValues(values);
-  };
+  
 
   const clearFormError = () => {
     setFormError((curr) => {
@@ -356,56 +356,59 @@ export default function OrganisationForm(
         // }}
       />,
     ],
-    [
-      "country",
-      <SelectMasterWrapper
-        key="country"
-        name={"country"}
-        id={"country"}
-        label={"Country"}
-        dialogTitle={"Country"}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-        fetchDataFn={getCountries}
-        fnFetchDataByID={getCountryById}
-        defaultValue={
-          {
-            id: entityData.country_id,
-            name: entityData.country,
-          } as optionsDataT
-        }
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <CountryForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-          />
-        )}
-      />,
-    ],
-    [
-      "state",
-      <SelectMasterWrapper
-        key={stateKey}
-        name={"state"}
-        id={"state"}
-        label={"State"}
-        onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-        dialogTitle={"State"}
-        fetchDataFn={getStatesforCountry}
-        fnFetchDataByID={getStateById}
-        defaultValue={defaultState}
-        allowModify={!stateDisable}
-        allowNewAdd={!stateDisable}
-        renderForm={(fnDialogOpen, fnDialogValue, data) => (
-          <StateForm
-            setDialogOpen={fnDialogOpen}
-            setDialogValue={fnDialogValue}
-            data={data}
-            parentData={selectValues.country?.id || entityData.country_id}
-          />
-        )}
-      />,
-    ],
+     [
+          "country",
+    
+          <SelectMasterWrapper
+            key={"country"}
+            name={"country"}
+            id={"country"}
+            label={"Country"}
+            dialogTitle={"Country"}
+            width={375}
+            onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+            fetchDataFn={getCountries}
+            fnFetchDataByID={getCountryById}
+            defaultValue={
+              {
+                id: entityData.country_id,
+                name: entityData.country,
+              } as optionsDataT
+            }
+            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              <CountryForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+                data={data}
+              />
+            )}
+          />,
+        ],
+        [
+          "state",
+          <SelectMasterWrapper
+            key={stateKey}
+            name={"state"}
+            id={"state"}
+            label={"State"}
+            onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+            width={375}
+            dialogTitle={"State"}
+            fetchDataFn={getStatesforCountry}
+            fnFetchDataByID={getStateById}
+            defaultValue={defaultState}
+            allowModify={!stateDisable}
+            allowNewAdd={!stateDisable}
+            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              <StateForm
+                setDialogOpen={fnDialogOpen}
+                setDialogValue={fnDialogValue}
+                data={data}
+                parentData={selectValues.country?.id || entityData.country_id}
+              />
+            )}
+          />,
+        ],
     [
       "city",
       <InputControl
@@ -511,19 +514,35 @@ export default function OrganisationForm(
       field.column_name_id === "country" ||
       field.column_name_id === "state"
     ) {
-      const baseElement = defaultComponentMap.get(
-        field.column_name_id
-      ) as React.ReactElement;
-
-      const fld = React.cloneElement(baseElement, {
-        ...baseElement.props,
-        label: field.column_label,
-        required: field.is_mandatory === 1,
-        key: `field-subAddress-${field.column_name_id}`,
-        disabled: field.is_disabled === 1 ? true : false,
-      });
-
-      fieldArr.push(fld);
+     if (field.column_name_id === "state") {
+             const baseElement = defaultComponentMap.get(
+               field.column_name_id
+             ) as React.ReactElement;
+     
+               const fld = React.cloneElement(baseElement, {
+                 ...baseElement.props,
+                 label: field.column_label,
+                 required: field.is_mandatory === 1,
+                 key: `field-subAddress-${field.column_name_id}-${stateKey}`,
+               });
+     
+               fieldArr.push(fld);
+             } else {
+               const baseElement = defaultComponentMap.get(
+                 field.column_name_id
+               ) as React.ReactElement;
+     
+             const fld = React.cloneElement(baseElement, {
+               ...baseElement.props,
+               label: field.column_label,
+               required: field.is_mandatory === 1,
+               key: `field-subAddress-${field.column_name_id}`,
+               disabled: field.is_disabled === 1 ? true : false,
+             });
+     
+               fieldArr.push(fld);
+             }
+           
     } else {
       const fld = (
         <CustomField
