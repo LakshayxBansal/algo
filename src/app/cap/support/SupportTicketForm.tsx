@@ -166,7 +166,6 @@ const SupportTicketForm = (props: customprop) => {
     .filter(Boolean)
     .join(" "); 
   const handleSubmit = async (formData: FormData) => {
-    console.log(formData);
     const formatedData = await supportDataFormat({
       formData,
       selectValues,

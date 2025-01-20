@@ -183,10 +183,11 @@ export default function AddProductToListForm(props: customprop) {
             formError={formError?.product ?? formError.product}
             setFormError={setFormError}
             onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
-            renderForm={(fnDialogOpen, fnDialogValue, data) => (
+            renderForm={(fnDialogOpen, fnDialogValue,metaData, data) => (
               <ProductForm
                 setDialogOpen={fnDialogOpen}
                 setDialogValue={fnDialogValue}
+                metaData={metaData}
                 data={data}
               />
             )}

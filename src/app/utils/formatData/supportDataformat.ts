@@ -76,8 +76,6 @@ export async function supportDataFormat({
     c_col10: (formData.get("c_col10") ?? "") as string,
   };
 
-
-
   return { ...headerData, ...ledgerData};
 }
 

@@ -85,8 +85,6 @@ export function useDialog(props: UseDialogProps): UseDialogReturn {
   }
 
   function changeDialogValue(val: optionsDataT) {
-    console.log("Props", props);
-    console.log(val);
     setDialogValue(val);
     if (props.onChange) {
       props.onChange(null, val, setDialogValue);
