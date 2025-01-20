@@ -185,18 +185,18 @@ export async function getOrganisationByPageDb(
     const vals: any = [page, limit, limit];
 
     if (filter) {
-      vals.unshift(filter);
+      vals.unshift(filter,filter,filter);
     }
 
-    return excuteQuery({
+    const result = await excuteQuery({
       host: crmDb,
       query:
         "SELECT *, RowNum as RowID \
-       FROM (select o.id, o.alias, o.name, o.print_name as printName, o.pan, o.gstin, o.address1, o.address2, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
+       FROM (select o.id, o.alias, o.name, o.print_name, o.pan, o.gstin, o.address1, o.address2, o.city, o.state_id state_id, o.pincode, o.country_id country_id, o.created_by, o.created_on, o.modified_by, o.modified_on, o.stamp, \
         s.name state, co.name country, ROW_NUMBER() OVER () AS RowNum  \
         from organisation_master o left outer join state_master s on o.state_id = s.id \
         left outer join country_master co on o.country_id = co.id " +
-        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        (filter ? "WHERE o.name LIKE CONCAT('%',?,'%') OR o.alias LIKE CONCAT('%',?,'%') OR o.print_name LIKE CONCAT('%',?,'%') " : "") +
         "order by o.name\
       ) AS NumberedRows\
       WHERE RowNum > ?*?\
@@ -204,6 +204,8 @@ export async function getOrganisationByPageDb(
       LIMIT ?;",
       values: vals,
     });
+    console.log(result);
+    return result;
   } catch (e) {
     console.log(e);
   }

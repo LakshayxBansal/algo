@@ -199,9 +199,9 @@ export async function getContactByPageDb(
     const vals: any = [page, limit, limit];
 
     if (filter) {
-      vals.unshift(filter);
+      vals.unshift(filter,filter,filter,filter,filter,filter);
     }
-
+    
     return excuteQuery({
       host: crmDb,
       query:
@@ -214,7 +214,7 @@ export async function getContactByPageDb(
         left outer join country_master co on c.country_id = co.id \
         left outer join department_master d on c.department_id = d.id \
         left outer join  organisation_master o on c.organisation_id = o.id " +
-        (filter ? "WHERE c.name LIKE CONCAT('%', ?, '%') " : "") +
+        (filter ? "WHERE c.name LIKE CONCAT('%', ?, '%') OR c.mobile LIKE CONCAT('%', ?, '%') OR c.whatsapp LIKE CONCAT('%', ?, '%') OR c.email LIKE CONCAT('%', ?, '%') OR c.alias LIKE CONCAT('%', ?, '%') OR o.name LIKE CONCAT('%', ?, '%') " : "") +
         "ORDER BY c.name \
 ) AS NumberedRows \
     WHERE RowNum > ?*? \
