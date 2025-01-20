@@ -20,6 +20,7 @@ const customLabel: any = {
   enquiry: "Enquiry Management",
   support: "Support Management",
   amcWarranty: "AMC Warranty Management",
+  regionalSetting: "Regional Settings",
   closeCall: "Can Close Call at the time of Call Receipt",
   maintainProducts: "Maintain Products in Call Receipt",
   saveFAQ: "Ask to Save FAQ on Call Receipt and Report Saving",
