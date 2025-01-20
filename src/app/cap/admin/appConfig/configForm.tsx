@@ -19,7 +19,8 @@ import { configDeptMapSchemaT, configSchemaT } from "@/app/models/models";
 const customLabel: any = {
   enquiry: "Enquiry Management",
   support: "Support Management",
-  contract: "Contract Management",
+  amcWarranty: "AMC Warranty Management",
+  regionalSetting: "Regional Settings",
   closeCall: "Can Close Call at the time of Call Receipt",
   maintainProducts: "Maintain Products in Call Receipt",
   saveFAQ: "Ask to Save FAQ on Call Receipt and Report Saving",
@@ -53,7 +54,7 @@ function camelCaseToNormal(camelCaseStr: string) {
 // styling for dept select
 function getStyles(id: number, configDept: readonly number[], theme: Theme) {
   return {
-    fontWeight: configDept.includes(id)
+    fontWeight: configDept?.includes(id)
       ? theme.typography.fontWeightMedium
       : theme.typography.fontWeightRegular,
   };
@@ -149,7 +150,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                   sx={{ height: "50px",border: formError?.[key]?.error ? "1px solid red" : "" }}
                 >
                   {/* check out only visible for non mandatory config type */}
-                  {["enquiry", "support", "contract"].includes(key) ?
+                  {["enquiry", "support", "amcWarranty"].includes(key) ?
                     <InputControl
                       key={index}
                       inputType={InputType.CHECKBOX}
@@ -263,7 +264,7 @@ export default function ConfigForm({ configData, allDepts, configDeptMap }: { co
                         {config[key as keyof configSchemaT].hasOwnProperty('voucher') && config[key as keyof configSchemaT]?.voucher?.voucherNumber && <Voucher config={config} setConfig={setConfig} parentKey={key as keyof configSchemaT} formError={formError} setFormError={setFormError} />}
                       </Box>
                       {/* select department is only for these config */}
-                      {["enquiry", "support", "contract"].includes(key) &&
+                      {["enquiry", "support", "amcWarranty"].includes(key) &&
                         <Box>
                           <Typography>Select Department to Allocate</Typography>
                           <FormControl sx={{ m: 1, width: 300 }}>

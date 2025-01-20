@@ -53,6 +53,7 @@ export const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   backgroundColor: "#fff",
   height: 650,
   border: "none",
+
   // disableColumnMenu:true,
   "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
     outline: "none !important",
