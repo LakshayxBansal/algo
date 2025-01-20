@@ -140,8 +140,8 @@ const getRowClassName = (params:any) =>
   const optionsColumn: GridColDef[] = [
     {
       field: "Icon menu",
-      headerName: "More Options",
-      minWidth: 100,
+      headerName: "",
+      minWidth: 50,
       hideable: false,
       sortable: false,
       editable: false,

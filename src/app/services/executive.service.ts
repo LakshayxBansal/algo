@@ -248,7 +248,7 @@ export async function getExecutiveByPageDb(
       host: crmDb,
       query:
         "SELECT *,RowNum AS RowID \
-              FROM (select em.*, am.name area, d.name department, e.name role, egm.name group_name,\
+              FROM (select em.*, am.name area, d.name department, e.name role, egm.name executive_group,\
          s.name state, co.name country, us.name as crm_user, ROW_NUMBER() OVER () AS RowNum\
          from executive_master em left join area_master am on am.id=em.area_id\
          left outer join executive_dept_master d on d.id=em.dept_id\
