@@ -1019,7 +1019,7 @@ export const supportConfigSchema = z.object({
   voucher : voucherSchema.optional()
 })
 
-export const contractConfigSchema = z.object({
+export const amcWarrantyConfigSchema = z.object({
   reqd : z.boolean(),
   voucher : voucherSchema.optional()
 })
@@ -1040,13 +1040,13 @@ export const regionalSettingSchema = z.object({
   voucher : voucherSchema.optional()
 });
 
-export const searchNavbarConfigSchema = z.object({
+export const globalSearchConfigSchema = z.object({
   reqd : z.boolean(),
   menu : z.boolean(),
   enquiryDescription : z.boolean(),
   organisation : z.boolean(),
   supportDescription : z.boolean(),
-  contractDescription : z.boolean(),
+  AmcWarrantyDescription : z.boolean(),
   product : z.boolean(),
   voucher : voucherSchema.optional()
 })
@@ -1084,12 +1084,9 @@ export const searchOrganisationConfigSchema = z.object({
 export const configSchema = z.object({
   enquiry : enquiryConfigSchema,
   support : supportConfigSchema,
-  contract : contractConfigSchema,
+  amcWarranty : amcWarrantyConfigSchema,
   regionalSetting : regionalSettingSchema,
-  searchNavbar : searchNavbarConfigSchema,
-  searchContact : searchContactConfigSchema,
-  searchExecutive : searchExecutiveConfigSchema,
-  searchOrganisation : searchOrganisationConfigSchema
+  globalSearch : globalSearchConfigSchema,
 })
 
 export const companySchema = z.object({
@@ -1246,7 +1243,7 @@ export const loggedInUserData = z.object({
 export const configDeptMapSchema = z.object({
   enquiry : z.array(z.number()),
   support : z.array(z.number()),
-  contract : z.array(z.number())
+  amcWarranty: z.array(z.number())
 })
 
 

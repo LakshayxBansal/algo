@@ -90,7 +90,7 @@ export async function fetchConfigDeptMapData() {
     const configArray = await getConfigDeptMappingDB(session.user.dbInfo.dbName);
 
     const configObj: configDeptMapSchemaT = {} as configDeptMapSchemaT;
-    ["enquiry", "support", "contract"].map((configType: string) => {
+    ["enquiry", "support", "amcWarranty"].map((configType: string) => {
       configObj[configType as keyof configDeptMapSchemaT] = [];
     })
     configArray.map((i: any) => {
