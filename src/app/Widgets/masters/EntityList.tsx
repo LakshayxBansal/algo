@@ -178,7 +178,6 @@ const getRowClassName = (params:any) =>
     );
     if (rows.data) {
       setData(rows.data);
-      console.log("data", rows.data);
       setNRows(rows.count as number);
     }
   }, 100);
@@ -223,7 +222,6 @@ const getRowClassName = (params:any) =>
           }))
         )
       : allDfltCols.map(col => ({ ...col, width: 100 }));
-  
     return columnList;
   };
   
@@ -315,7 +313,6 @@ const getRowClassName = (params:any) =>
     };
   
     fetchAndSetPreferences();
-      console.log("my useeffect run ");
       
     // Cleanup function
     return () => {

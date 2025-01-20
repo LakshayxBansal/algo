@@ -132,14 +132,14 @@ export async function getContactGroupByPageDb(
     const vals: any = [page, limit, limit];
 
     if (filter) {
-      vals.unshift(filter);
+      vals.unshift(filter,filter);
     }
 
     const result = await excuteQuery({
       host: crmDb,
       query:
         "SELECT *,RowNum as RowID FROM (SELECT c1.*, c2.name parent, ROW_NUMBER() OVER () AS RowNum FROM contact_group_master c1 left outer join contact_group_master c2 on c1.parent_id = c2.id " +
-        (filter ? "WHERE name LIKE CONCAT('%',?,'%') " : "") +
+        (filter ? "WHERE name LIKE CONCAT('%',?,'%') OR alias LIKE CONCAT('%', ?, '%') " : "") +
         "order by name) AS NumberedRows WHERE RowNum > ?*? ORDER BY RowNum LIMIT ?;",
       values: vals,
     });
