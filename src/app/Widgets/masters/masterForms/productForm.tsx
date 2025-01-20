@@ -349,7 +349,7 @@ export default function ProductForm(
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1}>
             {
               fieldArr.map((field, index) => {

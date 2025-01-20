@@ -150,7 +150,7 @@ export default function InviteUserForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="inviteForm" sx={{ m: 1, p: 3 }}>
-        <form action={handleSubmit} noValidate>
+        <form action={handleSubmit} noValidate autoComplete="off">
           <Grid
             container
             style={{

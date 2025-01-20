@@ -125,7 +125,7 @@ export default function AddDocsForm({setDialogOpen,setData}:{setDialogOpen : Rea
                 </Alert>
             </Collapse>
             <Box id="sourceForm" sx={{ m: 2, p: 1,width: "500px" }}>
-                <form action={handleSubmit} noValidate>
+                <form action={handleSubmit} noValidate autoComplete="off">
                     <Box
                         sx={{
                             display: "grid",

@@ -123,7 +123,7 @@ export default function ProductList(props: any) {
       </Collapse>
 
       <Box id="sourceForm" sx={{ m: 1, p: 3,  }} >
-        <form action={handleSubmit} noValidate>
+        <form action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1} sx={{width: "350"}}> 
             <Grid item
                 xs={12}

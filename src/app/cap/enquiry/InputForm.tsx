@@ -975,7 +975,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
+      <form action={handleSubmit} style={{ padding: "1em" }} noValidate autoComplete="off">
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>

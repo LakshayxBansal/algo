@@ -122,7 +122,7 @@ export default function StateForm(
         </Alert>
       </Collapse>
       <Box id="stateForm" sx={{ m: 1, p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} autoComplete="off">
           <Grid container spacing={1}>
             <Grid item xs={12} sm={12} md={6} lg={6}>
               <InputControl

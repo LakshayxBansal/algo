@@ -141,7 +141,7 @@ export default function NotificationForm(props: masterFormPropsT) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} autoComplete="off">
           <Paper elevation={3} sx={{ mb: 4, p: 2 }} square={false}>
             <Seperator>Details</Seperator>
             <Box

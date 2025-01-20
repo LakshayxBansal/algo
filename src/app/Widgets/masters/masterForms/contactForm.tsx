@@ -799,7 +799,7 @@ export default function ContactForm(
         </Alert>
       </Collapse>
       <Box id="contactForm" sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;

@@ -170,7 +170,7 @@ export default function AddProductToListForm(props: customprop) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 2, p: 3 }}>
-        <form action={handleSubmit} noValidate>
+        <form action={handleSubmit} noValidate autoComplete="off">
           <SelectMasterWrapper
             name={"product"}
             id={"product"}

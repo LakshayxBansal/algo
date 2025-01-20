@@ -122,9 +122,6 @@ export default function RegionalInfo({ config, setConfig, formError, setFormErro
   return (
     <>
       <Paper sx={{ padding: "1%" }}>
-        <Box mb={2} sx={{ width: "80%" }}>
-          <Seperator>Regional Settings</Seperator>
-        </Box>
         <Box sx={{ width: "90%" }}>
           <Box
             sx={{
