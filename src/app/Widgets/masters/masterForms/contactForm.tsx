@@ -89,17 +89,18 @@ export default function ContactForm(
   const handlePrintNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = event.target.value;
-
+   
     // Clear the existing timeout
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
 
-    // Set a new timeout
+    // // Set a new timeout
     debounceTimeout.current = setTimeout(() => {
-      setPrintNameFn(value);
+      console.log("From COntact Form")
+      setPrintNameFn(event.target.value);
     }, 300);
+
   };
 
   const handleWhatsappChange = (val: string) => {
@@ -266,6 +267,7 @@ export default function ContactForm(
         setFormError={setFormError}
         defaultValue={entityData.name}
         onChange={handlePrintNameChange}
+        // onBlur={handlePrintNameChange}
       />,
     ],
     [

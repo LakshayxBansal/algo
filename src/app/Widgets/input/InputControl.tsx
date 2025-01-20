@@ -93,13 +93,13 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
   );
   const inputRef = useRef<HTMLDivElement | null>(null);
 
-  let prevKey = "",
-    currentKey = "",
-    first = true;
+  const prevKey = useRef("");
+  const currentKey = useRef("")
+   let  first = true;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    prevKey = currentKey;
-    currentKey = event.key;
+    prevKey.current = currentKey.current;
+    currentKey.current = event.key;    
     if (props.onKeyDown) {
       props.onKeyDown(event);
     }
@@ -109,7 +109,6 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
     const flagButton = inputRef.current.getElementsByClassName(
       "MuiTelInput-IconButton"
     )[0] as HTMLElement;
-    console.log("flagbutton ",flagButton);
     
     if (flagButton) {
       flagButton.tabIndex = -1;
@@ -130,11 +129,12 @@ export const InputControl: React.FC<CustomControlProps<any>> = ({
           //  event.target.value = capitalizeFirstChar(event.target.value);
           const currValue = event.target.value;
           const position = event.target.selectionStart;
+          
           if (
             currValue.length === 1 ||
-            (prevKey === " " &&
+            (prevKey.current === " " &&
               position === currValue.length &&
-              currentKey !== "Backspace")
+              currentKey.current !== "Backspace")
           ) {
             const newChar = currValue
               .charAt(currValue.length - 1)

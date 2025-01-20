@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
 export default function Currency() {
   return (
     <>
-      <SecondNavbar title={"List of Currency"}/>
+      <SecondNavbar title={"List of Currencies"}/>
       <EntityList
         title="Currency"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

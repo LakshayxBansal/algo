@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
 export default function State() {
   return (
     <>
-      <SecondNavbar title={"List of State"}/>
+      <SecondNavbar title={"List of States"}/>
       <EntityList
         title="State"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

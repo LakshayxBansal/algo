@@ -26,7 +26,7 @@ export default function Action() {
   return (
     <>
     {/* <Box sx={{margin: "20px 20px"}}> */}
-      <SecondNavbar title={"List of Action"}/>
+      <SecondNavbar title={"List of Actions"}/>
     {/* </Box> */}
       <EntityList
         title="Action"

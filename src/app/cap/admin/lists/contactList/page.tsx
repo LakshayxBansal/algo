@@ -86,7 +86,7 @@ const columns: GridColDef[] = [
 export default function ManageContacts() {
   return (
     <>
-      <SecondNavbar title={"List of Contact"}/>
+      <SecondNavbar title={"List of Contacts"}/>
       <EntityList
         title="Contact"
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (

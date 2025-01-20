@@ -13,7 +13,7 @@ export async function getOpenEnquiriesDb(dbName: string) {
         left join contact_master cm on cm.id = eht.contact_id\
         left join enquiry_category_master ecm on ecm.id = eht.category_id\
         left join enquiry_sub_status_master essm on essm.id = elt.sub_status_id\
-        group by elt.enquiry_id\
+        where active = 1\
         order by eht.created_on desc limit 10;",
       values: [],
     });

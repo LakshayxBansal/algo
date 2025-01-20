@@ -242,6 +242,7 @@ export default function ProductForm(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
+        setSelectValues({});
         setUploadedImage(null);
       }
     } else {

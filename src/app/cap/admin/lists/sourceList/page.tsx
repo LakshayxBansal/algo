@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 export default function enquirySource() {
   return (
     <>
-      <SecondNavbar title={"List of Source"}/>
+      <SecondNavbar title={"List of Sources"}/>
       <EntityList
         title="Source"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
