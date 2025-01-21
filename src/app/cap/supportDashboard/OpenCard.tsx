@@ -36,7 +36,7 @@ export default async function OpenCard() {
       >
         <Box>
           <Typography component="h2" variant="h6" gutterBottom>
-            Open Ticekts
+            Open Tickets
           </Typography>
           <Typography component="p" variant="h4">
             {openTicketsCount}

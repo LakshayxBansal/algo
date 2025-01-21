@@ -36,7 +36,7 @@ export async function supportDataFormat({
       ? formatDate(formData.get("date") as string)
       :otherData?.masterData.date ? dayjs(otherData?.masterData.date).format('YYYY-MM-DD HH:mm:ss'):null;
   const nextActionDate = formatDate(formData.get("next_action_date") as string);
-
+  const actionTakenDate = formatDate(formData.get("action_taken_date") as string);
   const headerData = {
     tkt_number: formData.get("tkt_number") as string ?? otherData?.tkt_number,
     date: date?.length === 0 ? null : date,
@@ -63,6 +63,7 @@ export async function supportDataFormat({
     action_taken_remark: (formData.get("action_taken_remark" )?? "") as string ,
     closure_remark: (formData.get("closure_remark") ) as string ?? otherData?.closure_remark? otherData?.closure_remark : "",
     allocated_to_id: selectValues.allocated_to?.id ?? otherData?.ledger_allocated_to,
+    action_taken_date: actionTakenDate,
     c_col1: (formData.get("c_col1") ?? "") as string,
     c_col2: (formData.get("c_col2") ?? "") as string,
     c_col3: (formData.get("c_col3") ?? "") as string,

@@ -109,7 +109,7 @@ export default function CountryForm(
         </Alert>
       </Collapse>
       <Box id="countryForm" sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <InputControl

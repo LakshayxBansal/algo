@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 export default function ProductGroup() {
   return (
     <>
-      <SecondNavbar title={"List of Product Group"}/>
+      <SecondNavbar title={"List of Product Groups"}/>
       <EntityList
         title="Product Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

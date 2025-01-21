@@ -17,7 +17,7 @@ export async function createEnquiryDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call createEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.enq_number,
         enqData.headerLedger.date,
@@ -39,6 +39,7 @@ export async function createEnquiryDB(
         enqData.headerLedger.active,
         session.user.userId,
         enqData.product,
+        enqData.headerLedger.action_taken_date,
         enqData.headerLedger.c_col1,
         enqData.headerLedger.c_col2,
         enqData.headerLedger.c_col3,
@@ -65,7 +66,7 @@ export async function updateEnquiryDB(
     return excuteQuery({
       host: session.user.dbInfo.dbName,
       query:
-        "call updateEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "call updateEnquiry(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
       values: [
         enqData.headerLedger.id,
         enqData.headerLedger.enq_number,
@@ -89,6 +90,7 @@ export async function updateEnquiryDB(
         enqData.headerLedger.created_by,
         session.user.userId,
         enqData.product,
+        enqData.headerLedger.action_taken_date,
         enqData.headerLedger.c_col1,
         enqData.headerLedger.c_col2,
         enqData.headerLedger.c_col3,

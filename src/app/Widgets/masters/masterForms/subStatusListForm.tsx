@@ -54,6 +54,7 @@ export default function SubStatusListForm(
       : entityData.enquiry_status_id
       ? entityData.enquiry_status_id
       : 0;
+    data["status"] = '1';
     const result = await persistEntity(data as enquirySubStatusMasterT);
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
@@ -130,57 +131,9 @@ export default function SubStatusListForm(
         </Alert>
       </Collapse>
       <Box id="subStatusForm" sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={6} md={6} lg={6}>
-              <FormControl sx={{ marginLeft: "1rem", marginTop: "1rem" }}>
-                <Grid container alignItems="center">
-                  <Grid item sm="auto">
-                    <FormControlLabel
-                      value="Status"
-                      control={<label />}
-                      label="Status :"
-                    />
-                  </Grid>
-                  <Grid item sm="auto">
-                    <RadioGroup
-                      row
-                      name="status"
-                      id="status"
-                      defaultValue={1}
-                      value={status_id}
-                      onChange={onStatusChange}
-                    >
-                      <FormControlLabel
-                        value={1}
-                        control={
-                          <Radio
-                            inputProps={{
-                              tabIndex: -1,
-                              "aria-label": "Open status",
-                            }}
-                          />
-                        }
-                        label="Open"
-                      />
-                      <FormControlLabel
-                        value={2}
-                        control={
-                          <Radio
-                            inputProps={{
-                              tabIndex: -1,
-                              "aria-label": "Closed status",
-                            }}
-                          />
-                        }
-                        label="Closed"
-                      />
-                    </RadioGroup>
-                  </Grid>
-                </Grid>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={12} lg={12}> 
               <InputControl
                 autoFocus
                 inputType={InputType.TEXT}
@@ -194,12 +147,6 @@ export default function SubStatusListForm(
                 error={formError?.name?.error}
                 helperText={formError?.name?.msg}
                 setFormError={setFormError}
-                // onKeyDown={() => {
-                //   setFormError((curr) => {
-                //     const { name, ...rest } = curr;
-                //     return rest;
-                //   });
-                // }}
                 sx={{ marginTop: "1rem" }}
               />
             </Grid>

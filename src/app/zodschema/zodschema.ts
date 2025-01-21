@@ -19,7 +19,7 @@ const passwordRegex = new RegExp(
 
 export const docDescriptionSchema = z.object({
   id: z.number().optional(),
-  description: z.string().min(1,"Field can't be empty").max(255),
+  description: z.string().min(1,"Mandatory Field").max(255),
   fileName: z.string().optional(),
   objectId: z.number().optional(),
   objectTypeId: z.number().optional(),
@@ -100,7 +100,7 @@ export const organisationSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(75, "Field must contain at most 75 character(s)"),
   alias: z
     .string()
@@ -182,7 +182,7 @@ export const ProductSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(75, "Field must contain at most 75 character(s)"),
   stamp: z.number().optional(),
   group: z.number().optional(),
@@ -192,7 +192,7 @@ export const ProductSchema = z.object({
     .max(75, "Field must contain at most 75 character(s)")
     .optional(),
   unit: z.number().refine((val) => val !== 0, {
-    message: "Required",
+    message: "Mandatory Field",
     path: ["unit"],
   }),
   unit_name: z.string().optional(),
@@ -255,7 +255,7 @@ export const UnitSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(50, "Field must contain at most 50 character(s)"),
   stamp: z.number().optional(),
   group_id: z.number().optional(),
@@ -276,7 +276,7 @@ export const contactSchema = z.object({
     .optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   print_name: z
     .string()
@@ -347,7 +347,7 @@ export const stateListSchema = z.object({
   country: z.string().max(60).optional(),
   state_id: z.number().optional(),
   state: z.string().max(60).optional(),
-  name: z.string().min(1, "Field must not be empty").max(60),
+  name: z.string().min(1, "Mandatory Field").max(60),
   alias: z.string().min(1).max(45).optional(),
   country_id: z.number(),
   stamp: z.number().optional(),
@@ -465,7 +465,7 @@ export const enquiryHeaderSchema = z.object({
   id: z.number().optional(),
   enq_number: z
     .string()
-    .min(1, { message: "Field must not be empty" })
+    .min(1, { message: "Mandatory Field" })
     .max(75, {
       message: "Field must contain atmost 75 character(s)",
     }),
@@ -482,13 +482,13 @@ export const enquiryHeaderSchema = z.object({
       }),
   auto_number: z.number().optional(),
   contact_id: z.number().min(1),
-  contact: z.string().min(1, { message: "Field must not be empty" }).max(60),
+  contact: z.string().min(1, { message: "Mandatory Field" }).max(60),
   received_by_id: z.number().min(1),
-  received_by: z.string().min(1, { message: "Field by must not be empty" }),
+  received_by: z.string().min(1, { message: "Mandatory Field" }),
   category_id: z.number().min(1),
-  category: z.string().min(1, { message: "Field must not be empty" }),
+  category: z.string().min(1, { message: "Mandatory Field" }),
   source_id: z.number().min(1),
-  source: z.string().min(1, { message: "Field must not be empty" }),
+  source: z.string().min(1, { message: "Mandatory Field" }),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
@@ -523,13 +523,14 @@ export const enquiryLedgerSchema = z.object({
         message:"Date should not be greater than current date",
       }),
   status_id: z.number().min(1),
-  sub_status: z.string().min(1, { message: "Field must not be empty" }),
+  sub_status: z.string().min(1, { message: "Mandatory Field" }),
   sub_status_id: z.number().min(1),
   action_taken_id: z.number().nullable().optional(),
   action_taken: z.string().optional(),
   next_action_id: z.number().nullable().optional(),
   next_action: z.string().optional(),
   next_action_date: z.string().min(0).max(20).nullable().optional(),
+  action_taken_date: z.string().min(0).max(20).nullable().optional(),
   suggested_action_remark: z
     .string()
     .max(5000, {
@@ -577,7 +578,7 @@ export const supportHeaderSchema = z.object({
   id: z.number().optional(),
   tkt_number: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(75, "Field must contain at most 75 character(s)"),
   date: z.string().max(20, "Field must not be greater than 20 character(s)").nullable().
   refine((val) => { 
@@ -591,12 +592,12 @@ export const supportHeaderSchema = z.object({
       message:"Date should not be greater than current date",
     }),
   auto_number: z.number().optional(),
-  contact_id: z.number().min(1, "Field must not be empty"),
-  contact: z.string().min(1, "Field must not be empty").max(60),
-  received_by_id: z.number().min(1, "Field must not be empty"),
-  received_by: z.string().min(1, "Field by must not be empty").max(60),
-  category_id: z.number().min(1, "Field must not be empty"),
-  category: z.string().min(1, "Field must not be empty").max(60),
+  contact_id: z.number().min(1, "Mandatory Field"),
+  contact: z.string().min(1, "Mandatory Field").max(60),
+  received_by_id: z.number().min(1, "Mandatory Field"),
+  received_by: z.string().min(1, "Mandatory Field").max(60),
+  category_id: z.number().min(1, "Mandatory Field"),
+  category: z.string().min(1, "Mandatory Field").max(60),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
   modified_on: z.date().optional(),
@@ -629,7 +630,7 @@ export const supportLedgerSchema = z.object({
     }),
   status_id: z.number().min(1),
   sub_status: z.string().min(0).max(50),
-  sub_status_id: z.number().min(1, "Field must not be empty"),
+  sub_status_id: z.number().min(1, "Mandatory Field"),
   action_taken_id: z.number().min(0).nullable().optional(),
   action_taken: z.string().min(0).max(60).optional(),
   next_action_id: z.number().min(0).nullable().optional(),
@@ -653,6 +654,7 @@ export const supportLedgerSchema = z.object({
   allocated_to_name: z.string().max(60).optional(),
   stamp: z.number().optional(),
   custom_id: z.number().optional(),
+  action_taken_date: z.string().min(0).max(20).optional(),
   c_col1: z.string(),
   c_col2: z.string(),
   c_col3: z.string(),
@@ -669,11 +671,11 @@ export const supportTicketSchema =
   supportHeaderSchema.merge(supportLedgerSchema);
 
 export const supportProductSchema = z.object({
-  id: z.number().min(1, "Field must not be empty").optional(),
+  id: z.number().min(1, "Mandatory Field").optional(),
   product_id: z.number().min(1),
   product: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   quanity: z.number().min(1).optional(),
   unit_id: z.number().min(1).nullable().optional(),
@@ -700,7 +702,7 @@ export const contactGroupSchema = z.object({
     .optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
@@ -721,7 +723,7 @@ export const productGroupSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   alias: z
     .string()
@@ -744,11 +746,11 @@ export const currencySchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   symbol: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   shortForm: z
     .string()
@@ -766,7 +768,7 @@ export const executiveRoleSchema = z.object({
   alias: z.string().max(60).optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most of 60 character(s)"),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
@@ -789,7 +791,7 @@ export const executiveGroupSchema = z.object({
     .optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   stamp: z.number().optional(),
   parent_id: z.number().optional(),
@@ -811,7 +813,7 @@ export const executiveDeptSchema = z.object({
   alias: z.string().max(60).optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   stamp: z.number().optional(),
   modified_by: z.number().optional(),
@@ -842,7 +844,7 @@ export const countrySchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   alias: z
     .string()
@@ -855,7 +857,7 @@ export const stateSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(60, "Field must contain at most 60 character(s)"),
   alias: z
     .string()
@@ -863,7 +865,7 @@ export const stateSchema = z.object({
     .optional(),
   stamp: z.number().optional(),
   country_id: z.number().refine((val) => val !== 0, {
-    message: "Field must not be empty",
+    message: "Mandatory Field",
     path: ["country"],
   }),
 
@@ -924,7 +926,7 @@ export const enquirySubStatusMaster = z.object({
   id: z.number().optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(50, "Field must contain at most 50 character(s)"),
   enquiry_status_id: z.number().optional(),
   status: z.string().min(1).max(30),
@@ -1027,14 +1029,14 @@ export const regionalSettingSchema = z.object({
   id: z.number().optional(),
   country_id: z.number(),
   state_id: z.number(),
-  country: z.string().min(1,"Required"),
+  country: z.string().min(1,"Madatory Field"),
   state: z.string().optional(),
   decimalPlaces: z.string(),
-  timeFormat: z.string().min(1,"Required"),
+  timeFormat: z.string().min(1,"Madatory Field"),
   currencyString: z.string().max(20,"Currency string should not be greater than 20 character").optional(),
   currencySymbol: z.string().max(2,"Currency symbol should not be greater than 2 character").optional(),
   currencySubString: z.string().max(5,"Currency sub string should not be greater than 5 character").optional(),
-  dateFormat: z.string().min(1,"Required"),
+  dateFormat: z.string().min(1,"Mandatory Field"),
   voucher : voucherSchema.optional()
 });
 
@@ -1095,7 +1097,7 @@ export const companySchema = z.object({
     .optional(),
   name: z
     .string()
-    .min(1, "Field must not be empty")
+    .min(1, "Mandatory Field")
     .max(55, "Field Name must contain at most 55 character(s)"),
   add1: z
     .string()
@@ -1111,7 +1113,7 @@ export const companySchema = z.object({
     .optional(),
   state: z.string().optional(),
   state_id: z.number().optional(),
-  country: z.string().min(1,"Required"),
+  country: z.string().min(1,"Mandatory Field"),
   country_id: z.number().optional(),
   pincode: z
     .string()

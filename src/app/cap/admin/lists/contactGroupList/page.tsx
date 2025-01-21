@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 export default function ContactGroup() {
   return (
     <>
-      <SecondNavbar title={"List of Contact Group"}/>
+      <SecondNavbar title={"List of Contact Groups"}/>
       <EntityList
         title="Contact Group"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

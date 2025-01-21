@@ -103,7 +103,7 @@ export default function SupportCategoryForm(
         </Alert>
       </Collapse>
       <Box id="supportCategoryForm" sx={{ m: 1, p: 3 }}>
-        <form action={handleSubmit} noValidate>
+        <form action={handleSubmit} noValidate autoComplete="off">
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl

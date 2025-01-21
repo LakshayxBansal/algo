@@ -47,7 +47,8 @@ export async function getRegionalSettings() {
   try {
     const session = await getSession();
     if (session?.user.dbInfo) {
-      return getRegionalSettingsDb(session.user.dbInfo.dbName);
+      const result = await getRegionalSettingsDb(session.user.dbInfo.dbName);
+      return JSON.parse(result.config);
     }
   } catch (error) {
     throw error;

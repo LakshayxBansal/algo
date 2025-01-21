@@ -67,6 +67,7 @@ export default function StateFormList(
         }, 1000);
       } else {
         setFormKey(formKey + 1);
+        setSelectValues({});
       }
     } else {
       const issues = result.data;
@@ -128,7 +129,7 @@ export default function StateFormList(
         </Alert>
       </Collapse>
       <Box sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4} lg={4}>
               <SelectMasterWrapper

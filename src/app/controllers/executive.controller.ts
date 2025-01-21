@@ -323,6 +323,16 @@ export async function getProfileById(id: number) {
       } else {
         executiveDetails[0].docData = [];
       }
+      if(executiveDetails[0]?.profile_img) {
+        const docData = await viewExecutiveDoc(executiveDetails[0]?.profile_img);
+
+        executiveDetails[0].profileDocument = {
+          ...docData,
+          docId: executiveDetails[0]?.profile_img,
+          file: docData?.buffer,
+          description: "Profile Image"
+        }
+      }
       return executiveDetails;
     }
   } catch (error) {

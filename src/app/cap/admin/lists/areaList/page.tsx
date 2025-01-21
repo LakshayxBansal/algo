@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 export default function Area() {
   return (
     <>
-      <SecondNavbar title={"List of Area"}/>
+      <SecondNavbar title={"List of Areas"}/>
       <EntityList
         title="Area"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

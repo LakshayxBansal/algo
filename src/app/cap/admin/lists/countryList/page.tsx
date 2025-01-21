@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 export default function Country() {
   return (
     <>
-      <SecondNavbar title={"List of Country"}/>
+      <SecondNavbar title={"List of Countries"}/>
       <EntityList
         title="Country"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

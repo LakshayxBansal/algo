@@ -123,7 +123,7 @@ export default function ProductList(props: any) {
       </Collapse>
 
       <Box id="sourceForm" sx={{ m: 1, p: 3,  }} >
-        <form action={handleSubmit} noValidate>
+        <form action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1} sx={{width: "350"}}> 
             <Grid item
                 xs={12}
@@ -146,10 +146,11 @@ export default function ProductList(props: any) {
                       formError={formError?.product ?? formError.product}
                       setFormError={setFormError}
                       onChange={(e, v, s) => onSelectChange(e, v, s, "product")}
-                      renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                      renderForm={(fnDialogOpen, fnDialogValue,metaData, data) => (
                         <ProductForm
                           setDialogOpen={fnDialogOpen}
                           setDialogValue={fnDialogValue}
+                          metaData={metaData}
                           data={data}
                         />
                       )}

@@ -221,7 +221,7 @@ export default function CreateCompany(
           </Alert>
         </Collapse>
         <Box id="companyForm" sx={{ m: 1 }}>
-          <form action={handleSubmit} noValidate>
+          <form action={handleSubmit} noValidate autoComplete="off">
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6} md={6} lg={6}>
                 <InputControl

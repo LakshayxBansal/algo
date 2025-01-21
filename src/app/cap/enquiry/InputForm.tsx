@@ -500,6 +500,39 @@ export default function InputForm({ baseData }: InputFormProps) {
         />,
       ],
       [
+        "action_taken_date",
+        <InputControl
+          format={dateTimeFormat}
+          key={"action_taken_date"}
+          label="When"
+          sx={{ display: "flex", flexGrow: 1 }}
+          inputType={InputType.DATETIMEINPUT}
+          id="action_taken_date"
+          name="action_taken_date"
+          setFormError={setFormError}
+          slotProps={{
+            textField: {
+              error: formError?.action_taken_date?.error,
+              helperText: formError?.action_taken_date?.msg,
+            },
+            openPickerButton: {
+              tabIndex: -1,
+            },
+          }}
+          disabled={status === "2"}
+          required={false}
+          defaultValue={
+            status === "1"
+              ? enqData?.action_taken_date
+                ? adjustToLocal(enqData.action_taken_date)
+                : enqData.enquiry_id
+                ? null
+                : dayjs()
+              : null
+          }
+        />,
+      ],
+      [
         "closure_remark",
         <InputControl
           inputType={InputType.TEXTFIELD}
@@ -942,7 +975,7 @@ export default function InputForm({ baseData }: InputFormProps) {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
+      <form action={handleSubmit} style={{ padding: "1em" }} noValidate autoComplete="off">
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>

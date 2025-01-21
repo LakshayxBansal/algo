@@ -284,10 +284,11 @@ export default function SupportProductGrid({
                   name: params.row.product,
                 } as optionsDataT
               }
-              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+              renderForm={(fnDialogOpen, fnDialogValue,metaData, data) => (
                 <ProductForm
                   setDialogOpen={fnDialogOpen}
                   setDialogValue={fnDialogValue}
+                  metaData={metaData}
                   data={data}
                 />
               )}

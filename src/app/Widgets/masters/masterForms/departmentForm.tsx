@@ -106,7 +106,7 @@ export default function DepartmentForm(
         </Alert>
       </Collapse>
       <Box id="departmentForm" sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <InputControl

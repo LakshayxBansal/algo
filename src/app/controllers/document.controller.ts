@@ -143,7 +143,7 @@ export async function viewExecutiveDoc(documentId: string) {
 export async function uploadLogo(docData: mdl.docDescriptionSchemaT) {
     try {
         const session = await getSession();
-        if (session?.user.dbInfo) {
+        if (session?.user) {
             const formData = new FormData();
 
                 formData.append('application_id', process.env.DOC_APPLICATION_ID);

@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
 export default function executiveRole() {
   return (
     <>
-      <SecondNavbar title={"List of Executive Role"}/>
+      <SecondNavbar title={"List of Executive Roles"}/>
       <EntityList
         title="Executive Role"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (

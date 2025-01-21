@@ -210,7 +210,7 @@ export default function AllocateCall(props: customprop) {
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ p: 3 }}>
-        <form action={handleSubmit}>
+        <form action={handleSubmit} autoComplete="off">
           <Paper elevation={3} sx={{ p: 2 }} square={false}>
             <Box>
               <AutocompleteDB

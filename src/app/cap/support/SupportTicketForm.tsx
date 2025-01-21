@@ -460,6 +460,36 @@ const SupportTicketForm = (props: customprop) => {
         />,
       ],
       [
+        "action_taken_date",
+        <InputControl
+          format={dateTimeFormat}
+          key={`action_taken_date`}
+          label="Action Date"
+          inputType={InputType.DATETIMEINPUT}
+          sx={{ display: "flex", flexGrow: 1 }}
+          id="action_taken_date"
+          name="action_taken_date"
+          error={formError?.action_taken_date?.error}
+          helperText={formError?.action_taken_date?.msg}
+          setFormError={setFormError}
+          defaultValue={
+            status === "1"
+              ? masterData?.action_taken_date
+                ? adjustToLocal(masterData.action_taken_date)
+                : props.status
+                ? null
+                : dayjs()
+              : null
+          }
+          slotProps={{
+            openPickerButton: {
+              tabIndex: -1,
+            },
+          }}
+          disabled={status === "2"}
+        />,
+      ],
+      [
         "allocate_to",
         <SelectMasterWrapper
           key="allocated_to"
@@ -888,7 +918,7 @@ const SupportTicketForm = (props: customprop) => {
           {formError?.form?.msg}
         </Alert>
       </Collapse>
-      <form action={handleSubmit} style={{ padding: "1em" }} noValidate>
+      <form action={handleSubmit} style={{ padding: "1em" }} noValidate autoComplete="off">
         <Grid item xs={12}>
           <Seperator>
             <div style={{ fontSize: "0.8em", fontWeight: "bold" }}>

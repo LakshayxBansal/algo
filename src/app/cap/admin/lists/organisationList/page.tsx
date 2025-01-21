@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
 export default function organisation() {
   return (
     <>
-      <SecondNavbar title={"List of Organisation"}/>
+      <SecondNavbar title={"List of Organisations"}/>
       <EntityList
         title="Organisation"
         renderForm={(fnDialogOpen, fnDialogValue, metaData, data) => (

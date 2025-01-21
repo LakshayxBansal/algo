@@ -13,7 +13,7 @@ export async function createSupportTicketDB(
      const result = await  excuteQuery({
         host: session.user.dbInfo.dbName,
         query:
-          "call createSupportTicket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?);",
+          "call createSupportTicket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?);",
         values: [
           supportData.tkt_number,
           supportData.date,
@@ -34,6 +34,7 @@ export async function createSupportTicketDB(
           supportData.active,
           session.user.userId,
           productData,
+          supportData.action_taken_date|| null,
           supportData.c_col1,
           supportData.c_col2,
           supportData.c_col3,
@@ -134,7 +135,7 @@ export async function createSupportTicketDB(
       const result = await excuteQuery({
         host: session.user.dbInfo.dbName,
         query:
-          "call updateSupportTicket(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?);",
+          "call updateSupportTicket(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
         values: [
           supportData.id,
           supportData.tkt_number,
@@ -157,6 +158,7 @@ export async function createSupportTicketDB(
           session.user.userId,
           productData,
           supportData.stamp,
+          supportData.action_taken_date || null,
           supportData.c_col1,
           supportData.c_col2,
           supportData.c_col3,

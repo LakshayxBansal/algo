@@ -45,6 +45,7 @@ import {
   executiveSchemaT,
   masterFormPropsWithDataT,
   optionsDataT,
+  regionalSettingSchemaT,
   selectKeyValueT,
 } from "@/app/models/models";
 import dayjs from "dayjs";
@@ -72,6 +73,7 @@ import { VisuallyHiddenInput } from "@/styledComponents";
 export default function ExecutiveForm(
   props: masterFormPropsWithDataT<executiveSchemaT>
 ) {
+
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
@@ -103,8 +105,6 @@ export default function ExecutiveForm(
   // const [email, setEmail] = useState(entityData.email);
   const email = useRef<HTMLInputElement | null>(null);
   const [mobile, setMobile] = useState(entityData.mobile);
-  // const [keyDownEmail,setKeyDownEmail] = useState(false);
-  // const [keyDownMobile,setKeyDownMobile] = useState(false);
   const keyDownEmail = useRef<boolean | undefined>(false);
   const keyDownMobile = useRef<boolean | undefined>(false);
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>({
@@ -119,7 +119,8 @@ export default function ExecutiveForm(
   const [stateDisable, setStateDisable] = useState<boolean>(
     !entityData.country
   );
-  
+const dateFormat = props.metaData?.regionalSettingsConfigData?.dateFormat;
+
   const defaultComponentMap = new Map<string, React.ReactNode>([
     [
       "name",
@@ -486,6 +487,7 @@ export default function ExecutiveForm(
       <InputControl
         key="doj"
         inputType={InputType.DATEINPUT}
+        format={dateFormat}
         id="doj"
         label="Joining Date"
         name="doj"
@@ -508,6 +510,7 @@ export default function ExecutiveForm(
       <InputControl
         key="dob"
         inputType={InputType.DATEINPUT}
+        format={dateFormat}
         id="dob"
         label="Date of Birth"
         name="dob"
@@ -530,6 +533,7 @@ export default function ExecutiveForm(
       <InputControl
         key="doa"
         inputType={InputType.DATEINPUT}
+        format={dateFormat}
         id="doa"
         label="Anniversary Date"
         name="doa"
@@ -992,6 +996,8 @@ export default function ExecutiveForm(
     }
   }
 
+  
+
   return (
     <Box>
       <Collapse in={formError?.form ? true : false}>
@@ -1013,7 +1019,7 @@ export default function ExecutiveForm(
         </Alert>
       </Collapse>
       <Box id="sourceForm" sx={{ m: 1, p: 3 }}>
-        <form key={formKey} action={handleSubmit} noValidate>
+        <form key={formKey} action={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={1}>
             {fieldArr.map((field, index) => {
               const fieldKey = field.key as string;

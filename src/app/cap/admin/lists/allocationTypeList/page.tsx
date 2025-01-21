@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 export default function AllocationType() {
   return (
     <>      
-      <SecondNavbar title={"List of Allocation"}/>
+      <SecondNavbar title={"List of Allocations"}/>
       <EntityList
         title="Allocation Type"
         renderForm={(fnDialogOpen, fnDialogValue, data) => (
