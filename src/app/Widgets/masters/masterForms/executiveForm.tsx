@@ -74,9 +74,6 @@ export default function ExecutiveForm(
   props: masterFormPropsWithDataT<executiveSchemaT>
 ) {
 
-  console.log(props);
-
-
   const router = useRouter();
   const [formError, setFormError] = useState<
     Record<string, { msg: string; error: boolean }>
