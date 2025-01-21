@@ -76,11 +76,11 @@ export async function getClosedEnquiriesCountDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-              "SELECT DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since,\
+              "SELECT DATE_FORMAT(CURDATE() - INTERVAL 6 MONTH, '%Y-%m-01') AS since,\
                count(*) AS count from enquiry_header_tran eht\
                LEFT JOIN enquiry_ledger_tran elt ON eht.id = elt.enquiry_id\
                WHERE elt.active=1 AND elt.status_id=2 AND\
-               eht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+               eht.created_on >= CURDATE() - INTERVAL 6 MONTH;",
       values: [],
     });
 
@@ -115,11 +115,11 @@ export async function getAverageAgeDb(dbName: string) {
                 WHEN elt.active = 1 AND elt.status_id = 1 THEN CURDATE()\
             END, \
             eht.created_on))) AS age,\
-              DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since\
+              DATE_FORMAT(CURDATE() - INTERVAL 6 MONTH, '%Y-%m-01') AS since\
         FROM enquiry_header_tran eht\
         LEFT JOIN enquiry_ledger_tran elt ON eht.id = elt.enquiry_id\
         WHERE elt.active = 1 \
-          AND eht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+          AND eht.created_on >= CURDATE() - INTERVAL 6 MONTH;",
       values: [],
     });
 
@@ -151,11 +151,11 @@ export async function getClosedTicketsCountDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-              "SELECT DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since,\
+              "SELECT DATE_FORMAT(CURDATE() - INTERVAL 6 MONTH, '%Y-%m-01') AS since,\
                count(*) AS count from ticket_header_tran tht\
                LEFT JOIN ticket_ledger_tran tlt ON tht.id = tlt.ticket_id\
                WHERE tlt.active=1 AND tlt.status_id=2 AND\
-               tht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+               tht.created_on >= CURDATE() - INTERVAL 6 MONTH;",
       values: [],
     });
 
@@ -193,11 +193,11 @@ export async function getAverageTicketAgeDb(dbName: string) {
                 WHEN elt.active = 1 AND elt.status_id = 1 THEN CURDATE()\
             END, \
             eht.created_on))) AS age,\
-              DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS since\
+              DATE_FORMAT(CURDATE() - INTERVAL 6 MONTH, '%Y-%m-01') AS since\
         FROM ticket_header_tran eht\
         LEFT JOIN ticket_ledger_tran elt ON eht.id = elt.ticket_id\
         WHERE elt.active = 1 \
-          AND eht.created_on >= CURDATE() - INTERVAL 5 MONTH;",
+          AND eht.created_on >= CURDATE() - INTERVAL 6 MONTH;",
       values: [],
     });
 
