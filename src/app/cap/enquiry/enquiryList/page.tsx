@@ -1,5 +1,5 @@
 "use client";
-import React, { lazy, Suspense } from "react";
+import React from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import EntityList from "@/app/Widgets/masters/EntityList";
 import { createContactsBatch } from "@/app/controllers/contact.controller";
@@ -9,7 +9,6 @@ import {
   delEnquiryDataById,
 } from "@/app/controllers/enquiry.controller";
 import SecondNavbar from "../../navbar/SecondNavbar";
-import { Box } from "@mui/material";
 import { ENQUIRY_OBJECT_ID } from "@/app/utils/consts.utils";
 
 const columns: GridColDef[] = [

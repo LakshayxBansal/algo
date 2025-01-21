@@ -242,7 +242,7 @@ export async function getExecutiveByPageDb(
     const vals: any = [page, limit, limit];
 
     if (filter) {
-      vals.unshift(filter);
+      vals.unshift(filter,filter,filter,filter,filter);
     }
     return excuteQuery({
       host: crmDb,
@@ -257,7 +257,7 @@ export async function getExecutiveByPageDb(
          left outer join state_master s on em.state_id = s.id \
          left outer join country_master co on em.country_id = co.id \
          left outer join userDb.user us on em.crm_user_id=us.id " +
-        (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') " : "") +
+        (filter ? "WHERE em.name LIKE CONCAT('%',?,'%') OR em.alias LIKE CONCAT('%',?,'%') OR em.mobile LIKE CONCAT('%',?,'%') OR em.whatsapp LIKE CONCAT('%',?,'%') OR em.email LIKE CONCAT('%',?,'%') " : "") +
         "order by em.name\
               ) AS NumberedRows \
             WHERE RowNum > ?*? \

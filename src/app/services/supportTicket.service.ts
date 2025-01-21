@@ -186,7 +186,7 @@ export async function createSupportTicketDB(
       const offset = page * limit;
       const vals: any = [limit, offset];
       if (filter) {
-        vals.unshift(filter);
+        vals.unshift(filter,filter);
       }
       vals.unshift(SUPPORT_ID)
       const result = await excuteQuery({
@@ -228,7 +228,7 @@ export async function createSupportTicketDB(
           LEFT JOIN ticket_action_master next_action ON next_action.id = l.next_action_id
           LEFT OUTER JOIN custom_fields_data cfd on cfd.object_id=h.id and cfd.object_type_id=?
           LEFT JOIN executive_master allocate ON allocate.id = l.allocated_to 
-          ${filter ? "WHERE tkt_number LIKE CONCAT('%', ?, '%')" : ""}
+          ${filter ? "WHERE h.tkt_number LIKE CONCAT('%', ?, '%') OR cm.name LIKE CONCAT('%', ?, '%')" : ""}
           ORDER BY h.id
           LIMIT ? OFFSET ?;
         `,

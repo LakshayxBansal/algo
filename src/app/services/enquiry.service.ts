@@ -285,7 +285,7 @@ export async function getEnquiryDataByPageDb(
     const offset = page * limit;
     const vals: any = [limit, offset];
     if (filter) {
-      vals.unshift(filter);
+      vals.unshift(filter,filter);
     }
 
     const result = await excuteQuery({
@@ -329,7 +329,7 @@ export async function getEnquiryDataByPageDb(
         LEFT JOIN enquiry_action_master eam ON eam.id = l.action_taken_id 
         LEFT OUTER JOIN custom_fields_data cfd on cfd.object_id=h.id and cfd.object_type_id=26
         LEFT JOIN enquiry_action_master next_action ON next_action.id = l.next_action_id 
-        ${filter ? "WHERE enq_number LIKE CONCAT('%', ?, '%')" : ""}
+        ${filter ? "WHERE h.enq_number LIKE CONCAT('%', ?, '%') OR cm.name LIKE CONCAT('%', ?, '%')" : ""}
         ORDER BY h.id
         LIMIT ? OFFSET ?;
       `,

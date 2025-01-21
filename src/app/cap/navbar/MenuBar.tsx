@@ -189,7 +189,8 @@ export default function MenuBar(props: propsType) {
               renderInput={(params) => (
                 <CustomTextFieldForSearch
                   {...params}
-                  placeholder={`search across ${props.companyName}`}
+                  // search across ${props.companyName}
+                  placeholder={`Global Search`}
                   InputProps={{
                     ...params.InputProps,
                     startAdornment: (
