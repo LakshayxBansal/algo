@@ -519,7 +519,6 @@ export default function InputForm({ baseData }: InputFormProps) {
               tabIndex: -1,
             },
           }}
-          disabled={status === "2"}
           required={false}
           defaultValue={
             status === "1"
