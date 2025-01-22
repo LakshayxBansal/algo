@@ -486,7 +486,6 @@ const SupportTicketForm = (props: customprop) => {
               tabIndex: -1,
             },
           }}
-          disabled={status === "2"}
         />,
       ],
       [
