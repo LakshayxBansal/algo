@@ -476,7 +476,7 @@ export async function getInviteUserByCompany(
       getInviteUsers = {
         status: true,
         data: inviteUsers.map(bigIntToNum) as inviteUserSchemaT,
-        count: Number(inviteUsers[0]["total_count"]),
+        count: inviteUsers.length > 0 ? Number(inviteUsers[0]["total_count"]) : 0,
         error: {},
       };
     }
@@ -522,7 +522,7 @@ export async function getInviteByUserContact(
       getInvites = {
         status: true,
         data: invites.map(bigIntToNum) as inviteUserSchemaT[],
-        count: Number(invites[0]["total_count"]),
+        count: invites.length > 0 ? Number(invites[0]["total_count"]) : 0,
         // count: Number(rowCount[0]["rowCount"]),
         error: {},
       };

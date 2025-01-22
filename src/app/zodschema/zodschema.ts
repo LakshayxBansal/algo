@@ -1191,7 +1191,7 @@ export const configBaseSchema = z.object({
   .refine(
     (data) => {
       const columnFormat = (data.column_format ?? "").trim(); // Trim whitespace
-      if (data.column_type_id === 2 || data.column_type_id === 5) {
+      if (data.is_default_column !== 1 && data.column_type_id === 2 || data.column_type_id === 5) {
         // Allow trimmed alphanumeric values, optionally semicolon-separated
         const semicolonSeparatedPattern = /^([a-zA-Z0-9]+)(\s*;\s*[a-zA-Z0-9]+)*;?$/;
         return columnFormat.length > 0 && semicolonSeparatedPattern.test(columnFormat);

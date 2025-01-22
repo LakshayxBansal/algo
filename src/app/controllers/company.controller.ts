@@ -312,7 +312,7 @@ export async function getCompanies(
       getCompanies = {
         status: true,
         data: dbData.map(bigIntToNum) as companySchemaT[],
-        count: Number(dbData[0]["total_count"]),
+        count: dbData.length > 0 ? Number(dbData[0]["total_count"]) : 0,
         error: {},
       };
     }

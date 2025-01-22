@@ -555,7 +555,7 @@ const FieldConfigurator = () => {
                                 />
                             )}
 
-                            {item.column_type_id === 7 &&
+                            {item.column_type_id === 7 && item.is_default_column !== 1 &&
                                 <FormControl sx={{ width: 215 }} size="small" variant="outlined">
                                     <InputLabel>Select the Master Form</InputLabel>
                                     <Select
