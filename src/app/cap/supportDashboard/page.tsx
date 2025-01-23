@@ -29,13 +29,13 @@ export default async function SupportDashboard() {
                 <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
                   <div>
                     {" "}
-                    <OpenCard />{" "}
+                    <UnassignedCard />{" "}
                   </div>
                 </Grid>
                 <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
                   <div>
                     {" "}
-                    <UnassignedCard />{" "}
+                    <OpenCard />{" "}
                   </div>
                 </Grid>
                 <Grid item xs={11} sm={6} md={3} sx={{ margin: "auto" }}>
