@@ -29,8 +29,8 @@ export async function getOpenEnquiriesCountDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "SELECT COUNT(DISTINCT elt.enquiry_id) AS total\
-        FROM enquiry_ledger_tran elt where elt.active=1 and elt.status_id=1 AND elt.allocated_to != 0;",
+        "SELECT COUNT(DISTINCT elt.enquiry_id) AS total FROM enquiry_ledger_tran elt \
+        where elt.active=1 and elt.status_id=1 AND elt.allocated_to != 0 AND elt.allocated_to IS NOT NULL;",
       values: [],
     });
 
@@ -59,8 +59,7 @@ export async function getUnassignedEnquiriesDb(dbName: string) {
       host: dbName,
       query:
        "SELECT COUNT(*) AS count FROM enquiry_ledger_tran elt\
-       WHERE elt.active=1 AND elt.status_id=1 AND elt.allocated_to=0;"
-        ,
+       WHERE elt.active=1 AND elt.status_id=1 AND (elt.allocated_to=0 OR elt.allocated_to IS NULL);",
       values: [],
     });
 
@@ -133,9 +132,8 @@ export async function getOpenTicketsCountDb(dbName: string) {
     const result = await excuteQuery({
       host: dbName,
       query:
-        "SELECT COUNT(DISTINCT elt.ticket_id) AS total\
-        FROM ticket_ledger_tran elt where elt.active=1 and elt.status_id=1 AND elt.allocated_to != 0;\
-        ",
+        "SELECT COUNT(DISTINCT elt.ticket_id) AS total FROM ticket_ledger_tran elt \
+        where elt.active=1 and elt.status_id=1 AND elt.allocated_to != 0 AND elt.allocated_to IS NOT NULL;",
       values: [],
     });
 
@@ -170,7 +168,7 @@ export async function getUnassignedTicketsDb(dbName: string) {
       host: dbName,
       query:
        "SELECT COUNT(*) AS count FROM ticket_ledger_tran elt\
-       WHERE elt.active=1 AND elt.status_id=1 AND elt.allocated_to=0;"
+       WHERE elt.active=1 AND elt.status_id=1 AND (elt.allocated_to=0 OR elt.allocated_to IS NULL);"
         ,
       values: [],
     });
