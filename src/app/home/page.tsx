@@ -13,7 +13,7 @@ import {
   getStateById,
   getStates,
 } from "../controllers/masters.controller";
-import { Alert, Box, Button, Collapse, IconButton, Portal, Snackbar } from "@mui/material";
+import { Alert, Box, Button, Collapse, Grid, IconButton, Portal, Snackbar } from "@mui/material";
 import {
   createProfile,
   updateProfile,
@@ -29,14 +29,16 @@ export default function Home(props: any) {
 
   const params = useParams();
   const profileId = params.id ? Number(params.id) : null;
-  //const formRef = useRef<HTMLFormElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [phoneKey, setPhoneKey] = useState(0);
+
   
 
   const entityData: any = props.data
     ? props.data
     : ({
         name: "",
-        age: 0,
+        age: "",
         email: "",
         phone: "",
         country_name: "",
@@ -46,20 +48,17 @@ export default function Home(props: any) {
         user_id: 0,
       });
 
-
-
   const [defaultState, setDefaultState] = useState<optionsDataT | undefined>(
     entityData.state_name
       ? { id: entityData.state_id, name: entityData.state_name }
       : undefined
   );
 
-  
-
   const [selectValues, setSelectValues] = useState<selectKeyValueT>({
     country: {id:entityData?.country_id,name:entityData.country_name},
     state: {id:entityData?.state_id,name:entityData.state_name}
   });
+
   const [stateDisable, setStateDisable] = useState(!entityData.country_id);
   const [stateKey, setStateKey] = useState(true);
   const [snackOpen, setSnackOpen] = React.useState(false);
@@ -72,30 +71,6 @@ export default function Home(props: any) {
     name: string
   ) => {
     let values = { ...selectValues };
-    let errors = { ...formError };
-  
-    // if (name === "country") {
-    //   if (!val || val.id === 0) {
-    //     // If no country is selected, reset both country and state
-    //     values["country"] = { id: 0, name: "" };
-    //     values["state"] = undefined;
-    //     setDefaultState(undefined);
-    //     setStateDisable(true);
-    //   } else {
-    //     // If a country is selected, update and enable state selection
-    //     values["country"] = val;
-    //     values["state"] = undefined; // Reset state when changing country
-    //     setDefaultState(undefined);
-    //     setStateDisable(false);
-    //   }
-  
-    //   // Force re-render of SelectMasterWrapper to clear the state dropdown
-    //   setStateKey((prev) => prev + 1);
-    // }
-  
-    // if (name === "state") {
-    //   values["state"] = val ? val : { id: 0, name: "" };
-    // }
 
     if(name==="country"){
       values['state']={};
@@ -108,9 +83,6 @@ export default function Home(props: any) {
   
     setSelectValues(values);
   };
-  
-  
-  
   
   async function getStatesforCountry(stateStr: string) {
     const country = selectValues?.country?.name;
@@ -139,6 +111,28 @@ export default function Home(props: any) {
       const { form, ...rest } = curr;
       return rest;
     });
+  };
+
+  const clearForm = () => {
+    setSelectValues({ country: { id: 0, name: "" }, state: { id: 0, name: "" } }); // Reset selects
+    setDefaultState(undefined);
+    setStateDisable(true);
+    setStateKey((prev) => !prev);
+    setFormError({});
+    formRef.current?.reset();
+    const emptyEntity = {
+      name: "",
+      age: "",
+      email: "",
+      phone: "",
+      country_name: "",
+      country_id: 0,
+      state_name: "",
+      state_id: 0,
+      user_id: 0,
+    };
+    Object.assign(entityData, emptyEntity);
+    setPhoneKey((prev) => prev + 1);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -232,134 +226,142 @@ export default function Home(props: any) {
       </Collapse>
 
       <Box id="home" sx={{ m: 1, p: 3 }}>
-        <form action={handleSubmit} noValidate autoComplete="off">
-          <InputControl
-            autoFocus
-            inputType={InputType.TEXT}
-            name="name"
-            id="name"
-            label="Name"
-            required
-            titleCase={true}
-            defaultValue={entityData.name}
-            error={formError?.name?.error}
-            helperText={formError?.name?.msg}
-            setFormError={setFormError}
-          />
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <form ref={formRef} action={handleSubmit} noValidate autoComplete="off">
+            <InputControl
+              autoFocus
+              inputType={InputType.TEXT}
+              name="name"
+              id="name"
+              label="Name"
+              required
+              titleCase={true}
+              defaultValue={entityData.name}
+              error={formError?.name?.error}
+              helperText={formError?.name?.msg}
+              setFormError={setFormError}
+            />
 
-          <InputControl
-            autoFocus
-            inputType={InputType.TEXT}
-            type="number"
-            name="age"
-            id="age"
-            label="Age"
-            required
-            titleCase={true}
-            defaultValue={entityData.age}
-            error={formError?.age?.error}
-            helperText={formError?.age?.msg}
-            setFormError={setFormError}
-          />
+            <InputControl
+              inputType={InputType.TEXT}
+              type="number"
+              name="age"
+              id="age"
+              label="Age"
+              required
+              titleCase={true}
+              defaultValue={entityData.age}
+              error={formError?.age?.error}
+              helperText={formError?.age?.msg}
+              setFormError={setFormError}
+            />
 
-          <InputControl
-            inputType={InputType.PHONE}
-            name="phone"
-            id="phone"
-            label="Phone"
-            required
-            defaultValue={entityData.phone}
-            error={formError?.phone?.error}
-            helperText={formError?.phone?.msg}
-            setFormError={setFormError}
-          />
+            <InputControl
+              key={phoneKey}
+              inputType={InputType.PHONE}
+              name="phone"
+              id="phone"
+              label="Phone"
+              required
+              defaultValue={entityData.phone}
+              error={formError?.phone?.error}
+              helperText={formError?.phone?.msg}
+              setFormError={setFormError}
+            />
 
-          <InputControl
-            inputType={InputType.EMAIL}
-            name="email"
-            id="email"
-            label="Email"
-            required
-            titleCase={true}
-            defaultValue={entityData.email}
-            autoComplete="off"
-            error={formError?.email?.error}
-            helperText={formError?.email?.msg}
-            setFormError={setFormError}
-          />
+            <InputControl
+              inputType={InputType.EMAIL}
+              name="email"
+              id="email"
+              label="Email"
+              required
+              titleCase={true}
+              defaultValue={entityData.email}
+              autoComplete="off"
+              error={formError?.email?.error}
+              helperText={formError?.email?.msg}
+              setFormError={setFormError}
+              style={{marginLeft:"10px"}}
+            />
 
-          <SelectMasterWrapper
-            key={entityData.country_id}
-            required={true}
-            name={"country"}
-            id={"country"}
-            label={"Country"}
-            dialogTitle={"Country"}
-            error={true}
-            width={375}
-            onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
-            fetchDataFn={getCountries}
-            fnFetchDataByID={getCountryById}
-            
-            defaultValue={
-              entityData.country_name
-                ? {
-                    id: entityData.country_id,
-                    name: entityData.country_name, 
-                  }
-                : undefined
-            }
-            //defaultValue={selectValues.country}
-          
-            renderForm={(fnDialogOpen, fnDialogValue, data) => (
-              <CountryForm
-                setDialogOpen={fnDialogOpen}
-                setDialogValue={fnDialogValue}
-                data={data}
-              />
-            )}
-            formError={formError?.country}
-            setFormError = {setFormError}
-          />
-
-          <SelectMasterWrapper
-            key={`state-${selectValues.country?.id}`}
-            name={"state"}
-            required={true}
-            id={"state"}
-            label={"State"}
-            onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
-            width={375}
-            dialogTitle={"State"}
-            formError={formError?.state}
-            setFormError={setFormError}
-            fetchDataFn={getStatesforCountry}
-            fnFetchDataByID={getStateById}
-            defaultValue={defaultState}
-            allowModify={stateDisable}
-            allowNewAdd={stateDisable}
-            renderForm={(fnDialogOpen, fnDialogValue, data) => (
-              <StateForm
-                setDialogOpen={fnDialogOpen}
-                setDialogValue={fnDialogValue}
-                data={data}
-                parentData={selectValues.country?.id || entityData.country_id}
-              />
+            <SelectMasterWrapper
+              key={entityData.country_id}
+              required={true}
+              name={"country"}
+              id={"country"}
+              label={"Country"}
+              dialogTitle={"Country"}
+              error={true}
+              width={375}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "country")}
+              fetchDataFn={getCountries}
+              fnFetchDataByID={getCountryById}
               
-            )}
-          />
+              defaultValue={
+                entityData.country_name
+                  ? {
+                      id: entityData.country_id,
+                      name: entityData.country_name, 
+                    }
+                  : undefined
+              }
+              //defaultValue={selectValues.country}
+            
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <CountryForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                />
+              )}
+              formError={formError?.country}
+              setFormError = {setFormError}
+            />
 
-          <Button onClick={()=>{console.log("clear form")}} tabIndex={-1}>
-            Clear Form
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ width: "15%", marginLeft: "5%" }}
-          >
-            Submit
-          </Button>
-        </form>
+            <SelectMasterWrapper
+              key={`state-${selectValues.country?.id}`}
+              name={"state"}
+              required={true}
+              id={"state"}
+              label={"State"}
+              onChange={(e, v, s) => onSelectChange(e, v, s, "state")}
+              width={375}
+              dialogTitle={"State"}
+              formError={formError?.state}
+              setFormError={setFormError}
+              fetchDataFn={getStatesforCountry}
+              fnFetchDataByID={getStateById}
+              defaultValue={defaultState}
+              allowModify={stateDisable}
+              allowNewAdd={stateDisable}
+              renderForm={(fnDialogOpen, fnDialogValue, data) => (
+                <StateForm
+                  setDialogOpen={fnDialogOpen}
+                  setDialogValue={fnDialogValue}
+                  data={data}
+                  parentData={selectValues.country?.id || entityData.country_id}
+                />
+                
+              )}
+            />
+
+            <Button
+              onClick = {clearForm}
+            >
+              Clear Form
+            </Button>
+
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: "15%", marginLeft: "5%" }}
+            >
+              Submit
+            </Button>
+          </form>
+        </Grid>
+      </Grid>
       </Box>
       <Portal>
           <Snackbar

@@ -1,17 +1,18 @@
 "use client";
 import { fetchProfileById } from "@/app/controllers/profile.controller";
-import { Box, CircularProgress, Portal, Snackbar, Typography } from "@mui/material";
+import { Portal, Snackbar } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Home from "../page";
 import { CreateProfileInputT } from "@/app/models/profile.model";
+import Loading from "./loading";
 
 export default function ProfilePage() {
   const params = useParams();
   const router = useRouter();
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
-  const profileId = Number(params.id); // Convert string to number
+  const profileId = Number(params.id);
 
   const [profileData, setProfileData] = useState<CreateProfileInputT | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,6 +28,7 @@ export default function ProfilePage() {
         if (result.status && result.data) {
           setProfileData(result.data);
           setLoading(false);
+          showSnackbar("Profile fetched successfully!");
         } else {
           const errorMessage =
             result.data?.length > 0
@@ -48,20 +50,19 @@ export default function ProfilePage() {
     }, 1000);
   };
 
+  const showSnackbar = (message: string) => {
+    setSnackMessage(message);
+    setSnackOpen(true);
+  };
+
   return (
     <>
-      {loading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Home data={profileData} />
-      )}
+      {loading ? <Loading /> : <Home data={profileData} />}
 
       <Portal>
         <Snackbar
           open={snackOpen}
-          autoHideDuration={1000}
+          autoHideDuration={2000}
           onClose={() => setSnackOpen(false)}
           message={snackMessage}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
