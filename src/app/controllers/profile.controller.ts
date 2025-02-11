@@ -7,49 +7,49 @@ import { logger } from "../utils/logger.utils";
 
 
 
-// export async function updateProfile(data: CreateProfileInputT, params: any) {
-//   let result;
-//   try {
-//     const session = await getSession();
+export async function updateProfile(data: CreateProfileInputT, params: any) {
+  let result;
+  //data.phone = data.phone.replace(/\s+/g, "");
+  try {
+    const session = await getSession();
 
-//     if (!session?.user?.dbInfo?.id) {
-//       result = {
-//         status: false,
-//         data: [{ path: ["form"], message: "Session Error: User not logged in" }],
-//       };
-//       return result;
-//     }
-//     const parsed = createProfileSchema.safeParse(data);
-//     if (!parsed.success) {
-//       result = {
-//         status: false,
-//         data: parsed.error.issues, 
-//       };
-//       console.log("result", result);
-//       return result;
-//     }
-//     const dbResult = await updateProfileDb(session, data, params);
-//     console.log("dbResult", dbResult);
+    if (!session?.user?.dbInfo?.id) {
+      result = {
+        status: false,
+        data: [{ path: ["form"], message: "Session Error: User not logged in" }],
+      };
+      return result;
+    }
 
-//     if (dbResult.status) {
+    // console.log("data", data);
+    // console.log("params", params);
+    const parsed = createProfileSchema.safeParse(data);
+    //console.log("parsed", parsed);
+    if (!parsed.success) {
+      result = {
+        status: false,
+        data: parsed.error.issues, 
+      };
+      return result;
+    }
+    const dbResult = await updateProfileDb(session, data, params);
+    //console.log("dbResult", dbResult);
 
-//       return { status: true, data: dbResult };
-//       // return { status: false, data: dbResult.data.map((err: any) => ({
-//       //   error_path: err.path?.[0] || err.error_path,
-//       //   error_text: err.message || err.error_text,
-//       // }))};
+    if (dbResult.status) {
+
+      return { status: true, data: dbResult };
       
-//     } else {
-//       console.log("dbResult", dbResult.data);
-//       return { status: false, data: dbResult.data };
-//     }
-//   } catch (e) {
-//     return {
-//       status: false,
-//       data: [{ path: ["form"], message: "Unknown Error in updateProfile" }],
-//     };
-//   }
-// }
+    } else {
+     //console.log("dbResult", dbResult.data);
+      return { status: false, data: dbResult.data };
+    }
+  } catch (e) {
+    return {
+      status: false,
+      data: [{ path: ["form"], message: "Unknown Error in updateProfile" }],
+    };
+  }
+}
 
 
 export async function createProfile(data: CreateProfileInputT) {
@@ -62,10 +62,18 @@ export async function createProfile(data: CreateProfileInputT) {
       return result;
     }
 
+    console.log("phone from data  is here sdfghjsdfghjsdfghj ", data);
+    if(data.phone.includes(" ")){
+      data.phone = data.phone.split(" ").slice(1).join(" ");
+    }
+    console.log("data", data);
+    const data2 = {...data}
+    data2.phone = data2.phone.replace(/\s+/g, "");
     const parsed = createProfileSchema.safeParse(data);
+    console.log("parsed", parsed);
     
     if (!parsed.success) {
-      console.log("parsed.error.issues", parsed.error.issues);
+      //console.log("parsed.error.issues", parsed.error.issues);
       return result ={ status: false, data: parsed.error.issues };
     }
 
@@ -88,46 +96,6 @@ export async function createProfile(data: CreateProfileInputT) {
   }
 }
 
-
-export async function updateProfile(data: CreateProfileInputT, params: any) {
-  let result;
-  try {
-    const session = await getSession();
-
-    if (!session?.user?.dbInfo?.id) {
-      return {
-        status: false,
-        data: [{ path: ["form"], message: "Session Error: User not logged in" }],
-      };
-    }
-
-    // Collect parsing errors first
-    const parsed = createProfileSchema.safeParse(data);
-    let validationErrors = parsed.success ? [] : parsed.error.issues;
-    console.log("validationErrors", validationErrors);
-
-    // Call DB function regardless of parsing errors
-    const dbResult = await updateProfileDb(session, data, params);
-    console.log("dbResult", dbResult);
-
-    // Collect DB errors if any
-    let dbErrors = dbResult.status ? [] : dbResult.data;
-
-    // Merge both errors and return
-    let allErrors = [...validationErrors, ...dbErrors];
-
-    if (allErrors.length > 0) {
-      return { status: false, data: allErrors };
-    }
-
-    return { status: true, data: dbResult };
-  } catch (e) {
-    return {
-      status: false,
-      data: [{ path: ["form"], message: "Unknown Error in updateProfile" }],
-    };
-  }
-}
 
 
 export async function fetchProfileById(profileId: number) {

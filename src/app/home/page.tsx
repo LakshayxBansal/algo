@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { InputControl, InputType } from "../Widgets/input/InputControl";
 import { optionsDataT, selectKeyValueT } from "../models/models";
 import { useParams, usePathname } from "next/navigation";
@@ -20,7 +20,6 @@ import {
 } from "../controllers/profile.controller";
 import { CreateProfileInputT } from "../models/profile.model";
 import CloseIcon from "@mui/icons-material/Close";
-import { error } from "console";
 
 export default function Home(props: any) {
   
@@ -30,6 +29,8 @@ export default function Home(props: any) {
 
   const params = useParams();
   const profileId = params.id ? Number(params.id) : null;
+  //const formRef = useRef<HTMLFormElement>(null);
+  
 
   const entityData: any = props.data
     ? props.data
@@ -53,9 +54,14 @@ export default function Home(props: any) {
       : undefined
   );
 
-  const [selectValues, setSelectValues] = useState<selectKeyValueT>({});
+  
+
+  const [selectValues, setSelectValues] = useState<selectKeyValueT>({
+    country: {id:entityData?.country_id,name:entityData.country_name},
+    state: {id:entityData?.state_id,name:entityData.state_name}
+  });
   const [stateDisable, setStateDisable] = useState(!entityData.country_id);
-  const [stateKey, setStateKey] = useState(0);
+  const [stateKey, setStateKey] = useState(true);
   const [snackOpen, setSnackOpen] = React.useState(false);
 
 
@@ -66,34 +72,48 @@ export default function Home(props: any) {
     name: string
   ) => {
     let values = { ...selectValues };
-    let errors = {...formError};
-    values[name] = val ? val : { id: 0, name: " " };
+    let errors = { ...formError };
   
-    if (name === "country") {
-      setStateDisable(false); // Enable the state selector
+    // if (name === "country") {
+    //   if (!val || val.id === 0) {
+    //     // If no country is selected, reset both country and state
+    //     values["country"] = { id: 0, name: "" };
+    //     values["state"] = undefined;
+    //     setDefaultState(undefined);
+    //     setStateDisable(true);
+    //   } else {
+    //     // If a country is selected, update and enable state selection
+    //     values["country"] = val;
+    //     values["state"] = undefined; // Reset state when changing country
+    //     setDefaultState(undefined);
+    //     setStateDisable(false);
+    //   }
   
-      // Clear state data when a new country is selected
-      values["state"] = undefined;  
-      setDefaultState(undefined);    // Clear the default state value
-      setSelectValues(values);
+    //   // Force re-render of SelectMasterWrapper to clear the state dropdown
+    //   setStateKey((prev) => prev + 1);
+    // }
   
-      if (!val || val.id === 0) {
-        
-        setStateDisable(true);       // Disable if no country is selected
-      }
-      if(values.country.id){
-        setStateDisable(true);
-      }
-  
-      const newKey = 1 - stateKey;   // Force re-render of SelectMasterWrapper
-      setStateKey(newKey);
+    // if (name === "state") {
+    //   values["state"] = val ? val : { id: 0, name: "" };
+    // }
+
+    if(name==="country"){
+      values['state']={};
+      setDefaultState(undefined);
+      setStateDisable(true);
+      setStateKey((prev)=> !prev)
     }
+
+    values[name] = val ? val : {id:0,name:''};
+  
     setSelectValues(values);
   };
-
+  
+  
+  
   
   async function getStatesforCountry(stateStr: string) {
-    const country = selectValues.country?.name;
+    const country = selectValues?.country?.name;
     const states = await getStates(stateStr, country);
     return states.length > 0 ? states : [];
   }
@@ -101,13 +121,14 @@ export default function Home(props: any) {
   async function persistEntity(data: CreateProfileInputT) {
     let result;
     if (!profileId) {
+
       result = await createProfile(data);
     } else {
       result = await updateProfile(data,profileId);
     }
 
     if (!result.status || (result.data && result.data.length > 0)) {
-      return { status: false, data: result.data }; // Return errors properly
+      return { status: false, data: result.data };
     }
 
     return result;
@@ -121,6 +142,7 @@ export default function Home(props: any) {
   };
 
   const handleSubmit = async (formData: FormData) => {
+    // e.preventDefault();
     let data: { [key: string]: any } = {};
  
     for (const [key, value] of formData.entries()) {
@@ -128,19 +150,28 @@ export default function Home(props: any) {
     }
     console.log("data", data);
     data.age = Number(data.age);
-    data.country_id = selectValues.country?.id || entityData.country_id || 0;
-    data.state_id = selectValues.state?.id || entityData.state_id || 0;
-    data.phone = data.phone.replace(/\s+/g, "");
+    console.log("selectValues", selectValues);
+    
+    data.country_id = selectValues.country?.id ;
+    console.log("data.country_id", data.country_id);
+    data.country = selectValues.country?.name;
+    console.log("data.country", data.country);
+    data.state= selectValues.state?.name;
+    console.log("data.state", data.state);
+    data.state_id = selectValues.state?.id ;
+    console.log("data.state_id", data.state_id);
+   //data.phone = data.phone.replace(/\s+/g, "");
     try {
       const result = await persistEntity(data as any);
       console.log("result", result);
       if (result.status) {
         setFormError({});
         setSnackOpen(true);
+        //formRef.current?.reset();
         return;
       } else {
         const issues = result.data;
-        console.log("issues", issues);
+        
         const errorState: Record<string, { msg: string; error: boolean }> = {};
 
         issues.forEach((issue: any) => {
@@ -176,11 +207,9 @@ export default function Home(props: any) {
       setSnackOpen(false);
     }
   };
-  
-  const handleCancel = () => {
-    props.setDialogOpen ? props.setDialogOpen(false) : null;
-  };
 
+ 
+  
   return (
     <>
       <Collapse in={!!formError?.form?.msg}>
@@ -280,6 +309,7 @@ export default function Home(props: any) {
                   }
                 : undefined
             }
+            //defaultValue={selectValues.country}
           
             renderForm={(fnDialogOpen, fnDialogValue, data) => (
               <CountryForm
@@ -293,7 +323,7 @@ export default function Home(props: any) {
           />
 
           <SelectMasterWrapper
-            key={stateKey}
+            key={`state-${selectValues.country?.id}`}
             name={"state"}
             required={true}
             id={"state"}
@@ -319,8 +349,8 @@ export default function Home(props: any) {
             )}
           />
 
-          <Button onClick={handleCancel} tabIndex={-1}>
-            Cancel
+          <Button onClick={()=>{console.log("clear form")}} tabIndex={-1}>
+            Clear Form
           </Button>
           <Button
             type="submit"

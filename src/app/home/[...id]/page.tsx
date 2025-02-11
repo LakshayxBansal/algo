@@ -41,10 +41,10 @@ export default function ProfilePage() {
   const handleError = (message: string) => {
     setSnackMessage(message);
     setSnackOpen(true);
-    setLoading(false); // Prevent infinite loading state
+    setLoading(false);
 
     setTimeout(() => {
-      router.replace("/home"); // Use replace to avoid history stacking
+      router.replace("/home");
     }, 1000);
   };
 
@@ -55,7 +55,7 @@ export default function ProfilePage() {
           <CircularProgress />
         </Box>
       ) : (
-        profileData && <Home data={profileData} />
+        <Home data={profileData} />
       )}
 
       <Portal>

@@ -34,7 +34,7 @@ export async function createProfileDb(
       query: query,
       values: values,
     });
-     console.log("result", result[0].length);
+     //console.log("result", result[0].length);
     if(result[0].length > 0){
       return { status: false, data: result[0] };
     }
@@ -68,28 +68,29 @@ export async function updateProfileDb(
       profileData.state_id ,
     ];
 
+    //console.log("values", values);
     const result = await excuteQuery({
       host: session.user.dbInfo.dbName,
       query: query,
       values: values,
     });
-    console.log("Raw result from DB:", result);
+    //console.log("Raw result from DB:", result);
 
     if (!result || result.length === 0) {
-      console.error("Unexpected empty result set from DB.");
+      //console.error("Unexpected empty result set from DB.");
       return { status: false, data: [{ path: ["form"], message: "No data returned from DB" }] };
     }
 
 
     
     if (result[0].length > 0) {
-      console.log("result[0]", result[0]);
+      //console.log("result[0]", result[0]);
       return { status: false, data: result[0]}; 
     }
     
     return { status: true, data: result[1][0] }; 
   } catch (error) {
-    console.log("Error from service");
+    //console.log("Error from service");
     logger.error("Error in updateProfileDb:", error);
     return {
       status: false,
