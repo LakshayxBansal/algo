@@ -36,6 +36,7 @@ export default function ActionForm(
       data[key] = value;
     }
     const result = await persistEntity(data as nameMasterDataT);
+    
     if (result.status) {
       const newVal = { id: result.data[0].id, name: result.data[0].name };
       setFormError({});
@@ -112,12 +113,12 @@ export default function ActionForm(
             <Grid container>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <InputControl
+                  name="name"
                   autoFocus
                   id="name"
                   required
                   label="Action Name"
                   inputType={InputType.TEXT}
-                  name="name"
                   titleCase={true}
                   defaultValue={props.data?.name}
                   error={formError?.name?.error}

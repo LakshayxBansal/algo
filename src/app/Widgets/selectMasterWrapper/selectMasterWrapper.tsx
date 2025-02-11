@@ -11,7 +11,7 @@ import { AddDialogWrapper } from '@/app/Widgets/selectMasterWrapper/AddDialogWra
 
 type SelectOptionsFunction = (option: any) => string;
 
-type selectMasterWrapperT = {
+export type selectMasterWrapperT = {
   name: string;
   id: string;
   label: string;
@@ -35,6 +35,8 @@ type selectMasterWrapperT = {
   showDetails?: boolean;
   autoFocus?: boolean;
   setFormError?: (props: any) => void;
+  error?: boolean;
+  helperText?: string;
 };
 
 enum dialogMode {
